@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -37,7 +38,6 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -55,6 +55,7 @@ import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResol
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.ChunkDataHelper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
@@ -73,10 +74,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,11 +104,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * Breeding setting.
      */
     public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "breeding"));
-
-    /**
-     * Feeding setting.
-     */
-    public static final ISettingKey<BoolSetting> FEEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "feeding"));
 
     public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, new ResourceLocation(Constants.MOD_ID, "useshears"));
 
@@ -321,7 +314,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (getBuildingLevel() == 0)
         {
-            ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
+            ChunkDataHelper.claimBuildingChunks((Colony) colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
         }
     }
 
@@ -439,7 +432,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
+        ChunkDataHelper.claimBuildingChunks((Colony) colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModulesByType(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -696,8 +689,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
 
-        buf.writeInt(getRotation());
-        buf.writeBoolean(isMirrored());
+        if (getRotationMirror() == null)
+        {
+            Log.getLogger().error(String.format("Building %s is supposed to have rotation mirror!", this.getBuildingType().getRegistryName().toString()));
+            buf.writeByte(RotationMirror.NONE.ordinal());
+        }
+        else
+        {
+            buf.writeByte(getRotationMirror().ordinal());
+        }
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundTag requestSystemCompound = new CompoundTag();
@@ -868,7 +868,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
         compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
         stack.setTag(compoundNBT);
-        if (InventoryUtils.addItemStackToProvider(player, stack))
+        if (InventoryUtils.addItemStackToProvider(IItemHandlerCapProvider.wrap(player, false), stack))
         {
             this.destroy();
             colony.getWorld().destroyBlock(this.getPosition(), false);
@@ -966,8 +966,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        cachedRotation = -1;
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
+        ChunkDataHelper.claimBuildingChunks((Colony) colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
@@ -1016,8 +1015,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               = ColonyUtils.calculateCorners(this.getPosition(),
               colony.getWorld(),
               blueprint,
-              getRotation(),
-              isMirrored());
+              getRotationMirror());
             this.setCorners(corners.getA(), corners.getB());
 
             if (te != null)
@@ -1177,8 +1175,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final BlockEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
-            final LazyOptional<IItemHandler> handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
-            handler.ifPresent(handlers::add);
+            final IItemHandler handler = getItemHandlerCap();
+            if (handler != null)
+            {
+                handlers.add(handler);
+            }
         }
 
         return ImmutableList.copyOf(handlers);
@@ -1241,9 +1242,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             for (final BlockPos pos : containerList)
             {
                 final BlockEntity tempTileEntity = world.getBlockEntity(pos);
-                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(tempTileEntity))
+                final IItemHandlerCapProvider wrapped = IItemHandlerCapProvider.wrap(tempTileEntity);
+                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(wrapped))
                 {
-                    return forceItemStackToProvider(tempTileEntity, stack);
+                    return forceItemStackToProvider(wrapped, stack);
                 }
             }
         }
@@ -1255,7 +1257,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Nullable
-    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
+    private ItemStack forceItemStackToProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final ItemStack itemStack)
     {
         final List<ItemStorage> localAlreadyKept = new ArrayList<>();
         return InventoryUtils.forceItemStackToProvider(provider,
@@ -1376,13 +1378,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
-            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
-              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
+              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
         }
         else
         {
-            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
-              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
+              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
@@ -2005,7 +2007,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final int citizenId = getCitizensByRequest().get(request.getId());
         if (citizenId == -1)
         {
-            return Component.translatable(getBuildingDisplayName());
+            return Component.translatableEscape(getBuildingDisplayName());
         }
 
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
@@ -2014,7 +2016,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return Component.literal(citizenData.getName());
         }
 
-        final MutableComponent jobName = Component.translatable(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
+        final MutableComponent jobName = Component.translatableEscape(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(Component.literal(" " + citizenData.getName()));
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
-import net.minecraftforge.common.ToolActions;
+import net.neoforged.neoforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -77,7 +77,7 @@ public class Tool implements IDeliverable
         compound.putString(NBT_TYPE, tool.getToolClass().getName());
         compound.putInt(NBT_MIN_LEVEL, tool.getMinLevel());
         compound.putInt(NBT_MAX_LEVEL, tool.getMaxLevel());
-        compound.put(NBT_RESULT, tool.getResult().serializeNBT());
+        compound.put(NBT_RESULT, tool.getResult().save(new CompoundTag()));
 
         return compound;
     }

@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.jobs.views;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJobView;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -50,7 +51,7 @@ public class DefaultJobView implements IJobView
         {
             asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
-        entry = buffer.readRegistryId();
+        entry = buffer.readById(IJobRegistry.getInstance());
     }
 
     @Override

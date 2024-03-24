@@ -150,6 +150,6 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_NORSEMEN);
+        return Component.translatableEscape(RAID_NORSEMEN);
     }
 }

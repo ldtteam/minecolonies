@@ -1,24 +1,27 @@
 package com.minecolonies.api.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** A loot condition that checks if the entity producing loot is in a biome with a particular tag. */
 public class EntityInBiomeTag implements LootItemCondition
 {
+    public static final EntityInBiomeTag ANY = new EntityInBiomeTag(null);
+    public static final Codec<EntityInBiomeTag> CODEC = RecordCodecBuilder.create(builder -> builder
+        .group(ExtraCodecs.strictOptionalField(TagKey.hashedCodec(Registries.BIOME), "tag", null).forGetter(t -> t.tag))
+        .apply(builder, EntityInBiomeTag::ofNullable));
+
     @Nullable
     private final TagKey<Biome> tag;
 
@@ -29,12 +32,17 @@ public class EntityInBiomeTag implements LootItemCondition
 
     public static LootItemCondition.Builder any()
     {
-        return () -> new EntityInBiomeTag(null);
+        return () -> ANY;
     }
 
     public static LootItemCondition.Builder of(@NotNull final TagKey<Biome> category)
     {
         return () -> new EntityInBiomeTag(category);
+    }
+
+    private static EntityInBiomeTag ofNullable(final TagKey<Biome> tag)
+    {
+        return tag == null ? ANY : new EntityInBiomeTag(tag);
     }
 
     @NotNull
@@ -59,29 +67,5 @@ public class EntityInBiomeTag implements LootItemCondition
         }
 
         return false;
-    }
-
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<EntityInBiomeTag>
-    {
-        @Override
-        public void serialize(@NotNull final JsonObject json,
-                              @NotNull final EntityInBiomeTag condition,
-                              @NotNull final JsonSerializationContext context)
-        {
-            if (condition.tag != null)
-            {
-                json.addProperty("tag", condition.tag.location().toString());
-            }
-        }
-
-        @NotNull
-        @Override
-        public EntityInBiomeTag deserialize(@NotNull final JsonObject json,
-                                            @NotNull final JsonDeserializationContext context)
-        {
-            final String tagId = GsonHelper.getAsString(json, "tag", "");
-            final TagKey<Biome> tag = tagId.isEmpty() ? null : ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(tagId));
-            return new EntityInBiomeTag(tag);
-        }
     }
 }

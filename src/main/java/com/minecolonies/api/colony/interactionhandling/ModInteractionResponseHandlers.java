@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.interactionhandling;
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
  * List of mod interaction handlers.
@@ -24,13 +24,13 @@ public final class ModInteractionResponseHandlers
     /**
      * List of entries.
      */
-    public static RegistryObject<InteractionResponseHandlerEntry> standard;
-    public static RegistryObject<InteractionResponseHandlerEntry> simpleNotification;
-    public static RegistryObject<InteractionResponseHandlerEntry> pos;
-    public static RegistryObject<InteractionResponseHandlerEntry> request;
-    public static RegistryObject<InteractionResponseHandlerEntry> recruitment;
-    public static RegistryObject<InteractionResponseHandlerEntry> quest;
-    public static RegistryObject<InteractionResponseHandlerEntry> questAction;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> standard;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> simpleNotification;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> pos;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> request;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> recruitment;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> quest;
+    public static DeferredHolder<InteractionResponseHandlerEntry, InteractionResponseHandlerEntry> questAction;
 
     private ModInteractionResponseHandlers()
     {

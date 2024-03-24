@@ -1,7 +1,6 @@
 package com.minecolonies.core.compatibility.jei.transfer;
 
 import com.minecolonies.api.crafting.ModCraftingTypes;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.containers.WindowCrafting;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.compatibility.jei.JobBasedRecipeCategory;
@@ -80,6 +79,6 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
         }
 
         final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(matrix, gui.isCompleteCrafting());
-        Network.getNetwork().sendToServer(message);
+        message.sendToServer();
     }
 }

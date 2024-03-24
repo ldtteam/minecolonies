@@ -2,12 +2,16 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,9 +54,9 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
       @NotNull final BlockPos avoid,
       final int avoidDistance,
       final int range,
-      final LivingEntity entity)
+      final Mob entity)
     {
-        super(world, start, avoid, range, entity);
+        super(world, start, range, new PathResult<PathJobMoveAwayFromLocation>(), entity);
 
         this.avoid = new BlockPos(avoid);
         this.avoidDistance = avoidDistance;
@@ -89,13 +93,30 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * For MoveAwayFromLocation we want our heuristic to weight.
      *
-     * @param pos Position to compute heuristic from.
      * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return Math.sqrt(preferredDirection.distSqr(pos)) + 100 / Math.max(1, Math.sqrt(avoid.distSqr(pos)));
+        return BlockPosUtil.dist(preferredDirection, x, y, z);
+    }
+
+    protected double modifyCost(
+      final double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state)
+    {
+        if (BlockPosUtil.dist(avoid, x, y, z) < 3)
+        {
+            return cost + 100;
+        }
+
+        return cost;
     }
 
     /**
@@ -107,7 +128,9 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        return Math.sqrt(avoid.distSqr(n.pos)) > avoidDistance;
+        return BlockPosUtil.dist(avoid, n.x, n.y, n.z) > avoidDistance
+                 && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                      == SurfaceType.WALKABLE;
     }
 
     /**
@@ -117,8 +140,8 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return double amount.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final MNode n)
+    protected double getEndNodeScore(@NotNull final MNode n)
     {
-        return -avoid.distSqr(n.pos);
+        return -BlockPosUtil.dist(avoid, n.x, n.y, n.z);
     }
 }

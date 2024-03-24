@@ -55,7 +55,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
     {
-        final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
+        final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
         if (entry == null)
         {
             if (buildingName.getPath().equals("home"))
@@ -72,7 +72,7 @@ public class BuildingDataManager implements IBuildingDataManager
     public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer)
     {
         final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readUtf(32767));
-        final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
+        final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
 
         if (entry == null)
         {

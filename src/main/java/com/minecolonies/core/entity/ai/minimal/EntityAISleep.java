@@ -13,7 +13,6 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
@@ -179,9 +178,9 @@ public class EntityAISleep implements IStateAI
 
                 for (final BlockPos pos : bedList)
                 {
-                    if (WorldUtil.isEntityBlockLoaded(citizen.level, pos))
+                    if (WorldUtil.isEntityBlockLoaded(citizen.level(), pos))
                     {
-                        final Level world = citizen.level;
+                        final Level world = citizen.level();
                         final BlockState state = world.getBlockState(pos);
                         final BlockState above = world.getBlockState(pos.above());
                         if (state.is(BlockTags.BEDS)
@@ -223,7 +222,7 @@ public class EntityAISleep implements IStateAI
             return WALKING_HOME;
         }
 
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()), citizen);
+        new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()).sendToTrackingEntity(citizen);
         //TODO make sleeping noises here.
         return null;
     }
@@ -254,15 +253,15 @@ public class EntityAISleep implements IStateAI
      */
     private void setBedOccupied(boolean occupied)
     {
-        final BlockState headState = citizen.level.getBlockState(usedBed);
-        citizen.level.setBlock(usedBed, headState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
+        final BlockState headState = citizen.level().getBlockState(usedBed);
+        citizen.level().setBlock(usedBed, headState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
         final BlockPos feetPos = usedBed.relative(headState.getValue(BedBlock.FACING).getOpposite());
-        final BlockState feetState = citizen.level.getBlockState(feetPos);
+        final BlockState feetState = citizen.level().getBlockState(feetPos);
 
         if (feetState.is(BlockTags.BEDS))
         {
-            citizen.level.setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
+            citizen.level().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
         }
     }
 

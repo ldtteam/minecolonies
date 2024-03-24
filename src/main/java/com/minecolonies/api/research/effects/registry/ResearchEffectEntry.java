@@ -3,8 +3,8 @@ package com.minecolonies.api.research.effects.registry;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -58,8 +58,8 @@ public class ResearchEffectEntry
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
         public ResearchEffectEntry createResearchEffectEntry()
         {
-            Validate.notNull(readFromNBT);
-            Validate.notNull(registryName);
+            Objects.requireNonNull(readFromNBT);
+            Objects.requireNonNull(registryName);
 
             return new ResearchEffectEntry(readFromNBT, registryName);
         }

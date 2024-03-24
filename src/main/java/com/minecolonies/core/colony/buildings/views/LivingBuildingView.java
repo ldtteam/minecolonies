@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.core.BlockPos;
@@ -82,6 +81,6 @@ public abstract class LivingBuildingView extends AbstractBuildingView
     public void setHiringMode(final HiringMode value)
     {
         getModuleViewByType(LivingBuildingModuleView.class).setHiringMode(value);
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, value, getModuleViewByType(LivingBuildingModuleView.class).getProducer().getRuntimeID()));
+        new BuildingHiringModeMessage(this, value, getModuleViewByType(LivingBuildingModuleView.class).getProducer().getRuntimeID()).sendToServer();
     }
 }

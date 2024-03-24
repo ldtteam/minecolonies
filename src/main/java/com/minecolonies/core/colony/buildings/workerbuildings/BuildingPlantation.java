@@ -28,8 +28,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -350,12 +350,12 @@ public class BuildingPlantation extends AbstractBuilding
 
             if (getCurrentPlantsPlusField(field) > maxConcurrentPlants)
             {
-                return Component.translatable(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+                return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
             }
 
             if (!hasRequiredResearchForField(field))
             {
-                return Component.translatable(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
+                return Component.translatableEscape(FIELD_LIST_PLANTATION_RESEARCH_REQUIRED);
             }
             return null;
         }
@@ -454,7 +454,7 @@ public class BuildingPlantation extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
-            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry().getValues())
+            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry())
             {
                 type.getFieldModuleProducers().stream()
                   .map(m -> m.apply(null))

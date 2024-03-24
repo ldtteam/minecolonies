@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -24,6 +23,7 @@ import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
@@ -550,7 +550,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     public BlockPos getPositionToFollow()
     {
         Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
-        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level.dimension() == this.colony.getDimension())
+        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level().dimension() == this.colony.getDimension())
         {
             return followPlayer.blockPosition();
         }
@@ -705,7 +705,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     /**
-     * Populates the mobs list from the ForgeRegistries.
+     * Populates the mobs list from the BuiltInRegistries.
      */
     @Override
     public void calculateMobs()

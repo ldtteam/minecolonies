@@ -1,10 +1,10 @@
 package com.minecolonies.core.placementhandlers.main;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
@@ -20,11 +20,9 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.wrapper.InvWrapper;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -45,12 +43,12 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
     public Component getDisplayName()
     {
         // this should never actually be visible
-        return Component.translatable("com.minecolonies.coremod.supplies.placement");
+        return Component.translatableEscape("com.minecolonies.coremod.supplies.placement");
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
+    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir)
     {
         return false;
     }
@@ -64,7 +62,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             final Level world,
             final Player playerArg,
             final BlockPos blockPos,
-            final PlacementSettings placementSettings)
+            final RotationMirror rotMir)
     {
         if (clientPack || !StructurePacks.hasPack(packName))
         {
@@ -75,7 +73,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
         final ServerPlayer player = (ServerPlayer) playerArg;
 
-        blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
+        blueprint.setRotationMirror(rotMir, world);
 
         if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                 && !isFreeInstantPlacementMH(player) && !player.isCreative())
@@ -110,13 +108,12 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             {
                 MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
                 player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
-                AdvancementTriggers.PLACE_SUPPLY.trigger(player);
+                AdvancementTriggers.PLACE_SUPPLY.get().trigger(player);
             }
 
             SoundUtils.playSuccessSound(player, player.blockPosition());
 
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level, blueprint,
-                    blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level(), blueprint, blockPos, rotMir, true, player);
         }
         else
         {

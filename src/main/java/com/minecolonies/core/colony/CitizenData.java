@@ -24,7 +24,6 @@ import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.interactionhandling.QuestDeliveryInteraction;
 import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction;
@@ -351,6 +350,13 @@ public class CitizenData implements ICitizenData
     public Optional<AbstractEntityCitizen> getEntity()
     {
         final AbstractEntityCitizen citizen = entity.get();
+
+        if (citizen != null && citizen.isRemoved())
+        {
+            entity.clear();
+            return Optional.empty();
+        }
+
         return Optional.ofNullable(citizen);
     }
 
@@ -386,7 +392,7 @@ public class CitizenData implements ICitizenData
             {
                 if (getColony().getWorld().getPlayerByUUID(player) instanceof ServerPlayer playerEntity)
                 {
-                    Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage((Colony) getColony(), this), playerEntity);
+                    new ColonyViewCitizenViewMessage((Colony) getColony(), this).sendToPlayer(playerEntity);
                 }
             }
         }
@@ -865,7 +871,7 @@ public class CitizenData implements ICitizenData
         if (getEntity().isPresent())
         {
             final Entity entity = getEntity().get();
-            if (entity.isAlive() && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
+            if (entity.isAlive() && WorldUtil.isEntityBlockLoaded(entity.level(), entity.blockPosition()))
             {
                 return;
             }
@@ -1042,6 +1048,7 @@ public class CitizenData implements ICitizenData
     public void setName(final String name)
     {
         this.name = name;
+        markDirty(0);
     }
 
     @Override
@@ -1688,15 +1695,15 @@ public class CitizenData implements ICitizenData
 
         if (job != null && job.getWorkBuilding() != null && !job.getWorkBuilding().isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
+            triggerInteraction(new StandardInteraction(Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_WORK),
+              Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_WORK),
               ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
+            triggerInteraction(new StandardInteraction(Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_HOME),
+              Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
 

@@ -84,30 +84,30 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             if (qty > 0)
             {
                 text =
-                  Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.existing", lvl, qty, Component.translatable(buildingEntry.getTranslationKey()));
+                  Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding.existing", lvl, qty, Component.translatableEscape(buildingEntry.getTranslationKey()));
             }
             else
             {
-                text = Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing",
+                text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing",
                   lvl,
-                  Component.translatable(buildingEntry.getTranslationKey()));
+                  Component.translatableEscape(buildingEntry.getTranslationKey()));
             }
         }
         else
         {
             if (qty > 0)
             {
-                text = Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding", qty, lvl, Component.translatable(buildingEntry.getTranslationKey()));
+                text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding", qty, lvl, Component.translatableEscape(buildingEntry.getTranslationKey()));
             }
             else
             {
-                text = Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.cumulative", lvl, Component.translatable(buildingEntry.getTranslationKey()));
+                text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding.cumulative", lvl, Component.translatableEscape(buildingEntry.getTranslationKey()));
             }
         }
 
-        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+        final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
           new IQuestDialogueAnswer.CloseUIDialogueAnswer());
-        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+        final AnswerElement answer2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.cancel"),
           new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         return new DialogueElement(text, List.of(answer1, answer2));
     }
@@ -123,7 +123,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
 
         final int target = details.get(TARGET_KEY).getAsInt();
-        final BuildingEntry buildingEntry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(new ResourceLocation(details.get(BUILDING_KEY).getAsString()));
+        final BuildingEntry buildingEntry = IMinecoloniesAPI.getInstance().getBuildingRegistry().get(new ResourceLocation(details.get(BUILDING_KEY).getAsString()));
 
         final int level = details.get(LEVEL_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
@@ -228,17 +228,17 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         {
             if (qty > 0)
             {
-                return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress",
+                return Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding.progress",
                   Math.min(progress.currentProgress, qty),
                   qty,
-                  Component.translatable(buildingEntry.getTranslationKey()).setStyle(style));
+                  Component.translatableEscape(buildingEntry.getTranslationKey()).setStyle(style));
             }
             else
             {
-                return Component.translatable("com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative",
+                return Component.translatableEscape("com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative",
                   Math.min(progress.currentProgress, lvl),
                   lvl,
-                  Component.translatable(buildingEntry.getTranslationKey()).setStyle(style));
+                  Component.translatableEscape(buildingEntry.getTranslationKey()).setStyle(style));
             }
         }
         return Component.empty();

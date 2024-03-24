@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
+import static com.ldtteam.structurize.api.constants.Constants.UPDATE_FLAG;
 
 /**
  * Handler for non-waxed copper blocks.

@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
@@ -178,12 +177,7 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
-        final ColonyVisitorViewDataMessage message = new ColonyVisitorViewDataMessage(colony, toSend, refresh);
-
-        for (final ServerPlayer player : players)
-        {
-            Network.getNetwork().sendToPlayer(message, player);
-        }
+        new ColonyVisitorViewDataMessage(colony, toSend, refresh).sendToPlayer(players);
     }
 
     @NotNull

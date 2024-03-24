@@ -2,6 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.amazonevent.AmazonRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.barbarianEvent.BarbarianRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
@@ -9,15 +10,14 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.Norsem
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Initializer for colony event types, register new event types here.
  */
 public final class ModColonyEventTypeInitializer
 {
-    public final static DeferredRegister<ColonyEventTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"), Constants.MOD_ID);
+    public final static DeferredRegister<ColonyEventTypeRegistryEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, Constants.MOD_ID);
 
     private ModColonyEventTypeInitializer()
     {

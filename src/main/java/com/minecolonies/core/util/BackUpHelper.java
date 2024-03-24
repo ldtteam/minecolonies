@@ -13,11 +13,12 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
 {
@@ -91,7 +91,7 @@ public final class BackUpHelper
               new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (final ResourceKey<Level> dimensionType : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().levels.keySet())
+            for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levelKeys())
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
@@ -198,7 +198,7 @@ public final class BackUpHelper
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
+        for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levelKeys())
         {
             int missingFilesInRow = 0;
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
@@ -232,7 +232,7 @@ public final class BackUpHelper
     private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -297,7 +297,7 @@ public final class BackUpHelper
             if (file != null)
             {
                 file.getParentFile().mkdirs();
-                NbtIo.write(compound, file);
+                NbtIo.write(compound, file.toPath());
             }
         }
         catch (final IOException exception)
@@ -318,7 +318,7 @@ public final class BackUpHelper
         {
             if (file != null && file.exists())
             {
-                return NbtIo.read(file);
+                return NbtIo.read(file.toPath());
             }
         }
         catch (final IOException exception)
@@ -339,7 +339,7 @@ public final class BackUpHelper
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundTag colonyCompound = new CompoundTag();
@@ -357,12 +357,16 @@ public final class BackUpHelper
     public static void markColonyDeleted(final int colonyID, final ResourceKey<Level> dimensionID)
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
             final String fileName = getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY_DELETED, colonyID);
-            new File(saveDir, fileName).delete();
+            final File oldFile = new File(saveDir, fileName);
+            if (oldFile.exists())
+            {
+                oldFile.delete();
+            }
             toDelete.renameTo(new File(saveDir, fileName));
         }
     }
@@ -373,9 +377,9 @@ public final class BackUpHelper
     public static void loadAllBackups()
     {
         @NotNull final File saveDir =
-          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        ServerLifecycleHooks.getCurrentServer().levels.keySet().forEach(dimensionType -> {
+        ServerLifecycleHooks.getCurrentServer().levelKeys().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
             {
                 @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
@@ -432,15 +436,15 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final Level colonyWorld = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
-            final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
+            final Level colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            final Colony loadedColony = Colony.loadColony(compound, (ServerLevel) colonyWorld);
             if (loadedColony == null || colonyWorld == null)
             {
                 Log.getLogger().warn("Colony:" + colonyId + " loadBackup failed!");
                 return;
             }
 
-            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).ifPresent(cap -> cap.addColony(loadedColony));
+            IColonyManager.getInstance().addColonyDirect(loadedColony, (ServerLevel) colonyWorld);
 
             if (claimChunks)
             {
@@ -460,9 +464,9 @@ public final class BackUpHelper
      *
      * @param colony
      */
-    public static void reclaimChunks(final IColony colony)
+    public static void reclaimChunks(final Colony colony)
     {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony, colony.getCenter());
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             ChunkDataHelper.claimBuildingChunks(colony,
@@ -481,7 +485,7 @@ public final class BackUpHelper
      */
     public static String exportColony(final IColony colony)
     {
-        final MinecraftServer server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
+        final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         final File topworldDir = server.getWorldPath(LevelResource.ROOT).toFile();
         final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 

@@ -4,8 +4,6 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -81,12 +78,6 @@ public class SittingEntity extends Entity
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
-    @Override
     protected void defineSynchedData()
     {
 
@@ -95,7 +86,7 @@ public class SittingEntity extends Entity
     @Override
     public void tick()
     {
-        if (this.level.isClientSide)
+        if (this.level().isClientSide)
         {
             return;
         }
@@ -117,19 +108,19 @@ public class SittingEntity extends Entity
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (this.level.isClientSide)
+        if (this.level().isClientSide)
         {
             return;
         }
 
-        passenger.dimensions = passenger.dimensions.scale(1.0f, 0.5f);
+        passenger.dimensions = passenger.getType().getDimensions().scale(1.0f, 0.5f);
     }
 
     @Override
     protected void removePassenger(Entity passenger)
     {
         super.removePassenger(passenger);
-        if (this.level.isClientSide)
+        if (this.level().isClientSide)
         {
             return;
         }
@@ -145,7 +136,7 @@ public class SittingEntity extends Entity
     public Vec3 getDismountLocationForPassenger(@NotNull final LivingEntity passenger)
     {
         final BlockPos start = sittingpos == BlockPos.ZERO ? blockPosition().above() : sittingpos;
-        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, start);
+        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level(), start);
         if (spawn == null)
         {
             return super.getDismountLocationForPassenger(passenger);
@@ -188,13 +179,13 @@ public class SittingEntity extends Entity
             return;
         }
 
-        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level);
+        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level());
 
         // Find the lowest box and sit on that
-        final BlockState state = entity.level.getBlockState(pos);
+        final BlockState state = entity.level().getBlockState(pos);
         double minY = 1;
 
-        final List<AABB> shapes = state.getCollisionShape(entity.level, pos).toAabbs();
+        final List<AABB> shapes = state.getCollisionShape(entity.level(), pos).toAabbs();
         for (final AABB box : shapes)
         {
             if (box.maxY < minY)
@@ -208,10 +199,10 @@ public class SittingEntity extends Entity
             minY = 0;
         }
 
-        sittingEntity.setPos(pos.getX() + 0.5f, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5f);
+        sittingEntity.setPos(pos.getX() + 0.5, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5);
         sittingEntity.setMaxLifeTime(maxLifeTime);
         sittingEntity.setSittingPos(pos);
-        entity.level.addFreshEntity(sittingEntity);
+        entity.level().addFreshEntity(sittingEntity);
         entity.startRiding(sittingEntity);
         entity.getNavigation().stop();
     }

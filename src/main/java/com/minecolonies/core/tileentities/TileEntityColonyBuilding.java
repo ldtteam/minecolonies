@@ -1,5 +1,6 @@
 package com.minecolonies.core.tileentities;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -19,13 +20,14 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -36,13 +38,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -91,7 +93,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Check if the building has a mirror.
      */
-    private boolean mirror;
+    @Nullable
+    private RotationMirror rotationMirror;
 
     /**
      * The style of the building.
@@ -111,7 +114,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Create the combined inv wrapper for the building.
      */
-    private LazyOptional<CombinedItemHandler> combinedInv;
+    private CombinedItemHandler combinedInv;
 
     /**
      * Pending blueprint future.
@@ -228,14 +231,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 if (WorldUtil.isBlockLoaded(level, pos))
                 {
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof AbstractTileEntityRack)
+                    if (entity instanceof final AbstractTileEntityRack rack)
                     {
-                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                        if (rack.hasItemStack(notEmptyPredicate))
                         {
                             return pos;
                         }
                     }
-                    else if (isInTileEntity(entity, notEmptyPredicate))
+                    else if (isInTileEntity(IItemHandlerCapProvider.wrap(entity), notEmptyPredicate))
                     {
                         return pos;
                     }
@@ -357,7 +360,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             colonyId = compound.getInt(TAG_COLONY);
         }
-        mirror = compound.getBoolean(TAG_MIRROR);
+
+        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
+        {
+            rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
+        }
 
         String packName;
         String path;
@@ -428,7 +435,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
-        compound.putBoolean(TAG_MIRROR, mirror);
+        if (rotationMirror != null)
+        {
+            compound.putByte(TAG_ROTATION_MIRROR, (byte) rotationMirror.ordinal());
+        }
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
         if (registryName != null)
@@ -442,7 +452,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (combinedInv != null)
         {
-            combinedInv.invalidate();
+            invalidateCapabilities();
             combinedInv = null;
         }
         if (!getLevel().isClientSide && colonyId == 0)
@@ -491,26 +501,20 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
-    /**
-     * Set if the entity is mirrored.
-     *
-     * @param mirror true if so.
-     */
     @Override
-    public void setMirror(final boolean mirror)
+    public void setRotationMirror(final RotationMirror rotationMirror)
     {
-        this.mirror = mirror;
+        this.rotationMirror = rotationMirror;
     }
 
-    /**
-     * Check if building is mirrored.
-     *
-     * @return true if so.
-     */
     @Override
-    public boolean isMirrored()
+    public RotationMirror getRotationMirror()
     {
-        return mirror;
+        if (rotationMirror == null)
+        {
+            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path));
+        }
+        return rotationMirror;
     }
 
     /**
@@ -574,11 +578,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         // Do nothing
     }
 
-    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
+    public IItemHandler getItemHandlerCap(final Direction side)
     {
-        if (!remove && capability == ForgeCapabilities.ITEM_HANDLER && getBuilding() != null)
+        if (!remove && getBuilding() != null)
         {
             if (combinedInv == null)
             {
@@ -594,10 +597,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             final BlockEntity te = world.getBlockEntity(pos);
                             if (te != null)
                             {
-                                if (te instanceof AbstractTileEntityRack)
+                                if (te instanceof final AbstractTileEntityRack rack)
                                 {
-                                    handlers.add(((AbstractTileEntityRack) te).getInventory());
-                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
+                                    handlers.add(rack.getInventory());
+                                    rack.setBuildingPos(this.getBlockPos());
                                 }
                                 else
                                 {
@@ -609,11 +612,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 }
                 handlers.add(this.getInventory());
 
-                combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
+                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
             }
-            return (LazyOptional<T>) combinedInv;
+            return combinedInv;
         }
-        return super.getCapability(capability, side);
+        return super.getItemHandlerCap(side);
     }
 
     @Nullable
@@ -698,7 +701,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 rotation = 4 + worldRotation - structureRotation;
             }
 
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), this.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, level);
+            rotationMirror = RotationMirror.of(Rotation.values()[rotation], rotationMirror == null ? Mirror.NONE : rotationMirror.mirror());
+            blueprint.setRotationMirror(rotationMirror, level);
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
 
             if (info.getTileEntityData() != null)

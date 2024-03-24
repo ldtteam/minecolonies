@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescri
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
@@ -146,12 +145,12 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
                     workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
-                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
                 }
                 else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
                     workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
-                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
                 }
 
                 sortWorkOrders();
@@ -177,7 +176,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 break;
             }
         }
-        Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, true, 0));
+        new WorkOrderChangeMessage(this.building, id, true, 0).sendToServer();
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 

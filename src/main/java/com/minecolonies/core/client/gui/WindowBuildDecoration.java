@@ -7,32 +7,30 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,19 +74,14 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final String path;
 
     /**
-     * Rotation.
+     * Rotation and Mirror.
      */
-    private final Rotation rotation;
-
-    /**
-     * Mirror.
-     */
-    private final boolean mirror;
+    private final RotationMirror rotationMirror;
 
     /**
      * A function that will supply the message, given the position of the requested builder, if any.
      */
-    private final Function<BlockPos, IMessage> buildRequestMessage;
+    private final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage;
 
     /**
      * Drop down list for builders.
@@ -117,9 +110,8 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       final BlockPos pos,
       final String packMeta,
       final String path,
-      final Rotation rotation,
-      final boolean mirror,
-      Function<BlockPos, IMessage> buildRequestMessage)
+      final RotationMirror rotationMirror,
+      final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.packMeta = packMeta;
@@ -129,7 +121,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
 
-        findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(Component.translatable(ACTION_BUILD));
+        findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(Component.translatableEscape(ACTION_BUILD));
         findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
         findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
@@ -140,8 +132,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
         blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
-        this.rotation = rotation;
-        this.mirror = mirror;
+        this.rotationMirror = rotationMirror;
         this.buildRequestMessage = buildRequestMessage;
     }
 
@@ -176,7 +167,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         }
 
         builders.clear();
-        builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())
@@ -202,13 +193,13 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < builders.size())
                 {
-                    return builders.get(index).getA();
+                    return Component.literal(builders.get(index).getA());
                 }
-                return "";
+                return Component.empty();
             }
         });
         buildersDropDownList.setSelectedIndex(0);
@@ -238,9 +229,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               world,
               structurePos,
               blueprintFuture.get(),
-              new PlacementSettings(),
+              RotationMirror.NONE,
               true);
-            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
+            structure.getBluePrint().setRotationMirror(rotationMirror, Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;
@@ -345,7 +336,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                                    ? BlockPos.ZERO
                                    : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
-        Network.getNetwork().sendToServer(buildRequestMessage.apply(builder));
+        buildRequestMessage.apply(builder).sendToServer();
         close();
     }
 }

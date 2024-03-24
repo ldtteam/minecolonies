@@ -10,6 +10,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
@@ -29,9 +30,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.ToolAction;
+import net.neoforged.neoforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -478,29 +478,46 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final ArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDefenseForType(ArmorItem.Type.CHESTPLATE);
-        if (damageReductionAmount <= ArmorMaterials.LEATHER.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        final float armorLevel = getArmorValue(material);
+
+        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterials.GOLD.getDefenseForType(ArmorItem.Type.CHESTPLATE) && material != ArmorMaterials.CHAIN)
+        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD))
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterials.CHAIN.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterials.IRON.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterials.DIAMOND.getDefenseForType(ArmorItem.Type.CHESTPLATE))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND))
         {
             return 4;
         }
 
         return 5;
+    }
+
+    /**
+     * Calculate the full armor level of an entire kit of armor combined.
+     *
+     * @param material type of material of the armor.
+     * @return the armor value.
+     */
+    private static float getArmorValue(final ArmorMaterial material)
+    {
+        int value = 0;
+        for (final ArmorItem.Type type : ArmorItem.Type.values())
+        {
+            value += material.getDefenseForType(type);
+        }
+        return value + material.getToughness() * 4;
     }
 
     /**
@@ -611,11 +628,11 @@ public final class ItemStackUtils
     {
         if (toolGrade >= 0 && toolGrade <= 4)
         {
-            return Component.translatable("com.minecolonies.coremod.armorlevel." + toolGrade);
+            return Component.translatableEscape("com.minecolonies.coremod.armorlevel." + toolGrade);
         }
 
         // this shouldn't really ever happen, but just in case...
-        return Component.translatable("com.minecolonies.coremod.armorlevel.etc");
+        return Component.translatableEscape("com.minecolonies.coremod.armorlevel.etc");
     }
 
     /**
@@ -628,10 +645,10 @@ public final class ItemStackUtils
     {
         if (toolGrade >= 0 && toolGrade <= 4)
         {
-            return Component.translatable("com.minecolonies.coremod.toollevel." + toolGrade);
+            return Component.translatableEscape("com.minecolonies.coremod.toollevel." + toolGrade);
         }
 
-        return Component.translatable("com.minecolonies.coremod.toollevel.etc");
+        return Component.translatableEscape("com.minecolonies.coremod.toollevel.etc");
     }
 
     /**
@@ -979,7 +996,7 @@ public final class ItemStackUtils
                 Log.getLogger().error("Unable to parse item definition: " + itemData);
             }
         }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+        final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
         final ItemStack stack = new ItemStack(item);
         if (tag != null)
         {
@@ -1035,7 +1052,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemId)),
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(new ResourceLocation(itemId)),
                 itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
     }
 

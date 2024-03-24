@@ -9,17 +9,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.army_30.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecraft:iron_sword",
       "nbt": "{Damage:0}"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.army_30.title"
     }

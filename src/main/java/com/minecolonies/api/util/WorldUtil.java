@@ -64,7 +64,7 @@ public class WorldUtil
     {
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
+            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(x, z));
             if (holder != null)
             {
                 return holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().isPresent();
@@ -275,17 +275,17 @@ public class WorldUtil
      */
     public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state, int flags)
     {
-        if (world.isClientSide() || !(world instanceof ServerLevel))
+        if (world.isClientSide() || !(world instanceof ServerLevel serverLevel))
         {
             return world.setBlock(pos, state, flags);
         }
 
         if ((flags & 2) != 0)
         {
-            final Set<Mob> navigators = ((ServerLevel) world).navigatingMobs;
-            ((ServerLevel) world).navigatingMobs.clear();
+            final Set<Mob> navigators = serverLevel.navigatingMobs;
+            serverLevel.navigatingMobs.clear();
             final boolean result = world.setBlock(pos, state, flags);
-            ((ServerLevel) world).navigatingMobs.addAll(navigators);
+            serverLevel.navigatingMobs.addAll(navigators);
             return result;
         }
         else
@@ -383,7 +383,7 @@ public class WorldUtil
     @Nullable
     public static Player getNearestPlayer(Mob livingEntity, final int x, final int y, final int z, final double lookDistance)
     {
-        return getNearestEntity(livingEntity.level.players(), livingEntity, x, y, z, lookDistance);
+        return getNearestEntity(livingEntity.level().players(), livingEntity, x, y, z, lookDistance);
     }
 
     /**

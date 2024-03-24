@@ -3,7 +3,6 @@ package com.minecolonies.core.compatibility.jei.transfer;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
@@ -20,6 +19,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ import java.util.*;
 /**
  * JEI recipe transfer handler for teaching crafting recipes
  */
-public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, CraftingRecipe>
+public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, RecipeHolder<CraftingRecipe>>
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
@@ -53,7 +53,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
     @NotNull
     @Override
-    public RecipeType<CraftingRecipe> getRecipeType()
+    public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType()
     {
         return RecipeTypes.CRAFTING;
     }
@@ -62,7 +62,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     @Override
     public IRecipeTransferError transferRecipe(
             @NotNull final ContainerCrafting craftingGUIBuilding,
-            @NotNull final CraftingRecipe recipe,
+            @NotNull final RecipeHolder<CraftingRecipe> recipe,
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,
@@ -99,7 +99,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             {
                 if (badIndexes.contains(inputIndex))
                 {
-                    final Component tooltipMessage = Component.translatable("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
+                    final Component tooltipMessage = Component.translatableEscape("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
                     final List<IRecipeSlotView> badSlots = badIndexes.stream().map(index -> slots.get(index)).toList();
                     return handlerHelper.createUserErrorForMissingSlots(tooltipMessage, badSlots);
                 }
@@ -132,7 +132,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             }
 
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
-            Network.getNetwork().sendToServer(message);
+            message.sendToServer();
         }
 
         return null;

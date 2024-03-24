@@ -11,12 +11,11 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -255,8 +254,8 @@ public class SettingsFactories
         public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
-            compound.putString(TAG_VALUE, ForgeRegistries.ITEMS.getKey(storage.getValue()).toString());
-            compound.putString(TAG_DEF, ForgeRegistries.ITEMS.getKey(storage.getDefault()).toString());
+            compound.putString(TAG_VALUE, BuiltInRegistries.ITEM.getKey(storage.getValue()).toString());
+            compound.putString(TAG_DEF, BuiltInRegistries.ITEM.getKey(storage.getDefault()).toString());
             return compound;
         }
 
@@ -264,8 +263,8 @@ public class SettingsFactories
         @Override
         public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final BlockItem value = (BlockItem) ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(TAG_VALUE)));
-            final BlockItem def = (BlockItem) ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(TAG_DEF)));
+            final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_VALUE)));
+            final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_DEF)));
             return this.getNewInstance(value, def);
         }
 

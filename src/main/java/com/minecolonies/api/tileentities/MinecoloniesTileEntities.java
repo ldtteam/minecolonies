@@ -1,35 +1,34 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.core.tileentities.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class MinecoloniesTileEntities
 {
-    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityScarecrow>> SCARECROW;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityScarecrow>> SCARECROW;
 
-    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityPlantationField>> PLANTATION_FIELD;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityPlantationField>> PLANTATION_FIELD;
 
-    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityBarrel>> BARREL;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityBarrel>> BARREL;
 
-    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityColonyBuilding>> BUILDING;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityColonyBuilding>> BUILDING;
 
-    public static RegistryObject<BlockEntityType<? extends BlockEntity>> DECO_CONTROLLER;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityDecorationController>> DECO_CONTROLLER;
 
-    public static RegistryObject<BlockEntityType<TileEntityRack>> RACK;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityRack>> RACK;
 
-    public static RegistryObject<BlockEntityType<TileEntityGrave>> GRAVE;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityGrave>> GRAVE;
 
-    public static RegistryObject<BlockEntityType<? extends TileEntityNamedGrave>> NAMED_GRAVE;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityNamedGrave>> NAMED_GRAVE;
 
-    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityWareHouse>> WAREHOUSE;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityWareHouse>> WAREHOUSE;
 
-    public static RegistryObject<BlockEntityType<? extends BlockEntity>> COMPOSTED_DIRT;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityCompostedDirt>> COMPOSTED_DIRT;
 
-    public static RegistryObject<BlockEntityType<TileEntityEnchanter>> ENCHANTER;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityEnchanter>> ENCHANTER;
 
-    public static RegistryObject<BlockEntityType<TileEntityStash>> STASH;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityStash>> STASH;
 
-    public static RegistryObject<BlockEntityType<TileEntityColonyFlag>> COLONY_FLAG;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TileEntityColonyFlag>> COLONY_FLAG;
 }

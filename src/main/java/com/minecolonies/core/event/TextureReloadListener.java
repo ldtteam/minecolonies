@@ -1,14 +1,15 @@
 package com.minecolonies.core.event;
 
+import com.ldtteam.blockui.AtlasManager;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+import static net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 
 /**
  * Specific texture reload listener.
@@ -71,6 +72,9 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
     public static void modInitClient(final RegisterClientReloadListenersEvent event)
     {
         event.registerReloadListener(new TextureReloadListener());
+
+        // registry minecolonies gui atlas
+        AtlasManager.INSTANCE.addAtlas(event::registerReloadListener, Constants.MOD_ID);
     }
 }
 

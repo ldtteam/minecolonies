@@ -26,8 +26,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -218,7 +218,7 @@ public class BuildingFarmer extends AbstractBuilding
 
             if (field instanceof FarmField farmField && farmField.getSeed().isEmpty())
             {
-                return Component.translatable(FIELD_LIST_FARMER_NO_SEED);
+                return Component.translatableEscape(FIELD_LIST_FARMER_NO_SEED);
             }
 
             return null;

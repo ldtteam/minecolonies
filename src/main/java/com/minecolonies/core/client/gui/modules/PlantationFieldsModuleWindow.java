@@ -153,11 +153,11 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
     private void updateUI()
     {
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
-          .setText(Component.translatable(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+          .setText(Component.translatableEscape(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(Component.translatable(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
+          .setText(Component.translatableEscape(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
-          .setText(Component.translatable(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getCurrentPlants(), moduleView.getMaxConcurrentPlants()));
+          .setText(Component.translatableEscape(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getCurrentPlants(), moduleView.getMaxConcurrentPlants()));
     }
 
     @Override
@@ -185,9 +185,9 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
                 final DirectionResult direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
                 final Component directionText = switch (direction) {
-                    case SAME -> Component.translatable(FIELD_LIST_PLANTATION_DIRECTION);
+                    case SAME -> Component.translatableEscape(FIELD_LIST_PLANTATION_DIRECTION);
                     case UP, DOWN -> direction.getLongText();
-                    default -> Component.translatable(FIELD_LIST_LABEL_DISTANCE, Component.literal(distance + "m"), direction.getShortText());
+                    default -> Component.translatableEscape(FIELD_LIST_LABEL_DISTANCE, Component.literal(distance + "m"), direction.getShortText());
                 };
 
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(directionText);
@@ -243,13 +243,13 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
     {
         if (isOn)
         {
-            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_ON_NORMAL), true);
-            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_ON_DISABLED), true);
+            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_ON_NORMAL));
+            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_ON_DISABLED));
         }
         else
         {
-            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_OFF_NORMAL), true);
-            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_OFF_DISABLED), true);
+            button.setImage(new ResourceLocation(TEXTURE_ASSIGN_OFF_NORMAL));
+            button.setImageDisabled(new ResourceLocation(TEXTURE_ASSIGN_OFF_DISABLED));
         }
     }
 }

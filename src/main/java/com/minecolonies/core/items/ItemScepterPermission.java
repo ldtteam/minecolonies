@@ -3,7 +3,6 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -67,7 +66,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
           iColonyView,
           block,
           ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
-        Network.getNetwork().sendToServer(message);
+        message.sendToServer();
 
         return InteractionResult.SUCCESS;
     }
@@ -80,7 +79,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
       final IColonyView iColonyView)
     {
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(iColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
-        Network.getNetwork().sendToServer(message);
+        message.sendToServer();
 
         return InteractionResult.SUCCESS;
     }

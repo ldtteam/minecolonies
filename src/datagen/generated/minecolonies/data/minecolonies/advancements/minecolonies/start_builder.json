@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.create_build_request_1_builder.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockconstructiontape"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.create_build_request_1_builder.title"
     }

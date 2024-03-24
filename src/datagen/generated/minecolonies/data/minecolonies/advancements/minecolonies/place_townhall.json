@@ -9,16 +9,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.place_townhall.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhuttownhall"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.place_townhall.title"
     }

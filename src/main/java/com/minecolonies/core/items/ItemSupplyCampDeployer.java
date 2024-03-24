@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
@@ -8,10 +9,12 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.items.ISupplyItem;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
+import com.minecolonies.core.client.gui.WindowSupplyStory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,14 +28,17 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
 /**
  * Class to handle the placement of the supplychest and with it the supplycamp.
  */
-public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
+public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements ISupplyItem
 {
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
@@ -48,6 +54,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
+        if (!ctx.getItemInHand().getOrCreateTag().contains(TAG_RANDOM_KEY))
+        {
+            ctx.getItemInHand().getTag().putLong(TAG_RANDOM_KEY, ctx.getClickedPos().asLong());
+        }
         if (ctx.getLevel().isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
@@ -55,7 +65,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(ctx.getPlayer());
                 return InteractionResult.FAIL;
             }
-            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
+            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getHorizontalDirection(), SUPPLY_OFFSET_DISTANCE).above(), ctx.getPlayer().getDirection(), ctx.getItemInHand(), ctx.getHand());
         }
 
         return InteractionResult.FAIL;
@@ -66,6 +76,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
+        if (!stack.getOrCreateTag().contains(TAG_RANDOM_KEY))
+        {
+            stack.getTag().putLong(TAG_RANDOM_KEY, playerIn.blockPosition().asLong());
+        }
+
         if (worldIn.isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
@@ -73,7 +88,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
-            placeSupplyCamp(null, playerIn.getDirection());
+            placeSupplyCamp(null, playerIn.getDirection(), stack, hand);
         }
 
         return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
@@ -85,8 +100,14 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param pos       the position to place the supply camp at.
      * @param direction the direction the supply camp should face.
      */
-    private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand, final InteractionHand hand)
     {
+        if (!itemInHand.getOrCreateTag().contains(TAG_SAW_STORY))
+        {
+            new WindowSupplyStory(pos, "supplycamp", itemInHand, hand).open();
+            return;
+        }
+
         if (pos == null)
         {
             new WindowSupplies(pos, "supplycamp").open();
@@ -125,23 +146,37 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
         final int sizeX = blueprint.getSizeX();
         final int sizeZ = blueprint.getSizeZ();
-        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
+        final int groundHeight = BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
+        final int groundLevel = zeroPos.getY() + groundHeight;
 
-        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
+        final List<PlacementError> needsAirAbove = new ArrayList<>();
+        final List<PlacementError> needsSolidBelow = new ArrayList<>();
+
+        for (int z = 0; z < sizeZ; z++)
         {
-            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
+            for (int x = 0; x < sizeX; x++)
             {
-                checkIfSolidAndNotInColony(world, new BlockPos(x, groundLevel, z), placementErrorList, placer);
-
-                if (BlockUtils.isAnySolid(world.getBlockState(new BlockPos(x, groundLevel + 1, z))))
+                final BlockPos worldPos = new BlockPos(zeroPos.getX() + x, groundLevel, zeroPos.getZ() + z);
+                if (blueprint.getBlockState(new BlockPos(x, groundHeight, z)).getBlock() != ModBlocks.blockSubstitution.get())
                 {
-                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, groundLevel + 1, z));
-                    placementErrorList.add(placementError);
+                    checkIfSolidAndNotInColony(world, worldPos, needsSolidBelow, placer);
+                }
+
+                if (BlockUtils.isAnySolid(world.getBlockState(worldPos.above())))
+                {
+                    needsAirAbove.add(new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, worldPos.above()));
                 }
             }
         }
 
-        return placementErrorList.isEmpty();
+        if (needsAirAbove.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION || needsSolidBelow.size() > sizeX*sizeZ*SUPPLY_TOLERANCE_FRACTION)
+        {
+            placementErrorList.addAll(needsAirAbove);
+            placementErrorList.addAll(needsSolidBelow);
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -158,13 +193,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isSolid)
         {
-            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_SOLID, pos);
-            placementErrorList.add(placementError);
+            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.NOT_SOLID, pos));
         }
         if (!notInAnyColony)
         {
-            final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos);
-            placementErrorList.add(placementError);
+            placementErrorList.add(new PlacementError(PlacementError.PlacementErrorType.INSIDE_COLONY, pos));
         }
     }
 

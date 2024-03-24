@@ -1,9 +1,11 @@
 package com.minecolonies.core.entity.pathfinding;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.PathingConstants.SHIFT_X_BY;
+import static com.minecolonies.api.util.constant.PathingConstants.SHIFT_Y_BY;
 
 /**
  * Nodes used in pathfinding.
@@ -21,12 +23,9 @@ public class MNode implements Comparable<MNode>
      * The position of the node.
      */
     @NotNull
-    public final BlockPos pos;
-
-    /**
-     * The hash of the node.
-     */
-    private final int hash;
+    public final int x;
+    public final int y;
+    public final int z;
 
     /**
      * The parent of the node (Node preceding this node).
@@ -40,16 +39,6 @@ public class MNode implements Comparable<MNode>
     private int counterAdded;
 
     /**
-     * Visited counter.
-     */
-    private int counterVisited;
-
-    /**
-     * Number of steps.
-     */
-    private int steps;
-
-    /**
      * The cost of the node. A* g value.
      */
     private double cost;
@@ -60,14 +49,9 @@ public class MNode implements Comparable<MNode>
     private double heuristic;
 
     /**
-     * The score of the node. A* f value (g + h).
-     */
-    private double score;
-
-    /**
      * Checks if the node has been closed already.
      */
-    private boolean closed = false;
+    private boolean visited = false;
 
     /**
      * Checks if the node is on a ladder.
@@ -95,34 +79,20 @@ public class MNode implements Comparable<MNode>
     private boolean isReachedByWorker = false;
 
     /**
-     * Create initial Node.
-     *
-     * @param pos       coordinates of node.
-     * @param heuristic heuristic estimate.
-     */
-    public MNode(@NotNull final BlockPos pos, final double heuristic)
-    {
-        this(null, pos, 0, heuristic, heuristic);
-    }
-
-    /**
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate.
      *
      * @param parent    parent node arrives from.
-     * @param pos       coordinate of node.
      * @param cost      node cost.
      * @param heuristic heuristic estimate.
-     * @param score     node total score.
      */
-    public MNode(@Nullable final MNode parent, @NotNull final BlockPos pos, final double cost, final double heuristic, final double score)
+    public MNode(@Nullable final MNode parent, @NotNull final int posX, final int posY, final int posZ, final double cost, final double heuristic)
     {
         this.parent = parent;
-        this.pos = pos;
-        this.steps = parent == null ? 0 : (parent.steps + 1);
+        this.x = posX;
+        this.y = posY;
+        this.z = posZ;
         this.cost = cost;
         this.heuristic = heuristic;
-        this.score = score;
-        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
     }
 
     /**
@@ -133,13 +103,13 @@ public class MNode implements Comparable<MNode>
     {
         if (byteBuf.readBoolean())
         {
-            this.parent = new MNode(byteBuf.readBlockPos(), 0);
+            this.parent = new MNode(null, byteBuf.readVarInt(), byteBuf.readVarInt(), byteBuf.readVarInt(), 0, 0);
         }
-        this.pos = byteBuf.readBlockPos();
+        this.x = byteBuf.readVarInt();
+        this.y = byteBuf.readVarInt();
+        this.z = byteBuf.readVarInt();
         this.cost = byteBuf.readDouble();
         this.heuristic = byteBuf.readDouble();
-        this.score = byteBuf.readDouble();
-        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
         this.isReachedByWorker = byteBuf.readBoolean();
     }
 
@@ -152,12 +122,16 @@ public class MNode implements Comparable<MNode>
         byteBuf.writeBoolean(this.parent != null);
         if (this.parent != null)
         {
-            byteBuf.writeBlockPos(this.parent.pos);
+            // For debug display only position is used
+            byteBuf.writeVarInt(this.parent.x);
+            byteBuf.writeVarInt(this.parent.y);
+            byteBuf.writeVarInt(this.parent.z);
         }
-        byteBuf.writeBlockPos(this.pos);
+        byteBuf.writeVarInt(this.x);
+        byteBuf.writeVarInt(this.y);
+        byteBuf.writeVarInt(this.z);
         byteBuf.writeDouble(this.cost);
         byteBuf.writeDouble(this.heuristic);
-        byteBuf.writeDouble(this.score);
         byteBuf.writeBoolean(this.isReachedByWorker);
     }
 
@@ -165,12 +139,12 @@ public class MNode implements Comparable<MNode>
     public int compareTo(@NotNull final MNode o)
     {
         //  Comparing doubles and returning value as int; can't simply cast the result
-        if (score < o.score)
+        if ((cost + heuristic) < (o.cost + o.heuristic))
         {
             return -1;
         }
 
-        if (score > o.score)
+        if ((cost + heuristic) > (o.cost + o.heuristic))
         {
             return 1;
         }
@@ -192,7 +166,7 @@ public class MNode implements Comparable<MNode>
     @Override
     public int hashCode()
     {
-        return hash;
+        return x ^ ((z << HASH_A) | (z >> HASH_B)) ^ (y << HASH_C);
     }
 
     @Override
@@ -201,9 +175,9 @@ public class MNode implements Comparable<MNode>
         if (o != null && o.getClass() == this.getClass())
         {
             @Nullable final MNode other = (MNode) o;
-            return pos.getX() == other.pos.getX()
-                     && pos.getY() == other.pos.getY()
-                     && pos.getZ() == other.pos.getZ();
+            return x == other.x
+                     && y == other.y
+                     && z == other.z;
         }
 
         return false;
@@ -214,9 +188,9 @@ public class MNode implements Comparable<MNode>
      *
      * @return true if so.
      */
-    public boolean isClosed()
+    public boolean isVisited()
     {
-        return closed;
+        return visited;
     }
 
     /**
@@ -242,29 +216,9 @@ public class MNode implements Comparable<MNode>
     /**
      * Sets the node as closed.
      */
-    public void setClosed()
+    public void setVisited()
     {
-        closed = true;
-    }
-
-    /**
-     * Getter for the visited counter.
-     *
-     * @return the amount.
-     */
-    public int getCounterVisited()
-    {
-        return counterVisited;
-    }
-
-    /**
-     * Setter for the visited counter.
-     *
-     * @param counterVisited amount to set.
-     */
-    public void setCounterVisited(final int counterVisited)
-    {
-        this.counterVisited = counterVisited;
+        visited = true;
     }
 
     /**
@@ -274,17 +228,7 @@ public class MNode implements Comparable<MNode>
      */
     public double getScore()
     {
-        return score;
-    }
-
-    /**
-     * Sets the node score.
-     *
-     * @param score the score.
-     */
-    public void setScore(final double score)
-    {
-        this.score = score;
+        return cost + heuristic;
     }
 
     /**
@@ -305,26 +249,6 @@ public class MNode implements Comparable<MNode>
     public void setCost(final double cost)
     {
         this.cost = cost;
-    }
-
-    /**
-     * Getter of the steps.
-     *
-     * @return the steps.
-     */
-    public int getSteps()
-    {
-        return steps;
-    }
-
-    /**
-     * Sets the amount of steps.
-     *
-     * @param steps the amount.
-     */
-    public void setSteps(final int steps)
-    {
-        this.steps = steps;
     }
 
     /**
@@ -363,12 +287,14 @@ public class MNode implements Comparable<MNode>
         this.heuristic = heuristic;
     }
 
+    // TODO: Debug index and counter added actually needed at all??
+
     /**
      * Getter of the added counter.
      *
      * @return the amount.
      */
-    public int getCounterAdded()
+    public int getDebugAddedIndex()
     {
         return counterAdded;
     }
@@ -438,5 +364,28 @@ public class MNode implements Comparable<MNode>
     public boolean isCornerNode()
     {
         return isCornerNode;
+    }
+
+    /**
+     * Get the added index
+     *
+     * @return
+     */
+    public int getCounterAdded()
+    {
+        return counterAdded;
+    }
+
+    /**
+     * Generate a pseudo-unique key for identifying a given node by it's coordinates Encodes the lowest 12 bits of x,z and all useful bits of y. This creates unique keys for all
+     * blocks within a 4096x256x4096 cube, which is FAR bigger volume than one should attempt to pathfind within
+     *
+     * @return key for node in map
+     */
+    public static int computeNodeKey(final int x, final int y, final int z)
+    {
+        return ((x & 0xFFF) << SHIFT_X_BY)
+                 | ((y & 0xFF) << SHIFT_Y_BY)
+                 | (z & 0xFFF);
     }
 }

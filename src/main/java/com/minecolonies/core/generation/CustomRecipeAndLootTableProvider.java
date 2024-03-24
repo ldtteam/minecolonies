@@ -1,9 +1,9 @@
 package com.minecolonies.core.generation;
 
+import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
         lootTableProvider = new ChildLootTableProvider(packOutput);
     }
 
-    protected abstract void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer);
+    protected abstract void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer);
     protected abstract void registerTables(@NotNull final SimpleLootTableProvider.LootTableRegistrar registrar);
 
     @NotNull
@@ -48,7 +48,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+        protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
         {
             CustomRecipeAndLootTableProvider.this.registerRecipes(consumer);
         }
@@ -59,13 +59,6 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
         public ChildLootTableProvider(@NotNull final PackOutput packOutput)
         {
             super(packOutput);
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return CustomRecipeAndLootTableProvider.this.getName() + " loot tables";
         }
 
         @Override

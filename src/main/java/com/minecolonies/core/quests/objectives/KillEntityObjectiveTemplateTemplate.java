@@ -7,13 +7,13 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,10 +59,10 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     @NotNull
     private static DialogueElement buildDialogueTree(final EntityType<?> entityToKill)
     {
-        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
-        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+        final Component text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill", entityToKill.getDescription());
+        final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
-        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+        final AnswerElement answer2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.cancel"),
                 new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         return new DialogueElement(text, List.of(answer1, answer2));
     }
@@ -77,7 +77,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
-        final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getHolder(new ResourceLocation(details.get(ENTITY_TYPE_KEY).getAsString())).get().get();
+        final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(details.get(ENTITY_TYPE_KEY).getAsString()));
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
         return new KillEntityObjectiveTemplateTemplate(target, quantity, entityType, nextObj, parseRewards(jsonObject));
@@ -100,7 +100,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
     {
         if (quest.getCurrentObjectiveInstance() instanceof EntityKillProgressInstance progress)
         {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.kill.progress",
+            return Component.translatableEscape("com.minecolonies.coremod.questobjectives.kill.progress",
               progress.currentProgress,
               entitiesToKill,
               entityToKill.getDescription().plainCopy().setStyle(style));

@@ -1,22 +1,22 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
-    <label id="constructionName" size="90 11" pos="50 14" textalign="MIDDLE" color="blue"/>
+    <text id="constructionName" size="90 11" pos="50 14" textalign="MIDDLE" color="blue"/>
 
-    <label id="loading" size="90 11" pos="50 116" textalign="MIDDLE" color="green"
+    <text id="loading" size="90 11" pos="50 116" textalign="MIDDLE" color="green"
            label="$(com.minecolonies.command.gui.browsebuilding.loading)" />
 
     <list id="buildings" size="162 80%" pos="15 30" visible="false">
         <box size="100% 32" linewidth="1">
-            <label id="packName" size="158 10" pos="2 2" color="black"/>
-            <label id="buildingName" size="158 10" pos="2 11" color="black" textscale="0.5" wrap="true"/>
-            <label id="buildingSize" size="69% 10" pos="2 21" color="black"/>
-            <label id="buildingLevel" align="TOP_RIGHT" textalign="TOP_RIGHT" size="29% 10" pos="2 21" color="black"/>
+            <text id="packName" size="158 10" pos="2 2" color="black"/>
+            <text id="buildingName" size="158 10" pos="2 11" color="black" textscale="0.5" wrap="true"/>
+            <text id="buildingSize" size="69% 10" pos="2 21" color="black"/>
+            <text id="buildingLevel" align="TOP_RIGHT" textalign="TOP_RIGHT" size="29% 10" pos="2 21" color="black"/>
         </box>
     </list>
 </window>

@@ -4,15 +4,18 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.core.research.GlobalResearch;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_COST_COUNT;
@@ -63,20 +66,20 @@ public class TagItemCost implements IResearchCost
     @Override
     public List<Item> getItems()
     {
-        return ForgeRegistries.ITEMS.tags().getTag(this.tag).stream().toList();
+        return BuiltInRegistries.ITEM.getTag(this.tag).map(holders -> holders.stream().map(Holder::value).toList()).orElseGet(Collections::emptyList);
     }
 
     @Override
     public Component getTranslatedName()
     {
-        return Component.translatable(String.format("com.minecolonies.coremod.research.tags.%s", this.tag.location()));
+        return Component.translatableEscape(String.format("com.minecolonies.coremod.research.tags.%s", this.tag.location()));
     }
 
     @Override
     public void read(final @NotNull CompoundTag compound)
     {
         this.count = compound.getInt(TAG_COST_COUNT);
-        this.tag = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(compound.getString(TAG_COST_TAG)));
+        this.tag = TagKey.create(Registries.ITEM, new ResourceLocation(compound.getString(TAG_COST_TAG)));
     }
 
     @Override
@@ -97,7 +100,7 @@ public class TagItemCost implements IResearchCost
     public void deserialize(final @NotNull FriendlyByteBuf buf)
     {
         this.count = buf.readInt();
-        this.tag = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), buf.readResourceLocation());
+        this.tag = TagKey.create(Registries.ITEM, buf.readResourceLocation());
     }
 
     @Override
@@ -112,7 +115,7 @@ public class TagItemCost implements IResearchCost
     public void parseFromJson(final JsonObject jsonObject)
     {
         final String tagKey = jsonObject.getAsJsonObject(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive(RESEARCH_ITEM_TAG_PROP).getAsString();
-        this.tag = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(tagKey));
+        this.tag = TagKey.create(Registries.ITEM, new ResourceLocation(tagKey));
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 

@@ -59,7 +59,7 @@ public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
     @Override
     public double getValue(final ICitizenData citizenData)
     {
-        lastValue = IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry().getValue(key).getDoubleSupplier().apply(citizenData);
+        lastValue = IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry().get(key).getDoubleSupplier().apply(citizenData);
         return lastValue;
     }
 

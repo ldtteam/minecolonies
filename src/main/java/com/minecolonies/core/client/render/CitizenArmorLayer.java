@@ -19,8 +19,8 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
@@ -89,7 +89,7 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                     this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
                 }
 
-                ArmorTrim.getTrim(citizen.level().registryAccess(), itemstack).ifPresent((p_289638_) -> {
+                ArmorTrim.getTrim(citizen.level().registryAccess(), itemstack, true).ifPresent((p_289638_) -> {
                     this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, p_289638_, model, flag);
                 });
                 if (itemstack.hasFoil())
@@ -114,7 +114,7 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
     private void renderTrim(ArmorMaterial armorMaterial, PoseStack poseStack, MultiBufferSource bufferSource, int light, ArmorTrim armorItem, net.minecraft.client.model.Model model, boolean inner)
     {
         TextureAtlasSprite textureatlassprite = super.armorTrimAtlas.getSprite(inner ? armorItem.innerTexture(armorMaterial) : armorItem.outerTexture(armorMaterial));
-        VertexConsumer vertexconsumer = textureatlassprite.wrap(bufferSource.getBuffer(Sheets.armorTrimsSheet()));
+        VertexConsumer vertexconsumer = textureatlassprite.wrap(bufferSource.getBuffer(Sheets.armorTrimsSheet(armorItem.pattern().value().decal())));
         model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

@@ -20,11 +20,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.items.wrapper.InvWrapper;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,13 +50,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     /**
      * The recruit answer
      */
-    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.recruit"), null);
+    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.recruit"), Component.empty());
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.showstats"), null),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.showstats"), Component.empty()),
       recruitAnswer,
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.notnow"), null)};
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.notnow"), Component.empty())};
 
     /**
      * Chance for a bad visitor
@@ -73,7 +72,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
       final Component inquiry,
       final IChatPriority priority)
     {
-        super(inquiry, true, priority, d -> true, null, responses);
+        super(inquiry, true, priority, d -> true, Component.empty(), responses);
     }
 
     @Override
@@ -105,7 +104,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                 .append(Component.literal(dataView.getName() + ": "))
                 .append(this.getInquiry())
                 .emptyLines(1)
-                .append(Component.translatable(
+                .append(Component.translatableEscape(
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
@@ -173,6 +172,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
                     newCitizen.deserializeNBT(data.serializeNBT());
                     newCitizen.setParents("", "");
+                    newCitizen.setLastPosition(data.getLastPosition());
 
                     // Exchange entities
                     newCitizen.updateEntityIfNecessary();
@@ -187,7 +187,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                         MessageUtils.format(MESSAGE_RECRUITMENT_SUCCESS, data.getName()).sendTo(colony).forAllPlayers();
                     }
 
-                    MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.HIRED));
+                    NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.HIRED));
                 }
             }
             else

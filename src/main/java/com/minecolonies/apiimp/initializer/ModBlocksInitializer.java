@@ -9,13 +9,13 @@ import com.minecolonies.core.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.core.blocks.decorative.BlockGate;
 import com.minecolonies.core.blocks.huts.*;
 import com.minecolonies.core.blocks.schematic.BlockWaypoint;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
@@ -35,9 +35,9 @@ public final class ModBlocksInitializer
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        if (event.getRegistryKey().equals(Registries.BLOCK))
         {
-            ModBlocksInitializer.init(event.getForgeRegistry());
+            ModBlocksInitializer.init(event.getRegistry(Registries.BLOCK));
         }
     }
 
@@ -47,7 +47,7 @@ public final class ModBlocksInitializer
      * @param registry The registry to register the new blocks.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final IForgeRegistry<Block> registry)
+    public static void init(final Registry<Block> registry)
     {
         ModBlocks.blockHutBaker = new BlockHutBaker().registerBlock(registry);
         ModBlocks.blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
@@ -121,9 +121,9 @@ public final class ModBlocksInitializer
     @SubscribeEvent
     public static void registerItems(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        if (event.getRegistryKey().equals(Registries.ITEM))
         {
-            ModBlocksInitializer.registerBlockItem(event.getForgeRegistry());
+            ModBlocksInitializer.registerBlockItem(event.getRegistry(Registries.ITEM));
         }
     }
 
@@ -132,7 +132,7 @@ public final class ModBlocksInitializer
      *
      * @param registry The item registry to add the items too.
      */
-    public static void registerBlockItem(final IForgeRegistry<Item> registry)
+    public static void registerBlockItem(final Registry<Item> registry)
     {
         final Item.Properties properties = new Item.Properties();
 

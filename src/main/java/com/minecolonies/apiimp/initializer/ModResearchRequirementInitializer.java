@@ -3,17 +3,17 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.core.research.BuildingResearchRequirement;
 import com.minecolonies.core.research.ResearchResearchRequirement;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.ModResearchRequirements.*;
 
 public class ModResearchRequirementInitializer
 {
-    public final static DeferredRegister<ResearchRequirementEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"), Constants.MOD_ID);
+    public final static DeferredRegister<ResearchRequirementEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.RESEARCH_REQUIREMENT_TYPES, Constants.MOD_ID);
 
     private ModResearchRequirementInitializer()
     {

@@ -1,13 +1,13 @@
 package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
@@ -65,7 +65,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void addCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.add(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()));
+        new HireFireMessage(buildingView, true, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
         citizen.setWorkBuilding(buildingView.getPosition());
         citizen.setJobView(getJobEntry().getJobViewProducer().get().apply(buildingView.getColony(), citizen));
         citizen.getJobView().setEntry(getJobEntry());
@@ -75,7 +75,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void removeCitizen(final @NotNull ICitizenDataView citizen)
     {
         workerIDs.remove(citizen.getId());
-        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()));
+        new HireFireMessage(buildingView, false, citizen.getId(), getProducer().getRuntimeID()).sendToServer();
         citizen.setWorkBuilding(null);
     }
 
@@ -91,7 +91,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         this.hiringMode = HiringMode.values()[buf.readInt()];
         this.maxInhabitants = buf.readInt();
 
-        this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);
+        this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry());
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
     }
@@ -136,7 +136,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()));
+        new BuildingHiringModeMessage(buildingView, hiringMode, getProducer().getRuntimeID()).sendToServer();
     }
 
     @Override
@@ -162,7 +162,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
      */
     public String getJobDisplayName()
     {
-        return Component.translatable(jobEntry.getTranslationKey()).getString();
+        return Component.translatableEscape(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull

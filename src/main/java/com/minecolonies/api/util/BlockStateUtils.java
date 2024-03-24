@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -87,7 +87,7 @@ public class BlockStateUtils
      */
     public static Property<?> getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
     {
-        Property<?> property = propertyBlockMap.get(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString() + ":" + name);
+        Property<?> property = propertyBlockMap.get(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString() + ":" + name);
 
         if (property != null && state.hasProperty(property))
         {
@@ -100,7 +100,7 @@ public class BlockStateUtils
 
             if (property != null)
             {
-                propertyBlockMap.put(ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString() + ":" + name, property);
+                propertyBlockMap.put(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString() + ":" + name, property);
             }
             return property;
         }

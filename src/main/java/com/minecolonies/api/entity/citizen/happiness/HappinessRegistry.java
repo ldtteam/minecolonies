@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -24,7 +24,7 @@ public class HappinessRegistry
      *
      * @return the reward registry.
      */
-    static IForgeRegistry<HappinessFactorTypeEntry> getHappinessTypeRegistry()
+    static Registry<HappinessFactorTypeEntry> getHappinessTypeRegistry()
     {
         return IMinecoloniesAPI.getInstance().getHappinessTypeRegistry();
     }
@@ -34,7 +34,7 @@ public class HappinessRegistry
      *
      * @return the reward registry.
      */
-    static IForgeRegistry<HappinessFunctionEntry> getHappinessFunctionRegistry()
+    static Registry<HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry();
     }
@@ -72,7 +72,7 @@ public class HappinessRegistry
         final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
                                                 ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
                                                 : new ResourceLocation(Constants.MOD_ID, "null");
-        final IHappinessModifier modifier = getHappinessTypeRegistry().getValue(modifierType).create();
+        final IHappinessModifier modifier = getHappinessTypeRegistry().get(modifierType).create();
 
         if (modifier != null)
         {
@@ -126,9 +126,9 @@ public class HappinessRegistry
     public static ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
     public static ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
 
-    public static RegistryObject<HappinessFactorTypeEntry> staticHappinessModifier;
-    public static RegistryObject<HappinessFactorTypeEntry> expirationBasedHappinessModifier;
-    public static RegistryObject<HappinessFactorTypeEntry> timeBasedHappinessModifier;
+    public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> staticHappinessModifier;
+    public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> expirationBasedHappinessModifier;
+    public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> timeBasedHappinessModifier;
 
     public static ResourceLocation SCHOOL_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "school");
     public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
@@ -142,16 +142,16 @@ public class HappinessRegistry
     public static ResourceLocation IDLEATJOB_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "idleatjob");
     public static ResourceLocation SLEPTTONIGHT_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "slepttonight");
 
-    public static RegistryObject<HappinessFunctionEntry> schoolFunction;
-    public static RegistryObject<HappinessFunctionEntry> securityFunction;
-    public static RegistryObject<HappinessFunctionEntry> socialFunction;
-    public static RegistryObject<HappinessFunctionEntry> saturationFunction;
-    public static RegistryObject<HappinessFunctionEntry> mysticalSiteFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> schoolFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> securityFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> socialFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> saturationFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> mysticalSiteFunction;
 
-    public static RegistryObject<HappinessFunctionEntry> housingFunction;
-    public static RegistryObject<HappinessFunctionEntry> unemploymentFunction;
-    public static RegistryObject<HappinessFunctionEntry> healthFunction;
-    public static RegistryObject<HappinessFunctionEntry> idleatjobFunction;
-    public static RegistryObject<HappinessFunctionEntry> sleptTonightFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> housingFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> unemploymentFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> healthFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> idleatjobFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> sleptTonightFunction;
 
 }

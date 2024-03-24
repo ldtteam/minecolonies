@@ -6,15 +6,14 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTION_BARRACKS_HIRE_SPIES;
 
@@ -77,7 +76,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatable(DESCRIPTION_BARRACKS_HIRE_SPIES));
+        findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatableEscape(DESCRIPTION_BARRACKS_HIRE_SPIES));
     }
 
     @Override
@@ -93,7 +92,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
             case BUTTON_HIRE:
             {
                 findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
-                Network.getNetwork().sendToServer(new HireSpiesMessage(buildingView.getColony()));
+                new HireSpiesMessage(buildingView.getColony()).sendToServer();
                 this.close();
                 break;
             }

@@ -1,25 +1,30 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import com.ldtteam.common.config.AbstractConfiguration;
+import com.minecolonies.api.util.constant.Constants;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
 public class CommonConfiguration extends AbstractConfiguration
 {
-    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
-    public final ForgeConfigSpec.BooleanValue rsEnableDebugLogging;
+    public final BooleanValue generateSupplyLoot;
+    public final BooleanValue rsEnableDebugLogging;
 
     /**
      * Builds client configuration.
      *
      * @param builder config builder
      */
-    protected CommonConfiguration(final ForgeConfigSpec.Builder builder)
+    public CommonConfiguration(final Builder builder)
     {
-        createCategory(builder, "gameplay");
-        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
-        finishCategory(builder);
+        super(builder, Constants.MOD_ID);
 
-        createCategory(builder, "requestsystem");
-        rsEnableDebugLogging = defineBoolean(builder, "enabledebuglogging", false);
-        finishCategory(builder);
+        createCategory("gameplay");
+        generateSupplyLoot = defineBoolean("generatesupplyloot", true);
+
+        swapToCategory("requestsystem");
+
+        rsEnableDebugLogging = defineBoolean("enabledebuglogging", false);
+        finishCategory();
     }
 }

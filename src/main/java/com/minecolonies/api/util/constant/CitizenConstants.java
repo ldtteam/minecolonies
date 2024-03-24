@@ -1,5 +1,7 @@
 package com.minecolonies.api.util.constant;
 
+import java.util.UUID;
+
 /**
  * Constants regarding citizens.
  */
@@ -186,7 +188,8 @@ public final class CitizenConstants
     /**
      * The addition skill bonus speed modifier
      */
-    public static final String SKILL_BONUS_ADD = "SkillSpeedBonus";
+    public static final UUID SKILL_BONUS_ADD = UUID.fromString("e44226c1-dac3-441e-938e-3a94960f3675");
+    public static final String SKILL_BONUS_ADD_NAME = "SkillSpeedBonus";
 
     /**
      * The Config guard health modifier name

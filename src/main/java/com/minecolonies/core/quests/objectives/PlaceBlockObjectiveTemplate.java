@@ -7,13 +7,13 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,10 +61,10 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     @NotNull
     private static DialogueElement buildDialogueTree(final Block blockToMine)
     {
-        final Component text = Component.translatable("com.minecolonies.coremod.questobjectives.placeblock", blockToMine.getName());
-        final AnswerElement answer1 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.later"),
+        final Component text = Component.translatableEscape("com.minecolonies.coremod.questobjectives.placeblock", blockToMine.getName());
+        final AnswerElement answer1 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.later"),
                 new IQuestDialogueAnswer.CloseUIDialogueAnswer());
-        final AnswerElement answer2 = new AnswerElement(Component.translatable("com.minecolonies.coremod.questobjectives.answer.cancel"),
+        final AnswerElement answer2 = new AnswerElement(Component.translatableEscape("com.minecolonies.coremod.questobjectives.answer.cancel"),
                 new IQuestDialogueAnswer.QuestCancellationDialogueAnswer());
         return new DialogueElement(text, List.of(answer1, answer2));
     }
@@ -79,7 +79,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
-        final Block block = ForgeRegistries.BLOCKS.getHolder(new ResourceLocation(details.get(BLOCK_KEY).getAsString())).get().get();
+        final Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(details.get(BLOCK_KEY).getAsString()));
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
         return new PlaceBlockObjectiveTemplate(target, quantity, block, nextObj, parseRewards(jsonObject));
@@ -102,7 +102,7 @@ public class PlaceBlockObjectiveTemplate extends DialogueObjectiveTemplateTempla
     {
         if (quest.getCurrentObjectiveInstance() instanceof BlockPlacementProgressInstance progress)
         {
-            return Component.translatable("com.minecolonies.coremod.questobjectives.placeblock.progress",
+            return Component.translatableEscape("com.minecolonies.coremod.questobjectives.placeblock.progress",
               progress.currentProgress,
               blockToPlace,
               blockToPlace.getName().setStyle(style));

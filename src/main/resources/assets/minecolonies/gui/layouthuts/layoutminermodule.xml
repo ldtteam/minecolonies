@@ -1,15 +1,16 @@
-<window size="190 244" pause="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.minernodelist):"/>
     <list id="levels" size="164 185" pos="13 29">
         <box size="100% 28" linewidth="1">
-            <label id="lvl" size="50 13" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+            <text id="lvl" size="50 13" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
             <button id="changeToLevel" size="70 13" pos="30 2" label="$(com.minecolonies.coremod.gui.workerhuts.minerminenode)"/>
             <button id="repair" size="50 13" pos="103 2" label="$(com.minecolonies.coremod.gui.workerhuts.minerrepairnode)"/>
 
-            <label id="nONodes" size="90 12" pos="60 16" textalign="MIDDLE_LEFT" color="black"/>
-            <label id="yLevel" size="50 12" pos="5 16" textalign="MIDDLE_LEFT" color="black"/>
+            <text id="nONodes" size="90 12" pos="60 16" textalign="MIDDLE_LEFT" color="black"/>
+            <text id="yLevel" size="50 12" pos="5 16" textalign="MIDDLE_LEFT" color="black"/>
         </box>
     </list>
 </window>

@@ -294,7 +294,7 @@ public class BuildingLumberjack extends AbstractBuilding
                     if (rand < threshold)
                     {
                         final BonemealableBlock growable = (BonemealableBlock) block;
-                        if (growable.isValidBonemealTarget(world, pos, blockState, world.isClientSide))
+                        if (growable.isValidBonemealTarget(world, pos, blockState))
                         {
                             if (!world.isClientSide)
                             {

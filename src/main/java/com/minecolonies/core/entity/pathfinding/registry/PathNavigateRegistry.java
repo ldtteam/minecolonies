@@ -1,9 +1,9 @@
 package com.minecolonies.core.entity.pathfinding.registry;
 
 import com.google.common.collect.Maps;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
-import com.minecolonies.core.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import net.minecraft.world.entity.Mob;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 public class PathNavigateRegistry implements IPathNavigateRegistry
 {
-    private static final Function<Mob, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.level));
+    private static final Function<Mob, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.level()));
 
     private final Map<Predicate<Mob>, Function<Mob, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
 

@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
@@ -362,7 +362,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             {
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(WATER_TOO_FAR), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(WATER_TOO_FAR), ChatPriority.IMPORTANT));
                 }
             }
 
@@ -662,7 +662,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             itementity.noPhysics = true;
             itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
             this.world.addFreshEntity(itementity);
-            worker.level.addFreshEntity(new ExperienceOrb(worker.level,
+            worker.level().addFreshEntity(new ExperienceOrb(worker.level(),
               worker.getX(),
               worker.getY() + 0.5D,
               worker.getZ() + 0.5D,

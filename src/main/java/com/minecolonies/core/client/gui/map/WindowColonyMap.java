@@ -9,14 +9,13 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.common.language.LanguageHandler;
 import com.minecolonies.api.client.render.modeltype.ISimpleModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -64,7 +63,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * The zoomable view
      */
-    private final ZoomDragMap dragView;
+    private final ZoomDragView dragView;
 
     /**
      * Colony data beeing currently displayed
@@ -105,13 +104,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         this.building = building;
         playerPos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), 0, Minecraft.getInstance().player.blockPosition().getZ());
         final ZoomDragView parent = findPaneOfTypeByID("dragView", ZoomDragView.class);
-        dragView = new ZoomDragMap();
+        dragView = new ZoomDragView();
         dragView.setSize(parent.getWidth(), parent.getHeight());
         dragView.setPosition(parent.getX(), parent.getY());
-        dragView.enable();
-        dragView.setVisible(true);
-        dragView.setFocus();
-        dragView.setWindow(this);
         parent.addChild(dragView);
         if (addMaps())
         {
@@ -122,7 +117,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
 
-        Network.getNetwork().sendToServer(new ColonyListMessage());
+        new ColonyListMessage().sendToServer();
     }
 
     /**
@@ -130,7 +125,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
+        new OpenInventoryMessage(building).sendToServer();
     }
 
     /**
@@ -161,7 +156,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             mapImage.setID("map" + mapData.centerX + "-" + mapData.centerZ);
             mapImage.setMapData(mapData);
             mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
-            dragView.addChildFirst(mapImage);
+            dragView.addChild(mapImage, 0);
             maps.add(mapImage);
         }
 
@@ -343,7 +338,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             uiBuilding.setVisible(true);
 
-            dragView.removeChild(this.buildings.get(buildingView));
             this.buildings.put(buildingView, uiBuilding);
         }
 
@@ -375,7 +369,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 if (!data.getJob().isEmpty())
                 {
                     citizenImage.setSize(8, 8);
-                    builder.newLine().append(Component.translatable("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
+                    builder.newLine().append(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
                 }
                 builder.color(COLOR_TEXT_FULFILLED).build();
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());
@@ -390,7 +384,10 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
                 }
 
-                dragView.removeChild(citizens.get(data));
+                if (citizens.containsKey(data))
+                {
+                    dragView.removeChild(citizens.get(data));
+                }
                 citizens.put(data, citizenView);
             }
         }

@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.fields.FarmField;
@@ -23,17 +22,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.Tags;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -80,16 +77,6 @@ public class WindowField extends AbstractWindowSkeleton
      * The ID for the current farmer text.
      */
     private static final String CURRENT_FARMER_TEXT_ID = "current-farmer";
-
-    /**
-     * The resource location of the GUI background.
-     */
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/scarecrow.png");
-
-    /**
-     * The width and height of the directional buttons (they're square)
-     */
-    private static final int BUTTON_SIZE = 24;
 
     /**
      * The tile entity of the scarecrow.
@@ -158,7 +145,7 @@ public class WindowField extends AbstractWindowSkeleton
         farmField.setRadius(direction.get(), newRadius);
         button.setText(Component.literal(String.valueOf(newRadius)));
 
-        Network.getNetwork().sendToServer(new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()));
+        new FarmFieldPlotResizeMessage(tileEntityScarecrow.getCurrentColony(), newRadius, direction.get(), farmField.getPosition()).sendToServer();
     }
 
     private void updateAll()
@@ -180,7 +167,7 @@ public class WindowField extends AbstractWindowSkeleton
         IColonyView colonyView = getCurrentColony();
         if (colonyView != null && farmField != null)
         {
-            Network.getNetwork().sendToServer(new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()));
+            new FarmFieldUpdateSeedMessage(colonyView, stack, farmField.getPosition()).sendToServer();
 
             farmField.setSeed(stack);
         }
@@ -234,7 +221,7 @@ public class WindowField extends AbstractWindowSkeleton
      */
     private void updateOwner()
     {
-        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_NO_ASSIGNED_FARMER));
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatableEscape(FIELD_GUI_NO_ASSIGNED_FARMER));
 
         IColonyView colonyView = getCurrentColony();
         if (colonyView == null || farmField == null || !farmField.isTaken())
@@ -260,7 +247,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatable(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
+        findPaneOfTypeByID(CURRENT_FARMER_TEXT_ID, Text.class).setText(Component.translatableEscape(FIELD_GUI_ASSIGNED_FARMER, citizen.getName()));
     }
 
     /**
@@ -282,25 +269,13 @@ public class WindowField extends AbstractWindowSkeleton
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
             ButtonImage button = findPaneOfTypeByID(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), ButtonImage.class);
-            button.setEnabled(!Objects.isNull(farmField));
-
-            int buttonState = 1;
-            if (!button.isEnabled())
-            {
-                buttonState = 0;
-            }
-            else if (button.wasCursorInPane())
-            {
-                buttonState = 2;
-            }
-
-            button.setImage(TEXTURE, dir.get2DDataValue() * BUTTON_SIZE, buttonState * BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
-            button.setText(Component.literal(String.valueOf(Objects.isNull(farmField) ? "" : farmField.getRadius(dir))));
+            button.setEnabled(farmField != null);
+            button.setText(Component.literal(farmField == null ? "" : Integer.toString(farmField.getRadius(dir))));
 
             PaneBuilders.tooltipBuilder()
               .hoverPane(button)
-              .append(Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + dir.getSerializedName()))
-              .appendNL(Component.translatable(getDirectionalTranslationKey(dir)).setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY)))
+              .append(Component.translatableEscape(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + dir.getSerializedName()))
+              .appendNL(Component.translatableEscape(getDirectionalTranslationKey(dir)).setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY)))
               .build();
         }
     }

@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -164,7 +164,7 @@ public class EntityAIMournCitizen implements IStateAI
         // Wander around randomly.
         if (MathUtils.RANDOM.nextInt(100) < 90)
         {
-            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners());
             return MourningState.WANDER_AT_GRAVEYARD;
         }
 
@@ -172,9 +172,9 @@ public class EntityAIMournCitizen implements IStateAI
         final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
         for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
         {
-            if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
+            if (WorldUtil.isBlockLoaded(citizen.level(), gravePos.getA()))
             {
-                final BlockEntity blockEntity = citizen.level.getBlockEntity(gravePos.getA());
+                final BlockEntity blockEntity = citizen.level().getBlockEntity(gravePos.getA());
                 if (blockEntity instanceof TileEntityNamedGrave)
                 {
                     final Iterator<String> iterator = citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator();
@@ -245,7 +245,7 @@ public class EntityAIMournCitizen implements IStateAI
 
         if (closestEntity == null)
         {
-            closestEntity = this.citizen.level.getNearestEntity(EntityCitizen.class,
+            closestEntity = this.citizen.level().getNearestEntity(EntityCitizen.class,
               TargetingConditions.DEFAULT,
               citizen,
               citizen.getX(),

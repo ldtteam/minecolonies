@@ -2,7 +2,7 @@
   "credit": "created by:OddRobbia02 with Blockbench",
   "parent": "block/cube_all",
   "ambientocclusion": false,
-  "loader": "forge:composite",
+  "loader": "neoforge:composite",
   "textures": {
     "particle": "block/cobblestone"
   },

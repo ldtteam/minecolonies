@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.api.Log;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blocks.interfaces.IInvisibleBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
@@ -16,11 +16,11 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.INVISIBLE_TAG;
+import static com.ldtteam.structurize.api.constants.Constants.INVISIBLE_TAG;
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.LABEL_CONSTRUCTION_NAME;
@@ -194,7 +194,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
         final int maxLevel = list.get(list.size() - 1);
         if (list.size() == maxLevel - minLevel + 1)
         {
-            return Component.translatable("%s-%s", Integer.toString(minLevel), Integer.toString(maxLevel));
+            return Component.translatableEscape("%s-%s", Integer.toString(minLevel), Integer.toString(maxLevel));
         }
         return Component.literal(String.join(",", list.stream().map(i -> Integer.toString(i)).toList()));
     }
@@ -310,7 +310,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     @NotNull
     private static List<Block> findBrowsableBlocks()
     {
-        return ForgeRegistries.BLOCKS.getValues().stream()
+        return BuiltInRegistries.BLOCK.stream()
                 .filter(block -> block instanceof IBuildingBrowsableBlock)
                 .toList();
     }

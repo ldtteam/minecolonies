@@ -1,10 +1,10 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
@@ -39,7 +39,7 @@ public class GravePlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).getBlock() == ModBlocks.blockGrave)
         {

@@ -45,7 +45,7 @@ public class PrivateCrafting extends AbstractCrafting
     public static CompoundTag serialize(final IFactoryController controller, final PrivateCrafting input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_STACK, input.getStack().serializeNBT());
+        compound.put(NBT_STACK, input.getStack().save(new CompoundTag()));
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
         final CompoundTag tokenCompound = StandardFactoryController.getInstance().serialize(input.getRecipeID());

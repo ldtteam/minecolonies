@@ -96,8 +96,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean trySleep(final BlockPos bedLocation)
     {
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, bedLocation) ? citizen.level.getBlockState(bedLocation) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, bedLocation, citizen);
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level(), bedLocation) ? citizen.level().getBlockState(bedLocation) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level(), bedLocation, citizen);
 
         if (!isBed)
         {
@@ -124,7 +124,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         setIsAsleep(true);
 
-        citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
+        citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
 
         if (citizen.getCitizenData() != null)
         {
@@ -177,25 +177,25 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     private void spawnCitizenFromBed()
     {
         final BlockPos spawn;
-        final BlockState bedState = getBedLocation().equals(BlockPos.ZERO) ? null : citizen.level.getBlockState(getBedLocation());
+        final BlockState bedState = getBedLocation().equals(BlockPos.ZERO) ? null : citizen.level().getBlockState(getBedLocation());
         if (!getBedLocation().equals(BlockPos.ZERO) && bedState.is(BlockTags.BEDS))
         {
             if (bedState.getValue(BedBlock.PART) == BedPart.HEAD)
             {
                 final BlockPos relPos = getBedLocation().relative(bedState.getValue(BedBlock.FACING).getOpposite());
-                final BlockState lowerState = citizen.level.getBlockState(relPos);
+                final BlockState lowerState = citizen.level().getBlockState(relPos);
                 if (lowerState.is(BlockTags.BEDS) && lowerState.getValue(BedBlock.PART) == BedPart.FOOT)
                 {
-                    spawn = EntityUtils.getSpawnPoint(citizen.level, relPos);
+                    spawn = EntityUtils.getSpawnPoint(citizen.level(), relPos);
                 }
                 else
                 {
-                    spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
+                    spawn = EntityUtils.getSpawnPoint(citizen.level(), getBedLocation());
                 }
             }
             else
             {
-                spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
+                spawn = EntityUtils.getSpawnPoint(citizen.level(), getBedLocation());
             }
         }
         else
@@ -274,7 +274,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         // Estimated arrival is 1hour past night
         final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
-                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
+                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level().getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)
@@ -283,7 +283,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
                 if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE)
                 {
                     citizen.getCitizenData()
-                      .triggerInteraction(new SimpleNotificationInteraction(Component.translatable("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
+                      .triggerInteraction(new SimpleNotificationInteraction(Component.translatableEscape("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
                 }
             }
             return true;

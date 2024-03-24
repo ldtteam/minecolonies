@@ -11,7 +11,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
@@ -19,12 +18,13 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -137,7 +137,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);
-            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(building.getColony(), user.getName(), user.getId()));
+            new PermissionsMessage.AddPlayerOrFakePlayer(building.getColony(), user.getName(), user.getId()).sendToServer();
         }
     }
 
@@ -149,9 +149,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void setSubscriber(Button button)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()));
+        new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()).sendToServer();
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
-        button.setText(Component.translatable(actionsRank.isSubscriber()
+        button.setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                    ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                    : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -163,7 +163,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void changeRankMode(DropDownList dropdown)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(building.getColony(), actionsRank, dropdown.getSelectedIndex()));
+        new PermissionsMessage.EditRankType(building.getColony(), actionsRank, dropdown.getSelectedIndex()).sendToServer();
     }
 
     /**
@@ -176,7 +176,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
         if (isValidRankname(input.getText()))
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(building.getColony(), input.getText()));
+            new PermissionsMessage.AddRank(building.getColony(), input.getText()).sendToServer();
             input.setText("");
             SoundUtils.playSuccessSound(Minecraft.getInstance().player, Minecraft.getInstance().player.blockPosition());
         }
@@ -220,7 +220,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     {
         if (actionsRank != null)
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(building.getColony(), actionsRank));
+            new PermissionsMessage.RemoveRank(building.getColony(), actionsRank).sendToServer();
             building.getColony().getPermissions().removeRank(actionsRank);
             actionsRank = building.getColony().getPermissions().getRankOfficer();
             button.setEnabled(false);
@@ -268,11 +268,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         else
         {
             AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(playerNameField);
-            hoverText.append(Component.translatable("com.minecolonies.coremod.gui.townhall.player_permission_error")).paragraphBreak();
+            hoverText.append(Component.translatableEscape("com.minecolonies.coremod.gui.townhall.player_permission_error")).paragraphBreak();
             hoverText.build();
 
             AbstractTextBuilder.TooltipBuilder hoverText2 = PaneBuilders.tooltipBuilder().hoverPane(rankNameField);
-            hoverText2.append(Component.translatable("com.minecolonies.core.gui.townhall.rank_permission_error")).paragraphBreak();
+            hoverText2.append(Component.translatableEscape("com.minecolonies.core.gui.townhall.rank_permission_error")).paragraphBreak();
             hoverText2.build();
 
             rankNameField.setEnabled(false);
@@ -282,7 +282,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         }
 
         findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-        findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
+        findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                                                                       ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                       : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -338,9 +338,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int i)
+            public MutableComponent getLabel(final int i)
             {
-                return Component.translatable(rankTypes.get(i)).getString();
+                return Component.translatableEscape(rankTypes.get(i));
             }
         });
         dropdown.setHandler(this::changeRankMode);
@@ -362,7 +362,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
 
             findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
+            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatableEscape(actionsRank.isSubscriber()
                                                                                                           ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                           : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
@@ -394,7 +394,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
 
-                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+                    actionLabel.setText(Component.translatableEscape(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
             }
         });
     }
@@ -409,15 +409,13 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
             if (row < freeBlocks.size())
             {
-                Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(building.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                new ChangeFreeToInteractBlockMessage(building.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK).sendToServer();
                 building.getColony().removeFreeBlock(freeBlocks.get(row));
             }
             else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
-                Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(building.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                new ChangeFreeToInteractBlockMessage(building.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK).sendToServer();
                 building.getColony().removeFreePosition(freePos);
             }
             fillFreeBlockList();
@@ -446,7 +444,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 if (index < freeBlocks.size())
                 {
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(ForgeRegistries.BLOCKS.getKey(freeBlocks.get(index)).toString()));
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(BuiltInRegistries.BLOCK.getKey(freeBlocks.get(index)).toString()));
                 }
                 else
                 {
@@ -467,12 +465,12 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         try
         {
-            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
+            final Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(inputText));
 
             if (block != null)
             {
                 building.getColony().addFreeBlock(block);
-                Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+                new ChangeFreeToInteractBlockMessage(building.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK).sendToServer();
             }
         }
         catch (final ResourceLocationException e)
@@ -484,7 +482,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         if (pos != null)
         {
-            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            new ChangeFreeToInteractBlockMessage(building.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK).sendToServer();
             building.getColony().addFreePosition(pos);
         }
 
@@ -513,15 +511,15 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         {
             return;
         }
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), enable, actionsRank, action));
+        new PermissionsMessage.Permission(building.getColony(), enable, actionsRank, action).sendToServer();
 
         if (!enable)
         {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            button.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
         else
         {
-            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
+            button.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
         }
     }
 
@@ -542,13 +540,13 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Action action = actions.get(index);
-                final Component name =Component.translatable(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
+                final Component name =Component.translatableEscape(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
 
                 final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
-                onOffButton.setText(isTriggered ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                                      : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                onOffButton.setText(isTriggered ? Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                                      : Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Text.class).setText(Component.literal(Integer.toString(index)));
 
                 if (!building.getColony().getPermissions().canAlterPermission(building.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))
@@ -601,10 +599,10 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                         }
 
                         @Override
-                        public String getLabel(final int i)
+                        public MutableComponent getLabel(final int i)
                         {
                             Rank rank = rankList.get(i);
-                            return rank.getName();
+                            return Component.literal(rank.getName());
                         }
                     });
                     dropdown.setSelectedIndex(rankList.indexOf(rank));
@@ -629,7 +627,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         if (rank != player.getRank())
         {
             player.setRank(rank);
-            Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(building.getColony(), player.getID(), rank));
+            new PermissionsMessage.ChangePlayerRank(building.getColony(), player.getID(), rank).sendToServer();
         }
     }
 
@@ -647,7 +645,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void addPlayerCLicked()
     {
         final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(building.getColony(), input.getText()));
+        new PermissionsMessage.AddPlayer(building.getColony(), input.getText()).sendToServer();
         input.setText("");
     }
 
@@ -666,7 +664,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 users.remove(user);
                 userList.removeChild(button.getParent());
-                Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(building.getColony(), user.getID()));
+                new PermissionsMessage.RemovePlayer(building.getColony(), user.getID()).sendToServer();
             }
         }
     }

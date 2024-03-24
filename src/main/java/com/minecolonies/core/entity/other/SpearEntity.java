@@ -4,8 +4,6 @@ import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,9 +17,8 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,12 +79,6 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         getAddEntityPacket();
     }
 
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-
     @NotNull
     @Override
     public ItemStack getPickupItem()
@@ -112,7 +103,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         }
 
         Entity ownerEntity = this.getOwner();
-        DamageSource damageSource = this.level.damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
+        DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
         this.dealtDamage = true;
         if (targetEntity.hurt(damageSource, damageAmount))
         {

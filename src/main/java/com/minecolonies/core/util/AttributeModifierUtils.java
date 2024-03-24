@@ -5,6 +5,8 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import java.util.UUID;
+
 /**
  * Utility class for handling add/removal of attribute modifiers.
  */
@@ -22,10 +24,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).getModifiers())
-        {
-            entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(mod);
-        }
+        entity.getAttribute(Attributes.MAX_HEALTH).removeModifiers();
 
         if (entity.getHealth() > entity.getMaxHealth())
         {
@@ -39,20 +38,14 @@ public abstract class AttributeModifierUtils
      * @param entity       the entity to remove the modifier from
      * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
      */
-    public static void removeHealthModifier(final LivingEntity entity, final String modifierName)
+    public static void removeHealthModifier(final LivingEntity entity, final UUID modifierName)
     {
         if (entity == null)
         {
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(Attributes.MAX_HEALTH).getModifiers())
-        {
-            if (mod.getName().equals(modifierName))
-            {
-                entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(mod);
-            }
-        }
+        entity.getAttribute(Attributes.MAX_HEALTH).removeModifier(modifierName);
         if (entity.getHealth() > entity.getMaxHealth())
         {
             entity.setHealth(entity.getMaxHealth());
@@ -74,7 +67,7 @@ public abstract class AttributeModifierUtils
 
         final float prevHealthPct = entity.getHealth() / entity.getMaxHealth();
 
-        removeHealthModifier(entity, modifier.getName());
+        removeHealthModifier(entity, modifier.getId());
         entity.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(modifier);
 
         entity.setHealth(entity.getMaxHealth() * prevHealthPct);
@@ -86,20 +79,14 @@ public abstract class AttributeModifierUtils
      * @param modifierName the name of the modifier.
      * @param attribute the type of attribute.
      */
-    public static void removeModifier(final LivingEntity entity, final String modifierName, final Attribute attribute)
+    public static void removeModifier(final LivingEntity entity, final UUID modifierName, final Attribute attribute)
     {
         if (entity == null)
         {
             return;
         }
 
-        for (final AttributeModifier mod : entity.getAttribute(attribute).getModifiers())
-        {
-            if (mod.getName().equals(modifierName))
-            {
-                entity.getAttribute(attribute).removeModifier(mod);
-            }
-        }
+        entity.getAttribute(attribute).removeModifier(modifierName);
     }
 
     /**
@@ -115,7 +102,7 @@ public abstract class AttributeModifierUtils
             return;
         }
 
-        removeModifier(entity, modifier.getName(), attribute);
+        removeModifier(entity, modifier.getId(), attribute);
         entity.getAttribute(attribute).addTransientModifier(modifier);
     }
 }

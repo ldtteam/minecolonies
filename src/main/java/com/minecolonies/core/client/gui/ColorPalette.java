@@ -5,9 +5,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,16 +80,9 @@ public class ColorPalette
         }
 
         @Override
-        public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
-        {
-            this.active = selected != this.color;
-
-            super.render(stack, mouseX, mouseY, partialTicks);
-        }
-
-        @Override
         public void renderWidget(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
         {
+            this.active = selected != this.color;
             int color = this.color.getTextColor();
             boolean pressed = selected == this.color;
 

@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import net.minecraft.client.Minecraft;
@@ -219,7 +218,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
             {
                 ((RequestWindowCitizen) this.prevWindow).fulfill(request);
                 // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
-                Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
+                new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX).sendToServer();
             }
             this.window.close();
         }

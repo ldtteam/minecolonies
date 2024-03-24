@@ -1,4 +1,4 @@
-<window size="210 244" pause="false" lightbox="false">
+<window size="210 244" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <layout source="minecolonies:gui/citizen/nav.xml"/>
-        <label id="happinessModifier" pos="45 32" size="136 11" textalign="MIDDLE" color="black"/>
+    <text id="happinessModifier" pos="45 32" size="136 11" textalign="MIDDLE" color="black"/>
 </window>

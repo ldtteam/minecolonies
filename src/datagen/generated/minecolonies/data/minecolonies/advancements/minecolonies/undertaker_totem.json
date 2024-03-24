@@ -2,21 +2,16 @@
   "parent": "minecolonies:minecolonies/citizen_resurrect",
   "criteria": {
     "totem": {
-      "conditions": {},
       "trigger": "minecolonies:undertaker_totem"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.undertaker.totem.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecraft:totem_of_undying"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.undertaker.totem.title"
     }

@@ -1,5 +1,6 @@
 package com.minecolonies.core.tileentities;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -12,6 +13,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -62,14 +64,9 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     private BlockPos corner2 = BlockPos.ZERO;
 
     /**
-     * The used rotation.
+     * The used rotation and mirror.
      */
-    private Rotation rotation = Rotation.NONE;
-
-    /**
-     * The used mirror.
-     */
-    private boolean mirror;
+    private RotationMirror rotationMirror;
 
     /**
      * Map of block positions relative to TE pos and string tags
@@ -157,24 +154,15 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
      *
      * @return the placed rotation.
      */
-    public Rotation getRotation()
+    @Override
+    public RotationMirror getRotationMirror()
     {
-        return rotation;
-    }
-
-    /**
-     * Get the mirroring setting of the controller.
-     *
-     * @return true if mirrored.
-     */
-    public boolean getMirror()
-    {
-        return this.mirror;
+        return rotationMirror;
     }
 
     private FieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
     {
-        return FieldRegistries.getFieldRegistry().getValues().stream()
+        return FieldRegistries.getFieldRegistry().stream()
                  .filter(fieldEntry -> {
                      List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(m -> m.apply(null))
                                                          .filter(IPlantationModule.class::isInstance)
@@ -303,15 +291,9 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public void rotate(final Rotation rotationIn)
+    public void rotateAndMirror(final RotationMirror rotMir)
     {
-        this.rotation = rotationIn;
-    }
-
-    @Override
-    public void mirror(final Mirror mirror)
-    {
-        this.mirror = mirror != Mirror.NONE;
+        this.rotationMirror = rotMir;
     }
 
     @Override
@@ -326,8 +308,15 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         super.load(compound);
         super.readSchematicDataFromNBT(compound);
-        this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
-        this.mirror = compound.getBoolean(TAG_MIRROR);
+        if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
+        {
+            this.rotationMirror = RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)];
+        }
+        else
+        {
+            // TODO: remove this later (data break introduced in 1.20.4) because of blueprint data
+            this.rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
+        }
         if (compound.contains(TAG_PATH))
         {
             this.schematicPath = compound.getString(TAG_PATH);
@@ -356,8 +345,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     {
         super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
-        compound.putInt(TAG_ROTATION, this.rotation.ordinal());
-        compound.putBoolean(TAG_MIRROR, this.mirror);
+        compound.putByte(TAG_ROTATION_MIRROR, (byte) this.rotationMirror.ordinal());
         compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
         compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
         compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);

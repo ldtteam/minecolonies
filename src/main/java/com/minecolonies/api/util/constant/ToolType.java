@@ -12,21 +12,21 @@ public enum ToolType implements IToolType
      * Note to future coders: You must add these to both: com.minecolonies.api.colony.requestsystem.requestable.Tool.getToolClasses and,
      * com.minecolonies.api.util.ItemStackUtils.isTool to be usable by the RS system
      */
-    NONE("", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_NONE)),
-    PICKAXE("pickaxe", true, Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE)),
-    SHOVEL("shovel", true, Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL)),
-    AXE("axe", true, Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE)),
-    HOE("hoe", true, Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE)),
-    SWORD("weapon", true, Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD)),
-    BOW("bow", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOW)),
-    FISHINGROD("rod", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_FISHING_ROD)),
-    SHEARS("shears", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHEARS)),
-    SHIELD("shield", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHIELD)),
-    HELMET("helmet", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET)),
-    LEGGINGS("leggings", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS)),
-    CHESTPLATE("chestplate", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE)),
-    BOOTS("boots", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS)),
-    FLINT_N_STEEL("flintandsteel", false, Component.translatable(ToolTranslationConstants.TOOL_TYPE_LIGHTER));
+    NONE("", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_NONE)),
+    PICKAXE("pickaxe", true, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_PICKAXE)),
+    SHOVEL("shovel", true, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_SHOVEL)),
+    AXE("axe", true, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_AXE)),
+    HOE("hoe", true, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_HOE)),
+    SWORD("weapon", true, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_SWORD)),
+    BOW("bow", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_BOW)),
+    FISHINGROD("rod", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_FISHING_ROD)),
+    SHEARS("shears", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_SHEARS)),
+    SHIELD("shield", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_SHIELD)),
+    HELMET("helmet", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_HELMET)),
+    LEGGINGS("leggings", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_LEGGINGS)),
+    CHESTPLATE("chestplate", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE)),
+    BOOTS("boots", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_BOOTS)),
+    FLINT_N_STEEL("flintandsteel", false, Component.translatableEscape(ToolTranslationConstants.TOOL_TYPE_LIGHTER));
 
     static final private Map<String, IToolType> tools = new HashMap<>();
     static

@@ -139,7 +139,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
             if (box.corners() != null)
             {
                 assert box.corners().getA() != null && box.corners().getB() != null;
-                final AABB bounds = new AABB(box.corners().getA(), box.corners().getB().offset(1, 1, 1)).inflate(1);
+                final AABB bounds = AABB.encapsulatingFullBlocks(box.corners().getA(), box.corners().getB().offset(1, 1, 1)).inflate(1);
                 // inflate(1) is due to implementation of BlockPosUtil.isInArea
 
                 return List.of(anchorBox, new OverlayBox(bounds, GREEN_OVERLAY, 0.02f, true));

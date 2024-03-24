@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp;
 
+import com.ldtteam.common.config.Configurations;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -17,7 +18,9 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
-import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.configuration.ClientConfiguration;
+import com.minecolonies.api.configuration.CommonConfiguration;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
@@ -33,16 +36,18 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.CitizenDataManager;
 import com.minecolonies.core.colony.ColonyManager;
 import com.minecolonies.core.colony.buildings.registry.BuildingDataManager;
+import com.minecolonies.core.colony.buildings.registry.GuardTypeDataManager;
 import com.minecolonies.core.colony.interactionhandling.registry.InteractionResponseHandlerManager;
 import com.minecolonies.core.colony.jobs.registry.JobDataManager;
 import com.minecolonies.core.entity.mobs.registry.MobAIRegistry;
 import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
 import com.minecolonies.core.util.FurnaceRecipes;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraft.core.Registry;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
@@ -51,33 +56,53 @@ import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EF
 
 public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
-    private final  IColonyManager                                          colonyManager          = new ColonyManager();
-    private final  ICitizenDataManager                                     citizenDataManager     = new CitizenDataManager();
-    private final  IMobAIRegistry                                          mobAIRegistry          = new MobAIRegistry();
-    private final  IPathNavigateRegistry                                   pathNavigateRegistry   = new PathNavigateRegistry();
-    private        IForgeRegistry<BuildingEntry>                           buildingRegistry;
-    private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
-    private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
-    private final  IJobDataManager                                         jobDataManager         = new JobDataManager();
-    private final  IGuardTypeDataManager                                   guardTypeDataManager   = new com.minecolonies.core.colony.buildings.registry.GuardTypeDataManager();
-    private        IForgeRegistry<JobEntry>                                jobRegistry;
-    private        IForgeRegistry<GuardType>                               guardTypeRegistry;
-    private        IForgeRegistry<InteractionResponseHandlerEntry>         interactionHandlerRegistry;
-    private final  IInteractionResponseHandlerDataManager                  interactionDataManager = new InteractionResponseHandlerManager();
-    private        IForgeRegistry<ColonyEventTypeRegistryEntry>            colonyEventRegistry;
-    private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
-    private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
-    private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
-    private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
-    private        IForgeRegistry<ResearchCostType>                        researchCostRegistry;
-    private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
-    private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
-    private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
-    private        IForgeRegistry<QuestRegistries.RewardEntry>             questRewardRegistry;
-    private        IForgeRegistry<QuestRegistries.TriggerEntry>            questTriggerRegistry;
-    private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
-    private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
-    private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
+    public static final ResourceKey<Registry<BuildingEntry>> BUILDINGS = key("buildings");
+    public static final ResourceKey<Registry<FieldRegistries.FieldEntry>> FIELDS = key("fields");
+    public static final ResourceKey<Registry<JobEntry>> JOBS = key("jobs");
+    public static final ResourceKey<Registry<GuardType>> GUARD_TYPES = key("guardtypes");
+    public static final ResourceKey<Registry<InteractionResponseHandlerEntry>> INTERACTION_RESPONSE_HANDLERS = key("interactionresponsehandlers");
+    public static final ResourceKey<Registry<ColonyEventTypeRegistryEntry>> COLONY_EVENT_TYPES = key("colonyeventtypes");
+    public static final ResourceKey<Registry<ColonyEventDescriptionTypeRegistryEntry>> COLONY_EVENT_DESC_TYPES = key("colonyeventdesctypes");
+    public static final ResourceKey<Registry<CraftingType>> CRAFTING_TYPES = key("craftingtypes");
+    public static final ResourceKey<Registry<RecipeTypeEntry>> RECIPE_TYPE_ENTRIES = key("recipetypeentries");
+    public static final ResourceKey<Registry<ResearchRequirementEntry>> RESEARCH_REQUIREMENT_TYPES = key("researchrequirementtypes");
+    public static final ResourceKey<Registry<ResearchEffectEntry>> RESEARCH_EFFECT_TYPES = key("researcheffecttypes");
+    public static final ResourceKey<Registry<ResearchCostType>> RESEARCH_COST_TYPES = key("researchcosttypes");
+    public static final ResourceKey<Registry<QuestRegistries.ObjectiveEntry>> QUEST_OBJECTIVES = key("questobjectives");
+    public static final ResourceKey<Registry<QuestRegistries.RewardEntry>> QUEST_REWARDS = key("questrewards");
+    public static final ResourceKey<Registry<QuestRegistries.TriggerEntry>> QUEST_TRIGGERS = key("questtriggers");
+    public static final ResourceKey<Registry<QuestRegistries.DialogueAnswerEntry>> QUEST_ANSWER_RESULTS = key("questanswerresults");
+    public static final ResourceKey<Registry<HappinessRegistry.HappinessFactorTypeEntry>> HAPPINESS_FACTOR_TYPES = key("happinessfactortypes");
+    public static final ResourceKey<Registry<HappinessRegistry.HappinessFunctionEntry>> HAPPINESS_FUNCTION = key("happinessfunction");
+
+    private final IColonyManager                         colonyManager          = new ColonyManager();
+    private final ICitizenDataManager                    citizenDataManager     = new CitizenDataManager();
+    private final IMobAIRegistry                         mobAIRegistry          = new MobAIRegistry();
+    private final IPathNavigateRegistry                  pathNavigateRegistry   = new PathNavigateRegistry();
+    private final IBuildingDataManager                   buildingDataManager    = new BuildingDataManager();
+    private final IJobDataManager                        jobDataManager         = new JobDataManager();
+    private final IGuardTypeDataManager                  guardTypeDataManager   = new GuardTypeDataManager();
+    private final IInteractionResponseHandlerDataManager interactionDataManager = new InteractionResponseHandlerManager();
+    private final IGlobalResearchTree                    globalResearchTree     = new GlobalResearchTree();
+
+    private Registry<BuildingEntry>                              buildingRegistry;
+    private Registry<FieldRegistries.FieldEntry>                 fieldRegistry;
+    private Registry<JobEntry>                                   jobRegistry;
+    private Registry<GuardType>                                  guardTypeRegistry;
+    private Registry<InteractionResponseHandlerEntry>            interactionHandlerRegistry;
+    private Registry<ColonyEventTypeRegistryEntry>               colonyEventRegistry;
+    private Registry<ColonyEventDescriptionTypeRegistryEntry>    colonyEventDescriptionRegistry;
+    private Registry<ResearchRequirementEntry>                   researchRequirementRegistry;
+    private Registry<ResearchEffectEntry>                        researchEffectRegistry;
+    private Registry<ResearchCostType>                           researchCostRegistry;
+    private Registry<RecipeTypeEntry>                            recipeTypeEntryRegistry;
+    private Registry<CraftingType>                               craftingTypeRegistry;
+    private Registry<QuestRegistries.ObjectiveEntry>             questObjectiveRegistry;
+    private Registry<QuestRegistries.RewardEntry>                questRewardRegistry;
+    private Registry<QuestRegistries.TriggerEntry>               questTriggerRegistry;
+    private Registry<QuestRegistries.DialogueAnswerEntry>        questDialogueAnswerRegistry;
+    private Registry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
+    private Registry<HappinessRegistry.HappinessFunctionEntry>   happinessFunctionRegistry;
 
     @Override
     @NotNull
@@ -116,14 +141,14 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     @NotNull
-    public IForgeRegistry<BuildingEntry> getBuildingRegistry()
+    public Registry<BuildingEntry> getBuildingRegistry()
     {
         return buildingRegistry;
     }
 
     @Override
     @NotNull
-    public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
+    public Registry<FieldRegistries.FieldEntry> getFieldRegistry()
     {
         return fieldRegistry;
     }
@@ -135,13 +160,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<JobEntry> getJobRegistry()
+    public Registry<JobEntry> getJobRegistry()
     {
         return jobRegistry;
     }
 
     @Override
-    public IForgeRegistry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
+    public Registry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
     {
         return interactionHandlerRegistry;
     }
@@ -153,7 +178,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<GuardType> getGuardTypeRegistry()
+    public Registry<GuardType> getGuardTypeRegistry()
     {
         return guardTypeRegistry;
     }
@@ -165,7 +190,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public Configuration getConfig()
+    public Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
     {
         return MineColonies.getConfig();
     }
@@ -189,13 +214,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
+    public Registry<ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
+    public Registry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public Registry<ResearchCostType> getResearchCostRegistry()
     {
         return researchCostRegistry;
     }
@@ -203,178 +228,97 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
-        event.create(new RegistryBuilder<BuildingEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving()
-                       .allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
+        buildingRegistry = event.create(syncedRegistry(BUILDINGS));
+        fieldRegistry = event.create(syncedRegistry(FIELDS));
+        jobRegistry = event.create(syncedRegistry(JOBS));
+        guardTypeRegistry = event.create(syncedRegistry(GUARD_TYPES, ModGuardTypes.KNIGHT_ID));
+        interactionHandlerRegistry = event.create(syncedRegistry(INTERACTION_RESPONSE_HANDLERS));
+        colonyEventRegistry = event.create(syncedRegistry(COLONY_EVENT_TYPES));
+        colonyEventDescriptionRegistry = event.create(syncedRegistry(COLONY_EVENT_DESC_TYPES));
+        craftingTypeRegistry = event.create(syncedRegistry(CRAFTING_TYPES));
+        recipeTypeEntryRegistry = event.create(syncedRegistry(RECIPE_TYPE_ENTRIES, new ResourceLocation(Constants.MOD_ID, "classic")));
+        researchRequirementRegistry = event.create(syncedRegistry(RESEARCH_REQUIREMENT_TYPES, RESEARCH_RESEARCH_REQ_ID));
+        researchEffectRegistry = event.create(syncedRegistry(RESEARCH_EFFECT_TYPES, GLOBAL_EFFECT_ID));
+        researchCostRegistry = event.create(syncedRegistry(RESEARCH_COST_TYPES, LIST_ITEM_COST_ID));
+        questObjectiveRegistry = event.create(syncedRegistry(QUEST_OBJECTIVES));
+        questRewardRegistry = event.create(syncedRegistry(QUEST_REWARDS));
+        questTriggerRegistry = event.create(syncedRegistry(QUEST_TRIGGERS));
+        questDialogueAnswerRegistry = event.create(syncedRegistry(QUEST_ANSWER_RESULTS));
+        happinessFactorTypeRegistry = event.create(syncedRegistry(HAPPINESS_FACTOR_TYPES));
+        happinessFunctionRegistry = event.create(syncedRegistry(HAPPINESS_FUNCTION));
+    }
 
-        event.create(new RegistryBuilder<FieldRegistries.FieldEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "fields"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving()
-                       .allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> fieldRegistry = b);
+    private static <T> ResourceKey<Registry<T>> key(final String registryName)
+    {
+        return ResourceKey.createRegistryKey(new ResourceLocation(Constants.MOD_ID, registryName));
+    }
 
-        event.create(new RegistryBuilder<JobEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving()
-                       .allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> jobRegistry = b);
+    private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey)
+    {
+        return syncedRegistry(registryKey, new ResourceLocation(Constants.MOD_ID, "null"));
+    }
 
-        event.create(new RegistryBuilder<GuardType>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving()
-                       .allowModification()
-                       .setDefaultKey(ModGuardTypes.KNIGHT_ID)
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> guardTypeRegistry = b);
-
-        event.create(new RegistryBuilder<InteractionResponseHandlerEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving()
-                       .allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> interactionHandlerRegistry = b);
-
-        event.create(new RegistryBuilder<ColonyEventTypeRegistryEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventRegistry = b);
-
-        event.create(new RegistryBuilder<ColonyEventDescriptionTypeRegistryEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventdesctypes"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
-
-
-        event.create(new RegistryBuilder<CraftingType>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "craftingtypes"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> craftingTypeRegistry = b);
-
-        event.create(new RegistryBuilder<RecipeTypeEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> recipeTypeEntryRegistry = b);
-
-        event.create(new RegistryBuilder<ResearchRequirementEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
-                       .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
-
-        event.create(new RegistryBuilder<ResearchEffectEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
-                       .setDefaultKey(GLOBAL_EFFECT_ID)
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
-
-        event.create(new RegistryBuilder<ResearchCostType>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "researchcosttypes"))
-                       .setDefaultKey(LIST_ITEM_COST_ID)
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchCostRegistry = b);
-
-
-        event.create(new RegistryBuilder<QuestRegistries.ObjectiveEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "questobjectives"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questObjectiveRegistry = b);
-
-        event.create(new RegistryBuilder<QuestRegistries.RewardEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "questrewards"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questRewardRegistry = b);
-
-        event.create(new RegistryBuilder<QuestRegistries.TriggerEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "questtriggers"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questTriggerRegistry = b);
-
-        event.create(new RegistryBuilder<QuestRegistries.DialogueAnswerEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "questanswerresults"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questDialogueAnswerRegistry = b);
-
-        event.create(new RegistryBuilder<HappinessRegistry.HappinessFactorTypeEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfactortypes"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFactorTypeRegistry = b);
-
-        event.create(new RegistryBuilder<HappinessRegistry.HappinessFunctionEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfunction"))
-                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
-                       .disableSaving().allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
+    private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey, final ResourceLocation defaultKey)
+    {
+        return new RegistryBuilder<T>(registryKey).sync(true).defaultKey(defaultKey);
     }
 
     @Override
-    public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
+    public Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
     {
         return colonyEventRegistry;
     }
 
     @Override
-    public IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
+    public Registry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
     {
         return colonyEventDescriptionRegistry;
     }
 
     @Override
-    public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
+    public Registry<RecipeTypeEntry> getRecipeTypeRegistry()
     {
         return recipeTypeEntryRegistry;
     }
 
     @Override
-    public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
+    public Registry<CraftingType> getCraftingTypeRegistry()
     {
         return craftingTypeRegistry;
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
+    public Registry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
     {
         return questRewardRegistry;
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
+    public Registry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
     {
         return questObjectiveRegistry;
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
+    public Registry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
     {
         return questTriggerRegistry;
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
+    public Registry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
     {
         return questDialogueAnswerRegistry;
     }
 
     @Override
-    public IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
+    public Registry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
     {
         return happinessFactorTypeRegistry;
     }
 
     @Override
-    public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
+    public Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return happinessFunctionRegistry;
     }

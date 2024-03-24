@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -57,8 +57,8 @@ public final class InteractionResponseHandlerEntry
         @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
         public InteractionResponseHandlerEntry createEntry()
         {
-            Validate.notNull(responseHandlerProducer);
-            Validate.notNull(registryName);
+            Objects.requireNonNull(responseHandlerProducer);
+            Objects.requireNonNull(registryName);
 
             return new InteractionResponseHandlerEntry(responseHandlerProducer, registryName);
         }

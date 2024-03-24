@@ -4,12 +4,12 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.core.research.GlobalResearch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public class SimpleItemCost implements IResearchCost
     {
         if (compound.contains(TAG_COST_COUNT))
         {
-            this.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(compound.getString(TAG_COST_ITEM)));
+            this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(compound.getString(TAG_COST_ITEM)));
             this.count = compound.getInt(TAG_COST_COUNT);
         }
         else
@@ -77,7 +77,7 @@ public class SimpleItemCost implements IResearchCost
             String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
             if (costParts.length == 3)
             {
-                final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
+                final ItemStack is = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(costParts[0], costParts[1])));
                 if (compound.contains(TAG_COST_NBT))
                 {
                     is.setTag(compound.getCompound(TAG_COST_NBT));
@@ -92,7 +92,7 @@ public class SimpleItemCost implements IResearchCost
     @Override
     public void write(final @NotNull CompoundTag compound)
     {
-        compound.putString(TAG_COST_ITEM, ForgeRegistries.ITEMS.getKey(this.item).toString());
+        compound.putString(TAG_COST_ITEM, BuiltInRegistries.ITEM.getKey(this.item).toString());
         compound.putInt(TAG_COST_COUNT, this.count);
     }
 
@@ -100,14 +100,14 @@ public class SimpleItemCost implements IResearchCost
     public void serialize(final @NotNull FriendlyByteBuf buf)
     {
         buf.writeInt(this.count);
-        buf.writeRegistryId(ForgeRegistries.ITEMS, this.item);
+        buf.writeId(BuiltInRegistries.ITEM, this.item);
     }
 
     @Override
     public void deserialize(final @NotNull FriendlyByteBuf buf)
     {
         this.count = buf.readInt();
-        this.item = buf.readRegistryIdSafe(Item.class);
+        this.item = buf.readById(BuiltInRegistries.ITEM);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class SimpleItemCost implements IResearchCost
     @Override
     public void parseFromJson(final JsonObject jsonObject)
     {
-        this.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(jsonObject.getAsJsonPrimitive(RESEARCH_ITEM_NAME_PROP).getAsString()));
+        this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(jsonObject.getAsJsonPrimitive(RESEARCH_ITEM_NAME_PROP).getAsString()));
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 

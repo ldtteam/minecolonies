@@ -8,9 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -171,7 +171,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
 
         tag(ModTags.indestructible).add(Blocks.BEDROCK);
         tag(ModTags.oreChanceBlocks)
-                .addTags(Tags.Blocks.STONE, Tags.Blocks.COBBLESTONE)
+                .addTags(Tags.Blocks.STONE)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -195,7 +195,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
         tag(ModTags.validSpawn)
-          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH)
+          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS_BLOCK, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
           .addTags(BlockTags.WOOL_CARPETS);

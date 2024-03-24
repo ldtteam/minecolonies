@@ -17,13 +17,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -36,7 +35,8 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
-import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
+import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
@@ -51,12 +51,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -222,10 +220,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                                     this.building.hasOpenSyncRequest(worker.getCitizenData()) || this.building
-                                                                                                                                    .hasCitizenCompletedRequestsToPickup(
-                                                                                                                                      worker.getCitizenData()),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> checkIfNeedsItem(),
             NEEDS_ITEM,
             20),
 
@@ -258,6 +253,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Check if
+     * @return
+     */
+    protected boolean checkIfNeedsItem()
+    {
+        return getState() != INVENTORY_FULL &&
+                 (this.building.hasOpenSyncRequest(worker.getCitizenData())
+                    || this.building.hasCitizenCompletedRequestsToPickup(worker.getCitizenData()));
     }
 
     /**
@@ -365,7 +371,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Override
     protected void onException(final RuntimeException e)
     {
-        worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
+        worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
 
         try
         {
@@ -611,9 +617,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                 building.markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
 
+                final IItemHandlerCapProvider wrappedBlockEntity = IItemHandlerCapProvider.wrap(blockEntity);
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
                 validHandlers.add(worker.getItemHandlerCitizen());
-                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(blockEntity));
+                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(wrappedBlockEntity));
 
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
@@ -623,7 +630,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
-                      InventoryUtils.getItemHandlersFromProvider(blockEntity),
+                      InventoryUtils.getItemHandlersFromProvider(wrappedBlockEntity),
                       firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
@@ -691,9 +698,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param rawSkillLevel to apply the curve to
      * @return effective skill level to use in linear bonus functions
      */
-    protected int getEffectiveSkillLevel(int rawSkillLevel)
+    protected static int getEffectiveSkillLevel(int rawSkillLevel)
     {
         return (int) (((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1) / 10.0, 2));
+    }
+
+    /**
+     * Returns the inverted skill level, to use in chance based calcs
+     *
+     * @param rawSkillLevel
+     * @return
+     */
+    protected static int getInvertedEffectiveSkillLevel(final int rawSkillLevel)
+    {
+        return Math.max(1, 100 - getEffectiveSkillLevel(rawSkillLevel));
     }
 
     /**
@@ -775,12 +793,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
+            if (entity instanceof final TileEntityRack rack && rack.hasItemStack(is, 1, false))
             {
-                entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                  .ifPresent((handler) -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler,
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(rack.getItemHandlerCap(),
                     (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
-                    getInventory()));
+                    getInventory());
                 return true;
             }
         }
@@ -848,7 +865,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return false;
         }
         return InventoryFunctions.matchFirstInProviderWithAction(
-          entity,
+          IItemHandlerCapProvider.wrap(entity),
           stack -> ItemStackUtils.hasToolLevel(stack, toolType, minLevel, maxLevel),
           this::takeItemStackFromProvider
         );
@@ -861,7 +878,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param provider  The provider to take from.
      * @param slotIndex The slot to take.
      */
-    public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
+    public void takeItemStackFromProvider(@NotNull final IItemHandlerCapProvider provider, final int slotIndex)
     {
         InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, worker.getInventoryCitizen());
     }
@@ -1011,16 +1028,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             for (final BlockPos pos : building.getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof final TileEntityRack rack)
                 {
                     if (ToolType.NONE.equals(toolType))
                     {
                         return false;
                     }
 
-                    if (((TileEntityRack) entity).hasItemStack(toolPredicate))
+                    if (rack.hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(rack.getItemHandlerCap(),
                           toolPredicate,
                           worker.getInventoryCitizen()))
                         {
@@ -1078,7 +1095,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (citizenData != null)
             {
                 citizenData
-                  .triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
+                  .triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
             }
 
@@ -1180,7 +1197,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getItemHandlerCap());
 
                 if (getInventory().getHeldItemSlot(InteractionHand.MAIN_HAND) == slotAt)
                 {
@@ -1268,18 +1285,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
         if (building.getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW,
+              Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW,
                 new ItemStack(target.getBlock()).getHoverName(),
                 pos.getX(),
                 pos.getY(),
                 pos.getZ()),
               ChatPriority.IMPORTANT,
-              Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
+              Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
               pos));
         }
         updateToolFlag(toolType, required);
@@ -1312,7 +1329,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
         if (toolType == ToolType.NONE)
@@ -1448,6 +1465,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return targetPos;
         }
+
+        // TODO: Use pathfinding for this instead? Or find around Util
 
         @NotNull final Direction[] directions = {Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH};
 
@@ -1731,7 +1750,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true; // has already needed transfers...
         }
 
-        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen());
+        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(IItemHandlerCapProvider.wrap(entity), predicate.getA(), amount, worker.getInventoryCitizen());
         existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
         // has already needed transfers...
         return existingAmount >= predicate.getB();

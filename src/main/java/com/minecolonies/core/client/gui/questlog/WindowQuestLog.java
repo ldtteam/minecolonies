@@ -138,7 +138,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
                     if (questLocator != null)
                     {
                         PaneBuilders.tooltipBuilder()
-                          .append(Component.translatable(QUEST_LOG_TRACK_CITIZEN_TEXT))
+                          .append(Component.translatableEscape(QUEST_LOG_TRACK_CITIZEN_TEXT))
                           .hoverPane(questLocator)
                           .build();
                     }

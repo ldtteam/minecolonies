@@ -10,10 +10,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.common.util.MutableHashedLinkedMap;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.fml.ModLoader;
+import net.neoforged.fml.ModLoader;
+import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.common.util.MutableHashedLinkedMap;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -183,7 +183,7 @@ public final class CraftingUtils
         final HolderLookup.RegistryLookup<CreativeModeTab> registry = displayParams.holders().lookup(Registries.CREATIVE_MODE_TAB).get();
         final Map<CreativeModeTab, ResourceKey<CreativeModeTab>> tabKeys = registry.listElements()
                 .distinct()     // some mods are dumb
-                .collect(Collectors.toMap(Holder::get, Holder.Reference::key));
+                .collect(Collectors.toMap(Holder::value, Holder.Reference::key));
 
         for (final CreativeModeTab tab : CreativeModeTabs.allTabs())
         {
@@ -214,7 +214,7 @@ public final class CraftingUtils
     }
 
     /**
-     * Extracted from Forge {@link ForgeHooksClient} to avoid classloading problems (since we call on server).
+     * Extracted from Forge {@link ClientHooks} to avoid classloading problems (since we call on server).
      */
     private static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
     {

@@ -270,7 +270,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         switch (wo.getWorkOrderType())
         {
             case REPAIR:
-                message = Component.translatable(
+                message = Component.translatableEscape(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -278,7 +278,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                   position.getZ());
                 break;
             case REMOVE:
-                message = Component.translatable(
+                message = Component.translatableEscape(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -286,7 +286,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                   position.getZ());
                 break;
             default:
-                message = Component.translatable(
+                message = Component.translatableEscape(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -297,7 +297,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (showManualSuffix)
         {
-            message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
+            message.append(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
         worker.getCitizenChatHandler().sendLocalizedChat(message);

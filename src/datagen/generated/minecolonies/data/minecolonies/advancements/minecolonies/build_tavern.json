@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.tavern.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhuttavern"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.tavern.title"
     }

@@ -1,11 +1,12 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
 
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="title" size="130 11" pos="30 13" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.research.title)"/>
-    <label id="maxresearchwarn" size="180 10" pos="10 28" color="black" textalign="MIDDLE"/>
+    <text id="title" size="130 11" pos="30 13" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.research.title)"/>
+    <text id="maxresearchwarn" size="180 10" pos="10 28" color="black" textalign="MIDDLE"/>
     <list id="researches" size="164 175" pos="10 40">
         <box size="100% 28" linewidth="0">
-            <buttonimage id="name" size="129 17" pos="2 10" align="MIDDLE" textcolor="black"
+            <button id="name" size="129 17" pos="2 10" align="MIDDLE" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"/>
         </box>

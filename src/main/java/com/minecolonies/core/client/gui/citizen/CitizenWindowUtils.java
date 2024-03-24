@@ -31,7 +31,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
-import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
 import net.minecraft.network.chat.Component;
 
@@ -40,8 +39,6 @@ import net.minecraft.network.chat.Component;
  */
 public class CitizenWindowUtils
 {
-    public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
-
     /**
      * Private con to hide public.
      */
@@ -55,12 +52,10 @@ public class CitizenWindowUtils
      */
     private enum SmileyEnum
     {
-        EMPTY(HAPPINESS_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
-        HALF_RED(HAPPINESS_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
-        RED(HAPPINESS_ICONS_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY);
+        EMPTY(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/empty"), EMPTY_HEART_VALUE, null, null),
+        HALF_RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/full"), RED_HEART_VALUE, HALF_RED, EMPTY);
 
-        public final int              X;
-        public final int              Y;
         public final int happinessValue;
         public final SmileyEnum prevSmiley;
         public final SmileyEnum halfSmiley;
@@ -68,12 +63,10 @@ public class CitizenWindowUtils
         public final ResourceLocation Image;
 
         SmileyEnum(
-          final ResourceLocation heartImage, final int x, final int y, final int happinessValue,
+          final ResourceLocation heartImage, final int happinessValue,
           final SmileyEnum halfSmiley, final SmileyEnum prevSmiley)
         {
             this.Image = heartImage;
-            this.X = x;
-            this.Y = y;
             this.happinessValue = happinessValue;
             this.halfSmiley = halfSmiley;
             if (halfSmiley == null)
@@ -89,18 +82,20 @@ public class CitizenWindowUtils
      */
     private enum HeartsEnum
     {
-        EMPTY(GUI_ICONS_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
-        HALF_RED(GUI_ICONS_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
-        RED(GUI_ICONS_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY),
-        HALF_GOLDEN(GUI_ICONS_LOCATION, HALF_GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE - 1, null, RED),
-        GOLDEN(GUI_ICONS_LOCATION, GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
-        HALF_GREEN(GREEN_BLUE_ICON, GREEN_HALF_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE - 1, null, GOLDEN),
-        GREEN(GREEN_BLUE_ICON, GREEN_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
-        HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
-        BLUE(GREEN_BLUE_ICON, BLUE_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+        EMPTY(new ResourceLocation("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
 
-        public final int              X;
-        public final int              Y;
+        HALF_RED(new ResourceLocation("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(new ResourceLocation("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
+
+        HALF_GOLDEN(new ResourceLocation("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(new ResourceLocation("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+
+        HALF_GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green_half"), GREEN_HEART_VALUE - 1, null, GOLDEN),
+        GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green"), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
+
+        HALF_BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue_half"), BLUE_HEART_VALUE - 1, null, GREEN),
+        BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue"), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+
         public final int              hpValue;
         public final HeartsEnum       prevHeart;
         public final HeartsEnum       halfHeart;
@@ -108,12 +103,10 @@ public class CitizenWindowUtils
         public final ResourceLocation Image;
 
         HeartsEnum(
-          final ResourceLocation heartImage, final int x, final int y, final int hpValue,
+          final ResourceLocation heartImage, final int hpValue,
           final HeartsEnum halfHeart, final HeartsEnum prevHeart)
         {
             this.Image = heartImage;
-            this.X = x;
-            this.Y = y;
             this.hpValue = hpValue;
             this.halfHeart = halfHeart;
             if (halfHeart == null)
@@ -206,8 +199,7 @@ public class CitizenWindowUtils
     private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
     {
         @NotNull final Image heartImage = new Image();
-        heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-        heartImage.setMapDimensions(256, 256);
+        heartImage.setImage(heart.Image, false);
         heartImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         healthBarView.addChild(heartImage);
@@ -260,10 +252,7 @@ public class CitizenWindowUtils
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION,
-              EMPTY_SATURATION_ITEM_ROW_POS,
-              SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(new ResourceLocation("hud/food_empty"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
@@ -275,8 +264,7 @@ public class CitizenWindowUtils
         for (saturationPos = 0; saturationPos < ((int) curSaturation); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(new ResourceLocation("hud/food_full"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -286,8 +274,7 @@ public class CitizenWindowUtils
         if (curSaturation / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(new ResourceLocation("hud/food_half"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -359,8 +346,7 @@ public class CitizenWindowUtils
     private static void addSmiley(final View happinessBarView, final int happinessPos, final SmileyEnum smiley)
     {
         @NotNull final Image smileyImage = new Image();
-        smileyImage.setImage(smiley.Image, smiley.X, smiley.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-        smileyImage.setMapDimensions(9, 87);
+        smileyImage.setImage(smiley.Image, false);
         smileyImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         smileyImage.setPosition(happinessPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         happinessBarView.addChild(smileyImage);
@@ -408,7 +394,7 @@ public class CitizenWindowUtils
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(Component.translatable(LABEL_HAPPINESS_MODIFIER));
+        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(Component.translatableEscape(LABEL_HAPPINESS_MODIFIER));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -424,15 +410,15 @@ public class CitizenWindowUtils
             label.setSize(136, 11);
             label.setPosition(70, yPos);
             label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + name));
+            label.setText(Component.translatableEscape(PARTIAL_HAPPINESS_MODIFIER_NAME + name));
             window.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION + name)).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatableEscape(PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION + name)).build();
 
             if (value > 1.0)
             {
                 image.setImage(new ResourceLocation(HAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_POSITIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -440,7 +426,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(SATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_NEUTRAL))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
                     .build();
             }
@@ -448,7 +434,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -456,7 +442,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
-                    .append(Component.translatable(LABEL_HAPPINESS_NEGATIVE))
+                    .append(Component.translatableEscape(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -484,25 +470,25 @@ public class CitizenWindowUtils
                 return;
             }
 
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatable(LABEL_CITIZEN_JOB, Component.translatable(citizen.getJob())));
-            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(Component.translatable(DESCRIPTION_CITIZEN_JOB));
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(Component.translatableEscape(LABEL_CITIZEN_JOB, Component.translatableEscape(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(Component.translatableEscape(DESCRIPTION_CITIZEN_JOB));
 
             final Skill primary = moduleView.getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
-              .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
+              .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(new ResourceLocation(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
@@ -510,20 +496,20 @@ public class CitizenWindowUtils
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
-              .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
+              .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
-                  .setText(Component.translatable(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                  .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);

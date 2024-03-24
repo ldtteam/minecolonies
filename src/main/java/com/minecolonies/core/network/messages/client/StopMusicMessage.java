@@ -1,43 +1,38 @@
 package com.minecolonies.core.network.messages.client;
 
-import com.minecolonies.api.network.IMessage;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Asks the client to stop its music
  */
-public class StopMusicMessage implements IMessage
+public class StopMusicMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "stop_music", StopMusicMessage::new);
+
     public StopMusicMessage()
     {
-        super();
+        super(TYPE);
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
 
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected StopMusicMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-
-    }
-
-    @Nullable
-    @Override
-    public LogicalSide getExecutionSide()
-    {
-        return LogicalSide.CLIENT;
+        super(buf, type);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
         Minecraft.getInstance().getSoundManager().stop();
         Minecraft.getInstance().getMusicManager().stopPlaying();

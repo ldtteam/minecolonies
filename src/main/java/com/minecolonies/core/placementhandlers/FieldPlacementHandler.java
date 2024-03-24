@@ -1,8 +1,8 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.blocks.BlockScarecrow;
@@ -37,7 +37,7 @@ public class FieldPlacementHandler implements IPlacementHandler
       @Nullable CompoundTag tileEntityData,
       boolean complete,
       BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).getBlock() == ModBlocks.blockScarecrow)
         {

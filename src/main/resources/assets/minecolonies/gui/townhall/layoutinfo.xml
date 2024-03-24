@@ -2,33 +2,33 @@
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
 
-    <label size="148 11" pos="106 65" color="black" textalign="MIDDLE"
+    <text size="148 11" pos="106 65" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.townhall.events):"/>
 
     <list id="eventsList" size="148 140" pos="106 80">
         <box size="100% 36" linewidth="1">
-            <label id="action" size="135 12" pos="1 1" color="black"/>
-            <label id="name" size="135 12" pos="1 12" color="blue"/>
-            <label id="pos" size="70 12" pos="1 24" color="black"/>
+            <text id="action" size="135 12" pos="1 1" color="black"/>
+            <text id="name" size="135 12" pos="1 12" color="blue"/>
+            <text id="pos" size="70 12" pos="1 24" color="black"/>
             <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
         </box>
     </list>
 
-    <label size="148 11" pos="276 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
+    <text size="148 11" pos="276 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
 
     <list id="workOrderList" size="148 166" pos="276 50">
         <view size="100% 30">
             <box size="100% 30" linewidth="1">
-                <buttonimage id="plus" label="↥" pos="0 0" size="14 15" textcolor="black"
+                <button id="plus" label="↥" pos="0 0" size="14 15" color="black"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                <buttonimage id="minus" label="↧" pos="0 15" size="14 15" textcolor="black"
+                <button id="minus" label="↧" pos="0 15" size="14 15" color="black"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                <label id="assignee" size="80 8" pos="25 20" textalign="MIDDLE_LEFT" color="gray"/>
+                <text id="assignee" size="80 8" pos="25 20" textalign="MIDDLE_LEFT" color="gray"/>
 
-                <label id="work" size="105 17" pos="17 2" textalign="MIDDLE_LEFT" color="black"/>
-                <buttonimage id="delete" label="X" textcolor="red" pos="122 8" size="14 15"
+                <text id="work" size="105 17" pos="17 2" textalign="MIDDLE_LEFT" color="black"/>
+                <button id="delete" label="X" color="red" pos="122 8" size="14 15"
                              source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
-                <label id="hiddenId" size="1 1" pos="100 100"/>
+                <text id="hiddenId" size="1 1" pos="100 100"/>
             </box>
         </view>
     </list>

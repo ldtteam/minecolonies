@@ -14,16 +14,16 @@ public class WorkOrderPlantationFieldView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        return getOrderTypePrefix(Component.translatable(getTranslationKey()));
+        return getOrderTypePrefix(Component.translatableEscape(getTranslationKey()));
     }
 
     private Component getOrderTypePrefix(Component nameComponent)
     {
         return switch (this.getWorkOrderType())
         {
-            case BUILD -> Component.translatable(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
-            case REPAIR -> Component.translatable(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
-            case REMOVE -> Component.translatable(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
+            case BUILD -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
+            case REPAIR -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
+            case REMOVE -> Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
             default -> nameComponent;
         };
     }

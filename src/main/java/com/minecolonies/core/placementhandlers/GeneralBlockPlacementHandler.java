@@ -1,9 +1,10 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -36,14 +37,14 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).equals(blockState))
         {
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, blockState, Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }

@@ -34,8 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -212,7 +211,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        final IItemHandler handler = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
+        final IItemHandler handler = building.getItemHandlerCap();
         if (handler == null)
         {
             return false;
@@ -394,14 +393,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (targetBuilding instanceof AbstractBuilding)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
+                  targetBuilding.getItemHandlerCap(), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
             }
             else
             {
                 // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
                 // Therefore, the keep-predicate always returns true.
                 insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getItemHandlerCap(),
                     stack,
                     itemStack -> true);
             }
@@ -419,19 +418,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     if (targetBuilding.hasModule(WorkerBuildingModule.class))
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
+                          .triggerInteraction(new PosBasedInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                             targetBuilding.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen().getName()),
                             ChatPriority.IMPORTANT,
-                            Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                            Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
                             targetBuilding.getID()));
                     }
                     else
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                          .triggerInteraction(new PosBasedInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
                             Component.literal(" :" + targetBuilding.getSchematicName())),
                             ChatPriority.IMPORTANT,
-                            Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                            Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
                             targetBuildingLocation.getInDimensionLocation()));
                     }
                 }
@@ -565,18 +564,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding
-               && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
-              (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
+        IItemHandler handler = null;
+        if (entity instanceof final TileEntityColonyBuilding hut && InventoryUtils.hasBuildingEnoughElseCount(hut.getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount())
         {
-            final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
-            if (handler != null)
-            {
-                return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
-                  stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                  is.getCount(),
-                  worker.getInventoryCitizen());
-            }
+            handler = hut.getItemHandlerCap();
+        }
+        else if (entity instanceof final TileEntityRack rack && rack.getCount(new ItemStorage(is)) >= is.getCount())
+        {
+            handler = rack.getItemHandlerCap();
+        }
+
+        if (handler != null)
+        {
+            return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
+              stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+              is.getCount(),
+              worker.getInventoryCitizen());
         }
 
         return false;
@@ -653,7 +656,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (worker.getCitizenData() != null)
         {
             worker.getCitizenData()
-              .triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+              .triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
                 ChatPriority.BLOCKING));
         }
         return false;

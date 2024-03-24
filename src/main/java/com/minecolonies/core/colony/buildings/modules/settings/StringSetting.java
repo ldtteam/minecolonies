@@ -12,9 +12,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +115,7 @@ public class StringSetting implements IStringSetting<String>
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(getDisplayText());
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(key, triggerButton, settingsModuleView);
     }
 
     /**
@@ -126,7 +125,7 @@ public class StringSetting implements IStringSetting<String>
      */
     protected Component getDisplayText()
     {
-        return Component.translatable(settings.get(currentIndex));
+        return Component.translatableEscape(settings.get(currentIndex));
     }
 
     @Override
@@ -161,7 +160,7 @@ public class StringSetting implements IStringSetting<String>
     }
 
     @Override
-    public void updateSetting(final ISetting setting)
+    public void updateSetting(final ISetting<?> setting)
     {
         if (setting instanceof StringSetting stringSetting)
         {
@@ -171,6 +170,15 @@ public class StringSetting implements IStringSetting<String>
             {
                 currentIndex = this.settings.size() - 1;
             }
+        }
+    }
+
+    @Override
+    public void copyValue(final ISetting<?> setting)
+    {
+        if (setting instanceof final StringSetting other)
+        {
+            set(other.getValue());
         }
     }
 

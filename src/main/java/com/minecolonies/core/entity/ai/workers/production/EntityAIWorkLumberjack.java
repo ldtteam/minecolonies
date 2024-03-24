@@ -4,8 +4,9 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.TreePathResult;
+import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -16,9 +17,9 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack
 import com.minecolonies.core.colony.jobs.JobLumberjack;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
-import com.minecolonies.core.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.IPlantable;
+import net.neoforged.neoforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -314,7 +315,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             if (getItemsForPickUp() == null)
             {
                 // search for interesting items in our restriction zone, if we ran out of trees
-                searchForItems(new AABB(building.getStartRestriction(), building.getEndRestriction())
+                searchForItems(AABB.encapsulatingFullBlocks(building.getStartRestriction(), building.getEndRestriction())
                                  .inflate(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP));
             }
 
@@ -327,7 +328,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         // Reset everything, maybe there are new crafting requests
         resetGatheringItems();
-        return START_WORKING;
+        if (ColonyConstants.rand.nextInt(100) <= 10)
+        {
+            return START_WORKING;
+        }
+        else
+        {
+            return LUMBERJACK_SEARCHING_TREE;
+        }
     }
 
     @Override
@@ -460,6 +468,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return chopTree();
     }
 
+    //TODO: On walking to the zone(no tree found) leaves are not getting broken
     /**
      * Work on the tree. First find your way to the tree trunk. Then chop away and wait for saplings to drop then place a sapling if shouldReplant is true
      *
@@ -633,7 +642,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathToTree == null || !pathToTree.isInProgress())
         {
             pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveToWithPassable(world,
-              AbstractPathJob.prepareStart(worker),
+              PathfindingUtils.prepareStart(worker),
               workFrom,
               SEARCH_RANGE,
               worker,

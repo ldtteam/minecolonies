@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -26,10 +27,10 @@ public class WorkOrderPlantationField extends AbstractWorkOrder
     }
 
     private WorkOrderPlantationField(
-      String packName, String path, final String translationKey, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
+      String packName, String path, final String translationKey, WorkOrderType workOrderType, BlockPos location, RotationMirror rotationMirror, int currentLevel,
       int targetLevel)
     {
-        super(packName, path, translationKey, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+        super(packName, path, translationKey, workOrderType, location, rotationMirror, currentLevel, targetLevel);
     }
 
     public static WorkOrderPlantationField create(
@@ -38,8 +39,7 @@ public class WorkOrderPlantationField extends AbstractWorkOrder
       final String path,
       final String translationKey,
       final BlockPos location,
-      final int rotation,
-      final boolean mirror,
+      final RotationMirror rotationMirror,
       final int currentLevel)
     {
         int targetLevel = 1;
@@ -54,8 +54,7 @@ public class WorkOrderPlantationField extends AbstractWorkOrder
           translationKey,
           type,
           location,
-          rotation,
-          mirror,
+          rotationMirror,
           currentLevel,
           targetLevel);
     }

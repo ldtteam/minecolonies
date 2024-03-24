@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "minecraft:grass"
+              "minecraft:grass_block"
             ]
           }
         ]
@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_grass",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_grass"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:doublegrass"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

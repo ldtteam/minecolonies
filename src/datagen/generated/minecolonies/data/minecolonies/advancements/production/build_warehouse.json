@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.warehouse.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutwarehouse"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.warehouse.title"
     }

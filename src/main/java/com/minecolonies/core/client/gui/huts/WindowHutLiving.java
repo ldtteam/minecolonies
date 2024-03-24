@@ -6,7 +6,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.core.client.gui.WindowAssignCitizen;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
@@ -74,7 +73,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
+        new RecallCitizenHutMessage(building).sendToServer();
     }
 
     @Override
@@ -96,7 +95,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal((citizenDataView.getJob().isEmpty() ? "" : (Component.translatable(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName()));
+                    rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal((citizenDataView.getJob().isEmpty() ? "" : (Component.translatableEscape(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName()));
                 }
             }
         });
@@ -109,7 +108,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void refreshView()
     {
-        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatable(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatableEscape(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
 

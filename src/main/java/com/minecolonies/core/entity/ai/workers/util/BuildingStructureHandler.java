@@ -1,9 +1,9 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,18 +76,18 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      * @param world             the world.
      * @param worldPos          the pos it is placed at.
      * @param blueprintFuture   the structure.
-     * @param settings          the placement settings.
+     * @param rotMir          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
       final BlockPos worldPos,
       final Future<Blueprint> blueprintFuture,
-      final PlacementSettings settings,
+      final RotationMirror rotMir,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
       final Stage[] stages)
     {
-        super(world, worldPos, blueprintFuture, settings);
+        super(world, worldPos, blueprintFuture, rotMir);
         setupBuilding();
         this.structureAI = entityAIStructure;
         this.stages = stages;
@@ -100,18 +100,18 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      * @param world             the world.
      * @param worldPos          the pos it is placed at.
      * @param blueprint         the blueprint.
-     * @param settings          the placement settings.
+     * @param rotMir          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
       final BlockPos worldPos,
       final Blueprint blueprint,
-      final PlacementSettings settings,
+      final RotationMirror rotMir,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
       final Stage[] stages)
     {
-        super(world, worldPos, blueprint, settings);
+        super(world, worldPos, blueprint, rotMir);
         setupBuilding();
         this.structureAI = entityAIStructure;
         this.stages = stages;
@@ -315,15 +315,9 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
-    public BlockState getSolidBlockForPos(final BlockPos blockPos)
+    public BlockState getSolidBlockForPos(final BlockPos worldPos, final Function<BlockPos, @Nullable BlockState> virtualBlocks)
     {
-        return structureAI.getSolidSubstitution(blockPos);
-    }
-
-    @Override
-    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final Function<BlockPos, BlockState> virtualBlocks)
-    {
-        return structureAI.getSolidSubstitution(worldPos);
+        return structureAI.getSolidSubstitution(worldPos, virtualBlocks);
     }
 
     @Override

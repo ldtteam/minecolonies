@@ -138,7 +138,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
             return true;
         }
 
-        final List<LivingEntity> entities = user.level.getEntitiesOfClass(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = user.level().getEntitiesOfClass(LivingEntity.class, getSearchArea());
 
         if (entities.isEmpty())
         {

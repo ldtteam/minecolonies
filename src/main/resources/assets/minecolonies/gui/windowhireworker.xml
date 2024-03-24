@@ -1,42 +1,42 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false" lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <label id="jobLabel" size="100% 11" pos="0 15" textalign="MIDDLE" color="black"/>
+    <text id="jobLabel" size="100% 11" pos="0 15" textalign="MIDDLE" color="black"/>
     <list id="unemployed" size="375 135" pos="20 48">
         <view size="100% 35">
             <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
-            <label id="citizen" size="175 12" pos="5 0" color="blue"/>
-            <label id="distance" size="300 8" pos="2 10" color="black" textscale="0.8"/>
-            <label id="attributes" size="300 16" pos="2 18" color="black" textscale="0.7"/>
+            <text id="citizen" size="175 12" pos="5 0" color="blue"/>
+            <text id="distance" size="300 8" pos="2 10" color="black" textscale="0.8"/>
+            <text id="attributes" size="300 16" pos="2 18" color="black" textscale="0.7"/>
 
-            <buttonimage id="done" size="44 10" pos="200 2" textcolor="black"
+            <button id="done" size="44 10" pos="200 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="$(com.minecolonies.coremod.gui.hiring.buttonhire)" textscale="0.8"/>
-            <buttonimage id="fire" size="44 10" pos="200 2" textcolor="black"
+            <button id="fire" size="44 10" pos="200 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="$(com.minecolonies.coremod.gui.hiring.buttonfire)" textscale="0.8"/>
 
-            <buttonimage id="pause" size="44 10" pos="250 2" textcolor="black"
+            <button id="pause" size="44 10" pos="250 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="" textscale="0.8"/>
 
-            <buttonimage id="restart" size="44 10" pos="300 2" textcolor="black"
+            <button id="restart" size="44 10" pos="300 2" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
                          label="$(com.minecolonies.coremod.gui.hiring.restart)" textscale="0.8"/>
         </view>
     </list>
 
-    <label id="buildingHireMode" size="200 11" pos="20 189" color="black" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
-    <buttonimage id="mode" size="169 17" pos="150 187" textcolor="black"
+    <text id="buildingHireMode" size="200 11" pos="20 189" color="black" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
+    <button id="mode" size="169 17" pos="150 187" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
 
-    <label id="showEmployedLabel" size="120 11" pos="20 210"  color="black" label="$(com.minecolonies.coremod.gui.showemployed)"/>
+    <text id="showEmployedLabel" size="120 11" pos="20 210"  color="black" label="$(com.minecolonies.coremod.gui.showemployed)"/>
 
-    <buttonimage id="showEmployed" textcolor="black" pos="200 208" size="29 17" label="$(gui.no)"
+    <button id="showEmployed" color="black" pos="200 208" size="29 17" label="$(gui.no)"
                  source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
 
-    <buttonimage id="cancel" size="14 15" pos="375 10"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <button id="cancel" size="14 15" pos="375 10"
+                 source="minecolonies:textures/gui/button_x.png" color="black"/>
 </window>

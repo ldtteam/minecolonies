@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSmeltery;
@@ -31,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -104,10 +103,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID()), worker);
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
+        new LocalizedParticleEffectMessage(inputItem, building.getID()).sendToTrackingEntity(worker);
+        new LocalizedParticleEffectMessage(inputItem, building.getID().below()).sendToTrackingEntity(worker);
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         worker.swing(InteractionHand.MAIN_HAND);
@@ -193,7 +190,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     {
         if (!building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
               !building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-                req -> req.getShortDisplayString().getSiblings().contains(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE))))
+                req -> req.getShortDisplayString().getSiblings().contains(Component.translatableEscape(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE))))
         {
             final List<ItemStorage> allowedItems = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
             if (allowedItems.isEmpty())
@@ -212,7 +209,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                     if (worker.getCitizenData() != null)
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
+                          .triggerInteraction(new StandardInteraction(Component.translatableEscape(FURNACE_USER_NO_ORE), ChatPriority.BLOCKING));
                     }
                 }
                 else

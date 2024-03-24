@@ -1,9 +1,9 @@
 package com.minecolonies.api.blocks;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blocks.interfaces.*;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
@@ -28,6 +28,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -54,10 +55,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -315,7 +315,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param state   the state the placed block is in.
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
-     * @param mirror  the mirror used.
+     * @param rotMir  the mirror used.
      * @param style   the style of the building
      */
     public void onBlockPlacedByBuildTool(
@@ -324,16 +324,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final BlockState state,
       final LivingEntity placer,
       final ItemStack stack,
-      final boolean mirror,
+      final RotationMirror rotMir,
       final String style,
       final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
+        if (tileEntity instanceof final AbstractTileEntityColonyBuilding hut)
         {
-            ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setPackName(style);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
+            hut.setRotationMirror(rotMir);
+            hut.setPackName(style);
+            hut.setBlueprintPath(blueprintPath);
         }
 
         setPlacedBy(worldIn, pos, state, placer, stack);
@@ -349,9 +349,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public B registerBlock(final IForgeRegistry<Block> registry)
+    public B registerBlock(final Registry<Block> registry)
     {
-        registry.register(getRegistryName(), this);
+        Registry.register(registry, getRegistryName(), this);
         return (B) this;
     }
 
@@ -370,13 +370,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
         if (colonyView == null)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -388,8 +388,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
-            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
+            requirements.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
+            requirements.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
         }
 
         return requirements;
@@ -410,15 +410,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public List<MutableComponent> getDesc()
     {
         final List<MutableComponent> desc = new ArrayList<>();
-        desc.add(Component.translatable(getBuildingEntry().getTranslationKey()));
-        desc.add(Component.translatable(getBuildingEntry().getTranslationKey() + ".desc"));
+        desc.add(Component.translatableEscape(getBuildingEntry().getTranslationKey()));
+        desc.add(Component.translatableEscape(getBuildingEntry().getTranslationKey() + ".desc"));
         return desc;
     }
 
     @Override
     public Component getBlueprintDisplayName()
     {
-        return Component.translatable(getBuildingEntry().getTranslationKey());
+        return Component.translatableEscape(getBuildingEntry().getTranslationKey());
     }
 
     @Override
@@ -441,9 +441,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final PlacementSettings placementSettings, final boolean b)
+    public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final RotationMirror rotationMirror, final boolean b)
     {
-        return new CreativeBuildingStructureHandler(level, blockPos, blueprint, placementSettings, b);
+        return new CreativeBuildingStructureHandler(level, blockPos, blueprint, rotationMirror, b);
     }
 
     @Override
@@ -452,7 +452,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final Level world,
       final BlockPos pos,
       final Blueprint blueprint,
-      final PlacementSettings settings,
+      final RotationMirror rotationMirror,
       final boolean fancyPlacement,
       final String pack,
       final String path)
@@ -474,7 +474,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
           anchor,
           player,
           null,
-          settings.getMirror() != Mirror.NONE,
+          rotationMirror,
           pack,
           path);
 
@@ -524,7 +524,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 building.setBuildingLevel(1);
             }
 
-            building.setIsMirrored(settings.mirror != Mirror.NONE);
+            building.setRotationMirror(rotationMirror);
             building.onUpgradeComplete(building.getBuildingLevel());
         }
         return true;
@@ -582,8 +582,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
+    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
     {
-        registry.register(getRegistryName(), new ItemBlockHut(this, properties));
+        Registry.register(registry, getRegistryName(), new ItemBlockHut(this, properties));
     }
 }

@@ -15,6 +15,6 @@ public final class GuardTypeDataManager implements IGuardTypeDataManager
             return null;
         }
 
-        return IGuardTypeRegistry.getInstance().getValue(jobName);
+        return IGuardTypeRegistry.getInstance().get(jobName);
     }
 }

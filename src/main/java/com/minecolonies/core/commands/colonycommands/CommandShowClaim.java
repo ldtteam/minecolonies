@@ -62,23 +62,23 @@ public class CommandShowClaim implements IMCOPCommand
      */
     private MutableComponent buildClaimCommandResult(final LevelChunk chunk, final BlockPos pos, final ServerLevel level)
     {
-        final MutableComponent text = Component.translatable("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
+        final MutableComponent text = Component.translatableEscape("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
 
         final List<Integer> staticColonyClaims = ColonyUtils.getStaticClaims(chunk);
         final int owningColony = ColonyUtils.getOwningColony(chunk);
         if (!staticColonyClaims.isEmpty())
         {
-            text.append(Component.translatable("OwnerID:%s Direct colony claims:\n", owningColony).withStyle(ChatFormatting.GOLD));
+            text.append(Component.translatableEscape("OwnerID:%s Direct colony claims:\n", owningColony).withStyle(ChatFormatting.GOLD));
             for (int colonyID : staticColonyClaims)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, level.dimension());
                 if (colony == null)
                 {
-                    text.append(Component.translatable("ID: %s Name: Unkown Colony\n", colonyID));
+                    text.append(Component.translatableEscape("ID: %s Name: Unkown Colony\n", colonyID));
                 }
                 else
                 {
-                    text.append(Component.translatable("ID: %s Name: %s\n", colonyID, colony.getName()));
+                    text.append(Component.translatableEscape("ID: %s Name: %s\n", colonyID, colony.getName()));
                 }
             }
         }
@@ -86,7 +86,7 @@ public class CommandShowClaim implements IMCOPCommand
         final Map<Integer, Set<BlockPos>> buildingClaims = ColonyUtils.getAllClaimingBuildings(chunk);
         if (!buildingClaims.isEmpty())
         {
-            text.append(Component.translatable("Building claims:\n").withStyle(ChatFormatting.GOLD));
+            text.append(Component.translatableEscape("Building claims:\n").withStyle(ChatFormatting.GOLD));
             for (Map.Entry<Integer, Set<BlockPos>> entry : buildingClaims.entrySet())
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(entry.getKey(), level.dimension());
@@ -97,19 +97,19 @@ public class CommandShowClaim implements IMCOPCommand
                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
-                            text.append(Component.translatable("ID: %s Building: %s Pos: %s\n",
+                            text.append(Component.translatableEscape("ID: %s Building: %s Pos: %s\n",
                               entry.getKey(),
-                              Component.translatable(building.getBuildingDisplayName()),
+                              Component.translatableEscape(building.getBuildingDisplayName()),
                               buildingPos));
                         }
                         else
                         {
-                            text.append(Component.translatable("ID: %s Building: Unknown pos: %s\n", entry.getKey(), buildingPos));
+                            text.append(Component.translatableEscape("ID: %s Building: Unknown pos: %s\n", entry.getKey(), buildingPos));
                         }
                     }
                     else
                     {
-                        text.append(Component.translatable("ID: %s Building: Unknown Pos: %s\n", entry.getKey(), buildingPos));
+                        text.append(Component.translatableEscape("ID: %s Building: Unknown Pos: %s\n", entry.getKey(), buildingPos));
                     }
                 }
             }

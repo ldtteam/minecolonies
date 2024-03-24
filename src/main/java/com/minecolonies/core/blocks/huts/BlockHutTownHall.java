@@ -11,7 +11,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.client.gui.townhall.WindowTownHallColonyManage;
+import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -29,7 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,18 +63,22 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      */
     private boolean validTownHallBreak = false;
 
+    /**
+     * Interaction timeout.
+     */
+    public static long timeout = 0;
 
     @Override
     public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
     {
-        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level instanceof ServerLevel)
+        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level() instanceof ServerLevel)
         {
-            final IBuilding building = IColonyManager.getInstance().getBuilding(player.level, pos);
-            if (building != null && building.getColony().isCoordInColony(player.level, pos)
+            final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
+            if (building != null && building.getColony().isCoordInColony(player.level(), pos)
                   && building.getColony().getPermissions().getRank(player).isHostile())
             {
                 final double localProgress = breakProgressOnTownHall;
-                final double hardness = state.getDestroySpeed(player.level, pos) * 20.0 * 1.5;
+                final double hardness = state.getDestroySpeed(player.level(), pos) * 20.0 * 1.5;
 
                 if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
                 {
@@ -98,7 +102,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                     validTownHallBreak = true;
                 }
 
-                if (player.level.getGameTime() - lastTownHallBreakingTick < 10)
+                if (player.level().getGameTime() - lastTownHallBreakingTick < 10)
                 {
                     breakProgressOnTownHall++;
                 }
@@ -108,7 +112,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                     breakProgressOnTownHall = 0;
                     validTownHallBreak = false;
                 }
-                lastTownHallBreakingTick = player.level.getGameTime();
+                lastTownHallBreakingTick = player.level().getGameTime();
             }
             else
             {
@@ -119,7 +123,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         {
             validTownHallBreak = true;
         }
-        final float def = super.getDestroyProgress(state, player, player.level, pos);
+        final float def = super.getDestroyProgress(state, player, player.level(), pos);
         return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 12 : def;
     }
 
@@ -129,7 +133,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
               ChatFormatting.RED)));
         }
 
@@ -192,9 +196,10 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 building.openGui(player.isShiftKeyDown());
             }
-            else
+            else if (System.currentTimeMillis() > timeout)
             {
-                new WindowTownHallColonyManage(player, pos, worldIn).open();
+                new GetColonyInfoMessage(pos).sendToServer();
+                timeout = System.currentTimeMillis() + 1000;
             }
         }
         return InteractionResult.SUCCESS;

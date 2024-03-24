@@ -3,11 +3,11 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +52,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
         if (world.random.nextInt(10) == 0)
         {
             // Fail
-            player.displayClientMessage(Component.translatable("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+            player.displayClientMessage(Component.translatableEscape("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
 
             BlockPos pos = null;
@@ -110,12 +110,9 @@ public class ItemScrollColonyTP extends AbstractItemScroll
     {
         if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0)
         {
-            Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT),
-                entity);
-            Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT),
-                (ServerPlayer) entity);
+            final Entity entity1 = entity;
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT).sendToTrackingEntity(entity1);
+            new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.INSTANT_EFFECT).sendToPlayer((ServerPlayer) entity);
         }
     }
 
@@ -123,11 +120,11 @@ public class ItemScrollColonyTP extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_DESCRIPTION);
+        final MutableComponent guiHint = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        Component colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
+        Component colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
@@ -143,7 +140,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
             }
         }
 
-        final MutableComponent guiHint2 = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
+        final MutableComponent guiHint2 = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }

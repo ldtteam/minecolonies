@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.interactionhandling;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundTag;
@@ -118,7 +119,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
         tag.putString(NbtTagConstants.TAG_HANDLER_TYPE, getType());
         return tag;
     }
-
+    
     /**
      * Deserialize the response handler from NBT.
      */

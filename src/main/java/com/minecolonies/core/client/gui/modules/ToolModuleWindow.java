@@ -2,12 +2,11 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class ToolModuleWindow extends AbstractModuleWindow
 {
@@ -33,7 +32,7 @@ public class ToolModuleWindow extends AbstractModuleWindow
 
         this.moduleView = moduleView;
 
-        findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.tooldesc." + ForgeRegistries.ITEMS.getKey(moduleView.getTool()).getPath()));
+        findPaneOfTypeByID("desc", Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.tooldesc." + BuiltInRegistries.ITEM.getKey(moduleView.getTool()).getPath()));
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
     }
 
@@ -42,6 +41,6 @@ public class ToolModuleWindow extends AbstractModuleWindow
      */
     private void givePlayerScepter()
     {
-        Network.getNetwork().sendToServer(new GiveToolMessage(buildingView, moduleView.getTool()));
+        new GiveToolMessage(buildingView, moduleView.getTool()).sendToServer();
     }
 }

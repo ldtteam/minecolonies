@@ -51,6 +51,7 @@ public class DefaultSoundProvider implements DataProvider
         mainTypes.remove(ModJobs.placeHolder.getId());
         mainTypes.add(new ResourceLocation(Constants.MOD_ID, "unemployed"));
         mainTypes.add(new ResourceLocation(Constants.MOD_ID, "visitor"));
+        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "child"));
 
         if (soundFolder.isDirectory())
         {
@@ -79,16 +80,6 @@ public class DefaultSoundProvider implements DataProvider
                     }
                 }
             }
-        }
-
-        final List<String> childSounds = new ArrayList<>();
-        childSounds.add("minecolonies:mob/citizen/child/laugh1");
-        childSounds.add("minecolonies:mob/citizen/child/laugh2");
-
-        for (final EventType soundEvents : EventType.values())
-        {
-            sounds.add("mob.child.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
-            sounds.add("mob.child.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
         }
 
         for (final RaiderType type : RaiderType.values())

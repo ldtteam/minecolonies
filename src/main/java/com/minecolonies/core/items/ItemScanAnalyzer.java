@@ -27,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
-import static com.ldtteam.structurize.api.util.constant.NbtTagConstants.SECOND_POS_STRING;
-import static com.ldtteam.structurize.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+import static com.ldtteam.structurize.api.constants.NbtTagConstants.FIRST_POS_STRING;
+import static com.ldtteam.structurize.api.constants.NbtTagConstants.SECOND_POS_STRING;
+import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 
 /**
  * Item used to analyze schematics or selected blocks
@@ -133,7 +133,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
                 lastPos = start;
                 lastPos2 = end;
 
-                blueprint = saveStructure(worldIn, playerIn, new AABB(getBounds(itemStack).getA(), getBounds(itemStack).getB()));
+                blueprint = saveStructure(worldIn, playerIn, AABB.encapsulatingFullBlocks(getBounds(itemStack).getA(), getBounds(itemStack).getB()));
             }
 
             new WindowSchematicAnalyzer().open();
@@ -197,7 +197,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     {
         if (box.getXsize() * box.getYsize() * box.getZsize() > Structurize.getConfig().getServer().schematicBlockLimit.get())
         {
-            player.displayClientMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
+            player.displayClientMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
             return null;
         }
 

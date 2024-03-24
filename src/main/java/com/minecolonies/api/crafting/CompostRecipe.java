@@ -1,19 +1,20 @@
 package com.minecolonies.api.crafting;
 
-import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -27,18 +28,20 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CompostRecipe implements Recipe<Container>
 {
+    public static final Codec<CompostRecipe> CODEC = RecordCodecBuilder.create(builder -> builder
+        .group(Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(CompostRecipe::getInput),
+            ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "strength", 1).forGetter(CompostRecipe::getStrength))
+        .apply(builder, CompostRecipe::new));
+
     private static final int FERMENT_TIME = 24000;
     private static final int COMPOST_RESULT = 6;
-
-    private final ResourceLocation id;
 
     private final Ingredient input;
     private final ItemStack output;
     private final int strength;
 
-    public CompostRecipe(@NotNull final ResourceLocation id, @NotNull final Ingredient ingredient, final int strength)
+    public CompostRecipe(@NotNull final Ingredient ingredient, final int strength)
     {
-        this.id = id;
         this.input = ingredient;
         this.strength = strength;
         this.output = new ItemStack(ModItems.compost, COMPOST_RESULT);
@@ -47,10 +50,6 @@ public class CompostRecipe implements Recipe<Container>
     @NotNull
     @Override
     public RecipeType<?> getType() { return ModRecipeSerializer.CompostRecipeType.get(); }
-
-    @NotNull
-    @Override
-    public ResourceLocation getId() { return this.id; }
 
     /**
      * Get the input ingredient for this recipe (this is multiple alternative item types).
@@ -132,31 +131,21 @@ public class CompostRecipe implements Recipe<Container>
     // JEI looks better if we render these as many individual recipes rather than as
     // a few recipes with a massive number of alternative ingredients.
     @NotNull
-    public static CompostRecipe individualize(@NotNull final Item item, @NotNull final CompostRecipe recipe)
+    public static CompostRecipe individualize(@NotNull final Item item, @NotNull final RecipeHolder<CompostRecipe> recipe)
     {
-        return new CompostRecipe(recipe.getId(), Ingredient.of(item), recipe.getStrength());
+        return new CompostRecipe(Ingredient.of(item), recipe.value().getStrength());
     }
 
     public static class Serializer implements RecipeSerializer<CompostRecipe>
     {
-        @NotNull
-        @Override
-        public CompostRecipe fromJson(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject json)
-        {
-            final Ingredient ingredient = Ingredient.fromJson(json.get("input"));
-            final int strength = GsonHelper.getAsInt(json, "strength", 1);
-
-            return new CompostRecipe(recipeId, ingredient, strength);
-        }
-
         @Nullable
         @Override
-        public CompostRecipe fromNetwork(@NotNull final ResourceLocation recipeId, @NotNull final FriendlyByteBuf buffer)
+        public CompostRecipe fromNetwork(@NotNull final FriendlyByteBuf buffer)
         {
             final Ingredient ingredient = Ingredient.fromNetwork(buffer);
             final int strength = buffer.readVarInt();
 
-            return new CompostRecipe(recipeId, ingredient, strength);
+            return new CompostRecipe(ingredient, strength);
         }
 
         @Override
@@ -164,6 +153,12 @@ public class CompostRecipe implements Recipe<Container>
         {
             recipe.getInput().toNetwork(buffer);
             buffer.writeVarInt(recipe.getStrength());
+        }
+
+        @Override
+        public Codec<CompostRecipe> codec()
+        {
+            return CompostRecipe.CODEC;
         }
     }
 }

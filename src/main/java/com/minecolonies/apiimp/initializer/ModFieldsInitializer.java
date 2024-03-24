@@ -1,21 +1,21 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.fields.registry.FieldRegistries.FieldEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific.*;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.colony.fields.PlantationField;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Consumer;
 
 public final class ModFieldsInitializer
 {
-    public static final DeferredRegister<FieldRegistries.FieldEntry> DEFERRED_REGISTER =
-      DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "fields"), Constants.MOD_ID);
+    public static final DeferredRegister<FieldEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.FIELDS, Constants.MOD_ID);
     static
     {
         FieldRegistries.farmField = createEntry(FieldRegistries.FARM_FIELD_ID,
@@ -78,10 +78,9 @@ public final class ModFieldsInitializer
         throw new IllegalStateException("Tried to initialize: ModFieldsInitializer but this is a Utility class.");
     }
 
-    private static RegistryObject<FieldRegistries.FieldEntry> createEntry(ResourceLocation registryName, Consumer<FieldRegistries.FieldEntry.Builder> builder)
+    private static DeferredHolder<FieldEntry, FieldEntry> createEntry(ResourceLocation registryName, Consumer<FieldEntry.Builder> builder)
     {
-        FieldRegistries.FieldEntry.Builder field = new FieldRegistries.FieldEntry.Builder()
-                                                     .setRegistryName(registryName);
+        FieldEntry.Builder field = new FieldEntry.Builder().setRegistryName(registryName);
         builder.accept(field);
         return DEFERRED_REGISTER.register(registryName.getPath(), field::createFieldEntry);
     }

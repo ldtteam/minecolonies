@@ -3,8 +3,6 @@ package com.minecolonies.core.entity.other;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.colony.jobs.JobDruid;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,8 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -77,7 +73,7 @@ public class DruidPotionEntity extends ThrownPotion
         if (citizen != null && citizen.getCitizenData() != null && citizen.getCitizenData().getJob() instanceof JobDruid)
         {
             final AABB axisalignedbb = this.getBoundingBox().inflate(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
-            final List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
+            final List<LivingEntity> list = this.level().getEntitiesOfClass(LivingEntity.class, axisalignedbb);
             if (!list.isEmpty())
             {
                 for (final LivingEntity livingentity : list)
@@ -154,7 +150,7 @@ public class DruidPotionEntity extends ThrownPotion
         potionentity.setItem(potionStack);
         potionentity.setPos(thrower.getX(), thrower.getY() + 1, thrower.getZ());
 
-        thrower.level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(), SoundEvents.WITCH_THROW, thrower.getSoundSource(), 1.0F, 0.8F + thrower.getRandom().nextFloat() * 0.4F);
+        thrower.level().playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(), SoundEvents.WITCH_THROW, thrower.getSoundSource(), 1.0F, 0.8F + thrower.getRandom().nextFloat() * 0.4F);
 
         Vec3 movement = target.getDeltaMovement();
 
@@ -166,12 +162,5 @@ public class DruidPotionEntity extends ThrownPotion
 
         potionentity.shoot(x, y + distance * 0.2, z, velocity, inaccuracy);
         world.addFreshEntity(potionentity);
-    }
-
-    @Override
-    @NotNull
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

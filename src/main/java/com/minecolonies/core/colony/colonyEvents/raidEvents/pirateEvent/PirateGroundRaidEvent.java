@@ -167,6 +167,6 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_PIRATE);
+        return Component.translatableEscape(RAID_PIRATE);
     }
 }

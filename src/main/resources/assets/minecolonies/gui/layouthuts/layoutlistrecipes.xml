@@ -1,9 +1,10 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.listrecipes)"/>
 
-    <label size="100% 11" pos="70 30"  color="black" id="recipestatus" />
+    <text size="100% 11" pos="70 30"  color="black" id="recipestatus" />
     <list id="recipes" size="85% 150" pos="20 40">
         <view size="100% 50">
             <gradient id="gradient" size="100% 100%" pos="0 0" visible="false" gradientstart="rgb(160,160,160)" gradientend="rgb(160,160,160)"/>
@@ -25,12 +26,12 @@
             <button id="down" size="15 15" label="↧" pos="0 15"/>
             <button id="remove" size="45 15" pos="105 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
             <button id="toggle" size="45 15" pos="105 18" label="$(com.minecolonies.coremod.gui.recipe.disable)"/>
-            <label id="intermediate" size="45 15" pos="105 33" textalign="MIDDLE" color="black" />
+            <text id="intermediate" size="45 15" pos="105 33" textalign="MIDDLE" color="black" />
         </view>
     </list>
 
 
-    <buttonimage id="crafting" size="129 17" pos="30 200" textcolor="black"
+    <button id="crafting" size="129 17" pos="30 200" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

@@ -21,8 +21,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -143,7 +141,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (!colony.getRaiderManager().areSpiesEnabled())
             {
-                if (InventoryUtils.tryRemoveStackFromItemHandler(this.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST)))
+                if (InventoryUtils.tryRemoveStackFromItemHandler(getItemHandlerCap(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST)))
                 {
                     colony.getRaiderManager().setSpiesEnabled(true);
                     colony.markDirty();

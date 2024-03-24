@@ -79,7 +79,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final IColony colony = getColony(itemStack);
         if (colony == null)
         {
-            player.displayClientMessage(Component.translatable(MESSAGE_SCROLL_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatableEscape(MESSAGE_SCROLL_NEED_COLONY), true);
             return itemStack;
         }
 

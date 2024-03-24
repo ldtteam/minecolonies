@@ -37,7 +37,7 @@ public class CommandColonyChunks implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -68,7 +68,7 @@ public class CommandColonyChunks implements IMCColonyOfficerCommand
             .append(Component.literal(" " + NAME_TEXT))
             .append(Component.literal("" + colony.getName()).withStyle(ChatFormatting.YELLOW)), true);
         context.getSource().sendSuccess(() -> Component.literal("Loaded chunks:").append(Component.literal(" " + colony.getLoadedChunkCount()).withStyle(ChatFormatting.YELLOW)), true);
-        context.getSource().sendSuccess(() -> Component.translatable("Ticket types: ").append(Component.literal(ticketString.toString()).withStyle(ChatFormatting.YELLOW)), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape("Ticket types: ").append(Component.literal(ticketString.toString()).withStyle(ChatFormatting.YELLOW)), true);
 
         return 1;
     }

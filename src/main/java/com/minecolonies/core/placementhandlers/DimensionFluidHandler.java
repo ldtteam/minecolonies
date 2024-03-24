@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
+import static com.ldtteam.structurize.api.constants.Constants.UPDATE_FLAG;
 
 /**
  * Makes lava in the nether free and water everywhere else.

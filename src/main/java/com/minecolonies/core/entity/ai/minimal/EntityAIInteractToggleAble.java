@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.minimal;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
@@ -103,7 +104,7 @@ public class EntityAIInteractToggleAble extends Goal
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
         }
 
-        offSet = entityIn.level.random.nextInt(20);
+        offSet = entityIn.level().random.nextInt(20);
     }
 
     /**
@@ -191,7 +192,7 @@ public class EntityAIInteractToggleAble extends Goal
             }
             else
             {
-                dir = Direction.getNearest(next.x - current.x, 0, next.z - current.z);
+                dir = BlockPosUtil.directionFromDelta(next.x - current.x, 0, next.z - current.z);
             }
 
             // Check necessary height levels
@@ -217,11 +218,11 @@ public class EntityAIInteractToggleAble extends Goal
             return;
         }
 
-        final BlockState state = entity.level.getBlockState(pos);
+        final BlockState state = entity.level().getBlockState(pos);
         if (this.entity.distanceToSqr(pos.getX(), this.entity.getY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
         {
             // See if current pos collision shape can fit our entity in
-            final VoxelShape collisionShape = state.getCollisionShape(entity.level, pos);
+            final VoxelShape collisionShape = state.getCollisionShape(entity.level(), pos);
             dir = dir.getClockWise();
             if (collisionShape.min(dir.getAxis()) + 0.1 < entity.getBbWidth() && collisionShape.max(dir.getAxis()) + 0.1 + entity.getBbWidth() > 1)
             {
@@ -261,13 +262,13 @@ public class EntityAIInteractToggleAble extends Goal
                     continue;
                 }
 
-                BlockState state = entity.level.getBlockState(pos);
+                BlockState state = entity.level().getBlockState(pos);
                 if (this.entity.distanceToSqr(pos.getX(), entity.getY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
                 {
                     if (level > 0)
                     {
                         // Above current pathing node, so need to use this toggleable block
-                        toggleAblePositions.put(pos, entity.level.getBlockState(pos).getValue(BlockStateProperties.OPEN));
+                        toggleAblePositions.put(pos, entity.level().getBlockState(pos).getValue(BlockStateProperties.OPEN));
                     }
                     else if (i < path.getNodeCount() - 1)
                     {
@@ -275,7 +276,7 @@ public class EntityAIInteractToggleAble extends Goal
                         final Node nextPoint = path.getNode(i + 1);
                         if (pos.getX() == nextPoint.x && pos.getY() > nextPoint.y && pos.getZ() == nextPoint.z)
                         {
-                            toggleAblePositions.put(pos, entity.level.getBlockState(pos).getValue(BlockStateProperties.OPEN));
+                            toggleAblePositions.put(pos, entity.level().getBlockState(pos).getValue(BlockStateProperties.OPEN));
                         }
                     }
                 }
@@ -338,10 +339,10 @@ public class EntityAIInteractToggleAble extends Goal
         {
             for (final ToggleAble toggleAble : toggleAbles)
             {
-                final BlockState state = entity.level.getBlockState(pos);
+                final BlockState state = entity.level().getBlockState(pos);
                 if (toggleAble.isBlockToggleAble(state) && (!toggleAble.onlyCloseYourOpens() || myToggled.contains(toggleAble)))
                 {
-                    toggleAble.toggleBlockClosed(entity, state, entity.level, pos);
+                    toggleAble.toggleBlockClosed(entity, state, entity.level(), pos);
                     myToggled.remove(toggleAble);
                     break;
                 }
@@ -398,7 +399,7 @@ public class EntityAIInteractToggleAble extends Goal
         while (it.hasNext())
         {
             final BlockPos pos = it.next();
-            final BlockState state = entity.level.getBlockState(pos);
+            final BlockState state = entity.level().getBlockState(pos);
 
             // Recheck validity maybe the block changed
             if (!isValidBlockState(state))
@@ -410,12 +411,12 @@ public class EntityAIInteractToggleAble extends Goal
             if (this.entity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > MAX_DISTANCE)
             {
                 it.remove();
-                final BlockState blockState = entity.level.getBlockState(pos);
+                final BlockState blockState = entity.level().getBlockState(pos);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
                     if (toggleAble.isBlockToggleAble(blockState) && (!toggleAble.onlyCloseYourOpens() || myToggled.contains(toggleAble)))
                     {
-                        toggleAble.toggleBlockClosed(entity, blockState, entity.level, pos);
+                        toggleAble.toggleBlockClosed(entity, blockState, entity.level(), pos);
                         myToggled.remove(toggleAble);
                         break;
                     }
@@ -428,14 +429,14 @@ public class EntityAIInteractToggleAble extends Goal
 
         if (!posList.isEmpty())
         {
-            final BlockPos chosen = posList.get(entity.level.random.nextInt(posList.size()));
+            final BlockPos chosen = posList.get(entity.level().random.nextInt(posList.size()));
             {
-                final BlockState state = entity.level.getBlockState(chosen);
+                final BlockState state = entity.level().getBlockState(chosen);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
                     if (toggleAble.isBlockToggleAble(state) && toggleAble.canOpen(state))
                     {
-                        toggleAble.toggleBlock(entity, state, entity.level, chosen);
+                        toggleAble.toggleBlock(entity, state, entity.level(), chosen);
                         myToggled.add(toggleAble);
                         break;
                     }

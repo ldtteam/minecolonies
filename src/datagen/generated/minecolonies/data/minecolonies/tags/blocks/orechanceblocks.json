@@ -1,7 +1,6 @@
 {
   "values": [
     "#forge:stone",
-    "#forge:cobblestone",
     "#minecraft:base_stone_overworld",
     "#minecraft:base_stone_nether"
   ]

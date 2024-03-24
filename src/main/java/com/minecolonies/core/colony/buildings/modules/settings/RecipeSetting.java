@@ -19,9 +19,8 @@ import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +167,7 @@ public class RecipeSetting implements ICraftingSetting
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(stack.getPrimaryOutput().getDescriptionId()));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(key, triggerButton, settingsModuleView);
         pane.findPaneOfTypeByID("iconto", ItemIcon.class).setItem(stack.getPrimaryOutput());
         pane.findPaneOfTypeByID("iconfrom", ItemIcon.class).setItem(stack.getCleanedInput().get(0).getItemStack());
     }
@@ -206,7 +205,7 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public void copyValue(final ISetting setting)
+    public void copyValue(final ISetting<?> setting)
     {
         if (setting instanceof final RecipeSetting other)
         {

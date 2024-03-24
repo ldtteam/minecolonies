@@ -1,5 +1,6 @@
 package com.minecolonies.api;
 
+import com.ldtteam.common.config.Configurations;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
@@ -15,7 +16,9 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
-import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.configuration.ClientConfiguration;
+import com.minecolonies.api.configuration.CommonConfiguration;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
@@ -26,8 +29,8 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraft.core.Registry;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
 {
@@ -80,13 +83,13 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<BuildingEntry> getBuildingRegistry()
+    public Registry<BuildingEntry> getBuildingRegistry()
     {
         return apiInstance.getBuildingRegistry();
     }
 
     @Override
-    public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
+    public Registry<FieldRegistries.FieldEntry> getFieldRegistry()
     {
         return apiInstance.getFieldRegistry();
     }
@@ -98,13 +101,13 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<JobEntry> getJobRegistry()
+    public Registry<JobEntry> getJobRegistry()
     {
         return apiInstance.getJobRegistry();
     }
 
     @Override
-    public IForgeRegistry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
+    public Registry<InteractionResponseHandlerEntry> getInteractionResponseHandlerRegistry()
     {
         return apiInstance.getInteractionResponseHandlerRegistry();
     }
@@ -116,7 +119,7 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<GuardType> getGuardTypeRegistry()
+    public Registry<GuardType> getGuardTypeRegistry()
     {
         return apiInstance.getGuardTypeRegistry();
     }
@@ -128,7 +131,7 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public Configuration getConfig()
+    public Configurations<ClientConfiguration, ServerConfiguration, CommonConfiguration> getConfig()
     {
         return apiInstance.getConfig();
     }
@@ -152,73 +155,73 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
+    public Registry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
+    public Registry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public Registry<ResearchCostType> getResearchCostRegistry()
     {
         return apiInstance.getResearchCostRegistry();
     }
 
     @Override
-    public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
+    public Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
     {
         return apiInstance.getColonyEventRegistry();
     }
 
     @Override
-    public IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
+    public Registry<ColonyEventDescriptionTypeRegistryEntry> getColonyEventDescriptionRegistry()
     {
         return apiInstance.getColonyEventDescriptionRegistry();
     }
 
     @Override
-    public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
+    public Registry<RecipeTypeEntry> getRecipeTypeRegistry()
     {
         return apiInstance.getRecipeTypeRegistry();
     }
 
     @Override
-    public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
+    public Registry<CraftingType> getCraftingTypeRegistry()
     {
         return apiInstance.getCraftingTypeRegistry();
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
+    public Registry<QuestRegistries.RewardEntry> getQuestRewardRegistry()
     {
         return apiInstance.getQuestRewardRegistry();
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
+    public Registry<QuestRegistries.ObjectiveEntry> getQuestObjectiveRegistry()
     {
         return apiInstance.getQuestObjectiveRegistry();
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
+    public Registry<QuestRegistries.TriggerEntry> getQuestTriggerRegistry()
     {
         return apiInstance.getQuestTriggerRegistry();
     }
 
     @Override
-    public IForgeRegistry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
+    public Registry<QuestRegistries.DialogueAnswerEntry> getQuestDialogueAnswerRegistry()
     {
         return apiInstance.getQuestDialogueAnswerRegistry();
     }
 
     @Override
-    public IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
+    public Registry<HappinessRegistry.HappinessFactorTypeEntry> getHappinessTypeRegistry()
     {
         return apiInstance.getHappinessTypeRegistry();
     }
 
     @Override
-    public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
+    public Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return apiInstance.getHappinessFunctionRegistry();
     }

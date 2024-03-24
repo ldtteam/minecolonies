@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -36,10 +37,11 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final Recipe<?> recipe, @NotNull final Level world)
+    public static IGenericRecipe of(@Nullable final RecipeHolder<?> holder, @NotNull final Level world)
     {
-        if (recipe == null) return null;
+        if (holder == null) return null;
 
+        final Recipe<?> recipe = holder.value();
         final List<List<ItemStack>> inputs = compactInputs(recipe.getIngredients().stream()
                 .map(ingredient -> Arrays.asList(ingredient.getItems()))
                 .collect(Collectors.toList()));
@@ -55,7 +57,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getId(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
+        return new GenericRecipe(holder.id(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
                 size, intermediate, null, ToolType.NONE, new ArrayList<>(), -1);
     }
 

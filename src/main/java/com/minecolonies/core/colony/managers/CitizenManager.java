@@ -19,7 +19,6 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenModule;
@@ -42,7 +41,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,13 +128,13 @@ public class CitizenManager implements ICitizenManager
         if (!existingCitizen.isPresent())
         {
             data.setEntity(entity);
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
         if (existingCitizen.get() == entity)
         {
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -144,7 +143,7 @@ public class CitizenManager implements ICitizenManager
             existingCitizen.get().remove(Entity.RemovalReason.DISCARDED);
             data.setEntity(entity);
             entity.setCivilianData(data);
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -224,8 +223,7 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.isDirty() || !newSubscribers.isEmpty())
                 {
-                    final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage(colony, citizen);
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+                    new ColonyViewCitizenViewMessage(colony, citizen).sendToPlayer(players);
                 }
             }
         }
@@ -351,7 +349,7 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
+        NeoForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
 
         return citizenData;
     }
@@ -378,10 +376,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final ServerPlayer player : colony.getPackageManager().getCloseSubscribers())
-        {
-            Network.getNetwork().sendToPlayer(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
-        }
+        new ColonyViewRemoveCitizenMessage(colony, citizen.getId()).sendToPlayer(colony.getPackageManager().getCloseSubscribers());
 
         calculateMaxCitizens();
         markDirty();
@@ -610,7 +605,7 @@ public class CitizenManager implements ICitizenManager
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
 
-                MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
+                NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
 
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));

@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +21,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -114,12 +113,12 @@ public final class BlockPosUtil
     /**
      * Searches a random direction.
      *
-     * @param random a random object.
      * @return a tuple of two directions.
      */
-    public static Tuple<Direction, Direction> getRandomDirectionTuple(final RandomSource random)
+    public static Tuple<Direction, Direction> getRandomDirectionTuple()
     {
-        return new Tuple<>(Direction.getRandom(random), Direction.getRandom(random));
+        return new Tuple<>(Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)],
+          Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)]);
     }
 
     /**
@@ -134,8 +133,6 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
-        final RandomSource random = world.random;
-
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
@@ -144,13 +141,13 @@ public final class BlockPosUtil
                  || !BlockUtils.isAnySolid(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
-            final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
+            final Tuple<Direction, Direction> direction = getRandomDirectionTuple();
             pos =
               new BlockPos(currentPosition)
-                .relative(direction.getA(), random.nextInt(maxDist) + minDist)
-                .relative(direction.getB(), random.nextInt(maxDist) + minDist)
-                .above(random.nextInt(UP_DOWN_RANGE))
-                .below(random.nextInt(UP_DOWN_RANGE));
+                .relative(direction.getA(), ColonyConstants.rand.nextInt(maxDist) + minDist)
+                .relative(direction.getB(), ColonyConstants.rand.nextInt(maxDist) + minDist)
+                .above(ColonyConstants.rand.nextInt(UP_DOWN_RANGE))
+                .below(ColonyConstants.rand.nextInt(UP_DOWN_RANGE));
 
             if (tries >= MAX_TRIES)
             {
@@ -480,6 +477,105 @@ public final class BlockPosUtil
     }
 
     /**
+     * Manhatten distance
+     */
+    public static int distManhattan(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = Math.abs(pos.getX() - pos2.getX());
+        int yDist = Math.abs(pos.getY() - pos2.getY());
+        int zDist = Math.abs(pos.getZ() - pos2.getZ());
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Manhatten distance
+     */
+    public static int distManhattan(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = Math.abs(pos.getX() - x2);
+        int yDist = Math.abs(pos.getY() - y2);
+        int zDist = Math.abs(pos.getZ() - z2);
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Manhatten distance
+     */
+    public static int distManhattan(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = Math.abs(x1 - x2);
+        int yDist = Math.abs(y1 - y2);
+        int zDist = Math.abs(z1 - z2);
+        return xDist + yDist + zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = pos.getX() - pos2.getX();
+        int yDist = pos.getY() - pos2.getY();
+        int zDist = pos.getZ() - pos2.getZ();
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = pos.getX() - x2;
+        int yDist = pos.getY() - y2;
+        int zDist = pos.getZ() - z2;
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Square distance
+     */
+    public static int distSqr(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = x1 - x2;
+        int yDist = y1 - y2;
+        int zDist = z1 - z2;
+        return xDist * xDist + yDist * yDist + zDist * zDist;
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final BlockPos pos, final int x2, final int y2, final int z2)
+    {
+        int xDist = pos.getX() - x2;
+        int yDist = pos.getY() - y2;
+        int zDist = pos.getZ() - z2;
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final BlockPos pos, final BlockPos pos2)
+    {
+        int xDist = pos.getX() - pos2.getX();
+        int yDist = pos.getY() - pos2.getY();
+        int zDist = pos.getZ() - pos2.getZ();
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
+     * Euclidean distance
+     */
+    public static double dist(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        int xDist = x1 - x2;
+        int yDist = y1 - y2;
+        int zDist = z1 - z2;
+        return Math.sqrt(xDist * xDist + yDist * yDist + zDist * zDist);
+    }
+
+    /**
      * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
      * is also aligned to chunk-like sizes; this does not return full world height.  (It also
      * might return Y coordinates outside the world limits, so clip before using if needed.)
@@ -610,9 +706,19 @@ public final class BlockPosUtil
      * @param z      z-coordinate        (point 2).
      * @return True when coordinates are equal, otherwise false.
      */
-    public static boolean isEqual(@NotNull final BlockPos coords, final int x, final int y, final int z)
+    public static boolean equals(@NotNull final BlockPos coords, final int x, final int y, final int z)
     {
         return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
+    }
+
+    public static boolean equals(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        return x1 == x2 && y1 == y2 && z1 == z2;
+    }
+
+    public static boolean equals(final BlockPos pos1, final BlockPos pos2)
+    {
+        return pos1.equals(pos2);
     }
 
     /**
@@ -684,7 +790,7 @@ public final class BlockPosUtil
     public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getNearest(vector.getX(), vector.getY(), vector.getZ());
+        return directionFromDelta(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
@@ -697,9 +803,8 @@ public final class BlockPosUtil
     public static Direction getXZFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getNearest(vector.getX(), 0, vector.getZ());
+        return directionFromDelta(vector.getX(), 0, vector.getZ());
     }
-
 
     /**
      * Get facing from x,y
@@ -711,7 +816,68 @@ public final class BlockPosUtil
      */
     public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
     {
-        return Direction.getNearest(pos1X - pos2X, 0, pos1Z - pos2Z);
+        if (pos2X > pos1X)
+        {
+            return Direction.EAST;
+        }
+        else if (pos2X < pos1X)
+        {
+            return Direction.WEST;
+        }
+        if (pos2Z < pos1Z)
+        {
+            return Direction.NORTH;
+        }
+        else
+        {
+            return Direction.SOUTH;
+        }
+    }
+
+    /**
+     * Calculate a direction from a given delta.
+     * @param x the delta x.
+     * @param y the delta y.
+     * @param z the delta z.
+     * @return the direction.
+     */
+    public static Direction directionFromDelta(int x, int y, int z)
+    {
+        if (x == 0)
+        {
+            if (y == 0)
+            {
+                if (z > 0)
+                {
+                    return Direction.SOUTH;
+                }
+
+                if (z < 0)
+                {
+                    return Direction.NORTH;
+                }
+            }
+            else if (z == 0)
+            {
+                if (y > 0)
+                {
+                    return Direction.UP;
+                }
+
+                return Direction.DOWN;
+            }
+        }
+        else if (y == 0 && z == 0)
+        {
+            if (x > 0)
+            {
+                return Direction.EAST;
+            }
+
+            return Direction.WEST;
+        }
+
+        return Direction.NORTH;
     }
 
     /**
@@ -805,8 +971,8 @@ public final class BlockPosUtil
          */
         DirectionResult(final String longText, final String shortText)
         {
-            this.longText = Component.translatable(longText);
-            this.shortText = Component.translatable(shortText);
+            this.longText = Component.translatableEscape(longText);
+            this.shortText = Component.translatableEscape(shortText);
         }
 
         /**
@@ -836,27 +1002,6 @@ public final class BlockPosUtil
         public Component getShortText()
         {
             return shortText;
-        }
-    }
-
-    /**
-     * Get the rotation enum value from the amount of rotations.
-     *
-     * @param rotations the amount of rotations.
-     * @return the enum Rotation.
-     */
-    public static Rotation getRotationFromRotations(final int rotations)
-    {
-        switch (rotations)
-        {
-            case ROTATE_ONCE:
-                return Rotation.CLOCKWISE_90;
-            case ROTATE_TWICE:
-                return Rotation.CLOCKWISE_180;
-            case ROTATE_THREE_TIMES:
-                return Rotation.COUNTERCLOCKWISE_90;
-            default:
-                return Rotation.NONE;
         }
     }
 

@@ -1,13 +1,15 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
-import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,17 +17,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TownHallRenameMessage extends AbstractColonyServerMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "town_hall_rename", TownHallRenameMessage::new);
+
     private static final int    MAX_NAME_LENGTH  = 25;
     private static final int    SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
-    private              String name;
-
-    /**
-     * Empty public constructor.
-     */
-    public TownHallRenameMessage()
-    {
-        super();
-    }
+    private final              String name;
 
     /**
      * Object creation for the town hall rename
@@ -35,36 +31,28 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
      */
     public TownHallRenameMessage(@NotNull final IColonyView colony, final String name)
     {
-        super(colony);
+        super(TYPE, colony);
         this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected TownHallRenameMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        name = buf.readUtf(32767);
+        super(buf, type);
+        final String nameLong = buf.readUtf(32767);
+        name = (nameLong.length() <= MAX_NAME_LENGTH) ? nameLong : nameLong.substring(0, SUBSTRING_LENGTH);
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeUtf(name);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
         colony.setName(name);
-
-        if (ctxIn.getSender() != null)
-        {
-            Network.getNetwork().sendToEveryone(this);
-        }
-
-        if (isLogicalServer)
-        {
-            MinecraftForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
-        }
+        NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
     }
 }

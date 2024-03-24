@@ -87,7 +87,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_AMAZON);
+        return Component.translatableEscape(RAID_AMAZON);
     }
 
     @Override

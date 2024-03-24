@@ -94,19 +94,18 @@ public final class TeleportHelper
     public static void surfaceTeleport(@NotNull final ServerPlayer player)
     {
         BlockPos position = BlockPos.containing(player.getX(), 250, player.getZ()); //start at current position
-        final ServerLevel world = (ServerLevel) player.level;
 
-        position = BlockPosUtil.findLand(position, world);
+        position = BlockPosUtil.findLand(position, player.serverLevel());
 
         ChunkPos chunkpos = new ChunkPos(position);
-        world.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getId());
+        player.serverLevel().getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getId());
         player.stopRiding();
         if (player.isSleeping())
         {
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(world, position.getX(), position.getY() + 2.0, position.getZ(), player.getYRot(), player.getXRot());
+        player.teleportTo(player.serverLevel(), position.getX(), position.getY() + 2.0, position.getZ(), player.getYRot(), player.getXRot());
     }
 
     /**

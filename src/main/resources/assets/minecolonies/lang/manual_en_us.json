@@ -1005,9 +1005,6 @@
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
   "com.minecolonies.coremod.gui.workerhuts.pickup.denied": "You cannot pickup this building.",
 
-  "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
-  "com.minecolonies.coremod.toofar": "You can't place a colony that far from world-spawn. It can be at most %d blocks away! This can be configured in the server config.",
-
   "com.minecolonies.coremod.gui.scantool.select": "Select",
 
   "com.minecolonies.coremod.gui.workerhuts.happiness": "Happiness",
@@ -1164,12 +1161,11 @@
   "com.minecolonies.coremod.gui.colony.none": "You do not currently own a colony.",
   "com.minecolonies.coremod.gui.colony.own": "You own an existing colony at %s.",
   "com.minecolonies.coremod.gui.colony.delete": "Delete own colony",
-  "com.minecolonies.coremod.gui.colony.delete.sure": "§lDo you really want to delete your own colony?",
   "com.minecolonies.coremod.gui.colony.delete.notfound": "You do not currently own a colony to delete!",
   "com.minecolonies.coremod.gui.colony.delete.confirm": "§4Yes, delete!",
   "com.minecolonies.coremod.gui.colony.delete.success": "Successfully deleted your colony!",
   "com.minecolonies.coremod.gui.colony.delete.cancel": "§2Don't delete!",
-  "com.minecolonies.coremod.gui.colony.create": "Create new colony",
+  "com.minecolonies.coremod.gui.colony.create": "Sign Covenant and Found Colony",
   "com.minecolonies.coremod.gui.colony.create.notileentity": "Missing tile entity for the Town Hall block, try placing it down again!",
   "com.minecolonies.coremod.gui.colony.create.failed": "Oopsy, just noticed you already got a colony. Please try again!",
   "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
@@ -2102,6 +2098,7 @@
 
   "com.minecolonies.coremod.setting.minecolonies:retreat": "Retreat on low health:",
   "com.minecolonies.coremod.setting.minecolonies:hiretrainee": "Hire Trainee:",
+  "com.minecolonies.coremod.setting.tooltip.minecolonies:hiretrainee": "This setting only works when any of the jobs can be hired automatically.",
   "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
@@ -2162,6 +2159,7 @@
   "com.minecolonies.coremod.gui.chat.moobien": "Just a simple bloke from the deep south looking for somewhere to build",
   "com.minecolonies.coremod.gui.chat.cammy": "I am an elven brewmaster from the fallen Silverleaf Realm, roaming MineColonies offering exotic brews, seeking allies to reclaim his homeland's lost magic and glory",
   "com.minecolonies.coremod.gui.chat.duran": "Hi! I'm not sure how I got here.....BUT HECC YOU IM STAYIN!",
+  "com.minecolonies.coremod.gui.chat.sheizen": "Hi there! I'm an explorer who goes by the name Reizar. There is something interesting about this place, and I'd like to be a part of it.",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
@@ -2260,8 +2258,6 @@
   "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!",
   "com.minecolonies.coremod.gui.workerhuts.warehouse.couriers": "Couriers",
 
-  "com.minecolonies.coremod.building.missingcolony": "No colony was founded in this land yet, seek out the townhall to start a new colony here!",
-  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
   "com.minecolonies.coremod.gui.reactivate.button": "Reactivate",
   "block.minecolonies.simplequarry": "Simple Quarry",
   "block.minecolonies.simplequarry.name": "Simple Quarry",
@@ -2530,8 +2526,52 @@
   "com.minecolonies.coremod.gui.townhall.stats.mob_killed": "Killed %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.item_obtained": "Got %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.int_leveled": "%d Intelligence leveled",
-  "com.minecolonies.coremod.progress.colony_founded": "Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall.",
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
-  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!"
+  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!",
+  "com.minecolonies.core.settlementcovenant.title": "Settlement Covenant",
+  "com.minecolonies.core.settlementcovenant1": "In the year %d after creeper, we formally lay down the foundations of a new settlement henceforth called:",
+  "com.minecolonies.core.settlementcovenant2": "We pledge to steward the land with care, ensuring the safety, prosperity, and wellbeing of all who call it home.",
+  "com.minecolonies.core.settlementcovenant3.hasclose": "Furthermore, we solemnly commit to fostering constructive relations with the neighboring settlement of %s, located no more than %s blocks from here.",
+  "com.minecolonies.core.settlementcovenant3.noclose": "Furthermore, we solemnly commit to fostering constructive relations with potential neighboring settlements.",
+  "com.minecolonies.core.settlementcovenant4": "May this covenant stand as a testament to our shared dedication to building a better future for ourselves and generations to come.",
+  "com.minecolonies.core.configsetting": "Based on Config Setting",
+
+  "com.minecolonies.core.founding.tooclosetospawn": "We can't settle here. This place is too close to the world spawn and claimed by the Herobrine family. Let's journey further out, by at least another %d blocks.",
+  "com.minecolonies.core.founding.toofarfromspawn": "We can't settle out here. This place is too far from the usual trade routes. Let's turn back and retreat by at least %d blocks.",
+  "com.minecolonies.core.founding.tooclosetocolony": "We can't settle here. This spot is already claimed by a closeby colony. Let's respectfully give them their space and seek out new horizons, at least %d blocks from here.",
+  "com.minecolonies.core.founding.pickup": "Pickup Town Hall",
+  "com.minecolonies.core.founding.delete": "Destroy Old Colony",
+  "com.minecolonies.core.founding.abandon": "Abandon Old Colony",
+
+  "com.minecolonies.core.gui.colony.delete.proceed": "Are you sure you wish to proceed? This action cannot be undone and will leave behind a ghost town!",
+  "com.minecolonies.core.gui.colony.abandon.proceed": "Are you sure you wish to proceed? This action cannot be undone and you may not be able to alter certain settings in the old colony anymore!",
+
+  "com.minecolonies.core.gui.colony.abandon.warning": "⚠ Warning ⚠ \n\n You are already administering a settlement at \n [%d %d %d] called %s. \n\n If you wish to establish another settlement here, you have two options: \n\n - Either destroy the existing settlement entirely, leaving behind a ghost town. \n\n - Or step down from your position as mayor and retain a role as an officer within the old colony.",
+  "com.minecolonies.core.gui.colony.delete.warning": "⚠ Warning ⚠ \n\n You are already administering a settlement at \n [%d %d %d] called %s. \n\n If you wish to establish another settlement here, you must destroy the old settlement entirely, leaving behind a ghost town.",
+
+  "com.minecolonies.core.gui.colony.destroy.success": "Successfully destroyed your colony!",
+  "com.minecolonies.core.gui.colony.abandon.success": "Successfully abandoned your colony!",
+
+  "com.minecolonies.core.gui.colony.delete.confirm": "Destroy Colony",
+  "com.minecolonies.core.gui.colony.abandon.confirm": "Abandon Colony",
+  "com.minecolonies.core.gui.colony.manage.cancel": "Cancel",
+  "com.minecolonies.core.gui.colony.reactivate.question": "Are you, valiant traveler, brave enough to pick up where we failed and rebuild %s to its former glory?",
+  "com.minecolonies.core.gui.colony.reactivate.title": "Historic Record: %s",
+  "com.minecolonies.core.gui.reactivate.button": "Reinstate Settlement",
+  "com.minecolonies.core.gui.reactivate.message.living": "This once thrived as a %s. With careful attention and the skilled hands of a builder, you can breathe new life into this structure, enabling citizens to once again call it home. Assign a builder to restore it to its former glory, reactivating its purpose and revitalizing the community.",
+  "com.minecolonies.core.gui.reactivate.message.working": "This building once hummed with the activity of a %s. By initiating its reactivation, you'll open doors for citizens to resume their work here. Entrust a skilled builder with its repair, restoring it to its former functionality and igniting productivity once more.",
+
+  "com.minecolonies.coremod.building.missingcolony": "This building seems to belong to a long abandoned colony, try to locate the townhall to find out what happened here.",
+  "com.minecolonies.coremod.progress.colony_founded": "News spreads swiftly of the newly founded settlement. Before long, pioneers from distant lands will flock to join the ranks of your burgeoning colony.",
+  "com.minecolonies.coremod.progress.colony_reactivated": "Word of a courageous adventurer dedicated to restoring the glory of %s swiftly traverses the land. Eager settlers and former residents alike are drawn to your townhall, inspired by the opportunity to contribute their skills and efforts to this noble endeavor.",
+
+  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
+
+  "com.minecolonies.core.gui.supplies.selectstyle": "Select Style",
+  "com.minecolonies.core.gui.supplies.place": "Place %s",
+  "com.minecolonies.core.gui.supplies.guide": "Use these supplies to assemble a %s to serve as a foundation for your own colony. Within it, aside from §2ample resources§r, you shall find\na salvaged §2townhall block§r and §2build tool§r to lay the groundworks of the new colony. Founding a colony demands resilience; beyond the basic necessities of shelter, sustenance, and healing, lies the imperative to fortify against the looming threats of piracy and barbarism. Yet, should you endure these trials, the potential for growth knows no bounds. From artisans to scholars, miners to alchemists, your settlement holds the promise of evolving into a §2self-sustaining bastion of prosperity and knowledge§r.",
+
+  "com.minecolonies.core.gui.supplycamp.guide": "Make sure to find a flat, open area large enough for the camp's layout to place it.",
+  "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size."
 }

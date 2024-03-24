@@ -1,12 +1,12 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -15,7 +15,8 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -36,16 +37,17 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.ToolActions;
+import net.neoforged.neoforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -111,14 +113,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (quarry == null)
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
         if (quarry.getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -144,7 +146,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
             final Tuple<String, String> shaft = getShaftPath(quarry);
             final WorkOrderMiner wo =
-              new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+              new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotationMirror(), quarry.getPosition().below(2), false, building.getPosition());
             wo.setClaimedBy(building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
@@ -213,12 +215,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
-    public void loadStructure(
-      @NotNull final IWorkOrder workOrder,
-      final int rotateTimes,
-      final BlockPos position,
-      final boolean isMirrored,
-      final boolean removal)
+    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final RotationMirror rotMir, final boolean removal)
     {
         final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
@@ -237,7 +234,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             structure = new BuildingStructureHandler<>(world,
               position,
               blueprint,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              rotMir,
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
             building.setTotalStages(3);
 
@@ -250,7 +247,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             }
 
             job.setBlueprint(structure.getBluePrint());
-            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+            job.getBlueprint().setRotationMirror(rotMir, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -413,7 +410,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
             final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
-            if (currentWorldPos.getY() < worker.level.getMinBuildHeight() + 5)
+            if (currentWorldPos.getY() < worker.level().getMinBuildHeight() + 5)
             {
                 building.setProgressPos(null, null);
                 worker.getCitizenData().setStatusPosition(null);
@@ -434,8 +431,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure =
-          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        final WorkerLoadOnlyStructureHandler<JobQuarrier, BuildingMiner> structure =
+          new WorkerLoadOnlyStructureHandler<>(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), RotationMirror.NONE, true, this);
         job.getWorkOrder().setIteratorType("default");
 
         final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
@@ -563,12 +560,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         boolean isCanceled = false;
         if (job.findQuarry() == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
         else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
         else if (job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
@@ -656,11 +653,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         for (final Direction direction : Direction.values())
         {
             final BlockPos pos = blockToMine.relative(direction);
-            final BlockState surroundingState = world.getBlockState(pos);
-
             final FluidState fluid = world.getFluidState(pos);
-            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA))
-                  || SurfaceType.isWater(world, pos, surroundingState, fluid))
+            if (!fluid.isEmpty())
             {
                 setBlockFromInventory(pos, getMainFillBlock());
             }
@@ -786,7 +780,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
-    public BlockState getSolidSubstitution(final BlockPos ignored)
+    
+    public BlockState getSolidSubstitution(final BlockPos worldPos, final Function<BlockPos, @Nullable BlockState> virtualBlocks)
     {
         return getMainFillBlock().defaultBlockState();
     }

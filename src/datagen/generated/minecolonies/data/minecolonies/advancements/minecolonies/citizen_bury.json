@@ -2,21 +2,16 @@
   "parent": "minecolonies:minecolonies/build_tavern",
   "criteria": {
     "buried": {
-      "conditions": {},
       "trigger": "minecolonies:citizen_bury"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.citizen.bury.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutgraveyard"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.citizen.bury.title"
     }

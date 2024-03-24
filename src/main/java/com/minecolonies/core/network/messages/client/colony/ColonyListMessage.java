@@ -1,35 +1,37 @@
 package com.minecolonies.core.network.messages.client.colony;
 
+import com.ldtteam.common.network.AbstractPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.network.IMessage;
-import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class ColonyListMessage implements IMessage
+public class ColonyListMessage extends AbstractPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forBothSides(Constants.MOD_ID, "colony_list", ColonyListMessage::new);
+
     /**
      * List of colonies
      */
-    List<IColony>    colonies   = new ArrayList<>();
-    List<ColonyInfo> colonyInfo = new ArrayList<>();
+    private final List<IColony>    colonies;
+    private final List<ColonyInfo> colonyInfo;
 
-    /**
-     * Empty constructor used when registering the
-     */
     public ColonyListMessage()
     {
-        super();
+        this(Collections.emptyList());
     }
 
     /**
@@ -37,51 +39,47 @@ public class ColonyListMessage implements IMessage
      */
     public ColonyListMessage(final List<IColony> colonies)
     {
-        super();
+        super(TYPE);
         this.colonies = colonies;
+        this.colonyInfo = null;
+    }
+
+    protected ColonyListMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    {
+        super(buf, type);
+        colonies = null;
+        colonyInfo = buf.readList(b -> {
+            final ColonyInfo info = new ColonyInfo(b.readInt());
+            info.center = b.readBlockPos();
+            info.name = b.readUtf(32767);
+            info.citizencount = b.readInt();
+            info.owner = b.readUtf(32767);
+            return info;
+        });
     }
 
     @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
-        colonyInfo = new ArrayList<>();
-        final int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            final ColonyInfo info = new ColonyInfo(buf.readInt());
-            info.center = buf.readBlockPos();
-            info.name = buf.readUtf(32767);
-            info.citizencount = buf.readInt();
-            info.owner = buf.readUtf(32767);
-            colonyInfo.add(info);
-        }
+        buf.writeCollection(colonies, (b, colony) ->{
+            b.writeInt(colony.getID());
+            b.writeBlockPos(colony.getCenter());
+            b.writeUtf(colony.getName());
+            b.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
+            b.writeUtf(colony.getPermissions().getOwnerName());
+        });
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void onClientExecute(final PlayPayloadContext context, final Player player)
     {
-        buf.writeInt(colonies.size());
-        for (final IColony colony : colonies)
-        {
-            buf.writeInt(colony.getID());
-            buf.writeBlockPos(colony.getCenter());
-            buf.writeUtf(colony.getName());
-            buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
-            buf.writeUtf(colony.getPermissions().getOwnerName());
-        }
+        WindowColonyMap.setColonies(colonyInfo);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    protected void onServerExecute(final PlayPayloadContext context, final ServerPlayer player)
     {
-        if (!isLogicalServer)
-        {
-            WindowColonyMap.setColonies(colonyInfo);
-        }
-        else if (ctxIn.getSender() != null)
-        {
-            Network.getNetwork().sendToPlayer(new ColonyListMessage(IColonyManager.getInstance().getColonies(ctxIn.getSender().level)), ctxIn.getSender());
-        }
+        new ColonyListMessage(IColonyManager.getInstance().getColonies(player.level())).sendToPlayer(player);
     }
 
     public static class ColonyInfo

@@ -31,7 +31,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURR_STAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGES;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * The structureBuilder building.
@@ -143,15 +142,15 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
                 if (building.getTileEntity() != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getItemHandlerCap(),
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                if (data.getJob() instanceof IJobWithExternalWorkStations)
+                if (data.getJob() instanceof final IJobWithExternalWorkStations jobExternalStations)
                 {
-                    for (final IBuilding station : ((IJobWithExternalWorkStations) data.getJob()).getWorkStations())
+                    for (final IBuilding station : jobExternalStations.getWorkStations())
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getItemHandlerCap(),
                           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                     }
                 }

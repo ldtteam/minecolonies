@@ -5,7 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final Rule noGildedHammer = builder -> builder.maxResearchId(ResearchConstants.CRUSHING_11);
         final Rule withGildedHammer = builder -> builder.minResearchId(ResearchConstants.CRUSHING_11);
@@ -62,7 +61,7 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
         crush(consumer, "tuff2", new ItemStack(Items.COBBLED_DEEPSLATE), new ItemStack(Items.TUFF), withTheDepths, withGildedHammer);
     }
 
-    private void crush(@NotNull final Consumer<FinishedRecipe> consumer,
+    private void crush(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                        @NotNull final String name,
                        @NotNull final ItemStack input,
                        @NotNull final ItemStack output,

@@ -28,11 +28,11 @@ public class CommandExportColony implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyId), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyId), true);
             return 0;
         }
 
-        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_EXPORT_SUCCESS, BackUpHelper.exportColony(colony)), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_EXPORT_SUCCESS, BackUpHelper.exportColony(colony)), true);
         return 1;
     }
 

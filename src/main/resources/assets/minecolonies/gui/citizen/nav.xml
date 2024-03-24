@@ -1,32 +1,32 @@
-<window size="210 244" pause="false" lightbox="false">
-    <buttonimage id="mainTab" size="32 26" pos="0 36"
+<window size="210 244" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <button id="mainTab" size="32 26" pos="0 36"
                  source="minecolonies:textures/gui/modules/tab_side1.png"/>
-    <buttonimage id="mainIcon" size="20 20" pos="5 39"
+    <button id="mainIcon" size="20 20" pos="5 39"
                  source="minecolonies:textures/gui/modules/info.png"/>
 
-    <buttonimage id="requestTab" size="32 26" pos="0 64"
+    <button id="requestTab" size="32 26" pos="0 64"
                  source="minecolonies:textures/gui/modules/tab_side2.png"/>
-    <buttonimage id="requestIcon" size="20 20" pos="5 67"
+    <button id="requestIcon" size="20 20" pos="5 67"
                  source="minecolonies:textures/gui/modules/requests.png"/>
 
-    <buttonimage id="inventoryTab" size="32 26" pos="0 92"
+    <button id="inventoryTab" size="32 26" pos="0 92"
                  source="minecolonies:textures/gui/modules/tab_side3.png"/>
-    <buttonimage id="inventoryIcon" size="20 20" pos="5 95"
+    <button id="inventoryIcon" size="20 20" pos="5 95"
                  source="minecolonies:textures/gui/modules/inventory.png"/>
 
-    <buttonimage id="happinessTab" size="32 26" pos="0 118"
+    <button id="happinessTab" size="32 26" pos="0 118"
                  source="minecolonies:textures/gui/modules/tab_side2.png"/>
-    <buttonimage id="happinessIcon" size="20 20" pos="5 121"
+    <button id="happinessIcon" size="20 20" pos="5 121"
                  source="minecolonies:textures/gui/modules/happiness.png"/>
 
-    <buttonimage id="familyTab" size="32 26" pos="0 144"
+    <button id="familyTab" size="32 26" pos="0 144"
                  source="minecolonies:textures/gui/modules/tab_side1.png"/>
-    <buttonimage id="familyIcon" size="20 20" pos="5 147"
+    <button id="familyIcon" size="20 20" pos="5 147"
                  source="minecolonies:textures/gui/modules/family.png"/>
 
-    <buttonimage id="jobTab" size="32 26" pos="0 170" visible="false"
+    <button id="jobTab" size="32 26" pos="0 170" visible="false"
                  source="minecolonies:textures/gui/modules/tab_side3.png"/>
-    <buttonimage id="jobIcon" size="20 20" pos="5 173" visible="false"
+    <button id="jobIcon" size="20 20" pos="5 173" visible="false"
                  source="minecolonies:textures/gui/modules/main.png"/>
 
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="190 244" pos="20 0"/>

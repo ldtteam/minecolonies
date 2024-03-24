@@ -3,12 +3,11 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
-import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
-import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -20,50 +19,42 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
+public class DefaultBlockLootTableProvider extends BlockLootSubProvider
 {
-
-    public DefaultBlockLootTableProvider(final PackOutput output)
+    public DefaultBlockLootTableProvider()
     {
-        super(output);
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
     }
 
     @Override
-    public String getName()
+    public void generate()
     {
-        return "Mcol Loot";
-    }
+        saveBlocks(Arrays.asList(ModBlocks.getHuts()));
 
-    @Override
-    protected void registerTables(@NotNull final LootTableRegistrar registrar)
-    {
-        saveBlocks(Arrays.asList(ModBlocks.getHuts()), registrar);
+        saveBlock(ModBlocks.blockHutWareHouse);
+        saveBlock(ModBlocks.blockStash);
 
-        saveBlock(ModBlocks.blockHutWareHouse, registrar);
-        saveBlock(ModBlocks.blockStash, registrar);
-
-        saveBlock(ModBlocks.blockConstructionTape, registrar);
-        saveBlock(ModBlocks.blockRack, registrar);
-        saveBlock(ModBlocks.blockWayPoint, registrar);
-        saveBlock(ModBlocks.blockBarrel, registrar);
-        saveBlock(ModBlocks.blockScarecrow, registrar);
-        saveBlock(ModBlocks.blockPlantationField, registrar);
-        saveBlock(ModBlocks.blockColonyBanner, registrar);
-        saveBlock(ModBlocks.blockColonyWallBanner, registrar);
-        saveBlock(ModBlocks.blockIronGate, registrar);
-        saveBlock(ModBlocks.blockWoodenGate, registrar);
-        saveBlock(ModBlocks.blockCompostedDirt, registrar,
+        saveBlock(ModBlocks.blockRack);
+        saveBlock(ModBlocks.blockWayPoint);
+        saveBlock(ModBlocks.blockBarrel);
+        saveBlock(ModBlocks.blockScarecrow);
+        saveBlock(ModBlocks.blockPlantationField);
+        saveBlock(ModBlocks.blockColonyBanner);
+        saveBlock(ModBlocks.blockColonyWallBanner);
+        saveBlock(ModBlocks.blockIronGate);
+        saveBlock(ModBlocks.blockWoodenGate);
+        saveBlock(ModBlocks.blockCompostedDirt,
           lootPool -> lootPool.add(AlternativesEntry.alternatives()
                                      .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
                                                   .when(MatchTool.toolMatches(ItemPredicate.Builder.item()
@@ -74,50 +65,33 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
         // intentionally no drops -- creative only
         //saveBlock(ModBlocks.blockDecorationPlaceholder);
 
-        saveBannerBlock(Blocks.BLACK_BANNER, registrar);
-        saveBannerBlock(Blocks.BLUE_BANNER, registrar);
-        saveBannerBlock(Blocks.BROWN_BANNER, registrar);
-        saveBannerBlock(Blocks.WHITE_BANNER, registrar);
-        saveBannerBlock(Blocks.CYAN_BANNER, registrar);
-        saveBannerBlock(Blocks.GRAY_BANNER, registrar);
-        saveBannerBlock(Blocks.GREEN_BANNER, registrar);
-        saveBannerBlock(Blocks.LIGHT_BLUE_BANNER, registrar);
-        saveBannerBlock(Blocks.LIGHT_GRAY_BANNER, registrar);
-        saveBannerBlock(Blocks.LIME_BANNER, registrar);
-        saveBannerBlock(Blocks.MAGENTA_BANNER, registrar);
-        saveBannerBlock(Blocks.ORANGE_BANNER, registrar);
-        saveBannerBlock(Blocks.PINK_BANNER, registrar);
-        saveBannerBlock(Blocks.PURPLE_BANNER, registrar);
-        saveBannerBlock(Blocks.RED_BANNER, registrar);
-        saveBannerBlock(Blocks.YELLOW_BANNER, registrar);
-
-        saveBannerBlock(Blocks.BLACK_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.BLUE_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.BROWN_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.WHITE_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.CYAN_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.GRAY_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.GREEN_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.LIGHT_BLUE_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.LIGHT_GRAY_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.LIME_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.MAGENTA_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.ORANGE_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.PINK_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.PURPLE_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.RED_WALL_BANNER, registrar);
-        saveBannerBlock(Blocks.YELLOW_WALL_BANNER, registrar);
+        saveBannerBlock(Blocks.BLACK_BANNER);
+        saveBannerBlock(Blocks.BLUE_BANNER);
+        saveBannerBlock(Blocks.BROWN_BANNER);
+        saveBannerBlock(Blocks.WHITE_BANNER);
+        saveBannerBlock(Blocks.CYAN_BANNER);
+        saveBannerBlock(Blocks.GRAY_BANNER);
+        saveBannerBlock(Blocks.GREEN_BANNER);
+        saveBannerBlock(Blocks.LIGHT_BLUE_BANNER);
+        saveBannerBlock(Blocks.LIGHT_GRAY_BANNER);
+        saveBannerBlock(Blocks.LIME_BANNER);
+        saveBannerBlock(Blocks.MAGENTA_BANNER);
+        saveBannerBlock(Blocks.ORANGE_BANNER);
+        saveBannerBlock(Blocks.PINK_BANNER);
+        saveBannerBlock(Blocks.PURPLE_BANNER);
+        saveBannerBlock(Blocks.RED_BANNER);
+        saveBannerBlock(Blocks.YELLOW_BANNER);
     }
 
-    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks, @NotNull final LootTableRegistrar registrar)
+    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks)
     {
         for (final Block block : blocks)
         {
-            saveBlock(block, registrar);
+            saveBlock(block);
         }
     }
 
-    private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
+    private void saveBlock(@NotNull final Block block)
     {
         final LootPoolSingletonContainer.Builder<?> item = LootItem.lootTableItem(block);
         if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
@@ -125,35 +99,62 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
             item.apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY));
         }
 
-        this.saveBlock(block, registrar, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()));
+        this.saveBlock(block, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()));
     }
 
-    private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar, final Consumer<Builder> lootPoolConfigurer)
+    private void saveBlock(@NotNull final Block block, final Consumer<Builder> lootPoolConfigurer)
     {
-        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
-        if (location != null)
-        {
-            final ResourceLocation id = new ResourceLocation(location.getNamespace(),
-              "blocks/" + location.getPath());
-
             final Builder lootPoolbuilder = LootPool.lootPool();
             lootPoolConfigurer.accept(lootPoolbuilder);
-            registrar.register(id, LootContextParamSets.BLOCK, LootTable.lootTable().withPool(lootPoolbuilder));
-        }
+            add(block, LootTable.lootTable().withPool(lootPoolbuilder));
     }
 
-    private void saveBannerBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
+    private void saveBannerBlock(@NotNull final Block block)
     {
-        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
-        if (location != null)
-        {
-            registrar.register(new ResourceLocation(location.getNamespace(), "blocks/" + location.getPath()), LootContextParamSets.BLOCK,
+            add(block,
               LootTable.lootTable().withPool(LootPool.lootPool()
                                                .add(LootItem.lootTableItem(block))
                                                .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
                                                .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("Patterns", "BlockEntityTag.Patterns").copy("id", "BlockEntityTag.id"))
                                                .when(ExplosionCondition.survivesExplosion())
               ));
-        }
+    }
+
+    @Override
+    protected Iterable<Block> getKnownBlocks()
+    {
+        return Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
+            ModBlocks.blockHutWareHouse,
+            ModBlocks.blockStash,
+            //ModBlocks.blockConstructionTape, // no loot table
+            ModBlocks.blockRack,
+            ModBlocks.blockWayPoint,
+            ModBlocks.blockBarrel,
+            ModBlocks.blockScarecrow,
+            ModBlocks.blockPlantationField,
+            ModBlocks.blockColonyBanner,
+            ModBlocks.blockColonyWallBanner,
+            ModBlocks.blockIronGate,
+            ModBlocks.blockWoodenGate,
+            ModBlocks.blockCompostedDirt,
+            //ModBlocks.blockDecorationPlaceholder, // creative only
+
+            Blocks.BLACK_BANNER,
+            Blocks.BLUE_BANNER,
+            Blocks.BROWN_BANNER,
+            Blocks.WHITE_BANNER,
+            Blocks.CYAN_BANNER,
+            Blocks.GRAY_BANNER,
+            Blocks.GREEN_BANNER,
+            Blocks.LIGHT_BLUE_BANNER,
+            Blocks.LIGHT_GRAY_BANNER,
+            Blocks.LIME_BANNER,
+            Blocks.MAGENTA_BANNER,
+            Blocks.ORANGE_BANNER,
+            Blocks.PINK_BANNER,
+            Blocks.PURPLE_BANNER,
+            Blocks.RED_BANNER,
+            Blocks.YELLOW_BANNER
+        )).map(Block.class::cast).toList();
     }
 }

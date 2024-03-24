@@ -1,44 +1,5 @@
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        mavenLocal()
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0+', changing: true
-        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
-        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
-        classpath 'de.undercouch:gradle-download-task:4.1.2'
-    }
-}
-
 plugins {
   id "org.sonarqube" version "3.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
-
-configurations {
-    library
-    implementation.extendsFrom library
-}
-
-// Allow 400 errors.
-gradle.projectsEvaluated {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xmaxerrs" << "1000"
-    }
-}
-
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-    }
-}
-
-project.tasks.getByName("processResources", {task ->
-    task.duplicatesStrategy 'include'
-})
+apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/ng7/gradle/mod.gradle'

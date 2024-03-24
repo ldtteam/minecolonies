@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +23,6 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse.MAX_STORAGE_UPGRADE;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class which handles the tileEntity of our colony warehouse.
@@ -91,18 +92,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             for (@NotNull final BlockPos pos : getBuilding().getContainers())
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                if (entity instanceof final TileEntityRack rack && !rack.isEmpty() && rack.getItemCount(itemStackSelectionPredicate) > 0)
                 {
-                    final TileEntityRack rack = (TileEntityRack) entity;
                     for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
                     {
                         found.add(new Tuple<>(stack, pos));
                     }
                 }
 
-                if (entity instanceof ChestBlockEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
+                final IItemHandler cap;
+                if (entity instanceof ChestBlockEntity && InventoryUtils.hasItemInItemHandler((cap = ItemHandler.BLOCK.getCapability(entity.getLevel(), entity.getBlockPos(), entity.getBlockState(), entity, null)), itemStackSelectionPredicate))
                 {
-                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
+                    for (final ItemStack stack : InventoryUtils.filterItemHandler(cap, itemStackSelectionPredicate))
                     {
                         found.add(new Tuple<>(stack, pos));
                     }
@@ -123,7 +124,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 continue;
             }
 
-            @Nullable final BlockEntity chest = getRackForStack(stack);
+            @Nullable final AbstractTileEntityRack chest = getRackForStack(stack);
             if (chest == null)
             {
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
@@ -148,8 +149,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 return;
             }
 
-            final int index = i;
-            chest.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, i, chest.getItemHandlerCap());
         }
     }
 
@@ -158,9 +158,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @param stack the stack to insert.
      * @return the matching rack.
      */
-    public BlockEntity getRackForStack(final ItemStack stack)
+    public AbstractTileEntityRack getRackForStack(final ItemStack stack)
     {
-        BlockEntity rack = getPositionOfChestWithItemStack(stack);
+        AbstractTileEntityRack rack = getPositionOfChestWithItemStack(stack);
         if (rack == null)
         {
             rack = getPositionOfChestWithSimilarItemStack(stack);
@@ -179,18 +179,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the tile entity of the chest
      */
     @Nullable
-    private BlockEntity getPositionOfChestWithItemStack(@NotNull final ItemStack stack)
+    private AbstractTileEntityRack getPositionOfChestWithItemStack(@NotNull final ItemStack stack)
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             if (WorldUtil.isBlockLoaded(level, pos))
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof AbstractTileEntityRack)
+                if (entity instanceof final AbstractTileEntityRack rack)
                 {
-                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasItemStack(stack, 1, true))
+                    if (rack.getFreeSlots() > 0 && rack.hasItemStack(stack, 1, true))
                     {
-                        return entity;
+                        return rack;
                     }
                 }
             }
@@ -206,18 +206,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the entity of the chest.
      */
     @Nullable
-    private BlockEntity getPositionOfChestWithSimilarItemStack(final ItemStack stack)
+    private AbstractTileEntityRack getPositionOfChestWithSimilarItemStack(final ItemStack stack)
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             if (WorldUtil.isBlockLoaded(level, pos))
             {
                 final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof AbstractTileEntityRack)
+                if (entity instanceof final AbstractTileEntityRack rack)
                 {
-                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasSimilarStack(stack))
+                    if (rack.getFreeSlots() > 0 && rack.hasSimilarStack(stack))
                     {
-                        return entity;
+                        return rack;
                     }
                 }
             }
@@ -231,25 +231,25 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the tileEntity of this chest.
      */
     @Nullable
-    private BlockEntity searchMostEmptyRack()
+    private AbstractTileEntityRack searchMostEmptyRack()
     {
         int freeSlots = 0;
-        BlockEntity emptiestChest = null;
+        AbstractTileEntityRack emptiestChest = null;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final BlockEntity entity = getLevel().getBlockEntity(pos);
-            if (entity instanceof TileEntityRack)
+            if (entity instanceof final TileEntityRack rack)
             {
-                if (((AbstractTileEntityRack) entity).isEmpty())
+                if (rack.isEmpty())
                 {
-                    return entity;
+                    return rack;
                 }
 
-                final int tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
+                final int tempFreeSlots = rack.getFreeSlots();
                 if (tempFreeSlots > freeSlots)
                 {
                     freeSlots = tempFreeSlots;
-                    emptiestChest = entity;
+                    emptiestChest = rack;
                 }
             }
         }

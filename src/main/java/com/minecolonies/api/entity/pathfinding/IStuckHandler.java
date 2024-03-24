@@ -1,5 +1,7 @@
 package com.minecolonies.api.entity.pathfinding;
 
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+
 /**
  * Stuck handler for pathing, gets called to check/deal with stuck status
  */

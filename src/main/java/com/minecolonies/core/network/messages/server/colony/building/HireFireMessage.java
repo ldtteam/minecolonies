@@ -1,13 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,28 +18,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "hire_fire", HireFireMessage::new);
+
     /**
      * If hiring (true) else firing.
      */
-    private boolean hire;
+    private final boolean hire;
 
     /**
      * The citizen to hire/fire.
      */
-    private int citizenID;
+    private final int citizenID;
 
     /**
      * The module id
      */
-    private int moduleId;
-
-    /**
-     * Empty public constructor.
-     */
-    public HireFireMessage()
-    {
-        super();
-    }
+    private final int moduleId;
 
     /**
      * Creates object for the player to hire or fire a citizen.
@@ -47,7 +44,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      */
     public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final int moduleId)
     {
-        super(building);
+        super(TYPE, building);
         this.hire = hire;
         this.citizenID = citizenID;
         this.moduleId = moduleId;
@@ -58,9 +55,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      *
      * @param buf the used byteBuffer.
      */
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected HireFireMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         hire = buf.readBoolean();
         citizenID = buf.readInt();
         moduleId = buf.readInt();
@@ -72,17 +69,18 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
         buf.writeInt(moduleId);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        if (building.getModule(moduleId) instanceof IAssignsJob module)
+        if (building.getModule(moduleId) instanceof final IAssignsJob module)
         {
             final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
             citizen.setPaused(false);

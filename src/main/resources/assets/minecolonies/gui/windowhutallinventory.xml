@@ -1,24 +1,24 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
         size="190 244"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
+    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.allinventory)"/>
     <input id="names" size="132 18" pos="15 30" maxlength="25"/>
-    <buttonimage id="sortStorageFilter" size="14 15" pos="158 31" textcolor="black"
+    <button id="sortStorageFilter" size="14 15" pos="158 31" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                  label="v^"/>
     <list id="allinventorylist" size="165 156" pos="15 55">
         <box size="100% 18" linewidth="1">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
-            <label id="ressourceStackName" size="100 12" pos="20 3" color="black"/>
-            <label id="quantities" size="25 18" pos="117 1" color="black"/>
-            <buttonimage id="locate" size="14 15" pos="141 1" textcolor="black"
+            <text id="ressourceStackName" size="100 12" pos="20 3" color="black"/>
+            <text id="quantities" size="25 18" pos="117 1" color="black"/>
+            <button id="locate" size="14 15" pos="141 1" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                          label="?"/>
         </box>
     </list>
-    <buttonimage id="back" size="86 17" pos="50 215" textcolor="black"
+    <button id="back" size="86 17" pos="50 215" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.coremod.gui.back)"/>
 </window>

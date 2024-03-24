@@ -1,14 +1,13 @@
 package com.minecolonies.api.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -25,6 +24,12 @@ import java.util.Optional;
  */
 public class ResearchUnlocked implements LootItemCondition
 {
+    public static final Codec<ResearchUnlocked> CODEC = RecordCodecBuilder.create(builder -> builder
+        .group(ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.effectId),
+            ExtraCodecs.strictOptionalField(Codec.DOUBLE, "minStrength", Double.MIN_VALUE).forGetter(r -> r.minStrength),
+            ExtraCodecs.strictOptionalField(Codec.DOUBLE, "maxStrength", Double.MAX_VALUE).forGetter(r -> r.maxStrength))
+        .apply(builder, ResearchUnlocked::new));
+
     private final ResourceLocation effectId;
     private final double minStrength;
     private final double maxStrength;
@@ -104,37 +109,5 @@ public class ResearchUnlocked implements LootItemCondition
         return Optional.ofNullable(colony)
                 .map(c -> c.getResearchManager().getResearchEffects().getEffectStrength(this.effectId))
                 .map(s -> s >= this.minStrength && s < this.maxStrength);
-    }
-
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ResearchUnlocked>
-    {
-        @Override
-        public void serialize(@NotNull final JsonObject json,
-                              @NotNull final ResearchUnlocked condition,
-                              @NotNull final JsonSerializationContext context)
-        {
-            json.addProperty("id", condition.effectId.toString());
-
-            if (condition.minStrength != Double.MIN_VALUE)
-            {
-                json.addProperty("minStrength", condition.minStrength);
-            }
-
-            if (condition.maxStrength != Double.MAX_VALUE)
-            {
-                json.addProperty("maxStrength", condition.maxStrength);
-            }
-        }
-
-        @NotNull
-        @Override
-        public ResearchUnlocked deserialize(@NotNull final JsonObject json,
-                                                 @NotNull final JsonDeserializationContext context)
-        {
-            final ResourceLocation researchId = new ResourceLocation(GsonHelper.getAsString(json, "id", ""));
-            final double minStrength = GsonHelper.getAsDouble(json, "minStrength", Double.MIN_VALUE);
-            final double maxStrength = GsonHelper.getAsDouble(json, "maxStrength", Double.MAX_VALUE);
-            return new ResearchUnlocked(researchId, minStrength, maxStrength);
-        }
     }
 }

@@ -205,7 +205,7 @@ public class ReproductionManager implements IReproductionManager
             newCitizen.setSuffix(possibleSuffixes.get(random.nextInt(possibleSuffixes.size())));
 
             final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
-            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.get().trigger(playerMP, populationCount));
 
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
             if (isOnlyChildInColony)

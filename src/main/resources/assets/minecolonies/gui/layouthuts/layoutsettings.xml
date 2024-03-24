@@ -1,6 +1,7 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
 
     <list id="settingslist" size="164 170" pos="13 40">
         <box size="100% 45" linewidth="1" id="box"/>

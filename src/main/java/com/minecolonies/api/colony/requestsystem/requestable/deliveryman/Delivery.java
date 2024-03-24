@@ -61,7 +61,7 @@ public class Delivery extends AbstractDeliverymanRequestable
 
         compound.put(NBT_START, controller.serialize(delivery.getStart()));
         compound.put(NBT_TARGET, controller.serialize(delivery.getTarget()));
-        compound.put(NBT_STACK, delivery.getStack().serializeNBT());
+        compound.put(NBT_STACK, delivery.getStack().save(new CompoundTag()));
         compound.put(NBT_PRIORITY, controller.serialize(delivery.getPriority()));
 
         return compound;

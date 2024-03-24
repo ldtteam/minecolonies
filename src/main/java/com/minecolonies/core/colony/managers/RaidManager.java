@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.managers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -10,7 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
@@ -47,6 +48,8 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -320,28 +323,28 @@ public class RaidManager implements IRaiderManager
             }
 
             // No rotation till spawners are moved into schematics
-            final int shipRotation = colony.getWorld().random.nextInt(4);
+            final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().random.nextInt(4)], Mirror.NONE);
             final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
             final int rand = colony.getWorld().random.nextInt(100);
             if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, NorsemenShipRaidEvent.SHIP_NAME))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotation);
+                event.setShipRotation(shipRotMir);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
-            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
+            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
                        && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotation);
+                event.setShipRotation(shipRotMir);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
@@ -397,7 +400,7 @@ public class RaidManager implements IRaiderManager
     {
         final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
-          new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint, 200);
+          new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
     }

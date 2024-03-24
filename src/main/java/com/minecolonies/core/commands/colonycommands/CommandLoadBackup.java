@@ -27,7 +27,7 @@ public class CommandLoadBackup implements IMCOPCommand
     {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         BackUpHelper.loadColonyBackup(colonyId, context.getSource().getLevel().dimension(), true, true);
-        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
         return 1;
     }
 

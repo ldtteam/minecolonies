@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.workorders.view;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import net.minecraft.core.BlockPos;
@@ -50,12 +51,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     /**
      * Position where its being built at.
      */
-    private int rotation;
-
-    /**
-     * Position where its being built at.
-     */
-    private boolean isMirrored;
+    private RotationMirror rotationMirror;
 
     /**
      * The level it's at before the upgrade.
@@ -159,15 +155,9 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     }
 
     @Override
-    public int getRotation()
+    public RotationMirror getRotationMirror()
     {
-        return rotation;
-    }
-
-    @Override
-    public boolean isMirrored()
-    {
-        return isMirrored;
+        return rotationMirror;
     }
 
     public int getCurrentLevel()
@@ -215,8 +205,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         translationKey = buf.readUtf(32767);
         workOrderType = WorkOrderType.values()[buf.readInt()];
         location = buf.readBlockPos();
-        rotation = buf.readInt();
-        isMirrored = buf.readBoolean();
+        rotationMirror = RotationMirror.values()[buf.readByte()];
         currentLevel = buf.readInt();
         targetLevel = buf.readInt();
         amountOfResources = buf.readInt();

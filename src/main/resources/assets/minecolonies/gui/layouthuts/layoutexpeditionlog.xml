@@ -1,11 +1,12 @@
-<window size="190 244" pause="false" lightbox="false">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.expeditionlog)" color="black" textalign="MIDDLE"/>
+    <text id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.expeditionlog)" color="black" textalign="MIDDLE"/>
 
-    <label id="name" size="164 11" color="black" pos="13 28" textalign="MIDDLE"/>
-    <label id="status" size="164 11" color="black" pos="13 39" textalign="MIDDLE"/>
+    <text id="name" size="164 11" color="black" pos="13 28" textalign="MIDDLE"/>
+    <text id="status" size="164 11" color="black" pos="13 39" textalign="MIDDLE"/>
     <view id="healthBar" size="120 11" pos="35 48">
-        <label id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
+        <text id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
     </view>
     <view id="saturationBar" size="120 22" pos="35 60"/>
 

@@ -13,6 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,10 +24,8 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.List;
 import java.util.Random;
 
@@ -37,18 +36,12 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
  */
 public final class RaiderMobUtils
 {
-
-    /**
-     * Distances in which spawns are spread
-     */
-    public static       double                                MOB_SPAWN_DEVIATION_STEPS = 0.3;
-
-    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, Constants.MOD_ID);
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Constants.MOD_ID);
 
     /**
      * Mob attribute, used for custom attack damage
      */
-    public final static RegistryObject<Attribute> MOB_ATTACK_DAMAGE = ATTRIBUTES.register("mc_mob_damage", () -> new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20));
+    public final static DeferredHolder<Attribute, RangedAttribute> MOB_ATTACK_DAMAGE = ATTRIBUTES.register("mc_mob_damage", () -> new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20));
 
     /**
      * Damage increased by 1 for every 200 raid level difficulty
@@ -121,11 +114,8 @@ public final class RaiderMobUtils
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
         {
-            final int x = spawnLocation.getX();
-            final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
-            final int z = spawnLocation.getZ();
-            double spawnDeviationX = 0;
-            double spawnDeviationZ = 0;
+            int spawnDeviationX = 0;
+            int spawnDeviationZ = 0;
 
             for (int i = 0; i < numberOfSpawns; i++)
             {
@@ -133,17 +123,23 @@ public final class RaiderMobUtils
 
                 if (entity != null)
                 {
-                    entity.absMoveTo(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) Mth.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    BlockPos spawnpos = BlockPosUtil.findAround(world, spawnLocation.offset(spawnDeviationX, 0, spawnDeviationZ), 5, 5, BlockPosUtil.SOLID_AIR_POS_SELECTOR);
+                    if (spawnpos == null)
+                    {
+                        spawnpos = spawnLocation.above();
+                    }
+
+                    entity.absMoveTo(spawnpos.getX(), spawnpos.getY(), spawnpos.getZ(), (float) Mth.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                     entity.setEventID(eventID);
                     entity.registerWithColony();
-                    spawnDeviationZ += MOB_SPAWN_DEVIATION_STEPS;
+                    spawnDeviationZ += 1;
 
-                    if (spawnDeviationZ > 2)
+                    if (spawnDeviationZ > 5)
                     {
                         spawnDeviationZ = 0;
-                        spawnDeviationX += MOB_SPAWN_DEVIATION_STEPS;
+                        spawnDeviationX += 1;
                     }
                 }
             }

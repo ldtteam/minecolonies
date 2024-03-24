@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.WindowListRecipes;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.OpenCraftingGUIMessage;
@@ -16,8 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.MenuProvider;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     {
         if (buf.readBoolean())
         {
-            this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);
+            this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry());
         }
         else
         {
@@ -82,7 +81,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         final int size = buf.readVarInt();
         for (int i = 0; i < size; ++i)
         {
-            final CraftingType type = buf.readRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry());
+            final CraftingType type = buf.readById(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry());
             if (type != null)
             {
                 recipeTypeSet.add(type);
@@ -243,7 +242,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     {
         final BlockPos pos = buildingView.getPosition();
         Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()));
+        new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getProducer().getRuntimeID()).sendToServer();
     }
 
     /**

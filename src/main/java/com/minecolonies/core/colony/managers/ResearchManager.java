@@ -11,20 +11,19 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewResearchManagerViewMessage;
 import com.minecolonies.core.research.LocalResearch;
 import com.minecolonies.core.research.LocalResearchTree;
 import com.minecolonies.core.research.ResearchEffectManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -87,8 +86,7 @@ public class ResearchManager implements IResearchManager
             }
             players.addAll(newSubscribers);
 
-            final ColonyViewResearchManagerViewMessage message = new ColonyViewResearchManagerViewMessage(colony, this);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+            new ColonyViewResearchManagerViewMessage(colony, this).sendToPlayer(players);
 
         }
         clearDirty();
@@ -133,7 +131,7 @@ public class ResearchManager implements IResearchManager
     @Override
     public ResourceLocation getResearchEffectIdFrom(Block block)
     {
-        return new ResourceLocation(ForgeRegistries.BLOCKS.getKey(block).getNamespace(), "effects/" + ForgeRegistries.BLOCKS.getKey(block).getPath());
+        return new ResourceLocation(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "effects/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     @Override

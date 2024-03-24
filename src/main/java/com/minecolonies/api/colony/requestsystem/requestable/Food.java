@@ -84,7 +84,7 @@ public class Food implements IDeliverable
 
         if (!ItemStackUtils.isEmpty(food.result))
         {
-            compound.put(NBT_RESULT, food.result.serializeNBT());
+            compound.put(NBT_RESULT, food.result.save(new CompoundTag()));
         }
         if (!food.exclusionList.isEmpty())
         {

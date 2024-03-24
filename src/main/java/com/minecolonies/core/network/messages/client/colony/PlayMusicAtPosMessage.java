@@ -1,59 +1,53 @@
 package com.minecolonies.core.network.messages.client.colony;
 
-import com.minecolonies.api.network.IMessage;
-import net.minecraft.client.Minecraft;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Asks the client to play a specific music
  */
-public class PlayMusicAtPosMessage implements IMessage
+public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "play_music_at_pos", PlayMusicAtPosMessage::new);
+
     /**
      * The sound event to play.
      */
-    private SoundEvent soundEvent;
+    private final SoundEvent soundEvent;
 
     /**
      * The position to play at
      */
-    private BlockPos pos;
+    private final BlockPos pos;
 
     /**
      * The dimension id to play in
      */
-    private ResourceKey<Level> dimensionID;
+    private final ResourceKey<Level> dimensionID;
 
     /**
      * The volume to use
      */
-    private float volume;
+    private final float volume;
 
     /**
      * pitch to use
      */
-    private float pitch;
-
-    /**
-     * Default constructor.
-     */
-    public PlayMusicAtPosMessage()
-    {
-        super();
-    }
+    private final float pitch;
 
     /**
      * Create a play music message with a specific sound event.
@@ -62,7 +56,7 @@ public class PlayMusicAtPosMessage implements IMessage
      */
     public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final Level world, final float volume, final float pitch)
     {
-        super();
+        super(TYPE);
         this.soundEvent = event;
         this.pos = pos;
         this.dimensionID = world.dimension();
@@ -71,39 +65,32 @@ public class PlayMusicAtPosMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
+        buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
         buf.writeBlockPos(pos);
         buf.writeUtf(dimensionID.location().toString());
         buf.writeFloat(volume);
         buf.writeFloat(pitch);
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected PlayMusicAtPosMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        this.soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(buf.readResourceLocation());
+        super(buf, type);
+        this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
         this.pos = buf.readBlockPos();
         this.dimensionID = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
     }
 
-    @Nullable
+    
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        if (Minecraft.getInstance().level.dimension() == dimensionID)
+        if (player.level().dimension() == dimensionID)
         {
-            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
+            player.level().playSound(player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
         }
     }
 }

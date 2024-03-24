@@ -6,13 +6,13 @@ import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.research.GlobalResearch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class ListItemCost implements IResearchCost
     public void read(@NotNull final CompoundTag compound)
     {
         this.items = NBTUtils.streamCompound(compound.getList(TAG_COST_ITEMS, Tag.TAG_COMPOUND))
-                       .map(itemCompound -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemCompound.getString(TAG_COST_ITEM))))
+                       .map(itemCompound -> BuiltInRegistries.ITEM.get(new ResourceLocation(itemCompound.getString(TAG_COST_ITEM))))
                        .toList();
         this.count = compound.getInt(TAG_COST_COUNT);
     }
@@ -82,7 +82,7 @@ public class ListItemCost implements IResearchCost
     {
         final ListTag itemList = this.items.stream().map(item -> {
             final CompoundTag itemCompound = new CompoundTag();
-            itemCompound.putString(TAG_COST_ITEM, ForgeRegistries.ITEMS.getKey(item).toString());
+            itemCompound.putString(TAG_COST_ITEM, BuiltInRegistries.ITEM.getKey(item).toString());
             return itemCompound;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_COST_ITEMS, itemList);
@@ -96,7 +96,7 @@ public class ListItemCost implements IResearchCost
         buf.writeInt(this.items.size());
         for (final Item item : this.items)
         {
-            buf.writeRegistryId(ForgeRegistries.ITEMS, item);
+            buf.writeId(BuiltInRegistries.ITEM, item);
         }
     }
 
@@ -108,7 +108,7 @@ public class ListItemCost implements IResearchCost
         final int itemCount = buf.readInt();
         for (int i = 0; i < itemCount; i++)
         {
-            this.items.add(buf.readRegistryIdSafe(Item.class));
+            this.items.add(buf.readById(BuiltInRegistries.ITEM));
         }
     }
 
@@ -126,7 +126,7 @@ public class ListItemCost implements IResearchCost
         this.items = new ArrayList<>();
         for (JsonElement arrayItem : jsonObject.getAsJsonObject(RESEARCH_ITEM_NAME_PROP).getAsJsonArray(RESEARCH_ITEM_LIST_PROP))
         {
-            this.items.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(arrayItem.getAsJsonPrimitive().getAsString())));
+            this.items.add(BuiltInRegistries.ITEM.get(new ResourceLocation(arrayItem.getAsJsonPrimitive().getAsString())));
         }
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }

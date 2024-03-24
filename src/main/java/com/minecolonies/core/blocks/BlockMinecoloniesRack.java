@@ -34,8 +34,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -43,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.minecraft.core.Direction;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 
@@ -231,8 +231,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openScreen((ServerPlayer) player,
-                  rack,
+                ((ServerPlayer) player).openMenu(rack,
                   buf -> buf.writeBlockPos(rack.getBlockPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getBlockPos()));
             }
             return InteractionResult.SUCCESS;
@@ -283,14 +282,14 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public @NotNull Block getBlock()
-    {
-        return this;
-    }
-
-    @Override
     public @NotNull Collection<IMateriallyTexturedBlockComponent> getComponents()
     {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void buildRecipes(final RecipeOutput recipeOutput)
+    {
+        // noop, for DO blocks only        
     }
 }

@@ -1,9 +1,10 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.api.constants.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -43,11 +44,11 @@ public class JigsawPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (complete)
         {
-            WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+            WorldUtil.setBlockState(world, pos, blockState, Constants.UPDATE_FLAG);
             if (tileEntityData != null)
             {
                 try
@@ -88,7 +89,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
                 return ActionProcessingResult.SUCCESS;
             }
 
-            WorldUtil.setBlockState(world, pos, finalState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+            WorldUtil.setBlockState(world, pos, finalState, Constants.UPDATE_FLAG);
         }
         
         return ActionProcessingResult.SUCCESS;

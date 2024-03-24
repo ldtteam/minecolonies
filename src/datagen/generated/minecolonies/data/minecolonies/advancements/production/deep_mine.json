@@ -2,21 +2,16 @@
   "parent": "minecolonies:production/build_miner",
   "criteria": {
     "mineshaft": {
-      "conditions": {},
       "trigger": "minecolonies:deep_mine"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.deep_mine.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecraft:bedrock"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.deep_mine.title"
     }

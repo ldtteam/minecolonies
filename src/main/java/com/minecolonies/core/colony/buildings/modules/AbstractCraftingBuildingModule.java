@@ -46,7 +46,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -253,7 +253,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         if (jobEntry != null)
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
+            buf.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
         else
         {
@@ -264,7 +264,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeVarInt(craftingTypes.size());
         for (final CraftingType type : craftingTypes)
         {
-            buf.writeRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
+            buf.writeId(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
         }
 
         final List<IRecipeStorage> storages = new ArrayList<>();
@@ -475,7 +475,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     final IRecipeStorage storage = recipeManager.getRecipes().get(token);
 
                     //Let's verify that this recipe doesn't exist in an improved form
-                    if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
+                    if(storage != null && ItemStack.matches(storage.getPrimaryOutput(), recipeStorage.getPrimaryOutput()))
                     {
                         List<ItemStorage> recipeInput1 = storage.getCleanedInput();
                         List<ItemStorage> recipeInput2 = recipeStorage.getCleanedInput();

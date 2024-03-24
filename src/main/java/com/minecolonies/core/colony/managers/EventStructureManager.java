@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.managers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
@@ -9,7 +10,6 @@ import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
@@ -22,8 +22,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -34,7 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.BLUEPRINT_FOLDER;
+import static com.ldtteam.structurize.api.constants.Constants.BLUEPRINT_FOLDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -105,7 +103,7 @@ public class EventStructureManager implements IEventStructureManager
                                   .resolve(anchor.toString() + ".blueprint");
 
         final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true,
-                structure.getSizeX(), structure.getSizeY(), structure.getSizeZ(), anchor.toString(), Optional.of(anchor)));
+                (short) structure.getSizeX(), structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(), Optional.of(anchor)));
 
         StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
 
@@ -146,7 +144,7 @@ public class EventStructureManager implements IEventStructureManager
                         return;
                     }
 
-                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
+                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, RotationMirror.NONE, true);
                     Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), null));
 
                     try

@@ -27,8 +27,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,11 +157,11 @@ public class BlockSetting implements ISetting<BlockItem>
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(SWITCH));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(key, triggerButton, settingsModuleView);
     }
 
     @Override
-    public void copyValue(final ISetting setting)
+    public void copyValue(final ISetting<?> setting)
     {
         if (setting instanceof final BlockSetting other)
         {

@@ -1,6 +1,8 @@
 {
   "pack": {
-    "pack_format": 15,
-    "description": "Resources used for MineColonies"
+    "pack_format": 18,
+    "description": {
+      "text": "Resources used for MineColonies"
+    }
   }
 }

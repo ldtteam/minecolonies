@@ -1,14 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,28 +18,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class UpdateRequestStateMessage extends AbstractColonyServerMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "update_request_state", UpdateRequestStateMessage::new);
+
     /**
      * The requestId
      */
-    private IToken<?> token;
+    private final IToken<?> token;
 
     /**
      * How many item need to be transfer from the player inventory to the building chest.
      */
-    private ItemStack itemStack = ItemStackUtils.EMPTY;
+    private final ItemStack itemStack;
 
     /**
      * The request state to set.
      */
-    private RequestState state;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public UpdateRequestStateMessage()
-    {
-        super();
-    }
+    private final RequestState state;
 
     /**
      * Create an update request state
@@ -49,26 +45,24 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
      */
     public UpdateRequestStateMessage(final IColony colony, final IToken<?> requestId, final RequestState state, final ItemStack itemStack)
     {
-        super(colony);
+        super(TYPE, colony);
         this.token = requestId;
         this.state = state;
         this.itemStack = itemStack;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected UpdateRequestStateMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         token = StandardFactoryController.getInstance().deserialize(buf.readNbt());
         state = RequestState.values()[buf.readInt()];
-        if (state == RequestState.OVERRULED)
-        {
-            itemStack = buf.readItem();
-        }
+        itemStack = state == RequestState.OVERRULED ? buf.readItem() : ItemStack.EMPTY;
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeNbt(StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
@@ -78,7 +72,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         if (state == RequestState.OVERRULED)
         {

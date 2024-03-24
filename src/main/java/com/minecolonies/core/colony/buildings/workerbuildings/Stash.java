@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -57,8 +58,8 @@ public class Stash extends AbstractBuilding implements IRSComponent
     }
 
     @Override
-    public int getRotation()
+    public RotationMirror getRotationMirror()
     {
-        return 0;
+        return RotationMirror.NONE.mirrorate(super.getRotationMirror().mirror());
     }
 }

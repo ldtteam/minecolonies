@@ -4,14 +4,12 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.EntityListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableEntityMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void addEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, true));
+        new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, true).sendToServer();
         listOfEntities.add(entity);
     }
 
@@ -78,7 +76,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @Override
     public void removeEntity(final ResourceLocation entity)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, false));
+        new AssignFilterableEntityMessage(this.buildingView, getProducer().getRuntimeID(), entity, false).sendToServer();
         listOfEntities.remove(entity);
     }
 
@@ -111,7 +109,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
 
         for (int j = 0; j < size; j++)
         {
-            listOfEntities.add(ForgeRegistries.ENTITY_TYPES.getKey(buf.readRegistryIdUnsafe(ForgeRegistries.ENTITY_TYPES)));
+            listOfEntities.add(buf.readResourceLocation());
         }
     }
 

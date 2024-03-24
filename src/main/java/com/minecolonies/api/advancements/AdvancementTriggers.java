@@ -1,22 +1,10 @@
 package com.minecolonies.api.advancements;
 
-import com.minecolonies.api.advancements.all_towers.AllTowersTrigger;
-import com.minecolonies.api.advancements.army_population.ArmyPopulationTrigger;
-import com.minecolonies.api.advancements.building_add_recipe.BuildingAddRecipeTrigger;
-import com.minecolonies.api.advancements.citizen_bury.CitizenBuryTrigger;
-import com.minecolonies.api.advancements.citizen_eat_food.CitizenEatFoodTrigger;
-import com.minecolonies.api.advancements.citizen_resurrect.CitizenResurrectTrigger;
-import com.minecolonies.api.advancements.click_gui_button.ClickGuiButtonTrigger;
-import com.minecolonies.api.advancements.colony_population.ColonyPopulationTrigger;
-import com.minecolonies.api.advancements.complete_build_request.CompleteBuildRequestTrigger;
-import com.minecolonies.api.advancements.create_build_request.CreateBuildRequestTrigger;
-import com.minecolonies.api.advancements.deep_mine.DeepMineTrigger;
-import com.minecolonies.api.advancements.max_fields.MaxFieldsTrigger;
-import com.minecolonies.api.advancements.open_gui_window.OpenGuiWindowTrigger;
-import com.minecolonies.api.advancements.place_structure.PlaceStructureTrigger;
-import com.minecolonies.api.advancements.place_supply.PlaceSupplyTrigger;
-import com.minecolonies.api.advancements.undertaker_totem.UndertakerTotemTrigger;
-import net.minecraft.advancements.CriteriaTriggers;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * The collection of advancement triggers for minecolonies.
@@ -24,43 +12,22 @@ import net.minecraft.advancements.CriteriaTriggers;
  */
 public class AdvancementTriggers
 {
-    public static final PlaceSupplyTrigger          PLACE_SUPPLY           = new PlaceSupplyTrigger();
-    public static final PlaceStructureTrigger       PLACE_STRUCTURE        = new PlaceStructureTrigger();
-    public static final CreateBuildRequestTrigger   CREATE_BUILD_REQUEST   = new CreateBuildRequestTrigger();
-    public static final OpenGuiWindowTrigger        OPEN_GUI_WINDOW        = new OpenGuiWindowTrigger();
-    public static final ClickGuiButtonTrigger       CLICK_GUI_BUTTON       = new ClickGuiButtonTrigger();
-    public static final CitizenEatFoodTrigger       CITIZEN_EAT_FOOD       = new CitizenEatFoodTrigger();
-    public static final BuildingAddRecipeTrigger    BUILDING_ADD_RECIPE    = new BuildingAddRecipeTrigger();
-    public static final CompleteBuildRequestTrigger COMPLETE_BUILD_REQUEST = new CompleteBuildRequestTrigger();
-    public static final ColonyPopulationTrigger     COLONY_POPULATION      = new ColonyPopulationTrigger();
-    public static final ArmyPopulationTrigger       ARMY_POPULATION        = new ArmyPopulationTrigger();
-    public static final MaxFieldsTrigger            MAX_FIELDS             = new MaxFieldsTrigger();
-    public static final DeepMineTrigger             DEEP_MINE              = new DeepMineTrigger();
-    public static final AllTowersTrigger            ALL_TOWERS             = new AllTowersTrigger();
-    public static final CitizenBuryTrigger          CITIZEN_BURY           = new CitizenBuryTrigger();
-    public static final CitizenResurrectTrigger     CITIZEN_RESURRECT      = new CitizenResurrectTrigger();
-    public static final UndertakerTotemTrigger      UNDERTAKER_TOTEM       = new UndertakerTotemTrigger();
+    public static final DeferredRegister<CriterionTrigger<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.TRIGGER_TYPE, Constants.MOD_ID);
 
-    /**
-     * Registers all the triggers so they can be referenced in the advancement JSON
-     */
-    public static void preInit()
-    {
-        CriteriaTriggers.register(PLACE_SUPPLY);
-        CriteriaTriggers.register(PLACE_STRUCTURE);
-        CriteriaTriggers.register(CREATE_BUILD_REQUEST);
-        CriteriaTriggers.register(OPEN_GUI_WINDOW);
-        CriteriaTriggers.register(CLICK_GUI_BUTTON);
-        CriteriaTriggers.register(CITIZEN_EAT_FOOD);
-        CriteriaTriggers.register(BUILDING_ADD_RECIPE);
-        CriteriaTriggers.register(COMPLETE_BUILD_REQUEST);
-        CriteriaTriggers.register(COLONY_POPULATION);
-        CriteriaTriggers.register(ARMY_POPULATION);
-        CriteriaTriggers.register(MAX_FIELDS);
-        CriteriaTriggers.register(DEEP_MINE);
-        CriteriaTriggers.register(ALL_TOWERS);
-        CriteriaTriggers.register(CITIZEN_BURY);
-        CriteriaTriggers.register(CITIZEN_RESURRECT);
-        CriteriaTriggers.register(UNDERTAKER_TOTEM);
-    }
+    public static final DeferredHolder<CriterionTrigger<?>, AllTowersTrigger>            ALL_TOWERS             = DEFERRED_REGISTER.register(Constants.CRITERION_ALL_TOWERS, AllTowersTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, ArmyPopulationTrigger>       ARMY_POPULATION        = DEFERRED_REGISTER.register(Constants.CRITERION_ARMY_POPULATION, ArmyPopulationTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, BuildingAddRecipeTrigger>    BUILDING_ADD_RECIPE    = DEFERRED_REGISTER.register(Constants.CRITERION_BUILDING_ADD_RECIPE, BuildingAddRecipeTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, CitizenBuryTrigger>          CITIZEN_BURY           = DEFERRED_REGISTER.register(Constants.CRITERION_CITIZEN_BURY, CitizenBuryTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, CitizenEatFoodTrigger>       CITIZEN_EAT_FOOD       = DEFERRED_REGISTER.register(Constants.CRITERION_CITIZEN_EAT_FOOD, CitizenEatFoodTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, CitizenResurrectTrigger>     CITIZEN_RESURRECT      = DEFERRED_REGISTER.register(Constants.CRITERION_CITIZEN_RESURRECT, CitizenResurrectTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, ClickGuiButtonTrigger>       CLICK_GUI_BUTTON       = DEFERRED_REGISTER.register(Constants.CRITERION_CLICK_GUI_BUTTON, ClickGuiButtonTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, ColonyPopulationTrigger>     COLONY_POPULATION      = DEFERRED_REGISTER.register(Constants.CRITERION_COLONY_POPULATION, ColonyPopulationTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, CompleteBuildRequestTrigger> COMPLETE_BUILD_REQUEST = DEFERRED_REGISTER.register(Constants.CRITERION_COMPLETE_BUILD_REQUEST, CompleteBuildRequestTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, CreateBuildRequestTrigger>   CREATE_BUILD_REQUEST   = DEFERRED_REGISTER.register(Constants.CRITERION_CREATE_BUILD_REQUEST, CreateBuildRequestTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, DeepMineTrigger>             DEEP_MINE              = DEFERRED_REGISTER.register(Constants.CRITERION_DEEP_MINE, DeepMineTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, MaxFieldsTrigger>            MAX_FIELDS             = DEFERRED_REGISTER.register(Constants.CRITERION_MAX_FIELDS, MaxFieldsTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, OpenGuiWindowTrigger>        OPEN_GUI_WINDOW        = DEFERRED_REGISTER.register(Constants.CRITERION_OPEN_GUI_WINDOW, OpenGuiWindowTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, PlaceStructureTrigger>       PLACE_STRUCTURE        = DEFERRED_REGISTER.register(Constants.CRITERION_STRUCTURE_PLACED, PlaceStructureTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, PlaceSupplyTrigger>          PLACE_SUPPLY           = DEFERRED_REGISTER.register(Constants.CRITERION_SUPPLY_PLACED, PlaceSupplyTrigger::new);
+    public static final DeferredHolder<CriterionTrigger<?>, UndertakerTotemTrigger>      UNDERTAKER_TOTEM       = DEFERRED_REGISTER.register(Constants.CRITERION_UNDERTAKER_TOTEM, UndertakerTotemTrigger::new);
 }

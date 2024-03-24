@@ -19,7 +19,6 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.colony.buildings.modules.FieldsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFarmer;
@@ -45,7 +44,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -215,7 +214,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (module.getOwnedFields().size() == building.getMaxBuildingLevel())
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
+            AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS.get()::trigger);
         }
 
         final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, this::isCompost, 1);
@@ -241,7 +240,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             return IDLE;
         }
@@ -389,7 +388,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if ((curBlockState.isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.liquid())
+        if ((curBlockState.isSolid() && !(curBlock instanceof PumpkinBlock) && curBlock != Blocks.MELON && !(curBlock instanceof WebBlock)) || curBlockState.liquid())
         {
             if (depth < 0)
             {
@@ -725,8 +724,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
-                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
-                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                new CompostParticleMessage(position.above())
+                    .sendToTargetPoint(new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
                 crop.growCrops(world, position.above(), state);
                 state = world.getBlockState(position.above());
                 block = state.getBlock();

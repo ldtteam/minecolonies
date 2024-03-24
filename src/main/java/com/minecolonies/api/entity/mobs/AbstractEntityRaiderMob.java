@@ -15,14 +15,14 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -36,13 +36,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.common.util.ITeleporter;
+import net.neoforged.neoforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -516,7 +515,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         final int owningColonyId = ColonyUtils.getOwningColony(chunk);
         if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level);
+            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level());
             tempColony.getRaiderManager().setPassThroughRaid();
         }
     }
@@ -622,14 +621,14 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             }
 
             final Entity source = damageSource.getEntity();
-            if (source instanceof Player)
+            if (source instanceof final Player player)
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
                     source.hurt(level().damageSources().thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());
+                final float raiderDamageEnchantLevel = player.getMainHandItem().getEnchantmentLevel(ModEnchants.raiderDamage.get());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);

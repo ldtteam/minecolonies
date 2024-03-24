@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
             return 0;
         }
 
@@ -121,7 +120,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
     MutableComponent literalAndRemember(String message)
     {
         fullLog += message + "\n";
-        return MutableComponent.create(new LiteralContents(message));
+        return Component.literal(message);
     }
 
     /**

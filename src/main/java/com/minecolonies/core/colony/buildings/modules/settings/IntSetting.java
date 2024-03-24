@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Stores an integer setting.
@@ -109,7 +109,7 @@ public class IntSetting implements ISetting<Integer>
     {
         final TextField field = pane.findPaneOfTypeByID("trigger", TextField.class);
         field.setEnabled(isActive(settingsModuleView));
-        setInActiveHoverPane(field, settingsModuleView);
+        setHoverPane(key, field, settingsModuleView);
         if (!field.getText().equals(String.valueOf(this.value)))
         {
             field.setText(String.valueOf(value));
@@ -117,7 +117,7 @@ public class IntSetting implements ISetting<Integer>
     }
 
     @Override
-    public void copyValue(final ISetting setting)
+    public void copyValue(final ISetting<?> setting)
     {
         if (setting instanceof final IntSetting other)
         {

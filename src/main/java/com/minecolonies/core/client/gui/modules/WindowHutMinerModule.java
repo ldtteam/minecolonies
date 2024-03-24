@@ -8,7 +8,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.MinerLevelManagementModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
@@ -59,7 +58,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     private void repairClicked(final Button button)
     {
         final int row = levelList.getListElementIndexByPane(button);
-        Network.getNetwork().sendToServer(new MinerRepairLevelMessage(buildingView, row));
+        new MinerRepairLevelMessage(buildingView, row).sendToServer();
         MessageUtils.format(MINER_REPAIR_ENQUEUED).sendTo(Minecraft.getInstance().player);
     }
 
@@ -69,7 +68,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
         if (row != miner.current && row >= 0 && row < levelsInfo.size())
         {
             miner.current = row;
-            Network.getNetwork().sendToServer(new MinerSetLevelMessage(buildingView, row));
+            new MinerSetLevelMessage(buildingView, row).sendToServer();
         }
     }
 
@@ -116,7 +115,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
 
                 rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Component.literal(Integer.toString(index)));
                 rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(Component.translatable(MINER_NODES)
+                  .setText(Component.translatableEscape(MINER_NODES)
                              .append(": ")
                              .append(String.valueOf(levelsInfo.get(index).getA())));
                 rowPane.findPaneOfTypeByID("yLevel", Text.class)

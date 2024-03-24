@@ -9,7 +9,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobSifter;
@@ -132,7 +131,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 }
                 if (worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
                     setDelay(NO_MESH_DELAY);
                 }
             }
@@ -195,10 +194,8 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
-        Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
+        new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()).sendToTrackingEntity(worker);
+        new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()).sendToTrackingEntity(worker);
 
         worker.swing(InteractionHand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);

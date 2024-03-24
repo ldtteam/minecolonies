@@ -51,7 +51,7 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(Component.translatable(building.getCustomName().toLowerCase(Locale.ROOT)).getString());
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(Component.translatableEscape(building.getCustomName().toLowerCase(Locale.ROOT)).getString());
     }
 
     @Override

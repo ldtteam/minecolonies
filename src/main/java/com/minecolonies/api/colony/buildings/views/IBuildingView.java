@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings.views;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -115,18 +116,11 @@ public interface IBuildingView extends IRequester, IModuleContainerView
     String getStructurePack();
 
     /**
-     * Getter for the rotation.
-     *
-     * @return the rotation.
-     */
-    int getRotation();
-
-    /**
-     * Getter for the mirror.
+     * Getter for the rotation and the mirror.
      *
      * @return true if mirrored.
      */
-    boolean isMirrored();
+    RotationMirror getRotationMirror();
 
     /**
      * Get the current work order level.

@@ -4,6 +4,9 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.claim.ChunkClaimData;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
+import com.minecolonies.api.colony.savedata.IServerColonySaveData;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;
@@ -16,24 +19,27 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowReactivateBuilding;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.core.util.BackUpHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,8 +48,6 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.core.MineColonies.getConfig;
 
 /**
@@ -74,14 +78,20 @@ public final class ColonyManager implements IColonyManager
     private boolean schematicDownloaded = false;
 
     /**
-     * If the manager finished loading already.
+     * Global claim data from all colonies
      */
-    private boolean capLoaded = false;
+    private Map<ResourceKey<Level>, Long2ObjectMap<ChunkClaimData>> chunkClaimData = new HashMap<>();
+
+    @Nullable
+    private IServerColonySaveData getColonySaveData(final ServerLevel w)
+    {
+       return IServerColonySaveData.getOrComputeSaveData(w);
+    }
 
     @Override
-    public IColony createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
+    public IColony createColony(@NotNull final ServerLevel w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IServerColonySaveData cap = IServerColonySaveData.getOrComputeSaveData(w);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -105,12 +115,12 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        ChunkDataHelper.claimColonyChunks(w, true, (Colony) colony, colony.getCenter());
         return colony;
     }
 
     @Override
-    public void deleteColonyByWorld(final int id, final boolean canDestroy, final Level world)
+    public void deleteColonyByWorld(final int id, final boolean canDestroy, final ServerLevel world)
     {
         deleteColony(getColonyByWorld(id, world), canDestroy);
     }
@@ -129,14 +139,13 @@ public final class ColonyManager implements IColonyManager
      */
     private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
     {
-        if (!(iColony instanceof Colony))
+        if (!(iColony instanceof final Colony colony))
         {
             return;
         }
 
-        final Colony colony = (Colony) iColony;
         final int id = colony.getID();
-        final Level world = colony.getWorld();
+        final ServerLevel world = colony.getWorld();
 
         if (world == null)
         {
@@ -146,7 +155,7 @@ public final class ColonyManager implements IColonyManager
 
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
+            ChunkDataHelper.claimColonyChunks(world, false, colony, colony.getCenter());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -180,7 +189,7 @@ public final class ColonyManager implements IColonyManager
 
             try
             {
-                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
+                NeoForge.EVENT_BUS.unregister(colony.getEventHandler());
             }
             catch (final NullPointerException e)
             {
@@ -189,7 +198,7 @@ public final class ColonyManager implements IColonyManager
 
             Log.getLogger().info("Deleting colony: " + colony.getID());
 
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            final IServerColonySaveData cap = getColonySaveData(world);
             if (cap == null)
             {
                 Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -199,7 +208,7 @@ public final class ColonyManager implements IColonyManager
             cap.deleteColony(id);
             BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
             colony.getImportantMessageEntityPlayers()
-              .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayer) player));
+              .forEach(player -> new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()).sendToPlayer((ServerPlayer) player));
             Log.getLogger().info("Successfully deleted colony: " + id);
         }
         catch (final RuntimeException e)
@@ -221,7 +230,11 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByWorld(final int id, final Level world)
     {
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (!(world instanceof final ServerLevel serverLevel))
+        {
+            return null;
+        }
+        final IServerColonySaveData cap = getColonySaveData(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -234,12 +247,12 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final ResourceKey<Level> registryKey)
     {
-        final Level world = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
+        final ServerLevel world = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
         if (world == null)
         {
             return null;
         }
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        final IServerColonySaveData cap = getColonySaveData(world);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -260,6 +273,7 @@ public final class ColonyManager implements IColonyManager
                 return building;
             }
         }
+
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))
@@ -307,16 +321,23 @@ public final class ColonyManager implements IColonyManager
             return false;
         }
 
-        return ChunkDataHelper.canClaimChunksInRange(w,
-          pos,
-          getConfig().getServer().initialColonySize.get());
+        if (w.isClientSide())
+        {
+            return true;
+        }
+
+        return ChunkDataHelper.canClaimChunksInRange((ServerLevel) w, pos, getConfig().getServer().initialColonySize.get());
     }
 
     @Override
     @NotNull
     public List<IColony> getColonies(@NotNull final Level w)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (!(w instanceof final ServerLevel serverLevel))
+        {
+            return Collections.emptyList();
+        }
+        final IServerColonySaveData cap = getColonySaveData(serverLevel);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -330,9 +351,13 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final Level world : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final ServerLevel world : net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            world.getCapability(COLONY_MANAGER_CAP, null).ifPresent(c -> allColonies.addAll(c.getColonies()));
+            final IServerColonySaveData cap = getColonySaveData(world);
+            if (cap != null)
+            {
+                allColonies.addAll(cap.getColonies());
+            }
         }
         return allColonies;
     }
@@ -594,38 +619,24 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldTick(final TickEvent.@NotNull LevelTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        if (event.phase == TickEvent.Phase.END && !event.level.isClientSide)
         {
             getColonies(event.level).forEach(c -> c.onWorldTick(event));
         }
     }
 
     @Override
-    public void onWorldLoad(@NotNull final Level world)
+    public void onWorldLoad(@NotNull final Level w)
     {
-        if (!world.isClientSide)
+        if (w instanceof final ServerLevel world)
         {
-            // Late-load restore if cap was not loaded
-            if (!capLoaded)
-            {
-                BackUpHelper.loadMissingColonies();
-                BackUpHelper.loadManagerBackup();
-            }
-            capLoaded = false;
-
             for (@NotNull final IColony c : getColonies(world))
             {
                 c.onWorldLoad(world);
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            NeoForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
         }
-    }
-
-    @Override
-    public void setCapLoaded()
-    {
-        this.capLoaded = true;
     }
 
     @Override
@@ -645,7 +656,7 @@ public final class ColonyManager implements IColonyManager
                 BackUpHelper.backupColonyData();
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            NeoForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
         }
     }
 
@@ -653,14 +664,13 @@ public final class ColonyManager implements IColonyManager
     public void handleColonyViewMessage(
       final int colonyId,
       @NotNull final FriendlyByteBuf colonyData,
-      @NotNull final Level world,
       final boolean isNewSubscription,
       final ResourceKey<Level> dim)
     {
         IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
         {
-            view = ColonyView.createFromNetwork(colonyId);
+            view = ColonyView.createFromNetwork(colonyId, dim);
             if (colonyViews.containsKey(dim))
             {
                 colonyViews.get(dim).add(view);
@@ -672,9 +682,9 @@ public final class ColonyManager implements IColonyManager
                 colonyViews.put(dim, list);
             }
         }
-        view.handleColonyViewMessage(colonyData, world, isNewSubscription);
+        view.handleColonyViewMessage(colonyData, isNewSubscription);
 
-        MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        NeoForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
     }
 
     @Override
@@ -808,9 +818,10 @@ public final class ColonyManager implements IColonyManager
     public int getTopColonyId()
     {
         int top = 0;
-        for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
-            final int tempTop = world.getCapability(COLONY_MANAGER_CAP, null).map(IColonyManagerCapability::getTopID).orElse(0);
+            final IServerColonySaveData cap = getColonySaveData(world);
+            final int tempTop = cap == null ? 0 : cap.getTopID();
             if (tempTop > top)
             {
                 top = tempTop;
@@ -823,5 +834,34 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+    }
+
+    @Override
+    public void addColonyDirect(final IColony colony, final ServerLevel world)
+    {
+        final IServerColonySaveData cap = getColonySaveData(world);
+        if (cap != null)
+        {
+            cap.addColony(colony);
+        }
+    }
+
+    @Override
+    public void addClaimData(final IColony colony, final Long2ObjectMap<ChunkClaimData> claimData)
+    {
+        this.chunkClaimData.computeIfAbsent(colony.getDimension(), (k) -> new Long2ObjectOpenHashMap<>()).putAll(claimData);
+    }
+
+    @Nullable
+    @Override
+    public IChunkClaimData getClaimData(final ResourceKey<Level> dimension, final ChunkPos pos)
+    {
+        return this.chunkClaimData.getOrDefault(dimension, new Long2ObjectOpenHashMap<>()).getOrDefault(pos.toLong(), null);
+    }
+
+    @Override
+    public void addNewChunk(final Colony colony, final ChunkPos pos, final ChunkClaimData chunkClaimData)
+    {
+        this.chunkClaimData.computeIfAbsent(colony.getDimension(), (k) -> new Long2ObjectOpenHashMap<>()).put(pos.toLong(), chunkClaimData);
     }
 }

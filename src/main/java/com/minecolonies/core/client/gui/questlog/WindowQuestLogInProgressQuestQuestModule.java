@@ -34,8 +34,8 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
     {
         IQuestTemplate questTemplate = IQuestManager.GLOBAL_SERVER_QUESTS.get(quest.getId());
 
-        setText(row, LABEL_QUEST_NAME, Component.translatable(QUEST_LOG_NAME_PREFIX).append(questTemplate.getName()));
-        setText(row, LABEL_QUEST_GIVER, Component.translatable(QUEST_LOG_GIVER_PREFIX).append(getQuestGiverName(colonyView, quest)));
+        setText(row, LABEL_QUEST_NAME, Component.translatableEscape(QUEST_LOG_NAME_PREFIX).append(questTemplate.getName()));
+        setText(row, LABEL_QUEST_GIVER, Component.translatableEscape(QUEST_LOG_GIVER_PREFIX).append(getQuestGiverName(colonyView, quest)));
 
         final IQuestObjectiveTemplate objectiveTemplate = questTemplate.getObjective(quest.getObjectiveIndex());
         final Text questObjectiveText = row.findPaneOfTypeByID(LABEL_QUEST_OBJECTIVE, Text.class);

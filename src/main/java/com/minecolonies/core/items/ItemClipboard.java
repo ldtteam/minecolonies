@@ -124,7 +124,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
         }
     }
 }

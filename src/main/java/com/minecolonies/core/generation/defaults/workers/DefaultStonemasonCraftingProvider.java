@@ -4,12 +4,11 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         convert(consumer, Items.COBBLESTONE, Items.SAND, Items.SANDSTONE);
         convert(consumer, Items.COBBLESTONE, Items.RED_SAND, Items.RED_SANDSTONE);
@@ -52,13 +51,13 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
                 .build(consumer);
     }
 
-    private void convert(@NotNull final Consumer<FinishedRecipe> consumer,
+    private void convert(@NotNull final Consumer<CustomRecipeBuilder> consumer,
                          @NotNull final ItemLike input1,
                          @NotNull final ItemLike input2,
                          @NotNull final ItemLike output)
     {
         CustomRecipeBuilder.create(STONEMASON, MODULE_CRAFTING,
-                        ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
+                        BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input1)), new ItemStorage(new ItemStack(input2))))
                 .result(new ItemStack(output))
                 .build(consumer);

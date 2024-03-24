@@ -1,29 +1,26 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "change_delivery_priority", ChangeDeliveryPriorityMessage::new);
+
     /**
      * If up true, if down false.
      */
     private boolean up;
-
-    /**
-     * Empty public constructor.
-     */
-    public ChangeDeliveryPriorityMessage()
-    {
-        super();
-    }
 
     /**
      * Creates message for player to change the priority of the delivery.
@@ -33,7 +30,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      */
     public ChangeDeliveryPriorityMessage(@NotNull final IBuildingView building, final boolean up)
     {
-        super(building);
+        super(TYPE, building);
         this.up = up;
     }
 
@@ -42,9 +39,9 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected ChangeDeliveryPriorityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         this.up = buf.readBoolean();
     }
 
@@ -54,13 +51,14 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeBoolean(this.up);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if ((building != null && building.hasModule(WorkerBuildingModule.class)) || building instanceof Stash)
         {

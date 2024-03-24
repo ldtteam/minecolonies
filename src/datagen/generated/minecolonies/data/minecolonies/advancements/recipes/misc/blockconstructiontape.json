@@ -20,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_wool",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_wool"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:blockconstructiontape"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

@@ -62,7 +62,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -82,7 +82,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
 
         final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
-        final Component headerLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_TOP, page, pageCount);
+        final Component headerLine = Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_TOP, page, pageCount);
         context.getSource().sendSuccess(() -> headerLine, true);
 
         drawCitizens(context, citizensPage);
@@ -110,7 +110,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
     {
         for (final ICitizenData citizen : citizensPage)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
                                               .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                 String.format(COMMAND_CITIZEN_INFO_SUGGESTED, citizen.getColony().getID(), citizen.getId())))), true);
 
@@ -118,7 +118,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
             {
                 final BlockPos position = entityCitizen.blockPosition();
                 context.getSource()
-                  .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, position.getX(), position.getY(), position.getZ()), true);
+                  .sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, position.getX(), position.getY(), position.getZ()), true);
             });
         }
     }
@@ -138,19 +138,19 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
         final Component prevButton =
-          Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PREVIOUS).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
+          Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PREVIOUS).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
           ));
         final Component nextButton =
-          Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_NEXT).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
+          Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_NEXT).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
           ));
 
-        final MutableComponent beginLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
-        final MutableComponent endLine = Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
+        final MutableComponent beginLine = Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
+        final MutableComponent endLine = Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);
 
         context.getSource().sendSuccess(() -> beginLine.append(prevButton)
-                                          .append(Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_STYLE))
+                                          .append(Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_STYLE))
                                           .append(nextButton)
                                           .append(endLine), true);
     }

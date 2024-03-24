@@ -31,7 +31,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        Component buildingComponent = customBuildingName.isEmpty() ? Component.translatable(getTranslationKey()) : Component.literal(customBuildingName);
+        Component buildingComponent = customBuildingName.isEmpty() ? Component.translatableEscape(getTranslationKey()) : Component.literal(customBuildingName);
 
         Component nameComponent;
         if (parentTranslationKey.isEmpty())
@@ -41,8 +41,8 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
         else
         {
             Component parentComponent =
-              customParentBuildingName.isEmpty() ? Component.translatable(parentTranslationKey) : Component.literal(customParentBuildingName);
-            nameComponent = Component.translatable("%s / %s", parentComponent, buildingComponent);
+              customParentBuildingName.isEmpty() ? Component.translatableEscape(parentTranslationKey) : Component.literal(customParentBuildingName);
+            nameComponent = Component.translatableEscape("%s / %s", parentComponent, buildingComponent);
         }
         return getOrderTypePrefix(nameComponent);
     }
@@ -52,13 +52,13 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
         switch (this.getWorkOrderType())
         {
             case BUILD:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
             case REPAIR:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
             case REMOVE:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
             default:
                 return nameComponent;
         }

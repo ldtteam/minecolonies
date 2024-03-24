@@ -85,13 +85,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
             final WorkerBuildingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
             if (moduleView != null)
             {
-                return Component.translatable(moduleView.getJobEntry().getTranslationKey());
+                return Component.translatableEscape(moduleView.getJobEntry().getTranslationKey());
             }
         }
         if (requester instanceof IBuilding)
         {
             final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
-            return Component.translatable(module.getJobEntry().getTranslationKey());
+            return Component.translatableEscape(module.getJobEntry().getTranslationKey());
         }
         return super.getRequesterDisplayName(manager, request);
     }

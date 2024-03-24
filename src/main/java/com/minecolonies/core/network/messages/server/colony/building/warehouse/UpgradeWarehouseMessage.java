@@ -1,57 +1,40 @@
 package com.minecolonies.core.network.messages.server.colony.building.warehouse;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Issues the upgrade of the warehouse pos level 5.
  */
 public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse>
 {
-    /**
-     * Empty constructor used when registering the
-     */
-    public UpgradeWarehouseMessage()
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "upgrade_warehouse", UpgradeWarehouseMessage::new);
+
+    protected UpgradeWarehouseMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        super();
-    }
-
-    @Override
-    protected void toBytesOverride(final FriendlyByteBuf buf)
-    {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final FriendlyByteBuf buf)
-    {
-
+        super(buf, type);
     }
 
     public UpgradeWarehouseMessage(final IBuildingView building)
     {
-        super(building);
+        super(TYPE, building);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingWareHouse building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
     {
-        final Player player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
-
-        building.upgradeContainers(player.level);
+        building.upgradeContainers(player.level());
 
         final boolean isCreative = player.isCreative();
         if (!isCreative)

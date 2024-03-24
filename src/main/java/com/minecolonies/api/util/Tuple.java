@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -19,6 +20,11 @@ public class Tuple<A, B>
     {
         this.a = aIn;
         this.b = bIn;
+    }
+
+    public Tuple(final Pair<A, B> codecPair)
+    {
+        this(codecPair.getFirst(), codecPair.getSecond());
     }
 
     @Nullable
@@ -53,5 +59,10 @@ public class Tuple<A, B>
         final Tuple<?, ?> tuple = (Tuple<?, ?>) o;
         return Objects.equals(a, tuple.a) &&
                  Objects.equals(b, tuple.b);
+    }
+
+    public Pair<A, B> toCodecPair()
+    {
+        return new Pair<A,B>(a, b);
     }
 }

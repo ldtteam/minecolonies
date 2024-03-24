@@ -94,15 +94,13 @@ public class WindowPlantationField extends AbstractWindowSkeleton
         new WindowBuildDecoration(tileEntityPlantationField.getBlockPos(),
           tileEntityPlantationField.getPackName(),
           tileEntityPlantationField.getBlueprintPath(),
-          tileEntityPlantationField.getRotation(),
-          tileEntityPlantationField.getMirror(),
+          tileEntityPlantationField.getRotationMirror(),
           builder -> new PlantationFieldBuildRequestMessage(WorkOrderType.REPAIR,
             tileEntityPlantationField.getBlockPos(),
             tileEntityPlantationField.getPackName(),
             tileEntityPlantationField.getBlueprintPath(),
             Minecraft.getInstance().level.dimension(),
-            tileEntityPlantationField.getRotation(),
-            tileEntityPlantationField.getMirror(),
+            tileEntityPlantationField.getRotationMirror(),
             builder)).open();
     }
 

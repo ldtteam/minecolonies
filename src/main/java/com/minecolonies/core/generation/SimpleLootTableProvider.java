@@ -7,7 +7,6 @@ import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -53,21 +50,6 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
                     }
                 }, w.getValue().getFirst()))
                 .collect(Collectors.toList());
-    }
-
-    private static Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>
-        make(@NotNull final ResourceLocation id,
-             @NotNull final LootContextParamSet type,
-             @NotNull final LootTable.Builder table)
-    {
-        return Pair.of(() -> (BiConsumer<ResourceLocation, LootTable.Builder> register) -> register.accept(id, table), type);
-    }
-
-    @Override
-    protected void validate(@NotNull final Map<ResourceLocation, LootTable> map,
-                            @NotNull final ValidationContext validationtracker)
-    {
-        map.forEach((id, table) -> table.validate(validationtracker));
     }
 
     @FunctionalInterface

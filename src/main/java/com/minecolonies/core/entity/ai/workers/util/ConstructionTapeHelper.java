@@ -44,7 +44,7 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world, final IColony colony)
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotationMirror());
             placeConstructionTape(corners, colony);
         })));
     }
@@ -59,7 +59,7 @@ public final class ConstructionTapeHelper
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(),
           building.getBlueprintPath()), building.getColony().getWorld(), (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners =
-              ColonyUtils.calculateCorners(building.getPosition(), building.getColony().getWorld(), blueprint, building.getRotation(), building.isMirrored());
+              ColonyUtils.calculateCorners(building.getPosition(), building.getColony().getWorld(), blueprint, building.getRotationMirror());
             building.setCorners(corners.getA(), corners.getB());
             placeConstructionTape(corners, building.getColony());
         })));
@@ -173,7 +173,7 @@ public final class ConstructionTapeHelper
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotationMirror());
             removeConstructionTape(corners, world);
         })));
     }

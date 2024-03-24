@@ -11,10 +11,10 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -158,11 +158,11 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
             {
                 if (slot == 3)
                 {
-                    return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+                    return net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
                 }
                 else if (slot >= 0 && slot < 3)
                 {
-                    return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+                    return net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
                 }
                 else
                 {

@@ -16,6 +16,8 @@ import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -26,7 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -303,7 +304,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     public static void onResetFoodExclusionList(final ItemListModule listModule)
     {
         listModule.clearItems();
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ModTags.excludedFood))
+        for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.excludedFood))
         {
             listModule.addItem(new ItemStorage(new ItemStack(item)));
         }

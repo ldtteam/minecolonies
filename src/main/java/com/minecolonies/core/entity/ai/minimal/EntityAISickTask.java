@@ -14,7 +14,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -193,14 +192,14 @@ public class EntityAISickTask implements IStateAI
             {
                 for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                 {
-                    final Level world = citizen.level;
+                    final Level world = citizen.level();
                     BlockState state = world.getBlockState(pos);
                     if (state.is(BlockTags.BEDS)
                           && !state.getValue(BedBlock.OCCUPIED)
                           && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                           && world.isEmptyBlock(pos.above()))
                     {
-                        citizen.getCitizenDiseaseHandler().setSleepsAtHospital();
+                        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(true);
                         usedBed = pos;
                         ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
                         return FIND_EMPTY_BED;
@@ -250,12 +249,9 @@ public class EntityAISickTask implements IStateAI
 
 
         citizen.swing(InteractionHand.MAIN_HAND);
-        citizen.playSound(SoundEvents.NOTE_BLOCK_HARP.get(), (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
-        Network.getNetwork().sendToTrackingEntity(
-          new CircleParticleEffectMessage(
-            citizen.position().add(0, 2, 0),
-            ParticleTypes.HAPPY_VILLAGER,
-            waitingTicks), citizen);
+        citizen.playSound(SoundEvents.NOTE_BLOCK_HARP.value(), (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
+        new CircleParticleEffectMessage(citizen.position().add(0, 2, 0), ParticleTypes.HAPPY_VILLAGER, waitingTicks)
+            .sendToTrackingEntity(citizen);
 
 
         waitingTicks++;
@@ -360,13 +356,15 @@ public class EntityAISickTask implements IStateAI
     }
 
     /**
-     * Go to the hut to try to get food there first.
+     * Go to the hut to move to the hospital from there.
      *
      * @return the next state to go to.
      */
     private IState goToHut()
     {
         final IBuilding buildingWorker = citizenData.getWorkBuilding();
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
+
         if (buildingWorker == null)
         {
             return SEARCH_HOSPITAL;
@@ -386,6 +384,7 @@ public class EntityAISickTask implements IStateAI
      */
     private IState goToHospital()
     {
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
         if (placeToPath == null)
         {
             return SEARCH_HOSPITAL;
@@ -416,16 +415,16 @@ public class EntityAISickTask implements IStateAI
                 return CitizenAIState.IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_HOSPITAL, disease.getName(), disease.getCureString()),
-              Component.translatable(NO_HOSPITAL),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+              Component.translatableEscape(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return WANDER;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
-              Component.translatable(WAITING_FOR_CURE),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+              Component.translatableEscape(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }
 
@@ -477,6 +476,7 @@ public class EntityAISickTask implements IStateAI
         citizen.stopUsingItem();
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
+        citizen.getCitizenDiseaseHandler().setSleepsAtHospital(false);
     }
 
     // TODO: Citizen AI should set status icons

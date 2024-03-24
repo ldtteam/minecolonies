@@ -14,8 +14,6 @@
     "description": {
       "translate": "advancements.minecolonies.root.production.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutbuilder"
     },

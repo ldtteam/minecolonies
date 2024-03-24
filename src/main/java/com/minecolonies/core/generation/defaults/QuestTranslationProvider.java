@@ -10,8 +10,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.resource.PathPackResources;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
@@ -56,7 +56,7 @@ public class QuestTranslationProvider implements DataProvider
         final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "quests");
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
-        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", false, Path.of("..", "src", "main", "resources")))
+        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "..", "src", "main", "resources"), false))
         {
             pack.listResources(PackType.SERVER_DATA, MOD_ID, "quests", (questId, stream) ->
             {

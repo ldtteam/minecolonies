@@ -4,27 +4,27 @@ import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.quests.objectives.*;
 import com.minecolonies.core.quests.rewards.*;
 import com.minecolonies.core.quests.triggers.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.quests.registries.QuestRegistries.*;
 
 public final class ModQuestInitializer
 {
     public final static DeferredRegister<QuestRegistries.ObjectiveEntry>
-      DEFERRED_REGISTER_OBJECTIVE = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "questobjectives"), Constants.MOD_ID);
+      DEFERRED_REGISTER_OBJECTIVE = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_OBJECTIVES, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.TriggerEntry>
-      DEFERRED_REGISTER_TRIGGER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "questtriggers"), Constants.MOD_ID);
+      DEFERRED_REGISTER_TRIGGER = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_TRIGGERS, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.RewardEntry>
-      DEFERRED_REGISTER_REWARD = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "questrewards"), Constants.MOD_ID);
+      DEFERRED_REGISTER_REWARD = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_REWARDS, Constants.MOD_ID);
 
     public final static DeferredRegister<QuestRegistries.DialogueAnswerEntry>
-      DEFERRED_REGISTER_ANSWER_RESULT = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "questanswerresults"), Constants.MOD_ID);
+      DEFERRED_REGISTER_ANSWER_RESULT = DeferredRegister.create(CommonMinecoloniesAPIImpl.QUEST_ANSWER_RESULTS, Constants.MOD_ID);
 
 
     private ModQuestInitializer()

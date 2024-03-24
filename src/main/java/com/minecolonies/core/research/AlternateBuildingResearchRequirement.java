@@ -105,17 +105,17 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     @Override
     public MutableComponent getDesc()
     {
-        final MutableComponent requirementList = Component.translatable("");
+        final MutableComponent requirementList = Component.translatableEscape("");
         final Iterator<Map.Entry<String, Integer>> iterator = buildings.entrySet().iterator();
         while (iterator.hasNext())
         {
             final Map.Entry<String, Integer> kvp = iterator.next();
-            requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.level",
-              Component.translatable("block.minecolonies.blockhut" + kvp.getKey()),
+            requirementList.append(Component.translatableEscape("com.minecolonies.coremod.research.requirement.building.level",
+              Component.translatableEscape("block.minecolonies.blockhut" + kvp.getKey()),
               kvp.getValue()));
             if (iterator.hasNext())
             {
-                requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.or"));
+                requirementList.append(Component.translatableEscape("com.minecolonies.coremod.research.requirement.building.or"));
             }
         }
         return requirementList;

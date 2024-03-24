@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.cook.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutcook"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.cook.title"
     }

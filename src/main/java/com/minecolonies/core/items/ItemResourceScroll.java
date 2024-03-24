@@ -11,7 +11,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -33,8 +32,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +84,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 if (snapshotNeedsUpdate)
                 {
                     // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
                 }
                 else
                 {
@@ -102,12 +101,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             }
             else
             {
-                MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+                MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
             }
         }
         else
         {
-            MessageUtils.format(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
         }
     }
 
@@ -161,11 +160,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (warehouseSnapshotData != null)
                 {
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash).sendToServer();
                 }
                 else
                 {
-                    Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(builderPos));
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
                 }
             }
         }
@@ -328,7 +327,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 String name = builderBuildingView.getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
                               ? Component.literal(ChatFormatting.DARK_PURPLE + name)
-                              : Component.translatable(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                              : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }

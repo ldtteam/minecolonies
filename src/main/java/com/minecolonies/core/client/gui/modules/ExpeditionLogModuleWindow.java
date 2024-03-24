@@ -7,7 +7,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
@@ -53,7 +52,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         // refresh the log while we have the window open
         if (tick > 0 && --tick == 0)
         {
-            Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(buildingView));
+            new MarkBuildingDirtyMessage(buildingView).sendToServer();
         }
 
         if (module.checkAndResetUpdated())
@@ -70,7 +69,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         final ExpeditionLog expeditionLog = module.getLog();
 
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(Component.literal(Objects.requireNonNullElse(expeditionLog.getName(), "")));
-        findPaneOfTypeByID("status", Text.class).setText(Component.translatable(TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.ROOT)));
+        findPaneOfTypeByID("status", Text.class).setText(Component.translatableEscape(TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.ROOT)));
 
         final Gradient bg = findPaneOfTypeByID("resourcesbg", Gradient.class);
         if (expeditionLog.getStatus().equals(ExpeditionLog.Status.KILLED))

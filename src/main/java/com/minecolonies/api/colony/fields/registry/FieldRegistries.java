@@ -5,14 +5,14 @@ import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryObject;
-import org.apache.commons.lang3.Validate;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -36,20 +36,20 @@ public class FieldRegistries
     public static final ResourceLocation PLANTATION_CRIMSON_PLANTS_FIELD_ID = new ResourceLocation(Constants.MOD_ID, "plantation_crimson_plants");
     public static final ResourceLocation PLANTATION_WARPED_PLANTS_FIELD_ID  = new ResourceLocation(Constants.MOD_ID, "plantation_warped_plants");
 
-    public static RegistryObject<FieldRegistries.FieldEntry> farmField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationSugarCaneField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationCactusField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationBambooField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationCocoaBeansField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationVinesField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationKelpField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationSeagrassField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationSeaPicklesField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationGlowberriesField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationWeepingVinesField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationTwistingVinesField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationCrimsonPlantsField;
-    public static RegistryObject<FieldRegistries.FieldEntry> plantationWarpedPlantsField;
+    public static DeferredHolder<FieldEntry, FieldEntry> farmField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationSugarCaneField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationCactusField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationBambooField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationCocoaBeansField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationVinesField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationKelpField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationSeagrassField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationSeaPicklesField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationGlowberriesField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationWeepingVinesField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationTwistingVinesField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationCrimsonPlantsField;
+    public static DeferredHolder<FieldEntry, FieldEntry> plantationWarpedPlantsField;
 
     private FieldRegistries()
     {
@@ -60,7 +60,7 @@ public class FieldRegistries
      *
      * @return the field registry.
      */
-    public static IForgeRegistry<FieldEntry> getFieldRegistry()
+    public static Registry<FieldEntry> getFieldRegistry()
     {
         return IMinecoloniesAPI.getInstance().getFieldRegistry();
     }
@@ -198,8 +198,8 @@ public class FieldRegistries
              */
             public FieldEntry createFieldEntry()
             {
-                Validate.notNull(registryName);
-                Validate.notNull(fieldProducer);
+                Objects.requireNonNull(registryName);
+                Objects.requireNonNull(fieldProducer);
 
                 return new FieldEntry(registryName, fieldProducer, fieldModuleProducers);
             }

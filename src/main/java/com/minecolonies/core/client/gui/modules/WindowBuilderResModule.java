@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
@@ -20,7 +19,7 @@ import com.minecolonies.core.network.messages.server.colony.building.TransferIte
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     {
         super(building, res);
         this.moduleView = moduleView;
-        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
+        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
 
         pullResourcesFromHut();
 
@@ -108,7 +107,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
 
         if (total > 0)
         {
-            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
+            findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
         }
 
         resources.sort(new BuildingBuilderResource.ResourceComparator());
@@ -137,10 +136,10 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         });
 
         //Make sure we have a fresh view
-        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.buildingView));
+        new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
-        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
+        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
     }
 
     /**
@@ -254,7 +253,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             res.setAvailable(Math.min(res.getAmount(), res.getAvailable() + res.getPlayerAmount()));
             res.setPlayerAmount(Math.max(0, res.getPlayerAmount() - needed));
             resources.sort(new BuildingBuilderResource.ResourceComparator());
-            Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.buildingView, itemStack, quantity, true));
+            new TransferItemsRequestMessage(this.buildingView, itemStack, quantity, true).sendToServer();
         }
     }
 }

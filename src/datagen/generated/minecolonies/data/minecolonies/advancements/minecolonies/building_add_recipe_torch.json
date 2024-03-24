@@ -16,16 +16,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.building_add_recipe_torch.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecraft:torch"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.building_add_recipe_torch.title"
     }

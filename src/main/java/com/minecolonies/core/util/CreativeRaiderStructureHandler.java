@@ -1,6 +1,7 @@
 package com.minecolonies.core.util;
 
-import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.api.Log;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
@@ -8,7 +9,6 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
@@ -17,8 +17,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +56,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprintFuture  the blueprint future of the structure.
-     * @param settings       the placement settings.
+     * @param rotMir       the placement settings.
      * @param fancyPlacement if fancy or complete.
      * @param event          the raid event.
      * @param colonyId       the colony id.
@@ -67,12 +65,12 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
       final Level world,
       final BlockPos pos,
       final Future<Blueprint> blueprintFuture,
-      final PlacementSettings settings,
+      final RotationMirror rotMir,
       final boolean fancyPlacement,
       final IColonyRaidEvent event,
       final int colonyId)
     {
-        super(world, pos, blueprintFuture, settings, fancyPlacement);
+        super(world, pos, blueprintFuture, rotMir, fancyPlacement);
 
         this.event = event;
         this.colonyId = colonyId;
@@ -102,7 +100,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint of the structure.
-     * @param settings       the placement settings.
+     * @param rotMir       the placement settings.
      * @param fancyPlacement if fancy or complete.
      * @param event          the raid event.
      * @param colonyId       the colony id.
@@ -111,12 +109,12 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
       final Level world,
       final BlockPos pos,
       final Blueprint blueprint,
-      final PlacementSettings settings,
+      final RotationMirror rotMir,
       final boolean fancyPlacement,
       final IColonyRaidEvent event,
       final int colonyId)
     {
-        super(world, pos, blueprint, settings, fancyPlacement);
+        super(world, pos, blueprint, rotMir, fancyPlacement);
 
         this.event = event;
         this.colonyId = colonyId;
@@ -185,7 +183,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, RotationMirror.NONE, fancyPlacement, event, colonyId);
             Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)
@@ -213,7 +211,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, RotationMirror.NONE, fancyPlacement, event, colonyId);
             Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)

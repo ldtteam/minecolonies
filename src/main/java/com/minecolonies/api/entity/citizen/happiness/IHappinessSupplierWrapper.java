@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 /**
  * Wrapper to deal with happiness suppliers.

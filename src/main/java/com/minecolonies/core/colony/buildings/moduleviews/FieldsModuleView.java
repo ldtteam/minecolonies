@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -70,7 +69,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     public void setAssignFieldManually(final boolean assignFieldManually)
     {
         this.shouldAssignFieldManually = assignFieldManually;
-        Network.getNetwork().sendToServer(new AssignmentModeMessage(buildingView, assignFieldManually, getProducer().getRuntimeID()));
+        new AssignmentModeMessage(buildingView, assignFieldManually, getProducer().getRuntimeID()).sendToServer();
     }
 
     /**
@@ -82,7 +81,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null && canAssignField(field))
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, true, getProducer().getRuntimeID()));
+            new AssignFieldMessage(buildingView, field, true, getProducer().getRuntimeID()).sendToServer();
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -157,7 +156,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null)
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, field, false, getProducer().getRuntimeID()));
+            new AssignFieldMessage(buildingView, field, false, getProducer().getRuntimeID()).sendToServer();
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -178,7 +177,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (getOwnedFields().size() >= maxFieldCount)
         {
-            return Component.translatable(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
+            return Component.translatableEscape(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
         return null;
     }

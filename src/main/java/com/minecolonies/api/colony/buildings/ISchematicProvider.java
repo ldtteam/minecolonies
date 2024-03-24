@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.buildings;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.INBTSerializable;
-
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import java.util.Set;
 
 public interface ISchematicProvider extends INBTSerializable<CompoundTag>
@@ -67,13 +67,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
     Set<BlockPos> getChildren();
 
     /**
-     * Returns the rotation of the current building.
-     *
-     * @return integer value of the rotation.
-     */
-    int getRotation();
-
-    /**
      * Returns the style of the current building.
      *
      * @return String representation of the current building-style
@@ -133,18 +126,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
     void markDirty();
 
     /**
-     * Sets the mirror of the current building.
-     */
-    void setIsMirrored(final boolean isMirrored);
-
-    /**
-     * Returns the mirror of the current building.
-     *
-     * @return boolean value of the mirror.
-     */
-    boolean isMirrored();
-
-    /**
      * Children must return the name of their structure.
      *
      * @return StructureProxy name.
@@ -177,4 +158,14 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
      * @param newSchematic
      */
     void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProviderBE blueprintDataProvider);
+
+    /**
+     * @param rotMir rotation and mirror of schematic
+     */
+    void setRotationMirror(RotationMirror rotMir);
+
+    /**
+     * @return rotation and mirror of schematic
+     */
+    RotationMirror getRotationMirror();
 }

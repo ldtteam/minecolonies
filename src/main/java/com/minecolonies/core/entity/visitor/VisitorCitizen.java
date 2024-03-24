@@ -15,7 +15,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
@@ -24,8 +23,8 @@ import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.pathfinding.EntityCitizenWalkToProxy;
-import com.minecolonies.core.entity.pathfinding.MovementHandler;
+import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
+import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
@@ -50,7 +49,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -204,7 +203,7 @@ VisitorCitizen extends AbstractEntityCitizen
                     }
                     else
                     {
-                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level().dimension());
                         return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
                     }
                 }
@@ -484,7 +483,7 @@ VisitorCitizen extends AbstractEntityCitizen
     @Override
     public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level().dimension());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return InteractionResult.FAIL;
@@ -505,7 +504,7 @@ VisitorCitizen extends AbstractEntityCitizen
         {
             if (player.isShiftKeyDown())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
+                new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()).sendToServer();
             }
             else
             {
@@ -531,13 +530,13 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
+            final ItemStack remainingItem = usedStack.finishUsingItem(level(), this);
             if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
             {
                 if (!player.getInventory().add(remainingItem))
                 {
                     InventoryUtils.spawnItemStack(
-                      player.level,
+                      player.level(),
                       player.getX(),
                       player.getY(),
                       player.getZ(),
@@ -546,20 +545,14 @@ VisitorCitizen extends AbstractEntityCitizen
                 }
             }
 
-            if (!level.isClientSide())
+            if (!level().isClientSide())
             {
                 getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 // Position needs to be centered on citizen, Eat AI wrong too?
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
+                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
+                    .sendToTrackingEntity(this);
 
                 citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
             }
@@ -576,7 +569,7 @@ VisitorCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level().dimension());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getVisitor(citizenId);
@@ -615,7 +608,7 @@ VisitorCitizen extends AbstractEntityCitizen
             citizenColonyHandler.updateColonyClient();
             if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0 && getOffsetTicks() % TICKS_20 == 0)
             {
-                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level().dimension());
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getVisitor(citizenId);
@@ -669,7 +662,7 @@ VisitorCitizen extends AbstractEntityCitizen
     public void die(DamageSource cause)
     {
         super.die(cause);
-        if (!level.isClientSide())
+        if (!level().isClientSide())
         {
             IColony colony = getCitizenColonyHandler().getColony();
             if (colony != null && getCitizenData() != null)
@@ -678,7 +671,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
                 {
                     TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
-                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
+                    tavern.setNoVisitorTime(level().getRandom().nextInt(5000) + 30000);
                 }
 
                 final String deathLocation = BlockPosUtil.getString(blockPosition());
@@ -725,5 +718,12 @@ VisitorCitizen extends AbstractEntityCitizen
         {
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
         }
+    }
+
+    @Override
+    public void setRemoved(final RemovalReason reason)
+    {
+        citizenColonyHandler.onCitizenRemoved();
+        super.setRemoved(reason);
     }
 }

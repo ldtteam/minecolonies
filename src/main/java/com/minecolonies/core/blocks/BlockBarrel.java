@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityBarrel;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +33,8 @@ import net.minecraft.world.InteractionResult;
 
 public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements EntityBlock
 {
+    public static final MapCodec<BlockBarrel> CODEC = simpleCodec(BlockBarrel::new);
+
     /**
      * The hardness this block has.
      */
@@ -47,8 +50,19 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
 
     public BlockBarrel()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+    }
+
+    public BlockBarrel(final Properties properties)
+    {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(AbstractBlockBarrel.FACING, Direction.NORTH).setValue(VARIANT, BarrelType.ZERO));
+    }
+
+    @Override
+    protected MapCodec<BlockBarrel> codec()
+    {
+        return CODEC;
     }
 
     @Override

@@ -182,7 +182,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
+    public BlockState playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
     {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos otherpos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
@@ -196,7 +196,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         }
 
         notifyColonyAboutDestruction(worldIn, pos);
-        super.playerWillDestroy(worldIn, pos, state, player);
+        return super.playerWillDestroy(worldIn, pos, state, player);
     }
 
     @Override

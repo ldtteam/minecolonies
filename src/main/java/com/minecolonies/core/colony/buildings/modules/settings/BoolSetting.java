@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import static com.minecolonies.api.util.constant.WindowConstants.OFF;
 import static com.minecolonies.api.util.constant.WindowConstants.ON;
@@ -101,7 +101,7 @@ public class BoolSetting implements ISetting<Boolean>
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(Component.translatable(value ? ON : OFF));
-        setInActiveHoverPane(triggerButton, settingsModuleView);
+        setHoverPane(key, triggerButton, settingsModuleView);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class BoolSetting implements ISetting<Boolean>
     }
 
     @Override
-    public void copyValue(final ISetting setting)
+    public void copyValue(final ISetting<?> setting)
     {
         if (setting instanceof final BoolSetting other)
         {

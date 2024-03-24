@@ -2,21 +2,16 @@
   "parent": "minecolonies:minecolonies/citizen_bury",
   "criteria": {
     "resurrected": {
-      "conditions": {},
       "trigger": "minecolonies:citizen_resurrect"
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.citizen.resurrect.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutgraveyard"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.citizen.resurrect.title"
     }

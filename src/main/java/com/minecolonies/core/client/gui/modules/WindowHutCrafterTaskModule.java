@@ -134,7 +134,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
                                                                                        .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
                 }
 

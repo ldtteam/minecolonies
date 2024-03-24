@@ -1,8 +1,8 @@
 {
   "values": [
     "#minecolonies:mechanic_product",
-    "#minecraft:wooden_slabs",
-    "#minecraft:wooden_stairs",
+    "#minecolonies:dyer_product",
+    "#minecolonies:sawmill_product",
     "#minecraft:trim_templates",
     "minecraft:lectern",
     "minecraft:piston",

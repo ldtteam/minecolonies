@@ -1,14 +1,14 @@
 package com.minecolonies.core.entity.ai.combat;
 
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -67,9 +67,9 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
         final boolean canSeeTarget = user.getSensing().hasLineOfSight(target);
         if (canSeeTarget)
         {
-            nextTarget.setLastSeen(user.level.getGameTime());
+            nextTarget.setLastSeen(user.level().getGameTime());
         }
-        else if ((user.level.getGameTime() - nextTarget.getLastSeen()) > STOP_PERSECUTION_AFTER)
+        else if ((user.level().getGameTime() - nextTarget.getLastSeen()) > STOP_PERSECUTION_AFTER)
         {
             resetTarget();
             return null;
@@ -136,7 +136,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
             return CombatAIStates.NO_TARGET;
         }
 
-        if (nextAttackTime >= user.level.getGameTime() || !isInDistanceForAttack(target))
+        if (nextAttackTime >= user.level().getGameTime() || !isInDistanceForAttack(target))
         {
             return null;
         }
@@ -146,7 +146,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
             pathAttempts = 0;
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
             doAttack(target);
-            nextAttackTime = user.level.getGameTime() + getAttackDelay();
+            nextAttackTime = user.level().getGameTime() + getAttackDelay();
         }
 
         return null;
@@ -180,7 +180,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      */
     protected void doAttack(final LivingEntity target)
     {
-        target.hurt(target.level.damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
+        target.hurt(target.level().damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
         user.swing(InteractionHand.MAIN_HAND);
     }
 

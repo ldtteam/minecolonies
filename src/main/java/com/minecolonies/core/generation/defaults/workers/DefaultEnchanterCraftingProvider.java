@@ -7,9 +7,9 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -375,7 +375,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                 new ItemStack(ModItems.ancientTome), true, true));

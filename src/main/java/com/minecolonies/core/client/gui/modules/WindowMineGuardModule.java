@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
@@ -56,16 +55,16 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
             {
                 if (assignedGuards < getMaxGuards())
                 {
-                    Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()));
-                    button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                    new GuardSetMinePosMessage(guardbuilding, buildingView.getPosition()).sendToServer();
+                    button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                     guardbuilding.setMinePos(buildingView.getPosition());
                     assignedGuards++;
                 }
             }
             else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
             {
-                Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding));
-                button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                new GuardSetMinePosMessage(guardbuilding).sendToServer();
+                button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                 guardbuilding.setMinePos(null);
                 assignedGuards--;
             }
@@ -159,7 +158,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                         final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
                         if (guardbuilding.getMinePos() == null)
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                             if (assignedGuards >= getMaxGuards())
                             {
                                 button.setEnabled(false);
@@ -171,11 +170,11 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
                         }
                         else if (guardbuilding.getMinePos().equals(buildingView.getPosition()))
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                         }
                         else
                         {
-                            button.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            button.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonassign"));
                             button.setEnabled(false);
                         }
                     }

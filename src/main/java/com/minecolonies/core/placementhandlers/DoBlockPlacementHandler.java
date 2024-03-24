@@ -8,18 +8,23 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
-import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,17 +50,20 @@ public class DoBlockPlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
-      final PlacementSettings settings)
+      final RotationMirror settings)
     {
         if (world.getBlockState(pos).equals(blockState))
         {
             world.removeBlock(pos, false);
-            world.setBlock(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+            world.setBlock(pos, blockState, Constants.UPDATE_FLAG);
             if (tileEntityData != null)
             {
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                    final BlockHitResult hitresult = new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false);
+                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                      new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
                 }
                 catch (final Exception ex)
                 {
@@ -65,7 +73,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, blockState, Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }
@@ -75,6 +83,8 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                  new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
             }
             catch (final Exception ex)
             {
@@ -103,32 +113,36 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 return Collections.emptyList();
             }
 
-            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
+            final Property<?> property;
             if (blockState.getBlock() instanceof DoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
+                property = DoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof FancyDoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
+                property = FancyDoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof TrapdoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
+                property = TrapdoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
+                property = FancyTrapdoorBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof PanelBlock)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(PanelBlock.TYPE).toString().toUpperCase());
+                property = PanelBlock.TYPE;
             }
             else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
             {
-                item.getOrCreateTag().putString("type", blockState.getValue(AbstractPostBlock.TYPE).toString().toUpperCase());
+                property = AbstractPostBlock.TYPE;
             }
-            itemList.add(item);
+            else
+            {
+                property = null;
+            }
+            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity) : BlockUtils.getMaterializedItemStack(tileEntity, property));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;

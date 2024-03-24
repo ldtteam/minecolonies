@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.claim.ChunkClaimData;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -29,7 +31,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -43,6 +44,8 @@ import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
 import com.minecolonies.api.util.ColonyUtils;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -64,15 +67,15 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -107,7 +110,7 @@ public class Colony implements IColony
     /**
      * List of loaded chunks for the colony.
      */
-    private Set<Long> loadedChunks = new HashSet<>();
+    private ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
 
     /**
      * List of loaded chunks for the colony.
@@ -220,7 +223,7 @@ public class Colony implements IColony
      * The world the colony currently runs on.
      */
     @Nullable
-    private Level world = null;
+    private ServerLevel world = null;
 
     /**
      * The name of the colony.
@@ -330,6 +333,14 @@ public class Colony implements IColony
      */
     private int day = 0;
 
+    /**
+     * Colony claim data.
+     */
+    private Long2ObjectMap<ChunkClaimData> claimData = new Long2ObjectOpenHashMap<>();
+
+    /**
+     * Townhall settings module.
+     */
     private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
@@ -340,7 +351,7 @@ public class Colony implements IColony
      * @param c  The center of the colony (location of Town Hall).
      */
     @SuppressWarnings("squid:S2637")
-    Colony(final int id, @Nullable final Level w, final BlockPos c)
+    Colony(final int id, @Nullable final ServerLevel w, final BlockPos c)
     {
         this(id, w);
         center = c;
@@ -356,7 +367,7 @@ public class Colony implements IColony
      * @param id    The current id for the colony.
      * @param world The world the colony exists in.
      */
-    protected Colony(final int id, @Nullable final Level world)
+    protected Colony(final int id, @Nullable final ServerLevel world)
     {
         questManager = new QuestManager(this);
         this.id = id;
@@ -685,7 +696,7 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @Nullable
-    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final Level world)
+    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world)
     {
         try
         {
@@ -772,7 +783,7 @@ public class Colony implements IColony
         final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, Tag.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
-            tempFreeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
+            tempFreeBlocks.add(BuiltInRegistries.BLOCK.get(new ResourceLocation(freeBlockTagList.getString(i))));
         }
         freeBlocks = ImmutableSet.copyOf(tempFreeBlocks);
 
@@ -840,6 +851,16 @@ public class Colony implements IColony
         {
             settingsModule.deserializeNBT(compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
+
+        @NotNull final ListTag claimTagList = compound.getList(TAG_CLAIM_DATA, Tag.TAG_COMPOUND);
+        for (int i = 0; i < claimTagList.size(); i++)
+        {
+            @NotNull final CompoundTag chunkCompound = claimTagList.getCompound(i);
+            final ChunkClaimData chunkClaimData = new ChunkClaimData();
+            chunkClaimData.deserializeNBT(chunkCompound.getCompound(TAG_CHUNK_CLAIM));
+            claimData.put(chunkCompound.getLong(TAG_CHUNK_POS), chunkClaimData);
+        }
+        IColonyManager.getInstance().addClaimData(this, claimData);
 
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
@@ -922,7 +943,7 @@ public class Colony implements IColony
         @NotNull final ListTag freeBlocksTagList = new ListTag();
         for (@NotNull final Block block : freeBlocks)
         {
-            freeBlocksTagList.add(StringTag.valueOf(ForgeRegistries.BLOCKS.getKey(block).toString()));
+            freeBlocksTagList.add(StringTag.valueOf(BuiltInRegistries.BLOCK.getKey(block).toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 
@@ -950,6 +971,16 @@ public class Colony implements IColony
         final CompoundTag settings = new CompoundTag();
         settingsModule.serializeNBT(settings);
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
+
+        @NotNull final ListTag claimTagList = new ListTag();
+        for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
+        {
+            @NotNull final CompoundTag chunkCompound = new CompoundTag();
+            chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT());
+            chunkCompound.putLong(TAG_CHUNK_POS, chunkClaimData.getLongKey());
+            claimTagList.add(chunkCompound);
+        }
+        compound.put(TAG_CLAIM_DATA, claimTagList);
 
         this.colonyTag = compound;
 
@@ -985,7 +1016,7 @@ public class Colony implements IColony
      * @param w World object.
      */
     @Override
-    public void onWorldLoad(@NotNull final Level w)
+    public void onWorldLoad(@NotNull final ServerLevel w)
     {
         if (w.dimension() == dimensionId)
         {
@@ -995,7 +1026,7 @@ public class Colony implements IColony
             {
                 eventHandler = new ColonyPermissionEventHandler(this);
                 questManager.onWorldLoad();
-                MinecraftForge.EVENT_BUS.register(eventHandler);
+                NeoForge.EVENT_BUS.register(eventHandler);
             }
             setColonyColor(this.colonyTeamColor);
         }
@@ -1020,7 +1051,7 @@ public class Colony implements IColony
 
         if (eventHandler != null)
         {
-            MinecraftForge.EVENT_BUS.unregister(eventHandler);
+            NeoForge.EVENT_BUS.unregister(eventHandler);
         }
         world = null;
     }
@@ -1313,7 +1344,7 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
-    public Level getWorld()
+    public ServerLevel getWorld()
     {
         return world;
     }
@@ -1418,10 +1449,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final ServerPlayer player : packageManager.getCloseSubscribers())
-        {
-            Network.getNetwork().sendToPlayer(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
-        }
+        new ColonyViewRemoveWorkOrderMessage(this, orderId).sendToPlayer(packageManager.getCloseSubscribers());
     }
 
     /**
@@ -1834,7 +1862,7 @@ public class Colony implements IColony
                 this.pendingChunks.add(chunkPos);
             }
         }
-        this.loadedChunks.add(chunkPos);
+        this.loadedChunks.put(chunkPos, chunkPos);
     }
 
     @Override
@@ -1853,7 +1881,7 @@ public class Colony implements IColony
     @Override
     public Set<Long> getLoadedChunks()
     {
-        return loadedChunks;
+        return loadedChunks.keySet();
     }
 
     @Override
@@ -1954,5 +1982,23 @@ public class Colony implements IColony
     public ISettingsModule getSettings()
     {
         return settingsModule;
+    }
+
+    /**
+     * Get the claim data from the colony.
+     * @return the claim data map.
+     */
+    public Long2ObjectMap<ChunkClaimData> getClaimData()
+    {
+        return claimData;
+    }
+
+    public IChunkClaimData claimNewChunk(final ChunkPos pos)
+    {
+        final ChunkClaimData chunkClaimData = new ChunkClaimData();
+        claimData.put(pos.toLong(), chunkClaimData);
+        IColonyManager.getInstance().addNewChunk(this, pos, chunkClaimData);
+        this.markDirty();
+        return chunkClaimData;
     }
 }

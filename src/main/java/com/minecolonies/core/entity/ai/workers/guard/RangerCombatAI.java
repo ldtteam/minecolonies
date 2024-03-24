@@ -3,8 +3,9 @@ package com.minecolonies.core.entity.ai.workers.guard;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,11 +20,9 @@ import com.minecolonies.core.entity.other.CustomArrowEntity;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
-import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.pathjobs.*;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -109,7 +108,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (weaponSlot != -1)
         {
             user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
-            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime())
+            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level().getGameTime())
             {
                 user.startUsingItem(InteractionHand.MAIN_HAND);
             }
@@ -159,11 +158,11 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             // Add bow enchant effects: Knocback and fire
             final ItemStack bow = user.getItemInHand(InteractionHand.MAIN_HAND);
 
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bow) > 0)
+            if (bow.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
             {
                 arrow.setSecondsOnFire(100);
             }
-            final int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bow);
+            final int k = bow.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
             if (k > 0)
             {
                 arrow.setKnockback(k);
@@ -234,7 +233,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
         damage += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
-        damage += EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, heldItem);
+        damage += heldItem.getEnchantmentLevel(Enchantments.POWER_ARROWS);
         damage += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);
 
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
@@ -275,8 +274,8 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
-            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level,
-              AbstractPathJob.prepareStart(target),
+            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level(),
+              PathfindingUtils.prepareStart(target),
               target.blockPosition(),
               (int) 7.0,
               (int) user.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -287,12 +286,12 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
         else if (BlockPosUtil.getDistance2D(target.blockPosition(), user.blockPosition()) >= 20)
         {
-            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level(), PathfindingUtils.prepareStart(user), target.blockPosition(), 200, user);
             final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level(), ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
@@ -365,6 +364,9 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
-        parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + entity.getType().getDescription().toString());
+        if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
+        {
+            parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
+        }
     }
 }

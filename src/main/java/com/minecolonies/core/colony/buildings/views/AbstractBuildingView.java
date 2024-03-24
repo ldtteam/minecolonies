@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.views;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
@@ -17,7 +18,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
@@ -80,14 +80,9 @@ public abstract class AbstractBuildingView implements IBuildingView
     private int buildingDmPrio = 1;
 
     /**
-     * Rotation of the building.
+     * Rotation and mirror of the building.
      */
-    private int rotation;
-
-    /**
-     * Mirror of the building.
-     */
-    private boolean isBuildingMirrored;
+    private RotationMirror rotationMirror;
 
     /**
      * The workOrderLevel.
@@ -282,20 +277,9 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the rotation.
      */
     @Override
-    public int getRotation()
+    public RotationMirror getRotationMirror()
     {
-        return rotation;
-    }
-
-    /**
-     * Getter for the mirror.
-     *
-     * @return true if mirrored.
-     */
-    @Override
-    public boolean isMirrored()
-    {
-        return isBuildingMirrored;
+        return rotationMirror;
     }
 
     /**
@@ -357,7 +341,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (shouldOpenInv)
         {
-            Network.getNetwork().sendToServer(new OpenInventoryMessage(this));
+            new OpenInventoryMessage(this).sendToServer();
         }
         else
         {
@@ -402,8 +386,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         parent = buf.readBlockPos();
         customName = buf.readUtf(32767);
 
-        rotation = buf.readInt();
-        isBuildingMirrored = buf.readBoolean();
+        rotationMirror = RotationMirror.values()[buf.readByte()];
         claimRadius = buf.readInt();
 
         final List<IToken<?>> list = new ArrayList<>();
@@ -579,7 +562,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         try
         {
             final MutableComponent component = Component.literal("");
-            component.append(Component.translatable(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
+            component.append(Component.translatableEscape(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
                 return component;
@@ -625,7 +608,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void setCustomName(final String name)
     {
         this.customName = name;
-        Network.getNetwork().sendToServer(new HutRenameMessage(this, name));
+        new HutRenameMessage(this, name).sendToServer();
     }
 
     @Override

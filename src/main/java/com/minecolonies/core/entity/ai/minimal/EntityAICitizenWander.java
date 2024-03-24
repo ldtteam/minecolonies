@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
@@ -113,7 +113,7 @@ public class EntityAICitizenWander implements IStateAI
             return READ_A_BOOK;
         }
 
-        final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
+        final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
         if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary)
         {
             walkTo = ((BuildingLibrary) ((TileEntityColonyBuilding) blockEntity).getBuilding()).getRandomBookShelf();
@@ -157,13 +157,13 @@ public class EntityAICitizenWander implements IStateAI
             return WANDER_AT_LEISURE_SITE;
         }
 
-        final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
+        final BlockEntity blockEntity = citizen.level().getBlockEntity(leisureSite);
         if (blockEntity instanceof IBlueprintDataProviderBE)
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
                 citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)

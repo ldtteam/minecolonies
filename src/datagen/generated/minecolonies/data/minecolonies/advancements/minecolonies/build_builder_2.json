@@ -10,16 +10,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.complete_build_request_2_builder.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutbuilder"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.complete_build_request_2_builder.title"
     }

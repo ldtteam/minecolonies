@@ -1,34 +1,40 @@
 package com.minecolonies.api.configuration;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import com.ldtteam.common.config.AbstractConfiguration;
+import com.minecolonies.api.util.constant.Constants;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 
 /**
  * Mod client configuration. Loaded clientside, not synced.
  */
 public class ClientConfiguration extends AbstractConfiguration
 {
-    public final ForgeConfigSpec.BooleanValue citizenVoices;
-    public final ForgeConfigSpec.BooleanValue neighborbuildingrendering;
-    public final ForgeConfigSpec.IntValue neighborbuildingrange;
-    public final ForgeConfigSpec.IntValue buildgogglerange;
-    public final ForgeConfigSpec.BooleanValue colonyteamborders;
+    public final BooleanValue citizenVoices;
+    public final BooleanValue neighborbuildingrendering;
+    public final IntValue neighborbuildingrange;
+    public final IntValue buildgogglerange;
+    public final BooleanValue colonyteamborders;
 
     /**
      * Builds client configuration.
      *
      * @param builder config builder
      */
-    protected ClientConfiguration(final ForgeConfigSpec.Builder builder)
+    public ClientConfiguration(final Builder builder)
     {
-        createCategory(builder, "gameplay");
-        citizenVoices = defineBoolean(builder, "enablecitizenvoices", true);
-        neighborbuildingrendering = defineBoolean(builder, "neighborbuildingrendering", true);
-        neighborbuildingrange = defineInteger(builder, "neighborbuildingrange", 4, -2, 16);
-        buildgogglerange = defineInteger(builder, "buildgogglerange", 50, 1, 250);
-        colonyteamborders = defineBoolean(builder, "colonyteamborders", true);
+        super(builder, Constants.MOD_ID);
 
-        swapToCategory(builder, "pathfinding");
+        createCategory("gameplay");
+        citizenVoices = defineBoolean("enablecitizenvoices", true);
+        neighborbuildingrendering = defineBoolean("neighborbuildingrendering", true);
+        neighborbuildingrange = defineInteger("neighborbuildingrange", 4, -2, 16);
+        buildgogglerange = defineInteger("buildgogglerange", 50, 1, 250);
+        colonyteamborders = defineBoolean("colonyteamborders", true);
 
-        finishCategory(builder);
+        swapToCategory("pathfinding");
+
+        finishCategory();
     }
 }

@@ -3,7 +3,6 @@ package com.minecolonies.core.event;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.compatibility.CraftingTagAuditor;
 import com.minecolonies.core.datalistener.QuestJsonListener;
@@ -14,10 +13,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -65,7 +64,7 @@ public class DataPackSyncEventHandler
         private static void sendPackets(@NotNull final ServerPlayer player,
                                         @NotNull final UpdateClientWithCompatibilityMessage compatMsg)
         {
-            Network.getNetwork().sendToPlayer(compatMsg, player);
+            compatMsg.sendToPlayer(player);
             CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
             QuestJsonListener.sendGlobalQuestPackets(player);
@@ -76,7 +75,7 @@ public class DataPackSyncEventHandler
          * joins the server (with getPlayer() != null), and also on datapack reload (with null).
          * Note that at this point the client has not yet received the recipes/tags.
          *
-         * @param event {@link net.minecraftforge.event.OnDatapackSyncEvent}
+         * @param event {@link net.neoforged.neoforge.event.OnDatapackSyncEvent}
          */
         @SubscribeEvent
         public static void onDataPackSync(final OnDatapackSyncEvent event)

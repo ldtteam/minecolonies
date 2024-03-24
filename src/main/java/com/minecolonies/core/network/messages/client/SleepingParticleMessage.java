@@ -1,67 +1,56 @@
 package com.minecolonies.core.network.messages.client;
 
-import com.minecolonies.api.network.IMessage;
+import com.ldtteam.common.network.AbstractClientPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.ModParticleTypesInitializer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 /**
  * Message for sleeping particles
  */
-public class SleepingParticleMessage implements IMessage
+public class SleepingParticleMessage extends AbstractClientPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "sleeping_particle", SleepingParticleMessage::new);
+
     /**
      * Position the particles spawn at
      */
-    private double x;
-    private double y;
-    private double z;
-
-    public SleepingParticleMessage()
-    {
-        super();
-    }
+    private final double x;
+    private final double y;
+    private final double z;
 
     public SleepingParticleMessage(final double x, final double y, final double z)
     {
+        super(TYPE);
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf byteBuf)
+    protected SleepingParticleMessage(final FriendlyByteBuf byteBuf, final PlayMessageType<?> type)
     {
+        super(byteBuf, type);
         x = byteBuf.readDouble();
         y = byteBuf.readDouble();
         z = byteBuf.readDouble();
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf byteBuf)
+    protected void toBytes(final FriendlyByteBuf byteBuf)
     {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
         byteBuf.writeDouble(z);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    
+    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
     {
-        return LogicalSide.CLIENT;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        Minecraft.getInstance().level.addParticle(ModParticleTypesInitializer.SLEEPINGPARTICLE_TYPE,
+        player.level().addParticle(ModParticleTypesInitializer.SLEEPINGPARTICLE_TYPE,
           x,
           y,
           z,

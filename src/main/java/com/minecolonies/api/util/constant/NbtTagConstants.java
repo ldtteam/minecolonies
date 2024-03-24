@@ -30,6 +30,9 @@ public final class NbtTagConstants
     public static final String TAG_PRIO              = "prio";
     public static final String TAG_LAST_ONLINE       = "lastOnlineTime";
     public static final String TAG_SOUND_PROFILE     = "soundProfile";
+    public static final String TAG_CLAIM_DATA        = "colonyclaimdata";
+    public static final String TAG_CHUNK_CLAIM       = "chunkclaimdata";
+    public static final String TAG_CHUNK_POS         = "chunkpos";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -138,6 +141,11 @@ public final class NbtTagConstants
      * The tag to store the rotation of the building.
      */
     public static final String TAG_ROTATION = "rotation";
+
+    /**
+     * The tag to store the rotation and mirror of the building.
+     */
+    public static final String TAG_ROTATION_MIRROR = "rotMir";
 
     /**
      * The tag to store the md5 hash of the schematic.
@@ -730,6 +738,12 @@ public final class NbtTagConstants
     public static final String TAG_MODIFIER_TYPE = "modifier";
     public static final String TAG_WEIGHT        = "weight";
     public static final String TAG_SUPPLIER      = "supplier";
+
+    /**
+     * Supplycamp related things.
+     */
+    public static final String TAG_SAW_STORY     = "sawstory";
+    public static final String TAG_RANDOM_KEY     = "randkey";
 
     /**
      * Private constructor to hide the implicit one.

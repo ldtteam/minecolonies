@@ -1,42 +1,35 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Creates a message to get jei recipes.
  */
-public class TransferRecipeCraftingTeachingMessage implements IMessage
+public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "transfer_recipe_crafting_teaching", TransferRecipeCraftingTeachingMessage::new);
+
     /**
      * if the recipe is complete.
      */
-    private boolean complete;
+    private final boolean complete;
 
     /**
      * Recipes to transfer.
      */
-    private Map<Integer, ItemStack> itemStacks = new HashMap<>();
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public TransferRecipeCraftingTeachingMessage()
-    {
-        super();
-    }
+    private final Map<Integer, ItemStack> itemStacks;
 
     /**
      * Creates a new message to get jei recipes.
@@ -46,50 +39,30 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
      */
     public TransferRecipeCraftingTeachingMessage(final Map<Integer, ItemStack> itemStacks, final boolean complete)
     {
-        super();
+        super(TYPE);
         this.itemStacks = itemStacks;
         this.complete = complete;
     }
 
-    @Override
-    public void fromBytes(final FriendlyByteBuf buf)
+    protected TransferRecipeCraftingTeachingMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        itemStacks.clear();
-        final int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            itemStacks.put(buf.readInt(), buf.readItem());
-        }
+        super(buf, type);
+        itemStacks = buf.readMap(FriendlyByteBuf::readInt, FriendlyByteBuf::readItem);
         complete = buf.readBoolean();
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeInt(itemStacks.size());
-        itemStacks.forEach((slot, stack) ->
-        {
-            buf.writeInt(slot);
-            buf.writeItem(stack);
-        });
+        buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, FriendlyByteBuf::writeItem);
         buf.writeBoolean(complete);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final Player player = ctxIn.getSender();
-        if (player.containerMenu instanceof ContainerCrafting)
+        if (player.containerMenu instanceof final ContainerCrafting container)
         {
-            final ContainerCrafting container = (ContainerCrafting) player.containerMenu;
-
             if (complete)
             {
                 container.handleSlotClick(container.getSlot(1), itemStacks.getOrDefault(0, ItemStackUtils.EMPTY));
@@ -112,16 +85,12 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
 
             container.broadcastChanges();
         }
-        else if (player.containerMenu instanceof ContainerCraftingFurnace)
+        else if (player.containerMenu instanceof final ContainerCraftingFurnace container)
         {
-            final ContainerCraftingFurnace container = (ContainerCraftingFurnace) player.containerMenu;
-
             container.setFurnaceInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
         }
-        else if (player.containerMenu instanceof ContainerCraftingBrewingstand)
+        else if (player.containerMenu instanceof final ContainerCraftingBrewingstand container)
         {
-            final ContainerCraftingBrewingstand container = (ContainerCraftingBrewingstand) player.containerMenu;
-
             container.setInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
             container.setContainer(itemStacks.getOrDefault(1, ItemStack.EMPTY));
         }

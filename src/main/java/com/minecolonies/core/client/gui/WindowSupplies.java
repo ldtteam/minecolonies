@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.network.messages.BuildToolPlacementMessage;
@@ -28,9 +27,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
-import static com.ldtteam.structurize.api.util.constant.GUIConstants.BUTTON_SWITCH_STYLE;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_CAMP;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_SHIP;
+import static com.ldtteam.structurize.api.constants.GUIConstants.BUTTON_SWITCH_STYLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
 import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOURCE_SUFFIX;
@@ -57,12 +56,13 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
 
     /**
      * Create a new supply tool window.
-     * @param pos the pos its initiated at.
+     *
+     * @param pos        the pos its initiated at.
+     * @param itemInHand
      */
     public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
-
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
 
         if (!type.equals(WindowSupplies.type))
@@ -70,15 +70,16 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             HighlightManager.clearHighlightsForKey(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
         }
-        else if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-        {
-            loadBlueprint();
-        }
         WindowSupplies.type = type;
 
         if (pos != null)
         {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
+        }
+
+        if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
+        {
+            loadBlueprint();
         }
     }
 
@@ -109,7 +110,6 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                 blueprint -> {
                     if (blueprint == null)
                     {
-                        cancelClicked();
                         return;
                     }
                     RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
@@ -148,13 +148,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
+                new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotation(),
-                    previewData.getMirror()));
+                    previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }
@@ -166,13 +164,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
+                new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotation(),
-                    previewData.getMirror()));
+                    previewData.getRotationMirror()).sendToServer();
                 cancelClicked();
                 return;
             }
@@ -187,7 +183,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addHighlight(RENDER_BOX_CATEGORY + i++, new TimedBoxRenderData(error.getPos())
-                  .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                  .addText(Component.translatableEscape(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0x80FF0000)
                   .setDuration(Duration.ofSeconds(60)));
             }

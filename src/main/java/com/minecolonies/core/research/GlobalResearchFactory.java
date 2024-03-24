@@ -15,6 +15,7 @@ import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -22,7 +23,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putInt(TAG_RESEARCH_SORT, research.getSortOrder());
         compound.putBoolean(TAG_ONLY_CHILD, research.hasOnlyChild());
         compound.putString(TAG_ICON_TEXTURE, research.getIconTextureResourceLocation().toString());
-        compound.putString(TAG_ICON_ITEM_STACK, ForgeRegistries.ITEMS.getKey(research.getIconItemStack().getItem()) + ":" + research.getIconItemStack().getCount());
+        compound.putString(TAG_ICON_ITEM_STACK, BuiltInRegistries.ITEM.getKey(research.getIconItemStack().getItem()) + ":" + research.getIconItemStack().getCount());
         compound.putString(TAG_SUBTITLE_NAME, research.getSubtitle().getKey());
         compound.putBoolean(TAG_INSTANT, research.isInstant());
         compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
@@ -127,7 +127,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
         final ResourceLocation iconTexture = new ResourceLocation(nbt.getString(TAG_ICON_TEXTURE));
         final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
-        final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
+        final ItemStack iconStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
         iconStack.setCount(Integer.parseInt(iconStackParts[2]));
         final TranslatableContents subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE_NAME), null, TranslatableContents.NO_ARGS);
         final boolean instant = nbt.getBoolean(TAG_INSTANT);
@@ -140,7 +140,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
         {
             final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? new ResourceLocation(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
-            final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().getValue(res);
+            final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().get(res);
             final IResearchCost instance = researchCostType.createInstance();
             instance.read(compound);
             research.addCost(instance);
@@ -148,11 +148,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Tag.TAG_COMPOUND)).
              forEach(compound ->
                      research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance()
-                                                                      .getValue(ResourceLocation.tryParse(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
+                                                                      .get(ResourceLocation.tryParse(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
 
         NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Tag.TAG_COMPOUND)).forEach(compound ->
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance()
-                                                        .getValue(ResourceLocation.tryParse(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
+                                                        .get(ResourceLocation.tryParse(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
 
         NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Tag.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
         return research;
@@ -178,7 +178,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeVarInt(input.getCostList().size());
         for (IResearchCost cost : input.getCostList())
         {
-            packetBuffer.writeRegistryId(IMinecoloniesAPI.getInstance().getResearchCostRegistry(), cost.getType());
+            packetBuffer.writeId(IMinecoloniesAPI.getInstance().getResearchCostRegistry(), cost.getType());
             cost.serialize(packetBuffer);
         }
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
@@ -224,7 +224,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
-            final ResearchCostType researchCostType = buffer.readRegistryIdSafe(ResearchCostType.class);
+            final ResearchCostType researchCostType = buffer.readById(IMinecoloniesAPI.getInstance().getResearchCostRegistry());
             final IResearchCost cost = researchCostType.createInstance();
             cost.deserialize(buffer);
             research.addCost(cost);
@@ -234,14 +234,14 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         for(int i = 0; i < reqCount; i++)
         {
             final ResourceLocation reqId = buffer.readResourceLocation();
-            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(reqId)).readFromNBT(buffer.readNbt()));
+            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().get(reqId)).readFromNBT(buffer.readNbt()));
         }
 
         final int effectCount = buffer.readVarInt();
         for(int i = 0; i < effectCount; i++)
         {
             final ResourceLocation effectId = buffer.readResourceLocation();
-            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(effectId)).readFromNBT(buffer.readNbt()));
+            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().get(effectId)).readFromNBT(buffer.readNbt()));
         }
 
         final int childCount = buffer.readVarInt();

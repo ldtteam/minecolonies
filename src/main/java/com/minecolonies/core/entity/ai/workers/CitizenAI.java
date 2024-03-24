@@ -154,7 +154,7 @@ public class CitizenAI implements IStateAI
         // Raiding
         if (citizen.getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
+            citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             citizen.setVisibleStatusIfNone(RAIDED);
             return CitizenAIState.SLEEP;
         }
@@ -208,39 +208,34 @@ public class CitizenAI implements IStateAI
         }
 
         // Mourning
-        if (citizen.getCitizenData().getCitizenMournHandler().isMourning() && citizen.getCitizenData().getCitizenMournHandler().shouldMourn())
+        if (citizen.getCitizenData().getCitizenMournHandler().isMourning())
         {
             if (lastState != CitizenAIState.MOURN)
             {
-                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
+                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
                   citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
-                  Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+                  Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
                   ChatPriority.IMPORTANT));
 
                 citizen.setVisibleStatusIfNone(MOURNING);
             }
             return CitizenAIState.MOURN;
         }
-        else
-        {
-            this.citizen.getCitizenData().getCitizenMournHandler().clearDeceasedCitizen();
-            this.citizen.getCitizenData().getCitizenMournHandler().setMourning(false);
-        }
 
         // Raining
-        if (CompatibilityUtils.getWorldFromCitizen(citizen).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(citizen.level))
+        if (CompatibilityUtils.getWorldFromCitizen(citizen).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(citizen.level()))
         {
             citizen.setVisibleStatusIfNone(BAD_WEATHER);
             if (!citizen.getCitizenData().getColony().getRaiderManager().isRaided()
                   && !citizen.getCitizenData().getCitizenMournHandler().isMourning())
             {
-                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
+                citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             return CitizenAIState.IDLE;
         }
 
         // Work
-        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level.getDayTime() % 24000 > NOON)
+        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level().getDayTime() % 24000 > NOON)
         {
             citizen.setVisibleStatusIfNone(HOUSE);
             return CitizenAIState.IDLE;

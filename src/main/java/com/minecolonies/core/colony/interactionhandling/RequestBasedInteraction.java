@@ -16,8 +16,8 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -35,17 +35,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill"), null)};
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.cancel"), Component.empty()),
+      new Tuple<>(Component.translatableEscape("com.minecolonies.coremod.gui.chat.fulfill"), Component.empty())};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuplesAsync = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
-      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_OKAY), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_IGNORE), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_REMIND), Component.empty()),
+      new Tuple<>(Component.translatableEscape(INTERACTION_R_SKIP), Component.empty())};
 
     /**
      * The request this is related to.
@@ -134,7 +134,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public void onWindowOpened(final BOWindow window, final ICitizenDataView dataView)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level.dimension());
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level().dimension());
         if (colony != null)
         {
             final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
@@ -156,7 +156,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.fulfill"))
         {
-            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
+            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level().dimension());
 
             if (colony != null)
             {
@@ -186,7 +186,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         super.onServerResponseTriggered(responseId, player, data);
         final Component response = getPossibleResponses().get(responseId);
-        if (response.equals(Component.translatable("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(Component.translatableEscape("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

@@ -44,7 +44,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     public ResearchResearchRequirement(final ResourceLocation researchId)
     {
         this.researchId = researchId;
-        this.researchName = Component.translatable("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
+        this.researchName = Component.translatableEscape("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
     }
 
     /**
@@ -66,7 +66,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     public ResearchResearchRequirement(final CompoundTag nbt)
     {
         this.researchId = new ResourceLocation(nbt.getString(TAG_ID));
-        this.researchName = Component.translatable(nbt.getString(TAG_NAME));
+        this.researchName = Component.translatableEscape(nbt.getString(TAG_NAME));
     }
 
     /**
@@ -86,7 +86,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     @Override
     public MutableComponent getDesc()
     {
-        return Component.translatable(TranslationConstants.RESEARCH_REQUIRES, researchName);
+        return Component.translatableEscape(TranslationConstants.RESEARCH_REQUIRES, researchName);
     }
 
     @Override

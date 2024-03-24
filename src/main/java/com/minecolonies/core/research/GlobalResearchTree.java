@@ -4,23 +4,21 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -228,7 +226,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         final FriendlyByteBuf researchTreeFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 
-        Network.getNetwork().sendToPlayer(new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf), player);
+        new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);
     }
 
     public void serializeNetworkData(final FriendlyByteBuf buf)
@@ -251,7 +249,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public IMessage handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
+    public void handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
     {
         researchTree.clear();
         branchDatas.clear();
@@ -269,7 +267,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
             ResourceLocation branchId = buf.readResourceLocation();
             branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
         }
-        return null;
     }
 
     @Override
@@ -314,7 +311,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                     Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
                 }
             }
-            final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+            final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
             final ItemStack stack = new ItemStack(item);
             if (stack.isEmpty())
             {

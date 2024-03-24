@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
@@ -10,7 +11,6 @@ import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -44,11 +44,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.TriPredicate;
+import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -398,8 +398,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 break;
             case CLEAR_WATER:
                 //water
-                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.WATER_REMOVAL,
-                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getFluidState(pos).isEmpty()), false);
+                result = placer.clearWaterStep(world, progress);
                 break;
             case CLEAR_NON_SOLIDS:
                 // clear air
@@ -422,7 +421,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 else
                 {
                     // entities
-                    result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                    result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.SPAWN_ENTITY,
                       () -> placer.getIterator().increment((info, pos, handler) -> info.getEntities().length == 0 || DONT_TOUCH_PREDICATE.test(info, pos, handler)), true);
                 }
                 break;
@@ -462,12 +461,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 worker.getCitizenData().setStatusPosition(null);
                 return COMPLETE_BUILD;
             }
+            this.storeProgressPos(NULL_POS, structurePlacer.getB().getStage());
         }
         else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
         {
             this.limitReached = true;
+            this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
         }
-        this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+        else
+        {
+            this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+        }
+
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
         {
@@ -626,12 +631,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * Loads the structure given the name, rotation and position.
      *
      * @param workOrder   the work order.
-     * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
-     * @param isMirrored  is the structure mirroed?
+     * @param rotMir      rotation and mirror of structure
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final RotationMirror rotMir, final boolean removal)
     {
         final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
@@ -655,7 +659,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  rotMir,
                   this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
@@ -665,7 +669,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  rotMir,
                   this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
@@ -674,13 +678,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  rotMir,
                   this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
             job.setBlueprint(blueprint);
-            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+            job.getBlueprint().setRotationMirror(rotMir, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -892,7 +896,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final Blueprint blueprint = structurePlacer.getB().getBluePrint();
 
         final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
-        searchForItems(new AABB(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
+        searchForItems(AABB.encapsulatingFullBlocks(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
     }
 
     /**
@@ -1071,9 +1075,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
      *
      * @param ignored the location the block should be at.
+     * @param virtualBlocks blueprint blocks, fnc may return null if virtual block is not available (then use level instead for getting surrounding block states), pos argument is using world coords
      * @return the Block.
      */
-    public BlockState getSolidSubstitution(final BlockPos ignored)
+    public BlockState getSolidSubstitution(final BlockPos ignored, final Function<BlockPos, @Nullable BlockState> virtualBlocks)
     {
         return building.getSetting(FILL_BLOCK).getValue().getBlock().defaultBlockState();
     }

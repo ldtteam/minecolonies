@@ -1,11 +1,11 @@
 package com.minecolonies.core.entity.ai.workers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.event.BuildingConstructionEvent;
@@ -34,7 +34,7 @@ import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandl
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,10 +185,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final int tempRotation = workOrder.getRotation();
         final boolean removal = workOrder.getWorkOrderType() == WorkOrderType.REMOVE;
 
-        loadStructure(workOrder, tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder, pos, workOrder.getRotationMirror(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
@@ -215,26 +214,24 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.getWorkOrder().setAmountOfResources(newQuantity);
         }
     }
-
     @Override
-    protected IAIState waitForRequests()
+    protected boolean checkIfNeedsItem()
     {
-        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint()))
+        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || !job.getWorkOrder().isRequested()))
         {
-            return START_BUILDING;
+            return false;
         }
-
-        return super.waitForRequests();
+        return super.checkIfNeedsItem();
     }
 
     @Override
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world,
+        final WorkerLoadOnlyStructureHandler<J, B> structure = new WorkerLoadOnlyStructureHandler<>(world,
           structurePlacer.getB().getWorldPos(),
           structurePlacer.getB().getBluePrint(),
-          new PlacementSettings(),
+          RotationMirror.NONE,
           true,
           this);
 
@@ -428,7 +425,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (wo instanceof WorkOrderBuilding)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
-                MinecraftForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
+                NeoForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
                 switch (wo.getWorkOrderType())
                 {
                     case BUILD:
@@ -444,7 +441,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         else
                         {
                             // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
-                            final BlockEntity te = worker.level.getBlockEntity(building.getID());
+                            final BlockEntity te = worker.level().getBlockEntity(building.getID());
                             if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
                             {
                                 building.onUpgradeComplete(wo.getTargetLevel());

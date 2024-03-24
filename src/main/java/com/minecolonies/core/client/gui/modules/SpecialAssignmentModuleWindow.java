@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowHireWorker;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -63,7 +62,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallCitizenMessage(buildingView));
+        new RecallCitizenMessage(buildingView).sendToServer();
     }
 
     /**
@@ -92,7 +91,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
         {
             for (final int worker : module.getAssignedCitizens())
             {
-                workers.add(new Tuple<>(Component.translatable(module.getJobEntry().getTranslationKey()).getString(), worker));
+                workers.add(new Tuple<>(Component.translatableEscape(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -115,7 +114,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                          .setText(Component.literal(Component.translatableEscape(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

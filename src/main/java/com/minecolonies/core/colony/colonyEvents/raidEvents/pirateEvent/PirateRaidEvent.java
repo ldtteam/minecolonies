@@ -88,6 +88,6 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return Component.translatable(RAID_PIRATE);
+        return Component.translatableEscape(RAID_PIRATE);
     }
 }

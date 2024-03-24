@@ -19,9 +19,8 @@ import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -124,7 +123,7 @@ public class TileEntityColonyFlag extends BlockEntity
         for (Pair<Holder<BannerPattern>, DyeColor> pair : list)
         {
             CompoundTag pairNBT = new CompoundTag();
-            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().get().getHashname());
+            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().value().getHashname());
             pairNBT.putInt(TAG_PATTERN_COLOR, pair.getSecond().getId());
             nbt.add(pairNBT);
         }

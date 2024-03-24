@@ -1,26 +1,26 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../java/com/ldtteam/blockout/blockOut.xsd"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
         size="420 240" pause="false" lightbox="false">
 
-    <buttonimage id="selectleft" size="14 30" pos="1 1" textcolor="black" label="&lt;"/>
-    <buttonimage id="selectright" size="14 30" pos="126 1" textcolor="black" label="&gt;"/>
-    <buttonimage id="viewschem" text="none" size="111 30" pos="15 1"/>
-    <buttonimage id="selectschematic" size="111 15" pos="15 30" label="$(com.minecolonies.coremod.gui.analyzer.select)"/>
+    <button id="selectleft" size="14 30" pos="1 1" color="black" label="&lt;"/>
+    <button id="selectright" size="14 30" pos="126 1" color="black" label="&gt;"/>
+    <button id="viewschem" text="none" size="111 30" pos="15 1"/>
+    <button id="selectschematic" size="111 15" pos="15 30" label="$(com.minecolonies.coremod.gui.analyzer.select)"/>
 
-    <box id="results" size="100% 165" label="list" pos="1 45" linewidth="1">
-        <label id="score" size="100% 14" pos="3 1" color="white"/>
-        <label id="size" size="100% 14" pos="3 15" color="white"/>
-        <label id="blockcounts" size="100% 14" pos="3 29" color="white"/>
-        <label id="buildings" size="100% 14" pos="3 43" color="white"/>
-        <buttonimage label="$(com.ldtteam.structurize.gui.scantool.showres)" id="showresources" pos="3 57" size="86 20"
-                     source="structurize:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+    <box id="results" size="100% 165" pos="1 45" linewidth="1">
+        <text id="score" size="100% 14" pos="3 1" color="white"/>
+        <text id="size" size="100% 14" pos="3 15" color="white"/>
+        <text id="blockcounts" size="100% 14" pos="3 29" color="white"/>
+        <text id="buildings" size="100% 14" pos="3 43" color="white"/>
+        <button label="$(com.ldtteam.structurize.gui.scantool.showres)" id="showresources" pos="3 57" size="86 20"
+                     source="structurize:textures/gui/builderhut/builder_button_medium.png" color="black"/>
         <list id="resources" size="100% 120" pos="0 57" childspacing="-1" visible="false">
             <box size="100% 19" linewidth="1">
                 <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
-                <label id="resourceName" size="86 12" pos="19 1" color="white" wrap="true"/>
-                <label id="resourceCount" size="30 12" pos="105 1" color="white" wrap="true"/>
+                <text id="resourceName" size="86 12" pos="19 1" color="white" wrap="true"/>
+                <text id="resourceCount" size="30 12" pos="105 1" color="white" wrap="true"/>
             </box>
         </list>
     </box>
 
-    <buttonimage id="cancel" source="minecolonies:textures/gui/button_x.png" size="32" pos="235 250"/>
+    <button id="cancel" source="minecolonies:textures/gui/button_x.png" size="32" pos="235 250"/>
 </window>

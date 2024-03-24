@@ -17,6 +17,8 @@ import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingMo
 import com.minecolonies.core.colony.crafting.CustomRecipe;
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
@@ -25,7 +27,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -172,9 +173,9 @@ public class BuildingSmeltery extends AbstractBuilding
             final List<ResourceLocation> lootTables = new ArrayList<>(super.getAdditionalLootTables());
 
             //noinspection ConstantConditions
-            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
+            for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                lootTables.add(getLootTable(input));
+                lootTables.add(getLootTable(input.value()));
             }
 
             return lootTables;
@@ -198,7 +199,7 @@ public class BuildingSmeltery extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             //noinspection ConstantConditions
-            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
+            for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
                 recipes.add(new GenericRecipe(
                         null,                    //recipe
@@ -207,7 +208,7 @@ public class BuildingSmeltery extends AbstractBuilding
                         Collections.singletonList(Collections.singletonList(new ItemStack(input))), //inputs
                         1,                   //grid
                         Blocks.AIR,                 //intermediate
-                        getLootTable(input),        //loottable
+                        getLootTable(input.value()),        //loottable
                         ToolType.PICKAXE,
                         Collections.emptyList(),    //restrictions
                         -1));               //levelsort
@@ -221,9 +222,9 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             super.checkForWorkerSpecificRecipes();
 
-            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
+            for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                Block b = Block.byItem(input);
+                Block b = Block.byItem(input.value());
                 List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
                 for (ItemStack drop : drops)
                 {
@@ -244,7 +245,7 @@ public class BuildingSmeltery extends AbstractBuilding
                     null,               //Type
                     null,               //Altoutputs
                     drops,              //SecOutputs
-                    getLootTable(input) //Loot Table
+                    getLootTable(input.value()) //Loot Table
                     );
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
                 this.addRecipeToList(token, false);

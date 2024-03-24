@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_build_tool",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_build_tool"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:questlog"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

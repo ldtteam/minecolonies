@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.EffectCures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
         
         if (!worldIn.isClientSide)
         {
-            entityLiving.curePotionEffects(new ItemStack(Items.MILK_BUCKET));
+            entityLiving.removeEffectsCuredBy(EffectCures.MILK);
         }
 
         return super.finishUsingItem(stack, worldIn, entityLiving);
@@ -60,7 +61,7 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
     public void appendHoverText(
     @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI);
+        final MutableComponent guiHint = Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(guiHint);
 

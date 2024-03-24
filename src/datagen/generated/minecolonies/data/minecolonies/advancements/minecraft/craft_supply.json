@@ -2,7 +2,6 @@
   "parent": "minecraft:story/root",
   "criteria": {
     "supply_ship": {
-      "conditions": {},
       "trigger": "minecolonies:supply_placed"
     }
   },
@@ -11,8 +10,6 @@
     "description": {
       "translate": "advancements.minecolonies.root.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:supplychestdeployer"
     },

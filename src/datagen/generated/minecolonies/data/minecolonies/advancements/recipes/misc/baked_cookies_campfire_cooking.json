@@ -22,14 +22,13 @@
   },
   "requirements": [
     [
-      "has_dough",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_dough"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:baked_cookies_campfire_cooking"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

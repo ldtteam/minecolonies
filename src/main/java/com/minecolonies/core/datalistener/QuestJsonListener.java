@@ -8,7 +8,6 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.GlobalQuestSyncMessage;
 import com.minecolonies.core.quests.*;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
@@ -62,7 +61,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             byteBuf.writeResourceLocation(entry.getKey());
             byteBuf.writeByteArray(entry.getValue().toString().getBytes());
         }
-        Network.getNetwork().sendToPlayer(new GlobalQuestSyncMessage(byteBuf), player);
+        new GlobalQuestSyncMessage(byteBuf).sendToPlayer(player);
     }
 
     /**
@@ -129,7 +128,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().getValue(new ResourceLocation(type)).produce(triggerObj));
+                questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().get(new ResourceLocation(type)).produce(triggerObj));
             }
             catch (final Exception ex)
             {
@@ -144,7 +143,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().getValue(new ResourceLocation(type)).produce(objectiveObj));
+                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(new ResourceLocation(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {
@@ -178,7 +177,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             questTimeout = 10;
         }
 
-        final Component questName = Component.translatable(jsonObject.get(NAME).getAsString());
+        final Component questName = Component.translatableEscape(jsonObject.get(NAME).getAsString());
 
         final List<IQuestRewardTemplate> questRewards = new ArrayList<>();
         for (final JsonElement objectivesJson : jsonObject.get(QUEST_REWARDS).getAsJsonArray())
@@ -187,7 +186,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().getValue(new ResourceLocation(type)).produce(objectiveObj));
+                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(new ResourceLocation(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {

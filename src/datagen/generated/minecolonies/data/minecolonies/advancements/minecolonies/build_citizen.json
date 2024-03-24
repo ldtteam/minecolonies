@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.citizen.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutcitizen"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.citizen.title"
     }

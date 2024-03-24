@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
@@ -9,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +34,6 @@ public class MinerLevel
     private static final String TAG_OPEN_NODES = "OpenNodes";
     private static final String TAG_LEVEL_SIGN = "LevelSign";
 
-    /**
-     * Possible rotations.
-     */
-    private static final int                  ROTATE_ONCE              = 1;
-    private static final int                  ROTATE_TWICE             = 2;
-    private static final int                  ROTATE_THREE_TIMES       = 3;
-    private static final int                  MAX_ROTATIONS            = 4;
     /**
      * Random object needed for some tasks.
      */
@@ -235,7 +228,7 @@ public class MinerLevel
      * @param rotation the rotation of the node.
      * @param node     the node to close.
      */
-    public void closeNextNode(final int rotation, final MineNode node, final Level world)
+    public void closeNextNode(final RotationMirror rotation, final MineNode node, final Level world)
     {
         final MineNode tempNode = node == null ? openNodes.peek() : node;
         final List<Vec2i> nodeCenterList = new ArrayList<>(3);
@@ -248,30 +241,30 @@ public class MinerLevel
         switch (tempNode.getStyle())
         {
             case TUNNEL:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.NONE));
                 break;
             case BEND_RIGHT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R270));
                 break;
             case BEND_LEFT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R90));
                 break;
             case CROSS_THREE_LEFT_RIGHT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R90));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R270));
                 break;
             case CROSS_THREE_TOP_LEFT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.NONE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R270));
                 break;
             case CROSS_THREE_TOP_RIGHT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.NONE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R90));
                 break;
             case CROSSROAD:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.NONE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R90));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, RotationMirror.R270));
                 break;
             case UNDEFINED:
                 Log.getLogger().error("Minecolonies node: " + node.getX() + ":" + node.getZ() + " style undefined creating children, Please tell the mod authors about this");
@@ -314,16 +307,15 @@ public class MinerLevel
      * @param additionalRotation the additional rotation.
      * @return center of the new node.
      */
-    private static Vec2i getNextNodePositionFromNodeWithRotation(final MineNode node, final int rotation, final int additionalRotation)
+    private static Vec2i getNextNodePositionFromNodeWithRotation(final MineNode node, final RotationMirror rotation, final RotationMirror additionalRotation)
     {
-        final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
-        switch (realRotation)
+        switch (rotation.rotate(additionalRotation.rotation()).rotation())
         {
-            case ROTATE_ONCE:
+            case CLOCKWISE_90:
                 return node.getSouthNodeCenter();
-            case ROTATE_TWICE:
+            case CLOCKWISE_180:
                 return node.getWestNodeCenter();
-            case ROTATE_THREE_TIMES:
+            case COUNTERCLOCKWISE_90:
                 return node.getNorthNodeCenter();
             default:
                 return node.getEastNodeCenter();

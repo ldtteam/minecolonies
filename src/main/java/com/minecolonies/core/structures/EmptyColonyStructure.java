@@ -17,7 +17,10 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBinding;
+import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,7 +39,8 @@ public class EmptyColonyStructure extends Structure
                                                                                                     HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
                                                                                                     Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
                                                                                                     Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter),
-                                                                                                    Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave)
+                                                                                                    Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave),
+                                                                                                    Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_307187_ -> p_307187_.poolAliases)
                                                                                                   ).apply(instance, EmptyColonyStructure::new)).codec();
 
     private final Holder<StructureTemplatePool> startPool;
@@ -45,6 +49,7 @@ public class EmptyColonyStructure extends Structure
     private final HeightProvider startHeight;
     private final Optional<Heightmap.Types> projectStartToHeightmap;
     private final int maxDistanceFromCenter;
+    private final List<PoolAliasBinding> poolAliases;
     private boolean allowCave;
 
     public EmptyColonyStructure(Structure.StructureSettings config,
@@ -54,7 +59,8 @@ public class EmptyColonyStructure extends Structure
       HeightProvider startHeight,
       Optional<Heightmap.Types> projectStartToHeightmap,
       int maxDistanceFromCenter,
-      boolean allowCave)
+      boolean allowCave,
+      List<PoolAliasBinding> poolAliases)
     {
         super(config);
         this.startPool = startPool;
@@ -64,6 +70,7 @@ public class EmptyColonyStructure extends Structure
         this.projectStartToHeightmap = projectStartToHeightmap;
         this.maxDistanceFromCenter = maxDistanceFromCenter;
         this.allowCave = allowCave;
+        this.poolAliases = poolAliases;
     }
 
     @Override
@@ -106,7 +113,8 @@ public class EmptyColonyStructure extends Structure
                     result,
                     false,
                     this.projectStartToHeightmap,
-                    this.maxDistanceFromCenter
+                    this.maxDistanceFromCenter,
+                    PoolAliasLookup.create(this.poolAliases, result, context.seed())
                   );
 
                 if (structurePiecesGenerator.isPresent())
@@ -138,7 +146,8 @@ public class EmptyColonyStructure extends Structure
             blockpos,
             false,
             this.projectStartToHeightmap,
-            this.maxDistanceFromCenter
+            this.maxDistanceFromCenter,
+            PoolAliasLookup.create(this.poolAliases, blockpos, context.seed())
           );
 
         if (structurePiecesGenerator.isPresent())

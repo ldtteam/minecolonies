@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.ExperienceUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -246,10 +245,8 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         if (data.getEntity().isPresent())
         {
             final AbstractEntityCitizen citizen = data.getEntity().get();
-            playSoundAtCitizenWith(citizen.level, citizen.blockPosition(), SUCCESS, data);
-            Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER),
-                data.getEntity().get());
+            playSoundAtCitizenWith(citizen.level(), citizen.blockPosition(), SUCCESS, data);
+            new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER).sendToTrackingEntity(data.getEntity().get());
         }
 
         if (data.getJob() != null)

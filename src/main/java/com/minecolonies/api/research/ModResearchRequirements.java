@@ -3,7 +3,7 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class ModResearchRequirements
 {
@@ -11,9 +11,9 @@ public class ModResearchRequirements
     public static final ResourceLocation BUILDING_RESEARCH_REQ_ID                = new ResourceLocation(Constants.MOD_ID,"buildingresearchreq");
     public static final ResourceLocation RESEARCH_RESEARCH_REQ_ID                = new ResourceLocation(Constants.MOD_ID,"researchresearchrequirement");
 
-    public static RegistryObject<ResearchRequirementEntry> alternateBuildingResearchRequirement;
-    public static RegistryObject<ResearchRequirementEntry> buildingResearchRequirement;
-    public static RegistryObject<ResearchRequirementEntry> researchResearchRequirement;
+    public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> alternateBuildingResearchRequirement;
+    public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingResearchRequirement;
+    public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> researchResearchRequirement;
 
     private ModResearchRequirements()
     {

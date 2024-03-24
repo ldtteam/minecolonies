@@ -5,13 +5,14 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,8 +42,8 @@ public final class BuildingUtils
      */
     public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ForgeRegistries.BLOCKS.getKey(((BlockItem) item.getItem()).getBlock())
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(IItemHandlerCapProvider.wrap(inventory.player, false),
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && BuiltInRegistries.BLOCK.getKey(((BlockItem) item.getItem()).getBlock())
                   .getPath()
                   .endsWith(hut));
 

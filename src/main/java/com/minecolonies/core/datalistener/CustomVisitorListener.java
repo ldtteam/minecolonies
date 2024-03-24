@@ -211,7 +211,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (storykey != null)
             {
-                visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatableEscape(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
             }
 
             visitorData.markDirty(0);

@@ -3,13 +3,13 @@ package com.minecolonies.core.client.render.worldevent;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
-import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -28,7 +28,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,7 +123,7 @@ public class ColonyBlueprintRenderer
         {
             shouldRenderBlueprints = !shouldRenderBlueprints;
 
-            ctx.clientPlayer.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.NEUTRAL, 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
+            ctx.clientPlayer.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.NEUTRAL, 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
         }
 
         if (!ctx.hasNearestColony())
@@ -188,7 +187,7 @@ public class ColonyBlueprintRenderer
             if (buildingData.box().getPos1() != INVALID_POS)
             {
                 ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
-                        new AABB(buildingData.box().getPos1(), buildingData.box().getPos2().offset(1, 1, 1)),
+                        AABB.encapsulatingFullBlocks(buildingData.box().getPos1(), buildingData.box().getPos2().offset(1, 1, 1)),
                         0.08f, 0xFF0000FF, false);
             }
 
@@ -367,7 +366,7 @@ public class ColonyBlueprintRenderer
         @Override
         public boolean isEnabled(final WorldEventContext ctx)
         {
-            return RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() != null &&
+            return RenderingCache.hasBlueprint("blueprint") &&
                     MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get() &&
                     ctx.mainHandItem.getItem() == buildTool.get();
         }
@@ -376,10 +375,19 @@ public class ColonyBlueprintRenderer
         public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
         {
             final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
+            if (!RenderingCache.hasBlueprint("blueprint"))
+            {
+                return desired;
+            }
+
             final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getPos();
             final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+            if (blueprint == null)
+            {
+                return desired;
+            }
             final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
-            final AABB blueprintAABB = new AABB(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
+            final AABB blueprintAABB = AABB.encapsulatingFullBlocks(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                     .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
             for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
@@ -391,7 +399,7 @@ public class ColonyBlueprintRenderer
                     BlockPos cornerA = corners.getA();
                     BlockPos cornerB = corners.getB();
 
-                    if (blueprintAABB.intersects(new AABB(cornerA, cornerB)))
+                    if (blueprintAABB.intersects(AABB.encapsulatingFullBlocks(cornerA, cornerB)))
                     {
                         String schemPath = buildingView.getStructurePath();
                         schemPath = schemPath.replace(".blueprint", "");
@@ -399,9 +407,7 @@ public class ColonyBlueprintRenderer
                         schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
                         final String structurePack = buildingView.getStructurePack();
-                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath,
-                                RotationMirror.of(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
-                                        buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
+                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath, buildingView.getRotationMirror());
 
                         desired.put(currentPosition,
                                 new PendingRenderData(key, currentPosition, 0,
@@ -439,9 +445,7 @@ public class ColonyBlueprintRenderer
                 if (workOrder.getLocation().distSqr(ctx.clientPlayer.blockPosition()) < range)
                 {
                     final int builder = getBuilderId(ctx.nearestColony, workOrder.getClaimedBy());
-                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getPackName(), workOrder.getStructurePath(),
-                            RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
-                                    workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
+                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getPackName(), workOrder.getStructurePath(), workOrder.getRotationMirror());
                     desired.put(workOrder.getLocation(),
                             new PendingRenderData(key, workOrder.getLocation(), builder,
                                 workOrder.getWorkOrderType() == WorkOrderType.REMOVE,

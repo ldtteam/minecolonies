@@ -1,11 +1,11 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/clipboard.png" pos="0 0" size="190 244"/>
 
-    <label size="158 11" pos="16 28" textalign="MIDDLE" color="black"
+    <text size="158 11" pos="16 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <buttonimage id="important" size="14 15" pos="150 23" textcolor="red" label="!" tooltip="$(com.minecolonies.coremod.gui.request.hideshow)" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
+    <button id="important" size="14 15" pos="150 23" color="red" label="!" tooltip="$(com.minecolonies.coremod.gui.request.hideshow)" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
     <list id="requests" size="158 184" pos="16 44">
         <box id="requestx" size="100% 40" linewidth="1">
             <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>

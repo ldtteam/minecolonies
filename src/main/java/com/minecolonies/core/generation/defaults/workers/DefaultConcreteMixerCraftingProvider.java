@@ -3,14 +3,13 @@ package com.minecolonies.core.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final List<ItemStorage> input = new ArrayList<>();
         input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
@@ -46,9 +45,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
         for (final DyeColor color : DyeColor.values())
         {
             final String prefix = color.name().toLowerCase(Locale.ROOT);
-            final Item powder = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_concrete_powder"));
-            final Item concrete = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_concrete"));
-            final Item dye = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_dye"));
+            final Item powder = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_concrete_powder"));
+            final Item concrete = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_concrete"));
+            final Item dye = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_dye"));
 
             if (powder == null || concrete == null || dye == null)
             {
@@ -58,12 +57,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(),  MODULE_CUSTOM, ForgeRegistries.ITEMS.getKey(powder).getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(),  MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(powder).getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
                     .build(consumer);
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), MODULE_CUSTOM, ForgeRegistries.ITEMS.getKey(concrete).getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(concrete).getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)

@@ -306,7 +306,10 @@ public class QuestManager implements IQuestManager
             for (Map.Entry<ResourceLocation, Integer> entry : finishedQuests.entrySet())
             {
                 IQuestTemplate template = GLOBAL_SERVER_QUESTS.get(entry.getKey());
-                data.add(new FinishedQuest(template, entry.getValue()));
+                if (template != null)
+                {
+                    data.add(new FinishedQuest(template, entry.getValue()));
+                }
             }
             finishedQuestsCache = Collections.unmodifiableList(data);
         }

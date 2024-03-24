@@ -14,7 +14,7 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        return getOrderTypePrefix(Component.translatable(getTranslationKey()));
+        return getOrderTypePrefix(Component.translatableEscape(getTranslationKey()));
     }
 
     private Component getOrderTypePrefix(Component nameComponent)
@@ -22,13 +22,13 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
         switch (this.getWorkOrderType())
         {
             case BUILD:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
             case REPAIR:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
             case REMOVE:
-                return Component.translatable(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
+                return Component.translatableEscape(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
             default:
                 return nameComponent;
         }

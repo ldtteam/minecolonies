@@ -1,17 +1,20 @@
 package com.minecolonies.core.network.messages.server.colony.building.home;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,28 +22,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignUnassignMessage extends AbstractBuildingServerMessage<DefaultBuildingInstance>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "assign_unassign", AssignUnassignMessage::new);
+
     /**
      * If assigning (true) else unassigning.
      */
-    private boolean assign;
+    private final boolean assign;
 
     /**
      * The citizen to assign/unassigning.
      */
-    private int citizenID;
+    private final int citizenID;
 
     /**
      * The job entry.
      */
-    private JobEntry jobEntry;
-
-    /**
-     * Empty public constructor.
-     */
-    public AssignUnassignMessage()
-    {
-        super();
-    }
+    private final JobEntry jobEntry;
 
     /**
      * Creates object for the player to assigning or unassigning a citizen.
@@ -52,7 +49,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      */
     public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID, final JobEntry entry)
     {
-        super(building);
+        super(TYPE, building);
         this.assign = assign;
         this.citizenID = citizenID;
         this.jobEntry = entry;
@@ -63,15 +60,12 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      *
      * @param buf the used byteBuffer.
      */
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected AssignUnassignMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         assign = buf.readBoolean();
         citizenID = buf.readInt();
-        if (buf.readBoolean())
-        {
-            jobEntry = buf.readRegistryId();
-        }
+        jobEntry = buf.readBoolean() ? buf.readById(IMinecoloniesAPI.getInstance().getJobRegistry()) : null;
     }
 
     /**
@@ -80,30 +74,20 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
-        if (jobEntry == null)
+        buf.writeBoolean(jobEntry != null);
+        if (jobEntry != null)
         {
-            buf.writeBoolean(false);
-        }
-        else
-        {
-            buf.writeBoolean(true);
-            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
+            buf.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
     }
 
     @Override
-    public boolean errorIfCastFails()
-    {
-        return false;
-    }
-
-    @Override
-    public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final DefaultBuildingInstance building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final DefaultBuildingInstance building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         final AbstractAssignedCitizenModule module;

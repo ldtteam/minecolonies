@@ -1,22 +1,22 @@
 <window size="524 243" pause="false" lightbox="false">
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
 
-    <label size="148 11" pos="101 60" style="bold" color="green"
+    <text size="148 11" pos="101 60" style="bold" color="green"
            label="$(com.minecolonies.coremod.gui.townhall.allies)"/>
     <list id="allies" size="150 75" pos="101 70">
         <box size="100% 25" linewidth="1">
-            <label id="name" size="100 12" pos="5 0" color="black"/>
-            <label id="dist" size="40 13" pos="112 12" color="black"/>
+            <text id="name" size="100 12" pos="5 0" color="black"/>
+            <text id="dist" size="40 13" pos="112 12" color="black"/>
             <button id="tp" size="100 12" pos="5 12" label="$(com.minecolonies.coremod.permission.teleport_to_colony)"/>
         </box>
     </list>
 
-    <label size="148 11" pos="101 160" style="bold" color="red"
+    <text size="148 11" pos="101 160" style="bold" color="red"
            label="$(com.minecolonies.coremod.gui.townhall.feuds)"/>
     <list id="feuds" size="150 50" pos="101 170">
         <box size="100% 25" linewidth="1">
-            <label id="name" size="100 12" pos="5 0" color="black"/>
-            <label id="dist" size="40 12" pos="105 0" color="black"/>
+            <text id="name" size="100 12" pos="5 0" color="black"/>
+            <text id="dist" size="40 12" pos="105 0" color="black"/>
         </box>
     </list>
 

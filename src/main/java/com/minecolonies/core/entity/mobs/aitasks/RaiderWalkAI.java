@@ -9,9 +9,9 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -81,10 +81,10 @@ public class RaiderWalkAI implements IStateAI
             }
             raider.setTempEnvDamageImmunity(false);
 
-            if (targetBlock == null || raider.level.getGameTime() > walkTimer)
+            if (targetBlock == null || raider.level().getGameTime() > walkTimer)
             {
                 targetBlock = raider.getColony().getRaiderManager().getRandomBuilding();
-                walkTimer = raider.level.getGameTime() + TICKS_SECOND * 240;
+                walkTimer = raider.level().getGameTime() + TICKS_SECOND * 240;
 
                 final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
@@ -114,7 +114,7 @@ public class RaiderWalkAI implements IStateAI
                         else
                         {
                             randomPathResult = null;
-                            walkTimer = raider.level.getGameTime() + TICKS_SECOND * 60;
+                            walkTimer = raider.level().getGameTime() + TICKS_SECOND * 60;
                             findRandomPositionToWalkTo();
                         }
                     }
@@ -123,7 +123,7 @@ public class RaiderWalkAI implements IStateAI
             else if (raider.blockPosition().distSqr(targetBlock) < 25)
             {
                 findRandomPositionToWalkTo();
-                walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
+                walkTimer = raider.level().getGameTime() + TICKS_SECOND * 30;
                 walkInBuildingState = true;
             }
             else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
@@ -156,7 +156,7 @@ public class RaiderWalkAI implements IStateAI
                   && building.getBuildingLevel() > 0
                   && !building.getCorners().getA().equals(building.getCorners().getB()))
             {
-                randomPathResult = raider.getNavigation().moveToRandomPos(10, 0.9, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                randomPathResult = raider.getNavigation().moveToRandomPos(10, 0.9, building.getCorners());
                 randomPathResult.getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
             }
             else
@@ -184,7 +184,7 @@ public class RaiderWalkAI implements IStateAI
      */
     private void walkToCampFire()
     {
-        if (raider.level.getGameTime() - walkTimer < 0)
+        if (raider.level().getGameTime() - walkTimer < 0)
         {
             return;
         }
@@ -196,8 +196,8 @@ public class RaiderWalkAI implements IStateAI
             return;
         }
 
-        walkTimer = raider.level.getGameTime() + raider.level.random.nextInt(1000);
-        final BlockPos posAroundCampfire = BlockPosUtil.getRandomPosition(raider.level,
+        walkTimer = raider.level().getGameTime() + raider.level().random.nextInt(1000);
+        final BlockPos posAroundCampfire = BlockPosUtil.getRandomPosition(raider.level(),
           campFire,
           BlockPos.ZERO,
           3,

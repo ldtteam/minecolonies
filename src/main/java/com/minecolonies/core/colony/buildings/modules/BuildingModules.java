@@ -27,9 +27,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
 import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
-import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.SAPLINGS_LIST;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack.SAPLINGS_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
 public class BuildingModules
 {
@@ -157,7 +157,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("chickenherder_herding", BuildingChickenHerder.HerdingModule::new, null);
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> CHICKENHERDER_SETTINGS_BREEDING =
       new BuildingEntry.ModuleProducer<>("chickenherder_breeding_settings",
-        () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)).with(AbstractBuilding.FEEDING, new BoolSetting(true)),
+        () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)),
         () -> SettingsModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> COWHERDER_WORK      =
@@ -166,7 +166,6 @@ public class BuildingModules
         () -> WorkerBuildingModuleView::new);
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> COWHERDER_SETTINGS  =
       new BuildingEntry.ModuleProducer<>("cowherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-        .with(AbstractBuilding.FEEDING, new BoolSetting(true))
         .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
         .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
         .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1)), () -> SettingsModuleView::new);
@@ -178,13 +177,12 @@ public class BuildingModules
         () -> new WorkerBuildingModule(ModJobs.fisherman.get(), Skill.Focus, Skill.Agility, false, (b) -> 1),
         () -> WorkerBuildingModuleView::new);
 
-    public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> RABBITHERDER_WORK     =
+    public static final BuildingEntry.ModuleProducer<WorkerBuildingModule, WorkerBuildingModuleView> RABBITHERDER_WORK     =
       new BuildingEntry.ModuleProducer<>("rabbitherder_work", () -> new WorkerBuildingModule(ModJobs.rabbitHerder.get(), Skill.Agility, Skill.Athletics, false, (b) -> 1),
         () -> WorkerBuildingModuleView::new);
-    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> RABBITHERDER_SETTINGS =
-      new BuildingEntry.ModuleProducer<>("rabbitherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-        .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
-    public static final BuildingEntry.ModuleProducer<AnimalHerdingModule,IBuildingModuleView> RABBITHERDER_HERDING  =
+    public static final BuildingEntry.ModuleProducer<SettingsModule, SettingsModuleView>             RABBITHERDER_SETTINGS =
+      new BuildingEntry.ModuleProducer<>("rabbitherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
+    public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       RABBITHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("rabbitherder_herding",
         () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStack(Items.CARROT, 2)),
         null);
@@ -195,19 +193,17 @@ public class BuildingModules
         () -> WorkerBuildingModuleView::new);
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> SHEPERD_SETTINGS      =
       new BuildingEntry.ModuleProducer<>("sheperd_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-        .with(AbstractBuilding.FEEDING, new BoolSetting(true))
         .with(BuildingShepherd.DYEING, new BoolSetting(true))
         .with(BuildingShepherd.SHEARING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<BuildingShepherd.HerdingModule,IBuildingModuleView> SHEPERD_HERDING       =
       new BuildingEntry.ModuleProducer<>("sheperd_herding", BuildingShepherd.HerdingModule::new, null);
 
-    public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> SWINEHERDER_WORK      =
+    public static final BuildingEntry.ModuleProducer<WorkerBuildingModule, WorkerBuildingModuleView> SWINEHERDER_WORK     =
       new BuildingEntry.ModuleProducer<>("swineherder_work", () -> new WorkerBuildingModule(ModJobs.swineHerder.get(), Skill.Strength, Skill.Athletics, true, (b) -> 1),
         () -> WorkerBuildingModuleView::new);
-    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> SWINEHERDER_SETTINGS  =
-      new BuildingEntry.ModuleProducer<>("swineherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-        .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
-    public static final BuildingEntry.ModuleProducer<AnimalHerdingModule,IBuildingModuleView> SWINEHERDER_HERDING   =
+    public static final BuildingEntry.ModuleProducer<SettingsModule, SettingsModuleView>             SWINEHERDER_SETTINGS =
+      new BuildingEntry.ModuleProducer<>("swineherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
+    public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       SWINEHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("swineherder_herding",
         () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStack(Items.CARROT, 2)),
         null);

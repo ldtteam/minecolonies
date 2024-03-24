@@ -55,7 +55,7 @@ public class BuilderModeSetting extends StringSetting
     @Override
     protected Component getDisplayText()
     {
-        return Component.translatable("com.ldtteam.structurize.iterators." + getSettings().get(getCurrentIndex()));
+        return Component.translatableEscape("com.ldtteam.structurize.iterators." + getSettings().get(getCurrentIndex()));
     }
 
     @Override
@@ -73,6 +73,6 @@ public class BuilderModeSetting extends StringSetting
     @Override
     public @Nullable Component getInactiveReason()
     {
-        return Component.translatable(NEEDS_RESEARCH_REASON, Component.translatable(BUILDER_MODES_RESEARCH));
+        return Component.translatableEscape(NEEDS_RESEARCH_REASON, Component.translatableEscape(BUILDER_MODES_RESEARCH));
     }
 }

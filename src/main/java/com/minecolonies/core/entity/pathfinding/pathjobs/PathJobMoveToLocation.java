@@ -1,13 +1,19 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.pathfinder.Path;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +33,11 @@ public class PathJobMoveToLocation extends AbstractPathJob
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
 
     /**
+     * Modifier to the heuristics
+     */
+    private double heuristicModifier = 1;
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world  world the entity is in.
@@ -35,11 +46,21 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @param range  max search range.
      * @param entity the entity.
      */
-    public PathJobMoveToLocation(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)
+    public PathJobMoveToLocation(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final Mob entity)
     {
-        super(world, start, end, range, entity);
+        super(world, start, end, new PathResult<PathJobMoveToLocation>(), entity);
 
+        maxNodes += range;
         this.destination = new BlockPos(end);
+
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
+        {
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
+        }
+
+        // Overestimate for long distances, +1 per 100 blocks
+        heuristicModifier += BlockPosUtil.distManhattan(start, end) / 100.0;
+        extraNodes = 4;
     }
 
     /**
@@ -58,7 +79,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination) != destination.getY())
+        if (getGroundHeight(null, destination.getX(), destination.getY(), destination.getZ()) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
@@ -67,15 +88,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected BlockPos getPathTargetPos(final MNode finalNode)
+    protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return destination;
-    }
-
-    @Override
-    protected double computeHeuristic(@NotNull final BlockPos pos)
-    {
-        return Math.sqrt(destination.distSqr(pos));
+        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
     }
 
     /**
@@ -87,18 +102,29 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
+        boolean atDest = false;
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.pos.getX() == destination.getX()
-                     && n.pos.getY() == destination.getY()
-                     && n.pos.getZ() == destination.getZ();
+            atDest = n.x == destination.getX()
+                       && n.y == destination.getY()
+                       && n.z == destination.getZ();
+        }
+        else if (n.y == destination.getY() - 1)
+        {
+            atDest = BlockPosUtil.distSqr(destination, n.x, destination.getY(), n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
+        }
+        else
+        {
+            atDest = BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < DESTINATION_SLACK_ADJACENT * DESTINATION_SLACK_ADJACENT;
         }
 
-        if (n.pos.getY() == destination.getY() - 1)
+        if (atDest)
         {
-            return destination.closerThan(new Vec3i(n.pos.getX(), destination.getY(), n.pos.getZ()), DESTINATION_SLACK_ADJACENT);
+            atDest = SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                       == SurfaceType.WALKABLE;
         }
-        return destination.closerThan(n.pos, DESTINATION_SLACK_ADJACENT);
+
+        return atDest;
     }
 
     /**
@@ -108,9 +134,42 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final MNode n)
+    protected double getEndNodeScore(@NotNull final MNode n)
     {
+        if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z)))
+        {
+            return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z) + 30;
+        }
+
+        if (!ShapeUtil.isEmpty(cachedBlockLookup.getBlockState(n.x, n.y, n.z).getCollisionShape(cachedBlockLookup, tempWorldPos.set(n.x, n.y, n.z))))
+        {
+            return BlockPosUtil.distManhattan(destination, n.x, n.y, n.z) + 10;
+        }
+
         //  For Result Score lower is better
-        return destination.distManhattan(n.pos);
+
+        int xDist = Math.abs(destination.getX() - n.x);
+        int yDist = Math.abs(destination.getY() - n.y);
+        int zDist = Math.abs(destination.getZ() - n.z);
+        return xDist + yDist + zDist;
+    }
+
+    @Override
+    protected boolean stopOnNodeLimit(final int totalNodesVisited, final MNode bestNode, final int nodesSinceEndNode)
+    {
+        // Small chance to go full limit to maybe find a path still, when we did not find any good nodes to move towards
+        if (totalNodesVisited < MAX_NODES && BlockPosUtil.distManhattan(start, bestNode.x, bestNode.y, bestNode.z) < 10 && ColonyConstants.rand.nextInt(100) <= 20)
+        {
+            maxNodes += 1000;
+            return false;
+        }
+        // 10k limit for progressing
+        else if (nodesSinceEndNode < 200 && totalNodesVisited < MAX_NODES * 2)
+        {
+            maxNodes += 500;
+            return false;
+        }
+
+        return true;
     }
 }

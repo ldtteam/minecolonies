@@ -3,7 +3,7 @@ package com.minecolonies.api.util;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -296,7 +296,7 @@ public final class EntityUtils
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
         final BlockPos pos = BlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
-        return world.getEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
+        return world.getEntitiesOfClass(Entity.class, AABB.encapsulatingFullBlocks(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
                  .stream()
                  .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
@@ -352,7 +352,7 @@ public final class EntityUtils
             }
             else
             {
-                return !localEntity.level.isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
+                return !localEntity.level().isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
             }
         });
     }

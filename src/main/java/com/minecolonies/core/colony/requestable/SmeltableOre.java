@@ -53,7 +53,7 @@ public class SmeltableOre implements IDeliverable
 
         if (!ItemStackUtils.isEmpty(ore.result))
         {
-            compound.put(NBT_RESULT, ore.result.serializeNBT());
+            compound.put(NBT_RESULT, ore.result.save(new CompoundTag()));
         }
 
         return compound;

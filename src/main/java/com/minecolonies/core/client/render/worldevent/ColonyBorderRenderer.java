@@ -3,7 +3,9 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -21,8 +23,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class ColonyBorderRenderer
 {
@@ -65,7 +65,12 @@ public class ColonyBorderRenderer
                     if (chunk.isEmpty()) { continue; }
                     final ChunkPos chunkPos = chunk.getPos();
 
-                    chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunkPos, cap.getOwningColony()));
+                    final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(ctx.nearestColony.getDimension(), chunkPos);;
+                    if (cap != null)
+                    {
+                        coloniesMap.put(chunkPos, cap.getOwningColony());
+                    }
+
                     if (ctx.nearestColony.getTicketedChunks().contains(chunkPos.toLong()))
                     {
                         chunkticketsMap.put(chunkPos, nearestColonyId);

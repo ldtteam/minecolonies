@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
@@ -27,12 +27,12 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprintFuture  the future of the structure.
-     * @param settings       the placement settings.
+     * @param rotMir       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final RotationMirror rotMir, final boolean fancyPlacement)
     {
-        super(world, pos, blueprintFuture, settings, fancyPlacement);
+        super(world, pos, blueprintFuture, rotMir, fancyPlacement);
     }
 
     /**
@@ -41,12 +41,12 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param world          the world.
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint.
-     * @param settings       the placement settings.
+     * @param rotMir       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
     {
-        super(world, pos, blueprint, settings, fancyPlacement);
+        super(world, pos, blueprint, rotMir, fancyPlacement);
     }
 
     @Override

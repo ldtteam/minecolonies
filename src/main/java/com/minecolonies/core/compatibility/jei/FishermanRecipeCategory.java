@@ -13,8 +13,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe)
     {
         return Collections.singletonList(
-                Component.translatable(PARTIAL_JEI_INFO + "onelevelrestriction",
+                Component.translatableEscape(PARTIAL_JEI_INFO + "onelevelrestriction",
                         recipe.getLevel()));
     }
 

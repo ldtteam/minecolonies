@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.nbt.Tag;
@@ -18,9 +18,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -77,7 +76,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
       final boolean primary,
       final IChatPriority priority,
       final Predicate<ICitizenData> validator,
-      final Component validatorId,
+      @NotNull final Component validatorId,
       final Tuple<Component, Component>... responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
@@ -145,11 +144,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         {
             if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 10));
             }
             else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 20));
             }
         }
     }
@@ -166,7 +165,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), responseId));
+        new InteractionResponse(data.getColonyId(), data.getId(), player.level().dimension(), this.getInquiry(), responseId).sendToServer();
         return true;
     }
 

@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.core.colony.buildings.modules.HomeBuildingModule;
@@ -11,13 +12,13 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.colony.buildings.views.EmptyView;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 public final class ModBuildingsInitializer
 {
-    public final static DeferredRegister<BuildingEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "buildings"), Constants.MOD_ID);
+    public final static DeferredRegister<BuildingEntry> DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.BUILDINGS, Constants.MOD_ID);
 
     private ModBuildingsInitializer()
     {
@@ -109,6 +110,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(CHICKENHERDER_HERDING)
           .addBuildingModuleProducer(CHICKENHERDER_SETTINGS_BREEDING)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.combatAcademy = DEFERRED_REGISTER.register(ModBuildings.COMBAT_ACADEMY_ID, () -> new BuildingEntry.Builder()
@@ -156,6 +158,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(COWHERDER_HERDING)
           .addBuildingModuleProducer(COWHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
@@ -290,6 +293,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(SHEPERD_HERDING)
           .addBuildingModuleProducer(SHEPERD_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.sifter = DEFERRED_REGISTER.register(ModBuildings.SIFTER_ID, () -> new BuildingEntry.Builder()
@@ -350,6 +354,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(SWINEHERDER_HERDING)
           .addBuildingModuleProducer(SWINEHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.townHall = DEFERRED_REGISTER.register(ModBuildings.TOWNHALL_ID, () -> new BuildingEntry.Builder()
@@ -518,6 +523,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(RABBITHERDER_HERDING)
           .addBuildingModuleProducer(RABBITHERDER_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.concreteMixer = DEFERRED_REGISTER.register(ModBuildings.CONCRETE_ID, () -> new BuildingEntry.Builder()

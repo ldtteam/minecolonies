@@ -1,5 +1,6 @@
 package com.minecolonies.api.inventory;
 
+import com.google.common.collect.Iterables;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -12,11 +13,12 @@ import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
@@ -220,7 +222,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     @Override
     public Component getName()
     {
-        return Component.translatable(this.hasCustomName() ? this.customName : "citizen.inventory");
+        return Component.translatableEscape(this.hasCustomName() ? this.customName : "citizen.inventory");
     }
 
     /**
@@ -664,5 +666,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         }
 
         mainInventory.set(slot, stack);
+    }
+
+    /**
+     * Get an iterable of armor and hand inventory.
+     * @return the itemstack iterable.
+     */
+    public Iterable<ItemStack> getIterableArmorAndHandInv()
+    {
+        return Iterables.concat(armorInventory, List.of(getStackInSlot(mainItem), getStackInSlot(offhandItem)));
     }
 }

@@ -2,11 +2,7 @@ package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -191,10 +187,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
-                Network.getNetwork().sendToPosition(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new PacketDistributor.TargetPoint(
-                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.level.dimension()));
+                new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK)
+                    .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.level().dimension()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -211,12 +205,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
-                final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
-                Network.getNetwork().sendToPosition(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
-                  new PacketDistributor.TargetPoint(blockPos.getX(),
-                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level.dimension()));
+                new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal())
+                    .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level().dimension()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,

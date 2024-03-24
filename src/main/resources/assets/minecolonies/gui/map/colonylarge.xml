@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image id="background" source="minecolonies:textures/gui/logo_large_empty.png" size="426 150"/>
     <text id="textcontent" size="364 35" pos="31 110" textalign="MIDDLE" color="white"/>
 </window>

@@ -6,7 +6,6 @@ import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.SwitchView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.core.network.messages.server.OpenGuiWindowTriggerMessage;
 import net.minecraft.network.chat.Component;
@@ -74,8 +73,8 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         {
             buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
             buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.nextpage"), buttonNextPage);
-            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.core.gui.prevpage"), buttonPrevPage);
+            PaneBuilders.singleLineTooltip(Component.translatableEscape("com.minecolonies.core.gui.nextpage"), buttonNextPage);
+            PaneBuilders.singleLineTooltip(Component.translatableEscape("com.minecolonies.core.gui.prevpage"), buttonPrevPage);
 
             pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
             registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));
@@ -88,7 +87,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             pageNum = null;
         }
 
-        Network.getNetwork().sendToServer(new OpenGuiWindowTriggerMessage(this.resource));
+        new OpenGuiWindowTriggerMessage(this.resource).sendToServer();
     }
 
     /**
@@ -126,7 +125,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         if (buttons.containsKey(button.getID()))
         {
             buttons.get(button.getID()).accept(button);
-            Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.resource));
+            new ClickGuiButtonTriggerMessage(button.getID(), this.resource).sendToServer();
         }
     }
 

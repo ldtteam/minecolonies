@@ -1,5 +1,6 @@
 package com.minecolonies.core.network.messages.server.colony.building.worker;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -8,13 +9,14 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.TeleportHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,33 +31,20 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_CI
  */
 public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuilding>
 {
-    /**
-     * Empty public constructor.
-     */
-    public RecallCitizenMessage()
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "recall_citizen", RecallCitizenMessage::new);
+
+    protected RecallCitizenMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
-        super();
-    }
-
-    @Override
-    protected void toBytesOverride(final FriendlyByteBuf buf)
-    {
-
-    }
-
-    @Override
-    protected void fromBytesOverride(final FriendlyByteBuf buf)
-    {
-
+        super(buf, type);
     }
 
     public RecallCitizenMessage(final IBuildingView building)
     {
-        super(building);
+        super(TYPE, building);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         final List<ICitizenData> citizens = new ArrayList<>(building.getAllAssignedCitizen());
         for (int i = 0; i < building.getAllAssignedCitizen().size(); i++)
@@ -85,12 +74,6 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
             final BlockPos loc = building.getPosition();
             if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
             {
-                final Player player = ctxIn.getSender();
-                if (player == null)
-                {
-                    return;
-                }
-
                 MessageUtils.format(WARNING_CITIZEN_RECALL_FAILED).sendTo(player);
             }
         }

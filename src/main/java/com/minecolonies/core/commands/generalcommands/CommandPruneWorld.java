@@ -1,7 +1,7 @@
 package com.minecolonies.core.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.core.colony.IColonyManagerCapability;
+import com.minecolonies.api.colony.savedata.IServerColonySaveData;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PRUNE_WORLD_WARNING;
-import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 
 /**
  * Command for pruning world region files to colonies
@@ -68,7 +67,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
             return 0;
         }
 
@@ -83,7 +82,7 @@ public class CommandPruneWorld implements IMCOPCommand
 
         // Colony list for this world
         List<IColony> colonies = new ArrayList<>();
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
+        final IServerColonySaveData cap = IServerColonySaveData.getSaveData(world);
         if (cap != null)
         {
             colonies = cap.getColonies();

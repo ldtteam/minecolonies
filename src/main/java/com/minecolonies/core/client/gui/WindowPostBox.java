@@ -8,7 +8,6 @@ import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
@@ -104,7 +103,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
+        new OpenInventoryMessage(buildingView).sendToServer();
     }
 
     /**
@@ -132,7 +131,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
             }
         }
 
-        Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), qty, deliverAvailable));
+        new PostBoxRequestMessage(buildingView, stack.copy(), qty, deliverAvailable).sendToServer();
     }
 
     private void deliverPartialClicked(@NotNull final Button button)

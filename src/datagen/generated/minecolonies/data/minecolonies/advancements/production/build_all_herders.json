@@ -38,16 +38,13 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.herders.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutshepherd"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.herders.title"
     }

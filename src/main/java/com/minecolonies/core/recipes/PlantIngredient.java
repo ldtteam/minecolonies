@@ -1,22 +1,16 @@
 package com.minecolonies.core.recipes;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.StemBlock;
+import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -29,18 +23,18 @@ import java.util.stream.Stream;
  */
 public class PlantIngredient extends Ingredient
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "plant");
-
     private static final Lazy<PlantIngredient> INSTANCE
-            = Lazy.of(() -> new PlantIngredient(ForgeRegistries.ITEMS.getValues().stream()
+            = Lazy.of(() -> new PlantIngredient(BuiltInRegistries.ITEM.stream()
                     .filter(item -> item instanceof BlockItem &&
                         (((BlockItem) item).getBlock() instanceof CropBlock ||
                          ((BlockItem) item).getBlock() instanceof StemBlock))
                     .map(item -> new ItemValue(new ItemStack(item)))));
 
-    protected PlantIngredient(final Stream<? extends Value> itemLists)
+    public static final Codec<PlantIngredient> CODEC = Codec.unit(INSTANCE::get);
+
+    private PlantIngredient(final Stream<? extends Value> itemLists)
     {
-        super(itemLists);
+        super(itemLists, ModIngredientTypeInitializer.PLANT_INGREDIENT_TYPE);
     }
 
     @NotNull
@@ -49,52 +43,16 @@ public class PlantIngredient extends Ingredient
         return INSTANCE.get();
     }
 
-    @NotNull
     @Override
-    public JsonElement toJson()
+    public boolean equals(final Object obj)
     {
-        JsonObject json = new JsonObject();
-        Serializer.getInstance().write(json, this);
-        return json;
+        return obj == getInstance();
     }
 
-    @NotNull
     @Override
-    public IIngredientSerializer<? extends Ingredient> getSerializer()
+    public boolean synchronizeWithContents()
     {
-        return Serializer.getInstance();
-    }
-
-    public static class Serializer implements IIngredientSerializer<PlantIngredient>
-    {
-        private static final Serializer INSTANCE = new Serializer();
-
-        public static Serializer getInstance() { return INSTANCE; }
-
-        private Serializer() { }
-
-        @NotNull
-        @Override
-        public PlantIngredient parse(@NotNull final JsonObject json)
-        {
-            return PlantIngredient.getInstance();
-        }
-
-        public void write(@NotNull final JsonObject json, @NotNull final PlantIngredient ingredient)
-        {
-            json.addProperty("type", (Objects.requireNonNull(CraftingHelper.getID(this))).toString());
-        }
-
-        @NotNull
-        @Override
-        public PlantIngredient parse(@NotNull final FriendlyByteBuf buffer)
-        {
-            return PlantIngredient.getInstance();
-        }
-
-        @Override
-        public void write(@NotNull final FriendlyByteBuf buffer, @NotNull final PlantIngredient ingredient)
-        {
-        }
+        // must be false so network sync forcefully uses codec
+        return false;
     }
 }

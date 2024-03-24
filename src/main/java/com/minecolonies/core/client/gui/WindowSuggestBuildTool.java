@@ -5,17 +5,16 @@ import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.DirectPlaceMessage;
 import com.minecolonies.core.network.messages.server.SwitchBuildingWithToolMessage;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
+import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_RELATIVE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MISSING_BUILD_TOOL;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -65,7 +64,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     private void directClicked()
     {
-        Network.getNetwork().sendToServer(new DirectPlaceMessage(building, pos, stack));
+        new DirectPlaceMessage(building, pos, stack).sendToServer();
         close();
     }
 
@@ -76,7 +75,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
     {
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
-            Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
+            new SwitchBuildingWithToolMessage(stack).sendToServer();
             new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }

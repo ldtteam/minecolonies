@@ -1,5 +1,6 @@
 package com.minecolonies.core.util;
 
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -20,6 +21,7 @@ import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +31,7 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
@@ -38,9 +41,8 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.common.TierSortingRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.IShearable;
+import net.neoforged.neoforge.common.TierSortingRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -175,14 +177,12 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
-        if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
+        if (state.getBlock() instanceof IShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
             return ToolType.SHEARS;
         }
-
-        String toolName = "";
 
         if (blockHardness > 0f)
         {
@@ -190,17 +190,22 @@ public final class WorkerUtil
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
+                    if (state.getBlock() instanceof IMateriallyTexturedBlock materiallyTexturedBlock)
+                    {
+                        if (materiallyTexturedBlock.isCorrectToolForDrops(state, tool.getB(), level, pos))
+                        {
+                            return tool.getA();
+                        }
+                    }
                     if (tool.getB().isCorrectToolForDrops(state))
                     {
-                        toolName = tool.getA().getName();
-                        break;
+                        return tool.getA();
                     }
                 }
             }
         }
 
-        final IToolType toolType = ToolType.getToolType(toolName);
-        return toolType;
+        return ToolType.NONE;
     }
 
     /**
@@ -281,7 +286,7 @@ public final class WorkerUtil
                     {
                         final CompoundTag teData = te.getTileEntityData();
                         final ResourceLocation teId = teData == null ? null : ResourceLocation.tryParse(teData.getString("id"));
-                        final BlockEntityType<?> teType = teId == null ? null : ForgeRegistries.BLOCK_ENTITY_TYPES.getValue(teId);
+                        final BlockEntityType<?> teType = teId == null ? null : BuiltInRegistries.BLOCK_ENTITY_TYPE.get(teId);
                         if (teType == BlockEntityType.SIGN || teType == BlockEntityType.HANGING_SIGN)
                         {
                             if (BlockEntity.loadStatic(te.getPos(), te.getState(), te.getTileEntityData()) instanceof SignBlockEntity sign)
@@ -319,9 +324,9 @@ public final class WorkerUtil
                 final BlockState blockState = world.getBlockState(levelSignPos);
 
                 final SignText text = new SignText()
-                    .setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId))
+                    .setMessage(0, Component.translatableEscape(MINER_MINE_NODE).append(": " + levelId))
                     .setMessage(1, Component.literal("Y: " + (level.getDepth() + 1)))
-                    .setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()))
+                    .setMessage(2, Component.translatableEscape(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()))
                     .setMessage(3, Component.literal(""));
 
                 teLevelSign.setText(text, true);

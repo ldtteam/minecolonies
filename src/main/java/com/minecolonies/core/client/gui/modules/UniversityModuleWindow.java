@@ -79,11 +79,11 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             {
                 if(requirements.isEmpty())
                 {
-                    requirements.add(Component.translatable("com.minecolonies.coremod.research.locked"));
+                    requirements.add(Component.translatableEscape("com.minecolonies.coremod.research.locked"));
                 }
                 else
                 {
-                    requirements.add(Component.translatable("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
+                    requirements.add(Component.translatableEscape("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
                 }
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
@@ -120,7 +120,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     public void updateResearchCount(final int offset)
     {
         this.findPaneOfTypeByID("maxresearchwarn", Text.class)
-          .setText(Component.translatable("com.minecolonies.coremod.gui.research.countinprogress",
+          .setText(Component.translatableEscape("com.minecolonies.coremod.gui.research.countinprogress",
             buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
         if(buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
         {
@@ -160,7 +160,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             }
             else
             {
-                button.setText(Component.translatable("----------"));
+                button.setText(Component.translatableEscape("----------"));
                 button.disable();
             }
 

@@ -1,6 +1,7 @@
 package com.minecolonies.core.event;
 
 import com.google.common.collect.ImmutableMap;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -37,19 +38,19 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,10 +116,10 @@ public class ClientEventHandler
         {
             return;
         }
-        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level, event.getEntity().blockPosition());
+        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level(), event.getEntity().blockPosition());
         if (colony == null)
         {
-            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
+            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level(), event.getEntity());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
         if (event.getItemStack().getItem() instanceof BlockItem)
@@ -133,15 +134,15 @@ public class ClientEventHandler
             {
                 int tier = SchemAnalyzerUtil.getBlockTier(blockItem.getBlock());
 
-                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()) && event.getItemStack().hasTag())
+                if (DomumOrnamentumUtils.isDoBlock(blockItem.getBlock()))
                 {
-                    for (Block block : DomumOrnamentumUtils.getTextureData(event.getItemStack()).getTexturedComponents().values())
+                    for (Block block : MaterialTextureData.deserializeFromItemStack(event.getItemStack()).getTexturedComponents().values())
                     {
                         tier = Math.max(tier, SchemAnalyzerUtil.getBlockTier(block));
                     }
                 }
 
-                event.getToolTip().add(Component.translatable("com.minecolonies.coremod.tooltip.schematic.tier", tier));
+                event.getToolTip().add(Component.translatableEscape("com.minecolonies.coremod.tooltip.schematic.tier", tier));
             }
         }
     }
@@ -206,7 +207,7 @@ public class ClientEventHandler
 
                     for (IGlobalResearch research : researches)
                     {
-                        toolTip.add(Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
+                        toolTip.add(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
                           MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
@@ -225,7 +226,7 @@ public class ClientEventHandler
                 // appear to be an easy way to get the schematic name from a BuildingEntry ... or
                 // unless we can change how colony.hasBuilding uses its parameter...
 
-                final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
+                final MutableComponent reqLevelText = Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
                 if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
@@ -238,7 +239,7 @@ public class ClientEventHandler
             }
             else
             {
-                final MutableComponent reqBuildingTxt = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
+                final MutableComponent reqBuildingTxt = Component.translatableEscape(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
                                                           .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
@@ -304,8 +305,8 @@ public class ClientEventHandler
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            tooltip.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
-            tooltip.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
+            tooltip.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
+            tooltip.add(Component.translatableEscape(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
         }
     }
 
@@ -316,8 +317,7 @@ public class ClientEventHandler
     public static void onDebugOverlay(final CustomizeGuiOverlayEvent.DebugText event)
     {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.options.renderDebug)
-        {
+
             final ClientLevel world = mc.level;
             final LocalPlayer player = mc.player;
             final BlockPos pos = player.blockPosition();
@@ -326,7 +326,7 @@ public class ClientEventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(Component.translatable(DEBUG_NO_CLOSE_COLONY).getString());
+                    event.getLeft().add(Component.translatableEscape(DEBUG_NO_CLOSE_COLONY).getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -337,14 +337,13 @@ public class ClientEventHandler
                 }
 
                 event.getLeft()
-                  .add(Component.translatable(DEBUG_NEXT_COLONY,
+                  .add(Component.translatableEscape(DEBUG_NEXT_COLONY,
                     (int) Math.sqrt(colony.getDistanceSquared(pos)),
                     IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
-            event.getLeft().add(colony.getName() + " : " + Component.translatable(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
-        }
+            event.getLeft().add(colony.getName() + " : " + Component.translatableEscape(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

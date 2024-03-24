@@ -1,12 +1,13 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.research.ModResearchCostTypes;
+import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.research.costs.ListItemCost;
 import com.minecolonies.core.research.costs.SimpleItemCost;
 import com.minecolonies.core.research.costs.TagItemCost;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.ModResearchCostTypes.*;
 
@@ -16,7 +17,7 @@ import static com.minecolonies.api.research.ModResearchCostTypes.*;
 public class ModResearchCostTypeInitializer
 {
     public static final DeferredRegister<ResearchCostType>
-      DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "researchcosttypes"), Constants.MOD_ID);
+      DEFERRED_REGISTER = DeferredRegister.create(CommonMinecoloniesAPIImpl.RESEARCH_COST_TYPES, Constants.MOD_ID);
     static
     {
         ModResearchCostTypes.simpleItemCost =

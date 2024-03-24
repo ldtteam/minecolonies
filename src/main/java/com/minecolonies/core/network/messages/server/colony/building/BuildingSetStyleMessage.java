@@ -1,11 +1,14 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,18 +16,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuilding>
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "building_set_style", BuildingSetStyleMessage::new);
+
     /**
      * The style to set.
      */
-    private String structurePack;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public BuildingSetStyleMessage()
-    {
-        super();
-    }
+    private final String structurePack;
 
     /**
      * Creates object for the style of a building.
@@ -34,24 +31,25 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
      */
     public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String structurePack)
     {
-        super(building);
+        super(TYPE, building);
         this.structurePack = structurePack;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected BuildingSetStyleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         structurePack = buf.readUtf(32767);
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
         buf.writeUtf(structurePack);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.getBuildingLevel() > 0 && !building.isDeconstructed())
         {

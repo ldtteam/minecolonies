@@ -14,12 +14,9 @@
     "description": {
       "translate": "advancements.minecolonies.root.military.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutbarracks"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.root.military.title"
     }

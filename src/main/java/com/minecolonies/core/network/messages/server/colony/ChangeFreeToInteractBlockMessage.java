@@ -1,18 +1,20 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,30 +25,23 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "change_free_to_interact_block", ChangeFreeToInteractBlockMessage::new);
 
     /**
      * The position of the free to interact block.
      */
-    private BlockPos pos = new BlockPos(0, 0, 0);
+    private final BlockPos pos;
 
     /**
      * The blockState which can be freely interacted with.
      */
-    private BlockState block = Blocks.DIRT.defaultBlockState();
+    private final BlockState block;
 
     /**
      * The type of the
      */
-    private MessageType type;
-    private MessageMode mode;
-
-    /**
-     * Empty public constructor.
-     */
-    public ChangeFreeToInteractBlockMessage()
-    {
-        super();
-    }
+    private final MessageType msgType;
+    private final MessageMode msgMode;
 
     /**
      * Message creation to add a new freely interactable block to the colony.
@@ -57,11 +52,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
     {
-        super(colony);
+        super(TYPE, colony);
         this.pos = new BlockPos(0, 0, 0);
         this.block = block.defaultBlockState();
-        this.type = type;
-        this.mode = MessageMode.BLOCK;
+        this.msgType = type;
+        this.msgMode = MessageMode.BLOCK;
     }
 
     /**
@@ -73,54 +68,48 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
     {
-        super(colony);
+        super(TYPE, colony);
         this.pos = pos;
         this.block = Blocks.DIRT.defaultBlockState();
-        this.type = type;
-        this.mode = MessageMode.LOCATION;
+        this.msgType = type;
+        this.msgMode = MessageMode.LOCATION;
     }
 
-    @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected ChangeFreeToInteractBlockMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
 
         block = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
-        type = MessageType.values()[buf.readInt()];
-        mode = MessageMode.values()[buf.readInt()];
+        msgType = MessageType.values()[buf.readInt()];
+        msgMode = MessageMode.values()[buf.readInt()];
     }
 
     @Override
-    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
 
         buf.writeInt(Block.getId(block));
         buf.writeBlockPos(pos);
-        buf.writeInt(type.ordinal());
-        buf.writeInt(mode.ordinal());
+        buf.writeInt(msgType.ordinal());
+        buf.writeInt(msgMode.ordinal());
     }
 
     @Nullable
     @Override
-    public Action permissionNeeded()
+    protected Action permissionNeeded()
     {
         return Action.EDIT_PERMISSIONS;
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        final Player player = ctxIn.getSender();
-        if (player == null)
-        {
-            return;
-        }
-
         //Verify player has permission to change this huts settings
-
-        if (type == MessageType.ADD_BLOCK)
+        if (msgType == MessageType.ADD_BLOCK)
         {
-            switch (mode)
+            switch (msgMode)
             {
                 case LOCATION:
                     colony.addFreePosition(pos);
@@ -128,7 +117,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
                     break;
                 case BLOCK:
                     colony.addFreeBlock(block.getBlock());
-                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, ForgeRegistries.BLOCKS.getKey(block.getBlock())).sendTo(player);
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, BuiltInRegistries.BLOCK.getKey(block.getBlock())).sendTo(player);
                     break;
                 default:
                     // Error!
@@ -136,7 +125,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
         }
         else
         {
-            switch (mode)
+            switch (msgMode)
             {
                 case LOCATION:
                     colony.removeFreePosition(pos);
@@ -144,7 +133,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
                     break;
                 case BLOCK:
                     colony.removeFreeBlock(block.getBlock());
-                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, ForgeRegistries.BLOCKS.getKey(block.getBlock())).sendTo(player);
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, BuiltInRegistries.BLOCK.getKey(block.getBlock())).sendTo(player);
                     break;
                 default:
                     // Error!

@@ -8,7 +8,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.minecolonies.core.Network;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -19,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -123,7 +124,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         new WindowSwitchPack(() -> {
             building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
-            Network.getNetwork().sendToServer(new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()));
+            new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()).sendToServer();
             return new WindowMainPage((BuildingTownHall.View) this.building);
         }).open();
     }
@@ -149,14 +150,14 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < textColors.size())
                 {
                     final String colorName = textColors.get(index).getName().replace("_", " ");
-                    return colorName.substring(0, 1).toUpperCase(Locale.US) + colorName.substring(1);
+                    return Component.literal(colorName.substring(0, 1).toUpperCase(Locale.US) + colorName.substring(1));
                 }
-                return "";
+                return Component.empty();
             }
         });
 
@@ -171,9 +172,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return TEXTURE_PACKS.get(index);
+                return Component.literal(TEXTURE_PACKS.get(index));
             }
         });
 
@@ -188,9 +189,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return building.getColony().getNameFileIds().get(index);
+                return Component.literal(building.getColony().getNameFileIds().get(index));
             }
         });
     }
@@ -204,7 +205,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
+            new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -217,7 +218,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialNamePackIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())));
+            new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -228,7 +229,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building));
+        new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building).sendToServer();
     }
 
     /**
@@ -247,7 +248,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void resetTextureStyle()
     {
-        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)));
+        new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)).sendToServer();
     }
 
     @Override
@@ -280,17 +281,17 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.textures"))
               .paragraphBreak()
               .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon"))
               .paragraphBreak()
               .build();
 
             PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+              .append(Component.translatableEscape("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
               .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak()
+              .appendNL(Component.translatableEscape("com.minecolonies.core.townhall.patreon")).paragraphBreak()
               .build();
         }
     }
@@ -300,6 +301,10 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
+        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        {
+            return;
+        }
         final String player = Minecraft.getInstance().player.getStringUUID();
         new Thread(() -> {
             try

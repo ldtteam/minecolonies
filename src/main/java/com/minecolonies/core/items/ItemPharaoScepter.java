@@ -13,7 +13,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ public class ItemPharaoScepter extends BowItem
     {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
 
-        InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
+        InteractionResultHolder<ItemStack> ret = net.neoforged.neoforge.event.EventHooks.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
         if (ret != null)
         {
             return ret;
@@ -60,7 +59,7 @@ public class ItemPharaoScepter extends BowItem
             Player playerentity = (Player) entityLiving;
 
             int useDuration = this.getUseDuration(stack) - timeLeft;
-            useDuration = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
+            useDuration = net.neoforged.neoforge.event.EventHooks.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
             if (useDuration < 0)
             {
                 return;
@@ -73,26 +72,26 @@ public class ItemPharaoScepter extends BowItem
                 {
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrow abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
-                    abstractarrowentity = customArrow(abstractarrowentity);
+                    abstractarrowentity = customArrow(abstractarrowentity, arrowitem.getDefaultInstance());
                     abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
                         abstractarrowentity.setCritArrow(true);
                     }
 
-                    int j = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
+                    int j = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
                     if (j > 0)
                     {
                         abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double) j * 0.5D + 0.5D);
                     }
 
-                    int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
+                    int k = stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
                     if (k > 0)
                     {
                         abstractarrowentity.setKnockback(k);
                     }
 
-                    if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0)
+                    if (stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
                     {
                         abstractarrowentity.setSecondsOnFire(100);
                     }
@@ -132,14 +131,14 @@ public class ItemPharaoScepter extends BowItem
 
     @NotNull
     @Override
-    public AbstractArrow customArrow(@NotNull AbstractArrow arrow)
+    public AbstractArrow customArrow(@NotNull AbstractArrow arrow, final ItemStack projectileStack)
     {
         if (arrow.getOwner() == null)
         {
             return arrow;
         }
 
-        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
+        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level(), new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
         entity.pickup = AbstractArrow.Pickup.DISALLOWED;
         entity.setSecondsOnFire(3);
 

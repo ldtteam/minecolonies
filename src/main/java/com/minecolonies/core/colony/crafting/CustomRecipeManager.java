@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootDataManager;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -361,7 +360,7 @@ public class CustomRecipeManager
     {
         final FriendlyByteBuf recipeMgrFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
-        Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf), player);
+        new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf).sendToPlayer(player);
     }
 
     /**
@@ -421,6 +420,6 @@ public class CustomRecipeManager
             lootTables.put(id, drops);
         }
 
-        MinecraftForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
+        NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
     }
 }

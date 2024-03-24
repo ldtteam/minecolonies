@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -14,7 +15,6 @@ import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -26,7 +26,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
@@ -35,12 +34,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.TriPredicate;
+import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,7 +138,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setText(Component.translatable("com.minecolonies.coremod.gui.workerhuts.build"));
+            buttonBuild.setText(Component.translatableEscape("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
@@ -150,12 +149,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            buttonBuild.setText(Component.translatable(ACTION_UPGRADE));
+            buttonBuild.setText(Component.translatableEscape(ACTION_UPGRADE));
         }
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatable(ACTION_BUILD));
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatableEscape(ACTION_BUILD));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
     }
@@ -175,7 +174,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void pickUpBuilding()
     {
-        Network.getNetwork().sendToServer(new BuildPickUpMessage(building));
+        new BuildPickUpMessage(building).sendToServer();
         close();
     }
 
@@ -185,7 +184,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void deconstructBuildingClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder));
+        new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder).sendToServer();
         cancelClicked();
     }
 
@@ -204,14 +203,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
+        new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())).sendToServer();
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
         }
         else
         {
-            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, builder));
+            new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, builder).sendToServer();
         }
         cancelClicked();
     }
@@ -222,7 +221,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
+        new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder).sendToServer();
         cancelClicked();
     }
 
@@ -232,7 +231,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         builders.clear();
-        builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())
@@ -314,8 +313,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 return;
             }
 
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
-            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, new PlacementSettings(), true));
+            blueprint.setRotationMirror(building.getRotationMirror(), Minecraft.getInstance().level);
+            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE, true));
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 
@@ -384,13 +383,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < styles.size())
                 {
-                    return styles.get(index);
+                    return Component.literal(styles.get(index));
                 }
-                return "";
+                return Component.empty();
             }
         });
     }
@@ -410,13 +409,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
                 if (index >= 0 && index < builders.size())
                 {
-                    return builders.get(index).getA();
+                    return Component.literal(builders.get(index).getA());
                 }
-                return "";
+                return Component.empty();
             }
         });
         buildersDropDownList.setSelectedIndex(0);

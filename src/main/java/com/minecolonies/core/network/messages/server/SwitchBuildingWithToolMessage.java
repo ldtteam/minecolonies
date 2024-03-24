@@ -1,32 +1,26 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.items.ModItems;
-import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Switch the buildtool with the respective item in the inventory.
  */
-public class SwitchBuildingWithToolMessage implements IMessage
+public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "switch_building_with_tool", SwitchBuildingWithToolMessage::new);
+
     /**
      * The stack to switch.
      */
-    private ItemStack stack;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public SwitchBuildingWithToolMessage()
-    {
-        super();
-    }
+    private final ItemStack stack;
 
     /**
      * Switch the stack.
@@ -35,7 +29,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
      */
     public SwitchBuildingWithToolMessage(final ItemStack stack)
     {
-        super();
+        super(TYPE);
         this.stack = stack;
     }
 
@@ -44,9 +38,9 @@ public class SwitchBuildingWithToolMessage implements IMessage
      *
      * @param buf The buffer begin read from.
      */
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected SwitchBuildingWithToolMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         stack = buf.readItem();
     }
 
@@ -56,23 +50,14 @@ public class SwitchBuildingWithToolMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(stack);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ServerPlayer player = ctxIn.getSender();
-
         int stackSlot = -1;
         int buildToolSlot = -1;
         for (int i = 0; i < 9; i++)

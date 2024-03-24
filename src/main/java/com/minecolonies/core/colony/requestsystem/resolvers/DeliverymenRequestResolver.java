@@ -196,6 +196,6 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     public MutableComponent getRequesterDisplayName(
       @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
+        return Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
     }
 }

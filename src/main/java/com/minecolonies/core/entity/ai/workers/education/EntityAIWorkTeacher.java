@@ -100,7 +100,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         final List<? extends AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
           building,
-          cit -> cit.isBaby() && cit.vehicle != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
+          cit -> cit.isBaby() && cit.getVehicle() != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
             pupilToTeach = pupils.get(worker.getRandom().nextInt(pupils.size()));
@@ -112,7 +112,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
 
     private IAIState teach()
     {
-        if (pupilToTeach == null || pupilToTeach.vehicle == null)
+        if (pupilToTeach == null || pupilToTeach.getVehicle() == null)
         {
             return START_WORKING;
         }
@@ -123,7 +123,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return getState();
         }
 
-        if (maxSittingTicks == 0 || worker.vehicle == null)
+        if (maxSittingTicks == 0 || worker.getVehicle() == null)
         {
             // Sit for 2-100 seconds, modified by Skill.Mana
             final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
@@ -138,7 +138,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return getState();
         }
 
-        if (worker.vehicle != null)
+        if (worker.getVehicle() != null)
         {
             worker.stopRiding();
             worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());

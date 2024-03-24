@@ -20,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_boat",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_boat"
     ]
   ],
   "rewards": {
     "recipes": [
       "minecolonies:supplychestdeployer"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

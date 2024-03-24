@@ -14,9 +14,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +48,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.compostables)
           .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
-          .add(Items.GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
+          .add(Items.GRASS_BLOCK, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
           .add(Items.KELP, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE)
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)
@@ -59,6 +59,26 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         copy(ModTags.concreteBlocks, ModTags.concreteItems);
         copy(ModTags.concretePowderBlocks, ModTags.concretePowderItems);
+
+        final TagKey<Item> shulkerBoxes = ItemTags.create(new ResourceLocation(MOD_ID, "shulker_boxes"));
+        tag(shulkerBoxes)
+          .add(Items.SHULKER_BOX)
+          .add(Items.WHITE_SHULKER_BOX)
+          .add(Items.ORANGE_SHULKER_BOX)
+          .add(Items.MAGENTA_SHULKER_BOX)
+          .add(Items.LIGHT_BLUE_SHULKER_BOX)
+          .add(Items.YELLOW_SHULKER_BOX)
+          .add(Items.LIME_SHULKER_BOX)
+          .add(Items.PINK_SHULKER_BOX)
+          .add(Items.GRAY_SHULKER_BOX)
+          .add(Items.LIGHT_GRAY_SHULKER_BOX)
+          .add(Items.CYAN_SHULKER_BOX)
+          .add(Items.PURPLE_SHULKER_BOX)
+          .add(Items.BLUE_SHULKER_BOX)
+          .add(Items.BROWN_SHULKER_BOX)
+          .add(Items.GREEN_SHULKER_BOX)
+          .add(Items.RED_SHULKER_BOX)
+          .add(Items.BLACK_SHULKER_BOX);
 
         final TagKey<Item> glazedTerracotta = ItemTags.create(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
@@ -203,15 +223,30 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_DYER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
           .addTag(Tags.Items.DYES)
+          .addTag(Tags.Items.GLASS).addTag(Tags.Items.STAINED_GLASS)
+          .addTag(Tags.Items.GLASS_PANES).addTag(Tags.Items.STAINED_GLASS_PANES)
+          .addTag(ItemTags.TERRACOTTA)
+          .addTag(ItemTags.WOOL)
+          .addTag(ItemTags.WOOL_CARPETS)
+          .addTag(ItemTags.BEDS)
+          .addTag(ItemTags.CANDLES)
+          .addTag(shulkerBoxes)
+          .add(Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS, Items.LEATHER_HORSE_ARMOR)
+          .add(Items.FIREWORK_STAR)
           .add(Items.RED_NETHER_BRICKS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_DYER))
-                .addTags(ModTags.concretePowderItems);
+          .addTags(ModTags.concretePowderItems);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER_SMELTING))
           .addTag(Tags.Items.DYES);
 
+        com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getExtraTopBlocks().stream()
+          .filter(f -> f.getType().getColor() != null)
+          .map(Block::asItem)
+          .forEach(item -> tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER)).add(item));
+
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
                 .add(Items.HAY_BLOCK)
-                .add(Items.GRASS)
+                .add(Items.GRASS_BLOCK)
                 .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))
@@ -318,6 +353,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_PLANTATION));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_SAWMILL))
+          .addTag(ItemTags.LOGS)
           .add(Items.CACTUS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(Tags.Items.INGOTS)
@@ -325,15 +361,18 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.DUSTS_REDSTONE)
           .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
-          .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem())
-          .add(Items.BAMBOO_HANGING_SIGN)
-          .addTags(ItemTags.CHEST_BOATS, ItemTags.PLANKS);
+          .addTag(ItemTags.PLANKS)
+          .addTags(ItemTags.WOODEN_SLABS, ItemTags.WOODEN_STAIRS)
+          .add(Items.BAMBOO_MOSAIC, Items.BAMBOO_MOSAIC_SLAB, Items.BAMBOO_MOSAIC_STAIRS, Items.BAMBOO_HANGING_SIGN)
+          .addTags(ItemTags.BOATS, ItemTags.CHEST_BOATS)
+          .add(ModBlocks.blockBarrel.asItem());
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
-          .add(Items.NETHERRACK, Items.NETHER_BRICK, Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS, Items.RED_NETHER_BRICKS)
+          .add(Items.BRICK, Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS)
+          .add(Items.NETHER_BRICK, Items.NETHERRACK, Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS, Items.RED_NETHER_BRICKS)
           .add(Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES, Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
           .add(Items.POPPED_CHORUS_FRUIT)
           .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB, Items.PURPUR_PILLAR)
@@ -347,7 +386,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
           .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
           .add(Items.BASALT, Items.POLISHED_BASALT, Items.SMOOTH_BASALT, Items.TUFF)
-          .add(Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS)
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
           .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.END_STONES)
           .addTags(Tags.Items.SANDSTONE, ModTags.concreteItems)
@@ -367,8 +405,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
           .add(Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS)
           .add(Items.DRIPSTONE_BLOCK)
-          .add(Items.FURNACE)
-          .add(Items.FLOWER_POT)
           .add(Items.CHISELED_QUARTZ_BLOCK)
           .add(Items.QUARTZ_PILLAR)
           .add(Items.QUARTZ_BRICKS)
@@ -383,13 +419,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS);
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON))
-                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
-                .addTag(ItemTags.WOODEN_SLABS)
-                .addTag(ItemTags.WOODEN_STAIRS)
-                .addTag(ItemTags.TRIM_TEMPLATES)
-                .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
-                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
-                .add(paperExtras);
+          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
+          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
+          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
+          .addTag(ItemTags.TRIM_TEMPLATES)
+          .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
+          .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
+          .add(paperExtras);
 
         tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
                 .add(Items.STONE)

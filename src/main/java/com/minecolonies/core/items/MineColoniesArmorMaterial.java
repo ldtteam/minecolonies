@@ -1,92 +1,99 @@
 package com.minecolonies.core.items;
 
+import net.minecraft.Util;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorItem.Type;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 /**
- * Implementation for the IArmorMaterial interface so we can add custom armor types.
+ * Implementation for the ArmorMaterial interface, so we can add custom armor types.
  */
 public class MineColoniesArmorMaterial implements ArmorMaterial
 {
-    /**
-     * Max durability by equipment slot, taken from vanilla.
-     */
-    private static final int[] MAX_DAMAGE_ARRAY = new int[] {13, 15, 16, 11};
+    private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+        map.put(Type.BOOTS, 13);
+        map.put(Type.LEGGINGS, 15);
+        map.put(Type.CHESTPLATE, 16);
+        map.put(Type.HELMET, 11);
+    });
 
-    private final String     name;
-    private final int        maxDamageFactor;
-    private final int[]      damageReductionAmountArray;
-    private final int        enchantability;
-    private final SoundEvent soundEvent;
-    private final float      toughness;
-    private final Ingredient repairMaterial;
+    private final String                      name;
+    private final int                         durabilityMultiplier;
+    private final Map<Type, Integer>          protectionFunctionForType;
+    private final int                         enchantmentValue;
+    private final SoundEvent                  sound;
+    private final float                       toughness;
+    private final float                       knockbackResistance;
+    private final LazyLoadedValue<Ingredient> repairIngredient;
 
     public MineColoniesArmorMaterial(
-      @NotNull final String name,
-      final int maxDamageFactor,
-      final int[] damageReductionAmountArray,
-      final int enchantability,
-      @NotNull final SoundEvent soundEvent,
+      final String name,
+      final int durabilityMultiplier,
+      final Map<Type, Integer> protectionFunctionForType,
+      final int enchantmentValue,
+      final SoundEvent sound,
       final float toughness,
-      @NotNull final Ingredient repairMaterial)
+      final float knockbackResistance,
+      final Supplier<Ingredient> repairIngredient)
     {
         this.name = name;
-        this.maxDamageFactor = maxDamageFactor;
-        this.damageReductionAmountArray = damageReductionAmountArray;
-        this.enchantability = enchantability;
-        this.soundEvent = soundEvent;
+        this.durabilityMultiplier = durabilityMultiplier;
+        this.protectionFunctionForType = protectionFunctionForType;
+        this.enchantmentValue = enchantmentValue;
+        this.sound = sound;
         this.toughness = toughness;
-        this.repairMaterial = repairMaterial;
+        this.knockbackResistance = knockbackResistance;
+        this.repairIngredient = new LazyLoadedValue<>(repairIngredient);
     }
 
-    @Override
-    public int getDurabilityForType(final ArmorItem.Type equipmentSlotType)
+    public int getDurabilityForType(@NotNull ArmorItem.Type type)
     {
-        return MAX_DAMAGE_ARRAY[equipmentSlotType.ordinal()] * this.maxDamageFactor;
+        return HEALTH_FUNCTION_FOR_TYPE.get(type) * this.durabilityMultiplier;
     }
 
-    @Override
-    public int getDefenseForType(final ArmorItem.Type p_267168_)
+    public int getDefenseForType(@NotNull ArmorItem.Type type)
     {
-        return this.damageReductionAmountArray[p_267168_.ordinal()];
+        return this.protectionFunctionForType.get(type);
     }
 
-    @Override
     public int getEnchantmentValue()
     {
-        return enchantability;
+        return this.enchantmentValue;
     }
 
-    @Override
+    @NotNull
     public SoundEvent getEquipSound()
     {
-        return soundEvent;
+        return this.sound;
     }
 
-    @Override
+    @NotNull
     public Ingredient getRepairIngredient()
     {
-        return this.repairMaterial;
+        return this.repairIngredient.get();
     }
 
-    @Override
+    @NotNull
     public String getName()
     {
-        return name;
+        return this.name;
     }
 
-    @Override
     public float getToughness()
     {
-        return toughness;
+        return this.toughness;
     }
 
-    @Override
     public float getKnockbackResistance()
     {
-        return 0;
+        return this.knockbackResistance;
     }
 }

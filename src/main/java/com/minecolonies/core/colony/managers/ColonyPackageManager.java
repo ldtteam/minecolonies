@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.permissions.Permissions;
@@ -18,7 +17,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.FakePlayer;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -115,7 +114,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             final ServerPlayer player = iterator.next();
 
-            if (!player.isAlive() || colony.getWorld() != player.level || !WorldUtil.isChunkLoaded(player.level, player.chunkPosition().x, player.chunkPosition().z))
+            if (!player.isAlive() || colony.getWorld() != player.level() || !WorldUtil.isChunkLoaded(player.level(), player.chunkPosition().x, player.chunkPosition().z))
             {
                 iterator.remove();
                 continue;
@@ -215,7 +214,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             for (ServerPlayer player : players)
             {
                 message.setIsNewSubscription(newSubscribers.contains(player));
-                Network.getNetwork().sendToPlayer(message, player);
+                message.sendToPlayer(player);
             }
         }
         colony.getRequestManager().setDirty(false);
@@ -233,7 +232,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, permissions.getRank(player)), player));
+            players.forEach(player -> new PermissionsMessage.View(colony, permissions.getRank(player)).sendToPlayer(player));
         }
     }
 
@@ -249,8 +248,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             players.addAll(newSubscribers);
 
             List<IWorkOrder> workOrders = new ArrayList<>(workManager.getWorkOrders().values());
-            final ColonyViewWorkOrderMessage message = new ColonyViewWorkOrderMessage(colony, workOrders);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
+            new ColonyViewWorkOrderMessage(colony, workOrders).sendToPlayer(players);
 
             workManager.setDirty(false);
         }

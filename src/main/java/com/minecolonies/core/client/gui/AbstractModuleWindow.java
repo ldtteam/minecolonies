@@ -54,13 +54,13 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         if (building.getAllModuleViews().size() > 0 && anyVisible)
         {
             final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
+            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"));
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> building.getWindow().open());
 
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"), false);
+            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"));
             iconImage.setID("main");
             iconImage.setPosition(-15, 13 + offset);
             iconImage.setSize(20, 20);
@@ -71,7 +71,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(LABEL_MAIN_TAB_NAME));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(LABEL_MAIN_TAB_NAME));
         }
 
         for (IBuildingModuleView view : building.getAllModuleViews())
@@ -79,7 +79,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             if (!view.isPageVisible()) continue;
 
             final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
+            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"));
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> {
@@ -89,7 +89,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
             final String icon = view.getIcon();
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
+            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"));
             iconImage.setSize(20, 20);
             iconImage.setID(icon);
             iconImage.setPosition(-15, 13 + offset);
@@ -103,7 +103,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(view.getDesc().toLowerCase(Locale.US)));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(view.getDesc().toLowerCase(Locale.US)));
         }
     }
 }

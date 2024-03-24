@@ -1,7 +1,7 @@
-<overlay size="100% 100%" pos="0 0" vidible="false">
+<overlay size="100% 100%" pos="0 0" vidible="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <view size="256 180" pos="82 30">
         <image source="minecolonies:textures/gui/dialog.png" pos="0 0" size="256px 180px"/>
-        <label id="title" size="100% 11" pos="0 20" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.structure.delete.title)"/>
+        <text id="title" size="100% 11" pos="0 20" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.structure.delete.title)"/>
         <text id="textcontent" size="150 30" pos="53 70" textalign="TOP_MIDDLE" color="black"/>
         <button id="done" size="200 20" pos="28 110" label="$(gui.done)"/>
         <button id="cancel" size="200 20" pos="28 134" label="$(gui.cancel)"/>

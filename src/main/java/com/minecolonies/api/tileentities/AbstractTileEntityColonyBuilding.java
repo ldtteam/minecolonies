@@ -1,11 +1,13 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
@@ -16,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +68,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    public static boolean isInTileEntity(final ICapabilityProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+        public static boolean isInTileEntity(final IItemHandlerCapProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }
@@ -139,18 +140,14 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public abstract boolean hasAccessPermission(Player player);
 
     /**
-     * Set if the entity is mirrored.
-     *
-     * @param mirror true if so.
+     * @param rotationMirror rotation and mirror of the entity.
      */
-    public abstract void setMirror(boolean mirror);
+    public abstract void setRotationMirror(RotationMirror rotationMirror);
 
     /**
-     * Check if building is mirrored.
-     *
-     * @return true if so.
+     * @return rotation and mirror of the entity.
      */
-    public abstract boolean isMirrored();
+    public abstract RotationMirror getRotationMirror();
 
     /**
      * Getter for the style.

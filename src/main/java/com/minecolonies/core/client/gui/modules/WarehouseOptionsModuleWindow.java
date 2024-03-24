@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.WarehouseOptionsModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
@@ -24,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
@@ -71,8 +70,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         {
             final ButtonImage sortButton = findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class);
             PaneBuilders.tooltipBuilder()
-                .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
-                .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
+                .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
+                .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
                 .hoverPane(sortButton)
                 .build();
             sortButton.disable();
@@ -82,7 +81,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
         updateResourcePane();
         //Make sure we have a fresh view
-        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.buildingView));
+        new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
     }
 
     /**
@@ -117,7 +116,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatable(LABEL_X_OF_Z,
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatableEscape(LABEL_X_OF_Z,
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
@@ -154,8 +153,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
                     neededLabel.hide();
                     addButton.setText(Component.literal("X").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED)));
                     PaneBuilders.tooltipBuilder()
-                        .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
-                        .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
+                        .append(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
+                        .appendNL(Component.translatableEscape("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
                         .hoverPane(addButton)
                         .build();
                 }
@@ -189,7 +188,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
      */
     private void transferItems()
     {
-        Network.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.buildingView));
+        new UpgradeWarehouseMessage(this.buildingView).sendToServer();
         module.incrementStorageUpgrade();
         lockUpgrade = true;
         this.updateResourcePane();
@@ -202,7 +201,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     {
         if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
-            Network.getNetwork().sendToServer(new SortWarehouseMessage(this.buildingView));
+            new SortWarehouseMessage(this.buildingView).sendToServer();
             MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }
     }

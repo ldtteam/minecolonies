@@ -10,16 +10,12 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.blacksmith.description"
     },
-    "frame": "task",
-    "hidden": false,
     "icon": {
       "item": "minecolonies:blockhutblacksmith"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancements.minecolonies.build.blacksmith.title"
     }

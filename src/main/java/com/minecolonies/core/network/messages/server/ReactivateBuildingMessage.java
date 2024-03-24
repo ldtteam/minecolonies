@@ -1,38 +1,32 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
+import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.network.IMessage;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Reactivate a building.
  */
-public class ReactivateBuildingMessage implements IMessage
+public class ReactivateBuildingMessage extends AbstractServerPlayMessage
 {
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "reactivate_building", ReactivateBuildingMessage::new);
+
     /**
      * The position to reactivate it.
      */
-    private BlockPos pos;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public ReactivateBuildingMessage()
-    {
-        super();
-    }
+    private final BlockPos pos;
 
     /**
      * Reactivate the building.
@@ -41,7 +35,7 @@ public class ReactivateBuildingMessage implements IMessage
      */
     public ReactivateBuildingMessage(final BlockPos pos)
     {
-        super();
+        super(TYPE);
         this.pos = pos;
     }
 
@@ -50,9 +44,9 @@ public class ReactivateBuildingMessage implements IMessage
      *
      * @param buf The buffer begin read from.
      */
-    @Override
-    public void fromBytes(@NotNull final FriendlyByteBuf buf)
+    protected ReactivateBuildingMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
     {
+        super(buf, type);
         pos = buf.readBlockPos();
     }
 
@@ -62,27 +56,19 @@ public class ReactivateBuildingMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
     }
 
-    @Nullable
     @Override
-    public LogicalSide getExecutionSide()
+    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
     {
-        return LogicalSide.SERVER;
-    }
-
-    @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
-    {
-        final ServerPlayer player = ctxIn.getSender();
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            AbstractBuilding building = (AbstractBuilding) colony.getBuildingManager().getBuilding(pos);
+            final AbstractBuilding building = (AbstractBuilding) colony.getBuildingManager().getBuilding(pos);
             if (building == null)
             {
                 final BlockEntity tileEntity = world.getBlockEntity(pos);

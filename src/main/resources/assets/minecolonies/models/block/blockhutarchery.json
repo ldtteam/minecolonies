@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/cross",
     "ambientocclusion": false,
-	"loader": "forge:composite",
+	"loader": "neoforge:composite",
 	"textures": {
 		"particle": "block/target_side"
 	},

@@ -1,15 +1,16 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -20,12 +21,15 @@ public class PathfindingDebugRenderer
     /**
      * Set of visited nodes.
      */
-    public static Set<MNode> lastDebugNodesVisited = new HashSet<>();
+    public static Set<MNode> lastDebugNodesVisited      = new HashSet<>();
+    public static Set<MNode> lastDebugNodesVisitedLater = new HashSet<>();
+    public static Set<MNode> debugNodesOrgPath          = new HashSet<>();
+    public static Set<MNode> debugNodesExtra            = new HashSet<>();
 
     /**
      * Set of not visited nodes.
      */
-    public static Set<MNode> lastDebugNodesNotVisited  = new HashSet<>();
+    public static Set<MNode> lastDebugNodesNotVisited = new HashSet<>();
 
     /**
      * Set of nodes that belong to the chosen path.
@@ -46,6 +50,21 @@ public class PathfindingDebugRenderer
                 debugDrawNode(n, 0xffff0000, ctx);
             }
 
+            for (final MNode n : lastDebugNodesVisitedLater)
+            {
+                debugDrawNode(n, 0xffff5050, ctx);
+            }
+
+            for (final MNode n : debugNodesOrgPath)
+            {
+                debugDrawNode(n, 0xff808080, ctx);
+            }
+
+            for (final MNode n : debugNodesExtra)
+            {
+                debugDrawNode(n, 0xff9999ff, ctx);
+            }
+
             for (final MNode n : lastDebugNodesNotVisited)
             {
                 debugDrawNode(n, 0xff0000ff, ctx);
@@ -55,7 +74,7 @@ public class PathfindingDebugRenderer
             {
                 if (n.isReachedByWorker())
                 {
-                    debugDrawNode(n, 0xffff6600, ctx);
+                    debugDrawNode(n, 0xffffff00, ctx);
                 }
                 else
                 {
@@ -72,10 +91,10 @@ public class PathfindingDebugRenderer
     private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx)
     {
         ctx.poseStack.pushPose();
-        ctx.poseStack.translate(n.pos.getX() + 0.375d, n.pos.getY() + 0.375d, n.pos.getZ() + 0.375d);
+        ctx.poseStack.translate(n.x + 0.375d, n.y + 0.375d, n.z + 0.375d);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (n.pos.closerThan(entity.blockPosition(), 5d))
+        if (BlockPosUtil.distSqr(entity.blockPosition(), n.x, n.y, n.z) < 5d * 5d)
         {
             renderDebugText(n, ctx);
         }
@@ -88,9 +107,9 @@ public class PathfindingDebugRenderer
         {
             final Matrix4f lineMatrix = ctx.poseStack.last().pose();
 
-            final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
-            final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
-            final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
+            final float pdx = n.parent.x - n.x + 0.125f;
+            final float pdy = n.parent.y - n.y + 0.125f;
+            final float pdz = n.parent.z - n.z + 0.125f;
 
             final VertexConsumer buffer = ctx.bufferSource.getBuffer(WorldRenderMacros.LINES);
 
@@ -105,8 +124,8 @@ public class PathfindingDebugRenderer
     {
         final Font fontrenderer = Minecraft.getInstance().font;
 
-        final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
-        final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
+        final String s1 = String.format("C: %.1f", n.getCost());
+        final String s2 = String.format("H: %.1f", n.getHeuristic());
         final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
 
         ctx.poseStack.pushPose();

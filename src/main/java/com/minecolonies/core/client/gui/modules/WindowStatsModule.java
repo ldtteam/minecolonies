@@ -11,6 +11,7 @@ import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingStatisticsModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.MinerLevelManagementModuleView;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -108,11 +109,11 @@ public class WindowStatsModule extends AbstractModuleWindow
                 if (id.contains(";"))
                 {
                     final String[] split = id.split(";");
-                    resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatable(split[1])));
+                    resourceLabel.setText(Component.translatableEscape(PARTIAL_STATS_MODIFIER_NAME + split[0], stat, Component.translatableEscape(split[1])));
                 }
                 else
                 {
-                    resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + id, stat));
+                    resourceLabel.setText(Component.translatableEscape(PARTIAL_STATS_MODIFIER_NAME + id, stat));
                 }
             }
         });
@@ -129,9 +130,9 @@ public class WindowStatsModule extends AbstractModuleWindow
             }
 
             @Override
-            public String getLabel(final int index)
+            public MutableComponent getLabel(final int index)
             {
-                return Component.translatable((String) INTERVAL.keySet().toArray()[index]).getString();
+                return Component.translatableEscape((String) INTERVAL.keySet().toArray()[index]);
             }
         });
         intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));

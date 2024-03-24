@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
 import com.google.common.collect.ImmutableList;
+import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundTag;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
 
 /**
  * Miner Node Data StructureIterator.
@@ -23,7 +26,6 @@ public class MineNode
      */
     private static final String TAG_X       = "idX";
     private static final String TAG_Z       = "idZ";
-    private static final String TAG_ROT     = "rotation";
     private static final String TAG_STYLE   = "Style";
     private static final String TAG_STATUS  = "Status";
     private static final String TAG_PARENTX = "ParentX";
@@ -52,7 +54,7 @@ public class MineNode
     /**
      * The rotation that was calculated and used at build time
      */
-    private Optional<Integer> rot = Optional.empty();
+    private Optional<RotationMirror> rotMir = Optional.empty();
 
     /**
      * Central position of parent node.
@@ -148,11 +150,7 @@ public class MineNode
         }
         node.setStyle(style);
         node.setStatus(status);
-
-        if (compound.contains(TAG_ROT))
-        {
-            node.setRot(compound.getInt(TAG_ROT));
-        }
+        node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
 
         return node;
     }
@@ -167,10 +165,7 @@ public class MineNode
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);
 
-        if (rot.isPresent())
-        {
-            compound.putInt(TAG_ROT, rot.get());
-        }
+        rotMir.ifPresent(r -> compound.putByte(TAG_ROTATION_MIRROR, (byte) r.ordinal()));
 
         compound.putString(TAG_STYLE, style.name());
         compound.putString(TAG_STATUS, status.name());
@@ -442,9 +437,9 @@ public class MineNode
      *
      * @return
      */
-    public Optional<Integer> getRot()
+    public Optional<RotationMirror> getRotationMirror()
     {
-        return rot;
+        return rotMir;
     }
 
     /**
@@ -452,8 +447,8 @@ public class MineNode
      *
      * @param rot
      */
-    public void setRot(int rot)
+    public void setRotationMirror(final RotationMirror rot)
     {
-        this.rot = Optional.of(rot);
+        this.rotMir = Optional.ofNullable(rot);
     }
 }

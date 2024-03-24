@@ -1,10 +1,10 @@
 <window size="524 243" pause="false" lightbox="false">
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <label size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
-    <label id="totalCitizens" size="50 11" pos="215 61" color="black"/>
+    <text size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
+    <text id="totalCitizens" size="50 11" pos="215 61" color="black"/>
     <list id="citizen-stats" size="148 136" pos="100 83">
         <box size="100% 11" linewidth="0">
-            <label id="citizensAmount" size="100% 11" color="black"/>
+            <text id="citizensAmount" size="100% 11" color="black"/>
         </box>
     </list>
 
@@ -15,12 +15,12 @@
               maxContentHeight="75"
               dropDownSize="140 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-              textcolor="black">
-            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
+              color="black">
+            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" color="black"
                      label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
         </dropdown>
         <list id="stats" size="160 135" pos="20 65">
-           <label id="desc" size="160 13" pos="0 0" color="black"> </label>
+           <text id="desc" size="160 13" pos="0 0" color="black"/>
         </list>
     </view>
 </window>

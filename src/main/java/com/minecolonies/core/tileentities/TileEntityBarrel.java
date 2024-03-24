@@ -18,6 +18,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -123,14 +124,14 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
             ItemStack compostStack = new ItemStack(ModItems.compost, 6);
             if (hitFace != null) // Spawn all as ItemEntity
             {
-                playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
+                playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
             }
             else // Insert directly into inventory, spawning overflow as ItemEntity
             {
                 if(!playerIn.getInventory().add(compostStack))
                 {
-                    playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, 0, 0.2f, 0));
+                    playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, 0, 0.2f, 0));
                 }
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
             }
@@ -138,7 +139,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
             return true;
         }
 
-        final CompostRecipe recipe = findCompostRecipe(itemstack);
+        final RecipeHolder<CompostRecipe> recipe = findCompostRecipe(itemstack);
         if (recipe == null)
         {
             return false;
@@ -156,11 +157,11 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
         }
     }
 
-    private void consumeNeededItems(final ItemStack itemStack, final CompostRecipe recipe)
+    private void consumeNeededItems(final ItemStack itemStack, final RecipeHolder<CompostRecipe> recipe)
     {
         // the strength defined by the recipe determines how many "compostable items" each
         // item actually counts for.  (most items contribute 4 strength.)
-        final int factor = recipe.getStrength();
+        final int factor = recipe.value().getStrength();
 
         //The available items the player has in his hand
         final int availableItems = itemStack.getCount() * factor;
@@ -176,7 +177,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Nullable
-    private static CompostRecipe findCompostRecipe(final ItemStack itemStack)
+    private static RecipeHolder<CompostRecipe> findCompostRecipe(final ItemStack itemStack)
     {
         return IColonyManager.getInstance().getCompatibilityManager()
                 .getCopyOfCompostRecipes().get(itemStack.getItem());
@@ -298,7 +299,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     @Override
     public boolean addItem(final ItemStack item)
     {
-        final CompostRecipe recipe = findCompostRecipe(item);
+        final RecipeHolder<CompostRecipe> recipe = findCompostRecipe(item);
         if (recipe != null && this.items < MAX_ITEMS)
         {
             this.consumeNeededItems(item, recipe);

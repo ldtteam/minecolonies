@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.FriendlyByteBuf;
@@ -242,7 +241,7 @@ public class PermissionsView implements IPermissions
         final int numOwners = buf.readVarInt();
         for (int i = 0; i < numOwners; ++i)
         {
-            final UUID id = PacketUtils.readUUID(buf);
+            final UUID id = buf.readUUID();
             final String name = buf.readUtf(32767);
             final Rank rank = ranks.get(buf.readVarInt());
             if (rank.getId() == OWNER_RANK_ID)

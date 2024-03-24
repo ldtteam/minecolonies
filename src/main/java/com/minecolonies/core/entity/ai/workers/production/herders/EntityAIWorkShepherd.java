@@ -4,7 +4,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
@@ -22,6 +21,8 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
@@ -143,7 +144,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             }
 
             sheep.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()), worker);
+            new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()).sendToTrackingEntity(worker);
             dyeSheepChance(sheep);
 
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
@@ -153,6 +154,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
             for (final ItemStack item : items)
             {
+                building.getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + item.getItem().getDescriptionId(), item.getCount());
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, (worker.getInventoryCitizen()));
             }
         }

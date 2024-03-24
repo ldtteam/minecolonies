@@ -3,8 +3,8 @@ package com.minecolonies.core.structures;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.core.structures.EmptyColonyStructure.COLONY_CODEC;
 
@@ -23,5 +23,5 @@ public class MineColoniesStructures
      * Registers the base structure itself and sets what its path is. In this case,
      * this base structure will have the resourcelocation of structure_tutorial:sky_structures.
      */
-    public static final RegistryObject<StructureType<EmptyColonyStructure>> EMPTY_COLONY = DEFERRED_REGISTRY_STRUCTURE.register("empty_colony", () -> () -> COLONY_CODEC);
+    public static final DeferredHolder<StructureType<?>, StructureType<EmptyColonyStructure>> EMPTY_COLONY = DEFERRED_REGISTRY_STRUCTURE.register("empty_colony", () -> () -> COLONY_CODEC);
 }

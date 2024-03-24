@@ -1,7 +1,6 @@
 package com.minecolonies.core.compatibility.jei.transfer;
 
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
@@ -14,6 +13,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * JEI recipe transfer handler for teaching furnace recipes
  */
-public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, SmeltingRecipe>
+public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, RecipeHolder<SmeltingRecipe>>
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
@@ -43,7 +43,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
 
     @NotNull
     @Override
-    public RecipeType<SmeltingRecipe> getRecipeType()
+    public RecipeType<RecipeHolder<SmeltingRecipe>> getRecipeType()
     {
         return RecipeTypes.SMELTING;
     }
@@ -59,7 +59,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
     @Override
     public IRecipeTransferError transferRecipe(
             @NotNull final ContainerCraftingFurnace craftingGUIBuilding,
-            @NotNull final SmeltingRecipe recipe,
+            @NotNull final RecipeHolder<SmeltingRecipe> recipe,
             @NotNull final IRecipeSlotsView recipeSlots,
             @NotNull final Player player,
             final boolean maxTransfer,
@@ -78,7 +78,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
             final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
             guiIngredients.put(0, input);
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, false);
-            Network.getNetwork().sendToServer(message);
+            message.sendToServer();
         }
 
         return null;

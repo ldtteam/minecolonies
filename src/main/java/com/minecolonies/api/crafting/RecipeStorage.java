@@ -12,6 +12,8 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
@@ -22,8 +24,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -154,14 +155,15 @@ public class RecipeStorage implements IRecipeStorage
         this.intermediate = intermediate == null ? Blocks.AIR : intermediate;
         this.token = token;
         this.recipeSource = source;
-        IForgeRegistry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
+        Registry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
         if(type != null && recipeTypes.containsKey(type))
         {
-            this.recipeType = recipeTypes.getValue(type).getHandlerProducer().apply(this);
+            this.recipeType = recipeTypes.get(type).getHandlerProducer().apply(this);
         }
         else
         {
-            this.recipeType = recipeTypes.getValue(recipeTypes.getDefaultKey()).getHandlerProducer().apply(this);
+            // TODO: change the registry type to DefaultedRegistry 
+            this.recipeType = recipeTypes.get(((DefaultedRegistry<RecipeTypeEntry>) recipeTypes).getDefaultKey()).getHandlerProducer().apply(this);
         }
 
         this.lootTable = lootTable;

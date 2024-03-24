@@ -1,11 +1,11 @@
 package com.minecolonies.api.research.effects.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraft.core.Registry;
 
 public interface IResearchEffectRegistry
 {
-    static IForgeRegistry<ResearchEffectEntry> getInstance()
+    static Registry<ResearchEffectEntry> getInstance()
     {
         return IMinecoloniesAPI.getInstance().getResearchEffectRegistry();
     }
