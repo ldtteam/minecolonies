@@ -36,12 +36,6 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
  */
 public final class RaiderMobUtils
 {
-
-    /**
-     * Distances in which spawns are spread
-     */
-    public static       double                                MOB_SPAWN_DEVIATION_STEPS = 0.3;
-
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Constants.MOD_ID);
 
     /**
@@ -120,11 +114,8 @@ public final class RaiderMobUtils
     {
         if (spawnLocation != null && entityToSpawn != null && world != null && numberOfSpawns > 0)
         {
-            final int x = spawnLocation.getX();
-            final int y = BlockPosUtil.getFloor(spawnLocation, world).getY();
-            final int z = spawnLocation.getZ();
-            double spawnDeviationX = 0;
-            double spawnDeviationZ = 0;
+            int spawnDeviationX = 0;
+            int spawnDeviationZ = 0;
 
             for (int i = 0; i < numberOfSpawns; i++)
             {
@@ -132,17 +123,23 @@ public final class RaiderMobUtils
 
                 if (entity != null)
                 {
-                    entity.absMoveTo(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) Mth.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    BlockPos spawnpos = BlockPosUtil.findAround(world, spawnLocation.offset(spawnDeviationX, 0, spawnDeviationZ), 5, 5, BlockPosUtil.SOLID_AIR_POS_SELECTOR);
+                    if (spawnpos == null)
+                    {
+                        spawnpos = spawnLocation.above();
+                    }
+
+                    entity.absMoveTo(spawnpos.getX(), spawnpos.getY(), spawnpos.getZ(), (float) Mth.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                     entity.setEventID(eventID);
                     entity.registerWithColony();
-                    spawnDeviationZ += MOB_SPAWN_DEVIATION_STEPS;
+                    spawnDeviationZ += 1;
 
-                    if (spawnDeviationZ > 2)
+                    if (spawnDeviationZ > 5)
                     {
                         spawnDeviationZ = 0;
-                        spawnDeviationX += MOB_SPAWN_DEVIATION_STEPS;
+                        spawnDeviationX += 1;
                     }
                 }
             }
