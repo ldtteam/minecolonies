@@ -3,21 +3,21 @@
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <buttonimage id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <button id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
     <text id="warningtext" size="260 120" color="black" pos="70 15" textscale="1" textalign="MIDDLE"/>
 
-    <buttonimage id="pickup" size="129 17" pos="70 150" textcolor="black"
+    <button id="pickup" size="129 17" pos="70 150" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.pickup)"/>
 
-    <buttonimage id="delete" size="129 17" pos="200 150" textcolor="black"
+    <button id="delete" size="129 17" pos="200 150" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.delete)"/>
 
-    <buttonimage id="abandon" size="129 17" pos="130 180" textcolor="black"
+    <button id="abandon" size="129 17" pos="130 180" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
                  label="$(com.minecolonies.core.founding.abandon)"/>
@@ -27,15 +27,15 @@
 
     <text id="confirmtext" size="200 120" color="black" pos="100 30" textscale="1" textalign="MIDDLE" hide="true" visible="false"/>
 
-    <buttonimage id="confirmdelete" size="86 17" pos="110 160" textcolor="black"
+    <button id="confirmdelete" size="86 17" pos="110 160" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.core.gui.colony.delete.confirm)" visible="false"/>
 
-    <buttonimage id="confirmabandon" size="86 17" pos="110 160" textcolor="black"
+    <button id="confirmabandon" size="86 17" pos="110 160" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.core.gui.colony.abandon.confirm)" visible="false"/>
 
-    <buttonimage id="cancelaction" size="86 17" pos="210 160" textcolor="black"
+    <button id="cancelaction" size="86 17" pos="210 160" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.core.gui.colony.manage.cancel)" visible="false"/>
 </window>

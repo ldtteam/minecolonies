@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
-    <buttonimage id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <button id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
     <text id="title" size="200 15" color="black" pos="130 15" label="$(com.minecolonies.core.settlementcovenant.title)" textscale="1.4"/>
     <image size="128 16" pos="135 28" source="minecolonies:textures/gui/citizen/colonist_text_decor_down_wide.png"/>
@@ -21,7 +21,7 @@
     <image size="25 49" pos="355 200" source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
     <image  size="45 45" pos="345 185" source="minecolonies:textures/gui/citizen/colonist_wax_indetermined.png"/>
 
-    <buttonimage id="create" size="169 17" pos="115 210" textcolor="black"
+    <button id="create" size="169 17" pos="115 210" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_large_disabled.png"
                  label="$(com.minecolonies.coremod.gui.colony.create)"/>
