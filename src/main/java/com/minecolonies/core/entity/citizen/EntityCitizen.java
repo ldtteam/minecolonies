@@ -1790,10 +1790,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void remove(final RemovalReason reason)
+    public void setRemoved(final RemovalReason reason)
     {
         citizenColonyHandler.onCitizenRemoved();
-        super.remove(reason);
+        super.setRemoved(reason);
     }
 
     @Override
