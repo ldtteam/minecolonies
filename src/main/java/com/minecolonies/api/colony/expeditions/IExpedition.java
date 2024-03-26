@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.expeditions;
 
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
@@ -57,7 +58,7 @@ public interface IExpedition
      *
      * @return a list of stages containing results per expedition stage.
      */
-    Collection<IExpeditionStage> getResults();
+    Collection<ExpeditionStage> getResults();
 
     /**
      * Advances the current stage of the expedition.

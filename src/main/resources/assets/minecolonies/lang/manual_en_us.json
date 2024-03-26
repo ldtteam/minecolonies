@@ -2607,7 +2607,7 @@
   "com.minecolonies.core.expedition.gui.townhall.empty_list_active": "No active expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.empty_list_finished": "No previous expeditions.",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.CREATED": "Ongoing",
-  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.EMBARKED": "Ongoing",
+  "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.ONGOING": "Ongoing",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.RETURNED": "Safely Returned",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.KILLED": "Not Returned",
   "com.minecolonies.core.expedition.gui.townhall.expedition_list.status.LOST": "Not Returned",

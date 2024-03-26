@@ -365,11 +365,11 @@ public class CitizenManager implements ICitizenManager
         {
             for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModulesByType(AbstractAssignedCitizenModule.class))
             {
-                assignedCitizenModule.removeCitizen((ICitizenData) citizen);
+                assignedCitizenModule.removeCitizen(citizen);
             }
         }
 
-        colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
+        colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
         for (final ServerPlayer player : colony.getPackageManager().getCloseSubscribers())

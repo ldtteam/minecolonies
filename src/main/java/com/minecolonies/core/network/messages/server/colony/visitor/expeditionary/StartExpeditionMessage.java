@@ -10,13 +10,10 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraftforge.network.NetworkEvent.Context;
 
@@ -28,11 +25,6 @@ import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_
  */
 public class StartExpeditionMessage extends AbstractColonyServerMessage
 {
-    /**
-     * The provided expedition type id.
-     */
-    private ResourceLocation expeditionTypeId;
-
     /**
      * The provided expedition instance.
      */
@@ -48,27 +40,18 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
     /**
      * Default constructor.
      *
-     * @param colony         the colony this expedition will occur in.
-     * @param expeditionType the expedition type.
-     * @param expedition     the input expedition instance.
+     * @param colony     the colony this expedition will occur in.
+     * @param expedition the input expedition instance.
      */
-    public StartExpeditionMessage(final IColony colony, final ColonyExpeditionType expeditionType, final ColonyExpedition expedition)
+    public StartExpeditionMessage(final IColony colony, final ColonyExpedition expedition)
     {
         super(colony);
-        this.expeditionTypeId = expeditionType.getId();
         this.expedition = expedition;
     }
 
     @Override
     protected void onExecute(final Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        /// Check if the expedition type can be found.
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
-        if (expeditionType == null)
-        {
-            return;
-        }
-
         // Attempt to create the expedition.
         final boolean isAdded = colony.getExpeditionManager().addExpedition(expedition);
         if (!isAdded)
@@ -85,7 +68,7 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
           .forManagers();
 
         // Create the event related to this expedition.
-        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expeditionType, expedition));
+        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expedition));
 
         // Add all members to the travelling manager and de-spawn them.
         final BlockPos townHallReturnPosition = BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());
@@ -104,7 +87,6 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
     @Override
     protected void toBytesOverride(final FriendlyByteBuf buf)
     {
-        buf.writeResourceLocation(expeditionTypeId);
         final CompoundTag compound = new CompoundTag();
         expedition.write(compound);
         buf.writeNbt(compound);
@@ -113,7 +95,6 @@ public class StartExpeditionMessage extends AbstractColonyServerMessage
     @Override
     protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
-        expeditionTypeId = buf.readResourceLocation();
         expedition = ColonyExpedition.loadFromNBT(buf.readNbt());
     }
 }

@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.expeditions;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpedition;
 import net.minecraft.nbt.CompoundTag;
 
@@ -60,12 +59,6 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
     public abstract IExpedition getExpedition();
 
     @Override
-    public final EventStatus getStatus()
-    {
-        return getExpedition().getStatus().getEventStatus();
-    }
-
-    @Override
     public final void setStatus(final EventStatus status)
     {
         // No-op, expedition status uses a different enumeration to control active status, which can only be modified directly within this event.
@@ -75,12 +68,6 @@ public abstract class AbstractExpeditionEvent implements IColonyEvent
     public final int getID()
     {
         return id;
-    }
-
-    @Override
-    public void onStart()
-    {
-        getExpedition().setStatus(ExpeditionStatus.EMBARKED);
     }
 
     /**

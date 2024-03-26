@@ -1,20 +1,21 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIKnight;
 import com.minecolonies.core.util.AttributeModifierUtils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
@@ -68,6 +69,12 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     }
 
     @Override
+    public ToolType getPreferredWeapon()
+    {
+        return ToolType.SWORD;
+    }
+
+    @Override
     public ResourceLocation getModel()
     {
         return ModModelTypes.KNIGHT_GUARD_ID;
@@ -76,8 +83,8 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if(damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
-                && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
+        if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
+              && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
         {
             if (!this.getCitizen().getEntity().isPresent())
             {

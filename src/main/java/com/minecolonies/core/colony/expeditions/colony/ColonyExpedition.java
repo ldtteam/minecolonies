@@ -3,7 +3,8 @@ package com.minecolonies.core.colony.expeditions.colony;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
-import com.minecolonies.core.colony.expeditions.Expedition;
+import com.minecolonies.core.colony.expeditions.AbstractExpedition;
+import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 /**
  * Class for a colony expedition instance.
  */
-public final class ColonyExpedition extends Expedition
+public final class ColonyExpedition extends AbstractExpedition
 {
     /**
      * NBT tags.
@@ -50,22 +50,24 @@ public final class ColonyExpedition extends Expedition
     /**
      * Deserialization constructor.
      *
-     * @param equipment        the list of equipment for this expedition.
      * @param members          the members for this expedition.
+     * @param equipment        the list of equipment for this expedition.
+     * @param results          the results for this expedition.
      * @param status           the status of the expedition.
      * @param id               the id of the expedition.
      * @param dimensionId      the target dimension for this expedition.
      * @param expeditionTypeId the expedition type.
      */
     public ColonyExpedition(
-      final @NotNull List<ItemStack> equipment,
       final @NotNull List<IExpeditionMember<?>> members,
+      final @NotNull List<ItemStack> equipment,
+      final @NotNull List<ExpeditionStage> results,
       final @NotNull ExpeditionStatus status,
       final int id,
       final @NotNull ResourceKey<Level> dimensionId,
       final @NotNull ResourceLocation expeditionTypeId)
     {
-        super(equipment, members, status);
+        super(members, equipment, results, status);
         this.id = id;
         this.dimensionId = dimensionId;
         this.expeditionTypeId = expeditionTypeId;
@@ -80,12 +82,12 @@ public final class ColonyExpedition extends Expedition
     @NotNull
     public static ColonyExpedition loadFromNBT(final CompoundTag compound)
     {
-        final Expedition base = Expedition.loadFromNBT(compound);
-
         final int id = compound.getInt(TAG_ID);
         final ResourceKey<Level> dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
         final ResourceLocation expeditionTypeId = new ResourceLocation(compound.getString(TAG_EXPEDITION_TYPE));
-        return new ColonyExpedition(base.getEquipment(), base.getMembers(), base.getStatus(), id, dimensionId, expeditionTypeId);
+
+        return AbstractExpedition.loadFromNBT(compound,
+          (members, equipment, results, status) -> new ColonyExpedition(members, equipment, results, status, id, dimensionId, expeditionTypeId));
     }
 
     /**
@@ -114,13 +116,14 @@ public final class ColonyExpedition extends Expedition
      *
      * @return the expedition type id.
      */
+    @NotNull
     public ResourceLocation getExpeditionTypeId()
     {
         return expeditionTypeId;
     }
 
     /**
-     * Add a new member to this expedition, only possible when the status is still {@link ExpeditionStatus#CREATED}.
+     * Add a new member to this expedition, only possible when the status is still {@link ExpeditionStatus#ONGOING}.
      *
      * @param member the new member to add.
      */
@@ -179,7 +182,7 @@ public final class ColonyExpedition extends Expedition
      *
      * @return the member instance.
      */
-    @Nullable
+    @NotNull
     public ExpeditionVisitorMember getLeader()
     {
         for (final IExpeditionMember<?> member : members.values())
@@ -189,7 +192,7 @@ public final class ColonyExpedition extends Expedition
                 return visitorMember;
             }
         }
-        return null;
+        throw new IllegalStateException("Visitor leader from expedition is missing.");
     }
 
     /**

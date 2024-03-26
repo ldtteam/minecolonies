@@ -1,9 +1,10 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIRanger;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The Ranger's Job class
@@ -32,6 +33,12 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     public EntityAIRanger generateGuardAI()
     {
         return new EntityAIRanger(this);
+    }
+
+    @Override
+    public ToolType getPreferredWeapon()
+    {
+        return ToolType.BOW;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package com.minecolonies.core.colony.expeditions;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
@@ -18,7 +21,8 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     /**
      * Nbt tag constants.
      */
-    private static final String TAG_DIED = "died";
+    private static final String TAG_MAX_HEALTH = "maxHealth";
+    private static final String TAG_HEALTH     = "health";
 
     /**
      * The id of the visitor.
@@ -31,9 +35,14 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     private final String name;
 
     /**
-     * Whether this visitor dead or not.
+     * The max health for this member.
      */
-    private boolean died;
+    private final float maxHealth;
+
+    /**
+     * The current health for this member.
+     */
+    private float health;
 
     /**
      * Default constructor for deserialization.
@@ -42,31 +51,21 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     {
         this.id = compound.getInt(TAG_ID);
         this.name = compound.getString(TAG_NAME);
-        this.died = compound.getBoolean(TAG_DIED);
+        this.maxHealth = compound.getFloat(TAG_MAX_HEALTH);
+        this.health = compound.getFloat(TAG_HEALTH);
     }
 
     /**
      * Default constructor.
      *
-     * @param visitorData the visitor to create the expedition member for.
+     * @param visitorDataView the visitor to create the expedition member for.
      */
-    public ExpeditionVisitorMember(final IVisitorData visitorData)
+    public ExpeditionVisitorMember(final IVisitorViewData visitorDataView)
     {
-        this.id = visitorData.getId();
-        this.name = visitorData.getName();
-        this.died = false;
-    }
-
-    /**
-     * Default constructor.
-     *
-     * @param visitorData the visitor to create the expedition member for.
-     */
-    public ExpeditionVisitorMember(final IVisitorViewData visitorData)
-    {
-        this.id = visitorData.getId();
-        this.name = visitorData.getName();
-        this.died = false;
+        this.id = visitorDataView.getId();
+        this.name = visitorDataView.getName();
+        this.maxHealth = (float) visitorDataView.getMaxHealth();
+        this.health = (float) visitorDataView.getHealth();
     }
 
     @Override
@@ -82,15 +81,41 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     }
 
     @Override
-    public boolean isDead()
+    public float getHealth()
     {
-        return this.died;
+        return health;
     }
 
     @Override
-    public void died()
+    public float getMaxHealth()
     {
-        this.died = true;
+        return maxHealth;
+    }
+
+    @Override
+    public void heal(final IColony colony, final float amount)
+    {
+        this.health = Mth.clamp(this.health + amount, 0, this.maxHealth);
+    }
+
+    @Override
+    public void hurt(final IColony colony, final DamageSource damageSource, final float amount)
+    {
+        final ICitizenData citizenData = resolveCivilianData(colony);
+
+        float finalDamage = amount;
+        if (citizenData != null)
+        {
+            finalDamage = IExpeditionMember.handleDamageReduction(citizenData, damageSource, finalDamage);
+        }
+
+        this.health = Mth.clamp(this.health - finalDamage, 0, this.maxHealth);
+    }
+
+    @Override
+    public boolean isDead()
+    {
+        return this.health <= 0;
     }
 
     @Override
@@ -105,7 +130,24 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     {
         compound.putInt(TAG_ID, this.id);
         compound.putString(TAG_NAME, this.name);
-        compound.putBoolean(TAG_DIED, this.died);
+        compound.putFloat(TAG_MAX_HEALTH, this.maxHealth);
+        compound.putFloat(TAG_HEALTH, this.health);
+    }
+
+    @Override
+    public void removeFromColony(final IColony colony)
+    {
+        final IVisitorData visitorData = resolveCivilianData(colony);
+        if (visitorData != null)
+        {
+            colony.getVisitorManager().removeCivilian(visitorData);
+        }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id;
     }
 
     @Override
@@ -123,11 +165,5 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
         final ExpeditionVisitorMember that = (ExpeditionVisitorMember) o;
 
         return id == that.id;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return id;
     }
 }

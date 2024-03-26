@@ -7,23 +7,22 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.ScrollingList.DataProvider;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.colony.expeditions.IExpeditionStage;
+import com.minecolonies.api.colony.expeditions.ExpeditionStatusType;
+import com.minecolonies.api.colony.expeditions.MobKill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.ColonyView;
+import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_TOWNHALL_LIST_STATUS;
@@ -54,6 +53,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     private static final String LIST_EXPEDITION_RESULTS_CHILD_HEADER  = "child_header";
     private static final String LIST_EXPEDITION_RESULTS_CHILD_REWARDS = "child_rewards";
     private static final String LIST_EXPEDITION_RESULTS_CHILD_KILLS   = "child_kills";
+    private static final String PARTIAL_ITEM_PREFIX                   = "item_";
 
     /**
      * The amount of item icons showing on a single list row.
@@ -212,12 +212,12 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                         }
 
                         final ItemStack item = openedExpedition.instance.getEquipment().get(itemIndex);
-                        pane.findPaneOfTypeByID("item_" + colIndex, ItemIcon.class).setItem(item);
+                        pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
                     }
                 }
             });
 
-            if (openedExpedition.instance.getStatus().getEventStatus().equals(EventStatus.DONE))
+            if (openedExpedition.instance.getStatus().getStatusType().equals(ExpeditionStatusType.SUCCESSFUL))
             {
                 findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).on();
 
@@ -236,7 +236,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                     public void updateElement(final int i, final Pane pane)
                     {
                         final OpenedExpeditionResultData rowData = rows.get(i);
-                        final IExpeditionStage currentStage = openedExpedition.instance.getResults().get(rowData.stageIndex);
+                        final ExpeditionStage currentStage = openedExpedition.instance.getResults().get(rowData.stageIndex);
 
                         final Text childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, Text.class);
                         final View childRewards = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_REWARDS, View.class);
@@ -266,14 +266,13 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                     }
 
                                     final ItemStack item = currentStage.getRewards().get(itemIndex);
-                                    pane.findPaneOfTypeByID("item_" + colIndex, ItemIcon.class).setItem(item);
+                                    pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
                                 }
                             }
                             case KILLS ->
                             {
                                 childKills.on();
 
-                                final List<Entry<EntityType<?>, Integer>> entries = currentStage.getKills().entrySet().stream().toList();
                                 for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
                                 {
                                     final int itemIndex = colIndex + rowData.listOffsetIndex;
@@ -282,10 +281,10 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                         break;
                                     }
 
-                                    final Entry<EntityType<?>, Integer> item = entries.get(itemIndex);
-                                    final EntityIcon entityIcon = pane.findPaneOfTypeByID("item_" + colIndex, EntityIcon.class);
-                                    entityIcon.setEntity(item.getKey());
-                                    entityIcon.setCount(item.getValue());
+                                    final MobKill item = currentStage.getKills().get(itemIndex);
+                                    final EntityIcon entityIcon = pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
+                                    entityIcon.setEntity(item.entity());
+                                    entityIcon.setCount(item.count());
                                 }
                             }
                         }
@@ -308,10 +307,10 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
         final List<OpenedExpeditionResultData> results = new ArrayList<>();
 
-        final List<IExpeditionStage> instanceResults = openedExpedition.instance.getResults();
+        final List<ExpeditionStage> instanceResults = openedExpedition.instance.getResults();
         for (int stageIndex = 0; stageIndex < instanceResults.size(); stageIndex++)
         {
-            final IExpeditionStage stage = instanceResults.get(stageIndex);
+            final ExpeditionStage stage = instanceResults.get(stageIndex);
             // 1 row for the stage header
             results.add(new OpenedExpeditionResultData(OpenedExpeditionResultType.HEADER, stageIndex, 0));
 

@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.generic.ResourceItem;
@@ -311,42 +310,13 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
                 rowPane.findPaneOfTypeByID(ID_EXPEDITION_GUARDS_NAME, Text.class).setText(guard.getJobComponent().append(": ").append(Component.literal(guard.getName())));
 
-                renderGuardEquipment(getFirstWeapon(guard), ID_EXPEDITION_GUARDS_WEAPON, rowPane);
+                renderGuardEquipment(InventoryUtils.getFirstWeapon(guard.getInventory()), ID_EXPEDITION_GUARDS_WEAPON, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.HEAD), ID_EXPEDITION_GUARDS_HELMET, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.CHEST), ID_EXPEDITION_GUARDS_CHESTPLATE, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.LEGS), ID_EXPEDITION_GUARDS_LEGGINGS, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.FEET), ID_EXPEDITION_GUARDS_BOOTS, rowPane);
             }
         });
-    }
-
-    /**
-     * Get the first available weapon in the guard it's inventory.
-     *
-     * @param guard the guard to get the weapon for.
-     * @return the item stack containing the weapon or empty.
-     */
-    private ItemStack getFirstWeapon(final ICitizenDataView guard)
-    {
-        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(guard.getInventory(), ToolType.SWORD, 0, 5);
-        if (swordSlot != -1)
-        {
-            return guard.getInventory().getStackInSlot(swordSlot);
-        }
-
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(guard.getInventory(), ToolType.BOW, 0, 5);
-        if (bowSlot != -1)
-        {
-            return guard.getInventory().getStackInSlot(bowSlot);
-        }
-
-        final int axeSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(guard.getInventory(), ToolType.AXE, 0, 5);
-        if (axeSlot != -1)
-        {
-            return guard.getInventory().getStackInSlot(axeSlot);
-        }
-
-        return ItemStack.EMPTY;
     }
 
     /**
@@ -416,8 +386,8 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         expedition.setEquipment(equipment);
         expedition.addMember(new ExpeditionVisitorMember(visitorData));
 
-        expedition.setStatus(ExpeditionStatus.EMBARKED);
-        Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expeditionType, expedition));
+        expedition.setStatus(ExpeditionStatus.ONGOING);
+        Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expedition));
 
         close();
     }

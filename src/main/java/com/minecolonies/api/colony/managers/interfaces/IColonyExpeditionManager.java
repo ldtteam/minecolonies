@@ -68,6 +68,16 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
     boolean canGoToDimension(final ResourceKey<Level> dimension);
 
     /**
+     * Unlock nether expeditions.
+     */
+    void unlockNether();
+
+    /**
+     * Unlock end expeditions.
+     */
+    void unlockEnd();
+
+    /**
      * Whether the expedition manager class is dirty and the client needs to be updated.
      *
      * @return true if so.

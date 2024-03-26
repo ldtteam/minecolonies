@@ -3,7 +3,7 @@
   "to-text": "the Overworld",
   "difficulty": "easy",
   "dimension": "minecraft:overworld",
-  "loot-table": "minecolonies:expedition_overworld",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
   "requirements": [
     {
       "type": "tool",

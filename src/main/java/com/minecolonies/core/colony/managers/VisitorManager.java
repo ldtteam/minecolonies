@@ -242,8 +242,13 @@ public class VisitorManager implements IVisitorManager
         if (expeditionType != null)
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION,
-              new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, newVisitor.getId(), expeditionType.getDimension(), expeditionType.getId()));
+            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ColonyExpedition(new ArrayList<>(),
+              new ArrayList<>(),
+              new ArrayList<>(),
+              ExpeditionStatus.CREATED,
+              newVisitor.getId(),
+              expeditionType.getDimension(),
+              expeditionType.getId()));
             newVisitor.triggerInteraction(new ExpeditionInteraction(expeditionType));
 
             spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),

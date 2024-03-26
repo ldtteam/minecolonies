@@ -113,11 +113,6 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     public boolean addExpedition(final ColonyExpedition expedition)
     {
         final IExpeditionMember<?> leader = expedition.getLeader();
-        if (leader == null)
-        {
-            return false;
-        }
-
         if (activeExpeditions.containsKey(leader.getId()))
         {
             return false;
@@ -173,6 +168,18 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
             return isStrongholdDiscovered;
         }
         return false;
+    }
+
+    @Override
+    public void unlockNether()
+    {
+        isRuinedPortalDiscovered = true;
+    }
+
+    @Override
+    public void unlockEnd()
+    {
+        isStrongholdDiscovered = true;
     }
 
     @Override

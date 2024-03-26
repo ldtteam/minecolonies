@@ -22,7 +22,7 @@
                  label="$(com.minecolonies.coremod.gui.townhall.mercenary)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_merc.png"/>
 
     <buttonimage id="expeditions" size="129 17" pos="110 156"  textcolor="black"
-                 label="$(com.minecolonies.coremod.gui.townhall.expeditions)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_merc.png"/>
+                 label="$(com.minecolonies.coremod.gui.townhall.expeditions)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large_expeditions.png"/>
 
     <!-- Visual Changes, Right Side -->
 

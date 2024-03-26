@@ -275,10 +275,10 @@ public class ColonyExpeditionType
      */
     public enum Difficulty
     {
-        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5),
-        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10),
-        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15),
-        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30);
+        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5, 1f, 1f),
+        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10, 1.5f, 1.2f),
+        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15, 2f, 1.5f),
+        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30, 4f, 2f);
 
         /**
          * The key of the difficulty, used in the json files.
@@ -321,9 +321,29 @@ public class ColonyExpeditionType
         private final int randomTime;
 
         /**
+         * A multiplier that will spawn more mobs during encounters.
+         */
+        private final float mobEncounterMultiplier;
+
+        /**
+         * A multiplier that will increase the damage for mobs during encounters.
+         */
+        private final float mobDamageMultiplier;
+
+        /**
          * Internal constructor.
          */
-        Difficulty(final String key, final int level, final int luckLevel, final Item icon, final boolean hidden, final Style style, final int baseTime, final int randomTime)
+        Difficulty(
+          final String key,
+          final int level,
+          final int luckLevel,
+          final Item icon,
+          final boolean hidden,
+          final Style style,
+          final int baseTime,
+          final int randomTime,
+          float mobEncounterMultiplier,
+          float mobDamageMultiplier)
         {
             this.key = key;
             this.level = level;
@@ -333,6 +353,8 @@ public class ColonyExpeditionType
             this.style = style;
             this.baseTime = baseTime;
             this.randomTime = randomTime;
+            this.mobEncounterMultiplier = mobEncounterMultiplier;
+            this.mobDamageMultiplier = mobDamageMultiplier;
         }
 
         /**
@@ -432,6 +454,26 @@ public class ColonyExpeditionType
         public int getRandomTime()
         {
             return randomTime;
+        }
+
+        /**
+         * Get a multiplier that will spawn more mobs during encounters.
+         *
+         * @return the multiplier.
+         */
+        public float getMobEncounterMultiplier()
+        {
+            return mobEncounterMultiplier;
+        }
+
+        /**
+         * Get a multiplier that will increase the damage for mobs during encounters.
+         *
+         * @return the multiplier.
+         */
+        public float getMobDamageMultiplier()
+        {
+            return mobDamageMultiplier;
         }
     }
 }

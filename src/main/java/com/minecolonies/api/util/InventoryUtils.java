@@ -5,9 +5,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -3240,5 +3241,28 @@ public class InventoryUtils
             }
         }
         return allInInv;
+    }
+
+    /**
+     * Find the first possible weapon in the inventory (swords or bows)
+     *
+     * @param inventory the target inventory.
+     * @return the item stack containing the weapon or empty.
+     */
+    public static ItemStack getFirstWeapon(final IItemHandler inventory)
+    {
+        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.SWORD, 0, 5);
+        if (swordSlot != -1)
+        {
+            return inventory.getStackInSlot(swordSlot);
+        }
+
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.BOW, 0, 5);
+        if (bowSlot != -1)
+        {
+            return inventory.getStackInSlot(bowSlot);
+        }
+
+        return ItemStack.EMPTY;
     }
 }

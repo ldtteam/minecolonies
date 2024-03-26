@@ -9,9 +9,9 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -111,7 +111,7 @@ public class StringSetting implements IStringSetting<String>
       final IBuildingView building,
       final BOWindow window)
     {
-        int buttonWidth = MathUtils.clamp(getButtonWidth(settingsModuleView), 0, MAX_BUTTON_WIDTH);
+        int buttonWidth = Mth.clamp(getButtonWidth(settingsModuleView), 0, MAX_BUTTON_WIDTH);
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));

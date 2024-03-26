@@ -1,0 +1,122 @@
+{
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"structure_start\",structure:\"stronghold\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 2.0,
+        "max": 6.0
+      },
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "min": 0.1,
+        "max": 0.1
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 5500,
+          "quality": -10,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:5,entity-type:\"minecraft:zombified_piglin\",xp-dropped:5}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 300,
+          "quality": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:3,entity-type:\"minecraft:magma_cube\",xp-dropped:4}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 500,
+          "quality": -1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:3,entity-type:\"minecraft:hoglin\",xp-dropped:5}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 300,
+          "quality": -3,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:12,entity-type:\"minecraft:ghast\",xp-dropped:5}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 300,
+          "quality": -3,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:7,entity-type:\"minecraft:enderman\",xp-dropped:5}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 100,
+          "quality": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"mob\",damage-done:5,entity-type:\"minecraft:blaze\",xp-dropped:10}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{type:\"structure_end\",structure:\"stronghold\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ]
+    }
+  ]
+}

@@ -69,7 +69,8 @@ public class ExpeditionaryVisitorType implements IVisitorType
     {
         public ColonyExpeditionData()
         {
-            super("expedition", new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, -1, Level.OVERWORLD, new ResourceLocation("")));
+            super("expedition",
+              new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, -1, Level.OVERWORLD, new ResourceLocation("")));
         }
 
         @Override
