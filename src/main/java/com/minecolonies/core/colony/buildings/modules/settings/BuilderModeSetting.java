@@ -30,7 +30,7 @@ public class BuilderModeSetting extends StringSetting
      */
     public BuilderModeSetting()
     {
-        super(StructureIterators.getKeySet().stream().sorted(String::compareToIgnoreCase).toList(), 0);
+        super(StructureIterators.getKeySet().stream().sorted(String::compareToIgnoreCase).toList(), 5);
         set(Structurize.getConfig().getServer().iteratorType.get());
     }
 

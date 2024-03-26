@@ -16,13 +16,16 @@ import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveCloseToXNearY;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -47,6 +50,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * Building level to purge mobs at the build site.
      */
     private static final int LEVEL_TO_PURGE_MOBS = 4;
+
+    /**
+     * Current goto path
+     */
+    PathResult gotoPath = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -192,17 +200,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (workFrom == null)
         {
-            workFrom = findRandomPositionToWalkTo(5, currentBlock);
-            if (workFrom == null && pathBackupFactor > 10)
+            if (gotoPath == null || gotoPath.isCancelled())
             {
-                workFrom = worker.blockPosition();
+                gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveCloseToXNearY(world,
+                  currentBlock,
+                  job.getWorkOrder().getLocation(),
+                  5,
+                  worker), currentBlock, 1.0, false);
             }
-            return false;
-        }
+            else if (gotoPath.isDone())
+            {
+                if (gotoPath.getPath() != null)
+                {
+                    workFrom = gotoPath.getPath().getTarget();
+                }
+                gotoPath = null;
+            }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) <= 5L + (pathBackupFactor * 5L))
-        {
-            return true;
+            return false;
         }
 
         if (walkToBlock(workFrom))
@@ -210,15 +225,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5L + (pathBackupFactor * 5L))
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 10)
         {
+            double distToBuilding = BlockPosUtil.dist(workFrom, job.getWorkOrder().getLocation());
             workFrom = null;
-            return false;
-        }
-
-        if (pathBackupFactor > 1)
-        {
-            pathBackupFactor--;
+            return distToBuilding < 100;
         }
 
         return true;
