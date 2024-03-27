@@ -132,21 +132,6 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (existingCitizen.get() == entity)
-        {
-            entity.level().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
-            return;
-        }
-
-        if (entity.isAlive())
-        {
-            existingCitizen.get().remove(Entity.RemovalReason.DISCARDED);
-            data.setEntity(entity);
-            entity.setCivilianData(data);
-            entity.level().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
-            return;
-        }
-
         entity.remove(Entity.RemovalReason.DISCARDED);
     }
 

@@ -22,6 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -132,31 +133,25 @@ public class PathfindingUtils
         }
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || (bs.blocksMotion() && !canStandInSolidBlock(bs)))
         {
-            //Push away from fence
-            final double dX = entity.getX() - Math.floor(entity.getX());
-            final double dZ = entity.getZ() - Math.floor(entity.getZ());
-
-            if (dX < HALF_A_BLOCK && dZ < HALF_A_BLOCK)
+            final VoxelShape shape = bs.getCollisionShape(level, pos);
+            if (shape.isEmpty())
             {
-                if (dZ < dX)
-                {
-                    pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
-                }
-                else
-                {
-                    pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
-                }
+                return pos.immutable();
+            }
+
+            final Vec3 relativePos = entity.position().subtract(shape.move(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ()).bounds().getCenter());
+
+            //Push away from fence
+            final double dX = relativePos.x;
+            final double dZ = relativePos.z;
+
+            if (Math.abs(dX) < Math.abs(dZ))
+            {
+                pos.set(pos.getX(), pos.getY(), dZ < 0 ? pos.getZ() - 1 : pos.getZ() + 1);
             }
             else
             {
-                if (dZ > dX)
-                {
-                    pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
-                }
-                else
-                {
-                    pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
-                }
+                pos.set(dX < 0 ? pos.getX() - 1 : pos.getX() + 1, pos.getY(), pos.getZ());
             }
         }
 

@@ -2,6 +2,8 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
+import com.ldtteam.domumornamentum.block.decorative.ShingleBlock;
+import com.ldtteam.domumornamentum.block.decorative.ShingleSlabBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -870,6 +872,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         else if (!ShapeUtil.isEmpty(state.getCollisionShape(cachedBlockLookup, tempWorldPos.set(x, y, z))))
         {
             cost += pathingOptions.walkInShapesCost;
+        }
+
+        if (state.getBlock() instanceof ShingleBlock || state.getBlock() instanceof ShingleSlabBlock)
+        {
+            cost += 3;
         }
 
         if (railsExit)
