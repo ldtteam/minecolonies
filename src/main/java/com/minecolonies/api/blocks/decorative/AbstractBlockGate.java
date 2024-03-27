@@ -83,6 +83,16 @@ public abstract class AbstractBlockGate extends DoorBlock
         this.hardness = hardness;
     }
 
+    public int getMaxWidth()
+    {
+        return maxWidth;
+    }
+
+    public int getMaxHeight()
+    {
+        return maxHeight;
+    }
+
     @Override
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit)
     {

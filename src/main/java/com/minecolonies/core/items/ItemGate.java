@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
@@ -32,8 +33,12 @@ public class ItemGate extends BlockItem
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint2 = Component.translatableEscape(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
-        guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
-        tooltip.add(guiHint2);
+        if (getBlock() instanceof final AbstractBlockGate gate)
+        {
+            final MutableComponent guiHint2 = Component.translatable(TranslationConstants.GATE_PLACEMENT_TOOLTIP,
+                    gate.getMaxWidth(), gate.getMaxHeight(), gate.getMaxWidth() * gate.getMaxHeight());
+            guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
+            tooltip.add(guiHint2);
+        }
     }
 }
