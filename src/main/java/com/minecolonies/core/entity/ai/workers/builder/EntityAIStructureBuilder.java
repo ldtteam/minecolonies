@@ -225,7 +225,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 10)
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5)
         {
             double distToBuilding = BlockPosUtil.dist(workFrom, job.getWorkOrder().getLocation());
             workFrom = null;
