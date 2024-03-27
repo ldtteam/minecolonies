@@ -541,8 +541,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
             // Values taken from vanilla.
             worker.swing(InteractionHand.MAIN_HAND);
-            worker.getMainHandItem().shrink(1);
             building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + worker.getMainHandItem().getItem().getDescriptionId());
+            worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level().broadcastEntityEvent(toFeed, (byte) 18);
             toFeed.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
