@@ -222,6 +222,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           corners.getA(),
           corners.getB()), null, speedFactor, true);
 
+        if (result == null)
+        {
+            return null;
+        }
+
         result.getJob().getPathingOptions().withJumpCost(1).withDropCost(1);
         return result;
     }
@@ -565,7 +570,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         if (path == null)
         {
-            stop();
+            super.stop();
             return false;
         }
         pathStartTime = level.getGameTime();
