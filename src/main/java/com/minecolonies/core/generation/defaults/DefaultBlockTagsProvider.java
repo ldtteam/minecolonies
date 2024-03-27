@@ -156,6 +156,10 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
 
         tag(ModTags.dangerousBlocks);
 
+        tag(ModTags.freeClimbBlocks)
+                .add(Blocks.LADDER)
+                .add(Blocks.SCAFFOLDING);
+
         tag(ModTags.mangroveTree)
                 .add(Blocks.MANGROVE_LOG)
                 .add(Blocks.MANGROVE_ROOTS);

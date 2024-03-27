@@ -26,6 +26,7 @@ public class ModTags
     public static final TagKey<Block> decorationItems = BlockTags.create(TagConstants.DECORATION_ITEMS);
     public static final TagKey<Block> pathingBlocks   = BlockTags.create(TagConstants.PATHING_BLOCKS);
     public static final TagKey<Block> dangerousBlocks = BlockTags.create(TagConstants.DANGEROUS_BLOCKS);
+    public static final TagKey<Block> freeClimbBlocks = BlockTags.create(TagConstants.FREE_CLIMB_BLOCKS);
     public static final TagKey<Block> tier1blocks     = BlockTags.create(TagConstants.TIER1_BLOCKS);
     public static final TagKey<Block> tier2blocks     = BlockTags.create(TagConstants.TIER2_BLOCKS);
     public static final TagKey<Block> tier3blocks     = BlockTags.create(TagConstants.TIER3_BLOCKS);

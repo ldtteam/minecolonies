@@ -323,7 +323,9 @@ public class PathfindingUtils
      */
     public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options)
     {
-        return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbNonLadders()) || blockState.getBlock() instanceof LadderBlock);
+        return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
+                blockState.getBlock() instanceof LadderBlock ||
+                blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**

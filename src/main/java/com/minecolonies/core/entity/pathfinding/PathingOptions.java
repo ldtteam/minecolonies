@@ -91,7 +91,7 @@ public class PathingOptions
     /**
      * Whether to path through vines.
      */
-    private boolean canClimbNonLadders = false;
+    private boolean canClimbAdvanced = false;
 
     /**
      * Whether to path through dangerous blocks.
@@ -116,9 +116,9 @@ public class PathingOptions
         return canUseRails;
     }
 
-    public boolean canClimbNonLadders()
+    public boolean canClimbAdvanced()
     {
-        return canClimbNonLadders;
+        return canClimbAdvanced;
     }
 
     public void setCanUseRails(final boolean canUseRails)
@@ -126,9 +126,9 @@ public class PathingOptions
         this.canUseRails = canUseRails;
     }
 
-    public void setCanClimbNonLadders(final boolean canClimbNonLadders)
+    public void setCanClimbAdvanced(final boolean canClimbAdvanced)
     {
-        this.canClimbNonLadders = canClimbNonLadders;
+        this.canClimbAdvanced = canClimbAdvanced;
     }
 
     public boolean canSwim()
@@ -258,7 +258,7 @@ public class PathingOptions
         canSwim = pathingOptions.canSwim;
         enterDoors = pathingOptions.enterDoors;
         canOpenDoors = pathingOptions.canOpenDoors;
-        canClimbNonLadders = pathingOptions.canClimbNonLadders;
+        canClimbAdvanced = pathingOptions.canClimbAdvanced;
         canPassDanger = pathingOptions.canPassDanger;
         randomnessFactor = pathingOptions.randomnessFactor;
     }
