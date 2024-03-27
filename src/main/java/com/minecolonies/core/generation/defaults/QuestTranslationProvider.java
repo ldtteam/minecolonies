@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.minecolonies.api.quests.QuestParseConstant.*;
 import static com.minecolonies.api.quests.registries.QuestRegistries.DIALOGUE_OBJECTIVE_ID;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_QUESTS_DIR;
 import static com.minecolonies.core.quests.QuestParsingConstants.*;
 
 /**
@@ -53,19 +54,19 @@ public class QuestTranslationProvider implements DataProvider
     @Override
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "quests");
+        final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, COLONY_QUESTS_DIR);
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
         try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "..", "src", "main", "resources"), false))
         {
-            pack.listResources(PackType.SERVER_DATA, MOD_ID, "quests", (questId, stream) ->
+            pack.listResources(PackType.SERVER_DATA, MOD_ID, COLONY_QUESTS_DIR, (questId, stream) ->
             {
                 if (!questId.getPath().endsWith(".json"))
                 {
                     return;
                 }
 
-                final ResourceLocation questPath = new ResourceLocation(questId.getNamespace(), questId.getPath().replace("quests/", "").replace(".json", ""));
+                final ResourceLocation questPath = new ResourceLocation(questId.getNamespace(), questId.getPath().replace(COLONY_QUESTS_DIR + "/", "").replace(".json", ""));
                 final String baseKey = questPath.getNamespace() + ".quests." + questPath.getPath().replace("/", ".");
                 final JsonObject langJson = new JsonObject();
 

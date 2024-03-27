@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_QUESTS_DIR;
 import static com.minecolonies.core.quests.QuestParsingConstants.*;
 import static com.minecolonies.core.quests.QuestParsingConstants.BRACE_CLOSE;
 
@@ -41,11 +42,11 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     private static Map<ResourceLocation, JsonElement> globalJsonElementMap = new HashMap<>();
 
     /**
-     * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/quests/<path>
+     * Set up the core loading, with the directory in the datapack that contains this data Directory is: <namespace>/colony/quests/<path>
      */
     public QuestJsonListener()
     {
-        super(GSON, "quests");
+        super(GSON, COLONY_QUESTS_DIR);
     }
 
     /**
