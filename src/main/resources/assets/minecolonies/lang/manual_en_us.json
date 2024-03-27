@@ -930,7 +930,7 @@
   "enchantment.minecolonies.raider_damage_enchant": "Raider's Bane",
   "enchantment.minecolonies.raider_damage_enchant.desc": "Increases damage against MineColonies raiders.",
 
-  "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
+  "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is %sx%s which needs a stack of %s.",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
   "item.supplychestdeployer.invalid": "You must place it in a fitting ocean or river.",
