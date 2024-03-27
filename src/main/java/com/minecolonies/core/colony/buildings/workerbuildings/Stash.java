@@ -60,6 +60,6 @@ public class Stash extends AbstractBuilding implements IRSComponent
     @Override
     public RotationMirror getRotationMirror()
     {
-        return RotationMirror.NONE.mirrorate(super.getRotationMirror().mirror());
+        return RotationMirror.NONE;
     }
 }
