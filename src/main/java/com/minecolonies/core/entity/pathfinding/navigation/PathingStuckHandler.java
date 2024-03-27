@@ -223,6 +223,11 @@ public class PathingStuckHandler implements IStuckHandler
                         // Delay next action when the entity is moving
                         delayToNextUnstuckAction = Math.max(delayToNextUnstuckAction, 100);
                     }
+                    else if (lastPathIndex < 2 && navigator.getPath().getNodeCount() > 2)
+                    {
+                        // Skip ahead on the node index, incase the starting position is bad
+                        navigator.getPath().setNextNodeIndex(2);
+                    }
 
                     if ((stuckLevel == 0 || navigator.getPath().getTarget().distSqr(prevDestination) < 25))
                     {

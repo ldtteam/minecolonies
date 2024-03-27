@@ -188,7 +188,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           3,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           range,
-          ourEntity, pos), pos, speedFactor, true);
+          ourEntity, pos), pos, speedFactor, false);
+
+        if (result == null)
+        {
+            return null;
+        }
+
         result.getJob().getPathingOptions().withToggleCost(1).withJumpCost(1).withDropCost(1);
         return result;
     }
