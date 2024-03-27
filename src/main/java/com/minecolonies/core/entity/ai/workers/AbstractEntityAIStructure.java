@@ -133,6 +133,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     protected BlockPos blockToMine;
 
     /**
+     * Block to go to when building
+     */
+    protected BlockPos gotoPos = null;
+
+    /**
      * The id in the list of the last picked up item.
      */
     private int pickUpCount = 0;
@@ -361,15 +366,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         //Fill workFrom with the position from where the builder should build.
         //also ensure we are at that position.
         final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        final BlockPos worldPos = structurePlacer.getB().getProgressPosInWorld(progress);
+        final BlockPos worldPos;
+        if (gotoPos != null)
+        {
+            worldPos = structurePlacer.getB().getProgressPosInWorld(gotoPos);
+        }
+        else
+        {
+            worldPos = job.getWorkOrder().getLocation();
+        }
+        
         if (getProgressPos() != null)
         {
             structurePlacer.getB().setStage(getProgressPos().getB());
         }
 
-        if ((!progress.equals(NULL_POS) || blockToMine != null) && !limitReached && (blockToMine == null
-                                                                                       ? !walkToConstructionSite(worldPos)
-                                                                                       : !walkToConstructionSite(blockToMine)))
+        if ((worldPos != null || blockToMine != null) && !limitReached && (blockToMine == null
+                                                                             ? !walkToConstructionSite(worldPos)
+                                                                             : !walkToConstructionSite(blockToMine)))
         {
             return getState();
         }
@@ -470,6 +484,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
+            if (structurePlacer.getB().getStage() != CLEAR_WATER)
+            {
+                gotoPos = result.getIteratorPos();
+            }
+            else
+            {
+                gotoPos = null;
+            }
+
             this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
         }
 

@@ -502,6 +502,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         costPerEstimation = costPerEstimation / count;
 
+        if (costPerEstimation <= 0.0)
+        {
+            return false;
+        }
+
         // Detect an overstimating heuristic(not guranteed, but can check the found path)
         if (costPerEstimation < 1 || (costPerEstimation > 1.2 && !reaches))
         {
