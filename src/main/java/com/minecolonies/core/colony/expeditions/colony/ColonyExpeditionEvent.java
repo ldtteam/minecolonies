@@ -1,19 +1,16 @@
 package com.minecolonies.core.colony.expeditions.colony;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatusType;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
-import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.expeditions.AbstractExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
@@ -24,16 +21,21 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
@@ -86,11 +88,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * The inventory for the expedition.
      */
     private final ItemStackHandler inventory = new ItemStackHandler(EXPEDITION_INVENTORY_SIZE);
-
-    /**
-     * Map that retains the entities in combat.
-     */
-    private final Map<Integer, AbstractEntityCitizen> combatEntities = new HashMap<>();
 
     /**
      * The id of this expedition.
@@ -164,9 +161,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         final CompoundTag compound = super.serializeNBT();
         compound.putInt(TAG_EXPEDITION_ID, expeditionId);
         compound.put(TAG_INVENTORY, inventory.serializeNBT());
-        compound.put(TAG_REMAINING_ITEMS, remainingItems.stream()
-                                            .map(IForgeItemStack::serializeNBT)
-                                            .collect(NBTUtils.toListNBT()));
+        compound.put(TAG_REMAINING_ITEMS, remainingItems.stream().map(IForgeItemStack::serializeNBT).collect(NBTUtils.toListNBT()));
         compound.putLong(TAG_END_TIME, endTime);
         return compound;
     }
@@ -176,9 +171,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     {
         expeditionId = compoundTag.getInt(TAG_EXPEDITION_ID);
         inventory.deserializeNBT(compoundTag.getCompound(TAG_INVENTORY));
-        remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND))
-                           .map(ItemStack::of)
-                           .collect(Collectors.toCollection(ArrayDeque::new));
+        remainingItems = NBTUtils.streamCompound(compoundTag.getList(TAG_REMAINING_ITEMS, Tag.TAG_COMPOUND)).map(ItemStack::of).collect(Collectors.toCollection(ArrayDeque::new));
         endTime = compoundTag.getLong(TAG_END_TIME);
     }
 
@@ -190,13 +183,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      */
     private void processMobFight(final @NotNull EntityType<?> entityType)
     {
-        //livingEntity.hurt(colony.getWorld().damageSources().mobAttack());
-        //
-        //if (livingEntity.isDeadOrDying())
-        //{
-        //    livingEntity.getExperienceReward();
-        //}
-
         final Entity rawEntity = entityType.create(colony.getWorld());
         if (rawEntity instanceof Mob mob)
         {
@@ -208,9 +194,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             }
 
             // We don't bother handling mobs that cannot be attacked/are invulnerable, because colonists will always lose in that case (because target mob won't take damage).
-            if (!mob.isAttackable()
-                  || mob.isInvulnerable()
-                  || mob.isInvulnerableTo(colony.getWorld().damageSources().source(DamageTypes.MOB_ATTACK)))
+            if (!mob.isAttackable() || mob.isInvulnerable() || mob.isInvulnerableTo(colony.getWorld().damageSources().source(DamageTypes.MOB_ATTACK)))
             {
                 return;
             }
@@ -227,28 +211,33 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             // Keep the fight going as long as the mob is not dead.
             while (!mob.isDeadOrDying())
             {
-                final AbstractEntityCitizen attacker = getNextAttacker(expedition);
+                final IExpeditionMember<?> attacker = getNextAttacker(expedition);
                 if (attacker == null)
                 {
+                    // When no attackers are available, it means everyone is dead, so the fight cannot continue
+                    remainingItems.clear();
+                    getExpedition().setStatus(ExpeditionStatus.KILLED);
                     break;
                 }
 
-                attacker.doHurtTarget(mob);
-                mob.doHurtTarget(attacker);
+                final ItemStack weapon = attacker.getPrimaryWeapon();
+                mob.hurt(colony.getWorld().damageSources().mobAttack(mob), getWeaponDamage(weapon, mob.getMobType()));
+                weapon.hurtAndBreak(1, mob, (m) -> attacker.setPrimaryWeapon(ItemStack.EMPTY));
+
+                if (!mob.isDeadOrDying())
+                {
+                    final float damageAmount = handleDamageReduction(attacker, colony.getWorld().damageSources().mobAttack(mob), (float) damage.getValue());
+                    attacker.setHealth(Math.min(0, attacker.getHealth() - damageAmount));
+                }
             }
 
             if (mob.isDeadOrDying())
             {
                 expedition.mobKilled(entityType);
+                processLootTable(mob.getLootTable(), expeditionType).forEach(expedition::rewardFound);
             }
 
-            // When everyone is dead, the expedition is over.
-            // Expedition results are however not cleared, in case we decide to add recovery missions, they're just not shown in the GUI.
-            if (expedition.getActiveMembers().isEmpty())
-            {
-                remainingItems.clear();
-                getExpedition().setStatus(ExpeditionStatus.KILLED);
-            }
+            mob.remove(RemovalReason.DISCARDED);
         }
     }
 
@@ -258,7 +247,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * @param expedition the expedition instance.
      * @return the next member to attack, or null if no one is capable of fighting.
      */
-    private AbstractEntityCitizen getNextAttacker(final ColonyExpedition expedition)
+    private IExpeditionMember<?> getNextAttacker(final ColonyExpedition expedition)
     {
         final List<IExpeditionMember<?>> activeMembers = expedition.getActiveMembers();
         if (activeMembers.isEmpty())
@@ -281,31 +270,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             selected = leader;
         }
 
-        if (selected != null)
-        {
-            final ICivilianData civilianData = selected.resolveCivilianData(colony);
-
-            if (civilianData instanceof IVisitorData visitorData)
-            {
-                return visitorData.getEntity().orElseGet(() -> {
-                    final AbstractEntityVisitor visitor = ModEntities.VISITOR.create(colony.getWorld());
-                    visitor.setCivilianData(visitorData);
-                    visitorData.setEntity(visitor);
-                    return visitor;
-                });
-            }
-            else if (civilianData instanceof ICitizenData citizenData)
-            {
-                return citizenData.getEntity().orElseGet(() -> {
-                    final AbstractEntityCitizen citizen = ModEntities.CITIZEN.create(colony.getWorld());
-                    citizen.setCivilianData(citizenData);
-                    citizenData.setEntity(citizen);
-                    return citizen;
-                });
-            }
-        }
-
-        return null;
+        return selected;
     }
 
     /**
@@ -370,7 +335,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             return EventStatus.STARTING;
         }
 
-        if (endTime < getColony().getWorld().getGameTime() && remainingItems.isEmpty())
+        if (endTime < colony.getWorld().getGameTime() && remainingItems.isEmpty())
         {
             return EventStatus.DONE;
         }
@@ -398,7 +363,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     public void onStart()
     {
         super.onStart();
-        final Level world = getColony().getWorld();
+        final Level world = colony.getWorld();
         if (!world.isClientSide)
         {
             final ColonyExpedition expedition = getExpedition();
@@ -421,12 +386,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             expedition.getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
 
             // Generate the loot table
-            final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
-                                            .withLuck(expeditionType.getDifficulty().getLuckLevel())
-                                            .create(LootContextParamSet.builder().build());
-
-            final LootTable lootTable = getColony().getWorld().getServer().getLootData().getLootTable(expeditionType.getLootTable());
-            remainingItems = new ArrayDeque<>(lootTable.getRandomItems(lootParams));
+            remainingItems = new ArrayDeque<>(processLootTable(expeditionType.getLootTable(), expeditionType));
         }
     }
 
@@ -458,10 +418,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
 
         colony.getExpeditionManager().finishExpedition(expeditionId);
 
-        MessageUtils.format(EXPEDITION_FINISH_MESSAGE, expedition.getLeader().getName())
-          .withPriority(MessagePriority.IMPORTANT)
-          .sendTo(colony)
-          .forManagers();
+        MessageUtils.format(EXPEDITION_FINISH_MESSAGE, expedition.getLeader().getName()).withPriority(MessagePriority.IMPORTANT).sendTo(colony).forManagers();
 
         // Remove all members to the travelling manager and re-spawn them.
         for (final IExpeditionMember<?> member : expedition.getMembers())
@@ -527,7 +484,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                 if (slot >= 0)
                 {
                     final FoodProperties foodStack = inventory.getStackInSlot(slot).getFoodProperties(null);
-                    member.heal(colony, foodStack.getNutrition());
+                    member.setHealth(Mth.clamp(member.getHealth() + foodStack.getNutrition(), 0, member.getMaxHealth()));
                 }
                 else
                 {
@@ -537,5 +494,98 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
         }
 
         return true;
+    }
+
+    /**
+     * Get the damage the given weapon item stack will do.
+     *
+     * @param itemStack the item stack.
+     * @param target    the kind of mob they will deal damage to.
+     * @return the damage value.
+     */
+    private float getWeaponDamage(final ItemStack itemStack, final MobType target)
+    {
+        if (ItemStackUtils.isTool(itemStack, ToolType.SWORD))
+        {
+            if (Compatibility.isTinkersWeapon(itemStack))
+            {
+                return Math.min(1, (float) Compatibility.getAttackDamage(itemStack));
+            }
+
+            if (itemStack.getItem() instanceof SwordItem swordItem)
+            {
+                return swordItem.getDamage() + EnchantmentHelper.getDamageBonus(itemStack, target);
+            }
+        }
+
+        if (ItemStackUtils.isTool(itemStack, ToolType.BOW))
+        {
+            return 6;
+        }
+
+        return 1;
+    }
+
+    /**
+     * Handler methods for calculating damage reduction based on available armor.
+     *
+     * @param expeditionMember the expedition member.
+     * @param damageSource     the damage source.
+     * @param damage           the amount of incoming damage.
+     * @return the calculated damage after absorption.
+     */
+    private float handleDamageReduction(final @NotNull IExpeditionMember<?> expeditionMember, final DamageSource damageSource, final float damage)
+    {
+        final ItemStack head = expeditionMember.getArmor(EquipmentSlot.HEAD);
+        final ItemStack chest = expeditionMember.getArmor(EquipmentSlot.CHEST);
+        final ItemStack legs = expeditionMember.getArmor(EquipmentSlot.LEGS);
+        final ItemStack feet = expeditionMember.getArmor(EquipmentSlot.FEET);
+
+        final int armorPieces = (head.isEmpty() ? 0 : 1) + (chest.isEmpty() ? 0 : 1) + (legs.isEmpty() ? 0 : 1) + (feet.isEmpty() ? 0 : 1);
+        if (armorPieces > 0)
+        {
+            final float dividedDamage = damage / armorPieces;
+
+            float finalDamage = damage;
+            if (!head.isEmpty() && head.getItem() instanceof ArmorItem armorItem && damageSource.getEntity() != null)
+            {
+                head.hurtAndBreak(Math.round(dividedDamage), (LivingEntity) damageSource.getEntity(), e -> expeditionMember.setArmor(EquipmentSlot.HEAD, ItemStack.EMPTY));
+                finalDamage = CombatRules.getDamageAfterAbsorb(finalDamage, armorItem.getDefense(), armorItem.getToughness());
+            }
+            if (!chest.isEmpty() && chest.getItem() instanceof ArmorItem armorItem && damageSource.getEntity() != null)
+            {
+                chest.hurtAndBreak(Math.round(dividedDamage), (LivingEntity) damageSource.getEntity(), e -> expeditionMember.setArmor(EquipmentSlot.CHEST, ItemStack.EMPTY));
+                finalDamage = CombatRules.getDamageAfterAbsorb(finalDamage, armorItem.getDefense(), armorItem.getToughness());
+            }
+            if (!legs.isEmpty() && legs.getItem() instanceof ArmorItem armorItem && damageSource.getEntity() != null)
+            {
+                legs.hurtAndBreak(Math.round(dividedDamage), (LivingEntity) damageSource.getEntity(), e -> expeditionMember.setArmor(EquipmentSlot.LEGS, ItemStack.EMPTY));
+                finalDamage = CombatRules.getDamageAfterAbsorb(finalDamage, armorItem.getDefense(), armorItem.getToughness());
+            }
+            if (!feet.isEmpty() && feet.getItem() instanceof ArmorItem armorItem && damageSource.getEntity() != null)
+            {
+                feet.hurtAndBreak(Math.round(dividedDamage), (LivingEntity) damageSource.getEntity(), e -> expeditionMember.setArmor(EquipmentSlot.FEET, ItemStack.EMPTY));
+                finalDamage = CombatRules.getDamageAfterAbsorb(finalDamage, armorItem.getDefense(), armorItem.getToughness());
+            }
+            return finalDamage;
+        }
+
+        return damage;
+    }
+
+    /**
+     * Generate loot table rewards.
+     *
+     * @param lootTableId    the input loot table id.
+     * @param expeditionType the expedition type.
+     * @return the list of items.
+     */
+    private List<ItemStack> processLootTable(final ResourceLocation lootTableId, final ColonyExpeditionType expeditionType)
+    {
+        final LootParams lootParams =
+          new Builder((ServerLevel) colony.getWorld()).withLuck(expeditionType.getDifficulty().getLuckLevel()).create(LootContextParamSet.builder().build());
+
+        final LootTable lootTable = colony.getWorld().getServer().getLootData().getLootTable(lootTableId);
+        return lootTable.getRandomItems(lootParams);
     }
 }

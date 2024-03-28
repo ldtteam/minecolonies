@@ -4,12 +4,18 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
-import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
@@ -22,9 +28,12 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
     /**
      * Nbt tag constants.
      */
-    private static final String TAG_MAX_HEALTH = "maxHealth";
-    private static final String TAG_HEALTH     = "health";
-    private static final String TAG_DAMAGE     = "damage";
+    private static final String TAG_MAX_HEALTH  = "maxHealth";
+    private static final String TAG_HEALTH      = "health";
+    private static final String TAG_ARMOR       = "armor";
+    private static final String TAG_ARMOR_TYPE  = "type";
+    private static final String TAG_ARMOR_STACK = "stack";
+    private static final String TAG_WEAPON      = "weapon";
 
     /**
      * The id of the citizen.
@@ -42,9 +51,14 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
     private final float maxHealth;
 
     /**
-     * The damage for this member.
+     * The armor pieces this member is wearing.
      */
-    private final float damage;
+    private final Map<EquipmentSlot, ItemStack> armor;
+
+    /**
+     * The primary weapon the member is carrying.
+     */
+    private ItemStack primaryWeapon;
 
     /**
      * The current health for this member.
@@ -60,7 +74,16 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
         this.name = compound.getString(TAG_NAME);
         this.maxHealth = compound.getFloat(TAG_MAX_HEALTH);
         this.health = compound.getFloat(TAG_HEALTH);
-        this.damage = compound.getFloat(TAG_DAMAGE);
+        this.armor = new HashMap<>();
+        final ListTag armorsCompound = compound.getList(TAG_ARMOR, Tag.TAG_COMPOUND);
+        for (int i = 0; i < armorsCompound.size(); ++i)
+        {
+            final CompoundTag armorCompound = armorsCompound.getCompound(i);
+            final EquipmentSlot equipmentSlot = EquipmentSlot.byName(armorCompound.getString(TAG_ARMOR_TYPE));
+            final ItemStack itemStack = ItemStack.of(armorCompound.getCompound(TAG_ARMOR_STACK));
+            this.armor.put(equipmentSlot, itemStack);
+        }
+        this.primaryWeapon = ItemStack.of(compound.getCompound(TAG_WEAPON));
     }
 
     /**
@@ -74,7 +97,12 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
         this.name = citizenData.getName();
         this.maxHealth = citizenData.getEntity().orElseThrow().getMaxHealth();
         this.health = this.maxHealth;
-        this.damage = 0f;//InventoryUtils.getFirstWeapon(citizenData.getInventory());
+        this.armor = new HashMap<>();
+        this.armor.computeIfAbsent(EquipmentSlot.HEAD, citizenData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.CHEST, citizenData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.LEGS, citizenData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.FEET, citizenData.getInventory()::getArmorInSlot);
+        this.primaryWeapon = citizenData.getInventory().getHeldItem(InteractionHand.MAIN_HAND);
     }
 
     /**
@@ -88,6 +116,12 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
         this.name = citizenDataView.getName();
         this.maxHealth = (float) citizenDataView.getMaxHealth();
         this.health = (float) citizenDataView.getHealth();
+        this.armor = new HashMap<>();
+        this.armor.computeIfAbsent(EquipmentSlot.HEAD, citizenDataView.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.CHEST, citizenDataView.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.LEGS, citizenDataView.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.FEET, citizenDataView.getInventory()::getArmorInSlot);
+        this.primaryWeapon = citizenDataView.getInventory().getHeldItem(InteractionHand.MAIN_HAND);
     }
 
     @Override
@@ -109,41 +143,46 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
     }
 
     @Override
+    public void setHealth(final float health)
+    {
+        this.health = health;
+    }
+
+    @Override
     public float getMaxHealth()
     {
         return maxHealth;
     }
 
     @Override
-    public float getAttackDamage()
-    {
-        return 0;
-    }
-
-    @Override
-    public void heal(final IColony colony, final float amount)
-    {
-        this.health = Mth.clamp(this.health + amount, 0, this.maxHealth);
-    }
-
-    @Override
-    public void hurt(final IColony colony, final DamageSource damageSource, final float amount)
-    {
-        final ICitizenData citizenData = resolveCivilianData(colony);
-
-        float finalDamage = amount;
-        if (citizenData != null)
-        {
-            finalDamage = IExpeditionMember.handleDamageReduction(citizenData, damageSource, finalDamage);
-        }
-
-        this.health = Mth.clamp(this.health - finalDamage, 0, this.maxHealth);
-    }
-
-    @Override
     public boolean isDead()
     {
         return this.health <= 0;
+    }
+
+    @Override
+    public ItemStack getPrimaryWeapon()
+    {
+        return primaryWeapon;
+    }
+
+    @Override
+    public void setPrimaryWeapon(final ItemStack itemStack)
+    {
+        this.primaryWeapon = itemStack;
+    }
+
+    @Override
+    @NotNull
+    public ItemStack getArmor(final EquipmentSlot slot)
+    {
+        return armor.get(slot);
+    }
+
+    @Override
+    public void setArmor(final EquipmentSlot slot, final @NotNull ItemStack itemStack)
+    {
+        armor.put(slot, itemStack);
     }
 
     @Override
@@ -160,6 +199,14 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
         compound.putString(TAG_NAME, this.name);
         compound.putFloat(TAG_MAX_HEALTH, this.maxHealth);
         compound.putFloat(TAG_HEALTH, this.health);
+        final ListTag armorsCompound = new ListTag();
+        for (final Entry<EquipmentSlot, ItemStack> armorEntry : armor.entrySet())
+        {
+            final CompoundTag armorCompound = new CompoundTag();
+            armorCompound.putString(TAG_ARMOR_TYPE, armorEntry.getKey().getName());
+            armorCompound.put(TAG_ARMOR_STACK, armorEntry.getValue().serializeNBT());
+        }
+        compound.put(TAG_ARMOR, armorsCompound);
     }
 
     @Override
