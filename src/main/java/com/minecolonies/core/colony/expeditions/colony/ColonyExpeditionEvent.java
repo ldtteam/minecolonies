@@ -16,6 +16,7 @@ import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionFinishedInteraction;
 import com.minecolonies.core.items.ItemAdventureToken;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -37,6 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -179,65 +181,79 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
      * Simulates an entire mob fighting process.
      * This is essentially a turn based combat system where each guard rotates attacks.
      *
-     * @param entityType the entity type to fight.
+     * @param entityType         the entity type to fight.
+     * @param encounterAmount    a number for the mob encounter amount.
+     * @param scaleEncounterSize whether the difficulty should scale the size of the amount of mobs.
      */
-    private void processMobFight(final @NotNull EntityType<?> entityType)
+    private void processMobFight(final @NotNull EntityType<?> entityType, final int encounterAmount, final boolean scaleEncounterSize)
     {
-        final Entity rawEntity = entityType.create(colony.getWorld());
-        if (rawEntity instanceof Mob mob)
+        final ColonyExpedition expedition = getExpedition();
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
+        if (expeditionType == null)
         {
-            final ColonyExpedition expedition = getExpedition();
-            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
-            if (expeditionType == null)
-            {
-                return;
-            }
+            return;
+        }
 
-            // We don't bother handling mobs that cannot be attacked/are invulnerable, because colonists will always lose in that case (because target mob won't take damage).
-            if (!mob.isAttackable() || mob.isInvulnerable() || mob.isInvulnerableTo(colony.getWorld().damageSources().source(DamageTypes.MOB_ATTACK)))
-            {
-                return;
-            }
+        // Determine the amount of mobs we're going to fight
+        int amount = encounterAmount;
+        if (scaleEncounterSize)
+        {
+            amount *= expeditionType.getDifficulty().getMobEncounterMultiplier();
+        }
 
-            // Check if the mob can deal damage, before we attempt to damage it (prevent unfair one-way attack).
-            final AttributeInstance damage = mob.getAttribute(Attributes.ATTACK_DAMAGE);
-            if (damage == null)
+        for (int i = 0; i < amount; i++)
+        {
+            final Entity rawEntity = entityType.create(colony.getWorld());
+            if (rawEntity instanceof Mob mob)
             {
-                return;
-            }
-
-            damage.addTransientModifier(new AttributeModifier(MODIFIER_MOB_DAMAGE_DIFFICULTY, expeditionType.getDifficulty().getMobDamageMultiplier(), Operation.MULTIPLY_TOTAL));
-
-            // Keep the fight going as long as the mob is not dead.
-            while (!mob.isDeadOrDying())
-            {
-                final IExpeditionMember<?> attacker = getNextAttacker(expedition);
-                if (attacker == null)
+                // We don't bother handling mobs that cannot be attacked/are invulnerable, because colonists will always lose in that case (because target mob won't take damage).
+                if (!mob.isAttackable() || mob.isInvulnerable() || mob.isInvulnerableTo(colony.getWorld().damageSources().source(DamageTypes.MOB_ATTACK)))
                 {
-                    // When no attackers are available, it means everyone is dead, so the fight cannot continue
-                    remainingItems.clear();
-                    getExpedition().setStatus(ExpeditionStatus.KILLED);
-                    break;
+                    return;
                 }
 
-                final ItemStack weapon = attacker.getPrimaryWeapon();
-                mob.hurt(colony.getWorld().damageSources().mobAttack(mob), getWeaponDamage(weapon, mob.getMobType()));
-                weapon.hurtAndBreak(1, mob, (m) -> attacker.setPrimaryWeapon(ItemStack.EMPTY));
-
-                if (!mob.isDeadOrDying())
+                // Check if the mob can deal damage, before we attempt to damage it (prevent unfair one-way attack).
+                final AttributeInstance damage = mob.getAttribute(Attributes.ATTACK_DAMAGE);
+                if (damage == null)
                 {
-                    final float damageAmount = handleDamageReduction(attacker, colony.getWorld().damageSources().mobAttack(mob), (float) damage.getValue());
-                    attacker.setHealth(Math.min(0, attacker.getHealth() - damageAmount));
+                    return;
                 }
-            }
 
-            if (mob.isDeadOrDying())
-            {
-                expedition.mobKilled(entityType);
-                processLootTable(mob.getLootTable(), expeditionType).forEach(expedition::rewardFound);
-            }
+                damage.addTransientModifier(new AttributeModifier(MODIFIER_MOB_DAMAGE_DIFFICULTY,
+                  expeditionType.getDifficulty().getMobDamageMultiplier(),
+                  Operation.MULTIPLY_TOTAL));
 
-            mob.remove(RemovalReason.DISCARDED);
+                // Keep the fight going as long as the mob is not dead.
+                while (!mob.isDeadOrDying())
+                {
+                    final IExpeditionMember<?> attacker = getNextAttacker(expedition);
+                    if (attacker == null)
+                    {
+                        // When no attackers are available, it means everyone is dead, so the fight cannot continue
+                        remainingItems.clear();
+                        getExpedition().setStatus(ExpeditionStatus.KILLED);
+                        break;
+                    }
+
+                    final ItemStack weapon = attacker.getPrimaryWeapon();
+                    mob.hurt(colony.getWorld().damageSources().mobAttack(mob), getWeaponDamage(weapon, mob.getMobType()));
+                    weapon.hurtAndBreak(1, mob, (m) -> attacker.setPrimaryWeapon(ItemStack.EMPTY));
+
+                    if (!mob.isDeadOrDying())
+                    {
+                        final float damageAmount = handleDamageReduction(attacker, colony.getWorld().damageSources().mobAttack(mob), (float) damage.getValue());
+                        attacker.setHealth(Math.min(0, attacker.getHealth() - damageAmount));
+                    }
+                }
+
+                if (mob.isDeadOrDying())
+                {
+                    expedition.mobKilled(entityType);
+                    processLootTable(mob.getLootTable(), expeditionType).forEach(expedition::rewardFound);
+                }
+
+                mob.remove(RemovalReason.DISCARDED);
+            }
         }
     }
 
@@ -294,24 +310,33 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                 final Optional<EntityType<?>> entityType = EntityType.byString(compound.getString("entity-type"));
                 if (entityType.isEmpty())
                 {
-                    Log.getLogger().warn("Expedition loot table referred to entity type {} which does not exist.", () -> compound.getString("entity-type"));
+                    Log.getLogger().warn("Expedition loot table referred to entity type '{}' which does not exist.", entityType);
                     break;
                 }
 
-                processMobFight(entityType.get());
+                final int amount = compound.contains("amount") ? compound.getInt("amount") : 1;
+                final boolean scaleAmount = !compound.contains("scale") || compound.getBoolean("scale");
 
+                processMobFight(entityType.get(), amount, scaleAmount);
                 break;
             }
             case "structure_start":
             {
-                final String structure = compound.getString("structure");
+                final ResourceLocation structureId = new ResourceLocation(compound.getString("structure"));
+                final Optional<StructureType<?>> structureType = BuiltInRegistries.STRUCTURE_TYPE.getOptional(structureId);
+                if (structureType.isEmpty())
+                {
+                    Log.getLogger().warn("Expedition loot table referred to structure type '{}' which does not exist.", structureType);
+                    break;
+                }
+
                 getExpedition().advanceStage(Component.translatable(""));
 
-                if (structure.equals("stronghold"))
+                if (structureId.equals(new ResourceLocation("stronghold")))
                 {
                     colony.getExpeditionManager().unlockEnd();
                 }
-                else if (structure.equals("ruined_portal"))
+                else if (structureId.getNamespace().equals("minecraft") && structureId.getPath().startsWith("ruined_portal"))
                 {
                     colony.getExpeditionManager().unlockNether();
                 }
@@ -323,6 +348,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                 break;
             }
             default:
+                Log.getLogger().warn("Adventure token with type '{}' found. This adventure token is not implemented to do anything, skipping.", type);
                 break;
         }
     }

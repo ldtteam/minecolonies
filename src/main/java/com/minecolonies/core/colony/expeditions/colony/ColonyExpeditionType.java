@@ -275,10 +275,10 @@ public class ColonyExpeditionType
      */
     public enum Difficulty
     {
-        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5, 1f, 1f),
-        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10, 1.5f, 1.2f),
-        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15, 2f, 1.5f),
-        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30, 4f, 2f);
+        EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5, 1, 1f),
+        MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10, 2, 1.2f),
+        HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15, 3, 1.5f),
+        NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30, 4, 2f);
 
         /**
          * The key of the difficulty, used in the json files.
@@ -323,7 +323,7 @@ public class ColonyExpeditionType
         /**
          * A multiplier that will spawn more mobs during encounters.
          */
-        private final float mobEncounterMultiplier;
+        private final int mobEncounterMultiplier;
 
         /**
          * A multiplier that will increase the damage for mobs during encounters.
@@ -342,8 +342,8 @@ public class ColonyExpeditionType
           final Style style,
           final int baseTime,
           final int randomTime,
-          float mobEncounterMultiplier,
-          float mobDamageMultiplier)
+          final int mobEncounterMultiplier,
+          final float mobDamageMultiplier)
         {
             this.key = key;
             this.level = level;
@@ -461,7 +461,7 @@ public class ColonyExpeditionType
          *
          * @return the multiplier.
          */
-        public float getMobEncounterMultiplier()
+        public int getMobEncounterMultiplier()
         {
             return mobEncounterMultiplier;
         }
