@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
  */
 public class OpenColonyFoundingCovenantMessage  extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_colony_founding_covenant", LocalizedParticleEffectMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_colony_founding_covenant", OpenColonyFoundingCovenantMessage::new);
 
     /**
      * Info on the closest colony.

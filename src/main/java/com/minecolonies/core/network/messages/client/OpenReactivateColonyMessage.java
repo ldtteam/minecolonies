@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
  */
 public class OpenReactivateColonyMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_reactivate_colony", LocalizedParticleEffectMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_reactivate_colony", OpenReactivateColonyMessage::new);
 
     /**
      * Colony pos at which we are trying to place.

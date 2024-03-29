@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
  */
 public class PickupBlockMessage extends AbstractServerPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pickup_block", CreateColonyMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pickup_block", PickupBlockMessage::new);
 
     /**
      * Position the player wants to found the colony at.

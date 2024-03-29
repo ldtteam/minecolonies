@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
  */
 public class MarkStoryReadOnItem extends AbstractServerPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "mark_story_read", CreateColonyMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "mark_story_read", MarkStoryReadOnItem::new);
 
     /**
      * The hand that was holding the item.

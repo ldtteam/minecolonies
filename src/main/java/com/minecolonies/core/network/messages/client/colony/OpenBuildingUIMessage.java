@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OpenBuildingUIMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_building_ui", ColonyVisitorViewDataMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_building_ui", OpenBuildingUIMessage::new);
 
     private int          colonyId;
     private BlockPos     buildingId;

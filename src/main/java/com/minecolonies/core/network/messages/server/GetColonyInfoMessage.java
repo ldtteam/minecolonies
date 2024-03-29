@@ -30,7 +30,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
  */
 public class GetColonyInfoMessage extends AbstractServerPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "get_colony_info", CreateColonyMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "get_colony_info", GetColonyInfoMessage::new);
 
     /**
      * Position the player wants to found the colony at.

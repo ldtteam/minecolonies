@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
  */
 public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_delete_abandon_colony", LocalizedParticleEffectMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "open_delete_abandon_colony", OpenDeleteAbandonColonyMessage::new);
 
     /**
      * Colony pos at which we are trying to place.
