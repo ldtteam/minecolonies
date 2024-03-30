@@ -533,7 +533,7 @@ VisitorCitizen extends AbstractEntityCitizen
         {
             if (!level.isClientSide())
             {
-                ItemStackUtils.consumeFood(usedStack, this, citizenData, player.getInventory());
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 Network.getNetwork()
                   .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,

@@ -1111,11 +1111,11 @@ public final class ItemStackUtils
      *
      * @param foodStack   the itemstack of food.
      * @param citizen     the citizen entity.
-     * @param citizenData the citizen data.
      * @param inventory optional inventory to insert stack into if not citizen.
      */
-    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final ICitizenData citizenData, final Inventory inventory)
+    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
     {
+        final ICitizenData citizenData = citizen.getCitizenData();
         final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
         ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
 

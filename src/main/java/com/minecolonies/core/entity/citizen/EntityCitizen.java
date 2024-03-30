@@ -582,7 +582,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                ItemStackUtils.consumeFood(usedStack, this, citizenData, player.getInventory());
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
@@ -621,7 +621,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (!level.isClientSide())
         {
-            ItemStackUtils.consumeFood(usedStack, this, citizenData, player.getInventory());
+            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
 
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?

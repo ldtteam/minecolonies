@@ -209,7 +209,7 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-        ItemStackUtils.consumeFood(foodStack, citizen, citizenData, null);
+        ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())

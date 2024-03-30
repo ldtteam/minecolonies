@@ -881,7 +881,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (slot > -1)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-            ItemStackUtils.consumeFood(stack, worker, citizenData, null);
+            ItemStackUtils.consumeFood(stack, worker, null);
         }
     }
 
