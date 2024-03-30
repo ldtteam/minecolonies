@@ -119,7 +119,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double y = entityIn.getBbHeight() + (model.young ? 0.5f : 0.8f);
+                double y = entityIn.getNameTagOffsetY() + 0.3f;
 
                 matrixStack.pushPose();
                 matrixStack.translate(0, y, 0);

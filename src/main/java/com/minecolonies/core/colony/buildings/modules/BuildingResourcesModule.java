@@ -20,7 +20,6 @@ import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -95,7 +94,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             final IWorkOrder workOrder = structureBuilderJob.getWorkOrder();
             if (workOrder != null)
             {
-                buf.writeComponent(workOrder.getDisplayName());
+                buf.writeInt(workOrder.getID());
                 buf.writeDouble(workOrder.getAmountOfResources() == 0 ? 0 : qty / workOrder.getAmountOfResources());
                 buf.writeInt(totalStages);
                 buf.writeInt(currentStage);
@@ -103,7 +102,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             }
         }
 
-        buf.writeComponent(Component.literal(""));
+        buf.writeInt(-1);
         buf.writeDouble(0.0);
         buf.writeInt(0);
         buf.writeInt(0);

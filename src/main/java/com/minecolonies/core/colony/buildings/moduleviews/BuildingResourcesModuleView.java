@@ -6,7 +6,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -19,14 +18,14 @@ import java.util.Map;
 public class BuildingResourcesModuleView extends AbstractBuildingModuleView
 {
     /**
-     * The resources he has to keep.
+     * The resources they have to keep.
      */
     private final HashMap<String, BuildingBuilderResource> resources = new HashMap<>();
 
     /**
-     * The building he is working on.
+     * The building they are working on.
      */
-    private Component constructionName;
+    private int workOrderId;
 
     /**
      * Building progress.
@@ -56,20 +55,20 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
             resources.put(key, resource);
         }
 
-        constructionName = buf.readComponent();
+        workOrderId = buf.readInt();
         progress = buf.readDouble();
         totalStages = buf.readInt();
         finishedStages = buf.readInt();
     }
 
     /**
-     * Get the construction name he is working at.
+     * Get the work order id.
      *
      * @return a string describing it.
      */
-    public Component getConstructionName()
+    public int getWorkOrderId()
     {
-        return constructionName;
+        return workOrderId;
     }
 
     /**

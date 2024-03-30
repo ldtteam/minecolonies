@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.minimal;
 
-import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -12,6 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
@@ -23,15 +23,12 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
-import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
@@ -212,40 +209,7 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
-
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level, citizen);
-
-        final double satIncrease =
-          itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
-
-        citizenData.increaseSaturation(satIncrease / 2.0);
-
-        if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
-        {
-            if (citizenData.getInventory().isFull())
-            {
-                InventoryUtils.spawnItemStack(
-                  citizen.level,
-                  citizen.getX(),
-                  citizen.getY(),
-                  citizen.getZ(),
-                  itemUseReturn
-                );
-            }
-            else
-            {
-                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), itemUseReturn);
-            }
-        }
-
-        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
-        if (citizenColony != null)
-        {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
-        }
-
-        citizenData.markDirty(60);
+        ItemStackUtils.consumeFood(foodStack, citizen, citizenData, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())

@@ -130,6 +130,17 @@ public class BuildingBeekeeper extends AbstractBuilding
         }
     }
 
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        if (stack.getItem() == Items.HONEY_BLOCK)
+        {
+            return false;
+        }
+        return super.canEat(stack);
+    }
+
+
     /**
      * Get the hives/nests positions that belong to this beekeper
      *
