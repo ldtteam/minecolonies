@@ -133,7 +133,7 @@ public class BuildingBeekeeper extends AbstractBuilding
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        if (stack.getItem() == Items.HONEY_BLOCK)
+        if (stack.getItem() == Items.HONEY_BOTTLE)
         {
             return false;
         }
