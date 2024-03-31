@@ -38,7 +38,7 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(Component.translatable(colony.getName().toLowerCase(Locale.ROOT)).getString());
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(Component.translatable(colony.getName().toLowerCase(Locale.US)).getString());
     }
 
     @Override

@@ -182,7 +182,15 @@ public class WindowResourceList extends AbstractWindowSkeleton
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
+        if (moduleView.getWorkOrderId() > -1)
+        {
+            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(moduleView.getBuildingView()
+                                                                                                .getColony()
+                                                                                                .getWorkOrder(moduleView.getWorkOrderId())
+                                                                                                .getDisplayName()
+                                                                                                .getString()
+                                                                                                .replace("\n", " ")));
+        }
     }
 
     /**

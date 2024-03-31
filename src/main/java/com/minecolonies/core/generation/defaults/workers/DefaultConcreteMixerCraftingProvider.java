@@ -45,7 +45,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
 
         for (final DyeColor color : DyeColor.values())
         {
-            final String prefix = color.name().toLowerCase(Locale.ROOT);
+            final String prefix = color.name().toLowerCase(Locale.US);
             final Item powder = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_concrete_powder"));
             final Item concrete = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_concrete"));
             final Item dye = ForgeRegistries.ITEMS.getValue(new ResourceLocation(prefix + "_dye"));
