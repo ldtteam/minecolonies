@@ -236,16 +236,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return BUILDING_STEP;
         }
 
-        for (final Direction direction : Direction.values())
-        {
-            final BlockPos pos = blockToMine.relative(direction);
-            final FluidState fluid = world.getFluidState(pos);
-            if (!fluid.isEmpty())
-            {
-                setBlockFromInventory(pos, getMainFillBlock());
-            }
-        }
-
         final BlockState blockState = world.getBlockState(blockToMine);
         if (!IColonyManager.getInstance().getCompatibilityManager().isOre(blockState))
         {
@@ -490,8 +480,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_BUILDING_SHAFT;
         }
 
-        if ((!mineBlock(nextCobble, safeStand) && !world.getBlockState(nextCobble).canBeReplaced())
-              || (!mineBlock(nextLadder, safeStand) && !world.getBlockState(nextLadder).canBeReplaced()))
+        if (!world.getBlockState(nextCobble).canBeReplaced() && (!mineBlock(nextCobble, safeStand))
+              || (!world.getBlockState(nextLadder).canBeReplaced() && !mineBlock(nextLadder, safeStand)))
         {
             //waiting until blocks are mined
             return state;
@@ -528,11 +518,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             minerWorkingLocation = new BlockPos(ladderPos.getX(), lastLadder + 1, ladderPos.getZ());
         }
-        Block block = getBlock(minerWorkingLocation);
-        if (!(block instanceof AirBlock)
-              && block != Blocks.LADDER
-              && !(block.equals(Blocks.WATER)
-                     || block.equals(Blocks.LAVA)))
+        BlockState block = getBlockState(minerWorkingLocation);
+        if (!block.isAir()
+              && block.getBlock() != Blocks.LADDER
+              && block.getFluidState().isEmpty())
         {
             if (currentStandingPosition == null)
             {
@@ -558,9 +547,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     continue;
                 }
                 @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
-                block = getBlock(curBlock);
-                if (block.equals(Blocks.WATER)
-                      || block.equals(Blocks.LAVA))
+                block = getBlockState(curBlock);
+                if (!block.getFluidState().isEmpty())
                 {
                     setBlockFromInventory(curBlock, getMainFillBlock());
                 }
@@ -580,12 +568,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 }
                 @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
                 final double distance = curBlock.distSqr(ladderPos) + Math.pow(curBlock.distSqr(minerWorkingLocation), 2);
-                block = getBlock(curBlock);
+                block = getBlockState(curBlock);
                 if (distance < bestDistance
                       && !world.isEmptyBlock(curBlock))
                 {
-                    if (block.equals(Blocks.WATER)
-                          || block.equals(Blocks.LAVA))
+                    if (!block.getFluidState().isEmpty())
                     {
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
@@ -735,7 +722,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private boolean secureBlock(@NotNull final BlockPos curBlock, @NotNull final BlockPos safeStand)
     {
-        if ((!getBlockState(curBlock).blocksMotion() && getBlock(curBlock) != Blocks.TORCH)
+        final BlockState stateAtPos = getBlockState(curBlock);
+        if ((!stateAtPos.blocksMotion() && getBlock(curBlock) != Blocks.TORCH) || !stateAtPos.getFluidState().isEmpty()
               || IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(curBlock)))
         {
             if (!mineBlock(curBlock, safeStand))
@@ -779,9 +767,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 for (int y = -1; y <= LIQUID_CHECK_RANGE; y++)
                 {
                     @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    final Block block = getBlock(curBlock);
-                    if (block.equals(Blocks.WATER)
-                          || block.equals(Blocks.LAVA))
+                    final BlockState block = getBlockState(curBlock);
+                    if (block.getFluidState().isSource())
                     {
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
