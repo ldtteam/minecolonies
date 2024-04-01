@@ -575,7 +575,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final BlockState state = handler.getWorld().getBlockState(pos);
         return state.getBlock() instanceof IBuilderUndestroyable
                  || state.getBlock() == Blocks.BEDROCK
-                 || state.getBlock() instanceof AirBlock
+                 || state.isAir()
                  || !state.getFluidState().isEmpty();
     }
 
@@ -589,19 +589,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     private boolean skipRemoval(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
-        final Block infoBlock = info.getBlockInfo().getState().getBlock();
-        if (infoBlock instanceof AirBlock
+        final BlockState infoBlockState = info.getBlockInfo().getState();
+        final Block infoBlock = infoBlockState.getBlock();
+        if (infoBlockState.isAir()
               || infoBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution.get()
               || infoBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution.get()
-              || infoBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution.get())
+              || infoBlock == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get())
         {
             return true;
         }
 
         final BlockState state = handler.getWorld().getBlockState(pos);
-        return state.getBlock() instanceof AirBlock
-                 || !state.getFluidState().isEmpty()
-                 || state.getBlock() instanceof IBuilderUndestroyable;
+        return state.isAir() || state.getBlock() instanceof IBuilderUndestroyable;
     }
 
     /**
