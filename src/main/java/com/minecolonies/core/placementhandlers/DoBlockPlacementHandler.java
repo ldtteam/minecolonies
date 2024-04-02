@@ -16,11 +16,16 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +62,9 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getMaterializedItemStack(null, world.getBlockEntity(pos)));
+                    final BlockHitResult hitresult = new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false);
+                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                      new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
                 }
                 catch (final Exception ex)
                 {
@@ -77,7 +84,8 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getMaterializedItemStack(null, world.getBlockEntity(pos)));
+                blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                  new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
             }
             catch (final Exception ex)
             {

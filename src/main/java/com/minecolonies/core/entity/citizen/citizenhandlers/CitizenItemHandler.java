@@ -2,10 +2,7 @@ package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import net.minecraft.core.BlockPos;
@@ -211,7 +208,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
-                final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
