@@ -136,7 +136,7 @@ public class Permissions implements IPermissions
         for (OldRank oldRank : OldRank.values())
         {
             String name = oldRank.name();
-            name = name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
+            name = name.substring(0, 1).toUpperCase(Locale.US) + name.substring(1).toLowerCase(Locale.US);
             Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
             ranks.put(rank.getId(), rank);
             switch (oldRank)

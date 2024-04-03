@@ -576,20 +576,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void childFoodInteraction(final ItemStack usedStack, final Player player, final InteractionHand hand)
     {
-        if (usedStack.getDisplayName().getString().toLowerCase(Locale.ENGLISH).contains("cookie"))
+        if (usedStack.getDisplayName().getString().toLowerCase(Locale.US).contains("cookie"))
         {
-            usedStack.shrink(1);
-            player.setItemInHand(hand, usedStack);
             interactionCooldown = 100;
 
             if (!level.isClientSide())
             {
-                final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
-                  .getResearchManager()
-                  .getResearchEffects()
-                  .getEffectStrength(SATURATION));
-                citizenData.increaseSaturation(satIncrease / 2.0);
-
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
@@ -628,12 +621,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (!level.isClientSide())
         {
-            final double satIncrease = usedStack.getItem().getFoodProperties(usedStack, this).getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
-              .getResearchManager()
-              .getResearchEffects()
-              .getEffectStrength(SATURATION));
-            citizenData.increaseSaturation(satIncrease / 2.0);
-
+            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
 
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
@@ -645,21 +633,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 getXRot(),
                 getYRot(),
                 getEyeHeight()), this);
-        }
-
-        final ItemStack remainingItem = usedStack.finishUsingItem(level, this);
-        if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
-        {
-            if (!player.getInventory().add(remainingItem))
-            {
-                InventoryUtils.spawnItemStack(
-                  player.level,
-                  player.getX(),
-                  player.getY(),
-                  player.getZ(),
-                  remainingItem
-                );
-            }
         }
 
         interactionCooldown = 100;
@@ -758,7 +731,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 this.citizenDataView = colonyView.getCitizen(citizenId);
                 this.getNavigation().getPathingOptions().setCanUseRails(canPathOnRails());
-                this.getNavigation().getPathingOptions().setCanClimbNonLadders(canClimbVines());
+                this.getNavigation().getPathingOptions().setCanClimbAdvanced(canClimbVines());
             }
         }
         return false;
@@ -1120,12 +1093,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.getEntityData().set(DATA_IS_CHILD, isChild);
         refreshDimensions();
         markDirty(0);
-    }
-
-    @Override
-    public float getScale()
-    {
-        return child ? 0.5f * super.getScale() : super.getScale();
     }
 
     /**

@@ -729,6 +729,12 @@ public final class ColonyView implements IColonyView
         return Collections.unmodifiableCollection(workOrders.values());
     }
 
+    @Override
+    public IWorkOrderView getWorkOrder(final int id)
+    {
+        return workOrders.get(id);
+    }
+
     /**
      * Gets the CitizenDataView for a citizen id.
      *

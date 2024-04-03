@@ -156,7 +156,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult<AbstractPathJob> moveToRandomPos(final double range, final double speedFactor)
     {
-        if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
+        if (pathResult != null && pathResult.isInProgress() && pathResult.getJob() instanceof PathJobRandomPos)
         {
             return pathResult;
         }
@@ -188,7 +188,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           3,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           range,
-          ourEntity, pos), pos, speedFactor, true);
+          ourEntity, pos), pos, speedFactor, false);
 
         if (result == null)
         {

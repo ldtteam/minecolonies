@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -190,5 +191,12 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             Log.getLogger().warn("Could not load structure!", e);
         }
         return null;
+    }
+
+    @Override
+    public void onCompletion()
+    {
+        super.onCompletion();
+        ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
     }
 }
