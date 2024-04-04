@@ -4,8 +4,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import org.jetbrains.annotations.NotNull;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -15,8 +15,8 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Pathfinding
 {
-    private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-    private static       ThreadPoolExecutor      executor;
+    private static final ArrayBlockingQueue<Runnable> jobQueue = new ArrayBlockingQueue<>(10000, false);
+    private static       ThreadPoolExecutor           executor;
 
     /**
      * Minecolonies specific thread factory.

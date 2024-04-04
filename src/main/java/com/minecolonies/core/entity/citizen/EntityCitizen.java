@@ -697,7 +697,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (compound.contains(TAG_CITIZEN))
             {
                 citizenId = compound.getInt(TAG_CITIZEN);
-                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
             }
         }
         citizenDiseaseHandler.read(compound);

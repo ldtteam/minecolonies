@@ -641,7 +641,6 @@ VisitorCitizen extends AbstractEntityCitizen
             if (compound.contains(TAG_CITIZEN))
             {
                 citizenId = compound.getInt(TAG_CITIZEN);
-                citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
             }
         }
 
