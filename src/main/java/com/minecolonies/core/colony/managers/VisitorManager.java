@@ -75,6 +75,13 @@ public class VisitorManager implements IVisitorManager
         }
 
         final ICitizenData data = visitorMap.get(visitor.getCivilianID());
+
+        if (data == null || !visitor.getUUID().equals(data.getUUID()))
+        {
+            visitor.remove(Entity.RemovalReason.DISCARDED);
+            return;
+        }
+
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
         if (!existingCitizen.isPresent())
@@ -225,6 +232,7 @@ public class VisitorManager implements IVisitorManager
             return (IVisitorData) data;
         }
 
+        citizenEntity.setUUID(data.getUUID());
         citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
         world.addFreshEntity(citizenEntity);
 

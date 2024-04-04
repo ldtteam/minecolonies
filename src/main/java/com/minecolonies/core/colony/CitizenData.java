@@ -104,6 +104,11 @@ public class CitizenData implements ICitizenData
     private final int id;
 
     /**
+     * The unique citizen id.
+     */
+    private UUID uuid;
+
+    /**
      * The colony the citizen belongs to.
      */
     private final IColony colony;
@@ -1896,5 +1901,15 @@ public class CitizenData implements ICitizenData
         {
             chatOption.onClosed();
         }
+    }
+
+    @Override
+    public UUID getUUID()
+    {
+        if (uuid == null)
+        {
+            uuid = UUID.nameUUIDFromBytes((getId() + getColony().getID() + getColony().getDimension().location().toString()).getBytes());
+        }
+        return uuid;
     }
 }
