@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
@@ -70,6 +71,10 @@ public class VisitorManager implements IVisitorManager
     {
         if (visitor.getCivilianID() == 0 || visitorMap.get(visitor.getCivilianID()) == null)
         {
+            if (!visitor.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
             visitor.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
@@ -78,6 +83,10 @@ public class VisitorManager implements IVisitorManager
 
         if (data == null || !visitor.getUUID().equals(data.getUUID()))
         {
+            if (!visitor.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
             visitor.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
@@ -104,6 +113,10 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
+        if (!visitor.isAddedToWorld())
+        {
+            Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+        }
         visitor.remove(Entity.RemovalReason.DISCARDED);
     }
 
