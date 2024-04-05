@@ -169,7 +169,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, false))
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null))
         {
             getResult().treeLocation = pos.immutable();
             return true;
