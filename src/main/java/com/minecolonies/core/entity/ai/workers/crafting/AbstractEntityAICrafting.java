@@ -358,8 +358,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 remaining = inputStorage.getAmount() * Math.max(job.getMaxCraftingCount(), 1);
             }
 
-            if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
-                                   < remaining)
+            if (invCount + inProgressCount <= 0
+                  || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount()) < remaining)
             {
                 if (InventoryUtils.hasItemInProvider(building, predicate))
                 {

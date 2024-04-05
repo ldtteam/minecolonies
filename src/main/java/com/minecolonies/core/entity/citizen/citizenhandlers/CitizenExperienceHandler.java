@@ -95,8 +95,6 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         localXp *= (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
 
-        localXp = citizen.getCitizenItemHandler().applyMending(localXp);
-
         final WorkerBuildingModule module = workBuilding.getModuleMatching(WorkerBuildingModule.class, m -> m.getAssignedCitizen().contains(data));
         final Skill primary = module.getPrimarySkill();
         final Skill secondary = module.getSecondarySkill();
@@ -176,13 +174,17 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
             if (d1 < 1.0D)
             {
-                addExperience(orb.getValue() / 2.5D);
+                double localXp = orb.getValue();
+                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
             }
             else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
-                addExperience(orb.getValue() / 2.0D);
+                double localXp = orb.getValue();
+                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
                 return;
