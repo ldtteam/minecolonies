@@ -243,7 +243,12 @@ public class VisitorManager implements IVisitorManager
         citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
         world.addFreshEntity(citizenEntity);
 
-        citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+        citizenEntity.setCitizenId(data.getId());
+        citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
+        if (citizenEntity.isAddedToWorld())
+        {
+            citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+        }
 
         return (IVisitorData) data;
     }
