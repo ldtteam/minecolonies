@@ -113,7 +113,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             button.setPosition(x, y);
             button.setID(BUTTON_RESPONSE_ID + responseIndex);
             button.setTextRenderBox(BUTTON_LENGTH, buttonHeight);
-            button.setTextAlignment(Alignment.MIDDLE);
+            button.setTextAlignment(Alignment.TOP_MIDDLE);
             button.setText(component);
             group.addChild(button);
             button.setTextWrap(true);

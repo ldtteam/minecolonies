@@ -220,7 +220,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public @Nullable IItemHandler getItemHandlerCap(Direction direction)
     {
-        return tileEntity.getItemHandlerCap(direction);
+        return getTileEntity().getItemHandlerCap(direction);
     }
 
     //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
