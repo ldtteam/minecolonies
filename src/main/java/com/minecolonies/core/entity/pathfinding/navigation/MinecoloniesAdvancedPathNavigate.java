@@ -156,7 +156,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Nullable
     public PathResult<AbstractPathJob> moveToRandomPos(final double range, final double speedFactor)
     {
-        if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
+        if (pathResult != null && pathResult.isInProgress() && pathResult.getJob() instanceof PathJobRandomPos)
         {
             return pathResult;
         }
