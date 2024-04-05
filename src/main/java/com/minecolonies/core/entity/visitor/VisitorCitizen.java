@@ -530,18 +530,17 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            if (!level.isClientSide())
+            if (!level().isClientSide())
             {
                 ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
+                new ItemParticleEffectMessage(usedStack,
                     getX(),
                     getY(),
                     getZ(),
                     getXRot(),
                     getYRot(),
-                    getEyeHeight()), this);
+                    getEyeHeight()).sendToTrackingEntity(this);
 
                 citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
             }
