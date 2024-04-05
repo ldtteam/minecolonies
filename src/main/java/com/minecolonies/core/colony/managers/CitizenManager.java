@@ -13,10 +13,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
-import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.CitizenData;
@@ -118,11 +115,26 @@ public class CitizenManager implements ICitizenManager
     {
         if (entity.getCivilianID() == 0 || citizens.get(entity.getCivilianID()) == null)
         {
+            if (!entity.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
         final ICitizenData data = citizens.get(entity.getCivilianID());
+
+        if (data == null || !entity.getUUID().equals(data.getUUID()))
+        {
+            if (!entity.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
+            entity.remove(Entity.RemovalReason.DISCARDED);
+            return;
+        }
+
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
         if (!existingCitizen.isPresent())
@@ -132,6 +144,10 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
+        if (!entity.isAddedToWorld())
+        {
+            Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+        }
         entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
@@ -281,6 +297,7 @@ public class CitizenManager implements ICitizenManager
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
+        entity.setUUID(citizenData.getUUID());
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addFreshEntity(entity);
 

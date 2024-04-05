@@ -1135,7 +1135,7 @@ public final class ItemStackUtils
             if (citizenData.getInventory().isFull() || (inventory != null && !inventory.add(itemUseReturn)))
             {
                 InventoryUtils.spawnItemStack(
-                  citizen.level,
+                  citizen.level(),
                   citizen.getX(),
                   citizen.getY(),
                   citizen.getZ(),
@@ -1151,7 +1151,7 @@ public final class ItemStackUtils
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));
         }
         citizenData.markDirty(60);
     }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Data for all civilians of a colony, can be citizen/trader/visitor etc
@@ -190,7 +191,15 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
 
     /**
      * Get the sound profile of the citizen.
+     *
      * @return the profile id.
      */
     int getSoundProfile();
+
+    /**
+     * Get the uuid for the citizen
+     *
+     * @return uuid
+     */
+    UUID getUUID();
 }
