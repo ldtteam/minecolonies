@@ -304,7 +304,13 @@ public class CitizenManager implements ICitizenManager
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
         world.addFreshEntity(entity);
 
-        entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
+        entity.setCitizenId(citizenData.getId());
+        entity.getCitizenColonyHandler().setColonyId(colony.getID());
+        if (entity.isAddedToWorld())
+        {
+            entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
+        }
+
         markDirty();
         return citizenData;
     }
