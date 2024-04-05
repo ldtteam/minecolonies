@@ -243,7 +243,7 @@ public class ExpeditionLog
         final CompoundTag stats = new CompoundTag();
         for (final Map.Entry<StatType, Double> entry : this.stats.entrySet())
         {
-            stats.putDouble(entry.getKey().name().toLowerCase(Locale.ROOT), entry.getValue());
+            stats.putDouble(entry.getKey().name().toLowerCase(Locale.US), entry.getValue());
         }
         compound.put(TAG_STATS, stats);
 
@@ -287,7 +287,7 @@ public class ExpeditionLog
         final CompoundTag stats = compound.getCompound(TAG_STATS);
         for (final StatType stat : StatType.values())
         {
-            final String key = stat.name().toLowerCase(Locale.ROOT);
+            final String key = stat.name().toLowerCase(Locale.US);
             if (stats.contains(key))
             {
                 this.stats.put(stat, stats.getDouble(key));

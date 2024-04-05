@@ -183,7 +183,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(Component.translatable("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.US)));
     }
 
     /**

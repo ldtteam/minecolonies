@@ -65,7 +65,7 @@ public class CommandSetRank implements IMCOPCommand
         Rank rankFound = null;
         for (final Rank rank : colony.getPermissions().getRanks().values())
         {
-            if (rankName != null && !rankName.isEmpty() && rankName.toLowerCase(Locale.ROOT).equals(rank.getName().toLowerCase(Locale.ROOT)))
+            if (rankName != null && !rankName.isEmpty() && rankName.toLowerCase(Locale.US).equals(rank.getName().toLowerCase(Locale.US)))
             {
                 rankFound = rank;
                 break;

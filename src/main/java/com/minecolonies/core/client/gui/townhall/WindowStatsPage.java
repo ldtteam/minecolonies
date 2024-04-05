@@ -148,7 +148,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
                     }
                     int workers = module.getAssignedCitizens().size();
 
-                    final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);
+                    final String jobName = module.getJobDisplayName().toLowerCase(Locale.US);
 
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));

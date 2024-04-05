@@ -530,29 +530,18 @@ VisitorCitizen extends AbstractEntityCitizen
         final ItemStack usedStack = player.getItemInHand(hand);
         if (ISFOOD.test(usedStack))
         {
-            final ItemStack remainingItem = usedStack.finishUsingItem(level(), this);
-            if (!remainingItem.isEmpty() && remainingItem.getItem() != usedStack.getItem())
+            if (!level.isClientSide())
             {
-                if (!player.getInventory().add(remainingItem))
-                {
-                    InventoryUtils.spawnItemStack(
-                      player.level(),
-                      player.getX(),
-                      player.getY(),
-                      player.getZ(),
-                      remainingItem
-                    );
-                }
-            }
-
-            if (!level().isClientSide())
-            {
-                getCitizenData().increaseSaturation(usedStack.getFoodProperties(this).getNutrition());
-
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                // Position needs to be centered on citizen, Eat AI wrong too?
-                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
-                    .sendToTrackingEntity(this);
+                Network.getNetwork()
+                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    getXRot(),
+                    getYRot(),
+                    getEyeHeight()), this);
 
                 citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
             }

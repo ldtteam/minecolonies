@@ -138,8 +138,16 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         //Make sure we have a fresh view
         new MarkBuildingDirtyMessage(this.buildingView).sendToServer();
 
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
-        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
+        if (moduleView.getWorkOrderId() > -1)
+        {
+            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(moduleView.getBuildingView()
+                                                                                                .getColony()
+                                                                                                .getWorkOrder(moduleView.getWorkOrderId())
+                                                                                                .getDisplayName()
+                                                                                                .getString()
+                                                                                                .replace("\n", " ")));
+        }
+        findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
     }
 
     /**

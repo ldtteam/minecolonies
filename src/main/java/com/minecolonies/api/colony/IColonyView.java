@@ -157,6 +157,14 @@ public interface IColonyView extends IColony
     Collection<IWorkOrderView> getWorkOrders();
 
     /**
+     * Getter for a single workorder.
+     *
+     * @param id workorder id.
+     * @return a specific workorder.
+     */
+    IWorkOrderView getWorkOrder(final int id);
+
+    /**
      * Gets the CitizenDataView for a citizen id.
      *
      * @param id the citizen id.
