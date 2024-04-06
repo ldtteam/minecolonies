@@ -161,8 +161,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @param worldObj       the world to load it in.
      * @param future         the structures blueprint future.
      * @param pos            coordinates.
-     * @param rotation       the rotation.
-     * @param mirror         the mirror used.
+     * @param rotMir         the rotation and mirror used.
      * @param fancyPlacement if fancy or complete.
      * @param player         the placing player.
      * @return the placed blueprint.
@@ -194,6 +193,9 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     public void onCompletion()
     {
         super.onCompletion();
-        ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
+        if (building != null)
+        {
+            ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
+        }
     }
 }
