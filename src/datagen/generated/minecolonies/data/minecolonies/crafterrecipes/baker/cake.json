@@ -7,6 +7,6 @@
     }
   ],
   "intermediate": "minecraft:furnace",
-  "min-building-level": 2,
+  "min-building-level": 4,
   "result": "minecraft:cake"
 }
