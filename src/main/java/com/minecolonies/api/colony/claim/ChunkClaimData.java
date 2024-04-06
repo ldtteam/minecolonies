@@ -248,6 +248,7 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         }
         compound.put(TAG_COLONIES, colonyClaimTag);
 
+        final ListTag buildingsClaimTag = new ListTag();
         for (final Map.Entry<Integer, Set<BlockPos>> entry : claimingBuildings.entrySet())
         {
             final CompoundTag perColonyEntry = new CompoundTag();
@@ -258,8 +259,10 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
             {
                 BlockPosUtil.writeToListNBT(buildingListTag, pos);
             }
-            perColonyEntry.put(TAG_BUILDINGS_CLAIM, buildingListTag);
+            perColonyEntry.put(TAG_BUILDING_CLAIM, buildingListTag);
+            buildingsClaimTag.add(perColonyEntry);
         }
+        compound.put(TAG_BUILDING_LIST_CLAIM, buildingsClaimTag);
 
         return compound;
     }
@@ -276,14 +279,14 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
             colonies.add(colonyClaim.getInt(i));
         }
 
-        final ListTag buildingClaim = compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND);
+        final ListTag buildingClaim = compound.getList(TAG_BUILDING_LIST_CLAIM, Tag.TAG_COMPOUND);
         for (int i = 0; i < buildingClaim.size(); i++)
         {
             final CompoundTag perColonyCompound = buildingClaim.getCompound(i);
             final int id = perColonyCompound.getInt(TAG_ID);
             final Set<BlockPos> buildings = claimingBuildings.computeIfAbsent(id, HashSet::new);
 
-            final ListTag buildingList = perColonyCompound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
+            final ListTag buildingList = perColonyCompound.getList(TAG_BUILDING_CLAIM, Tag.TAG_COMPOUND);
             for (int j = 0; j < buildingList.size(); j++)
             {
                 buildings.add(BlockPosUtil.readFromListNBT(buildingList, j));

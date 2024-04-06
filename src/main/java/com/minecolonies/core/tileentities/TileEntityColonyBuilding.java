@@ -512,7 +512,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (rotationMirror == null)
         {
-            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path));
+            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint")));
         }
         return rotationMirror;
     }

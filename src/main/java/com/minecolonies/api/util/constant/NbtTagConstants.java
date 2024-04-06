@@ -13,8 +13,8 @@ public final class NbtTagConstants
     public static final String TAG_BUILDINGS         = "buildings";
     public static final String TAG_BUILDING_MODULES  = "building_modules";
     public static final String TAG_BUILDING          = "building";
-    public static final String TAG_BUILDINGS_CLAIM   = "buildingsClaim";
-    public static final String TAG_BUILDINGS_UNCLAIM = "buildingUnclaim";
+    public static final String TAG_BUILDING_CLAIM    = "buildingClaim";
+    public static final String TAG_BUILDING_LIST_CLAIM  = "buildingListClaim";
     public static final String TAG_CITIZENS          = "citizens";
     public static final String TAG_VISITORS          = "visitors";
     public static final String TAG_WORK              = "work";

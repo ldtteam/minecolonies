@@ -119,6 +119,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
             IColonyManager.getInstance().write(managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
         }
+        Log.getLogger().warn("Writing " + colonies.getSize() + " colonies to disk!");
 
         inputTag.put(Constants.MOD_ID, compound);
         return inputTag;
@@ -158,6 +159,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
             IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
+        Log.getLogger().warn("Loaded: " + colonies.getSize() + " colonies from disk!");
 
         // Check colonies for duplicates causing issues.
         for (final BlockPos pos : tempColonies.keySet())
