@@ -1122,7 +1122,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (parent != null)
         {
-            final BlockState hereState = cachedBlockLookup.getBlockState(x, y - 1, z);
+            final BlockState belowState = cachedBlockLookup.getBlockState(x, y - 1, z);
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 1, z).getCollisionShape(world, tempWorldPos.set(x, y + 1, z));
             final VoxelShape bb = cachedBlockLookup.getBlockState(x, y, z).getCollisionShape(world, tempWorldPos.set(x, y, z));
             if ((y + 1 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb, 0)) >= 2)
@@ -1130,7 +1130,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 return false;
             }
 
-            return PathfindingUtils.isLiquid(hereState) && !isPassable(x, y, z, false, parent);
+            return parent.isSwimming() && PathfindingUtils.isLiquid(belowState) && !isPassable(x, y, z, false, parent);
         }
         return false;
     }
