@@ -197,6 +197,9 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     public void onCompletion()
     {
         super.onCompletion();
-        ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
+        if (building != null)
+        {
+            ConstructionTapeHelper.removeConstructionTape(building.getCorners(), getWorld());
+        }
     }
 }
