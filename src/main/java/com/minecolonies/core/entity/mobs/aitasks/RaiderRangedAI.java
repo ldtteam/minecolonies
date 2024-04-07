@@ -99,6 +99,10 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
 
         // Setup arrow
         AbstractArrow arrowEntity = CombatUtils.createArrowForShooter(user);
+        if (this.user.penetrateFluids() && arrowEntity instanceof CustomArrowEntity customArrowEntity )
+        {
+            customArrowEntity.setWaterInertia(0.99f);
+        }
 
         arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue());
         if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity)

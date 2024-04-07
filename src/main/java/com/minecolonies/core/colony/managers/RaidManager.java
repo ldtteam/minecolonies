@@ -334,7 +334,7 @@ public class RaidManager implements IRaiderManager
             }
             else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
                                  || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, DrownedPirateRaidEvent.SHIP_NAME, 11))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
             {
                 final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);

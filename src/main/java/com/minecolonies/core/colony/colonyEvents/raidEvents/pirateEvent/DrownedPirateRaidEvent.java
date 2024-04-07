@@ -43,7 +43,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     /**
      * Depth requirement.
      */
-    public static final int DEPTH_REQ = 19;
+    public static final int DEPTH_REQ = 13;
 
     /**
      * Create a new Pirate raid event.

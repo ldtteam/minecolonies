@@ -20,4 +20,10 @@ public class EntityDrownedArcherPirate extends AbstractDrownedEntityPirate imple
     {
         super(type, worldIn);
     }
+
+    @Override
+    public boolean penetrateFluids()
+    {
+        return true;
+    }
 }
