@@ -324,6 +324,10 @@ public class PathfindingUtils
      */
     public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options)
     {
+        if (options != null && options.canWalkUnderWater() && blockState.liquid())
+        {
+            return true;
+        }
         return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
                 blockState.getBlock() instanceof LadderBlock ||
                 blockState.is(ModTags.freeClimbBlocks));

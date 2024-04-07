@@ -660,7 +660,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
 
             final BlockPos pos = new BlockPos(pEx.x, pEx.y, pEx.z);
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && level.getBlockState(pos).isLadder(level, pos, ourEntity))
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && PathfindingUtils.isLadder(level.getBlockState(pos), getPathingOptions()))
             {
                 return handlePathPointOnLadder(pEx);
             }
@@ -867,7 +867,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (level.getBlockState(entityPos.below()).isLadder(level, entityPos.below(), ourEntity))
+                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()))
                 {
                     this.ourEntity.setYya(-0.5f);
                 }

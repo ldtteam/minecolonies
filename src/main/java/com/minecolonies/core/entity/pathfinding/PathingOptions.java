@@ -98,6 +98,11 @@ public class PathingOptions
      */
     private boolean canPassDanger  = false;
 
+    /**
+     * Whether the entity can walk underwater.
+     */
+    private boolean walkUnderWater = false;
+
     public PathingOptions()
     {}
 
@@ -159,6 +164,15 @@ public class PathingOptions
     public boolean canPassDanger()
     {
         return canPassDanger;
+    }
+    public boolean canWalkUnderWater()
+    {
+        return walkUnderWater;
+    }
+
+    public void setWalkUnderWater(final boolean walkUnderWater)
+    {
+        this.walkUnderWater = walkUnderWater;
     }
 
     public PathingOptions withStartSwimCost(final double startSwimCost)
@@ -239,6 +253,17 @@ public class PathingOptions
     }
 
     /**
+     * Set under water walking opening capability
+     * @param walkUnderWater whether we can walk underwater
+     * @return
+     */
+    public PathingOptions withWalkUnderWater(final boolean walkUnderWater)
+    {
+        setWalkUnderWater(walkUnderWater);
+        return this;
+    }
+
+    /**
      * Imports all options from the given other pathing options
      * @param pathingOptions
      */
@@ -261,6 +286,7 @@ public class PathingOptions
         canClimbAdvanced = pathingOptions.canClimbAdvanced;
         canPassDanger = pathingOptions.canPassDanger;
         randomnessFactor = pathingOptions.randomnessFactor;
+        walkUnderWater = pathingOptions.walkUnderWater;
     }
 
 }
