@@ -132,6 +132,12 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     }
 
     @Override
+    public boolean isUnderWater()
+    {
+        return true;
+    }
+
+    @Override
     public EntityType<?> getNormalRaiderType()
     {
         return ModEntities.DROWNED_PIRATE;

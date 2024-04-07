@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.*;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -27,10 +28,6 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.barbarianEvent.Horde
 import com.minecolonies.core.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
@@ -328,6 +325,18 @@ public class RaidManager implements IRaiderManager
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, NorsemenShipRaidEvent.SHIP_NAME))
             {
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
+                event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                raidEvent = event;
+                colony.getEventManager().addEvent(event);
+            }
+            else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
+                                 || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, DrownedPirateRaidEvent.SHIP_NAME, 11))
+            {
+                final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);

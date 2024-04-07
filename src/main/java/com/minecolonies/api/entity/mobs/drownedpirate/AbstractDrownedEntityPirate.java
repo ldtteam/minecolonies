@@ -101,11 +101,15 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
             }
 
             newNavigator.setStuckHandler(stuckHandler);
-            this.newNavigator.setCanFloat(false);
+            this.newNavigator.setCanFloat(true);
         }
-        this.newNavigator.setCanFloat(true);
-
         return newNavigator;
+    }
+
+    @Override
+    protected int decreaseAirSupply(final int supply)
+    {
+        return supply;
     }
 
     @Override
