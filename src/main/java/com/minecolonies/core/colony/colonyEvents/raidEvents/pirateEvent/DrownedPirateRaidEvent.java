@@ -84,10 +84,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
                     final BlockPos endpoint = path.getEndNode().asBlockPos().below();
                     if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, blueprint, colony.getWorld(), DEPTH_REQ))
                     {
-                        while (PathfindingUtils.isLiquid(colony.getWorld().getBlockState(spawnPoint)))
-                        {
-                            spawnPoint = spawnPoint.below();
-                        }
+                        spawnPoint = endpoint;
                     }
                 }
                 this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
@@ -95,10 +92,12 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
 
             if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, blueprint, colony.getWorld(), DEPTH_REQ))
             {
-                while (PathfindingUtils.isLiquid(colony.getWorld().getBlockState(spawnPoint)))
-                {
-                    spawnPoint = spawnPoint.below();
-                }
+                spawnPoint = spawnPoint.below();
+            }
+
+            while (PathfindingUtils.isLiquid(colony.getWorld().getBlockState(spawnPoint)) )
+            {
+                spawnPoint = spawnPoint.below();
             }
 
             if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, blueprint, this))

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -59,6 +60,12 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
+    }
+
+    @Override
+    public boolean checkSpawnObstruction(final LevelReader level)
+    {
+        return level.isUnobstructed(this);
     }
 
     @Override
