@@ -4,6 +4,9 @@ import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.mobs.drownedpirates.EntityDrownedArcherPirate;
+import com.minecolonies.core.entity.mobs.drownedpirates.EntityDrownedCaptainPirate;
+import com.minecolonies.core.entity.mobs.drownedpirates.EntityDrownedPirate;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.entity.mobs.amazons.EntityAmazonChief;
@@ -202,6 +205,24 @@ public class EntityInitializer
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                 .sized(0.5F, 0.5F)
                 .setShouldReceiveVelocityUpdates(true));
+
+            ModEntities.DROWNED_PIRATE = build(registry, "drownedpirate",
+              EntityType.Builder.of(EntityDrownedPirate::new, MobCategory.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+            ModEntities.DROWNED_ARCHERPIRATE = build(registry, "drownedarcherpirate",
+              EntityType.Builder.of(EntityDrownedArcherPirate::new, MobCategory.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+            ModEntities.DROWNED_CHIEFPIRATE = build(registry, "drownedchiefpirate",
+              EntityType.Builder.of(EntityDrownedCaptainPirate::new, MobCategory.MONSTER)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
         }
     }
 

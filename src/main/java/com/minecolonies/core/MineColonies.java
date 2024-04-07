@@ -188,6 +188,9 @@ public class MineColonies
         event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
     }
 
     @SubscribeEvent

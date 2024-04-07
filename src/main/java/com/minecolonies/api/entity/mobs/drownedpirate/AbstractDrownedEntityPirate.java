@@ -1,8 +1,11 @@
-package com.minecolonies.api.entity.mobs.pirates;
+package com.minecolonies.api.entity.mobs.drownedpirate;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
+import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -16,9 +19,9 @@ import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
- * Abstract for all pirate entities.
+ * Abstract for all drowned pirate entities.
  */
-public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
+public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for pirates
@@ -41,7 +44,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final EntityType<? extends AbstractEntityPirate> type, final Level world)
+    public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world)
     {
         super(type, world);
         this.textureId = new Random().nextInt(PIRATE_TEXTURES);
@@ -78,9 +81,31 @@ public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
     @Override
     public AbstractAdvancedPathNavigate getNavigation()
     {
-        AbstractAdvancedPathNavigate navigator = super.getNavigation();
-        navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
-        return navigator;
+        if (this.newNavigator == null)
+        {
+            this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
+            this.navigation = newNavigator;
+            newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
+            this.newNavigator.getPathingOptions().setEnterDoors(true);
+            newNavigator.getPathingOptions().withDropCost(1D).withJumpCost(1D).withWalkUnderWater(true).setPassDanger(true);
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
+                                                 .withTakeDamageOnStuck(0.4f)
+                                                 .withBuildLeafBridges()
+                                                 .withChanceToByPassMovingAway(0.20)
+                                                 .withPlaceLadders();
+
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
+            {
+                stuckHandler.withBlockBreaks();
+                stuckHandler.withCompleteStuckBlockBreak(6);
+            }
+
+            newNavigator.setStuckHandler(stuckHandler);
+            this.newNavigator.setCanFloat(false);
+        }
+        this.newNavigator.setCanFloat(true);
+
+        return newNavigator;
     }
 
     @Override

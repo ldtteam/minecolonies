@@ -7,6 +7,7 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.barbarianEvent.Barba
 import com.minecolonies.core.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.DrownedPirateRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
 import net.minecraft.resources.ResourceLocation;
@@ -33,5 +34,6 @@ public final class ModColonyEventTypeInitializer
         DEFERRED_REGISTER.register(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(NorsemenRaidEvent::loadFromNBT, NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID));
         DEFERRED_REGISTER.register(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(NorsemenShipRaidEvent::loadFromNBT, NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID));
         DEFERRED_REGISTER.register(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(PirateGroundRaidEvent::loadFromNBT, PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID));
+        DEFERRED_REGISTER.register(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath(), () -> new ColonyEventTypeRegistryEntry(DrownedPirateRaidEvent::loadFromNBT, DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID));
     }
 }
