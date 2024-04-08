@@ -176,6 +176,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public PathResult<AbstractPathJob> moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
     {
         if (pathResult != null
+              && pathResult.isInProgress()
               && pathResult.getJob() instanceof PathJobRandomPos
               && ((((PathJobRandomPos) pathResult.getJob()).posAndRangeMatch(range, pos))))
         {
@@ -205,7 +206,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final double speedFactor,
       final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
     {
-        if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
+        if (pathResult != null && pathResult.isInProgress() && pathResult.getJob() instanceof PathJobRandomPos)
         {
             return pathResult;
         }

@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -51,6 +51,11 @@ public final class BlockPosUtil
      * Amount of string required to try to calculate a blockpos.
      */
     private static final int BLOCKPOS_LENGTH = 3;
+
+    /**
+     * All directions.
+     */
+    public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
      * Selects a solid position with air above
@@ -115,10 +120,11 @@ public final class BlockPosUtil
      *
      * @return a tuple of two directions.
      */
-    public static Tuple<Direction, Direction> getRandomDirectionTuple()
+    public static BlockPos getRandomPosAround(final BlockPos center, final int distance)
     {
-        return new Tuple<>(Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)],
-          Direction.values()[ColonyConstants.rand.nextInt(Direction.values().length)]);
+        final Vec3 vec =
+          new Vec3(ColonyConstants.rand.nextDouble(), ColonyConstants.rand.nextDouble(), ColonyConstants.rand.nextDouble()).normalize().multiply(distance, distance, distance);
+        return new BlockPos((int) Math.round(center.getX() + vec.x), (int) Math.round(center.getY() + vec.y), (int) Math.round(center.getZ() + vec.z));
     }
 
     /**
@@ -141,13 +147,9 @@ public final class BlockPosUtil
                  || !BlockUtils.isAnySolid(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
-            final Tuple<Direction, Direction> direction = getRandomDirectionTuple();
-            pos =
-              new BlockPos(currentPosition)
-                .relative(direction.getA(), ColonyConstants.rand.nextInt(maxDist) + minDist)
-                .relative(direction.getB(), ColonyConstants.rand.nextInt(maxDist) + minDist)
-                .above(ColonyConstants.rand.nextInt(UP_DOWN_RANGE))
-                .below(ColonyConstants.rand.nextInt(UP_DOWN_RANGE));
+            pos = getRandomPosAround(currentPosition, ColonyConstants.rand.nextInt(maxDist) + minDist)
+              .above(ColonyConstants.rand.nextInt(UP_DOWN_RANGE))
+              .below(ColonyConstants.rand.nextInt(UP_DOWN_RANGE));
 
             if (tries >= MAX_TRIES)
             {
@@ -618,10 +620,10 @@ public final class BlockPosUtil
     public static List<ItemStack> getBlockDrops(@NotNull final Level world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
     {
         return world.getBlockState(coords).getDrops(new LootParams.Builder((ServerLevel) world)
-                                                      .withLuck(fortune)
-                                                      .withOptionalParameter(LootContextParams.BLOCK_ENTITY, world.getBlockEntity(coords))
-                                                      .withParameter(LootContextParams.ORIGIN, entity.position())
-                                                      .withParameter(LootContextParams.TOOL, stack));
+          .withLuck(fortune)
+          .withOptionalParameter(LootContextParams.BLOCK_ENTITY, world.getBlockEntity(coords))
+          .withParameter(LootContextParams.ORIGIN, entity.position())
+          .withParameter(LootContextParams.TOOL, stack));
     }
 
     /**
@@ -808,6 +810,7 @@ public final class BlockPosUtil
 
     /**
      * Get facing from x,y
+     *
      * @param pos1X start-x
      * @param pos1Z start-z
      * @param pos2X end-x
@@ -836,6 +839,7 @@ public final class BlockPosUtil
 
     /**
      * Calculate a direction from a given delta.
+     *
      * @param x the delta x.
      * @param y the delta y.
      * @param z the delta z.
@@ -883,8 +887,8 @@ public final class BlockPosUtil
     /**
      * Calculates the direction a position is from the building.
      *
-     * @param building          the building.
-     * @param pos               the position.
+     * @param building the building.
+     * @param pos      the position.
      * @return a text component describing the direction.
      */
     public static DirectionResult calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
@@ -920,19 +924,21 @@ public final class BlockPosUtil
         // If previously already north or south was selected, create a compound direction (north/east etc)
         if (pos.getX() > building.getX())
         {
-            direction = switch (direction) {
-                case NORTH -> DirectionResult.NORTH_EAST;
-                case SOUTH -> DirectionResult.SOUTH_EAST;
-                default -> DirectionResult.EAST;
-            };
+            direction = switch (direction)
+                          {
+                              case NORTH -> DirectionResult.NORTH_EAST;
+                              case SOUTH -> DirectionResult.SOUTH_EAST;
+                              default -> DirectionResult.EAST;
+                          };
         }
         else if (pos.getX() < building.getX())
         {
-            direction = switch (direction) {
-                case NORTH -> DirectionResult.NORTH_WEST;
-                case SOUTH -> DirectionResult.SOUTH_WEST;
-                default -> DirectionResult.WEST;
-            };
+            direction = switch (direction)
+                          {
+                              case NORTH -> DirectionResult.NORTH_WEST;
+                              case SOUTH -> DirectionResult.SOUTH_WEST;
+                              default -> DirectionResult.WEST;
+                          };
         }
 
         // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
@@ -1008,13 +1014,18 @@ public final class BlockPosUtil
     /**
      * Returns the first air position near the given start. Advances vertically first then horizontally
      *
-     * @param start     start position
-     * @param horizontalRange    horizontal search range
-     * @param verticalRange    vertical search range
-     * @param predicate check predicate for the right block
+     * @param start           start position
+     * @param horizontalRange horizontal search range
+     * @param verticalRange   vertical search range
+     * @param predicate       check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final Level world, final BlockPos start, final int verticalRange, final int horizontalRange, final BiPredicate<BlockGetter, BlockPos> predicate)
+    public static BlockPos findAround(
+      final Level world,
+      final BlockPos start,
+      final int verticalRange,
+      final int horizontalRange,
+      final BiPredicate<BlockGetter, BlockPos> predicate)
     {
         if (horizontalRange < 1 && verticalRange < 1)
         {
@@ -1157,8 +1168,9 @@ public final class BlockPosUtil
 
     /**
      * Check if a location is within an area.
-     * @param cornerA the first corner.
-     * @param cornerB the second corner.
+     *
+     * @param cornerA  the first corner.
+     * @param cornerB  the second corner.
      * @param location the location to check for.
      * @return true if so.
      */

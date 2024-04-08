@@ -9,7 +9,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
@@ -21,9 +20,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
+
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 
 /**
  * Stuck handler for pathing
@@ -34,11 +33,6 @@ public class PathingStuckHandler implements IStuckHandler
      * The distance at which we consider a target to arrive
      */
     private static final double MIN_TARGET_DIST = 3;
-
-    /**
-     * All directions.
-     */
-    public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
      * Constants related to tp.
@@ -289,7 +283,9 @@ public class PathingStuckHandler implements IStuckHandler
 
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
-                if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i).above()))
+                if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position())
+                  .relative(facing, i)
+                  .above()))
                 {
                     breakBlocksAhead(world, BlockPos.containing(entity.position()).relative(facing, i - 1), facing);
                     break;
@@ -565,7 +561,8 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final Level world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if ((canBreakBlocks || state.canBeReplaced() || state.isAir()) && state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(ModTags.indestructible))
+        if ((canBreakBlocks || state.canBeReplaced() || state.isAir()) && state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(
+          ModTags.indestructible))
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {
