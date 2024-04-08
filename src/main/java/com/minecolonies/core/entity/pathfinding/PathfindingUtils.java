@@ -3,8 +3,10 @@ package com.minecolonies.core.entity.pathfinding;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.DrownedPirateRaidEvent;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -124,7 +126,7 @@ public class PathfindingUtils
 
         final Block b = bs.getBlock();
 
-        if (entity.isInWater())
+        if (entity.isInWater() && !(entity instanceof AbstractDrownedEntityPirate))
         {
             while (!bs.getFluidState().isEmpty())
             {
@@ -324,7 +326,7 @@ public class PathfindingUtils
      */
     public static boolean isLadder(final BlockState blockState, @Nullable final PathingOptions options)
     {
-        if (options != null && options.canWalkUnderWater() && blockState.liquid())
+        if (options != null && options.canWalkUnderWater() && isLiquid(blockState))
         {
             return true;
         }

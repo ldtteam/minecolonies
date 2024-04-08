@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.*;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -44,14 +45,14 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
-import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
+import static com.minecolonies.api.util.BlockPosUtil.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
@@ -266,7 +267,7 @@ public class RaidManager implements IRaiderManager
             return RaidSpawnResult.CANNOT_RAID;
         }
 
-        final int raidLevel = getColonyRaidLevel();
+        final int raidLevel = getColonyRaidLevel() + 100;
         int amount = calculateRaiderAmount(raidLevel);
         if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {
@@ -300,7 +301,7 @@ public class RaidManager implements IRaiderManager
         raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
-        for (final BlockPos targetSpawnPoint : spawnPoints)
+        for (BlockPos targetSpawnPoint : spawnPoints)
         {
             IColonyRaidEvent raidEvent = null;
 
@@ -314,6 +315,19 @@ public class RaidManager implements IRaiderManager
                   && colony.getWorld().getBlockState(targetSpawnPoint.below()).isAir())
             {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
+            }
+            else if (colony.getWorld().getBlockState(targetSpawnPoint).liquid() &&
+                        colony.getWorld().getBlockState(targetSpawnPoint.below()).liquid())
+            {
+                raidType = DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
+                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)
+                {
+                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above())))
+                    {
+                        break;
+                    }
+                    targetSpawnPoint = targetSpawnPoint.above();
+                }
             }
 
             // No rotation till spawners are moved into schematics
@@ -466,6 +480,13 @@ public class RaidManager implements IRaiderManager
                   30,
                   3,
                   SOLID_AIR_POS_SELECTOR);
+
+                if (worldSpawnPos == null && colony.getWorld().getBlockState(spawnPos).getBlock() == Blocks.WATER)
+                {
+                    worldSpawnPos = spawnPos;
+                    break;
+                }
+
                 if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get())
                 {
                     break;

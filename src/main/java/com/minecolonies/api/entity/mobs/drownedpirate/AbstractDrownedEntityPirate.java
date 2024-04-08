@@ -93,8 +93,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = newNavigator;
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
-            this.newNavigator.getPathingOptions().setEnterDoors(true);
-            newNavigator.getPathingOptions().withDropCost(1D).withJumpCost(1D).withWalkUnderWater(true).setPassDanger(true);
+            newNavigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.0D).withCanEnterDoors(true).withDropCost(1D).withJumpCost(1D).withWalkUnderWater(true).withNonLadderClimbableCost(1D).setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
