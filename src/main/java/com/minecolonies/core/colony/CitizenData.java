@@ -1907,7 +1907,7 @@ public class CitizenData implements ICitizenData
     {
         if (uuid == null)
         {
-            uuid = UUID.nameUUIDFromBytes((String.valueOf(getId()) + String.valueOf(getColony().getID()) + getColony().getDimension().location().toString()).getBytes());
+            uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().location().toString()).getBytes());
         }
         return uuid;
     }
