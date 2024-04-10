@@ -1893,6 +1893,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public boolean hasQuestAssignment()
+    {
+        return !this.availableQuests.isEmpty() || !this.participatingQuests.isEmpty();
+    }
+
+    @Override
     public void onInteractionClosed(final Component key, final ServerPlayer sender)
     {
         final IInteractionResponseHandler chatOption = citizenChatOptions.get(key);

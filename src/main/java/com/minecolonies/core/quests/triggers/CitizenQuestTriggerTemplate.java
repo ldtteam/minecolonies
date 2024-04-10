@@ -71,6 +71,10 @@ public class CitizenQuestTriggerTemplate implements IQuestTriggerTemplate
         Collections.shuffle(citizenDataList);
         for (final ICitizenData data : citizenDataList)
         {
+            if (data.hasQuestAssignment())
+            {
+                continue;
+            }
             if (matchTag != null && !IQuestTriggerTemplate.matchNbt(data.serializeNBT(), matchTag))
             {
                 continue;
