@@ -1440,7 +1440,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setTranslatedSubtitle("Yabba Dabba Doo!")
                                           .setIcon(ModBlocks.blockHutStoneSmeltery.asItem())
                                           .addBuildingRequirement(ModBuildings.STONE_MASON_ID, 1)
-                                          .addItemCost(Items.BRICKS, 64)
+                                          .addItemCost(Items.BRICK, 64)
                                           .addEffect(ModBuildings.stoneSmelter.get().getBuildingBlock(), 1)
                                           .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)

@@ -16,7 +16,7 @@
       "type": "minecolonies:item_list",
       "item": {
         "items": [
-          "minecraft:bricks"
+          "minecraft:brick"
         ]
       },
       "quantity": 64
