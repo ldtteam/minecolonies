@@ -57,6 +57,12 @@ public class WindowInteraction extends AbstractWindowSkeleton
         super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
         this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
+        registerButton(BUTTON_CANCEL, this::cancelClicked);
+    }
+
+    private void cancelClicked()
+    {
+        close();
     }
 
     /**
@@ -151,7 +157,11 @@ public class WindowInteraction extends AbstractWindowSkeleton
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (!interactions.isEmpty())
+        if (button.getID().equals(BUTTON_CANCEL))
+        {
+            super.onButtonClicked(button);
+        }
+        else if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
             try
