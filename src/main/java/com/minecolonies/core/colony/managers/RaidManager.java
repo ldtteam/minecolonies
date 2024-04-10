@@ -267,7 +267,7 @@ public class RaidManager implements IRaiderManager
             return RaidSpawnResult.CANNOT_RAID;
         }
 
-        final int raidLevel = getColonyRaidLevel() + 100;
+        final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
         if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {

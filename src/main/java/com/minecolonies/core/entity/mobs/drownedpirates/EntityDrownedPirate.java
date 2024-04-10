@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirat
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 /**
@@ -22,5 +23,14 @@ public class EntityDrownedPirate extends AbstractDrownedEntityPirate implements 
     {
         super(type, worldIn);
         this.moveControl = new MovementHandler(this);
+    }
+
+    @Override
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
+    {
+        super.initStatsFor(baseHealth, difficulty, baseDamage);
+        this.getAttribute(Attributes.ARMOR).setBaseValue(0.25);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);
+        this.setHealth(this.getMaxHealth());
     }
 }

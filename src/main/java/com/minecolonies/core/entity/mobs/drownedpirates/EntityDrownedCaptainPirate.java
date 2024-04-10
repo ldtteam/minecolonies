@@ -2,6 +2,8 @@ package com.minecolonies.core.entity.mobs.drownedpirates;
 
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
+import com.minecolonies.api.util.MathUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
@@ -14,7 +16,6 @@ import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE
  */
 public class EntityDrownedCaptainPirate extends AbstractDrownedEntityPirate implements ICaptainPirateEntity
 {
-
     /**
      * Constructor of the entity.
      *
@@ -31,9 +32,13 @@ public class EntityDrownedCaptainPirate extends AbstractDrownedEntityPirate impl
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(-1);
-        this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage + 2.0);
+        this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.3);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 2.0);
         this.setHealth(this.getMaxHealth());
+        if (MathUtils.RANDOM.nextInt(100) < 2)
+        {
+            setCustomName(Component.literal("Davy Jones"));
+        }
     }
 }

@@ -27,7 +27,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
     /**
      * Swim speed for pirates
      */
-    private static final double PIRATE_SWIM_BONUS = 2.3;
+    private static final double PIRATE_SWIM_BONUS = 3.0;
 
     /**
      * Amount of unique pirate textures.
@@ -93,6 +93,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = newNavigator;
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
+            newNavigator.setSpeedModifier(0.5);
             newNavigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.0D).withCanEnterDoors(true).withDropCost(1D).withJumpCost(1D).withWalkUnderWater(true).withNonLadderClimbableCost(1D).setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
