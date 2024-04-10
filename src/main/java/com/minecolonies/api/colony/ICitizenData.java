@@ -413,4 +413,10 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @param player the player that interacted
      */
     void setInteractedRecently(final UUID player);
+
+    /**
+     * If any quest is assigned to the citizen.
+     * @return true if so.
+     */
+    boolean hasQuestAssignment();
 }
