@@ -104,7 +104,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 5000000
+      "rarity": 50000000
     },
     {
       "type": "minecolonies:state",

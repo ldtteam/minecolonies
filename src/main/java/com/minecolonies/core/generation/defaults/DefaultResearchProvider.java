@@ -1434,6 +1434,25 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(Items.STONE, 64)
                                        .addEffect(ModBuildings.crusher.get().getBuildingBlock(), 1)
                                        .addToList(r);
+
+        final Research theFlintstones = new Research(new ResourceLocation(Constants.MOD_ID, "technology/theflintstones"), TECH).setParentResearch(stoneCake)
+                                          .setTranslatedName("The Flintstones")
+                                          .setTranslatedSubtitle("Yabba Dabba Doo!")
+                                          .setIcon(ModBlocks.blockHutStoneSmeltery.asItem())
+                                          .addBuildingRequirement(ModBuildings.STONE_MASON_ID, 1)
+                                          .addItemCost(Items.BRICKS, 64)
+                                          .addEffect(ModBuildings.stoneSmelter.get().getBuildingBlock(), 1)
+                                          .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)
+          .setTranslatedName("Know the End")
+          .setTranslatedSubtitle("Unlock the secrets of the most mysterious dimension.")
+          .setIcon(ModItems.chorusBread)
+          .addBuildingRequirement("baker", 3)
+          .addItemCost(Items.CHORUS_FRUIT, 64)
+          .addEffect(new ResourceLocation("minecolonies:effects/knowledgeoftheendunlock"), 1)
+          .addToList(r);
+
+
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/gildedhammer"), TECH).setParentResearch(rockingRoll)
           .setTranslatedName("Gilded Hammer")
           .setTranslatedSubtitle("When in doubt, cover in shiny stuff.")
@@ -1649,23 +1668,6 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.REPEATER)
           .addItemCost(Items.REDSTONE, 2048)
           .addEffect(BLOCK_BREAK_SPEED, 5)
-          .addToList(r);
-
-        final Research theFlintstones = new Research(new ResourceLocation(Constants.MOD_ID, "technology/theflintstones"), TECH).setParentResearch(hot)
-                                          .setTranslatedName("The Flintstones")
-                                          .setTranslatedSubtitle("Yabba Dabba Doo!")
-                                          .setIcon(ModBlocks.blockHutStoneSmeltery.asItem())
-                                          .addBuildingRequirement(ModBuildings.SMELTERY_ID, 3)
-                                          .addItemCost(Items.STONE_BRICKS, 64)
-                                          .addEffect(ModBuildings.stoneSmelter.get().getBuildingBlock(), 1)
-                                          .addToList(r);
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)
-          .setTranslatedName("Know the End")
-          .setTranslatedSubtitle("Unlock the secrets of the most mysterious dimension.")
-          .setIcon(ModItems.chorusBread)
-          .addBuildingRequirement("baker", 3)
-          .addItemCost(Items.CHORUS_FRUIT, 64)
-          .addEffect(new ResourceLocation("minecolonies:effects/knowledgeoftheendunlock"), 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/thoselungs"), TECH).setParentResearch(hot)
