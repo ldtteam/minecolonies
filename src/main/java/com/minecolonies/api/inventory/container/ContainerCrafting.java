@@ -208,7 +208,7 @@ public class ContainerCrafting extends AbstractContainerMenu
         if (!world.isClientSide)
         {
             final ServerPlayer player = (ServerPlayer) inv.player;
-            final List<CraftingRecipe> recipes = ((ServerPlayer) inv.player).server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix, world)
+            final List<CraftingRecipe> recipes = player.server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix, world)
                     .stream().filter(recipe -> recipe.isSpecial()
                             || !world.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING)
                             || player.getRecipeBook().contains(recipe)
