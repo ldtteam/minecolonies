@@ -213,9 +213,8 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           @Override
                           public ItemStack remove(final int slot)
                           {
-                              final ItemStack stack = inventory.getArmorInSlot(equipmentSlot);
-                              inventory.forceClearArmorInSlot(equipmentSlot, stack);
-                              return stack;
+                              inventory.forceClearArmorInSlot(equipmentSlot, inventory.getArmorInSlot(equipmentSlot));
+                              return super.remove(slot);
                           }
 
                           @Override

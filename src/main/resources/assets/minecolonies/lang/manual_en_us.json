@@ -2137,6 +2137,7 @@
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Citizen Style:",
   "com.minecolonies.coremod.gui.townhall.picknamestyle": "Name Pack:",
   "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
+  "com.minecolonies.core.townhall.patreon.needs_owner": "Need to be Colony Owner to adjust this Feature",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
   "com.minecolonies.coremod.gui.chat.arston": "I am Arston, former military advisor and general of the draconian army. I can offer my expertise to run and strengthen your army",
   "com.minecolonies.coremod.gui.chat.kedamono": "I am the Kedamono Dragon, I have traveled far and seek a fair place to reside. Do you have enough beds for me?",
