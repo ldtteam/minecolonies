@@ -751,6 +751,7 @@
   "item.minecolonies.spear": "Spear",
 
   "com.minecolonies.coremod.item.permissionscepter.setmode": "Set to mode %s.",
+  "com.minecolonies.coremod.item.permissionscepter.mode": "Tool Mode: %s",
   "com.minecolonies.coremod.item.permissionscepter.mode.block": "block",
   "com.minecolonies.coremod.item.permissionscepter.mode.location": "location",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "You do not have permission to edit blocks with this tool!",

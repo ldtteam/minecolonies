@@ -116,8 +116,6 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
             return;
         }
 
-        //Verify player has permission to change this huts settings
-
         if (type == MessageType.ADD_BLOCK)
         {
             switch (mode)

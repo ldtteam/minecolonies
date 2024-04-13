@@ -94,12 +94,12 @@
             <label size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addblock)"/>
             <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addBlock" size="19 19" pos="130 76" label="+"/>
-
+            <buttonimage id="blockTool" size="19 19" pos="153 76" source="minecolonies:textures/gui/scepterpermission.png"/>
 
             <list id="blocks" size="148 171" pos="201 36">
                 <box size="100% 30" linewidth="1">
-                    <label id="name" size="100 12" pos="5 2" color="black"/>
-                    <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                    <label id="name" size="115 28" pos="5 2" color="black" wrap="true" textalign="TOP_LEFT"/>
+                    <button id="removeBlock" size="11 11" pos="2 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
                 </box>
             </list>
         </view>

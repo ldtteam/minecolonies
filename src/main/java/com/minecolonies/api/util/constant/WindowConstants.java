@@ -400,6 +400,11 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
+     * Button to obtain a permissions scepter.
+     */
+    public static final String BUTTON_BLOCK_TOOL = "blockTool";
+
+    /**
      * Button to select a block for a replacement.
      */
     public static final String BUTTON_SELECT = "select";
