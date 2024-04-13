@@ -13,7 +13,7 @@
         "path": "buildingManager/buildings",
         "match": {
           "type": "minecolonies:baker",
-          "level": 1
+          "level": 2
         }
       }
     },

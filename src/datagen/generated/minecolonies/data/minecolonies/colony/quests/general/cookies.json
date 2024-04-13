@@ -237,7 +237,7 @@
       "state": {
         "match": {
           "type": "minecolonies:baker",
-          "level": 1
+          "level": 2
         },
         "path": "buildingManager/buildings"
       }
