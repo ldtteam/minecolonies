@@ -233,7 +233,7 @@ public class ColonyBorderMapping
                     .setFontShadow(true);
 
             this.noText = new TextProperties()
-                    .setActiveUIs(Context.UI.all());
+                    .setActiveUIs((Context.UI []) EnumSet.noneOf(Context.UI.class).toArray());
         }
 
         /** Add or remove chunks from this overlay */
