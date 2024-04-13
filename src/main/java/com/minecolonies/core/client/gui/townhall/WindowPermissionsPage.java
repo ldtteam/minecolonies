@@ -500,7 +500,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         {
             final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
 
-            if (block != null)
+            if (block != null && !block.defaultBlockState().isAir())
             {
                 building.getColony().addFreeBlock(block);
                 Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
