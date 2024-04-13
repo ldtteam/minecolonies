@@ -8,13 +8,13 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ColonyUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import journeymap.client.api.display.Context;
-import journeymap.client.api.display.DisplayType;
-import journeymap.client.api.display.PolygonOverlay;
-import journeymap.client.api.model.MapPolygonWithHoles;
-import journeymap.client.api.model.ShapeProperties;
-import journeymap.client.api.model.TextProperties;
-import journeymap.client.api.util.PolygonHelper;
+import journeymap.api.v2.client.display.Context;
+import journeymap.api.v2.client.display.DisplayType;
+import journeymap.api.v2.client.display.PolygonOverlay;
+import journeymap.api.v2.client.model.MapPolygonWithHoles;
+import journeymap.api.v2.client.model.ShapeProperties;
+import journeymap.api.v2.client.model.TextProperties;
+import journeymap.api.v2.client.util.PolygonHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -166,12 +166,12 @@ public class ColonyBorderMapping
         private final ResourceKey<Level> dimension;
         private final int id;
         private final String name;
-        private final Set<ChunkPos> chunks;
+        private final Set<ChunkPos>        chunks;
         private final List<PolygonOverlay> overlays = new ArrayList<>();
-        private final ShapeProperties fill;
+        private final ShapeProperties      fill;
         private final ShapeProperties stroke;
-        private final TextProperties text;
-        private final TextProperties noText;
+        private final TextProperties  text;
+        private final TextProperties  noText;
 
         private boolean dirty = false;
         private boolean permitted = true;
@@ -233,7 +233,7 @@ public class ColonyBorderMapping
                     .setFontShadow(true);
 
             this.noText = new TextProperties()
-                    .setActiveUIs(EnumSet.noneOf(Context.UI.class));
+                    .setActiveUIs(Context.UI.all());
         }
 
         /** Add or remove chunks from this overlay */
@@ -326,9 +326,9 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(fullscreenStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay overlay = new PolygonOverlay(String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
                             overlay.setOverlayGroupName(this.name)
-                                    .setActiveUIs(EnumSet.of(Context.UI.Fullscreen, Context.UI.Webmap))
+                                    .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
                                     .setTextProperties(this.text)
                                     .setLabel(this.colonyName);
                             this.overlays.add(overlay);
@@ -341,9 +341,9 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(minimapStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay mini = new PolygonOverlay(String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
                             mini.setOverlayGroupName(this.name)
-                                    .setActiveUIs(EnumSet.of(Context.UI.Minimap))
+                                    .setActiveUIs(Context.UI.Minimap)
                                     .setTextProperties(this.noText);
                             this.overlays.add(mini);
                             jmap.show(mini);

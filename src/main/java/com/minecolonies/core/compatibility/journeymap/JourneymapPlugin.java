@@ -1,11 +1,11 @@
 package com.minecolonies.core.compatibility.journeymap;
 
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.IClientPlugin;
-import journeymap.client.api.JourneyMapPlugin;
-import journeymap.client.api.event.MappingEvent;
-import journeymap.client.api.event.RegistryEvent;
-import journeymap.common.api.event.ClientEventRegistry;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.client.IClientPlugin;
+import journeymap.api.v2.client.JourneyMapPlugin;
+import journeymap.api.v2.client.event.MappingEvent;
+import journeymap.api.v2.client.event.RegistryEvent;
+import journeymap.api.v2.common.event.ClientEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;

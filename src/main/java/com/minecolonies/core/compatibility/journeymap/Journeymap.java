@@ -7,8 +7,8 @@ import com.google.gson.stream.JsonWriter;
 import com.minecolonies.api.util.Log;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.display.Displayable;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.client.display.Displayable;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public class Journeymap
 {
     private static Journeymap INSTANCE;
 
-    private IClientAPI jmap;
+    private IClientAPI        jmap;
     private JourneymapOptions options;
 
     public Journeymap(final IClientAPI jmap)
