@@ -342,7 +342,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -354,7 +354,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -365,7 +365,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -399,7 +399,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
 
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -416,11 +416,12 @@ public class RaidManager implements IRaiderManager
      * @param targetSpawnPoint
      * @return
      */
-    private PathResult createSpawnPath(final BlockPos targetSpawnPoint)
+    private PathResult createSpawnPath(final BlockPos targetSpawnPoint, final boolean  underwater)
     {
         final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
           new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
+        job.getPathingOptions().withWalkUnderWater(underwater);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
     }
