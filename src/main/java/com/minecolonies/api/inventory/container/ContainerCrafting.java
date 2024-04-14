@@ -3,7 +3,6 @@ package com.minecolonies.api.inventory.container;
 import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,7 +32,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     public final CraftingContainer craftMatrix;
 
     /**
-     * The crafting matrix inventory (2x2).
+     * The crafting matrix inventory (2x2 or 3x3).
      */
     public final ResultContainer craftResult = new ResultContainer();
 
@@ -41,6 +40,16 @@ public class ContainerCrafting extends AbstractContainerMenu
      * The crafting result slot.
      */
     private final Slot craftResultSlot;
+
+    /**
+     * Whether there are multiple recipe possibilities.
+     */
+    private final DataSlot switchableSlot;
+
+    /**
+     * Which recipe to use out of multiple possibilities.
+     */
+    private final DataSlot recipeIndexSlot;
 
     /**
      * The secondary outputs
@@ -180,7 +189,11 @@ public class ContainerCrafting extends AbstractContainerMenu
             ));
         }
 
-        
+        this.switchableSlot = DataSlot.standalone();
+        this.recipeIndexSlot = DataSlot.standalone();
+        addDataSlot(this.switchableSlot);
+        addDataSlot(this.recipeIndexSlot);
+
         remainingItems = new ArrayList<>();
 
         this.slotsChanged(this.craftMatrix);
@@ -195,25 +208,45 @@ public class ContainerCrafting extends AbstractContainerMenu
         if (!world.isClientSide)
         {
             final ServerPlayer player = (ServerPlayer) inv.player;
-            final Optional<CraftingRecipe> iRecipe = ((ServerPlayer) inv.player).server.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, world);
-            final ItemStack stack;
-            if (iRecipe.isPresent() && (iRecipe.get().isSpecial()
-                                          || !world.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING)
-                                          || player.getRecipeBook().contains(iRecipe.get())
-                                          || player.isCreative()))
+            final List<CraftingRecipe> recipes = player.server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix, world)
+                    .stream().filter(recipe -> recipe.isSpecial()
+                            || !world.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING)
+                            || player.getRecipeBook().contains(recipe)
+                            || player.isCreative())
+                    .toList();
+            if (recipes.isEmpty())
             {
-                stack = iRecipe.get().assemble(this.craftMatrix, this.world.registryAccess());
-                this.craftResultSlot.set(stack);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, stack));
+                this.switchableSlot.set(0);
+                this.craftResultSlot.set(ItemStack.EMPTY);
             }
             else
             {
-                this.craftResultSlot.set(ItemStack.EMPTY);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, ItemStack.EMPTY));
+                this.switchableSlot.set(recipes.size());
+                this.recipeIndexSlot.set(this.recipeIndexSlot.get() % recipes.size());
+                final ItemStack stack = recipes.get(this.recipeIndexSlot.get())
+                        .assemble(this.craftMatrix, this.world.registryAccess());
+                this.craftResultSlot.set(stack);
             }
         }
 
         super.slotsChanged(inventoryIn);
+    }
+
+    /**
+     * @return true if recipe switching is possible.
+     */
+    public boolean canSwitchRecipes()
+    {
+        return this.switchableSlot.get() > 1;
+    }
+
+    /**
+     * Switch to the next possible recipe (when more than one are available).
+     */
+    public void switchRecipes()
+    {
+        this.recipeIndexSlot.set(this.recipeIndexSlot.get() + 1);
+        this.slotsChanged(this.craftMatrix);
     }
 
     @Override

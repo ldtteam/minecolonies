@@ -5,13 +5,14 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.core.network.messages.server.SwitchRecipeCraftingTeachingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
@@ -30,9 +32,11 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
  */
 public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 {
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
+    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/crafting2x2.png");
 
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting3x3.png");
+    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(MOD_ID, "textures/gui/crafting3x3.png");
+
+    private static final ResourceLocation SWITCH_TEXTURE = new ResourceLocation(MOD_ID, "textures/gui/craftingswitch.png");
 
     /**
      * X offset of the button.
@@ -53,6 +57,26 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * Button height.
      */
     private static final int BUTTON_HEIGHT = 20;
+
+    /**
+     * Switch button width.
+     */
+    private static final int SWITCH_WIDTH = 20;
+
+    /**
+     * Switch button height.
+     */
+    private static final int SWITCH_HEIGHT = 18;
+
+    /**
+     * Switch button horizontal location.
+     */
+    private static final int SWITCH_X_OFFSET = 148;
+
+    /**
+     * Switch button vertical location.
+     */
+    private static final int SWITCH_Y_OFFSET = 43 - (SWITCH_HEIGHT / 2);
 
     /**
      * Color of the gui description.
@@ -95,6 +119,11 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     private final CraftingModuleView module;
 
     /**
+     * The recipe switch button.
+     */
+    private ImageButton switchButton;
+
+    /**
      * Create a crafting gui window.
      *
      * @param container       the container.
@@ -106,7 +135,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = (CraftingModuleView) building.getModuleView(container.getModuleId());
-        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get());
+        this.completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get());
     }
 
     @NotNull
@@ -128,41 +157,55 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button.Builder(buttonDisplay, new WindowCrafting.OnButtonPress()).pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS).size(BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        final Button doneButton = Button.builder(buttonDisplay, this::onDoneClicked)
+                .pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS)
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .build();
         this.addRenderableWidget(doneButton);
         if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
         {
             doneButton.active = false;
         }
 
+        this.switchButton = new ImageButton(leftPos + SWITCH_X_OFFSET, topPos + SWITCH_Y_OFFSET, SWITCH_WIDTH, SWITCH_HEIGHT,
+                0, 0, SWITCH_HEIGHT + 1, SWITCH_TEXTURE, btn ->
+        {
+            Network.getNetwork().sendToServer(new SwitchRecipeCraftingTeachingMessage());
+        });
+        this.switchButton.visible = false;
+        this.addRenderableWidget(this.switchButton);
     }
 
-    public class OnButtonPress implements Button.OnPress
+    @Override
+    protected void containerTick()
     {
-        @Override
-        public void onPress(final Button button)
+        super.containerTick();
+
+        this.switchButton.visible = this.menu.canSwitchRecipes();
+    }
+
+    private void onDoneClicked(final Button button)
+    {
+        if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
         {
-            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
+            final List<ItemStorage> input = new LinkedList<>();
+
+            for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
             {
-                final List<ItemStorage> input = new LinkedList<>();
+                final ItemStack stack = menu.craftMatrix.getItem(i);
+                final ItemStack copy = stack.copy();
+                ItemStackUtils.setSize(copy, 1);
 
-                for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
-                {
-                    final ItemStack stack = menu.craftMatrix.getItem(i);
-                    final ItemStack copy = stack.copy();
-                    ItemStackUtils.setSize(copy, 1);
+                input.add(new ItemStorage(copy));
+            }
 
-                    input.add(new ItemStorage(copy));
-                }
+            final ItemStack primaryOutput = menu.craftResult.getItem(0).copy();
+            final List<ItemStack> secondaryOutputs = menu.getRemainingItems();
 
-                final ItemStack primaryOutput = menu.craftResult.getItem(0).copy();
-                final List<ItemStack> secondaryOutputs = menu.getRemainingItems();
-
-                if (!ItemStackUtils.isEmpty(primaryOutput))
-                {
-                    Network.getNetwork()
-                      .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getProducer().getRuntimeID()));
-                }
+            if (!ItemStackUtils.isEmpty(primaryOutput))
+            {
+                Network.getNetwork()
+                  .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getProducer().getRuntimeID()));
             }
         }
     }
