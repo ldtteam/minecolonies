@@ -123,7 +123,8 @@ public final class BlockPosUtil
     public static BlockPos getRandomPosAround(final BlockPos center, final int distance)
     {
         final Vec3 vec =
-          new Vec3(ColonyConstants.rand.nextDouble(), ColonyConstants.rand.nextDouble(), ColonyConstants.rand.nextDouble()).normalize().multiply(distance, distance, distance);
+          new Vec3(ColonyConstants.rand.nextDouble() - 0.5, ColonyConstants.rand.nextDouble() - 0.5, ColonyConstants.rand.nextDouble() - 0.5).normalize()
+            .multiply(distance, distance, distance);
         return new BlockPos((int) Math.round(center.getX() + vec.x), (int) Math.round(center.getY() + vec.y), (int) Math.round(center.getZ() + vec.z));
     }
 
