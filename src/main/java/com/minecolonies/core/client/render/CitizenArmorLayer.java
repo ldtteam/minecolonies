@@ -48,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends HumanoidArmorLayer<T, M, A>
 {
     private final Map<SkullBlock.Type, SkullModelBase> skullModels;
-    private final Map<UUID, GameProfile> gameProfileMap = new ConcurrentHashMap<>();
+    private final Map<UUID, GameProfile> gameProfileMap = new HashMap<>();
 
     public CitizenArmorLayer(RenderLayerParent<T, M> parentLayer, A innerModel, A outerModel, ModelManager modelManager, final EntityModelSet modelSet)
     {
@@ -113,7 +113,7 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                     Minecraft minecraft = Minecraft.getInstance();
                     final GameProfile profile = new GameProfile(textureUUID, "mcoltexturequery");
                     minecraft.getMinecraftSessionService().fillProfileProperties(profile, true);
-                    gameProfileMap.put(textureUUID, profile);
+                    minecraft.submit(() -> gameProfileMap.put(textureUUID, profile));
                 });
             }
         }
