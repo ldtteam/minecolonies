@@ -91,7 +91,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     /**
      * The New PathNavigate navigator.
      */
-    private AbstractAdvancedPathNavigate newNavigator;
+    protected AbstractAdvancedPathNavigate newNavigator;
 
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.

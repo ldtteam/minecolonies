@@ -265,7 +265,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             startNode.setLadder();
         }
-        else if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(start.below())))
+        else if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(start.below())))
         {
             startNode.setSwimming();
         }
@@ -1057,7 +1057,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     protected int getGroundHeight(final MNode node, final int x, final int y, final int z)
     {
-        if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y + 1, z)))
+        if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y + 1, z)))
         {
             return -100;
         }
@@ -1357,7 +1357,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         final boolean isSwimming = parent != null && parent.isSwimming();
 
-        if (PathfindingUtils.isLiquid(below))
+        if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(below))
         {
             return handleInLiquid(x, y, z, below, isSwimming);
         }

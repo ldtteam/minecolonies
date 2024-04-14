@@ -18,6 +18,9 @@ import com.minecolonies.core.client.render.mobs.amazon.RendererAmazonSpearman;
 import com.minecolonies.core.client.render.mobs.amazon.RendererChiefAmazon;
 import com.minecolonies.core.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.core.client.render.mobs.barbarians.RendererChiefBarbarian;
+import com.minecolonies.core.client.render.mobs.drownedpirates.RendererDrownedArcherPirate;
+import com.minecolonies.core.client.render.mobs.drownedpirates.RendererDrownedChiefPirate;
+import com.minecolonies.core.client.render.mobs.drownedpirates.RendererDrownedPirate;
 import com.minecolonies.core.client.render.mobs.egyptians.RendererArcherMummy;
 import com.minecolonies.core.client.render.mobs.egyptians.RendererMummy;
 import com.minecolonies.core.client.render.mobs.egyptians.RendererPharao;
@@ -279,6 +282,7 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.BARBARIAN, RendererBarbarian::new);
         event.registerEntityRenderer(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
         event.registerEntityRenderer(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
+
         event.registerEntityRenderer(ModEntities.PIRATE, RendererPirate::new);
         event.registerEntityRenderer(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
         event.registerEntityRenderer(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
@@ -294,6 +298,10 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.AMAZON, RendererAmazon::new);
         event.registerEntityRenderer(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
         event.registerEntityRenderer(ModEntities.AMAZONSPEARMAN, RendererAmazonSpearman::new);
+
+        event.registerEntityRenderer(ModEntities.DROWNED_PIRATE, RendererDrownedPirate::new);
+        event.registerEntityRenderer(ModEntities.DROWNED_ARCHERPIRATE, RendererDrownedArcherPirate::new);
+        event.registerEntityRenderer(ModEntities.DROWNED_CHIEFPIRATE, RendererDrownedChiefPirate::new);
 
         event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
         event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);

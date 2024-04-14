@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
@@ -67,6 +68,12 @@ public class ModEntities
 
     public static EntityType<? extends ThrownTrident> SPEAR;
 
+    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_PIRATE;
+
+    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_CHIEFPIRATE;
+
+    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_ARCHERPIRATE;
+
     public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
     {
         return List.of(
@@ -84,7 +91,10 @@ public class ModEntities
           CHIEFPIRATE,
           SHIELDMAIDEN,
           NORSEMEN_ARCHER,
-          NORSEMEN_CHIEF
+          NORSEMEN_CHIEF,
+          DROWNED_PIRATE,
+          DROWNED_ARCHERPIRATE,
+          DROWNED_CHIEFPIRATE
         );
     }
 }

@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
- * Abstract for all Barbarian entities.
+ * Abstract for all pirate entities.
  */
 public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
 {

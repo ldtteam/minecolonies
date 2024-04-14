@@ -39,6 +39,11 @@ public class CustomArrowEntity extends Arrow
     private boolean armorPiercePlayer = false;
 
     /**
+     * The water inertia.
+     */
+    private float waterInertia = 0.6f;
+
+    /**
      * Callback on hitting an entity
      */
     private Predicate<EntityHitResult> onHitCallback = null;
@@ -60,6 +65,21 @@ public class CustomArrowEntity extends Arrow
     public Packet<ClientGamePacketListener> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    protected float getWaterInertia()
+    {
+        return waterInertia;
+    }
+
+    /**
+     * Setter for the water inertia to allow to penetrate liquids better.
+     * @param waterInertia the new inertia.
+     */
+    public void setWaterInertia(final float waterInertia)
+    {
+        this.waterInertia = waterInertia;
     }
 
     @Override
