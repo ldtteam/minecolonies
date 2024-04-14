@@ -385,6 +385,7 @@ public class MineColonies
 
         // Crafter Recipe-related messages
         CustomRecipeManagerMessage.TYPE.register(registry);
+        SwitchRecipeCraftingTeachingMessage.TYPE.register(registry);
 
         ColonyListMessage.TYPE.register(registry);
 
