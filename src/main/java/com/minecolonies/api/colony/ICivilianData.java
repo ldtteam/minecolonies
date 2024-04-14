@@ -190,11 +190,17 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     Optional<? extends AbstractCivilianEntity> getEntity();
 
     /**
-     * Get the sound profile of the citizen.
+     * Get the voice profile of the citizen.
      *
      * @return the profile id.
      */
-    int getSoundProfile();
+    int getVoiceProfile();
+
+    /**
+     * Set the voice profile of the citizen.
+     * @param profile the profile to set.
+     */
+    void setVoiceProfile(final int profile);
 
     /**
      * Get the uuid for the citizen

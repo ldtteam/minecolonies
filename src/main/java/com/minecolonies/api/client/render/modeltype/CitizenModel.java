@@ -78,6 +78,6 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             return false;
         }
-        return citizen.getCitizenDataView() == null || citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty();
+        return citizen.getCitizenDataView() == null || (citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty() && citizen.getCitizenDataView().getCustomTextureUUID() == null);
     }
 }

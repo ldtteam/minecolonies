@@ -35,6 +35,4 @@ public interface IVisitorData extends ICitizenData
      * @param pos sitting pos
      */
     void setSittingPosition(final BlockPos pos);
-
-    void setCustomTexture(UUID texture);
 }
