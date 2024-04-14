@@ -8,4 +8,6 @@
             <itemicon id="requestItem" size="32 32" pos="30 60"/>
         </view>
     </switch>
+    <buttonimage id="cancel" pos="303 1" size="14 15"
+                 source="minecolonies:textures/gui/button_x.png" textcolor="black" tooltip="$(com.minecolonies.core.exit_interactions)"/>
 </window>

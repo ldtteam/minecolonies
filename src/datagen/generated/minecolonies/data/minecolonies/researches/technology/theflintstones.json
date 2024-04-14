@@ -6,17 +6,17 @@
     }
   ],
   "icon": "minecolonies:blockhutstonesmeltery",
-  "parentResearch": "minecolonies:technology/hot",
+  "parentResearch": "minecolonies:technology/stonecake",
   "requirements": [
     {
-      "building": "smeltery",
-      "level": 3
+      "building": "stonemason",
+      "level": 1
     },
     {
       "type": "minecolonies:item_list",
       "item": {
         "items": [
-          "minecraft:stone_bricks"
+          "minecraft:brick"
         ]
       },
       "quantity": 64
