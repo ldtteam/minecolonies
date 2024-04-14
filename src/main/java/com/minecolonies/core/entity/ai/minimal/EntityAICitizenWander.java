@@ -5,13 +5,12 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.education.EntityAIStudy;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -211,11 +210,16 @@ public class EntityAICitizenWander implements IStateAI
                 {
                     leisureSite = citizen.getCitizenData().getHomeBuilding().getPosition();
                 }
-            }
-            else
-            {
-                citizen.getCitizenAI().setCurrentDelay(60 * 20);
-                return GO_TO_LEISURE_SITE;
+                else
+                {
+                    leisureSite = citizen.getCitizenColonyHandler().getColony().getCenter();
+                }
+
+                if (leisureSite != null)
+                {
+                    citizen.getCitizenAI().setCurrentDelay(60 * 20);
+                    return GO_TO_LEISURE_SITE;
+                }
             }
         }
 
