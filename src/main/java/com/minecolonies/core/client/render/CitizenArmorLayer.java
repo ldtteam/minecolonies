@@ -87,7 +87,7 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
             if (gameProfile != null)
             {
                 poseStack.pushPose();
-                poseStack.scale(1.1575F, -1.1575F, -1.1575F);
+                poseStack.scale(1.0F, -1.0F, -1.0F);
 
                 final CompoundTag compoundTag = new CompoundTag();
                 compoundTag.putUUID("Id", citizenDataView.getCustomTextureUUID());
