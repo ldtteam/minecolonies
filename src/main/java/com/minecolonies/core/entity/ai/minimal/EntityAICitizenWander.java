@@ -214,12 +214,12 @@ public class EntityAICitizenWander implements IStateAI
                 {
                     leisureSite = citizen.getCitizenColonyHandler().getColony().getCenter();
                 }
+            }
 
-                if (leisureSite != null)
-                {
-                    citizen.getCitizenAI().setCurrentDelay(60 * 20);
-                    return GO_TO_LEISURE_SITE;
-                }
+            if (leisureSite != null)
+            {
+                citizen.getCitizenAI().setCurrentDelay(60 * 20);
+                return GO_TO_LEISURE_SITE;
             }
         }
 
