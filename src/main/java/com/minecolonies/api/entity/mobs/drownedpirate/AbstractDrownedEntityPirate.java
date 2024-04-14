@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
@@ -54,11 +55,9 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
     @Override
     public void playAmbientSound()
     {
-        final SoundEvent soundevent = this.getAmbientSound();
-
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
-            this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(this.isInWater() ? SoundEvents.DROWNED_AMBIENT_WATER : SoundEvents.DROWNED_AMBIENT, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
