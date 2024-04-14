@@ -7,11 +7,13 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
+import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction;
 import com.minecolonies.core.network.messages.server.colony.InteractionClose;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -58,6 +60,12 @@ public class WindowInteraction extends AbstractWindowSkeleton
         super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
         this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
+        registerButton(BUTTON_CANCEL, this::cancelClicked);
+    }
+
+    private void cancelClicked()
+    {
+        close();
     }
 
     /**
@@ -86,6 +94,12 @@ public class WindowInteraction extends AbstractWindowSkeleton
         window.findPaneOfTypeByID("requestItem", ItemIcon.class).hide();
 
         final IInteractionResponseHandler handler = interactions.get(currentInteraction);
+        if (handler.getPriority().getPriority() <= ChatPriority.CHITCHAT.getPriority() && currentInteraction > 0 && !(handler instanceof QuestDialogueInteraction))
+        {
+            currentInteraction++;
+            setupInteraction();
+            return;
+        }
         handler.onOpened(Minecraft.getInstance().player);
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         group.getChildren().clear();
@@ -100,7 +114,6 @@ public class WindowInteraction extends AbstractWindowSkeleton
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);
-
 
             final int textLen = mc.font.width(component.getString());
             int buttonHeight = BUTTON_HEIGHT;
@@ -152,7 +165,11 @@ public class WindowInteraction extends AbstractWindowSkeleton
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (!interactions.isEmpty())
+        if (button.getID().equals(BUTTON_CANCEL))
+        {
+            super.onButtonClicked(button);
+        }
+        else if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
             try

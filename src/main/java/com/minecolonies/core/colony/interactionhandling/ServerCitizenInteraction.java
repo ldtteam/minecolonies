@@ -28,8 +28,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.core.colony.interactionhandling.StandardInteraction.INTERACTION_R_IGNORE;
-import static com.minecolonies.core.colony.interactionhandling.StandardInteraction.INTERACTION_R_REMIND;
+import static com.minecolonies.core.colony.interactionhandling.StandardInteraction.*;
 
 /**
  * The server side interaction response handler.
@@ -143,13 +142,20 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     {
         if (response.getContents() instanceof TranslatableContents)
         {
-            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
+            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
+                // 6 hours later
+                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 60 * 6));
             }
-            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
+            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
             {
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
+                // 1 hour later
+                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 60));
+            }
+            else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY) || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_SKIP))
+            {
+                // 5 minutes
+                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 5));
             }
         }
     }

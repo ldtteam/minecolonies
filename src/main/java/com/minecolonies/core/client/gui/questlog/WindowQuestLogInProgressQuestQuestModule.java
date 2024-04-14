@@ -89,7 +89,7 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
      */
     private Component getQuestGiverName(final IColonyView colonyView, final IQuestInstance quest)
     {
-        final ICitizenDataView citizen = colonyView.getCitizen(quest.getQuestGiverId());
+        final ICitizenDataView citizen = colonyView.getCitizen(quest.getQuestTarget());
         if (citizen != null)
         {
             return Component.literal(citizen.getName());

@@ -79,15 +79,15 @@ public class PathingOptions
     /**
      * Can swim
      */
-    private boolean canSwim            = false;
+    private boolean canSwim          = false;
     /**
      * Allowed to enter doors?
      */
-    private boolean enterDoors   = false;
+    private boolean enterDoors       = false;
     /**
      * Allowed to open doors?
      */
-    private boolean canOpenDoors = false;
+    private boolean canOpenDoors     = false;
     /**
      * Whether to path through vines.
      */
@@ -96,12 +96,17 @@ public class PathingOptions
     /**
      * Whether to path through dangerous blocks.
      */
-    private boolean canPassDanger  = false;
+    private boolean canPassDanger = false;
 
     /**
      * Whether the entity can walk underwater.
      */
     private boolean walkUnderWater = false;
+
+    /**
+     * Whether we can drop down more than one block
+     */
+    public boolean canDrop = true;
 
     public PathingOptions()
     {}
@@ -287,6 +292,7 @@ public class PathingOptions
         canPassDanger = pathingOptions.canPassDanger;
         randomnessFactor = pathingOptions.randomnessFactor;
         walkUnderWater = pathingOptions.walkUnderWater;
+        canDrop = pathingOptions.canDrop;
     }
 
 }

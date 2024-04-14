@@ -39,6 +39,17 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             head.xRot = getActualRotation(citizen);
         }
+
+        if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTextureUUID() != null)
+        {
+            head.visible = false;
+            hat.visible = false;
+        }
+        else
+        {
+            head.visible = true;
+            hat.visible = true;
+        }
     }
 
     public static LayerDefinition createMesh()
@@ -78,6 +89,6 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             return false;
         }
-        return citizen.getCitizenDataView() == null || citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty();
+        return citizen.getCitizenDataView() == null || (citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty() && citizen.getCitizenDataView().getCustomTextureUUID() == null);
     }
 }

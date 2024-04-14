@@ -7,7 +7,7 @@
   "triggers": [
     {
       "type": "minecolonies:random",
-      "rarity": 500
+      "rarity": 10000000
     },
     {
       "type": "minecolonies:citizen",
