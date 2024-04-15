@@ -10,6 +10,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -183,12 +184,14 @@ public class WindowResourceList extends AbstractWindowSkeleton
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
         if (moduleView.getWorkOrderId() > -1)
         {
-            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(moduleView.getBuildingView()
-                                                                                                .getColony()
-                                                                                                .getWorkOrder(moduleView.getWorkOrderId())
-                                                                                                .getDisplayName()
-                                                                                                .getString()
-                                                                                                .replace("\n", " ")));
+            final IWorkOrderView workOrderView = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
+            if (workOrderView != null)
+            {
+                findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(workOrderView
+                                                                                                    .getDisplayName()
+                                                                                                    .getString()
+                                                                                                    .replace("\n", " ")));
+            }
         }
     }
 
