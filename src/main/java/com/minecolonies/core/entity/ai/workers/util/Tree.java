@@ -236,17 +236,17 @@ public class Tree
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
-        if (checkFitsBase)
-        {
-            // Check if the tree's base log variant fits the leaf
-            if (Compatibility.isDynamicLeaf(block))
+            if (checkFitsBase)
             {
-                if (!isDynamicTree() || !Compatibility.isDynamicFamilyFitting(pos, location, world))
+                // Check if the tree's base log variant fits the leaf
+                if (Compatibility.isDynamicLeaf(block))
                 {
-                    return null;
+                    if (!isDynamicTree() || !Compatibility.isDynamicFamilyFitting(pos, location, world))
+                    {
+                        return null;
+                    }
                 }
             }
-        }
 
             // Dynamic trees is using a custom Drops function
             if (Compatibility.isDynamicLeaf(block))
