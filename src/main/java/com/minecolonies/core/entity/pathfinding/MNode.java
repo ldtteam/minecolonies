@@ -367,6 +367,16 @@ public class MNode implements Comparable<MNode>
     }
 
     /**
+     * Get the added index
+     *
+     * @return
+     */
+    public int getCounterAdded()
+    {
+        return counterAdded;
+    }
+
+    /**
      * Generate a pseudo-unique key for identifying a given node by it's coordinates Encodes the lowest 12 bits of x,z and all useful bits of y. This creates unique keys for all
      * blocks within a 4096x256x4096 cube, which is FAR bigger volume than one should attempt to pathfind within
      *

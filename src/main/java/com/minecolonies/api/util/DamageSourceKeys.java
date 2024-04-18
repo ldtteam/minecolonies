@@ -36,4 +36,8 @@ public class DamageSourceKeys
     public static ResourceKey<DamageType> AMAZON = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "amazon"));
     public static ResourceKey<DamageType> AMAZONSPEARMAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "amazonspearman"));
     public static ResourceKey<DamageType> AMAZONCHIEF = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "amazonchief"));
+    public static ResourceKey<DamageType> DROWNED_PIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "drownedpirate"));
+    public static ResourceKey<DamageType> DROWNED_CHIEFPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "drownedchiefpirate"));
+    public static ResourceKey<DamageType> DROWNED_ARCHERPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "drownedarcherpirate"));
+
 }

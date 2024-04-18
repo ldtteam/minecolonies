@@ -11,6 +11,7 @@ import com.minecolonies.api.quests.IQuestGiver;
 import com.minecolonies.api.quests.IQuestParticipant;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -383,6 +384,18 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     }
 
     /**
+     * Setter of the custom texture.
+     * @param texture the texture uuid.
+     */
+    void setCustomTexture(UUID texture);
+
+    /**
+     * Get custom texture uuid.
+     * @return uuid to return.
+     */
+    UUID getCustomTexture();
+
+    /**
      * Sets the citizen idle for a certain amount of days
      *
      * @param days amount of days
@@ -413,4 +426,10 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @param player the player that interacted
      */
     void setInteractedRecently(final UUID player);
+
+    /**
+     * If any quest is assigned to the citizen.
+     * @return true if so.
+     */
+    boolean hasQuestAssignment();
 }

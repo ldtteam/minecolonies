@@ -6,9 +6,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -46,6 +54,9 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
     public static final String VISITOR_RECRUITCOST      = "recruitcost";
     public static final String VISITOR_RECRUITCOSTCOUNT = "recruitcostcount";
     public static final String VISITOR_GENDER           = "gender";
+    public static final String VISITOR_VOICE_PROFILE    = "voiceprofile";
+    public static final String VISITOR_PRIMARY_SKILL    = "primaryskill";
+    public static final String VISITOR_SECONDARY_SKILL  = "secondaryskill";
 
     /**
      * List of custom visitor data
@@ -123,6 +134,21 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
                 }
             }
 
+            if (data.has(VISITOR_VOICE_PROFILE))
+            {
+                dataEntry.voiceProfile = data.get(VISITOR_VOICE_PROFILE).getAsInt();
+            }
+
+            if (data.has(VISITOR_PRIMARY_SKILL))
+            {
+                dataEntry.primarySkill = data.get(VISITOR_PRIMARY_SKILL).getAsString();
+            }
+
+            if (data.has(VISITOR_SECONDARY_SKILL))
+            {
+                dataEntry.secondarySkill = data.get(VISITOR_SECONDARY_SKILL).getAsString();
+            }
+
             if (data.has(VISITOR_GENDER))
             {
                 dataEntry.gender = data.get(VISITOR_GENDER).getAsString().substring(0, 1);
@@ -182,6 +208,17 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
         private String gender = null;
 
         /**
+         * Voice profile setting.
+         */
+        private int voiceProfile = -1;
+
+        /**
+         * Skill settings.
+         */
+        private String primarySkill = null;
+        private String secondarySkill = null;
+
+        /**
          * Modifies the given visitor data
          *
          * @param visitorData
@@ -216,6 +253,21 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
             if (storykey != null)
             {
                 visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+            }
+
+            if (primarySkill != null)
+            {
+                visitorData.getCitizenSkillHandler().incrementLevel(Skill.valueOf(primarySkill), MathUtils.RANDOM.nextInt(20));
+            }
+
+            if (secondarySkill != null)
+            {
+                visitorData.getCitizenSkillHandler().incrementLevel(Skill.valueOf(secondarySkill), MathUtils.RANDOM.nextInt(20));
+            }
+
+            if (voiceProfile >= 0)
+            {
+                visitorData.getVoiceProfile();
             }
 
             visitorData.markDirty(0);

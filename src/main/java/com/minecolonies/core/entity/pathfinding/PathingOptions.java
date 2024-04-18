@@ -8,14 +8,19 @@ public class PathingOptions
     // x2: Weak dislike, x3: clear dislike, x4 strong dislike x5 very strong dislike
 
     /**
+     * Maximum cost used
+     */
+    public static final int MAX_COST = 25;
+
+    /**
      * Additional cost of jumping
      */
-    public double jumpCost = 3D;
+    public double jumpCost = 2D;
 
     /**
      * Additional cost of dropping
      */
-    public double dropCost = 2D;
+    public double dropCost = 1D;
 
     /**
      * Cost improvement of paths - base 1.
@@ -30,32 +35,37 @@ public class PathingOptions
     /**
      * The rails exit cost.
      */
-    public double railsExitCost = 5;
+    public double railsExitCost = 4;
 
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 3D;
+    public double swimCost = 2D;
 
     /**
      * Additional cost of cave air.
      */
-    public double caveAirCost = 4D;
+    public double caveAirCost = 3D;
 
     /**
      * Additional cost enter entering water
      */
-    public double swimCostEnter = 25D;
+    public double swimCostEnter = 24D;
 
     /**
      * Cost to traverse trap doors
      */
-    public double traverseToggleAbleCost = 10D;
+    public double traverseToggleAbleCost = 5D;
 
     /**
      * Cost to climb a non ladder.
      */
-    public double nonLadderClimbableCost = 4D;
+    public double nonLadderClimbableCost = 3D;
+
+    /**
+     * Cost for walking within shapes(e.g. panels)
+     */
+    public double walkInShapesCost = 2D;
 
     /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
@@ -69,24 +79,34 @@ public class PathingOptions
     /**
      * Can swim
      */
-    private boolean canSwim            = false;
+    private boolean canSwim          = false;
     /**
      * Allowed to enter doors?
      */
-    private boolean enterDoors   = false;
+    private boolean enterDoors       = false;
     /**
      * Allowed to open doors?
      */
-    private boolean canOpenDoors = false;
+    private boolean canOpenDoors     = false;
     /**
      * Whether to path through vines.
      */
-    private boolean canClimbNonLadders = false;
+    private boolean canClimbAdvanced = false;
 
     /**
      * Whether to path through dangerous blocks.
      */
-    private boolean canPassDanger  = false;
+    private boolean canPassDanger = false;
+
+    /**
+     * Whether the entity can walk underwater.
+     */
+    private boolean walkUnderWater = false;
+
+    /**
+     * Whether we can drop down more than one block
+     */
+    public boolean canDrop = true;
 
     public PathingOptions()
     {}
@@ -106,9 +126,9 @@ public class PathingOptions
         return canUseRails;
     }
 
-    public boolean canClimbNonLadders()
+    public boolean canClimbAdvanced()
     {
-        return canClimbNonLadders;
+        return canClimbAdvanced;
     }
 
     public void setCanUseRails(final boolean canUseRails)
@@ -116,9 +136,9 @@ public class PathingOptions
         this.canUseRails = canUseRails;
     }
 
-    public void setCanClimbNonLadders(final boolean canClimbNonLadders)
+    public void setCanClimbAdvanced(final boolean canClimbAdvanced)
     {
-        this.canClimbNonLadders = canClimbNonLadders;
+        this.canClimbAdvanced = canClimbAdvanced;
     }
 
     public boolean canSwim()
@@ -149,6 +169,15 @@ public class PathingOptions
     public boolean canPassDanger()
     {
         return canPassDanger;
+    }
+    public boolean canWalkUnderWater()
+    {
+        return walkUnderWater;
+    }
+
+    public void setWalkUnderWater(final boolean walkUnderWater)
+    {
+        this.walkUnderWater = walkUnderWater;
     }
 
     public PathingOptions withStartSwimCost(final double startSwimCost)
@@ -229,6 +258,17 @@ public class PathingOptions
     }
 
     /**
+     * Set under water walking opening capability
+     * @param walkUnderWater whether we can walk underwater
+     * @return
+     */
+    public PathingOptions withWalkUnderWater(final boolean walkUnderWater)
+    {
+        setWalkUnderWater(walkUnderWater);
+        return this;
+    }
+
+    /**
      * Imports all options from the given other pathing options
      * @param pathingOptions
      */
@@ -248,9 +288,11 @@ public class PathingOptions
         canSwim = pathingOptions.canSwim;
         enterDoors = pathingOptions.enterDoors;
         canOpenDoors = pathingOptions.canOpenDoors;
-        canClimbNonLadders = pathingOptions.canClimbNonLadders;
+        canClimbAdvanced = pathingOptions.canClimbAdvanced;
         canPassDanger = pathingOptions.canPassDanger;
         randomnessFactor = pathingOptions.randomnessFactor;
+        walkUnderWater = pathingOptions.walkUnderWater;
+        canDrop = pathingOptions.canDrop;
     }
 
 }

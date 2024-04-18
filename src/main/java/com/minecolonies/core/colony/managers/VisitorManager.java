@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
@@ -77,11 +78,26 @@ public class VisitorManager implements IVisitorManager
     {
         if (visitor.getCivilianID() == 0 || visitorMap.get(visitor.getCivilianID()) == null)
         {
+            if (!visitor.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
             visitor.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
         final ICitizenData data = visitorMap.get(visitor.getCivilianID());
+
+        if (data == null || !visitor.getUUID().equals(data.getUUID()))
+        {
+            if (!visitor.isAddedToWorld())
+            {
+                Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+            }
+            visitor.remove(Entity.RemovalReason.DISCARDED);
+            return;
+        }
+
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
         if (!existingCitizen.isPresent())
@@ -104,6 +120,10 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
+        if (!visitor.isAddedToWorld())
+        {
+            Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
+        }
         visitor.remove(Entity.RemovalReason.DISCARDED);
     }
 
@@ -225,10 +245,16 @@ public class VisitorManager implements IVisitorManager
             return data;
         }
 
+        citizenEntity.setUUID(data.getUUID());
         citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
         world.addFreshEntity(citizenEntity);
 
-        citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+        citizenEntity.setCitizenId(data.getId());
+        citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
+        if (citizenEntity.isAddedToWorld())
+        {
+            citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+        }
 
         return data;
     }

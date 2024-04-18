@@ -169,7 +169,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, false))
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null))
         {
             getResult().treeLocation = pos.immutable();
             return true;
@@ -191,7 +191,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double modifyCost(double cost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(double cost, final MNode parent, final boolean swimstart, final boolean swimming, final int x, final int y, final int z, final BlockState state)
     {
         if (!state.isAir() && state.is(BlockTags.LEAVES))
         {

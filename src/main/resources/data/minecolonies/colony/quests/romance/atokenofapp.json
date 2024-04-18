@@ -1,0 +1,143 @@
+{
+  "name": "A Token of Appreciation",
+  "parents": [
+    "minecolonies:romance/aromanticgesture"
+  ],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 10000000
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:romance/aromanticgesture"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hey, thank you so much for delivering that poppy to me earlier. It really made my day. I was wondering if I could ask you for another favour?",
+      "options": [
+        {
+          "answer": "Of course, what do you need?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "I have a friend who is feeling a bit down and I want to cheer them up. Could you bring $1 this gift for me?",
+            "options": [
+              {
+                "answer": "Sure, I'll be happy to help.",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "I'm sorry, but I'm a bit busy right now.",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Oh, that's too bad. Maybe another time then.",
+                  "options": [
+                    {
+                      "answer": "Sure, I'll keep it in mind.",
+                      "result": {
+                        "type": "minecolonies:return"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I'm sorry, but I can't help you right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "Hi, what do you want?",
+      "options": [
+        {
+          "answer": "Oh, hello! $0 told me to bring you a gift to cheer you up.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "How kind of them! Thank you so much!",
+            "options": [
+              {
+                "answer": "No Problem!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 1,
+        "item": "minecraft:dandelion",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0, 1],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Thank you so much for delivering that gift. You're a true friend.",
+      "options": [
+        {
+          "answer": "No problem, glad I could help.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:emerald",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 2,
+        "days": 7
+      }
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
@@ -155,7 +155,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
             for (final ItemStack item : items)
             {
-                building.getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + item.getItem().getDescriptionId(), item.getCount());
+                building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + item.getItem().getDescriptionId(), item.getCount());
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, (worker.getInventoryCitizen()));
             }
         }

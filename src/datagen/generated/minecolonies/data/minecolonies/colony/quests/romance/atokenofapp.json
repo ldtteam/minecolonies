@@ -1,0 +1,146 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.romance.atokenofapp",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.romance.atokenofapp.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.romance.atokenofapp.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.romance.atokenofapp.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.romance.atokenofapp.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:return"
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.romance.atokenofapp.obj0.answer0.reply.answer1.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.romance.atokenofapp.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.romance.atokenofapp.obj0.answer1",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.romance.atokenofapp.obj0"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.romance.atokenofapp.obj1.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.romance.atokenofapp.obj1.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ],
+            "text": "minecolonies.quests.romance.atokenofapp.obj1.answer0.reply"
+          }
+        }
+      ],
+      "target": 1,
+      "text": "minecolonies.quests.romance.atokenofapp.obj1"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:dandelion",
+        "next-objective": 3,
+        "qty": 1,
+        "target": 1
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.romance.atokenofapp.obj3.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.romance.atokenofapp.obj3",
+      "unlocks-rewards": [
+        0,
+        1
+      ]
+    }
+  ],
+  "parents": [
+    "minecolonies:romance/aromanticgesture"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:emerald",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "days": 7,
+        "qty": 2,
+        "target": 0
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 10000000
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "finpartquests": [
+            "minecolonies:romance/aromanticgesture"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ]
+}

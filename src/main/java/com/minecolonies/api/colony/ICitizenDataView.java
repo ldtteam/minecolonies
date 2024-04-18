@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ICitizenDataView extends ICitizen
 {
@@ -220,6 +221,12 @@ public interface ICitizenDataView extends ICitizen
      * @param position the pos of the home building.
      */
     void setHomeBuilding(BlockPos position);
+
+    /**
+     * Get UUID of the custom texture.
+     * @return the uuid.
+     */
+    UUID getCustomTextureUUID();
 
     /**
      * Get the colony this citizen belongs to.

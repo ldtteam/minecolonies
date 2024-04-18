@@ -168,7 +168,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
               || curBlock instanceof IBuilderUndestroyable
               || curBlock == Blocks.BEDROCK)
         {
-            if (curBlockState.liquid())
+            if (!curBlockState.getFluidState().isEmpty())
             {
                 world.removeBlock(blockToMine, false);
             }
@@ -476,6 +476,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         {
             pathBackupFactor++;
             pathResult = getRandomNavigationPath(range * pathBackupFactor, pos);
+        }
+
+        if (pathResult == null)
+        {
+            return null;
         }
 
         if (pathResult.isPathReachingDestination())

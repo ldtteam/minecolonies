@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler.HORIZONTAL_DIRS;
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 
 /**
  * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
@@ -148,7 +148,15 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected double modifyCost(final double cost, final MNode parent, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(
+      final double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state)
     {
         double modifier = addCost;
         addCost = 1.0;

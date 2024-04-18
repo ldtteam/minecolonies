@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,9 +20,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
+
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 
 /**
  * Stuck handler for pathing
@@ -34,15 +35,15 @@ public class PathingStuckHandler implements IStuckHandler
     private static final double MIN_TARGET_DIST = 3;
 
     /**
-     * All directions.
-     */
-    public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
-
-    /**
      * Constants related to tp.
      */
     private static final int MIN_TP_DELAY    = 120 * 20;
     private static final int MIN_DIST_FOR_TP = 10;
+
+    /**
+     * Rough amount of ticks taken to travel one block
+     */
+    private static final int TICKS_PER_BLOCK = 7;
 
     /**
      * Amount of path steps allowed to teleport on stuck, 0 = disabled
@@ -121,7 +122,8 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * The start position of moving away unstuck
      */
-    private BlockPos moveAwayStartPos = BlockPos.ZERO;
+    private BlockPos  moveAwayStartPos = BlockPos.ZERO;
+    private Direction movingAwayDir    = Direction.EAST;
 
     private Random rand = new Random();
 
@@ -208,14 +210,28 @@ public class PathingStuckHandler implements IStuckHandler
             }
             else
             {
-                if (lastPathIndex != -1 && (stuckLevel == 0 || navigator.getPath().getTarget().distSqr(prevDestination) < 25))
+                if (lastPathIndex != -1)
                 {
-                    progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
-
-                    if (progressedNodes > 5 && (navigator.getPath().getEndNode() == null || !moveAwayStartPos.equals(navigator.getPath().getEndNode().asBlockPos())))
+                    if (lastPathIndex != navigator.getPath().getNextNodeIndex())
                     {
-                        // Not stuck when progressing
-                        resetStuckTimers();
+                        // Delay next action when the entity is moving
+                        delayToNextUnstuckAction = Math.max(delayToNextUnstuckAction, 100);
+                    }
+                    else if (lastPathIndex < 2 && navigator.getPath().getNodeCount() > 2)
+                    {
+                        // Skip ahead on the node index, incase the starting position is bad
+                        navigator.getPath().setNextNodeIndex(2);
+                    }
+
+                    if ((stuckLevel == 0 || navigator.getPath().getTarget().distSqr(prevDestination) < 25))
+                    {
+                        progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
+
+                        if (progressedNodes > 5 && (navigator.getPath().getEndNode() == null || !moveAwayStartPos.equals(navigator.getPath().getEndNode().asBlockPos())))
+                        {
+                            // Not stuck when progressing
+                            resetStuckTimers();
+                        }
                     }
                 }
             }
@@ -267,7 +283,9 @@ public class PathingStuckHandler implements IStuckHandler
 
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
-                if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i).above()))
+                if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position())
+                  .relative(facing, i)
+                  .above()))
                 {
                     breakBlocksAhead(world, BlockPos.containing(entity.position()).relative(facing, i - 1), facing);
                     break;
@@ -301,10 +319,10 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         // Move away, with chance to skip this.
-        if (stuckLevel == 1 && rand.nextDouble() > chanceToByPassMovingAway)
+        if (stuckLevel == 1 && rand.nextDouble() > chanceToByPassMovingAway
+              || ((stuckLevel >= 3 && stuckLevel <= 8) && !(canBreakBlocks || canBuildLeafBridges || canPlaceLadders) && rand.nextBoolean()))
         {
-            stuckLevel++;
-            delayToNextUnstuckAction = 300;
+            delayToNextUnstuckAction = 600;
 
             if (navigator.getPath() != null)
             {
@@ -316,7 +334,10 @@ public class PathingStuckHandler implements IStuckHandler
             }
 
             navigator.stop();
-            navigator.moveAwayFromXYZ(navigator.getOurEntity().blockPosition(), 10, 1.0f, false);
+            final int range = ColonyConstants.rand.nextInt(20) + BlockPosUtil.distManhattan(navigator.ourEntity.blockPosition(), prevDestination);
+            navigator.moveTowards(navigator.getOurEntity().blockPosition().relative(movingAwayDir, 40), range, 1.0f);
+            movingAwayDir = movingAwayDir.getClockWise();
+            navigator.setPauseTicks(range * TICKS_PER_BLOCK);
             return;
         }
 
@@ -540,7 +561,8 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final Level world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if ((canBreakBlocks || state.canBeReplaced() || state.isAir()) && state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(ModTags.indestructible))
+        if ((canBreakBlocks || state.canBeReplaced() || state.isAir()) && state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(
+          ModTags.indestructible))
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {

@@ -42,8 +42,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_PARTICLE_RANGE;
-import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static com.minecolonies.core.util.WorkerUtil.hasTooManyExternalItemsInInv;
@@ -145,6 +144,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 if (building.isInBuilding(worker.blockPosition()))
                 {
+                    setDelay(TICKS_20 * 20);
                     worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
                 }
                 else
@@ -359,8 +359,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 remaining = inputStorage.getAmount() * Math.max(job.getMaxCraftingCount(), 1);
             }
 
-            if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())
-                                   < remaining)
+            if (invCount + inProgressCount <= 0
+                  || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount()) < remaining)
             {
                 if (InventoryUtils.hasItemInProvider(building, predicate))
                 {

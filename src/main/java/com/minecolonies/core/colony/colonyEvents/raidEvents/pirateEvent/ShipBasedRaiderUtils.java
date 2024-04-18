@@ -8,12 +8,12 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -111,6 +111,21 @@ public final class ShipBasedRaiderUtils
      */
     public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName)
     {
+        return canSpawnShipAt(colony, spawnPoint, raidLevel, rotation, shipName, 3);
+    }
+
+    /**
+     * Checks whether a pirate event is possible at this place.
+     *
+     * @param colony     the colony.
+     * @param spawnPoint the spawn point.
+     * @param raidLevel  the raid level.
+     * @param rotation   the rotation.
+     * @param neededDepth the required depth.
+     * @return true if successful.
+     */
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName, final int neededDepth)
+    {
         if (spawnPoint.equals(colony.getCenter()))
         {
             return false;
@@ -122,7 +137,7 @@ public final class ShipBasedRaiderUtils
         final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
-        return canPlaceShipAt(spawnPoint, blueprint, world) || canPlaceShipAt(spawnPoint.below(), blueprint, world);
+        return canPlaceShipAt(spawnPoint, blueprint, world, neededDepth) || canPlaceShipAt(spawnPoint.below(), blueprint, world, neededDepth);
     }
 
     /**
@@ -134,6 +149,19 @@ public final class ShipBasedRaiderUtils
      * @return true if ship fits
      */
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world)
+    {
+        return canPlaceShipAt(pos, ship, world, 3);
+    }
+
+    /**
+     * Checks whether the structure fits the position.
+     *
+     * @param pos   the position to check
+     * @param ship  the ship structure to check
+     * @param world the world to use
+     * @return true if ship fits
+     */
+    public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world, final int neededDepth)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
         final List<Predicate<BlockState>> allowedShipMaterials = Lists.newArrayList();
@@ -147,10 +175,22 @@ public final class ShipBasedRaiderUtils
             allowedShipMaterials.add(BlockBehaviour.BlockStateBase::isAir);
         }
 
-        return isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
+        if (isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.85);
+          0.85))
+        {
+            for (int i = 0; i < neededDepth; i++)
+            {
+                if (!PathfindingUtils.isLiquid(world.getBlockState(pos.below(i))))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -253,6 +293,30 @@ public final class ShipBasedRaiderUtils
       final int minDistance,
       final int accuracy)
     {
+        return getLoadedPositionTowardsCenter(startPos, colony, maxDistance, maxDistancePos, minDistance, accuracy, false);
+    }
+
+    /**
+     * Returns a loaded blockpos towards the colony center
+     *
+     * @param startPos       the start position
+     * @param colony         the colony to use
+     * @param maxDistance    the max distance to go
+     * @param maxDistancePos the position from where to calc the max distance.
+     * @param minDistance    the min distance from colony center allowed
+     * @param accuracy       the accuracy of steps to check in percent, min 1.
+     * @param underWater     if an underwater spawn pos is okay.
+     * @return the position.
+     */
+    public static BlockPos getLoadedPositionTowardsCenter(
+      final BlockPos startPos,
+      final IColony colony,
+      final int maxDistance,
+      final BlockPos maxDistancePos,
+      final int minDistance,
+      final int accuracy,
+      final boolean underWater)
+    {
         if (accuracy < 1)
         {
             return null;
@@ -260,12 +324,24 @@ public final class ShipBasedRaiderUtils
 
         if (WorldUtil.isBlockLoaded(colony.getWorld(), startPos))
         {
-            return BlockPosUtil.findAround(colony.getWorld(),
-              startPos,
-              30,
-              3,
-              (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
-                pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir());
+            if (underWater)
+            {
+                return BlockPosUtil.findAround(colony.getWorld(),
+                  startPos,
+                  30,
+                  3,
+                  (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && !world.getBlockState(
+                    pos.above()).blocksMotion() && !world.getBlockState(pos.above(2)).blocksMotion());
+            }
+            else
+            {
+                return BlockPosUtil.findAround(colony.getWorld(),
+                  startPos,
+                  30,
+                  3,
+                  (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
+                    pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir());
+            }
         }
 
         BlockPos diff = colony.getCenter().subtract(startPos);
@@ -309,8 +385,7 @@ public final class ShipBasedRaiderUtils
             {
                 for (int z = -radius; z <= radius; z++)
                 {
-                    if (world.getBlockState(spawnPos.offset(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.offset(x, y + 1, z))
-                      .getBlock() instanceof AirBlock)
+                    if (!world.getBlockState(spawnPos.offset(x, y, z)).blocksMotion() && !world.getBlockState(spawnPos.offset(x, y + 1, z)).blocksMotion())
                     {
                         return spawnPos.offset(x, y, z);
                     }

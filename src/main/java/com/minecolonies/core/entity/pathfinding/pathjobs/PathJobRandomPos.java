@@ -1,25 +1,18 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles random pathing.
@@ -46,7 +39,11 @@ public class PathJobRandomPos extends AbstractPathJob
      * Box restriction area
      */
     private AABB     restrictionBox = null;
-    private BlockPos centerBox      = null;
+
+    /**
+     * Modifier to the heuristics
+     */
+    private double heuristicModifier = 1.0;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -68,8 +65,12 @@ public class PathJobRandomPos extends AbstractPathJob
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = -1;
 
-        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple();
-        this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
+        this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
+
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
+        {
+            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -122,29 +123,26 @@ public class PathJobRandomPos extends AbstractPathJob
           Math.max(startRestriction.getX(), endRestriction.getX()),
           Math.max(startRestriction.getY(), endRestriction.getY()),
           Math.max(startRestriction.getZ(), endRestriction.getZ()));
-        centerBox = BlockPos.containing(restrictionBox.getCenter());
 
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = -1;
 
-        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple();
-        this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
+        this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
     }
 
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.dist(destination, x, y, z);
+        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
     }
 
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        if (ColonyConstants.rand.nextInt(minDistFromStart * minDistFromStart) == 0
-              && (restrictionBox == null || restrictionBox.contains(n.x, n.y, n.z))
+        if ((restrictionBox == null || restrictionBox.contains(n.x, n.y, n.z))
               && BlockPosUtil.distSqr(start, n.x, n.y, n.z) > minDistFromStart * minDistFromStart
               && (maxDistToDest == -1 || BlockPosUtil.distSqr(destination, n.x, n.y, n.z) < this.maxDistToDest * this.maxDistToDest)
-              && !PathfindingUtils.isWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z))
+              && (getPathingOptions().canWalkUnderWater() || !PathfindingUtils.isWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z)))
               && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                    == SurfaceType.WALKABLE)
         {
@@ -156,7 +154,14 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double getEndNodeScore(@NotNull final MNode n)
     {
-        return -BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
+        return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
+    }
+
+    @Override
+    public void setPathingOptions(final PathingOptions pathingOptions)
+    {
+        super.setPathingOptions(pathingOptions);
+        getPathingOptions().canDrop = false;
     }
 
     /**

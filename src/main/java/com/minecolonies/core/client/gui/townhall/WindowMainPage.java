@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
@@ -284,18 +285,28 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+
+            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
               .paragraphBreak()
               .appendNL(Component.empty())
               .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
-              .paragraphBreak()
-              .build();
+              .paragraphBreak();
 
-            PaneBuilders.tooltipBuilder().hoverPane(namePane)
+
+            final AbstractTextBuilder.TooltipBuilder namePaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(namePane)
               .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
               .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak()
-              .build();
+              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+
+            if (isFeatureUnlocked.get() && !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+            {
+                textPaneToolTipBuilder.appendNL(Component.empty());
+                namePaneToolTipBuilder.appendNL(Component.empty());
+                textPaneToolTipBuilder.appendNL(Component.translatable("com.minecolonies.core.townhall.patreon.needs_owner"));
+                namePaneToolTipBuilder.appendNL(Component.translatable("com.minecolonies.core.townhall.patreon.needs_owner"));
+            }
+            textPaneToolTipBuilder.build();
+            namePaneToolTipBuilder.build();
         }
     }
 

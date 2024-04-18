@@ -1,0 +1,130 @@
+{
+  "max-occurrences": 10,
+  "name": "minecolonies.quests.general.hungrycourier",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.hungrycourier.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer0.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 1
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer0.reply"
+                }
+              },
+              {
+                "answer": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:return"
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply.answer1.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.general.hungrycourier.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.hungrycourier.obj0.answer1",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.hungrycourier.obj0"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:baked_potato",
+        "next-objective": 2,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.hungrycourier.obj2.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.hungrycourier.obj2",
+      "unlocks-rewards": [
+        0,
+        1
+      ]
+    }
+  ],
+  "parents": [],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:gold_ingot",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "days": 7,
+        "qty": 1,
+        "target": 0
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 50000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "match": {
+          "type": "minecolonies:warehouse",
+          "level": 3
+        },
+        "path": "buildingManager/buildings"
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:deliveryman"
+          }
+        }
+      }
+    }
+  ]
+}

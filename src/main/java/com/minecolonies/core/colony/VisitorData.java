@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import java.util.List;
 import java.util.Optional;
 

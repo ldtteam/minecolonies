@@ -288,7 +288,7 @@ public final class SoundUtils
             jobDesc = "unemployed";
         }
 
-        final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getSoundProfile()).getA();
+        final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getA();
         if (chance > rand.nextDouble() * ONE_HUNDRED)
         {
             worldIn.playSound(null,

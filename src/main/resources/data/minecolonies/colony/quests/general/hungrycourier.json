@@ -1,0 +1,128 @@
+{
+  "name": "The Hungry Deliveryman",
+  "parents": [],
+  "max-occurrences": 10,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 50000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:warehouse",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:deliveryman"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hey there, could I ask you a favour?",
+      "options": [
+        {
+          "answer": "Sure, what do you need?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "I'm starving and I forgot my lunch at home. Could you bring me some food?",
+            "options": [
+              {
+                "answer": "What kind of food do you want?",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "A baked potato would just hit the spot!",
+                  "options": [
+                    {
+                      "answer": "Got it. I'll be right back.",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "answer": "I'm sorry, I don't have any food on me.",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Ah, too bad. I guess I'll just have to make do until I get home.",
+                  "options": [
+                    {
+                      "answer": "I'll see if I can find something for you later.",
+                      "result": {
+                        "type": "minecolonies:return"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Sorry, I'm in a rush right now!",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:baked_potato",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0, 1],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh, this was great! Thanks a lot!",
+      "options": [
+        {
+          "answer": "You're welcome!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:gold_ingot",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}
+

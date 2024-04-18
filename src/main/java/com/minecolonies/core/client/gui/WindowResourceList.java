@@ -10,6 +10,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -182,7 +183,17 @@ public class WindowResourceList extends AbstractWindowSkeleton
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
+        if (moduleView.getWorkOrderId() > -1)
+        {
+            final IWorkOrderView workOrderView = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
+            if (workOrderView != null)
+            {
+                findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(workOrderView
+                                                                                                    .getDisplayName()
+                                                                                                    .getString()
+                                                                                                    .replace("\n", " ")));
+            }
+        }
     }
 
     /**

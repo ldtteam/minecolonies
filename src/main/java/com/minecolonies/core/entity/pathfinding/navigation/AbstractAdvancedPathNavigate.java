@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
@@ -97,11 +98,23 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
 
     /**
      * Attempt to move to a specific pos.
+     *
      * @param position the position to move to.
-     * @param speed the speed.
+     * @param speed    the speed.
      * @return true if successful.
      */
     public abstract boolean tryMoveToBlockPos(final BlockPos position, final double speed);
+
+    /**
+     * Attemps to move in the given direction, walking at least range blocks
+     *
+     * @param towards
+     * @param range
+     * @param speedFactor
+     * @return
+     */
+    @Nullable
+    public abstract PathResult<AbstractPathJob> moveTowards(BlockPos towards, double range, double speedFactor);
 
     /**
      * Used to path towards a random pos.
@@ -206,4 +219,11 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract void setStuckHandler(final IStuckHandler stuckHandler);
 
     public abstract void setSwimSpeedFactor(double factor);
+
+    /**
+     * Sets the navigation to not accept new jobs for a time
+     *
+     * @param pauseTicks
+     */
+    protected abstract void setPauseTicks(int pauseTicks);
 }

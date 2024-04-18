@@ -14,6 +14,7 @@ import java.util.List;
 
 import static com.minecolonies.core.colony.VisitorData.TAG_EXTRA_DATA;
 import static com.minecolonies.core.colony.VisitorData.TAG_VISITOR_TYPE;
+import java.util.Map;
 
 /**
  * View data for visitors

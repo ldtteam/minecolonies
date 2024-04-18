@@ -163,6 +163,11 @@ public class CitizenDataView implements ICitizenDataView
     private final List<ResourceLocation> participatingQuests = new ArrayList<>();
 
     /**
+     * Texture UUID.
+     */
+    protected UUID textureUUID;
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -406,6 +411,11 @@ public class CitizenDataView implements ICitizenDataView
         {
             participatingQuests.add(buf.readResourceLocation());
         }
+
+        if (buf.readBoolean())
+        {
+            textureUUID = buf.readUUID();
+        }
     }
 
     @Override
@@ -566,6 +576,12 @@ public class CitizenDataView implements ICitizenDataView
     public ResourceLocation getCustomTexture()
     {
         return null;
+    }
+
+    @Override
+    public UUID getCustomTextureUUID()
+    {
+        return textureUUID;
     }
 
     @Override

@@ -261,6 +261,9 @@ public class NetworkChannel
 
         // Resource scroll NBT share message
         registerMessage(++idx, ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);
+
+        // Crafting GUI
+        registerMessage(++idx, SwitchRecipeCraftingTeachingMessage.class, SwitchRecipeCraftingTeachingMessage::new);
     }
 
     private void setupInternalMessages()

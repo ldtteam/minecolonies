@@ -1,6 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -9,6 +12,8 @@ import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -22,6 +27,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -41,6 +47,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -1097,6 +1104,56 @@ public final class ItemStackUtils
         }
 
         return allItems.stream().map(ItemStorage::getItemStack).collect(Collectors.toSet());
+    }
+
+    /**
+     * Consume food helper.
+     *
+     * @param foodStack   the itemstack of food.
+     * @param citizen     the citizen entity.
+     * @param inventory optional inventory to insert stack into if not citizen.
+     */
+    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
+    {
+        final ICitizenData citizenData = citizen.getCitizenData();
+        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
+        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
+
+        final double satIncrease =
+          itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+
+        citizenData.increaseSaturation(satIncrease / 2.0);
+
+        // Special handling for these as those are stackable + have a return per item.
+        if (foodStack.getItem() instanceof HoneyBottleItem)
+        {
+            itemUseReturn = new ItemStack(Items.GLASS_BOTTLE);
+        }
+
+        if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
+        {
+            if (citizenData.getInventory().isFull() || (inventory != null && !inventory.add(itemUseReturn)))
+            {
+                InventoryUtils.spawnItemStack(
+                  citizen.level,
+                  citizen.getX(),
+                  citizen.getY(),
+                  citizen.getZ(),
+                  itemUseReturn
+                );
+            }
+            else
+            {
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), itemUseReturn);
+            }
+        }
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (citizenColony != null)
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
+        }
+        citizenData.markDirty(60);
     }
 }
 

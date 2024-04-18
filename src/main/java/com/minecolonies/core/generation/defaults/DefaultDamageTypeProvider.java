@@ -57,8 +57,11 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
                 Map.entry(DamageSourceKeys.PIRATE.location(), entityDamage(ModEntities.PIRATE)),
                 Map.entry(DamageSourceKeys.SHIELDMAIDEN.location(), entityDamage(ModEntities.SHIELDMAIDEN)),
                 Map.entry(DamageSourceKeys.SPEAR.location(), entityDamage(ModEntities.SPEAR)),
-                Map.entry(DamageSourceKeys.VISITOR.location(), entityDamage(ModEntities.VISITOR))
-        );
+                Map.entry(DamageSourceKeys.VISITOR.location(), entityDamage(ModEntities.VISITOR)),
+                Map.entry(DamageSourceKeys.DROWNED_PIRATE.location(), entityDamage(ModEntities.DROWNED_PIRATE)),
+                Map.entry(DamageSourceKeys.DROWNED_ARCHERPIRATE.location(), entityDamage(ModEntities.DROWNED_ARCHERPIRATE)),
+                Map.entry(DamageSourceKeys.DROWNED_CHIEFPIRATE.location(), entityDamage(ModEntities.DROWNED_CHIEFPIRATE))
+          );
     }
 
     @NotNull
