@@ -20,8 +20,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
@@ -37,7 +35,6 @@ public class RegularVisitorType implements IVisitorType
      */
     public static final SittingPositionData EXTRA_DATA_SITTING_POSITION = new SittingPositionData();
     public static final RecruitCostData     EXTRA_DATA_RECRUIT_COST     = new RecruitCostData();
-    public static final CustomTextureData   EXTRA_DATA_CUSTOM_TEXTURE   = new CustomTextureData();
 
     @Override
     public ResourceLocation getId()
@@ -60,7 +57,7 @@ public class RegularVisitorType implements IVisitorType
     @Override
     public List<IVisitorExtraData<?>> getExtraDataKeys()
     {
-        return List.of(EXTRA_DATA_SITTING_POSITION, EXTRA_DATA_RECRUIT_COST, EXTRA_DATA_CUSTOM_TEXTURE);
+        return List.of(EXTRA_DATA_SITTING_POSITION, EXTRA_DATA_RECRUIT_COST);
     }
 
     @Override
@@ -144,33 +141,6 @@ public class RegularVisitorType implements IVisitorType
         public void deserializeNBT(final CompoundTag compoundTag)
         {
             setValue(ItemStack.of(compoundTag.getCompound(TAG_VALUE)));
-        }
-    }
-
-    public static class CustomTextureData extends AbstractVisitorExtraData<Optional<UUID>>
-    {
-        private static final String TAG_VALUE = "value";
-
-        public CustomTextureData()
-        {
-            super("custom-texture", Optional.empty());
-        }
-
-        @Override
-        public CompoundTag serializeNBT()
-        {
-            final CompoundTag compound = new CompoundTag();
-            getValue().ifPresent(val -> compound.putUUID(TAG_VALUE, val));
-            return compound;
-        }
-
-        @Override
-        public void deserializeNBT(final CompoundTag compoundTag)
-        {
-            if (compoundTag.contains(TAG_VALUE))
-            {
-                setValue(Optional.of(compoundTag.getUUID(TAG_VALUE)));
-            }
         }
     }
 }

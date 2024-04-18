@@ -20,11 +20,9 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_CUSTOM_TEXTURE;
 import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 
 /**
@@ -221,7 +219,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
         {
             if (texture != null)
             {
-                visitorData.setExtraDataValue(EXTRA_DATA_CUSTOM_TEXTURE, Optional.of(texture));
+                visitorData.setCustomTexture(texture);
             }
 
             if (gender != null)

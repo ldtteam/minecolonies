@@ -13,15 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import java.util.List;
-import java.util.Optional;
 
 import static com.minecolonies.api.entity.visitor.ModVisitorTypes.VISITOR_TYPE_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE_UUID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
-import static com.minecolonies.core.entity.visitor.RegularVisitorType.*;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_SITTING_POSITION;
 
 /**
  * Data for visitors
@@ -154,10 +152,6 @@ public class VisitorData extends CitizenData implements IVisitorData
             final ItemStack itemStack = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
             itemStack.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
             setExtraDataValue(EXTRA_DATA_RECRUIT_COST, itemStack);
-            if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
-            {
-                setExtraDataValue(EXTRA_DATA_CUSTOM_TEXTURE, Optional.of(nbtTagCompound.getUUID(TAG_TEXTURE_UUID)));
-            }
         }
     }
 
