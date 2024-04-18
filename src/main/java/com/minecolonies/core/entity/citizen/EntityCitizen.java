@@ -1701,6 +1701,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         switch (slotType.getType())
         {
+            case HAND:
+                return super.getItemBySlot(slotType);
             case ARMOR:
                 if (citizenData != null)
                 {
