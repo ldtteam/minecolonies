@@ -2583,8 +2583,7 @@
   "death.attack.entity.minecolonies.drownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
   "entity.minecolonies.drownedchiefpirate": "Drowned Pirate Chief",
   "death.attack.entity.minecolonies.drownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
-  "com.minecolonies.core.exit_interactions": "Exit Interactions"
-  "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size.",
+  "com.minecolonies.core.exit_interactions": "Exit Interactions",
 
   "com.minecolonies.core.expedition.interaction": "Hello! I am going on an expedition to %s, but I need some people and supplies. Could you help me out?",
   "com.minecolonies.core.expedition.interaction.view": "View Expedition",
