@@ -121,6 +121,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         activeExpeditions.put(expedition.getId(), expedition);
         updateCaches();
 
+        colony.markDirty();
         dirty = true;
         return true;
     }
@@ -133,6 +134,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
             finishedExpeditions.add(activeExpeditions.remove(id));
             updateCaches();
 
+            colony.markDirty();
             dirty = true;
         }
     }

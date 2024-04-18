@@ -19,7 +19,7 @@ plugins {
   id "org.sonarqube" version "3.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
+apply from: 'https://raw.githubusercontent.com/Thodor12/OperaPublicaCreator/feature/allow_custom_run_folders/gradle/mod.gradle'
 
 configurations {
     library

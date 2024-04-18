@@ -2,13 +2,15 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Optional;
 
 /**
  * Manages the traveling system for a given colony.
  */
-public interface ITravelingManager
+public interface ITravelingManager extends INBTSerializable<CompoundTag>
 {
     /**
      * Get whether a citizen is currently travelling.
@@ -92,4 +94,18 @@ public interface ITravelingManager
      * Finishes travelling for all citizens currently away travelling.
      */
     void recallAllTravellingCitizens();
+
+    /**
+     * Whether the expedition manager class is dirty and the client needs to be updated.
+     *
+     * @return true if so.
+     */
+    boolean isDirty();
+
+    /**
+     * Update the dirty flag of the expedition manager.
+     *
+     * @param dirty the new dirty state.
+     */
+    void setDirty(boolean dirty);
 }

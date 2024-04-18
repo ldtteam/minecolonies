@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Implementation that manages the traveling system for a given colony.
  */
-public class TravelingManager implements ITravelingManager, INBTSerializable<CompoundTag>
+public class TravelingManager implements ITravelingManager
 {
     /**
      * The colony this manager belongs to.
@@ -34,6 +34,11 @@ public class TravelingManager implements ITravelingManager, INBTSerializable<Com
      * The map containing the information on which citizens are travelling.
      */
     private final Map<Integer, TravelerData> travelerDataMap = new HashMap<>();
+
+    /**
+     * Whether this manager is dirty and needs to sync to the client again.
+     */
+    private boolean dirty = false;
 
     /**
      * Default constructor.
@@ -61,6 +66,7 @@ public class TravelingManager implements ITravelingManager, INBTSerializable<Com
     public void startTravellingTo(final int citizenId, final BlockPos target, final int travelTimeInTicks, final boolean canRecall)
     {
         travelerDataMap.put(citizenId, new TravelerData(citizenId, target, travelTimeInTicks, canRecall));
+        dirty = true;
         colony.markDirty();
     }
 
@@ -70,6 +76,7 @@ public class TravelingManager implements ITravelingManager, INBTSerializable<Com
         if (travelerDataMap.containsKey(citizenId))
         {
             travelerDataMap.remove(citizenId);
+            dirty = true;
             colony.markDirty();
         }
     }
@@ -111,7 +118,20 @@ public class TravelingManager implements ITravelingManager, INBTSerializable<Com
 
         this.travelerDataMap.clear();
         this.travelerDataMap.putAll(travelersToKeep);
+        dirty = true;
         colony.markDirty();
+    }
+
+    @Override
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(final boolean dirty)
+    {
+        this.dirty = dirty;
     }
 
     /**

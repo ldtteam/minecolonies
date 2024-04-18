@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_STAGE_WILDERNESS;
+
 /**
  * Class for an expedition instance.
  */
@@ -167,27 +169,31 @@ public abstract class AbstractExpedition implements IExpedition
     @Override
     public void advanceStage(final Component header)
     {
+        final ExpeditionStage current = getCurrentStage();
+        // If the last inserted stage has not yielded any results yet, simply remove the stage and append the next one.
+        if (current.getRewards().isEmpty() && current.getKills().isEmpty() && current.getMembersLost().isEmpty())
+        {
+            this.results.pop();
+        }
         this.results.add(new ExpeditionStage(header));
     }
 
     @Override
     public void rewardFound(final ItemStack itemStack)
     {
-        this.results.getLast().addReward(itemStack);
+        getCurrentStage().addReward(itemStack);
     }
 
     @Override
     public void mobKilled(final EntityType<?> type)
     {
-        this.results.getLast().addKill(type);
+        getCurrentStage().addKill(type);
     }
 
     @Override
     public void memberLost(final IExpeditionMember<?> member)
     {
-        this.results.getLast().memberLost(member.getId());
-        member.died();
-
+        getCurrentStage().memberLost(member.getId());
         activeMembersCache = null;
     }
 
@@ -233,6 +239,21 @@ public abstract class AbstractExpedition implements IExpedition
         compound.put(TAG_RESULTS, resultsCompound);
 
         compound.putString(TAG_STATUS, status.name());
+    }
+
+    /**
+     * The currently active stage, or create a default one if none exists just yet.
+     *
+     * @return the current expedition stage.
+     */
+    @NotNull
+    private ExpeditionStage getCurrentStage()
+    {
+        if (results.isEmpty())
+        {
+            results.push(new ExpeditionStage(Component.translatable(EXPEDITION_STAGE_WILDERNESS)));
+        }
+        return results.getLast();
     }
 
     /**

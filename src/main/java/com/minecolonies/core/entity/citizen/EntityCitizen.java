@@ -1735,7 +1735,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         switch (slotType.getType())
         {
             case HAND:
-                return citizenData.getInventory().getHeldItem(slotType.equals(EquipmentSlot.MAINHAND) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                if (citizenData != null)
+                {
+                    return citizenData.getInventory().getHeldItem(slotType.equals(EquipmentSlot.MAINHAND) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+                }
             case ARMOR:
                 if (citizenData != null)
                 {

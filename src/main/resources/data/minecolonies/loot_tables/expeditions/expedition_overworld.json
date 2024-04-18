@@ -1,10 +1,13 @@
 {
   "pools": [
     {
-      "type": "loot_table",
-      "loot_table": "minecolonies:expeditions/structures/stronghold",
-      "weight": 1,
-      "quality": 5
+      "rolls": 1,
+      "entries" : [
+        {
+          "type": "loot_table",
+          "name": "minecolonies:expeditions/structures/stronghold"
+        }
+      ]
     }
   ]
 }

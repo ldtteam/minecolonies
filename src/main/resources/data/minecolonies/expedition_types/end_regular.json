@@ -3,7 +3,7 @@
   "to-text": "the End",
   "difficulty": "hard",
   "dimension": "minecraft:the_end",
-  "loot-table": "minecolonies:expedition_end",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
   "requirements": [
     {
       "type": "tool",

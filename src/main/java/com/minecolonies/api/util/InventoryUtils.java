@@ -3242,27 +3242,4 @@ public class InventoryUtils
         }
         return allInInv;
     }
-
-    /**
-     * Find the first possible weapon in the inventory (swords or bows)
-     *
-     * @param inventory the target inventory.
-     * @return the item stack containing the weapon or empty.
-     */
-    public static ItemStack getFirstWeapon(final IItemHandler inventory)
-    {
-        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.SWORD, 0, 5);
-        if (swordSlot != -1)
-        {
-            return inventory.getStackInSlot(swordSlot);
-        }
-
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.BOW, 0, 5);
-        if (bowSlot != -1)
-        {
-            return inventory.getStackInSlot(bowSlot);
-        }
-
-        return ItemStack.EMPTY;
-    }
 }

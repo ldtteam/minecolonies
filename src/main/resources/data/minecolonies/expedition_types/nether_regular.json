@@ -3,7 +3,7 @@
   "to-text": "the Nether",
   "difficulty": "medium",
   "dimension": "minecraft:the_nether",
-  "loot-table": "minecolonies:expedition_nether",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
   "requirements": [
     {
       "type": "tool",

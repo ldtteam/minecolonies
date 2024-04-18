@@ -243,6 +243,11 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
                     {
                         final float damageAmount = handleDamageReduction(attacker, colony.getWorld().damageSources().mobAttack(mob), (float) damage.getValue());
                         attacker.setHealth(Math.min(0, attacker.getHealth() - damageAmount));
+
+                        if (attacker.isDead())
+                        {
+                            getExpedition().memberLost(attacker);
+                        }
                     }
                 }
 
@@ -439,7 +444,6 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
             {
                 expedition.setStatus(ExpeditionStatus.RETURNED);
             }
-            return;
         }
 
         colony.getExpeditionManager().finishExpedition(expeditionId);
@@ -472,7 +476,7 @@ public class ColonyExpeditionEvent extends AbstractExpeditionEvent
     private void processLootTableEntry()
     {
         // Process the next item in the loot table deque.
-        final ItemStack nextItem = remainingItems.getFirst();
+        final ItemStack nextItem = remainingItems.pop();
         if (nextItem.equals(ItemStack.EMPTY))
         {
             return;

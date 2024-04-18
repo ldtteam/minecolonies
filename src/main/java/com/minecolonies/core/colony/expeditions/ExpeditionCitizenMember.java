@@ -205,8 +205,10 @@ public final class ExpeditionCitizenMember implements IExpeditionMember<ICitizen
             final CompoundTag armorCompound = new CompoundTag();
             armorCompound.putString(TAG_ARMOR_TYPE, armorEntry.getKey().getName());
             armorCompound.put(TAG_ARMOR_STACK, armorEntry.getValue().serializeNBT());
+            armorsCompound.add(armorCompound);
         }
         compound.put(TAG_ARMOR, armorsCompound);
+        compound.put(TAG_WEAPON, primaryWeapon.save(new CompoundTag()));
     }
 
     @Override

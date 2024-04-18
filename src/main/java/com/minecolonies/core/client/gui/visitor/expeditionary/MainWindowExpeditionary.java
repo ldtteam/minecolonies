@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.generic.ResourceItem;
@@ -35,6 +36,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -140,7 +142,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
         guardsComparator = new GuardsComparator(expedition);
         guards = visitorData.getColony().getCitizens().values().stream()
-                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard())
+                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard() && !f.getColony().getTravelingManager().isTravelling(f.getId()))
                    .collect(Collectors.toList());
         guards.sort(guardsComparator);
 
@@ -150,6 +152,29 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(ID_EXPEDITION_NAME, this::openVisitorInventory);
         registerButton(ID_EXPEDITION_START, this::startExpedition);
+    }
+
+    /**
+     * Find the first possible weapon in the inventory (swords or bows)
+     *
+     * @param inventory the target inventory.
+     * @return the item stack containing the weapon or empty.
+     */
+    public static ItemStack getFirstWeapon(final IItemHandler inventory)
+    {
+        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.SWORD, 0, 5);
+        if (swordSlot != -1)
+        {
+            return inventory.getStackInSlot(swordSlot);
+        }
+
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.BOW, 0, 5);
+        if (bowSlot != -1)
+        {
+            return inventory.getStackInSlot(bowSlot);
+        }
+
+        return ItemStack.EMPTY;
     }
 
     /**
@@ -310,7 +335,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
                 rowPane.findPaneOfTypeByID(ID_EXPEDITION_GUARDS_NAME, Text.class).setText(guard.getJobComponent().append(": ").append(Component.literal(guard.getName())));
 
-                renderGuardEquipment(InventoryUtils.getFirstWeapon(guard.getInventory()), ID_EXPEDITION_GUARDS_WEAPON, rowPane);
+                renderGuardEquipment(getFirstWeapon(guard.getInventory()), ID_EXPEDITION_GUARDS_WEAPON, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.HEAD), ID_EXPEDITION_GUARDS_HELMET, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.CHEST), ID_EXPEDITION_GUARDS_CHESTPLATE, rowPane);
                 renderGuardEquipment(guard.getInventory().getArmorInSlot(EquipmentSlot.LEGS), ID_EXPEDITION_GUARDS_LEGGINGS, rowPane);
