@@ -65,7 +65,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public static final String TAG_SPAWNERS      = "spawners";
     public static final String TAG_SHIPSIZE      = "shipSize";
     public static final String TAG_SHIPROTATION  = "shipRotation";
-    public static final String TAG_KILLED        = "killed";
+    public static final String TAG_RAIDER_KILL_COUNT = "raiderKillCount";
+    public static final String TAG_MAX_RAIDER_COUNT  = "maxRaiderCount";
 
     /**
      * The max distance for spawning raiders when the ship is unloaded
@@ -120,7 +121,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Reference to the currently active pirates for this event.
      */
-    private Map<Entity, UUID> raiders = new WeakHashMap<>();
+    protected Map<Entity, UUID> raiders = new WeakHashMap<>();
 
     /**
      * Entities which are to be respawned in a loaded chunk.
@@ -153,6 +154,16 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     protected List<BlockPos> wayPoints = new ArrayList<>();
 
     /**
+     * Max raider count.
+     */
+    protected int maxRaiderCount = 0;
+
+    /**
+     * Raider kill count.
+     */
+    protected int raiderKillCount = 0;
+
+    /**
      * Create a new ship based raid event.
      *
      * @param colony the colony.
@@ -160,7 +171,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public AbstractShipRaidEvent(@NotNull final IColony colony)
     {
         this.colony = colony;
-        id = colony.getEventManager().getAndTakeNextEventID();
+        this.id = colony.getEventManager().getAndTakeNextEventID();
     }
 
     @Override
@@ -356,6 +367,19 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             status = EventStatus.WAITING;
             MessageUtils.format(ALL_PIRATES_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
         }
+        raiderKillCount++;
+
+        if (!spawners.isEmpty() && raiderKillCount > maxRaiderCount/maxSpawners)
+        {
+            MessageUtils.format(STRUCTURE_SPAWNER_BREAKS, colony.getName()).sendTo(colony).forManagers();
+            colony.getWorld().removeBlock(spawners.remove(0), false);
+            raidBar.setProgress((float) spawners.size() / maxSpawners);
+            if (spawners.isEmpty())
+            {
+                daysToGo = 1;
+                MessageUtils.format(ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
+            }
+        }
     }
 
     @Override
@@ -497,6 +521,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
         compound.putInt(TAG_SHIPROTATION, shipRotation);
         BlockPosUtil.writePosListToNBT(compound, TAG_WAYPOINT, wayPoints);
+        compound.putInt(TAG_MAX_RAIDER_COUNT, maxRaiderCount);
+        compound.putInt(TAG_RAIDER_KILL_COUNT, raiderKillCount);
         return compound;
     }
 
@@ -518,6 +544,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
         shipRotation = compound.getInt(TAG_SHIPROTATION);
         wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
+        maxRaiderCount = compound.getInt(TAG_MAX_RAIDER_COUNT);
+        raiderKillCount = compound.getInt(TAG_RAIDER_KILL_COUNT);
     }
 
     @Override
@@ -551,5 +579,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             return !spawners.isEmpty() || !raiders.isEmpty() || !respawns.isEmpty();
         }
         return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
+    }
+
+    @Override
+    public void setMaxRaiderCount(final int maxRaiderCount)
+    {
+        this.maxRaiderCount = maxRaiderCount;
     }
 }

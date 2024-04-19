@@ -16,14 +16,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -109,7 +109,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
 
             updateRaidBar();
 
-            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+            MessageUtils.format(RAID_EVENT_MESSAGE_U_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
               .withPriority(MessageUtils.MessagePriority.DANGER)
               .sendTo(colony).forManagers();
             colony.markDirty();
@@ -145,7 +145,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     @Override
     public EntityType<?> getArcherRaiderType()
     {
-        return ModEntities.DROWNED_ARCHERPIRATE;
+        return null;
     }
 
     @Override
@@ -158,5 +158,26 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     protected MutableComponent getDisplayName()
     {
         return Component.translatable(RAID_PIRATE);
+    }
+
+    @Override
+    protected void updateRaidBar()
+    {
+        super.updateRaidBar();
+        raidBar.setDarkenScreen(true);
+    }
+
+    @Override
+    public void onFinish()
+    {
+        MessageUtils.format(DROWNED_PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
+        for (final Entity entity : raiders.keySet())
+        {
+            entity.remove(Entity.RemovalReason.DISCARDED);
+        }
+
+        raidBar.setVisible(false);
+        raidBar.removeAllPlayers();
     }
 }

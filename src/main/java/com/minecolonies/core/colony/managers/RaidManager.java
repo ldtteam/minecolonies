@@ -343,6 +343,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
+                event.setMaxRaiderCount(amount*2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -355,6 +356,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
+                event.setMaxRaiderCount(amount*2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -366,6 +368,7 @@ public class RaidManager implements IRaiderManager
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
+                event.setMaxRaiderCount(amount*2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -391,9 +394,13 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }
-                else
+                else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID))
                 {
                     event = new BarbarianRaidEvent(colony);
+                }
+                else
+                {
+                    return RaidSpawnResult.NO_SPAWN_POINT;
                 }
 
                 event.setSpawnPoint(targetSpawnPoint);

@@ -194,6 +194,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RAID_EVENT_MESSAGE_PIRATE                                            = "event.minecolonies.raidmessage_p";
     @NonNls
+    public static final String RAID_EVENT_MESSAGE_U_PIRATE                                          = "event.minecolonies.raidmessage_u";
+    @NonNls
     public static final String RAID_AMAZON                                                          = "com.minecolonies.coremod.raid.amazon.name";
     @NonNls
     public static final String RAID_EGYPTIAN                                                        = "com.minecolonies.coremod.raid.egyptian.name";
@@ -261,6 +263,10 @@ public final class TranslationConstants
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                      = "com.minecolonies.coremod.gui.townhall.buildinglevel";
     @NonNls
     public static final String PIRATES_SAILING_OFF_MESSAGE                                          = "com.minecolonies.coremod.pirates.sailing.away";
+    @NonNls
+    public static final String DROWNED_PIRATES_SAILING_OFF_MESSAGE                                  = "com.minecolonies.core.drowned_pirates.sailing.away";
+    @NonNls
+    public static final String STRUCTURE_SPAWNER_BREAKS                                             = "com.minecolonies.core.raidevent.spawnerbreaks";
     @NonNls
     public static final String ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE                                = "com.minecolonies.coremod.pirates.spawners.destroyed";
     @NonNls
