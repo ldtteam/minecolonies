@@ -8,8 +8,8 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
-import com.ldtteam.domumornamentum.util.MaterialTextureDataUtil;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -18,13 +18,13 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,17 +53,32 @@ public class DoBlockPlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final PlacementSettings settings)
     {
-        if (world.getBlockState(pos).equals(blockState))
+        BlockState placementState = blockState;
+        try
+        {
+            final BlockState tempState = blockState.getBlock().getStateForPlacement(
+              new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
+                new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
+            if (tempState != null)
+            {
+                placementState = tempState;
+            }
+        }
+        catch (final Exception ex)
+        {
+            // Noop
+        }
+
+        if (world.getBlockState(pos).equals(placementState))
         {
             world.removeBlock(pos, false);
-            world.setBlock(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+            WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG);
             if (tileEntityData != null)
             {
                 try
                 {
                     handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                    final BlockHitResult hitresult = new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false);
-                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                    placementState.getBlock().setPlacedBy(world, pos, placementState, null, placementState.getBlock().getCloneItemStack(placementState,
                       new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
                 }
                 catch (final Exception ex)
@@ -74,9 +89,9 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG))
         {
-            return ActionProcessingResult.PASS;
+                return ActionProcessingResult.PASS;
         }
 
         if (tileEntityData != null)
@@ -84,7 +99,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                blockState.getBlock().setPlacedBy(world, pos, blockState, null, blockState.getBlock().getCloneItemStack(blockState,
+                blockState.getBlock().setPlacedBy(world, pos, placementState, null, placementState.getBlock().getCloneItemStack(placementState,
                   new BlockHitResult(new Vec3(0,0,0), Direction.NORTH, pos, false), world, pos, null));
             }
             catch (final Exception ex)

@@ -7,11 +7,16 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,12 +43,28 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final PlacementSettings settings)
     {
-        if (world.getBlockState(pos).equals(blockState))
+        BlockState placementState = blockState;
+        try
+        {
+            final BlockState tempState = blockState.getBlock().getStateForPlacement(
+              new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
+                new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
+            if (tempState != null)
+            {
+                placementState = tempState;
+            }
+        }
+        catch (final Exception ex)
+        {
+            // Noop
+        }
+
+        if (world.getBlockState(pos).equals(placementState))
         {
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, placementState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }
@@ -53,7 +74,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
+                placementState.getBlock().setPlacedBy(world, pos, placementState, null, BlockUtils.getItemStackFromBlockState(placementState));
             }
             catch (final Exception ex)
             {
