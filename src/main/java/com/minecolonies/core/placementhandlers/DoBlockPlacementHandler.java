@@ -5,6 +5,7 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
+import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
@@ -22,6 +23,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -54,19 +59,22 @@ public class DoBlockPlacementHandler implements IPlacementHandler
       final PlacementSettings settings)
     {
         BlockState placementState = blockState;
-        try
+        if (blockState.getBlock() instanceof WallBlock || blockState.getBlock() instanceof FenceBlock || blockState.getBlock() instanceof PillarBlock || blockState.getBlock() instanceof IronBarsBlock)
         {
-            final BlockState tempState = blockState.getBlock().getStateForPlacement(
-              new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
-                new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
-            if (tempState != null)
+            try
             {
-                placementState = tempState;
+                final BlockState tempState = blockState.getBlock().getStateForPlacement(
+                  new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
+                    new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
+                if (tempState != null)
+                {
+                    placementState = tempState;
+                }
             }
-        }
-        catch (final Exception ex)
-        {
-            // Noop
+            catch (final Exception ex)
+            {
+                // Noop
+            }
         }
 
         if (world.getBlockState(pos).equals(placementState))

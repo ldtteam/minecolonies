@@ -1,5 +1,6 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -10,6 +11,9 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -44,19 +48,22 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       final PlacementSettings settings)
     {
         BlockState placementState = blockState;
-        try
+        if (blockState.getBlock() instanceof WallBlock || blockState.getBlock() instanceof FenceBlock || blockState.getBlock() instanceof PillarBlock || blockState.getBlock() instanceof IronBarsBlock)
         {
-            final BlockState tempState = blockState.getBlock().getStateForPlacement(
-              new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
-                new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
-            if (tempState != null)
+            try
             {
-                placementState = tempState;
+                final BlockState tempState = blockState.getBlock().getStateForPlacement(
+                  new BlockPlaceContext(world, null, InteractionHand.MAIN_HAND, ItemStack.EMPTY,
+                    new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
+                if (tempState != null)
+                {
+                    placementState = tempState;
+                }
             }
-        }
-        catch (final Exception ex)
-        {
-            // Noop
+            catch (final Exception ex)
+            {
+                // Noop
+            }
         }
 
         if (world.getBlockState(pos).equals(placementState))
