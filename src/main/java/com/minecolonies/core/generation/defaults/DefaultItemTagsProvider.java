@@ -136,9 +136,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.CORNFLOWER)
           .add(Items.LILY_OF_THE_VALLEY);
 
-        tag(ModTags.fungi)
-          .add(Items.WARPED_FUNGUS)
-          .add(Items.CRIMSON_FUNGUS);
+        copy(ModTags.fungiBlocks, ModTags.fungi);
 
         tag(ModTags.meshes)
           .add(ModItems.sifterMeshString)

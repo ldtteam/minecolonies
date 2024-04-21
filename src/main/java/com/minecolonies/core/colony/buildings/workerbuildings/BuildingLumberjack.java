@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
@@ -33,7 +34,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -287,7 +287,7 @@ public class BuildingLumberjack extends AbstractBuilding
             {
                 final BlockState blockState = world.getBlockState(pos);
                 final Block block = blockState.getBlock();
-                if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
+                if (blockState.is(ModTags.mushroomBlocks) || blockState.is(ModTags.fungiBlocks))
                 {
                     int threshold = modifier + (int) Math.ceil(data.getCitizenSkillHandler().getLevel(module.getPrimarySkill()) * (1 - ((float) modifier / 100)));
                     final int rand = world.getRandom().nextInt(100);

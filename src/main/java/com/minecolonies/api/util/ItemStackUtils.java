@@ -12,7 +12,6 @@ import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
@@ -35,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -903,7 +903,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return stack.is(ItemTags.SAPLINGS) || stack.is(fungi) || Compatibility.isDynamicTreeSapling(stack);
+        return stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(fungi) || Compatibility.isDynamicTreeSapling(stack);
     }
 
     /**
