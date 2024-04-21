@@ -9,21 +9,26 @@ import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
+import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,6 +122,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
+        registerButton(BUTTON_BLOCK_TOOL, this::giveBlockTool);
         registerButton(BUTTON_ADD_RANK, this::addRank);
         registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
         registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
@@ -256,7 +262,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final TextField playerNameField = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
         final TextField rankNameField = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
         final Button addRankButton = findPaneOfTypeByID(BUTTON_ADD_RANK, Button.class);
-
+        final Button addBlockButton = findPaneOfTypeByID(BUTTON_ADD_BLOCK, Button.class);
+        final Button blockToolButton = findPaneOfTypeByID(BUTTON_BLOCK_TOOL, Button.class);
 
         if (building.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
         {
@@ -264,6 +271,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             playerNameField.setEnabled(true);
             rankNameField.setEnabled(true);
             addRankButton.setEnabled(true);
+            addBlockButton.setEnabled(true);
+            blockToolButton.setEnabled(true);
         }
         else
         {
@@ -279,6 +288,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             addPlayerButton.setEnabled(false);
             playerNameField.setEnabled(false);
             addRankButton.setEnabled(false);
+            addBlockButton.setEnabled(false);
+            blockToolButton.setEnabled(false);
         }
 
         findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
@@ -425,6 +436,14 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     }
 
     /**
+     * Gives the player a Permission Scepter.
+     */
+    private void giveBlockTool(final Button button)
+    {
+        Network.getNetwork().sendToServer(new GiveToolMessage(buildingView, ModItems.permTool));
+    }
+
+    /**
      * Fills the free blocks list in the GUI.
      */
     private void fillFreeBlockList()
@@ -446,13 +465,25 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 if (index < freeBlocks.size())
                 {
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(ForgeRegistries.BLOCKS.getKey(freeBlocks.get(index)).toString()));
+                    final Block block = freeBlocks.get(index);
+                    final MutableComponent text = Component.literal(ForgeRegistries.BLOCKS.getKey(block).toString());
+                    text.append(Component.literal("\n")).append(block.getName().withStyle(ChatFormatting.DARK_GRAY));
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(text);
                 }
                 else
                 {
                     final BlockPos pos = freePositions.get(index - freeBlocks.size());
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(pos.getX() + " " + pos.getY() + " " + pos.getZ()));
+                    final MutableComponent text = Component.literal(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    if (building.getColony().getWorld().isLoaded(pos))
+                    {
+                        final BlockState state = building.getColony().getWorld().getBlockState(pos);
+                        text.append(Component.literal("\n")).append(state.getBlock().getName().withStyle(ChatFormatting.DARK_GRAY));
+                    }
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(text);
                 }
+
+                final boolean canEdit = building.getColony().getPermissions().hasPermission(Minecraft.getInstance().player, Action.EDIT_PERMISSIONS);
+                rowPane.findPaneOfTypeByID(BUTTON_REMOVE_BLOCK, Button.class).setEnabled(canEdit);
             }
         });
     }
@@ -469,7 +500,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         {
             final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
 
-            if (block != null)
+            if (block != null && !block.defaultBlockState().isAir())
             {
                 building.getColony().addFreeBlock(block);
                 Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
