@@ -1,5 +1,6 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
 import com.ldtteam.structurize.api.ItemStackUtils;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
@@ -71,7 +72,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
 
-        if (!WorldUtil.setBlockState(world, pos, placementState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }

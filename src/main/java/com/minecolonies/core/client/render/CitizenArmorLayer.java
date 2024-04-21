@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -111,9 +112,11 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                 Util.backgroundExecutor().execute(() ->
                 {
                     Minecraft minecraft = Minecraft.getInstance();
-                    final GameProfile profile = new GameProfile(textureUUID, "mcoltexturequery");
-                    minecraft.getMinecraftSessionService().fillProfileProperties(profile, true);
-                    minecraft.submit(() -> gameProfileMap.put(textureUUID, profile));
+                    final ProfileResult profile = minecraft.getMinecraftSessionService().fetchProfile(textureUUID, true);
+                    if (profile != null)
+                    {
+                        minecraft.submit(() -> gameProfileMap.put(textureUUID, profile.profile()));
+                    }
                 });
             }
         }

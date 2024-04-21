@@ -344,7 +344,7 @@ public class RaidManager implements IRaiderManager
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotation);
+                event.setShipRotation(shipRotMir);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 event.setMaxRaiderCount(amount*2);
                 raidEvent = event;
@@ -352,24 +352,24 @@ public class RaidManager implements IRaiderManager
             }
             else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
                                  || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
             {
                 final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotation);
+                event.setShipRotation(shipRotMir);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
                 event.setMaxRaiderCount(amount*2);
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
-            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
+            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
                        && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotation);
+                event.setShipRotation(shipRotMir);
                 event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 event.setMaxRaiderCount(amount*2);
                 raidEvent = event;

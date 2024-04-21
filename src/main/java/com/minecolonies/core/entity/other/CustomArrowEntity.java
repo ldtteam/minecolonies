@@ -58,7 +58,6 @@ public class CustomArrowEntity extends Arrow
     }
 
     @Override
-    @Override
     protected float getWaterInertia()
     {
         return waterInertia;

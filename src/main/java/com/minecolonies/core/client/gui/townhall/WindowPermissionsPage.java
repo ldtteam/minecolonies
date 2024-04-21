@@ -28,6 +28,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -436,7 +437,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void giveBlockTool(final Button button)
     {
-        Network.getNetwork().sendToServer(new GiveToolMessage(buildingView, ModItems.permTool));
+        new GiveToolMessage(buildingView, ModItems.permTool).sendToServer();
     }
 
     /**
@@ -462,7 +463,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 if (index < freeBlocks.size())
                 {
                     final Block block = freeBlocks.get(index);
-                    final MutableComponent text = Component.literal(ForgeRegistries.BLOCKS.getKey(block).toString());
+                    final MutableComponent text = Component.literal(BuiltInRegistries.BLOCK.getKey(block).toString());
                     text.append(Component.literal("\n")).append(block.getName().withStyle(ChatFormatting.DARK_GRAY));
                     rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(text);
                 }

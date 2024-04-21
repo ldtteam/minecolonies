@@ -64,7 +64,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     public static final String TAG_POS           = "pos";
     public static final String TAG_SPAWNERS      = "spawners";
     public static final String TAG_SHIPSIZE      = "shipSize";
-    public static final String TAG_SHIPROTATION             = "shipRotation";
+    public static final String TAG_SHIP_ROTMIR   = "shipRotMir";
     public static final String TAG_RAIDER_THRESHOLD_TRACKER = "raiderkillthresholdtracker";
     public static final String TAG_MAX_RAIDER_COUNT         = "maxRaiderCount";
 
@@ -131,7 +131,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Rotation of the ship to spawn
      */
-    private RotationMirror shipRotationMirror = RotationMirror.NONE;
+    protected RotationMirror shipRotationMirror = RotationMirror.NONE;
 
     /**
      * List of all spawners.
@@ -443,7 +443,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Sets the ships rotation
      *
-     * @param shipRotation the ship rotation.
+     * @param shipRotationMirror the ship rotation.
      */
     public void setShipRotation(final RotationMirror shipRotationMirror)
     {

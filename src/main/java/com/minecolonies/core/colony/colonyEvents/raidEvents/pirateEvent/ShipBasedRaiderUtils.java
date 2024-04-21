@@ -111,7 +111,7 @@ public final class ShipBasedRaiderUtils
      */
     public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final RotationMirror rotMir, final String shipName)
     {
-        return canSpawnShipAt(colony, spawnPoint, raidLevel, rotation, shipName, 3);
+        return canSpawnShipAt(colony, spawnPoint, raidLevel, rotMir, shipName, 3);
     }
 
     /**
@@ -120,11 +120,11 @@ public final class ShipBasedRaiderUtils
      * @param colony     the colony.
      * @param spawnPoint the spawn point.
      * @param raidLevel  the raid level.
-     * @param rotation   the rotation.
+     * @param rotMir     the rotation mirror.
      * @param neededDepth the required depth.
      * @return true if successful.
      */
-    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final int rotation, final String shipName, final int neededDepth)
+    public static boolean canSpawnShipAt(final IColony colony, final BlockPos spawnPoint, final int raidLevel, final RotationMirror rotMir, final String shipName, final int neededDepth)
     {
         if (spawnPoint.equals(colony.getCenter()))
         {

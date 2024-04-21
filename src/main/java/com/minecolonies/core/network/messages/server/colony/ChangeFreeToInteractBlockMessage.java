@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,13 +107,12 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;
         }
 
-        if (type == MessageType.ADD_BLOCK)
+        if (msgType == MessageType.ADD_BLOCK)
         {
             switch (msgMode)
             {

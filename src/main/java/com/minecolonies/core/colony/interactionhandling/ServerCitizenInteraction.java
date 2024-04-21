@@ -144,17 +144,17 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
                 // 6 hours later
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 60 * 6));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 60 * 6));
             }
             else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_REMIND))
             {
                 // 1 hour later
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 60));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 60));
             }
             else if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY) || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_SKIP))
             {
                 // 5 minutes
-                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 5));
+                displayAtWorldTick = (int) (player.level().getGameTime() + (TICKS_SECOND * 60 * 5));
             }
         }
     }
