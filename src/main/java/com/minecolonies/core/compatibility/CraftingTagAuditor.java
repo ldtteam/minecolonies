@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.LevelResource;
@@ -57,6 +58,7 @@ public class CraftingTagAuditor
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
         createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
+        createFile("food audit", server, "food_audit.csv", writer -> doFoodAudit(writer, server));
     }
 
     private static boolean createFile(@NotNull final String description,
@@ -307,6 +309,34 @@ public class CraftingTagAuditor
                     }
                 }
             }
+
+            writer.newLine();
+        }
+    }
+
+    private static void doFoodAudit(@NotNull final BufferedWriter writer,
+                                    @NotNull final MinecraftServer server) throws IOException
+    {
+        writeItemHeaders(writer);
+        writer.write(",nutrition,maxlevel");
+        writer.newLine();
+
+        for (final ItemStack item : getAllItems())
+        {
+            if (!ItemStackUtils.ISFOOD.test(item)) continue;
+
+            final FoodProperties properties = item.getItem().getFoodProperties(item, null);
+            if (properties == null) continue;
+
+            writeItemData(writer, item);
+
+            writer.write(',');
+            writer.write(Integer.toString(properties.getNutrition()));
+            writer.write(',');
+
+            // minNutrition = getBuildingLevel() - 1
+            // maxLevel     = getNutrition()     + 1
+            writer.write(Integer.toString(Math.min(5, properties.getNutrition() + 1)));
 
             writer.newLine();
         }

@@ -7,6 +7,6 @@
     }
   ],
   "intermediate": "minecraft:furnace",
-  "min-building-level": 4,
+  "min-building-level": 2,
   "result": "minecraft:cookie"
 }

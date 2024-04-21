@@ -102,19 +102,17 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .showTooltip(true)
                 .build(consumer);
 
-        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "cake_batter")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
-                        new ItemStorage(new ItemStack(Items.MILK_BUCKET, 3)),
-                        new ItemStorage(new ItemStack(Items.SUGAR, 2)),
-                        new ItemStorage(new ItemStack(Items.EGG))))
-                .result(new ItemStack(ModItems.cakeBatter))
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "cookie_dough")
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 2)),
+                        new ItemStorage(new ItemStack(Items.COCOA_BEANS, 2))))
+                .result(new ItemStack(ModItems.cookieDough, 8))
                 .minBuildingLevel(2)
                 .showTooltip(true)
                 .build(consumer);
 
-        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cake")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.cakeBatter))))
-                .result(new ItemStack(Items.CAKE))
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cookie")
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.cookieDough))))
+                .result(new ItemStack(Items.COOKIE))
                 .minBuildingLevel(2)
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);
@@ -135,17 +133,19 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);
 
-        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "cookie_dough")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 2)),
-                        new ItemStorage(new ItemStack(Items.COCOA_BEANS, 2))))
-                .result(new ItemStack(ModItems.cookieDough, 8))
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "cake_batter")
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
+                        new ItemStorage(new ItemStack(Items.MILK_BUCKET, 3)),
+                        new ItemStorage(new ItemStack(Items.SUGAR, 2)),
+                        new ItemStorage(new ItemStack(Items.EGG))))
+                .result(new ItemStack(ModItems.cakeBatter))
                 .minBuildingLevel(4)
                 .showTooltip(true)
                 .build(consumer);
 
-        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cookie")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.cookieDough))))
-                .result(new ItemStack(Items.COOKIE))
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cake")
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.cakeBatter))))
+                .result(new ItemStack(Items.CAKE))
                 .minBuildingLevel(4)
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);

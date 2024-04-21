@@ -13,7 +13,7 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 4,
+  "min-building-level": 2,
   "result": "minecolonies:cookie_dough",
   "show-tooltip": true
 }
