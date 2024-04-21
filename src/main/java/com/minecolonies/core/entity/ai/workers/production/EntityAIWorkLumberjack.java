@@ -1,13 +1,13 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.MineColonies;
@@ -17,9 +17,11 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack
 import com.minecolonies.core.colony.jobs.JobLumberjack;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,7 +50,8 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.TREE_CUT;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
@@ -344,7 +347,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (getState() == LUMBERJACK_GATHERING_2)
         {
             // we're only interested in saplings at this point
-            return stack.is(ItemTags.SAPLINGS) || stack.is(fungi);
+            return stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(fungi);
         }
 
         return super.isItemWorthPickingUp(stack);
@@ -532,7 +535,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (job.getTree().hasLogs())
+        if (job.getTree().hasLeaves() && shouldBreakLeaves)
+        {
+            final BlockPos leaf = job.getTree().peekNextLeaf();
+            if (!mineBlock(leaf, workFrom))
+            {
+                return getState();
+            }
+            job.getTree().pollNextLeaf();
+        }
+        else if (job.getTree().hasLogs())
         {
             //take first log from queue
             final BlockPos log = job.getTree().peekNextLog();
@@ -566,15 +578,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
         }
-        else if (job.getTree().hasLeaves() && shouldBreakLeaves)
-        {
-            final BlockPos leaf = job.getTree().peekNextLeaf();
-            if (!mineBlock(leaf, workFrom))
-            {
-                return getState();
-            }
-            job.getTree().pollNextLeaf();
-        }
         return getState();
     }
 
@@ -602,13 +605,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             if (world.getRandom().nextInt(100) > 95)
             {
-                if (stack.getItem() == Items.NETHER_WART_BLOCK)
+                if (stack.is(ItemTags.WART_BLOCKS))
                 {
-                    newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
-                }
-                else if (stack.getItem() == Items.WARPED_WART_BLOCK)
-                {
-                    newDrops.add(new ItemStack(Items.WARPED_FUNGUS, 1));
+                    final Block wartBlock = ((BlockItem) stack.getItem()).getBlock();
+                    final ItemStack fungus = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(wartBlock);
+                    if (fungus != null)
+                    {
+                        newDrops.add(fungus);
+                    }
                 }
             }
         }
@@ -660,7 +664,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private Boolean isPassable(final BlockState blockState)
     {
-        return blockState.is(BlockTags.LEAVES);
+        return blockState.is(BlockTags.LEAVES) || blockState.is(ModTags.hugeMushroomBlocks);
     }
 
     /**
@@ -726,6 +730,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
 
                 mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
+                mineIfEqualsBlockTag(checkPositions, ModTags.hugeMushroomBlocks);
                 return;
             }
         }
@@ -740,6 +745,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
 
         mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
+        mineIfEqualsBlockTag(checkPositions, ModTags.hugeMushroomBlocks);
     }
 
     /**
@@ -905,20 +911,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
             final ItemStack sapling = getInventory().getStackInSlot(saplingSlot);
-            final Block new_block;
-            if (sapling.is(fungi))
+            if (sapling.is(Tags.Items.MUSHROOMS))
             {
-                if (sapling.getItem() == Items.WARPED_FUNGUS)
-                {
-                    new_block = Blocks.WARPED_NYLIUM;
-                }
-                else
-                {
-                    new_block = Blocks.CRIMSON_NYLIUM;
-                }
-
+                building.addNetherTree(pos);
+            }
+            else if (sapling.is(fungi))
+            {
                 if (world.getBlockState(pos.below()).getBlock() instanceof NetherrackBlock)
                 {
+                    final Block new_block = sapling.is(Items.WARPED_FUNGUS) ? Blocks.WARPED_NYLIUM : Blocks.CRIMSON_NYLIUM;
                     world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
                     building.addNetherTree(pos);
                 }

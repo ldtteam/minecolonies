@@ -12,7 +12,6 @@ import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -903,7 +902,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return stack.is(ItemTags.SAPLINGS) || stack.is(fungi) || Compatibility.isDynamicTreeSapling(stack);
+        return stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(fungi) || Compatibility.isDynamicTreeSapling(stack);
     }
 
     /**

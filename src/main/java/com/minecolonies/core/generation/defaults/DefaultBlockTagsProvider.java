@@ -164,9 +164,23 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.MANGROVE_LOG)
                 .add(Blocks.MANGROVE_ROOTS);
 
+        // sadly forge doesn't provide the block form of this tag, despite providing an item tag
+        tag(ModTags.mushroomBlocks)
+                .add(Blocks.BROWN_MUSHROOM)
+                .add(Blocks.RED_MUSHROOM);
+
+        tag(ModTags.hugeMushroomBlocks)
+                .add(Blocks.BROWN_MUSHROOM_BLOCK)
+                .add(Blocks.RED_MUSHROOM_BLOCK);
+
+        tag(ModTags.fungiBlocks)
+                .add(Blocks.WARPED_FUNGUS)
+                .add(Blocks.CRIMSON_FUNGUS);
+
         tag(ModTags.tree)
                 .addTag(BlockTags.LOGS)
-                .addTag(ModTags.mangroveTree);
+                .addTag(ModTags.mangroveTree)
+                .add(Blocks.MUSHROOM_STEM);
 
         tag(ModTags.colonyProtectionException)
                 .addOptional(new ResourceLocation("waystones:waystone"))

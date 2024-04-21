@@ -35,6 +35,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -45,6 +46,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,25 +70,12 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * BiMap of saplings and leaves.
      */
-    private final Map<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
+    private final Map<Block, ItemStorage> leavesToSaplingMap = new HashMap<>();
 
     /**
      * List of saplings. Works on client and server-side.
      */
     private final List<ItemStorage> saplings = new ArrayList<>();
-
-    /**
-     * List of properties we're ignoring when comparing leaves.
-     */
-    private final List<Property<?>> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO, TREE_DISTANCE);
-
-    /**
-     * Properties for leaves we're ignoring upon comparing.
-     */
-    private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
-    private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
-    public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
-    public static final  IntegerProperty TREE_DISTANCE  = IntegerProperty.create("distance", 1, 7);
 
     /**
      * List of all ore-like blocks. Works on client and server-side.
@@ -391,14 +380,13 @@ public class CompatibilityManager implements ICompatibilityManager
         return block.defaultBlockState().is(ModTags.oreChanceBlocks);
     }
 
+    @Nullable
     @Override
-    public ItemStack getSaplingForLeaf(final BlockState block)
+    public ItemStack getSaplingForLeaf(final Block block)
     {
-        final BlockStateStorage tempLeaf = new BlockStateStorage(block, leafCompareWithoutProperties, true);
-
-        if (leavesToSaplingMap.containsKey(tempLeaf))
+        if (leavesToSaplingMap.containsKey(block))
         {
-            return leavesToSaplingMap.get(tempLeaf).getItemStack();
+            return leavesToSaplingMap.get(block).getItemStack();
         }
         return null;
     }
@@ -563,7 +551,7 @@ public class CompatibilityManager implements ICompatibilityManager
           leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
+            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().defaultBlockState(), entry.getValue()))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
@@ -573,17 +561,16 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Tag.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
-          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
+          .filter(key -> !key.getA().isAir() && !leavesToSaplingMap.containsKey(key.getA().getBlock()) && !leavesToSaplingMap.containsValue(key.getB()))
+          .forEach(key -> leavesToSaplingMap.put(key.getA().getBlock(), key.getB()));
     }
 
     @Override
-    public void connectLeafToSapling(final BlockState leaf, final ItemStack stack)
+    public void connectLeafToSapling(final Block leaf, final ItemStack stack)
     {
-        final BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
-        if (!leavesToSaplingMap.containsKey(store))
+        if (!leavesToSaplingMap.containsKey(leaf))
         {
-            leavesToSaplingMap.put(store, new ItemStorage(stack, false, true));
+            leavesToSaplingMap.put(leaf, new ItemStorage(stack, false, true));
         }
     }
 
@@ -702,6 +689,8 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         });
 
+        discoverFungi();
+
         beekeeperflowers = ImmutableSet.copyOf(tempFlowers);
         Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
         Log.getLogger().info("Finished discovering saplings " + saplings.size());
@@ -749,10 +738,23 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverSaplings(final ItemStack stack)
     {
-        if (stack.is(ItemTags.SAPLINGS))
+        if (stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS) || stack.is(ModTags.fungi))
         {
             saplings.add(new ItemStorage(stack, false, true));
         }
+    }
+
+    /**
+     * "Discover" associated saplings for fungi; there currently isn't a great way to do this automatically,
+     * so it's just hard-coded for now.  (TODO: datapack this in 1.20.4?)
+     */
+    private void discoverFungi()
+    {
+        // regular saplings and overworld mushrooms are discovered by loot drops, so will populate this table on
+        // their own (though only after the first tree is cut); nether "leaves" don't drop saplings by default
+        // though, so we instead use this table to force that.
+        leavesToSaplingMap.put(Blocks.NETHER_WART_BLOCK, new ItemStorage(new ItemStack(Items.CRIMSON_FUNGUS)));
+        leavesToSaplingMap.put(Blocks.WARPED_WART_BLOCK, new ItemStorage(new ItemStack(Items.WARPED_FUNGUS)));
     }
 
     /**

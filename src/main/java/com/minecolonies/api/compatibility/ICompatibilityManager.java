@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -56,12 +57,12 @@ public interface ICompatibilityManager
     void deserialize(@NotNull final FriendlyByteBuf buf, final ClientLevel level);
 
     /**
-     * Gets the sapling matching a leave.
+     * Gets the sapling matching a leaf.
      *
-     * @param block the leave.
-     * @return the sapling stack.
+     * @param block the leaves.
+     * @return the sapling stack or null.
      */
-    ItemStack getSaplingForLeaf(final BlockState block);
+    @Nullable ItemStack getSaplingForLeaf(final Block block);
 
     /**
      * Get a copy of the list of saplings.
@@ -219,7 +220,7 @@ public interface ICompatibilityManager
      * @param block the block to connect the sapling to.
      * @param stack the sapling.
      */
-    void connectLeafToSapling(BlockState block, ItemStack stack);
+    void connectLeafToSapling(Block block, ItemStack stack);
 
     /**
      * Test if an itemStack is plantable for the florist.
