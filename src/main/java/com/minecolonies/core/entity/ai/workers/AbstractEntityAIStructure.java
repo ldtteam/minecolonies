@@ -600,7 +600,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
 
         final BlockState state = handler.getWorld().getBlockState(pos);
-        return state.isAir() || state.getBlock() instanceof IBuilderUndestroyable;
+        return state.isAir() || state.getBlock() instanceof IBuilderUndestroyable || state.getBlock() == Blocks.WATER;
     }
 
     /**
@@ -635,7 +635,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     public IAIState doMining()
     {
-        if (blockToMine == null || world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
+        if (blockToMine == null)
+        {
+            return BUILDING_STEP;
+        }
+
+        final BlockState worldState = world.getBlockState(blockToMine);
+        if (worldState.getBlock() instanceof AirBlock || worldState.getBlock() == Blocks.WATER)
         {
             return BUILDING_STEP;
         }
