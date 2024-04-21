@@ -958,6 +958,11 @@
   "event.minecolonies.raidmessage_p3": "Arr Comrade! There's some darn pirates from the %s comin' for %s tonight! They sailed 'ere and will continue attacking until we destroy their caravel.",
   "event.minecolonies.raidmessage_p4": "A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
 
+  "event.minecolonies.raidmessage_u1": "A mysterious sunken shipwreck has been been spotted to the %s of %s! It is a small sloop, you should consider destroying it.",
+  "event.minecolonies.raidmessage_u2": "Citizens report rumors of drowned pirates closing in %s of %s! There also seems to be a sunk ship there, better destroy it.",
+  "event.minecolonies.raidmessage_u3": "Arrglglglgl! There's some darn drowned pirates from the %s comin' for %s tonight! There is even a sunk ship 'ere and will continue attacking until we destroy their caravel.",
+  "event.minecolonies.raidmessage_u4": "A huge horde of drowned pirates are swimming' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their sunken galleon!",
+
   "com.minecolonies.coremod.raid.amazon.name": "Amazons",
   "com.minecolonies.coremod.raid.egyptian.name": "Mummies",
   "com.minecolonies.coremod.raid.barbarian.name": "Barbarians",
@@ -1088,6 +1093,8 @@
   "item.minecolonies.mercegg": "Mercenary Spawn Egg",
 
   "com.minecolonies.coremod.pirates.sailing.away": "A pirate ship %s of %s just sailed away to search for another victim.",
+  "com.minecolonies.core.drowned_pirates.sailing.away": "The sunk shipwreck %s of %s mysteriously disappears back into the depths of the ocean.",
+
   "com.minecolonies.coremod.cook.serve.player": "%s: Here Governor, take this food!",
 
   "item.minecolonies.santa_hat": "Santa Hat",
@@ -2581,5 +2588,6 @@
   "death.attack.entity.minecolonies.drownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
   "entity.minecolonies.drownedchiefpirate": "Drowned Pirate Chief",
   "death.attack.entity.minecolonies.drownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
-  "com.minecolonies.core.exit_interactions": "Exit Interactions"
+  "com.minecolonies.core.exit_interactions": "Exit Interactions",
+  "com.minecolonies.core.raidevent.spawnerbreaks": "One of the spawners of the raid misteriously broke, it seems you hit some sort of limit"
 }
