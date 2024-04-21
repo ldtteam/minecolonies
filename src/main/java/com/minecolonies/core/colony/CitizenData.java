@@ -307,7 +307,7 @@ public class CitizenData implements ICitizenData
     /**
      * The sound profile index.
      */
-    private int soundProfile;
+    private int voiceProfile;
 
     /**
      * Recent interaction timer
@@ -318,6 +318,11 @@ public class CitizenData implements ICitizenData
      * Recent interaction timer
      */
     private Set<UUID> interactedRecentlyPlayers = new HashSet<>();
+
+    /**
+     * Texture UUID.
+     */
+    private UUID textureUUID;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -366,9 +371,15 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public int getSoundProfile()
+    public int getVoiceProfile()
     {
-        return soundProfile;
+        return voiceProfile;
+    }
+
+    @Override
+    public void setVoiceProfile(final int profile)
+    {
+        this.voiceProfile = profile;
     }
 
     @Override
@@ -478,7 +489,7 @@ public class CitizenData implements ICitizenData
         //Assign the gender before name
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
-        soundProfile = random.nextInt(NUM_SOUND_PROFILES);
+        voiceProfile = random.nextInt(NUM_SOUND_PROFILES);
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
@@ -1031,6 +1042,16 @@ public class CitizenData implements ICitizenData
         {
             buf.writeResourceLocation(av);
         }
+
+        if (textureUUID == null)
+        {
+            buf.writeBoolean(false);
+        }
+        else
+        {
+            buf.writeBoolean(true);
+            buf.writeUUID(textureUUID);
+        }
     }
 
     @Override
@@ -1186,7 +1207,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
         nbtTagCompound.putString(TAG_SUFFIX, textureSuffix);
-        nbtTagCompound.putInt(TAG_SOUND_PROFILE, soundProfile);
+        nbtTagCompound.putInt(TAG_SOUND_PROFILE, voiceProfile);
 
         nbtTagCompound.putBoolean(TAG_FEMALE, female);
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
@@ -1278,6 +1299,10 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_FINISHED_PART_QUESTS, finishedPartQuestNBT);
 
+        if (textureUUID != null)
+        {
+            nbtTagCompound.putUUID(TAG_TEXTURE_UUID, textureUUID);
+        }
 
         return nbtTagCompound;
     }
@@ -1302,11 +1327,11 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_SOUND_PROFILE))
         {
-            soundProfile = nbtTagCompound.getInt(TAG_SOUND_PROFILE);
+            voiceProfile = nbtTagCompound.getInt(TAG_SOUND_PROFILE);
         }
         else
         {
-            soundProfile = random.nextInt(NUM_SOUND_PROFILES);
+            voiceProfile = random.nextInt(NUM_SOUND_PROFILES);
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
@@ -1438,6 +1463,11 @@ public class CitizenData implements ICitizenData
         for (int i = 0; i < finPartQuestsNbt.size(); i++)
         {
             finishedQuestParticipation.add(new ResourceLocation(finPartQuestsNbt.getString(i)));
+        }
+
+        if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
+        {
+            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
         }
     }
 
@@ -1916,5 +1946,23 @@ public class CitizenData implements ICitizenData
             uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().location().toString()).getBytes());
         }
         return uuid;
+    }
+
+    @Override
+    public void setCustomTexture(final UUID texture)
+    {
+        this.textureUUID = texture;
+    }
+
+    @Override
+    public boolean hasCustomTexture()
+    {
+        return textureUUID != null;
+    }
+
+    @Override
+    public UUID getCustomTexture()
+    {
+        return textureUUID;
     }
 }

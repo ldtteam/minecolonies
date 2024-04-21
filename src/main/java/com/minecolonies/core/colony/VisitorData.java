@@ -11,8 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
@@ -38,11 +36,6 @@ public class VisitorData extends CitizenData implements IVisitorData
     private ItemStack recruitCost = ItemStack.EMPTY;
 
     /**
-     * Texture UUID.
-     */
-    private UUID textureUUID;
-
-    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -62,10 +55,6 @@ public class VisitorData extends CitizenData implements IVisitorData
         compoundNBT.put(TAG_RECRUIT_COST, item);
         compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
-        if (textureUUID != null)
-        {
-            compoundNBT.putUUID(TAG_TEXTURE_UUID, textureUUID);
-        }
         return compoundNBT;
     }
 
@@ -76,10 +65,6 @@ public class VisitorData extends CitizenData implements IVisitorData
         sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
         recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
         recruitCost.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
-        if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
-        {
-            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
-        }
     }
 
     @Override
@@ -114,15 +99,6 @@ public class VisitorData extends CitizenData implements IVisitorData
         super.serializeViewNetworkData(buf);
         buf.writeItem(recruitCost);
         buf.writeInt(recruitCost.getCount());
-        if (textureUUID == null)
-        {
-            buf.writeBoolean(false);
-        }
-        else
-        {
-            buf.writeBoolean(true);
-            buf.writeUUID(textureUUID);
-        }
     }
 
     @Override
@@ -171,17 +147,5 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void applyResearchEffects()
     {
         // no research effects for now
-    }
-
-    @Override
-    public void setCustomTexture(final UUID texture)
-    {
-        this.textureUUID = texture;
-    }
-
-    @Override
-    public boolean hasCustomTexture()
-    {
-        return textureUUID != null;
     }
 }

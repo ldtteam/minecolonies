@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.util.Map;
 
 /**
  * View data for visitors
@@ -22,11 +22,6 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
      * The recruitment costs
      */
     private ItemStack recruitmentCosts;
-
-    /**
-     * Texture UUID.
-     */
-    private UUID textureUUID;
 
     /**
      * Cached player info for custom texture.
@@ -50,10 +45,6 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         super.deserialize(buf);
         recruitmentCosts = buf.readItem();
         recruitmentCosts.setCount(buf.readInt());
-        if (buf.readBoolean())
-        {
-            textureUUID = buf.readUUID();
-        }
     }
 
     @Override
