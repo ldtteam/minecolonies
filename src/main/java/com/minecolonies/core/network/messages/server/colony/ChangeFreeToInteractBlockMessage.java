@@ -106,8 +106,13 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        //Verify player has permission to change this huts settings
-        if (msgType == MessageType.ADD_BLOCK)
+        final Player player = ctxIn.getSender();
+        if (player == null)
+        {
+            return;
+        }
+
+        if (type == MessageType.ADD_BLOCK)
         {
             switch (msgMode)
             {
