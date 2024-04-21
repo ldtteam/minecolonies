@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -56,7 +57,14 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     protected void doAttack(final LivingEntity target)
     {
         double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue();
-        target.hurt(target.level().damageSources().source(ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, ((TranslatableContents) user.getName().getContents()).getKey().replace("entity.minecolonies.", ""))), user), (float) damageToBeDealt);
+        if (user.getName().getContents() instanceof TranslatableContents translatableContents)
+        {
+            target.hurt(target.level.damageSources().source(ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, translatableContents.getKey().replace("entity.minecolonies.", ""))), user), (float) damageToBeDealt);
+        }
+        else
+        {
+            target.hurt(target.level.damageSources().mobAttack(user), (float) damageToBeDealt);
+        }
         user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(user.getRandom()));
         target.setLastHurtByMob(user);

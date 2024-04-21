@@ -130,6 +130,29 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 16)))
                         .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(1, 32))))
                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
+
+        registerLoot(registrar, ModEntities.DROWNED_PIRATE, builder -> builder
+                                                                 .add(EmptyLootItem.emptyItem().setWeight(80))
+                                                                 .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(6))
+                                                                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(4)));
+
+        registerLoot(registrar, ModEntities.DROWNED_ARCHERPIRATE, builder -> builder
+                                                                       .add(EmptyLootItem.emptyItem().setWeight(80))
+                                                                       .add(LootItem.lootTableItem(Items.BOW).setWeight(10))
+                                                                       .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(5)));
+
+        registerLoot(registrar, ModEntities.DROWNED_CHIEFPIRATE, builder -> builder
+                                                                      .add(EmptyLootItem.emptyItem().setWeight(50))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateHelmet_1).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateLegs_1).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateBoots_1).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateChest_1).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateHelmet_2).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateLegs_2).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateBoots_2).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.pirateChest_2).setWeight(5).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.scimitar).setWeight(25).setQuality(1))
+                                                                      .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
     }
 
     private void registerLoot(@NotNull final EntityType<?> entity,

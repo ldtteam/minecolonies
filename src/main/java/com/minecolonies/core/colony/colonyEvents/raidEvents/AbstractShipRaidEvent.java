@@ -54,7 +54,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * Spacing between waypoints
      */
-    private static final int WAYPOINT_SPACING = 30;
+    protected static final int WAYPOINT_SPACING = 30;
 
     /**
      * NBT Tags
@@ -86,7 +86,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The current raidstatus
      */
-    private EventStatus status = EventStatus.STARTING;
+    protected EventStatus status = EventStatus.STARTING;
 
     /**
      * The raids visual raidbar
@@ -101,17 +101,17 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The associated colony
      */
-    private IColony colony;
+    protected IColony colony;
 
     /**
      * The ships spawnpoint
      */
-    private BlockPos spawnPoint;
+    protected BlockPos spawnPoint;
 
     /**
      * The events shipsize
      */
-    private ShipSize shipSize;
+    protected ShipSize shipSize;
 
     /**
      * The days the event lasts
@@ -146,12 +146,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The path result towards the intended spawn point
      */
-    private PathResult spawnPathResult;
+    protected PathResult spawnPathResult;
 
     /**
      * Waypoints helping raiders travel
      */
-    private List<BlockPos> wayPoints = new ArrayList<>();
+    protected List<BlockPos> wayPoints = new ArrayList<>();
 
     /**
      * Create a new ship based raid event.
@@ -247,7 +247,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         {
             for (final Tuple<EntityType<?>, BlockPos> entry : respawns)
             {
-                final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
+                final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(entry.getB(), colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10, this.isUnderWater());
                 if (spawnPos != null)
                 {
                     RaiderMobUtils.spawn(entry.getA(), 1, spawnPos, colony.getWorld(), colony, id);
@@ -264,7 +264,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         // Spawns landing troops.
         if (raiders.size() < spawners.size() * 2)
         {
-            BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10);
+            BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_LANDING_DISTANCE, spawnPoint, MIN_CENTER_DISTANCE, 10, this.isUnderWater());
             if (spawnPos != null)
             {
                 // Find nice position on the ship
@@ -290,6 +290,15 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                 }
             }
         }
+    }
+
+    /**
+     * If this is an underwater ship based event.
+     * @return true if so.
+     */
+    public boolean isUnderWater()
+    {
+        return false;
     }
 
     @Override

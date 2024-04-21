@@ -36,6 +36,11 @@ public class CustomArrowEntity extends Arrow
     private boolean armorPiercePlayer = false;
 
     /**
+     * The water inertia.
+     */
+    private float waterInertia = 0.6f;
+
+    /**
      * Callback on hitting an entity
      */
     private Predicate<EntityHitResult> onHitCallback = null;
@@ -50,6 +55,22 @@ public class CustomArrowEntity extends Arrow
     {
         // TODO add enderman damage hit research here. Note that this is also used by mobs, so check the shooter first.
         super.doPostHurtEffects(target);
+    }
+
+    @Override
+    @Override
+    protected float getWaterInertia()
+    {
+        return waterInertia;
+    }
+
+    /**
+     * Setter for the water inertia to allow to penetrate liquids better.
+     * @param waterInertia the new inertia.
+     */
+    public void setWaterInertia(final float waterInertia)
+    {
+        this.waterInertia = waterInertia;
     }
 
     @Override

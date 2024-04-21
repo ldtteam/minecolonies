@@ -11,6 +11,8 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.*;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -28,10 +30,6 @@ import com.minecolonies.core.colony.colonyEvents.raidEvents.barbarianEvent.Horde
 import com.minecolonies.core.colony.colonyEvents.raidEvents.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.core.colony.colonyEvents.raidEvents.norsemenevent.NorsemenShipRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateGroundRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.PirateRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
@@ -50,14 +48,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
-import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
+import static com.minecolonies.api.util.BlockPosUtil.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
@@ -306,7 +304,7 @@ public class RaidManager implements IRaiderManager
         raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
-        for (final BlockPos targetSpawnPoint : spawnPoints)
+        for (BlockPos targetSpawnPoint : spawnPoints)
         {
             IColonyRaidEvent raidEvent = null;
 
@@ -321,6 +319,19 @@ public class RaidManager implements IRaiderManager
             {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
             }
+            else if (colony.getWorld().getBlockState(targetSpawnPoint).liquid() &&
+                        colony.getWorld().getBlockState(targetSpawnPoint.below()).liquid())
+            {
+                raidType = DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
+                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)
+                {
+                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above())))
+                    {
+                        break;
+                    }
+                    targetSpawnPoint = targetSpawnPoint.above();
+                }
+            }
 
             // No rotation till spawners are moved into schematics
             final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().random.nextInt(4)], Mirror.NONE);
@@ -333,19 +344,31 @@ public class RaidManager implements IRaiderManager
                 final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotMir);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
-            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
+            else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
+                                 || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
+            {
+                final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
+                event.setSpawnPoint(targetSpawnPoint);
+                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
+                event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
+                raidEvent = event;
+                colony.getEventManager().addEvent(event);
+            }
+            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
                        && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotMir);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -379,7 +402,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
 
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
                 raidEvent = event;
                 colony.getEventManager().addEvent(event);
             }
@@ -396,11 +419,12 @@ public class RaidManager implements IRaiderManager
      * @param targetSpawnPoint
      * @return
      */
-    private PathResult createSpawnPath(final BlockPos targetSpawnPoint)
+    private PathResult createSpawnPath(final BlockPos targetSpawnPoint, final boolean  underwater)
     {
         final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
           new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
+        job.getPathingOptions().withWalkUnderWater(underwater);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
     }
@@ -460,6 +484,13 @@ public class RaidManager implements IRaiderManager
                   30,
                   3,
                   SOLID_AIR_POS_SELECTOR);
+
+                if (worldSpawnPos == null && colony.getWorld().getBlockState(spawnPos).getBlock() == Blocks.WATER)
+                {
+                    worldSpawnPos = spawnPos;
+                    break;
+                }
+
                 if (worldSpawnPos != null || MineColonies.getConfig().getServer().skyRaiders.get())
                 {
                     break;

@@ -2575,5 +2575,11 @@
 
   "com.minecolonies.core.gui.supplycamp.guide": "Make sure to find a flat, open area large enough for the camp's layout to place it.",
   "com.minecolonies.core.gui.supplyship.guide": "Make sure to place it in open waters spacious enough to accommodate the ship's size.",
+  "entity.minecolonies.drownedpirate": "Drowned Pirate",
+  "death.attack.entity.minecolonies.drownedpirate": "%s was taken to the depths by a drowned Pirate",
+  "entity.minecolonies.drownedarcherpirate": "Drowned Pirate Archer",
+  "death.attack.entity.minecolonies.drownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
+  "entity.minecolonies.drownedchiefpirate": "Drowned Pirate Chief",
+  "death.attack.entity.minecolonies.drownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
   "com.minecolonies.core.exit_interactions": "Exit Interactions"
 }
