@@ -543,11 +543,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 nodesToVisit.offer(recalc);
             }
 
-            if (debugDrawEnabled)
-            {
-
-            }
-
             // Set a future heuristic modification
             heuristicMod *= costPerEstimation;
 

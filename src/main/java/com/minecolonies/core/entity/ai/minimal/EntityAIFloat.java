@@ -9,10 +9,19 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 
+/**
+ * Custom float goal, which bumps less(only every 3 ticks) and does trigger escape pathfinding underwater
+ */
 public class EntityAIFloat extends FloatGoal
 {
+    /**
+     * Owner of the goal
+     */
     private final Mob owner;
 
+    /**
+     * Water pathfinding result
+     */
     private PathResult waterPathing = null;
 
     public EntityAIFloat(final Mob mob)
