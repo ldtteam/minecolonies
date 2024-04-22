@@ -14,6 +14,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.entity.pathfinding.*;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.world.CachingBlockLookup;
 import com.minecolonies.core.entity.pathfinding.world.ChunkCache;
@@ -359,7 +360,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             // Don't keep searching more costly nodes when there is a destination
-            if (!node.isVisited() && reachesDestination && node.getScore() > bestNode.getScore() + 2)
+            if (!node.isVisited() && reachesDestination && node.getScore() > bestNode.getScore())
             {
                 if (reevaluteHeuristic(bestNode, reachesDestination))
                 {
@@ -521,6 +522,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             // Overshoot a bit
             costPerEstimation *= costPerEstimation < 1 ? 0.9 : 1.1;
 
+            if (reaches && entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+            {
+                double foundPathCostPerDist = node.getCost() / Math.max(1, BlockPosUtil.distManhattan(start, node.x, node.y, node.z));
+
+                // If the path we found is per block more expensive than the entities historic we explore more for a potential cheaper path
+                if (foundPathCostPerDist > navigator.getAvgHeuristicModifier())
+                {
+                    double modifier = Math.min(0.8, Math.max(0.3, navigator.getAvgHeuristicModifier() / foundPathCostPerDist));
+                    costPerEstimation *= modifier;
+                }
+            }
+
             // Fix up existing heuristic values
             final List<MNode> nodes = new ArrayList<>(nodesToVisit);
             nodesToVisit.clear();
@@ -528,6 +541,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 recalc.setHeuristic(recalc.getHeuristic() * costPerEstimation);
                 nodesToVisit.offer(recalc);
+            }
+
+            if (debugDrawEnabled)
+            {
+
             }
 
             // Set a future heuristic modification
@@ -701,8 +719,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         final boolean swimStart = isSwimming && !node.isSwimming();
         final BlockState state = cachedBlockLookup.getBlockState(nextX, nextY, nextZ);
-        final boolean onRoad = WorkerUtil.isPathBlock(cachedBlockLookup.getBlockState(nextX, nextY - 1, nextZ).getBlock());
-        final boolean onRails = pathingOptions.canUseRails() && cachedBlockLookup.getBlockState(nextX, corner ? nextY - 1 : nextY, nextZ).getBlock() instanceof BaseRailBlock;
+        final BlockState belowState = cachedBlockLookup.getBlockState(nextX, nextY - 1, nextZ);
+        final boolean onRoad = WorkerUtil.isPathBlock(belowState.getBlock());
+        final boolean onRails = pathingOptions.canUseRails() && (corner ? belowState : state).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && node != null && node.isOnRails();
         final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions);
 
@@ -719,8 +738,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 costFrom = node.parent;
             }
 
-            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, onRails, railsExit, swimStart, ladder, state, nextX, nextY, nextZ);
-            nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state);
+            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
+            nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state, belowState);
 
             if (nextCost > maxCost)
             {
@@ -836,6 +855,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param onRails    checks if the node is a rail block.
      * @param railsExit  the exit of the rails.
      * @param swimStart  if its the swim start.
+     * @param blockState
      * @return cost to move from the parent to the new position.
      */
     protected double computeCost(
@@ -846,7 +866,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final boolean railsExit,
       final boolean swimStart,
       final boolean ladder,
-      final BlockState state,
+      final BlockState state, final BlockState below,
       final int x, final int y, final int z)
     {
         double cost = 1;
@@ -870,7 +890,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost += pathingOptions.caveAirCost;
         }
 
-        if (dY != 0 && !(ladder && parent.isLadder()) && !(Math.abs(dY) == 1 && cachedBlockLookup.getBlockState(x, y - 1, z).is(BlockTags.STAIRS)))
+        if (dY != 0 && !(ladder && parent.isLadder()) && !(Math.abs(dY) == 1 && below.is(BlockTags.STAIRS)))
         {
             if (dY > 0)
             {
@@ -891,7 +911,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost += pathingOptions.walkInShapesCost;
         }
 
-        if (state.getBlock() instanceof ShingleBlock || state.getBlock() instanceof ShingleSlabBlock)
+        if (below.getBlock() instanceof ShingleBlock || below.getBlock() instanceof ShingleSlabBlock)
         {
             cost += 3;
         }
@@ -928,6 +948,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param parent
      * @param swimstart
      * @param swimming
+     * @param blockState
      * @param state
      * @return
      */
@@ -939,7 +960,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final int x,
       final int y,
       final int z,
-      final BlockState state)
+      final BlockState state, final BlockState below)
     {
         return cost;
     }

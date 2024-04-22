@@ -156,7 +156,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
       final int x,
       final int y,
       final int z,
-      final BlockState state)
+      final BlockState state, final BlockState below)
     {
         double modifier = addCost;
         addCost = 1.0;
