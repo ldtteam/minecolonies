@@ -58,7 +58,7 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
       final int x,
       final int y,
       final int z,
-      final BlockState state)
+      final BlockState state, final BlockState below)
     {
         if (!state.isAir() && isPassable.apply(state))
         {
