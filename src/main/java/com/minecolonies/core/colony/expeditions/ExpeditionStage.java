@@ -6,9 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,14 +24,14 @@ public final class ExpeditionStage
     /**
      * NBT Tags.
      */
-    private static final String TAG_HEADER           = "header";
-    private static final String TAG_REWARDS          = "rewards";
-    private static final String TAG_REWARD_ITEM      = "item";
-    private static final String TAG_REWARD_COUNT     = "count";
-    private static final String TAG_KILLS            = "kills";
-    private static final String TAG_KILL_ENTITY_TYPE = "entityType";
-    private static final String TAG_KILL_COUNT       = "count";
-    private static final String TAG_MEMBERS_LOST     = "membersLost";
+    private static final String TAG_HEADER            = "header";
+    private static final String TAG_REWARDS           = "rewards";
+    private static final String TAG_REWARD_ITEM       = "item";
+    private static final String TAG_REWARD_COUNT      = "count";
+    private static final String TAG_KILLS             = "kills";
+    private static final String TAG_KILL_ENCOUNTER_ID = "encounterId";
+    private static final String TAG_KILL_COUNT        = "count";
+    private static final String TAG_MEMBERS_LOST      = "membersLost";
 
     /**
      * The header for this stage.
@@ -48,7 +46,7 @@ public final class ExpeditionStage
     /**
      * The map of kills.
      */
-    private final Map<EntityType<?>, Integer> kills;
+    private final Map<ResourceLocation, Integer> kills;
 
     /**
      * The list of members that died.
@@ -83,7 +81,7 @@ public final class ExpeditionStage
      * @param kills       the map of kills.
      * @param membersLost the list of members that died.
      */
-    public ExpeditionStage(final Component header, final Map<ItemStack, Integer> rewards, final Map<EntityType<?>, Integer> kills, final List<Integer> membersLost)
+    public ExpeditionStage(final Component header, final Map<ItemStack, Integer> rewards, final Map<ResourceLocation, Integer> kills, final List<Integer> membersLost)
     {
         this.header = header;
         this.rewards = new HashMap<>(rewards);
@@ -116,19 +114,13 @@ public final class ExpeditionStage
             rewards.put(itemStack, rewardCompound.getInt(TAG_REWARD_COUNT));
         }
 
-        final Map<EntityType<?>, Integer> kills = new HashMap<>();
+        final Map<ResourceLocation, Integer> kills = new HashMap<>();
         final ListTag killsList = compound.getList(TAG_KILLS, Tag.TAG_COMPOUND);
         for (int i = 0; i < killsList.size(); ++i)
         {
             final CompoundTag killCompound = killsList.getCompound(i);
-            final ResourceLocation entityTypeId = new ResourceLocation(killCompound.getString(TAG_KILL_ENTITY_TYPE));
-            final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(entityTypeId);
-            if (entityType == null)
-            {
-                continue;
-            }
-
-            kills.put(entityType, killCompound.getInt(TAG_KILL_COUNT));
+            final ResourceLocation encounterId = new ResourceLocation(killCompound.getString(TAG_KILL_ENCOUNTER_ID));
+            kills.put(encounterId, killCompound.getInt(TAG_KILL_COUNT));
         }
 
         final List<Integer> membersLost = IntStream.of(compound.getIntArray(TAG_MEMBERS_LOST)).boxed().toList();
@@ -183,12 +175,12 @@ public final class ExpeditionStage
     /**
      * Adds a kill to this stage.
      *
-     * @param type the entity type that got killed.
+     * @param encounterId the encounter type that got killed.
      */
-    public void addKill(final EntityType<?> type)
+    public void addKill(final ResourceLocation encounterId)
     {
-        kills.putIfAbsent(type, 0);
-        kills.put(type, kills.get(type) + 1);
+        kills.putIfAbsent(encounterId, 0);
+        kills.put(encounterId, kills.get(encounterId) + 1);
         cachedKills.clear();
     }
 
@@ -233,10 +225,10 @@ public final class ExpeditionStage
         compound.put(TAG_REWARDS, rewardsList);
 
         final ListTag killsList = new ListTag();
-        for (final Entry<EntityType<?>, Integer> killEntry : kills.entrySet())
+        for (final Entry<ResourceLocation, Integer> killEntry : kills.entrySet())
         {
             final CompoundTag killCompound = new CompoundTag();
-            killCompound.putString(TAG_KILL_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(killEntry.getKey()).toString());
+            killCompound.putString(TAG_KILL_ENCOUNTER_ID, killEntry.getKey().toString());
             killCompound.putInt(TAG_KILL_COUNT, killEntry.getValue());
             killsList.add(killCompound);
         }

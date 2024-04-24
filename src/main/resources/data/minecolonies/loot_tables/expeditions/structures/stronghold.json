@@ -35,7 +35,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:5,entity-type:\"minecraft:zombified_piglin\",xp-dropped:5}"
+              "tag": "{type:\"encounter\",encounter:\"minecolonies:zombie\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -47,7 +47,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:3,entity-type:\"minecraft:magma_cube\",xp-dropped:4}"
+              "tag": "{type:\"encounter\",encounter:\"minecolonies:skeleton\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -59,7 +59,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:3,entity-type:\"minecraft:hoglin\",xp-dropped:5}"
+              "tag": "{type:\"encounter\",encounter:\"minecolonies:creeper\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -71,31 +71,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:12,entity-type:\"minecraft:ghast\",xp-dropped:5}"
-            }
-          ],
-          "name": "minecolonies:adventure_token"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 300,
-          "quality": -3,
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:7,entity-type:\"minecraft:enderman\",xp-dropped:5}"
-            }
-          ],
-          "name": "minecolonies:adventure_token"
-        },
-        {
-          "type": "minecraft:item",
-          "weight": 100,
-          "quality": 1,
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{type:\"mob\",damage-done:5,entity-type:\"minecraft:blaze\",xp-dropped:10}"
+              "tag": "{type:\"encounter\",encounter:\"minecolonies:enderman\"}"
             }
           ],
           "name": "minecolonies:adventure_token"

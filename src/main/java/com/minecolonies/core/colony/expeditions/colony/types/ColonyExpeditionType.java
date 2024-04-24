@@ -1,4 +1,4 @@
-package com.minecolonies.core.colony.expeditions.colony;
+package com.minecolonies.core.colony.expeditions.colony.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

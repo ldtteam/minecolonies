@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
+import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Loader for json based expedition types.
+ * Loader for json based expedition encounters.
  */
-public class ColonyExpeditionTypeListener extends SimpleJsonResourceReloadListener
+public class ExpeditionEncounterListener extends SimpleJsonResourceReloadListener
 {
     /**
      * The gson instance.
@@ -29,11 +29,11 @@ public class ColonyExpeditionTypeListener extends SimpleJsonResourceReloadListen
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
-     * Directory is: (namespace)/colony/expedition_types/(path)
+     * Directory is: (namespace)/expedition_encounters/(path)
      */
-    public ColonyExpeditionTypeListener()
+    public ExpeditionEncounterListener()
     {
-        super(GSON, "colony/expedition_types");
+        super(GSON, "expedition_encounters");
     }
 
     @Override
@@ -42,24 +42,24 @@ public class ColonyExpeditionTypeListener extends SimpleJsonResourceReloadListen
       @NotNull final ResourceManager resourceManager,
       @NotNull final ProfilerFiller profiler)
     {
-        Log.getLogger().info("Beginning load of expedition types for colony.");
+        Log.getLogger().info("Beginning load of expedition encounters.");
 
-        final Map<ResourceLocation, ColonyExpeditionType> newTypes = new HashMap<>();
+        final Map<ResourceLocation, ExpeditionEncounter> newTypes = new HashMap<>();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             final ResourceLocation key = entry.getKey();
             try
             {
-                final ColonyExpeditionType parsed = ColonyExpeditionType.parse(key, entry.getValue().getAsJsonObject());
+                final ExpeditionEncounter parsed = ExpeditionEncounter.parse(key, entry.getValue().getAsJsonObject());
                 newTypes.put(key, parsed);
             }
             catch (final JsonParseException | NullPointerException e)
             {
-                Log.getLogger().error(new FormattedMessage("Error parsing expedition type {}", new Object[] {key}, e));
+                Log.getLogger().error(new FormattedMessage("Error parsing expedition encounter {}", new Object[] {key}, e));
             }
         }
 
-        final ColonyExpeditionTypeManager manager = ColonyExpeditionTypeManager.getInstance();
-        manager.reloadTypes(newTypes);
+        final ExpeditionEncounterManager manager = ExpeditionEncounterManager.getInstance();
+        manager.reloadEncounters(newTypes);
     }
 }

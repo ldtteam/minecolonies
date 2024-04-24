@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,9 +78,9 @@ public interface IExpedition
     /**
      * Adds a kill to the current newest stage.
      *
-     * @param type the entity type that got killed.
+     * @param encounterId
      */
-    void mobKilled(final EntityType<?> type);
+    void mobKilled(final ResourceLocation encounterId);
 
     /**
      * Adds a member that got lost during the current newest stage.

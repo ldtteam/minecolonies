@@ -1,4 +1,4 @@
-package com.minecolonies.core.colony.expeditions.colony;
+package com.minecolonies.core.colony.expeditions.colony.types;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IColonyExpeditionManager;

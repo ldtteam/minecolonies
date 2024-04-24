@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHan
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.visitor.expeditionary.MainWindowExpeditionary;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.network.chat.Component;

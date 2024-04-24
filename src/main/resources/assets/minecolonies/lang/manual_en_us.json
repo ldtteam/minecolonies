@@ -2607,6 +2607,7 @@
   "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d",
   "com.minecolonies.core.expedition.start": "[%s]: Thanks for the help, we will be leaving soon to start the expedition!",
   "com.minecolonies.core.expedition.finish": "[%s]: We've returned from our expedition! I've left your share of rewards at the Town Hall.",
+  "com.minecolonies.core.expedition.failure": "The expedition lead by %s has not returned in time, they either got lost or died on the way.",
   "com.minecolonies.core.expedition.gui.townhall.header": "Expeditions Overview",
   "com.minecolonies.core.expedition.gui.townhall.header_active": "Active Expeditions",
   "com.minecolonies.core.expedition.gui.townhall.header_finished": "Previous Expeditions",

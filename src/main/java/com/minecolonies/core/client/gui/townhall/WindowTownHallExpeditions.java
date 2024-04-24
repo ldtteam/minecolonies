@@ -14,8 +14,10 @@ import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionTypeManager;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
+import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -75,11 +77,8 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
      */
     private final ScrollingList finishedExpeditionsList;
 
-    /**
-     * The current opened expedition data.
-     */
     @Nullable
-    private OpenedExpeditionInfo openedExpedition;
+    private ColonyExpedition openedExpedition;
 
     /**
      * Constructor for a town hall rename entry window.
@@ -92,9 +91,9 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         this.colony = colony;
 
         this.activeExpeditionsList = findPaneOfTypeByID(LIST_ACTIVE_EXPEDITIONS, ScrollingList.class);
-        setupExpeditionList(activeExpeditionsList, colony.getExpeditionManager()::getActiveExpeditions, true);
+        setupExpeditionList(activeExpeditionsList, colony.getExpeditionManager()::getActiveExpeditions);
         this.finishedExpeditionsList = findPaneOfTypeByID(LIST_FINISHED_EXPEDITIONS, ScrollingList.class);
-        setupExpeditionList(finishedExpeditionsList, colony.getExpeditionManager()::getFinishedExpeditions, false);
+        setupExpeditionList(finishedExpeditionsList, colony.getExpeditionManager()::getFinishedExpeditions);
 
         registerButton(BUTTON_EXPEDITION_OPEN, this::openExpedition);
         updateOpenedExpedition();
@@ -105,9 +104,8 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
      *
      * @param list             the scrolling list element.
      * @param expeditionGetter the getter for the list of expeditions.
-     * @param isActive         whether this list is the active or finished list.
      */
-    private void setupExpeditionList(final ScrollingList list, final Supplier<List<ColonyExpedition>> expeditionGetter, final boolean isActive)
+    private void setupExpeditionList(final ScrollingList list, final Supplier<List<ColonyExpedition>> expeditionGetter)
     {
         list.setDataProvider(new DataProvider()
         {
@@ -134,7 +132,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                   Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + expedition.getStatus().name()).withStyle(expedition.getStatus().getStatusType().getDisplayColor());
                 pane.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
 
-                final boolean isOpenActive = openedExpedition == null || openedExpedition.isActive != isActive || openedExpedition.listIndex != index;
+                final boolean isOpenActive = openedExpedition == null || openedExpedition.getId() != expedition.getId();
                 pane.findPaneOfTypeByID(BUTTON_EXPEDITION_OPEN, ButtonImage.class).setEnabled(isOpenActive);
             }
         });
@@ -151,14 +149,13 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         final int activeListIndex = activeExpeditionsList.getListElementIndexByPane(container);
         if (activeListIndex != -1)
         {
-            openedExpedition = new OpenedExpeditionInfo(colony.getExpeditionManager().getActiveExpeditions().get(activeListIndex), activeListIndex, true);
-            return;
+            this.openedExpedition = colony.getExpeditionManager().getActiveExpeditions().get(activeListIndex);
         }
 
         final int finishedListIndex = finishedExpeditionsList.getListElementIndexByPane(container);
         if (finishedListIndex != -1)
         {
-            openedExpedition = new OpenedExpeditionInfo(colony.getExpeditionManager().getFinishedExpeditions().get(finishedListIndex), finishedListIndex, false);
+            this.openedExpedition = colony.getExpeditionManager().getFinishedExpeditions().get(finishedListIndex);
         }
 
         updateOpenedExpedition();
@@ -178,7 +175,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
         if (openedExpedition != null)
         {
-            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(openedExpedition.instance.getExpeditionTypeId());
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(openedExpedition.getExpeditionTypeId());
             if (expeditionType == null)
             {
                 return;
@@ -187,8 +184,8 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
             detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
 
             final MutableComponent statusComponent =
-              Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + openedExpedition.instance.getStatus().name())
-                .withStyle(openedExpedition.instance.getStatus().getStatusType().getDisplayColor());
+              Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + openedExpedition.getStatus().name())
+                .withStyle(openedExpedition.getStatus().getStatusType().getDisplayColor());
             detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
 
             final ScrollingList itemsList = detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_ITEMS, ScrollingList.class);
@@ -197,7 +194,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                 @Override
                 public int getElementCount()
                 {
-                    return (int) Math.ceil(openedExpedition.instance.getEquipment().size() / (double) ITEMS_PER_ROW);
+                    return (int) Math.ceil(openedExpedition.getEquipment().size() / (double) ITEMS_PER_ROW);
                 }
 
                 @Override
@@ -206,25 +203,24 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                     for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
                     {
                         final int itemIndex = colIndex * (i + 1);
-                        if (openedExpedition.instance.getEquipment().size() <= itemIndex)
+                        if (openedExpedition.getEquipment().size() <= itemIndex)
                         {
                             break;
                         }
 
-                        final ItemStack item = openedExpedition.instance.getEquipment().get(itemIndex);
+                        final ItemStack item = openedExpedition.getEquipment().get(itemIndex);
                         pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
                     }
                 }
             });
 
-            if (openedExpedition.instance.getStatus().getStatusType().equals(ExpeditionStatusType.SUCCESSFUL))
+            if (openedExpedition.getStatus().getStatusType().equals(ExpeditionStatusType.SUCCESSFUL))
             {
                 findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).on();
 
-                final List<OpenedExpeditionResultData> rows = getResultRowData();
+                final List<OpenedExpeditionResultData> rows = getResultRowData(openedExpedition);
 
-                final ScrollingList resultsList = detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class);
-                resultsList.setDataProvider(new DataProvider()
+                detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(new DataProvider()
                 {
                     @Override
                     public int getElementCount()
@@ -233,10 +229,16 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                     }
 
                     @Override
+                    public boolean shouldUpdate()
+                    {
+                        return false;
+                    }
+
+                    @Override
                     public void updateElement(final int i, final Pane pane)
                     {
                         final OpenedExpeditionResultData rowData = rows.get(i);
-                        final ExpeditionStage currentStage = openedExpedition.instance.getResults().get(rowData.stageIndex);
+                        final ExpeditionStage currentStage = openedExpedition.getResults().get(rowData.stageIndex);
 
                         final Text childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, Text.class);
                         final View childRewards = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_REWARDS, View.class);
@@ -283,8 +285,13 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
                                     final MobKill item = currentStage.getKills().get(itemIndex);
                                     final EntityIcon entityIcon = pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
-                                    entityIcon.setEntity(item.entity());
-                                    entityIcon.setCount(item.count());
+
+                                    final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
+                                    if (encounter != null)
+                                    {
+                                        entityIcon.setEntity(encounter.getEntityType());
+                                        entityIcon.setCount(item.count());
+                                    }
                                 }
                             }
                         }
@@ -294,20 +301,21 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
             else
             {
                 findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).off();
+                detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(null);
             }
         }
     }
 
-    private List<OpenedExpeditionResultData> getResultRowData()
+    private List<OpenedExpeditionResultData> getResultRowData(@Nullable final ColonyExpedition colonyExpedition)
     {
-        if (openedExpedition == null)
+        if (colonyExpedition == null)
         {
             return new ArrayList<>();
         }
 
         final List<OpenedExpeditionResultData> results = new ArrayList<>();
 
-        final List<ExpeditionStage> instanceResults = openedExpedition.instance.getResults();
+        final List<ExpeditionStage> instanceResults = colonyExpedition.getResults();
         for (int stageIndex = 0; stageIndex < instanceResults.size(); stageIndex++)
         {
             final ExpeditionStage stage = instanceResults.get(stageIndex);
@@ -342,17 +350,6 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         HEADER,
         REWARDS,
         KILLS
-    }
-
-    /**
-     * Container class to hold a reference to the selected expedition, mostly used for the different lists to know whether to disable their open buttons or not.
-     *
-     * @param instance  the expedition instance.
-     * @param listIndex the index in the list.
-     * @param isActive  whether this expedition is in the active or finished list.
-     */
-    private record OpenedExpeditionInfo(ColonyExpedition instance, int listIndex, boolean isActive)
-    {
     }
 
     private record OpenedExpeditionResultData(OpenedExpeditionResultType type, int stageIndex, int listOffsetIndex)

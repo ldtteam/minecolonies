@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,9 +185,9 @@ public abstract class AbstractExpedition implements IExpedition
     }
 
     @Override
-    public void mobKilled(final EntityType<?> type)
+    public void mobKilled(final ResourceLocation encounterId)
     {
-        getCurrentStage().addKill(type);
+        getCurrentStage().addKill(encounterId);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package com.minecolonies.api.colony.expeditions;
 
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Record for recording a kill during an expedition stage.
  *
- * @param entity the entity that was killed.
- * @param count  how many of said entity were killed.
+ * @param encounterId the entity that was killed.
+ * @param count       how many of said entity were killed.
  */
-public record MobKill(EntityType<?> entity, int count)
+public record MobKill(ResourceLocation encounterId, int count)
 {
 }

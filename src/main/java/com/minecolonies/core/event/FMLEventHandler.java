@@ -52,6 +52,7 @@ public class FMLEventHandler
         event.addListener(new QuestJsonListener());
         event.addListener(new ItemNbtListener());
         event.addListener(new ColonyExpeditionTypeListener());
+        event.addListener(new ExpeditionEncounterListener());
     }
 
     @SubscribeEvent
