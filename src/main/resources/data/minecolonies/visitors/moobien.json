@@ -6,5 +6,7 @@
   "storylangkey": "com.minecolonies.coremod.gui.chat.moobien",
   "recruitcost": "minecraft:copper_block",
   "recruitcostcount": 15,
-  "gender": "male"
+  "gender": "male",
+  "primaryskill": "Athletics",
+  "secondaryskill": "Adaptability"
 }
