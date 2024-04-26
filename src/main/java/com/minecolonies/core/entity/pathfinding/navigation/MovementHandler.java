@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.navigation;
 
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Mob;
@@ -109,6 +110,19 @@ public class MovementHandler extends MoveControl
             this.mob.setSpeed((float) (this.speedModifier * speedValue));
             final BlockPos blockpos = this.mob.blockPosition();
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);
+
+            if (PathfindingUtils.isWater(mob.level, mob.blockPosition(), blockstate, blockstate.getFluidState())
+                  && PathfindingUtils.isWater(mob.level, mob.blockPosition().above(), null, null))
+            {
+                if (yDif != 0.0D)
+                {
+                    double d3 = Math.sqrt(xDif * xDif + yDif * yDif + zDif * zDif);
+                    this.mob.setDeltaMovement(this.mob.getDeltaMovement().add(0, (double) this.mob.getSpeed() * ((yDif + 0.3) / d3) * 0.1D, 0));
+                }
+
+                return;
+            }
+
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
             if ((yDif > (double) stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
