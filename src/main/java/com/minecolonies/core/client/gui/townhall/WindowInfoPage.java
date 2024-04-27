@@ -14,7 +14,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessage;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
