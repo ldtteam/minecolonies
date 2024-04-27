@@ -9,14 +9,13 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import com.minecolonies.core.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
+import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
+import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
