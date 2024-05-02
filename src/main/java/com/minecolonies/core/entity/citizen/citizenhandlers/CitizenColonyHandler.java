@@ -88,6 +88,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (!citizen.isAddedToWorld())
         {
             Log.getLogger().warn("Registering too early, entity not added to world!", new Exception());
+            citizen.discard();
             return;
         }
 
