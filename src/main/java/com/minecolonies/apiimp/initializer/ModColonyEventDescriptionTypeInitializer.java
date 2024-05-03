@@ -6,6 +6,7 @@ import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingBuiltEvent
 import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingUpgradedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

@@ -255,6 +255,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ITickRateStateMachine<IState> citizenAI = new TickRateStateMachine<>(CitizenAIState.IDLE, e -> {}, ENTITY_AI_TICKRATE);
 
     /**
+     * Maximum air supply
+     */
+    private int maxAir = 300;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -773,12 +778,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public int getMaxAirSupply()
     {
-        if (getCitizenColonyHandler() != null && getCitizenColonyHandler().getColony() != null
-              && getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
-        {
-            return super.getMaxAirSupply() * 2;
-        }
-        return super.getMaxAirSupply();
+        return maxAir;
     }
 
     /**
@@ -2008,5 +2008,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean isCurrentlyGlowing()
     {
         return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
+
+    /**
+     * Sets the max air
+     *
+     * @param maxAir
+     */
+    public void setMaxAir(final int maxAir)
+    {
+        this.maxAir = maxAir;
     }
 }
