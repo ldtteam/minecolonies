@@ -9,7 +9,7 @@
         <view size="100% 35">
             <buttonimage id="job" size="129 17" pos="10 9" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
-            <text id="jobLabel" size="225 33" pos="150 1" color="black" textalign="MIDDLE_LEFT" wrap="true"/>
+            <text id="jobLabel" size="220 33" pos="150 1" color="black" textalign="MIDDLE_LEFT" wrap="true"/>
         </view>
     </list>
 </window>
