@@ -3,20 +3,33 @@ package com.minecolonies.core.colony.managers;
 import com.google.common.collect.EvictingQueue;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
+import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
-import com.minecolonies.api.colony.managers.interfaces.IColonyExpeditionManager;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedition;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.FinishedExpedition;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
+import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -32,10 +45,16 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     /**
      * NBT tags.
      */
-    private static final String TAG_ACTIVE_EXPEDITIONS         = "activeExpeditions";
-    private static final String TAG_FINISHED_EXPEDITIONS       = "finishedExpeditions";
-    private static final String TAG_RUINED_PORTAL_DISCOVER     = "isRuinedPortalDiscovered";
-    private static final String TAG_STRONGHOLD_PORTAL_DISCOVER = "isStrongholdDiscovered";
+    private static final String TAG_CREATED_EXPEDITIONS         = "createdExpeditions";
+    private static final String TAG_CREATED_EXPEDITION_ID       = "id";
+    private static final String TAG_CREATED_EXPEDITION_TYPE_ID  = "expeditionTypeId";
+    private static final String TAG_CREATED_EXPEDITION_ACCEPTED = "accepted";
+    private static final String TAG_ACTIVE_EXPEDITIONS          = "activeExpeditions";
+    private static final String TAG_FINISHED_EXPEDITIONS        = "finishedExpeditions";
+    private static final String TAG_FINISHED_EXPEDITION_DATA    = "data";
+    private static final String TAG_FINISHED_EXPEDITION_STATUS  = "status";
+    private static final String TAG_RUINED_PORTAL_DISCOVER      = "isRuinedPortalDiscovered";
+    private static final String TAG_STRONGHOLD_PORTAL_DISCOVER  = "isStrongholdDiscovered";
 
     /**
      * The maximum amount of expeditions kept in the history.
@@ -48,6 +67,11 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     private final IColony colony;
 
     /**
+     * The currently created expedition(s).
+     */
+    private final Map<Integer, CreatedExpedition> createdExpeditions = new HashMap<>();
+
+    /**
      * The currently active expedition(s).
      */
     private final Map<Integer, ColonyExpedition> activeExpeditions = new HashMap<>();
@@ -55,7 +79,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     /**
      * The currently finished expeditions.
      */
-    private final EvictingQueue<ColonyExpedition> finishedExpeditions = EvictingQueue.create(MAX_EXPEDITION_HISTORY);
+    private final EvictingQueue<FinishedExpedition> finishedExpeditions = EvictingQueue.create(MAX_EXPEDITION_HISTORY);
 
     /**
      * Whether a ruined portal has been discovered by an expedition.
@@ -104,21 +128,56 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
 
     @Override
     @Nullable
-    public ColonyExpedition getExpedition(final int id)
+    public CreatedExpedition getCreatedExpedition(final int id)
+    {
+        return createdExpeditions.get(id);
+    }
+
+    @Override
+    @Nullable
+    public ColonyExpedition getActiveExpedition(final int id)
     {
         return activeExpeditions.get(id);
     }
 
     @Override
-    public boolean addExpedition(final ColonyExpedition expedition)
+    @Nullable
+    public FinishedExpedition getFinishedExpedition(final int id)
     {
-        final IExpeditionMember<?> leader = expedition.getLeader();
-        if (activeExpeditions.containsKey(leader.getId()))
+        return finishedExpeditions.stream().filter(f -> f.expedition().getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    @NotNull
+    public ExpeditionStatus getExpeditionStatus(final int id)
+    {
+        if (createdExpeditions.containsKey(id))
+        {
+            return createdExpeditions.get(id).accepted() ? ExpeditionStatus.ACCEPTED : ExpeditionStatus.CREATED;
+        }
+
+        if (activeExpeditions.containsKey(id))
+        {
+            return ExpeditionStatus.ONGOING;
+        }
+
+        if (finishedExpeditions.stream().anyMatch(finishedExpedition -> finishedExpedition.expedition().getId() == id))
+        {
+            return ExpeditionStatus.FINISHED;
+        }
+
+        return ExpeditionStatus.UNKNOWN;
+    }
+
+    @Override
+    public boolean addExpedition(final int id, final ResourceLocation expeditionTypeId)
+    {
+        if (createdExpeditions.containsKey(id))
         {
             return false;
         }
 
-        activeExpeditions.put(expedition.getId(), expedition);
+        createdExpeditions.put(id, new CreatedExpedition(id, expeditionTypeId, false));
         updateCaches();
 
         colony.markDirty();
@@ -127,16 +186,54 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    public void finishExpedition(final int id)
+    public boolean acceptExpedition(final int id)
     {
-        if (activeExpeditions.containsKey(id))
+        final boolean exists = createdExpeditions.containsKey(id);
+        if (exists)
         {
-            finishedExpeditions.add(activeExpeditions.remove(id));
+            createdExpeditions.put(id, createdExpeditions.get(id).accept());
             updateCaches();
 
             colony.markDirty();
             dirty = true;
         }
+        return exists;
+    }
+
+    @Override
+    public boolean startExpedition(final int id, final List<IExpeditionMember<?>> members, final List<ItemStack> equipment)
+    {
+        final boolean exists = createdExpeditions.containsKey(id);
+        if (exists && createdExpeditions.get(id).accepted())
+        {
+            activeExpeditions.put(id, createdExpeditions.get(id).createExpedition(members, equipment));
+            updateCaches();
+
+            colony.markDirty();
+            dirty = true;
+        }
+        return exists;
+    }
+
+    @Override
+    public boolean finishExpedition(final int id, final ExpeditionFinishedStatus status)
+    {
+        final boolean exists = activeExpeditions.containsKey(id);
+        if (exists)
+        {
+            finishedExpeditions.add(new FinishedExpedition(activeExpeditions.remove(id), status));
+            updateCaches();
+
+            colony.markDirty();
+            dirty = true;
+        }
+        return exists;
+    }
+
+    @Override
+    public void removeCreatedExpedition(final int id)
+    {
+        createdExpeditions.remove(id);
     }
 
     @Override
@@ -173,6 +270,28 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
+    public boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainer inventory)
+    {
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        if (expeditionType == null)
+        {
+            Log.getLogger().warn(String.format("Expedition type with id %s does not exist", expeditionTypeId));
+            return false;
+        }
+
+        return meetsRequirements(expeditionType, inventory);
+    }
+
+    @Override
+    public boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainer inventory)
+    {
+        return expeditionType.getRequirements().stream()
+                 .map(m -> m.createHandler(() -> new InvWrapper(inventory)))
+                 .anyMatch(f -> f.getAvailabilityStatus().equals(ResourceAvailability.NOT_NEEDED))
+                 && inventory.getMembers().size() >= expeditionType.getGuards();
+    }
+
+    @Override
     public void unlockNether()
     {
         isRuinedPortalDiscovered = true;
@@ -200,6 +319,17 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     public CompoundTag serializeNBT()
     {
         final CompoundTag compound = new CompoundTag();
+        final ListTag createdExpeditionsCompound = createdExpeditions.entrySet().stream()
+                                                     .map(expedition -> {
+                                                         final CompoundTag expeditionItemCompound = new CompoundTag();
+                                                         expeditionItemCompound.putInt(TAG_CREATED_EXPEDITION_ID, expedition.getKey());
+                                                         expeditionItemCompound.putString(TAG_CREATED_EXPEDITION_TYPE_ID, expedition.getValue().expeditionTypeId().toString());
+                                                         expeditionItemCompound.putBoolean(TAG_CREATED_EXPEDITION_ACCEPTED, expedition.getValue().accepted());
+                                                         return expeditionItemCompound;
+                                                     })
+                                                     .collect(NBTUtils.toListNBT());
+        compound.put(TAG_CREATED_EXPEDITIONS, createdExpeditionsCompound);
+
         final ListTag activeExpeditionsCompound = activeExpeditions.values().stream()
                                                     .map(expedition -> {
                                                         final CompoundTag expeditionItemCompound = new CompoundTag();
@@ -212,7 +342,10 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         final ListTag finishedExpeditionsCompound = finishedExpeditions.stream()
                                                       .map(expedition -> {
                                                           final CompoundTag expeditionItemCompound = new CompoundTag();
-                                                          expedition.write(expeditionItemCompound);
+                                                          final CompoundTag expeditionDataCompound = new CompoundTag();
+                                                          expedition.expedition().write(expeditionDataCompound);
+                                                          expeditionItemCompound.put(TAG_FINISHED_EXPEDITION_DATA, expeditionDataCompound);
+                                                          expeditionItemCompound.putString(TAG_FINISHED_EXPEDITION_STATUS, expedition.status().name());
                                                           return expeditionItemCompound;
                                                       })
                                                       .collect(NBTUtils.toListNBT());
@@ -226,6 +359,17 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
+        final ListTag createdExpeditionsCompound = compound.getList(TAG_CREATED_EXPEDITIONS, Tag.TAG_COMPOUND);
+        createdExpeditions.clear();
+        createdExpeditions.putAll(NBTUtils.streamCompound(createdExpeditionsCompound)
+                                    .map(expeditionItemCompound -> {
+                                        final int id = expeditionItemCompound.getInt(TAG_CREATED_EXPEDITION_ID);
+                                        final ResourceLocation expeditionTypeId = new ResourceLocation(expeditionItemCompound.getString(TAG_CREATED_EXPEDITION_TYPE_ID));
+                                        final boolean accepted = expeditionItemCompound.getBoolean(TAG_CREATED_EXPEDITION_ACCEPTED);
+                                        return new CreatedExpedition(id, expeditionTypeId, accepted);
+                                    })
+                                    .collect(Collectors.toMap(CreatedExpedition::id, v -> v)));
+
         final ListTag activeExpeditionsCompound = compound.getList(TAG_ACTIVE_EXPEDITIONS, Tag.TAG_COMPOUND);
         activeExpeditions.clear();
         activeExpeditions.putAll(NBTUtils.streamCompound(activeExpeditionsCompound)
@@ -235,7 +379,11 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         final ListTag finishedExpeditionsCompound = compound.getList(TAG_FINISHED_EXPEDITIONS, Tag.TAG_COMPOUND);
         finishedExpeditions.clear();
         finishedExpeditions.addAll(NBTUtils.streamCompound(finishedExpeditionsCompound)
-                                     .map(ColonyExpedition::loadFromNBT)
+                                     .map((expeditionItemCompound) -> {
+                                         final ColonyExpedition expeditionCompound = ColonyExpedition.loadFromNBT(expeditionItemCompound.getCompound(TAG_FINISHED_EXPEDITION_DATA));
+                                         final ExpeditionFinishedStatus status = ExpeditionFinishedStatus.valueOf(expeditionItemCompound.getString(TAG_FINISHED_EXPEDITION_STATUS));
+                                         return new FinishedExpedition(expeditionCompound, status);
+                                     })
                                      .toList());
 
         updateCaches();
@@ -250,7 +398,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     private void updateCaches()
     {
         activeExpeditionsCache = activeExpeditions.values().stream().toList();
-        finishedExpeditionsCache = finishedExpeditions.stream().toList();
+        finishedExpeditionsCache = finishedExpeditions.stream().map(FinishedExpedition::expedition).toList();
     }
 
     /**

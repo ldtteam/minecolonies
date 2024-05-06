@@ -2,15 +2,17 @@ package com.minecolonies.core.client.gui.visitor.expeditionary;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.support.DataProviders.CheckListDataProvider;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.ScrollingList.DataProvider;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IVisitorViewData;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
-import com.minecolonies.api.colony.expeditions.IExpeditionMember;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition.GuardsComparator;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -20,20 +22,14 @@ import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.generic.ResourceItem;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
-import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
-import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition.GuardsComparator;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType.Difficulty;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
-import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
-import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
-import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.AssignGuardMessage;
-import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.StartExpeditionMessage;
-import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.TransferItemsMessage;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.network.messages.server.OpenExpeditionSheetInventoryMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -42,12 +38,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
 
 /**
  * Main window for the expeditionary their GUI.
@@ -59,9 +53,9 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private static final String ID_EXPEDITION_NAME              = "expedition_name";
     private static final String ID_EXPEDITION_DIFFICULTY        = "expedition_difficulty";
-    private static final String ID_EXPEDITION_START             = "expedition_start";
     private static final String ID_EXPEDITION_ITEMS             = "expedition_items";
     private static final String ID_EXPEDITION_ITEMS_HEADER      = "expedition_items_header";
+    private static final String ID_EXPEDITION_ITEMS_INVENTORY   = "expedition_inventory";
     private static final String ID_EXPEDITION_ITEMS_SUBHEADER   = "expedition_items_subheader";
     private static final String ID_EXPEDITION_GUARDS            = "expedition_guards";
     private static final String ID_EXPEDITION_GUARDS_HEADER     = "expedition_guards_header";
@@ -75,25 +69,22 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     private static final String ID_EXPEDITION_GUARDS_ASSIGN     = "guardAssign";
 
     /**
-     * The visitor data.
-     */
-    @NotNull
-    private final IVisitorViewData visitorData;
-
-    /**
      * The current expedition type.
      */
+    @NotNull
     private final ColonyExpeditionType expeditionType;
 
     /**
-     * The builder instance for the expedition.
+     * Which hand the player used to open the GUI with from item.
      */
-    private final ColonyExpedition expedition;
+    @NotNull
+    private final InteractionHand hand;
 
     /**
-     * Cache of the members for easier O(1) lookup.
+     * The container surrounding the item stack for the expedition.
      */
-    private final Set<Integer> membersByIdCache;
+    @NotNull
+    private final ExpeditionSheetContainer container;
 
     /**
      * The comparator instance for the resources list.
@@ -121,28 +112,26 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     /**
      * Default constructor.
      */
-    public MainWindowExpeditionary(final @NotNull IVisitorViewData visitorData)
+    public MainWindowExpeditionary(
+      final @NotNull IColonyView colonyView,
+      final @NotNull ColonyExpeditionType expeditionType,
+      final @NotNull InteractionHand hand,
+      final @NotNull ExpeditionSheetContainer container)
     {
         super(Constants.MOD_ID + EXPEDITIONARY_MAIN_RESOURCE_SUFFIX);
-        this.visitorData = visitorData;
-
-        expedition = visitorData.getExtraDataValue(EXTRA_DATA_EXPEDITION);
-
-        expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
-        if (expeditionType == null)
-        {
-            throw new IllegalStateException(String.format("Expedition with id '%s' does not exist.", expedition.getExpeditionTypeId()));
-        }
-
-        membersByIdCache = expedition.getMembers().stream().map(IExpeditionMember::getId).collect(Collectors.toSet());
+        this.expeditionType = expeditionType;
+        this.hand = hand;
+        this.container = container;
 
         resourceComparator = new ResourceComparator();
-        requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(visitorData::getInventory)).collect(Collectors.toList());
+        requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
         requirements.sort(resourceComparator);
 
-        guardsComparator = new GuardsComparator(expedition);
-        guards = visitorData.getColony().getCitizens().values().stream()
-                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard() && !f.getColony().getTravelingManager().isTravelling(f.getId()))
+        guardsComparator = new GuardsComparator(container.getMembers());
+        guards = colonyView.getCitizens().values().stream()
+                   .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard() && !f.getColony()
+                                                                                                                           .getTravelingManager()
+                                                                                                                           .isTravelling(f.getId()))
                    .collect(Collectors.toList());
         guards.sort(guardsComparator);
 
@@ -150,8 +139,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         guardsList = findPaneOfTypeByID(ID_EXPEDITION_GUARDS, ScrollingList.class);
 
         registerButton(RESOURCE_ADD, this::transferItems);
-        registerButton(ID_EXPEDITION_NAME, this::openVisitorInventory);
-        registerButton(ID_EXPEDITION_START, this::startExpedition);
+        registerButton(ID_EXPEDITION_ITEMS_INVENTORY, this::openVisitorInventory);
     }
 
     /**
@@ -182,7 +170,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private void openVisitorInventory()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(visitorData.getColony(), visitorData.getName(), visitorData.getId()));
+        Network.getNetwork().sendToServer(new OpenExpeditionSheetInventoryMessage(hand));
     }
 
     /**
@@ -250,14 +238,12 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                      ? Component.translatable(EXPEDITIONARY_ITEMS_SUBHEADER_MET)
                      : Component.translatable(EXPEDITIONARY_ITEMS_SUBHEADER_NOT_MET));
 
-        final int currentGuardCount = expedition.getMembers().size();
+        final int currentGuardCount = container.getMembers().size();
         final boolean guardRequirementMet = currentGuardCount >= expeditionType.getGuards();
         findPaneOfTypeByID(ID_EXPEDITION_GUARDS_SUBHEADER, Text.class)
           .setText(guardRequirementMet
                      ? Component.translatable(EXPEDITIONARY_GUARDS_SUBHEADER_MET)
                      : Component.translatable(EXPEDITIONARY_GUARDS_SUBHEADER_NOT_MET, expeditionType.getGuards() - currentGuardCount));
-
-        findPaneOfTypeByID(ID_EXPEDITION_START, ButtonImage.class).setEnabled(itemRequirementsMet && guardRequirementMet);
     }
 
     /**
@@ -303,28 +289,15 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             @Override
             public boolean isChecked(final int index)
             {
-                return membersByIdCache.contains(guards.get(index).getId());
+                return container.getMembers().contains(guards.get(index).getId());
             }
 
             @Override
             public void setChecked(final int index, final boolean checked)
             {
                 final ICitizenDataView guard = guards.get(index);
-                if (checked)
-                {
-                    expedition.addMember(new ExpeditionCitizenMember(guard));
-                    membersByIdCache.add(guard.getId());
-                }
-                else
-                {
-                    expedition.removeMember(new ExpeditionCitizenMember(guard));
-                    membersByIdCache.remove(guard.getId());
-                }
-
-                Network.getNetwork().sendToServer(new AssignGuardMessage(guard, checked));
-
+                container.toggleMember(guard.getId());
                 guards.sort(guardsComparator);
-
                 renderHeaders();
             }
 
@@ -375,45 +348,43 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             return;
         }
 
-        Network.getNetwork().sendToServer(new TransferItemsMessage(visitorData, expeditionType, requirement.getId()));
-
         final int needed = requirement.getAmount() - requirement.getAmountAvailable();
         if (mc.player.isCreative())
         {
-            InventoryUtils.addItemStackToItemHandler(visitorData.getInventory(), requirement.getDefaultItemStack().copyWithCount(needed));
+            InventoryUtils.addItemStackToItemHandler(new InvWrapper(container), requirement.getDefaultItemStack().copyWithCount(needed));
         }
         else
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(new InvWrapper(mc.player.getInventory()),
               requirement.getItemPredicate(),
               needed,
-              visitorData.getInventory());
+              new InvWrapper(container));
         }
 
         renderHeaders();
     }
 
-    /**
-     * Triggers starting the expedition.
-     */
-    private void startExpedition()
-    {
-        // Gather the inventory and the armor slots from the inventory.
-        final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(visitorData.getInventory());
-        for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
-        {
-            final ItemStack armorItem = visitorData.getInventory().getArmorInSlot(equipmentSlot);
-            if (armorItem != ItemStack.EMPTY)
-            {
-                equipment.add(armorItem);
-            }
-        }
-        expedition.setEquipment(equipment);
-        expedition.addMember(new ExpeditionVisitorMember(visitorData));
-
-        expedition.setStatus(ExpeditionStatus.ONGOING);
-        Network.getNetwork().sendToServer(new StartExpeditionMessage(visitorData.getColony(), expedition));
-
-        close();
-    }
+    ///**
+    // * Triggers starting the expedition.
+    // */
+    //private void startExpedition()
+    //{
+    //    // Gather the inventory and the armor slots from the inventory.
+    //    final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(visitorData.getInventory());
+    //    for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
+    //    {
+    //        final ItemStack armorItem = visitorData.getInventory().getArmorInSlot(equipmentSlot);
+    //        if (armorItem != ItemStack.EMPTY)
+    //        {
+    //            equipment.add(armorItem);
+    //        }
+    //    }
+    //    expedition.setEquipment(equipment);
+    //    expedition.addMember(new ExpeditionVisitorMember(visitorData));
+    //
+    //    expedition.setStatus(ExpeditionFinishedStatus.ONGOING);
+    //    Network.getNetwork().sendToServer(new StartExpeditionMessage(expedition, expedition));
+    //
+    //    close();
+    //}
 }

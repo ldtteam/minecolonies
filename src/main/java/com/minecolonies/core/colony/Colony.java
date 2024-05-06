@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;

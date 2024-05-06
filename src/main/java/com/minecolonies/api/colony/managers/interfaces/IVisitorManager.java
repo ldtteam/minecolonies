@@ -29,12 +29,4 @@ public interface IVisitorManager extends IEntityManager<IVisitorData>
      * @return new IVisitorData
      */
     IVisitorData createAndRegisterVisitorData(final IVisitorType visitorType);
-
-    /**
-     * Get the current active expeditionary, if any.
-     *
-     * @return the active expeditionary visitor data.
-     */
-    @Nullable
-    IVisitorData getActiveExpeditionary();
 }

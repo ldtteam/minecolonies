@@ -1,6 +1,5 @@
 package com.minecolonies.core.colony.expeditions;
 
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpedition;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_STAGE_WILDERNESS;
 
@@ -29,7 +27,6 @@ public abstract class AbstractExpedition implements IExpedition
     private static final String TAG_MEMBERS     = "members";
     private static final String TAG_MEMBER_TYPE = "memberType";
     private static final String TAG_RESULTS     = "results";
-    private static final String TAG_STATUS      = "status";
 
     /**
      * The members of the expedition.
@@ -49,11 +46,6 @@ public abstract class AbstractExpedition implements IExpedition
     protected final Deque<ExpeditionStage> results;
 
     /**
-     * The stage of the expedition.
-     */
-    protected ExpeditionStatus status;
-
-    /**
      * The current active members of the expedition.
      */
     @Nullable
@@ -65,18 +57,15 @@ public abstract class AbstractExpedition implements IExpedition
      * @param members   the members for this expedition.
      * @param equipment the list of equipment for this expedition.
      * @param results   the results for this expedition.
-     * @param status    the status of the expedition.
      */
     protected AbstractExpedition(
-      final @NotNull List<IExpeditionMember<?>> members,
+      final @NotNull Map<Integer, IExpeditionMember<?>> members,
       final @NotNull List<ItemStack> equipment,
-      final @NotNull List<ExpeditionStage> results,
-      final @NotNull ExpeditionStatus status)
+      final @NotNull List<ExpeditionStage> results)
     {
-        this.members = members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v));
-        this.equipment = equipment;
+        this.members = Collections.unmodifiableMap(members);
+        this.equipment = Collections.unmodifiableList(equipment);
         this.results = new ArrayDeque<>(results);
-        this.status = status;
     }
 
     /**
@@ -86,21 +75,7 @@ public abstract class AbstractExpedition implements IExpedition
      */
     public static <T extends AbstractExpedition> T loadFromNBT(final CompoundTag compound, final ExpeditionCreator<T> creator)
     {
-        final List<IExpeditionMember<?>> members = new ArrayList<>();
-        final ListTag membersList = compound.getList(TAG_MEMBERS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < membersList.size(); ++i)
-        {
-            final CompoundTag memberCompound = membersList.getCompound(i);
-            final String memberType = memberCompound.getString(TAG_MEMBER_TYPE);
-            if (Objects.equals(memberType, "citizen"))
-            {
-                members.add(new ExpeditionCitizenMember(memberCompound));
-            }
-            else if (Objects.equals(memberType, "visitor"))
-            {
-                members.add(new ExpeditionVisitorMember(memberCompound));
-            }
-        }
+        final List<IExpeditionMember<?>> members = readMembers(compound, TAG_MEMBERS);
 
         final List<ItemStack> equipment = new ArrayList<>();
         final ListTag equipmentList = compound.getList(TAG_EQUIPMENT, Tag.TAG_COMPOUND);
@@ -116,21 +91,61 @@ public abstract class AbstractExpedition implements IExpedition
             results.add(ExpeditionStage.loadFromNBT(resultsList.getCompound(i)));
         }
 
-        final ExpeditionStatus status = compound.contains(TAG_STATUS) ? ExpeditionStatus.valueOf(compound.getString(TAG_STATUS)) : ExpeditionStatus.CREATED;
-
-        return creator.create(members, equipment, results, status);
+        return creator.create(members, equipment, results);
     }
 
-    @Override
-    public final ExpeditionStatus getStatus()
+    /**
+     * Read member data from NBT.
+     *
+     * @param compound the compound data.
+     * @param tagName  the name of the tag where the members data is stored.
+     * @return the list of members.
+     */
+    public static List<IExpeditionMember<?>> readMembers(final CompoundTag compound, final String tagName)
     {
-        return status;
+        final List<IExpeditionMember<?>> members = new ArrayList<>();
+        final ListTag membersList = compound.getList(tagName, Tag.TAG_COMPOUND);
+        for (int i = 0; i < membersList.size(); ++i)
+        {
+            final CompoundTag memberCompound = membersList.getCompound(i);
+            final String memberType = memberCompound.getString(TAG_MEMBER_TYPE);
+            if (Objects.equals(memberType, "citizen"))
+            {
+                members.add(new ExpeditionCitizenMember(memberCompound));
+            }
+            else if (Objects.equals(memberType, "visitor"))
+            {
+                members.add(new ExpeditionVisitorMember(memberCompound));
+            }
+        }
+        return members;
     }
 
-    @Override
-    public final void setStatus(final ExpeditionStatus status)
+    /**
+     * Write member data to NBT.
+     *
+     * @param compound the compound data.
+     * @param tagName  the name of the tag where the members data is stored.
+     * @param members  the list of members.
+     */
+    public static void writeMembers(final CompoundTag compound, final String tagName, final Collection<IExpeditionMember<?>> members)
     {
-        this.status = status;
+        final ListTag membersCompound = new ListTag();
+        for (final IExpeditionMember<?> member : members)
+        {
+            final CompoundTag memberCompound = new CompoundTag();
+            if (member instanceof ExpeditionCitizenMember)
+            {
+                memberCompound.putString(TAG_MEMBER_TYPE, "citizen");
+            }
+            else if (member instanceof ExpeditionVisitorMember)
+            {
+                memberCompound.putString(TAG_MEMBER_TYPE, "visitor");
+            }
+            member.write(memberCompound);
+            membersCompound.add(memberCompound);
+        }
+        compound.put(tagName, membersCompound);
     }
 
     @Override
@@ -205,22 +220,7 @@ public abstract class AbstractExpedition implements IExpedition
     @Override
     public void write(final CompoundTag compound)
     {
-        final ListTag membersCompound = new ListTag();
-        for (final IExpeditionMember<?> member : members.values())
-        {
-            final CompoundTag memberCompound = new CompoundTag();
-            if (member instanceof ExpeditionCitizenMember)
-            {
-                memberCompound.putString(TAG_MEMBER_TYPE, "citizen");
-            }
-            else if (member instanceof ExpeditionVisitorMember)
-            {
-                memberCompound.putString(TAG_MEMBER_TYPE, "visitor");
-            }
-            member.write(memberCompound);
-            membersCompound.add(memberCompound);
-        }
-        compound.put(TAG_MEMBERS, membersCompound);
+        writeMembers(compound, TAG_MEMBERS, members.values());
 
         final ListTag equipmentCompound = new ListTag();
         for (final ItemStack itemStack : equipment)
@@ -237,8 +237,6 @@ public abstract class AbstractExpedition implements IExpedition
             resultsCompound.add(resultCompound);
         }
         compound.put(TAG_RESULTS, resultsCompound);
-
-        compound.putString(TAG_STATUS, status.name());
     }
 
     /**
@@ -270,9 +268,8 @@ public abstract class AbstractExpedition implements IExpedition
          * @param members   the members for this expedition.
          * @param equipment the list of equipment for this expedition.
          * @param results   the results for this expedition.
-         * @param status    the status of the expedition.
          * @return the new expedition instance.
          */
-        T create(final List<IExpeditionMember<?>> members, final List<ItemStack> equipment, final List<ExpeditionStage> results, final ExpeditionStatus status);
+        T create(final List<IExpeditionMember<?>> members, final List<ItemStack> equipment, final List<ExpeditionStage> results);
     }
 }

@@ -8,15 +8,23 @@ import org.jetbrains.annotations.NonNls;
 public class ExpeditionConstants
 {
     @NonNls
-    public static final String EXPEDITION_INTERACTION_INQUIRY                 = "com.minecolonies.core.expedition.interaction";
+    public static final String EXPEDITION_INTERACTION_INQUIRY_ACCEPT          = "com.minecolonies.core.expedition.interaction.inquiry.accept";
     @NonNls
-    public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW           = "com.minecolonies.core.expedition.interaction.view";
+    public static final String EXPEDITION_INTERACTION_INQUIRY_PREPARE         = "com.minecolonies.core.expedition.interaction.inquiry.prepare";
     @NonNls
-    public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW_RESULTS   = "com.minecolonies.core.expedition.interaction.view_results";
+    public static final String EXPEDITION_INTERACTION_INQUIRY_FINISHED        = "com.minecolonies.core.expedition.interaction.inquiry.finished";
     @NonNls
-    public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_NOW        = "com.minecolonies.core.expedition.interaction.not_now";
+    public static final String EXPEDITION_INTERACTION_RESPONSE_ACCEPT         = "com.minecolonies.core.expedition.interaction.response.accept";
     @NonNls
-    public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED = "com.minecolonies.core.expedition.interaction.not_interested";
+    public static final String EXPEDITION_INTERACTION_RESPONSE_GET_SHEET      = "com.minecolonies.core.expedition.interaction.response.get_sheet";
+    @NonNls
+    public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED = "com.minecolonies.core.expedition.interaction.response.not_interested";
+    @NonNls
+    public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_NOW        = "com.minecolonies.core.expedition.interaction.response.not_now";
+    @NonNls
+    public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW           = "com.minecolonies.core.expedition.interaction.response.view";
+    @NonNls
+    public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW_RESULTS   = "com.minecolonies.core.expedition.interaction.response.view_results";
     @NonNls
     public static final String EXPEDITIONARY_DIFFICULTY                       = "com.minecolonies.core.expedition.gui.difficulty";
     @NonNls

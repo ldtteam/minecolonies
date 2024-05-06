@@ -6,46 +6,23 @@ package com.minecolonies.api.colony.expeditions;
 public enum ExpeditionStatus
 {
     /**
-     * Default state, the moment this expedition is registered as an event to the colony they will embark.
+     * The expedition has been created but not accepted yet.
      */
-    CREATED(ExpeditionStatusType.ONGOING),
+    CREATED,
     /**
-     * The expedition embarked on their journey and is currently in progress.
+     * The expedition has been accepted but has not been sent away just yet.
      */
-    ONGOING(ExpeditionStatusType.ONGOING),
+    ACCEPTED,
     /**
-     * The expedition has returned safely to the colony.
+     * The expedition is currently active.
      */
-    RETURNED(ExpeditionStatusType.SUCCESSFUL),
+    ONGOING,
     /**
-     * The expedition has been killed off.
+     * The expedition is finished.
      */
-    KILLED(ExpeditionStatusType.UNSUCCESSFUL),
+    FINISHED,
     /**
-     * The expedition has gotten lost.
+     * The expedition does not exist.
      */
-    LOST(ExpeditionStatusType.UNSUCCESSFUL);
-
-    /**
-     * The status type for this status.
-     */
-    private final ExpeditionStatusType statusType;
-
-    /**
-     * Internal constructor.
-     */
-    ExpeditionStatus(final ExpeditionStatusType statusType)
-    {
-        this.statusType = statusType;
-    }
-
-    /**
-     * Get the status type for this status.
-     *
-     * @return the status type enum.
-     */
-    public ExpeditionStatusType getStatusType()
-    {
-        return statusType;
-    }
+    UNKNOWN
 }

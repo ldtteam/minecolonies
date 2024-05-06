@@ -16,20 +16,6 @@ import java.util.Collection;
 public interface IExpedition
 {
     /**
-     * Get the status of the expedition.
-     *
-     * @return the current status.
-     */
-    ExpeditionStatus getStatus();
-
-    /**
-     * Set the status of the expedition.
-     *
-     * @param status the new status.
-     */
-    void setStatus(final ExpeditionStatus status);
-
-    /**
      * Get all the members of the expedition.
      *
      * @return the expedition members.
@@ -78,7 +64,7 @@ public interface IExpedition
     /**
      * Adds a kill to the current newest stage.
      *
-     * @param encounterId
+     * @param encounterId the type of the encounter.
      */
     void mobKilled(final ResourceLocation encounterId);
 

@@ -1,9 +1,10 @@
 package com.minecolonies.core.entity.visitor;
 
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.visitor.*;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.entity.ai.visitor.EntityAIExpeditionary;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +14,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -27,7 +28,12 @@ public class ExpeditionaryVisitorType implements IVisitorType
     /**
      * Extra data fields.
      */
-    public static final ColonyExpeditionData EXTRA_DATA_EXPEDITION = new ColonyExpeditionData();
+    public static final DespawnTimeData EXTRA_DATA_DESPAWN_TIME = new DespawnTimeData();
+
+    /**
+     * Despawn time of 20 minutes.
+     */
+    public static final int DEFAULT_DESPAWN_TIME = 24000;
 
     @Override
     public ResourceLocation getId()
@@ -50,7 +56,7 @@ public class ExpeditionaryVisitorType implements IVisitorType
     @Override
     public List<IVisitorExtraData<?>> getExtraDataKeys()
     {
-        return List.of(EXTRA_DATA_EXPEDITION);
+        return List.of(EXTRA_DATA_DESPAWN_TIME);
     }
 
     @Override
@@ -62,29 +68,41 @@ public class ExpeditionaryVisitorType implements IVisitorType
         return InteractionResult.PASS;
     }
 
-    /**
-     * Extra data for storing the expedition builder instance.
-     */
-    public static class ColonyExpeditionData extends AbstractVisitorExtraData<ColonyExpedition>
+    @Override
+    public void update(final IVisitorData visitor)
     {
-        public ColonyExpeditionData()
+        final Integer despawnTime = visitor.getExtraDataValue(EXTRA_DATA_DESPAWN_TIME);
+        final Optional<AbstractEntityCitizen> entity = visitor.getEntity();
+        if (entity.isPresent()
+              && entity.get().level.getGameTime() >= despawnTime
+              && visitor.getColony().getExpeditionManager().getExpeditionStatus(visitor.getId()).equals(ExpeditionStatus.UNKNOWN))
         {
-            super("expedition",
-              new ColonyExpedition(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), ExpeditionStatus.CREATED, -1, Level.OVERWORLD, new ResourceLocation("")));
+            visitor.getColony().getVisitorManager().removeCivilian(visitor);
+        }
+    }
+
+    /**
+     * Extra data for storing the de-spawn time.
+     */
+    public static class DespawnTimeData extends AbstractVisitorExtraData<Integer>
+    {
+        public DespawnTimeData()
+        {
+            super("despawn-time", 0);
         }
 
         @Override
         public CompoundTag serializeNBT()
         {
             final CompoundTag compound = new CompoundTag();
-            getValue().write(compound);
+            compound.putInt("time", getValue());
             return compound;
         }
 
         @Override
         public void deserializeNBT(final CompoundTag compoundTag)
         {
-            setValue(ColonyExpedition.loadFromNBT(compoundTag));
+            setValue(compoundTag.getInt("time"));
         }
     }
 }

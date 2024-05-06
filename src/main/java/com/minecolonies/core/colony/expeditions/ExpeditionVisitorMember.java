@@ -2,13 +2,13 @@ package com.minecolonies.core.colony.expeditions;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,20 +89,20 @@ public final class ExpeditionVisitorMember implements IExpeditionMember<IVisitor
     /**
      * Default constructor.
      *
-     * @param visitorDataView the visitor to create the expedition member for.
+     * @param visitorData the visitor to create the expedition member for.
      */
-    public ExpeditionVisitorMember(final IVisitorViewData visitorDataView)
+    public ExpeditionVisitorMember(final IVisitorData visitorData)
     {
-        this.id = visitorDataView.getId();
-        this.name = visitorDataView.getName();
-        this.maxHealth = (float) visitorDataView.getMaxHealth();
+        this.id = visitorData.getId();
+        this.name = visitorData.getName();
+        this.maxHealth = visitorData.getEntity().map(LivingEntity::getMaxHealth).orElseThrow();
         this.health = this.maxHealth;
         this.armor = new HashMap<>();
-        this.armor.computeIfAbsent(EquipmentSlot.HEAD, visitorDataView.getInventory()::getArmorInSlot);
-        this.armor.computeIfAbsent(EquipmentSlot.CHEST, visitorDataView.getInventory()::getArmorInSlot);
-        this.armor.computeIfAbsent(EquipmentSlot.LEGS, visitorDataView.getInventory()::getArmorInSlot);
-        this.armor.computeIfAbsent(EquipmentSlot.FEET, visitorDataView.getInventory()::getArmorInSlot);
-        this.primaryWeapon = visitorDataView.getInventory().getHeldItem(InteractionHand.MAIN_HAND);
+        this.armor.computeIfAbsent(EquipmentSlot.HEAD, visitorData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.CHEST, visitorData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.LEGS, visitorData.getInventory()::getArmorInSlot);
+        this.armor.computeIfAbsent(EquipmentSlot.FEET, visitorData.getInventory()::getArmorInSlot);
+        this.primaryWeapon = visitorData.getInventory().getHeldItem(InteractionHand.MAIN_HAND);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;

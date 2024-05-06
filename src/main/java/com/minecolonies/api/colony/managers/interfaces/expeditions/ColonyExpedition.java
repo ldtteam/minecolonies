@@ -1,23 +1,21 @@
-package com.minecolonies.core.colony.expeditions.colony;
+package com.minecolonies.api.colony.managers.interfaces.expeditions;
 
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.core.colony.expeditions.AbstractExpedition;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DIMENSION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
@@ -36,16 +34,29 @@ public final class ColonyExpedition extends AbstractExpedition
     private final int id;
 
     /**
-     * The dimension to send the expedition to.
-     */
-    @NotNull
-    private final ResourceKey<Level> dimensionId;
-
-    /**
      * The expedition type.
      */
     @NotNull
     private final ResourceLocation expeditionTypeId;
+
+    /**
+     * Default constructor.
+     *
+     * @param id               the id of the expedition.
+     * @param expeditionTypeId the expedition type.
+     * @param members          the members for this expedition.
+     * @param equipment        the list of equipment for this expedition.
+     */
+    public ColonyExpedition(
+      final int id,
+      final @NotNull ResourceLocation expeditionTypeId,
+      final @NotNull Map<Integer, IExpeditionMember<?>> members,
+      final @NotNull List<ItemStack> equipment)
+    {
+        super(members, equipment, List.of());
+        this.id = id;
+        this.expeditionTypeId = expeditionTypeId;
+    }
 
     /**
      * Deserialization constructor.
@@ -53,23 +64,18 @@ public final class ColonyExpedition extends AbstractExpedition
      * @param members          the members for this expedition.
      * @param equipment        the list of equipment for this expedition.
      * @param results          the results for this expedition.
-     * @param status           the status of the expedition.
      * @param id               the id of the expedition.
-     * @param dimensionId      the target dimension for this expedition.
      * @param expeditionTypeId the expedition type.
      */
-    public ColonyExpedition(
+    private ColonyExpedition(
+      final int id,
+      final @NotNull ResourceLocation expeditionTypeId,
       final @NotNull List<IExpeditionMember<?>> members,
       final @NotNull List<ItemStack> equipment,
-      final @NotNull List<ExpeditionStage> results,
-      final @NotNull ExpeditionStatus status,
-      final int id,
-      final @NotNull ResourceKey<Level> dimensionId,
-      final @NotNull ResourceLocation expeditionTypeId)
+      final @NotNull List<ExpeditionStage> results)
     {
-        super(members, equipment, results, status);
+        super(members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v)), equipment, results);
         this.id = id;
-        this.dimensionId = dimensionId;
         this.expeditionTypeId = expeditionTypeId;
     }
 
@@ -83,11 +89,9 @@ public final class ColonyExpedition extends AbstractExpedition
     public static ColonyExpedition loadFromNBT(final CompoundTag compound)
     {
         final int id = compound.getInt(TAG_ID);
-        final ResourceKey<Level> dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
         final ResourceLocation expeditionTypeId = new ResourceLocation(compound.getString(TAG_EXPEDITION_TYPE));
 
-        return AbstractExpedition.loadFromNBT(compound,
-          (members, equipment, results, status) -> new ColonyExpedition(members, equipment, results, status, id, dimensionId, expeditionTypeId));
+        return AbstractExpedition.loadFromNBT(compound, (members, equipment, results) -> new ColonyExpedition(id, expeditionTypeId, members, equipment, results));
     }
 
     /**
@@ -101,17 +105,6 @@ public final class ColonyExpedition extends AbstractExpedition
     }
 
     /**
-     * The dimension this expedition is going to.
-     *
-     * @return the dimension key.
-     */
-    @NotNull
-    public ResourceKey<Level> getTargetDimension()
-    {
-        return this.dimensionId;
-    }
-
-    /**
      * Get the expedition type id for this expedition.
      *
      * @return the expedition type id.
@@ -122,58 +115,11 @@ public final class ColonyExpedition extends AbstractExpedition
         return expeditionTypeId;
     }
 
-    /**
-     * Add a new member to this expedition, only possible when the status is still {@link ExpeditionStatus#ONGOING}.
-     *
-     * @param member the new member to add.
-     */
-    public void addMember(final IExpeditionMember<?> member)
-    {
-        if (!status.equals(ExpeditionStatus.CREATED))
-        {
-            return;
-        }
-
-        members.put(member.getId(), member);
-    }
-
-    /**
-     * Remove a member from this expedition, only possible when the status is still {@link ExpeditionStatus#CREATED}.
-     *
-     * @param member the new member to add.
-     */
-    public void removeMember(final IExpeditionMember<?> member)
-    {
-        if (!status.equals(ExpeditionStatus.CREATED))
-        {
-            return;
-        }
-
-        members.remove(member.getId());
-    }
-
-    /**
-     * Set the equipment which is going to be used for this expedition, only possible when the status is still {@link ExpeditionStatus#CREATED}.
-     *
-     * @param equipment the new list of equipment.
-     */
-    public void setEquipment(final List<ItemStack> equipment)
-    {
-        if (!status.equals(ExpeditionStatus.CREATED))
-        {
-            return;
-        }
-
-        this.equipment.clear();
-        this.equipment.addAll(equipment);
-    }
-
     @Override
     public void write(final CompoundTag compound)
     {
         super.write(compound);
         compound.putInt(TAG_ID, id);
-        compound.putString(TAG_DIMENSION, dimensionId.location().toString());
         compound.putString(TAG_EXPEDITION_TYPE, expeditionTypeId.toString());
     }
 
@@ -201,32 +147,32 @@ public final class ColonyExpedition extends AbstractExpedition
     public static class GuardsComparator implements Comparator<ICitizenDataView>
     {
         /**
-         * The expedition instance.
+         * The set of active members.
          */
-        private final ColonyExpedition colonyExpedition;
+        private final Set<Integer> activeMembers;
 
         /**
          * Default constructor.
          *
-         * @param colonyExpedition the expedition instance.
+         * @param activeMembers the set of active members.
          */
-        public GuardsComparator(final ColonyExpedition colonyExpedition)
+        public GuardsComparator(final Set<Integer> activeMembers)
         {
-            this.colonyExpedition = colonyExpedition;
+            this.activeMembers = activeMembers;
         }
 
         @Override
         public int compare(final ICitizenDataView guard1, final ICitizenDataView guard2)
         {
-            if (colonyExpedition.members.containsKey(guard1.getId()) && colonyExpedition.members.containsKey(guard2.getId()))
+            if (activeMembers.contains(guard1.getId()) && activeMembers.contains(guard2.getId()))
             {
                 return guard1.getName().compareTo(guard2.getName());
             }
-            else if (colonyExpedition.members.containsKey(guard1.getId()))
+            else if (activeMembers.contains(guard1.getId()))
             {
                 return -1;
             }
-            else if (colonyExpedition.members.containsKey(guard2.getId()))
+            else if (activeMembers.contains(guard2.getId()))
             {
                 return 1;
             }

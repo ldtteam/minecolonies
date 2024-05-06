@@ -156,6 +156,13 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
+    public void update()
+    {
+        super.update();
+        visitorType.update(this);
+    }
+
+    @Override
     public void applyResearchEffects()
     {
         // no research effects for now

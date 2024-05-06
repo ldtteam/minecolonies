@@ -21,7 +21,6 @@ public final class ModInteractionResponseHandlers
     public static final ResourceLocation QUEST               = new ResourceLocation(Constants.MOD_ID, "quest");
     public static final ResourceLocation QUEST_ACTION        = new ResourceLocation(Constants.MOD_ID, "questaction");
     public static final ResourceLocation EXPEDITION          = new ResourceLocation(Constants.MOD_ID, "expedition");
-    public static final ResourceLocation EXPEDITION_FINISHED = new ResourceLocation(Constants.MOD_ID, "expeditionfinished");
 
     /**
      * List of entries.
@@ -34,7 +33,6 @@ public final class ModInteractionResponseHandlers
     public static RegistryObject<InteractionResponseHandlerEntry> quest;
     public static RegistryObject<InteractionResponseHandlerEntry> questAction;
     public static RegistryObject<InteractionResponseHandlerEntry> expedition;
-    public static RegistryObject<InteractionResponseHandlerEntry> expeditionFinished;
 
     private ModInteractionResponseHandlers()
     {

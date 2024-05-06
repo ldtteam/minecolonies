@@ -128,7 +128,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         // Validate recruitment before returning true
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData visitorViewData)
         {
@@ -148,7 +148,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     @Override
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData visitorData)
         {
             IColony colony = data.getColony();

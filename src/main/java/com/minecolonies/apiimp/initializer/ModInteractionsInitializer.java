@@ -58,11 +58,5 @@ public final class ModInteractionsInitializer
                   .setResponseHandlerProducer(ExpeditionInteraction::new)
                   .setRegistryName(ModInteractionResponseHandlers.EXPEDITION)
                   .createEntry());
-
-        ModInteractionResponseHandlers.expeditionFinished = DEFERRED_REGISTER.register(ModInteractionResponseHandlers.EXPEDITION_FINISHED.getPath(),
-          () -> new InteractionResponseHandlerEntry.Builder()
-                  .setResponseHandlerProducer(ExpeditionFinishedInteraction::new)
-                  .setRegistryName(ModInteractionResponseHandlers.EXPEDITION_FINISHED)
-                  .createEntry());
     }
 }

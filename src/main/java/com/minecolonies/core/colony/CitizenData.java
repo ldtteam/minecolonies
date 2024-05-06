@@ -1591,7 +1591,7 @@ public class CitizenData implements ICitizenData
         for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getId());
-            for (final Component comp : handler.getPossibleResponses())
+            for (final Component comp : handler.getPossibleResponses(this))
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
@@ -1612,22 +1612,6 @@ public class CitizenData implements ICitizenData
                 this.citizenChatOptions.put(childHandler.getId(), childHandler);
             }
             markDirty(20 * 5);
-        }
-    }
-
-    @Override
-    public void removeInteractions(@NotNull final String type)
-    {
-        final Iterator<IInteractionResponseHandler> iterator = this.citizenChatOptions.values().iterator();
-        while (iterator.hasNext())
-        {
-            final IInteractionResponseHandler handler = iterator.next();
-
-            if (handler.getType().equals(type))
-            {
-                iterator.remove();
-                markDirty(20 * 5);
-            }
         }
     }
 

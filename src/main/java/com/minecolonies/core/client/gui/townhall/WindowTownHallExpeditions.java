@@ -7,13 +7,14 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.ScrollingList.DataProvider;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatusType;
+import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.MobKill;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.FinishedExpedition;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
@@ -128,9 +129,22 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
                 pane.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
 
-                final MutableComponent statusComponent =
-                  Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + expedition.getStatus().name()).withStyle(expedition.getStatus().getStatusType().getDisplayColor());
-                pane.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+                final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(expedition.getId());
+                if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
+                {
+                    final FinishedExpedition finishedExpedition = colony.getExpeditionManager().getFinishedExpedition(expedition.getId());
+                    if (finishedExpedition != null)
+                    {
+                        final MutableComponent statusComponent = Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + finishedExpedition.status().name())
+                                                                   .withStyle(finishedExpedition.status().getStatusType().getDisplayColor());
+                        pane.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+                    }
+                }
+                else if (expeditionStatus.equals(ExpeditionStatus.ONGOING))
+                {
+                    final MutableComponent statusComponent = Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + ExpeditionStatus.ONGOING.name());
+                    pane.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+                }
 
                 final boolean isOpenActive = openedExpedition == null || openedExpedition.getId() != expedition.getId();
                 pane.findPaneOfTypeByID(BUTTON_EXPEDITION_OPEN, ButtonImage.class).setEnabled(isOpenActive);
@@ -183,10 +197,111 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
             detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
 
-            final MutableComponent statusComponent =
-              Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + openedExpedition.getStatus().name())
-                .withStyle(openedExpedition.getStatus().getStatusType().getDisplayColor());
-            detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+            final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(openedExpedition.getId());
+            if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
+            {
+                final FinishedExpedition finishedExpedition = colony.getExpeditionManager().getFinishedExpedition(openedExpedition.getId());
+                if (finishedExpedition != null)
+                {
+                    final MutableComponent statusComponent = Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + finishedExpedition.status().name())
+                                                               .withStyle(finishedExpedition.status().getStatusType().getDisplayColor());
+                    detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+
+                    findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).on();
+
+                    final List<OpenedExpeditionResultData> rows = getResultRowData(openedExpedition);
+                    detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(new DataProvider()
+                    {
+                        @Override
+                        public int getElementCount()
+                        {
+                            return rows.size();
+                        }
+
+                        @Override
+                        public boolean shouldUpdate()
+                        {
+                            return false;
+                        }
+
+                        @Override
+                        public void updateElement(final int i, final Pane pane)
+                        {
+                            final OpenedExpeditionResultData rowData = rows.get(i);
+                            final ExpeditionStage currentStage = openedExpedition.getResults().get(rowData.stageIndex);
+
+                            final Text childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, Text.class);
+                            final View childRewards = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_REWARDS, View.class);
+                            final View childKills = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_KILLS, View.class);
+
+                            childHeader.off();
+                            childRewards.off();
+                            childKills.off();
+
+                            switch (rowData.type)
+                            {
+                                case HEADER ->
+                                {
+                                    childHeader.on();
+                                    childHeader.setText(Component.empty());
+                                }
+                                case REWARDS ->
+                                {
+                                    childRewards.on();
+
+                                    for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
+                                    {
+                                        final int itemIndex = colIndex + rowData.listOffsetIndex;
+                                        if (currentStage.getRewards().size() <= itemIndex)
+                                        {
+                                            break;
+                                        }
+
+                                        final ItemStack item = currentStage.getRewards().get(itemIndex);
+                                        pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
+                                    }
+                                }
+                                case KILLS ->
+                                {
+                                    childKills.on();
+
+                                    for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
+                                    {
+                                        final int itemIndex = colIndex + rowData.listOffsetIndex;
+                                        if (currentStage.getKills().size() <= itemIndex)
+                                        {
+                                            break;
+                                        }
+
+                                        final MobKill item = currentStage.getKills().get(itemIndex);
+                                        final EntityIcon entityIcon = pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
+
+                                        final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
+                                        if (encounter != null)
+                                        {
+                                            entityIcon.setEntity(encounter.getEntityType());
+                                            entityIcon.setCount(item.count());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).off();
+                    detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(null);
+                }
+            }
+            else
+            {
+                final MutableComponent statusComponent = Component.translatable(EXPEDITION_TOWNHALL_LIST_STATUS + ExpeditionStatus.ONGOING.name());
+                detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_STATUS, Text.class).setText(statusComponent);
+
+                findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).off();
+                detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(null);
+            }
 
             final ScrollingList itemsList = detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_ITEMS, ScrollingList.class);
             itemsList.setDataProvider(new DataProvider()
@@ -213,96 +328,6 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                     }
                 }
             });
-
-            if (openedExpedition.getStatus().getStatusType().equals(ExpeditionStatusType.SUCCESSFUL))
-            {
-                findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).on();
-
-                final List<OpenedExpeditionResultData> rows = getResultRowData(openedExpedition);
-
-                detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(new DataProvider()
-                {
-                    @Override
-                    public int getElementCount()
-                    {
-                        return rows.size();
-                    }
-
-                    @Override
-                    public boolean shouldUpdate()
-                    {
-                        return false;
-                    }
-
-                    @Override
-                    public void updateElement(final int i, final Pane pane)
-                    {
-                        final OpenedExpeditionResultData rowData = rows.get(i);
-                        final ExpeditionStage currentStage = openedExpedition.getResults().get(rowData.stageIndex);
-
-                        final Text childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, Text.class);
-                        final View childRewards = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_REWARDS, View.class);
-                        final View childKills = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_KILLS, View.class);
-
-                        childHeader.off();
-                        childRewards.off();
-                        childKills.off();
-
-                        switch (rowData.type)
-                        {
-                            case HEADER ->
-                            {
-                                childHeader.on();
-                                childHeader.setText(Component.empty());
-                            }
-                            case REWARDS ->
-                            {
-                                childRewards.on();
-
-                                for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
-                                {
-                                    final int itemIndex = colIndex + rowData.listOffsetIndex;
-                                    if (currentStage.getRewards().size() <= itemIndex)
-                                    {
-                                        break;
-                                    }
-
-                                    final ItemStack item = currentStage.getRewards().get(itemIndex);
-                                    pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
-                                }
-                            }
-                            case KILLS ->
-                            {
-                                childKills.on();
-
-                                for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
-                                {
-                                    final int itemIndex = colIndex + rowData.listOffsetIndex;
-                                    if (currentStage.getKills().size() <= itemIndex)
-                                    {
-                                        break;
-                                    }
-
-                                    final MobKill item = currentStage.getKills().get(itemIndex);
-                                    final EntityIcon entityIcon = pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
-
-                                    final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
-                                    if (encounter != null)
-                                    {
-                                        entityIcon.setEntity(encounter.getEntityType());
-                                        entityIcon.setCount(item.count());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            else
-            {
-                findPaneOfTypeByID(STATUS_EXPEDITION_RESULTS, View.class).off();
-                detailsContainer.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS, ScrollingList.class).setDataProvider(null);
-            }
         }
     }
 

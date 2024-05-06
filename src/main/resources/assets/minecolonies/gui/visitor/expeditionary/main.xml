@@ -11,17 +11,9 @@
             <image id="diff_4" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="48 0" visible="false"/>
         </view>
 
-        <buttonimage id="expedition_start"
-                     label="$(com.minecolonies.core.expedition.gui.start)"
-                     color="black"
-                     textalign="MIDDLE"
-                     size="129 17"
-                     pos="211 0"
-                     source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                     disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
-
-        <text id="expedition_items_header" size="164 15" pos="0 44" color="black"/>
-        <text id="expedition_items_subheader" size="164 15" pos="0 59" color="#505050" textscale="0.8"/>
+        <text id="expedition_items_header" size="134 15" pos="0 44" color="black"/>
+        <text id="expedition_items_subheader" size="134 15" pos="0 59" color="#505050" textscale="0.8"/>
+        <buttonimage id="expedition_inventory" size="25 25" pos="139 44" textcolor="black" source="minecolonies:textures/gui/chest.png"/>
         <list id="expedition_items" size="164 125" pos="0 79">
             <view size="156 30">
                 <layout source="minecolonies:gui/generic/resource.xml"/>

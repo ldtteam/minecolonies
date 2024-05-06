@@ -3,14 +3,10 @@ package com.minecolonies.api.colony.expeditions;
 import net.minecraft.ChatFormatting;
 
 /**
- * Enum describing the different status types of an expedition.
+ * Enum describing the different finished status types of an expedition.
  */
-public enum ExpeditionStatusType
+public enum ExpeditionFinishedStatusType
 {
-    /**
-     * The expedition is ongoing.
-     */
-    ONGOING(ChatFormatting.BLACK),
     /**
      * The expedition has been successfully completed.
      */
@@ -28,7 +24,7 @@ public enum ExpeditionStatusType
     /**
      * Internal constructor.
      */
-    ExpeditionStatusType(final ChatFormatting displayColor)
+    ExpeditionFinishedStatusType(final ChatFormatting displayColor)
     {
         this.displayColor = displayColor;
     }

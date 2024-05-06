@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.expeditions.colony.types;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.managers.interfaces.IColonyExpeditionManager;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

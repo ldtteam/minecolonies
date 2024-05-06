@@ -3,19 +3,17 @@ package com.minecolonies.core.colony.managers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpedition;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionInteraction;
@@ -28,13 +26,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
-import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_EXPEDITION;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DEFAULT_DESPAWN_TIME;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_DESPAWN_TIME;
 
 /**
  * Manages all visiting entities to the colony
@@ -268,19 +266,16 @@ public class VisitorManager implements IVisitorManager
         if (expeditionType != null)
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-            newVisitor.setExtraDataValue(EXTRA_DATA_EXPEDITION, new ColonyExpedition(new ArrayList<>(),
-              new ArrayList<>(),
-              new ArrayList<>(),
-              ExpeditionStatus.CREATED,
-              newVisitor.getId(),
-              expeditionType.getDimension(),
-              expeditionType.getId()));
-            newVisitor.triggerInteraction(new ExpeditionInteraction(expeditionType));
+            newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+            newVisitor.triggerInteraction(new ExpeditionInteraction());
 
-            spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
-              newVisitor,
-              colony.getWorld(),
-              BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition()));
+            if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.getId()))
+            {
+                spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
+                  newVisitor,
+                  colony.getWorld(),
+                  BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition()));
+            }
         }
     }
 
@@ -292,19 +287,6 @@ public class VisitorManager implements IVisitorManager
         data.initForNewCivilian();
         visitorMap.put(data.getId(), data);
         return data;
-    }
-
-    @Override
-    public @Nullable IVisitorData getActiveExpeditionary()
-    {
-        for (final IVisitorData visitor : visitorMap.values())
-        {
-            if (visitor.getVisitorType().equals(ModVisitorTypes.expeditionary.get()))
-            {
-                return visitor;
-            }
-        }
-        return null;
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.minecolonies.core.colony.expeditions.colony;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
-import com.minecolonies.api.colony.expeditions.ExpeditionStatusType;
+import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
+import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatusType;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
@@ -18,7 +18,6 @@ import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTyp
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
-import com.minecolonies.core.colony.interactionhandling.ExpeditionFinishedInteraction;
 import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -170,7 +169,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     {
         if (cachedExpedition == null)
         {
-            cachedExpedition = colony.getExpeditionManager().getExpedition(expeditionId);
+            cachedExpedition = colony.getExpeditionManager().getActiveExpedition(expeditionId);
         }
         return cachedExpedition;
     }
@@ -426,8 +425,6 @@ public class ColonyExpeditionEvent implements IColonyEvent
         if (!world.isClientSide)
         {
             final ColonyExpedition expedition = getExpedition();
-            expedition.setStatus(ExpeditionStatus.ONGOING);
-
             final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
             if (expeditionType == null)
             {
@@ -454,26 +451,26 @@ public class ColonyExpeditionEvent implements IColonyEvent
     {
         final ColonyExpedition expedition = getExpedition();
 
+        ExpeditionFinishedStatus finishedStatus = ExpeditionFinishedStatus.RETURNED;
         if (expedition.getActiveMembers().isEmpty())
         {
-            expedition.setStatus(ExpeditionStatus.KILLED);
+            finishedStatus = ExpeditionFinishedStatus.KILLED;
         }
         else
         {
             final int chance = random.nextInt(100);
             if (chance <= 2)
             {
-                expedition.setStatus(ExpeditionStatus.LOST);
-            }
-            else
-            {
-                expedition.setStatus(ExpeditionStatus.RETURNED);
+                finishedStatus = ExpeditionFinishedStatus.LOST;
             }
         }
 
-        colony.getExpeditionManager().finishExpedition(expeditionId);
+        if (!colony.getExpeditionManager().finishExpedition(expeditionId, finishedStatus))
+        {
+            Log.getLogger().warn(String.format("Expedition with id %d could not be found after finishing.", expeditionId));
+        }
 
-        if (expedition.getStatus().getStatusType().equals(ExpeditionStatusType.SUCCESSFUL))
+        if (finishedStatus.getStatusType().equals(ExpeditionFinishedStatusType.SUCCESSFUL))
         {
             MessageUtils.format(EXPEDITION_FINISH_MESSAGE, expedition.getLeader().getName()).withPriority(MessagePriority.IMPORTANT).sendTo(colony).forManagers();
         }
@@ -490,14 +487,6 @@ public class ColonyExpeditionEvent implements IColonyEvent
             if (member.isDead())
             {
                 member.removeFromColony(colony);
-            }
-            else
-            {
-                if (member instanceof ExpeditionVisitorMember visitorMember)
-                {
-                    final IVisitorData leaderData = visitorMember.resolveCivilianData(colony);
-                    leaderData.triggerInteraction(new ExpeditionFinishedInteraction(expedition));
-                }
             }
         }
     }

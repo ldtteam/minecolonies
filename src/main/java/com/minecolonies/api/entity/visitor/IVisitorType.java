@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.visitor;
 
+import com.minecolonies.api.colony.IVisitorData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -65,4 +66,11 @@ public interface IVisitorType
         visitor.getLookControl().setLookAt(player);
         return InteractionResult.PASS;
     }
+
+    /**
+     * Tick the data to update values.
+     *
+     * @param visitor the visitor the update call is called for.
+     */
+    default void update(final IVisitorData visitor) {}
 }

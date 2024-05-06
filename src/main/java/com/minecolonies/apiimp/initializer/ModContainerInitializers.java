@@ -26,6 +26,7 @@ public class ModContainerInitializers
         ModContainers.rackInv = CONTAINERS.register("rack_inv", () -> IForgeMenuType.create(ContainerRack::fromFriendlyByteBuf));
         ModContainers.graveInv = CONTAINERS.register("grave_inv", () -> IForgeMenuType.create(ContainerGrave::fromFriendlyByteBuf));
         ModContainers.craftingBrewingstand = CONTAINERS.register("crafting_brewingstand", () -> IForgeMenuType.create(ContainerCraftingBrewingstand::fromFriendlyByteBuf));
+        ModContainers.expeditionSheet = CONTAINERS.register("expedition_sheet", () -> IForgeMenuType.create(ContainerExpeditionSheet::fromFriendlyByteBuf));
     }
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
@@ -38,5 +39,6 @@ public class ModContainerInitializers
         MenuScreens.register(ModContainers.citizenInv.get(), WindowCitizenInventory::new);
         MenuScreens.register(ModContainers.rackInv.get(), WindowRack::new);
         MenuScreens.register(ModContainers.graveInv.get(), WindowGrave::new);
+        MenuScreens.register(ModContainers.expeditionSheet.get(), WindowExpeditionSheet::new);
     }
 }
