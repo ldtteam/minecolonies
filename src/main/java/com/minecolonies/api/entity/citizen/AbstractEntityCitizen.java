@@ -617,13 +617,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ICitizenExperienceHandler getCitizenExperienceHandler();
 
     /**
-     * The Handler for all chat related methods.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenChatHandler getCitizenChatHandler();
-
-    /**
      * The Handler for all item related methods.
      *
      * @return the instance of the handler.
@@ -682,8 +675,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
 
     public abstract void setCitizenItemHandler(ICitizenItemHandler citizenItemHandler);
-
-    public abstract void setCitizenChatHandler(ICitizenChatHandler citizenChatHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
 

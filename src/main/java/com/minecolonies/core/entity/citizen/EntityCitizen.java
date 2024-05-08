@@ -28,6 +28,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
@@ -161,10 +162,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private       ICitizenExperienceHandler citizenExperienceHandler;
     /**
-     * The citizen chat handler.
-     */
-    private       ICitizenChatHandler       citizenChatHandler;
-    /**
      * The citizen item handler.
      */
     private       ICitizenItemHandler       citizenItemHandler;
@@ -271,7 +268,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
@@ -1173,17 +1169,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * The Handler for all chat related methods.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenChatHandler getCitizenChatHandler()
-    {
-        return citizenChatHandler;
-    }
-
-    /**
      * The Handler for all item related methods.
      *
      * @return the instance of the handler.
@@ -1314,12 +1299,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
     {
         this.citizenItemHandler = citizenItemHandler;
-    }
-
-    @Override
-    public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler)
-    {
-        this.citizenChatHandler = citizenChatHandler;
     }
 
     @Override
@@ -1630,7 +1609,19 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
                 }
             }
-            citizenChatHandler.notifyDeath(damageSource, !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>), graveSpawned);
+
+            if (getCitizenColonyHandler().getColony() != null && getCitizenData() != null)
+            {
+                MessageUtils.format(getCombatTracker().getDeathMessage())
+                  .append(Component.literal("! "))
+                  .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(getX()), Math.round(getY()), Math.round(getZ())))
+                  .append(!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>)
+                            ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN, getCitizenData().getName())
+                            : Component.empty())
+                  .append(graveSpawned ? Component.translatable(WARNING_GRAVE_SPAWNED) : Component.empty())
+                  .withPriority(MessagePriority.DANGER)
+                  .sendTo(getCitizenColonyHandler().getColony()).forManagers();
+            }
 
             if (citizenData.getJob() != null)
             {
