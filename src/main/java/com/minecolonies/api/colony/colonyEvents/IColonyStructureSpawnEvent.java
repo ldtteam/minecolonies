@@ -21,4 +21,10 @@ public interface IColonyStructureSpawnEvent
      * Get the ship description for the schematic
      */
     String getShipDesc();
+
+    /**
+     * Set the max raider count.
+     * @param maxRaiderCount the count.
+     */
+    void setMaxRaiderCount(int maxRaiderCount);
 }

@@ -93,6 +93,8 @@ public class ToolTranslationConstants
     @NonNls
     public static final String TOOL_PERMISSION_SCEPTER_SET_MODE        = "com.minecolonies.coremod.item.permissionscepter.setmode";
     @NonNls
+    public static final String TOOL_PERMISSION_SCEPTER_MODE            = "com.minecolonies.coremod.item.permissionscepter.mode";
+    @NonNls
     public static final String TOOL_PERMISSION_SCEPTER_MODE_BLOCK      = "com.minecolonies.coremod.item.permissionscepter.mode.block";
     @NonNls
     public static final String TOOL_PERMISSION_SCEPTER_MODE_LOCATION   = "com.minecolonies.coremod.item.permissionscepter.mode.location";

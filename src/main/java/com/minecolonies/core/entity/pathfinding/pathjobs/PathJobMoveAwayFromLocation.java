@@ -101,6 +101,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         return BlockPosUtil.dist(preferredDirection, x, y, z);
     }
 
+    @Override
     protected double modifyCost(
       final double cost,
       final MNode parent,
@@ -109,7 +110,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
       final int x,
       final int y,
       final int z,
-      final BlockState state)
+      final BlockState state, final BlockState below)
     {
         if (BlockPosUtil.dist(avoid, x, y, z) < 3)
         {

@@ -12,7 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenBornEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenBornEvent;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;

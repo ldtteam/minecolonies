@@ -13,7 +13,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;

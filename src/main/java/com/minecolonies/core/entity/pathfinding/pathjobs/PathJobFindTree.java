@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
 import com.minecolonies.core.entity.pathfinding.MNode;
@@ -187,20 +188,29 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isPassable(@NotNull final BlockState block, final int x, final int y, final int z, final MNode parent, final boolean head)
     {
-        return super.isPassable(block, x, y, z, parent, head) || block.is(BlockTags.LEAVES) || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, x, y, z, parent, head) || isLeafLike(block);
     }
 
     @Override
-    protected double modifyCost(double cost, final MNode parent, final boolean swimstart, final boolean swimming, final int x, final int y, final int z, final BlockState state)
+    protected double modifyCost(
+      double cost,
+      final MNode parent,
+      final boolean swimstart,
+      final boolean swimming,
+      final int x,
+      final int y,
+      final int z,
+      final BlockState state,
+      final BlockState below)
     {
-        if (!state.isAir() && state.is(BlockTags.LEAVES))
+        if (!state.isAir() && isLeafLike(state))
         {
             cost *= PASSING_COST;
         }
         else
         {
             final BlockState above = cachedBlockLookup.getBlockState(x, y + 1, z);
-            if (!above.isAir() && above.is(BlockTags.LEAVES))
+            if (!above.isAir() && isLeafLike(above))
             {
                 cost *= PASSING_COST;
             }
@@ -212,5 +222,10 @@ public class PathJobFindTree extends AbstractPathJob
         }
 
         return cost;
+    }
+
+    private boolean isLeafLike(@NotNull final BlockState block)
+    {
+        return block.is(BlockTags.LEAVES) || Compatibility.isDynamicTrunkShell(block.getBlock()) || block.is(ModTags.hugeMushroomBlocks);
     }
 }

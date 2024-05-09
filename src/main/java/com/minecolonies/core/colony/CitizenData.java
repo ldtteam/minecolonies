@@ -56,8 +56,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
-import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
-import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -65,6 +64,8 @@ import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIB
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -1745,6 +1746,11 @@ public class CitizenData implements ICitizenData
                 colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST),
                 AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
+
+            if (getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
+            {
+                ((EntityCitizen) citizen).setMaxAir(600);
+            }
         }
     }
 

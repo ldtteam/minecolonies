@@ -22,7 +22,7 @@ import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.client.render.RenderBipedCitizen;
 import com.minecolonies.core.colony.ColonyManager;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobFarmer;

@@ -6,5 +6,7 @@
   "storylangkey": "com.minecolonies.coremod.gui.chat.kedamono",
   "recruitcost": "minecraft:purple_bed",
   "recruitcostcount": 27,
-  "gender": "male"
+  "gender": "male",
+  "primaryskill": "Adaptability",
+  "secondaryskill": "Knowledge"
 }

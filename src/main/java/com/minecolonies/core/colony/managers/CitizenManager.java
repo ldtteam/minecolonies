@@ -22,7 +22,7 @@ import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenMod
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.WorkAtHomeBuildingModule;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -39,7 +39,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

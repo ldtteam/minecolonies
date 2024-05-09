@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;

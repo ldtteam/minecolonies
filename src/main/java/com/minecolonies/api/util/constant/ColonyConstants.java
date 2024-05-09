@@ -13,6 +13,12 @@ import java.util.Random;
 public final class ColonyConstants
 {
     /**
+     * The colony data version
+     */
+    public static final int    DATA_VERSION     = 1;
+    public static final String DATA_VERSION_TAG = "data_version";
+
+    /**
      * Shared random
      */
     public static final Random rand = new Random();

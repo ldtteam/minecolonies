@@ -5,16 +5,16 @@
         <view id="pageAddPlayer">
             <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
+            <buttonimage id="addPlayer" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
             <list id="users" size="148 121" pos="26 100">
                 <box size="100% 35" linewidth="1">
                     <label id="name" size="100 11" pos="5 2" color="black"/>
-                    <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
-                    <label id="rank" size="129 11" pos="5 15" color="black" />
+                    <buttonimage id="removePlayer" size="14 15" pos="2 1" align="TOP_RIGHT" source="minecolonies:textures/gui/button_x.png"/>
+                    <label id="rank" size="129 11" pos="5 17" color="black" />
                     <dropdown id="rankPicker"
                               size="129 17"
-                              pos="2 15"
+                              pos="2 17"
                               maxContentHeight="100"
                               dropDownSize="129 100"
                               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
@@ -44,7 +44,7 @@
         <view id="managePermissions">
             <label size="148 11" pos="36 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
             <input id="addRankName" size="100 18" pos="36 80" maxlength="32"/>
-            <button id="buttonAddRank" size="19 19" pos="140 80" label="+"/>
+            <buttonimage id="buttonAddRank" size="14 15" pos="140 82" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
             <list id="rankButtonList" size="100 110" pos="46 105">
                 <box size="100% 15" linewidth="0">
@@ -80,7 +80,9 @@
             <list id="rankList" size="138 120" pos="201 77">
                 <box size="100% 21" linewidth="1">
                     <label id="name" size="110 18" pos="2 2" color="black"/>
-                    <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveoff)"/>
+                    <buttonimage id="trigger" size="29 15" pos="2 3" align="TOP_RIGHT" color="black"
+                                 label="$(com.minecolonies.coremod.gui.workerhuts.retrieveoff)"
+                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
                     <label id="index" pos="100 100"/>
                 </box>
             </list>
@@ -93,13 +95,13 @@
 
             <label size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addblock)"/>
             <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addBlock" size="19 19" pos="130 76" label="+"/>
-
+            <buttonimage id="addBlock" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <buttonimage id="blockTool" size="14 15" pos="146 78" source="minecolonies:textures/gui/scepterpermission.png"/>
 
             <list id="blocks" size="148 171" pos="201 36">
                 <box size="100% 30" linewidth="1">
-                    <label id="name" size="100 12" pos="5 2" color="black"/>
-                    <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                    <label id="name" size="115 28" pos="5 2" color="black" wrap="true" textalign="TOP_LEFT"/>
+                    <buttonimage id="removeBlock" size="14 15" pos="2 1" align="TOP_RIGHT" source="minecolonies:textures/gui/button_x.png"/>
                 </box>
             </list>
         </view>

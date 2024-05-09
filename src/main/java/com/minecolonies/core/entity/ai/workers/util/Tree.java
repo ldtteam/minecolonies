@@ -9,7 +9,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.core.BlockPos;
@@ -32,11 +31,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,7 +161,7 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(block.getBlock());
             sapling = calcSapling(world);
-            if (sapling.is(fungi))
+            if (sapling.is(Tags.Items.MUSHROOMS) || sapling.is(fungi))
             {
                 netherTree = true;
             }
@@ -234,7 +232,7 @@ public class Tree
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
-        if (blockState.is(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
+        if (blockState.is(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block) || blockState.is(ModTags.hugeMushroomBlocks))
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
@@ -253,7 +251,7 @@ public class Tree
             // Dynamic trees is using a custom Drops function
             if (Compatibility.isDynamicLeaf(block))
             {
-                list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
+                list = Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block);
             }
             else
             {
@@ -268,20 +266,16 @@ public class Tree
                     continue;
                 }
 
-                if (stack.is(ItemTags.SAPLINGS))
+                if (stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS))
                 {
-                    IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
+                    IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(block, stack);
                     return stack;
                 }
             }
         }
         else if (blockState.is(BlockTags.WART_BLOCKS))
         {
-            if (block == Blocks.WARPED_WART_BLOCK)
-            {
-                return new ItemStack(Items.WARPED_FUNGUS, 1);
-            }
-            return new ItemStack(Items.CRIMSON_FUNGUS, 1);
+            return IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(block);
         }
         return null;
     }
@@ -314,7 +308,7 @@ public class Tree
             {
                 for (ItemStack stack : list)
                 {
-                    if (stack.is(ItemTags.SAPLINGS))
+                    if (stack.is(ItemTags.SAPLINGS) || stack.is(Tags.Items.MUSHROOMS))
                     {
                         return list;
                     }
@@ -336,7 +330,7 @@ public class Tree
         for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
         {
             final BlockState blockState = world.getBlockState(topLog.offset(0, i, 0));
-            if (blockState.is(BlockTags.LEAVES))
+            if (blockState.is(BlockTags.LEAVES) || blockState.is(ModTags.hugeMushroomBlocks))
             {
                 return topLog.offset(0, i, 0);
             }
@@ -465,7 +459,8 @@ public class Tree
                 for (int dy = -3; dy <= 3 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.offset(dx, dy, dz);
-                    if (world.getBlockState(leafPos).is(BlockTags.LEAVES) || world.getBlockState(leafPos).is(BlockTags.WART_BLOCKS))
+                    final BlockState block = world.getBlockState(leafPos);
+                    if (block.is(BlockTags.LEAVES) || block.is(ModTags.hugeMushroomBlocks) || block.is(BlockTags.WART_BLOCKS))
                     {
                         if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
                         {
@@ -475,7 +470,7 @@ public class Tree
 
                         leafCount++;
                         // Dynamic tree growth is checked by radius instead of leafcount
-                        if (leafCount >= NUMBER_OF_LEAVES || (Compatibility.isDynamicLeaf(world.getBlockState(leafPos).getBlock())))
+                        if (leafCount >= NUMBER_OF_LEAVES || (Compatibility.isDynamicLeaf(block.getBlock())))
                         {
                             return true;
                         }
@@ -496,12 +491,17 @@ public class Tree
      */
     private static boolean supposedToCut(final LevelReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
-        if (world.getBlockState(leafPos).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+        final BlockState leaf = world.getBlockState(leafPos);
+        if (leaf.getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
         {
             return false;
         }
 
-        final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
+        // sadly this is called from pathfinding so can't directly access server loot; this means if the sapling
+        // isn't already cached (which it won't be the very first time we encounter a new tree type for this colony)
+        // then we will try to chop it regardless of hut settings.  but the *second* tree of that type we should
+        // obey the settings properly.
+        final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(leaf.getBlock());
 
         if (sap == null)
         {
@@ -600,9 +600,10 @@ public class Tree
                 for (int y = -1; y <= 1; y++)
                 {
                     final BlockPos leaf = new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z);
-                    if (world.getBlockState(leaf).is(BlockTags.LEAVES))
+                    final BlockState leaves = world.getBlockState(leaf);
+                    if (leaves.is(BlockTags.LEAVES) || leaves.is(ModTags.hugeMushroomBlocks))
                     {
-                        if (world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+                        if (leaves.getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
                         {
                             continue;
                         }
@@ -766,7 +767,7 @@ public class Tree
     {
         int locXMin = location.getX() - LEAVES_WIDTH;
         int locXMax = location.getX() + LEAVES_WIDTH;
-        final int locYMin = location.getY() + 2;
+        final int locYMin = location.getY() + 1;
         int locZMin = location.getZ() - LEAVES_WIDTH;
         int locZMax = location.getZ() + LEAVES_WIDTH;
         int temp;
@@ -789,10 +790,11 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).is(BlockTags.LEAVES) || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS)
-                          || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
+                    final BlockState block = world.getBlockState(leaf);
+                    if (block.is(BlockTags.LEAVES) || block.is(ModTags.hugeMushroomBlocks) ||
+                            block.is(BlockTags.WART_BLOCKS) || block.is(Blocks.SHROOMLIGHT))
                     {
-                        if (!world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+                        if (!block.getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
                         {
                             leaves.add(leaf);
                         }
