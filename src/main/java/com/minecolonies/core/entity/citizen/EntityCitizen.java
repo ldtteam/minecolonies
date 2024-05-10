@@ -45,7 +45,7 @@ import com.minecolonies.core.client.gui.WindowInteraction;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
@@ -87,7 +87,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -96,7 +95,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
@@ -255,6 +253,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * The citizen AI
      */
     private ITickRateStateMachine<IState> citizenAI = new TickRateStateMachine<>(CitizenAIState.IDLE, e -> {}, ENTITY_AI_TICKRATE);
+
+    /**
+     * Maximum air supply
+     */
+    private int maxAir = 300;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -775,12 +778,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public int getMaxAirSupply()
     {
-        if (getCitizenColonyHandler() != null && getCitizenColonyHandler().getColony() != null
-              && getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
-        {
-            return super.getMaxAirSupply() * 2;
-        }
-        return super.getMaxAirSupply();
+        return maxAir;
     }
 
     /**
@@ -2010,5 +2008,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean isCurrentlyGlowing()
     {
         return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
+
+    /**
+     * Sets the max air
+     *
+     * @param maxAir
+     */
+    public void setMaxAir(final int maxAir)
+    {
+        this.maxAir = maxAir;
     }
 }

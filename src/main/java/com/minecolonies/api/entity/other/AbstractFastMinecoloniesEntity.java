@@ -143,12 +143,15 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
                 entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
             }
 
-            for (int i = 0, entityPushCacheSize = entityPushCache.size(); i < entityPushCacheSize; i++)
+            if (!entityPushCache.isEmpty())
             {
-                final Entity entity = entityPushCache.get(i);
-                if (getBoundingBox().contains(entity.position()))
+                for (int i = 0, entityPushCacheSize = entityPushCache.size(); i < entityPushCacheSize; i++)
                 {
-                    this.doPush(entity);
+                    final Entity entity = entityPushCache.get(i);
+                    if (getBoundingBox().contains(entity.position()))
+                    {
+                        this.doPush(entity);
+                    }
                 }
             }
         }
