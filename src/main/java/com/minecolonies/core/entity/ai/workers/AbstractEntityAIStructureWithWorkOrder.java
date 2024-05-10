@@ -135,7 +135,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return IDLE;
                 }
 
-                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName());
+                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
+                  .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -145,7 +146,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderMiner))
             {
-                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName());
+                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
+                  .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
+                ;
             }
             return getState();
         }

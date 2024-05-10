@@ -312,6 +312,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
-        MessageUtils.forCitizen(worker, message);
+        MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers());
     }
 }
