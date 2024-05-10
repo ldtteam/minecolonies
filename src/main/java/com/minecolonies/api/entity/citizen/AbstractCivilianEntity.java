@@ -2,9 +2,10 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.sounds.SoundManager;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -22,9 +23,19 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEntity implements Npc
 {
     /**
+     * Whether this entity can be stuck for stuckhandling
+     */
+    private boolean canBeStuck = true;
+
+    /**
      * Time after which the next player collision is possible
      */
     protected long nextPlayerCollisionTime = 0;
+
+    /**
+     * Sound manager of the civilian.
+     */
+    private SoundManager soundManager;
 
     /**
      * Create a new instance.
@@ -34,6 +45,10 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     protected AbstractCivilianEntity(final EntityType<? extends PathfinderMob> type, final Level worldIn)
     {
         super(type, worldIn);
+        if (worldIn.isClientSide)
+        {
+            soundManager = new SoundManager((ClientLevel) worldIn);
+        }
     }
 
     /**
@@ -68,6 +83,16 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
      * @param id the id to set.
      */
     public abstract void setCitizenId(int id);
+
+    @Override
+    public void tick()
+    {
+        super.tick();
+        if (level().isClientSide)
+        {
+            soundManager.tick();
+        }
+    }
 
     @Override
     public boolean checkBedExists()
@@ -115,22 +140,14 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     }
 
     /**
-     * Queue a sound at the citizen.
+     * Get the sound manager.
      *
-     * @param soundEvent  the sound event to play.
-     * @param length      the length of the event.
-     * @param repetitions the number of times to play it.
+     * @return the sound manager.
      */
-    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions);
-
-    /**
-     * Queue a sound at the citizen.
-     *
-     * @param soundEvent  the sound event to play.
-     * @param length      the length of the event.
-     * @param repetitions the number of times to play it.
-     */
-    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
+    public SoundManager getSoundManager()
+    {
+        return soundManager;
+    }
 
     @Override
     public String toString()
