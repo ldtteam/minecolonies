@@ -20,12 +20,12 @@ public class SoundManager
     /**
      * The queue to play from.
      */
-    private final Map<UUID, Deque<TimedSound>> soundQueue = new HashMap<>();
+    private static final Map<UUID, Deque<TimedSound>> soundQueue = new HashMap<>();
 
     /**
      * Tick the sound queue to play a sound.
      */
-    public void tick()
+    public static void tick()
     {
         if (soundQueue.isEmpty())
         {
@@ -78,7 +78,7 @@ public class SoundManager
      * @param pitch       the pitch to play it with.
      * @param volume      the volume to play it at.
      */
-    public void addToQueue(
+    public static void addToQueue(
       final UUID uuid,
       final SoundEvent soundEvent,
       final SoundSource source,

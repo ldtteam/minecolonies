@@ -426,10 +426,4 @@ public interface IColonyManager
      * @param pos the pos to open it at.
      */
     void openReactivationWindow(final BlockPos pos);
-
-    /**
-     * Get the sound manager from the colony manager.
-     * @return the sound manager.
-     */
-    SoundManager getSoundManager();
 }

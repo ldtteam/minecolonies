@@ -839,14 +839,4 @@ public final class ColonyManager implements IColonyManager
     {
         colonyViews.clear();
     }
-
-    @Override
-    public SoundManager getSoundManager()
-    {
-        if (clientSoundManager == null)
-        {
-            clientSoundManager = new SoundManager();
-        }
-        return clientSoundManager;
-    }
 }

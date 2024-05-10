@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.client.colony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -189,7 +190,7 @@ public class PlaySoundForCitizenMessage implements IMessage
         final Entity entity = Minecraft.getInstance().level.getEntity(this.entityid);
         if (entity instanceof AbstractCivilianEntity)
         {
-            IColonyManager.getInstance().getSoundManager().addToQueue(entity.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
+            SoundManager.addToQueue(entity.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
         }
     }
 }
