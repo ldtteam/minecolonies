@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
@@ -42,7 +43,6 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.core.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.core.MineColonies.getConfig;
 
@@ -77,6 +77,11 @@ public final class ColonyManager implements IColonyManager
      * If the manager finished loading already.
      */
     private boolean capLoaded = false;
+
+    /**
+     * Client side sound manager.
+     */
+    private SoundManager clientSoundManager;
 
     @Override
     public IColony createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
@@ -584,10 +589,20 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level == null && !colonyViews.isEmpty())
+        if (event.phase == TickEvent.Phase.END)
         {
-            //  Player has left the game, clear the Colony View cache
-            colonyViews.clear();
+            if (Minecraft.getInstance().level == null && !colonyViews.isEmpty())
+            {
+                //  Player has left the game, clear the Colony View cache
+                colonyViews.clear();
+            }
+
+
+            if (clientSoundManager == null)
+            {
+                clientSoundManager = new SoundManager();
+            }
+            clientSoundManager.tick();
         }
     }
 
@@ -823,5 +838,15 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+    }
+
+    @Override
+    public SoundManager getSoundManager()
+    {
+        if (clientSoundManager == null)
+        {
+            clientSoundManager = new SoundManager();
+        }
+        return clientSoundManager;
     }
 }
