@@ -79,6 +79,11 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
             return;
         }
 
+        if (citizen.isInvisible())
+        {
+            return;
+        }
+
         final ICitizenDataView citizenDataView = citizen.getCitizenDataView();
         if (citizenDataView.getCustomTextureUUID() != null )
         {
