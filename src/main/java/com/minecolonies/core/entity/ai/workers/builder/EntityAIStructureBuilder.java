@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSetting;
@@ -311,6 +312,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
-        worker.getCitizenChatHandler().sendLocalizedChat(message);
+        MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers());
     }
 }

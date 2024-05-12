@@ -438,8 +438,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (burialPos == null || burialPos.getA() == null)
         {
             // couldn't find a place to dig a grave
-            worker.getCitizenChatHandler()
-              .sendLocalizedChat(Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
+            MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()))
+              .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
             return IDLE;
         }
 

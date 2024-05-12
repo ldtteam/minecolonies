@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -235,7 +236,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
         if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
         {
-            getCitizen().getEntity().ifPresent(e -> e.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP));
+            getCitizen().getEntity()
+              .ifPresent(e -> MessageUtils.forCitizen(e, COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP)
+                .sendTo(e.getCitizenColonyHandler().getColony().getMessagePlayerEntities()));
         }
     }
 
