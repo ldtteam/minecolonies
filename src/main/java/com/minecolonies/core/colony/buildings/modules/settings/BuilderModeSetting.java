@@ -59,6 +59,12 @@ public class BuilderModeSetting extends StringSetting
     }
 
     @Override
+    protected Component getToolTipText()
+    {
+        return Component.translatable("com.ldtteam.structurize.iterators." + getSettings().get(getCurrentIndex()) + ".tooltip");
+    }
+
+    @Override
     public boolean isActive(final ISettingsModule module)
     {
         return module.getBuilding().getColony().getResearchManager().getResearchEffects().getEffectStrength(BUILDER_MODE) > 0;

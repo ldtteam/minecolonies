@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.modules.settings;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -15,9 +16,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
 
 /**
  * Stores a string-list setting (Like enum, but easily serializable).
@@ -116,7 +120,14 @@ public class StringSetting implements IStringSetting<String>
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(getDisplayText());
-        setHoverPane(key, triggerButton, settingsModuleView);
+        if (getToolTipText() != null)
+        {
+            PaneBuilders.tooltipBuilder().hoverPane(triggerButton).build().setText(getToolTipText());
+        }
+        else
+        {
+            setHoverPane(key, triggerButton, settingsModuleView);
+        }
     }
 
     /**
@@ -127,6 +138,17 @@ public class StringSetting implements IStringSetting<String>
     protected Component getDisplayText()
     {
         return Component.translatable(settings.get(currentIndex));
+    }
+
+    /**
+     * Get the tooltip text to render on the button, defaults to null.
+     *
+     * @return the tooltip component to render on the button.
+     */
+    @Nullable
+    protected Component getToolTipText()
+    {
+        return null;
     }
 
     @Override
