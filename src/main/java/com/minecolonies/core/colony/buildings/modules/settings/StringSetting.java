@@ -120,14 +120,7 @@ public class StringSetting implements IStringSetting<String>
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
         triggerButton.setEnabled(isActive(settingsModuleView));
         triggerButton.setText(getDisplayText());
-        if (getToolTipText() != null)
-        {
-            PaneBuilders.tooltipBuilder().hoverPane(triggerButton).build().setText(getToolTipText());
-        }
-        else
-        {
-            setHoverPane(key, triggerButton, settingsModuleView);
-        }
+        setHoverPane(key, triggerButton, settingsModuleView);
     }
 
     /**
@@ -138,17 +131,6 @@ public class StringSetting implements IStringSetting<String>
     protected Component getDisplayText()
     {
         return Component.translatable(settings.get(currentIndex));
-    }
-
-    /**
-     * Get the tooltip text to render on the button, defaults to null.
-     *
-     * @return the tooltip component to render on the button.
-     */
-    @Nullable
-    protected Component getToolTipText()
-    {
-        return null;
     }
 
     @Override

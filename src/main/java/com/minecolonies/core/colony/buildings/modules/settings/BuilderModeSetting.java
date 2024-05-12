@@ -59,7 +59,7 @@ public class BuilderModeSetting extends StringSetting
     }
 
     @Override
-    protected Component getToolTipText()
+    public Component getToolTipText()
     {
         return Component.translatable("com.ldtteam.structurize.iterators." + getSettings().get(getCurrentIndex()) + ".tooltip");
     }
