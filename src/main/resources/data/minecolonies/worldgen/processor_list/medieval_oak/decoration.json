@@ -21,6 +21,17 @@
     {
       "processor_type": "minecraft:block_age",
       "mossiness": 0.15
+    },
+    {
+      "blocks": [
+        {
+          "Name": "structurize:blocksubstitution"
+        },
+        {
+          "Name": "minecolonies:blockwaypoint"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
     }
   ]
 }
