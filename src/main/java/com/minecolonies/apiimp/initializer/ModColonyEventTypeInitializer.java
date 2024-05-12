@@ -10,7 +10,7 @@ import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenShipRaidEv
 import com.minecolonies.core.colony.events.raid.pirateEvent.DrownedPirateRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.PirateGroundRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.PirateRaidEvent;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
+import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 

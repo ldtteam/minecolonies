@@ -5,13 +5,10 @@ import com.minecolonies.api.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
 public class OpenExpeditionSheetInventoryMessage implements IMessage
 {
@@ -39,23 +36,17 @@ public class OpenExpeditionSheetInventoryMessage implements IMessage
     }
 
     @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
+    }
+
+    @Override
     public void onExecute(final Context ctxIn, final boolean isLogicalServer)
     {
-        NetworkHooks.openScreen(ctxIn.getSender(), new MenuProvider()
-        {
-            @Override
-            @NotNull
-            public Component getDisplayName()
-            {
-                return Component.literal("Expedition Sheet Inventory");
-            }
-
-            @Override
-            @NotNull
-            public AbstractContainerMenu createMenu(final int windowId, final @NotNull Inventory inventory, final @NotNull Player player)
-            {
-                return new ContainerExpeditionSheet(windowId, inventory, player.getItemInHand(hand));
-            }
-        }, packetBuffer -> packetBuffer.writeEnum(hand));
+        NetworkHooks.openScreen(ctxIn.getSender(),
+          new SimpleMenuProvider((windowId, inventory, player1) -> new ContainerExpeditionSheet(windowId, inventory, player1.getItemInHand(hand)),
+            Component.literal("Expedition Sheet Inventory")),
+          packetBuffer -> packetBuffer.writeEnum(hand));
     }
 }

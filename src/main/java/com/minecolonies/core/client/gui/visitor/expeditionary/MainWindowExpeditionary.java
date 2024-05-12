@@ -352,6 +352,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         if (mc.player.isCreative())
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(container), requirement.getDefaultItemStack().copyWithCount(needed));
+            container.createTag();
         }
         else
         {
@@ -363,28 +364,4 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
 
         renderHeaders();
     }
-
-    ///**
-    // * Triggers starting the expedition.
-    // */
-    //private void startExpedition()
-    //{
-    //    // Gather the inventory and the armor slots from the inventory.
-    //    final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(visitorData.getInventory());
-    //    for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
-    //    {
-    //        final ItemStack armorItem = visitorData.getInventory().getArmorInSlot(equipmentSlot);
-    //        if (armorItem != ItemStack.EMPTY)
-    //        {
-    //            equipment.add(armorItem);
-    //        }
-    //    }
-    //    expedition.setEquipment(equipment);
-    //    expedition.addMember(new ExpeditionVisitorMember(visitorData));
-    //
-    //    expedition.setStatus(ExpeditionFinishedStatus.ONGOING);
-    //    Network.getNetwork().sendToServer(new StartExpeditionMessage(expedition, expedition));
-    //
-    //    close();
-    //}
 }

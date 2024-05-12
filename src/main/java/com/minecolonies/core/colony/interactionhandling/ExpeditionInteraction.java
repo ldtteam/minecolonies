@@ -19,7 +19,7 @@ import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
-import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionEvent;
+import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.core.BlockPos;

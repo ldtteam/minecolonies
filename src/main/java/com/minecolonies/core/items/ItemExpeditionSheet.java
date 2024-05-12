@@ -165,7 +165,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             this.stack = stack;
             this.members = new HashSet<>();
 
-            final CompoundTag rootTag = stack.getOrCreateTag();
+            final CompoundTag rootTag = stack.getOrCreateTag().getCompound(TAG_SHEET_DATA);
             fromTag(rootTag.contains(TAG_INVENTORY) ? rootTag.getList(TAG_INVENTORY, Tag.TAG_COMPOUND) : new ListTag());
             members.addAll(rootTag.contains(TAG_MEMBERS) ? IntStream.of(rootTag.getIntArray(TAG_MEMBERS)).boxed().toList() : new ArrayList<>());
         }
