@@ -1,9 +1,11 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class Pond
 {
-    //TODO: Recheck logic/rewrite it simpler, return central pond position instead of the water pos next to the standing for better direction
-
     /**
      * The minimum pond requirements.
      */
@@ -46,7 +46,7 @@ public final class Pond
                 tempPos.set(water.getX() + x, water.getY(), water.getZ() + z);
                 final BlockState state = world.getBlockState(tempPos);
 
-                if (state.getBlock() != Blocks.WATER)
+                if (!isWaterForFishing(world, state, tempPos))
                 {
                     return false;
                 }
@@ -54,5 +54,24 @@ public final class Pond
         }
 
         return true;
+    }
+
+    /**
+     * Checks if the water is fine for fishing, see vanilla FishingHook checks
+     *
+     * @param world
+     * @param state
+     * @param pos
+     * @return
+     */
+    public static boolean isWaterForFishing(final BlockGetter world, final BlockState state, final BlockPos pos)
+    {
+        if (!state.isAir() && !state.is(Blocks.LILY_PAD))
+        {
+            FluidState fluidstate = state.getFluidState();
+            return fluidstate.is(FluidTags.WATER) && fluidstate.isSource() && state.getCollisionShape(world, pos).isEmpty();
+        }
+
+        return false;
     }
 }
