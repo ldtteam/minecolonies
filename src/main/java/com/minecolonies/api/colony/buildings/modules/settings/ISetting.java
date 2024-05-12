@@ -129,10 +129,7 @@ public interface ISetting<S>
         }
         else if (isActive && getToolTipText() != null)
         {
-            if (getToolTipText() != null)
-            {
-                PaneBuilders.tooltipBuilder().hoverPane(component).build().setText(getToolTipText());
-            }
+            PaneBuilders.tooltipBuilder().hoverPane(component).build().setText(getToolTipText());
         }
         else if (!isActive && (hasTooltip || inActiveReason != null))
         {
@@ -174,8 +171,7 @@ public interface ISetting<S>
      * @return the value.
      */
     S getValue();
-
-
+    
     /**
      * Get the tooltip text to render on the button, defaults to null.
      *
