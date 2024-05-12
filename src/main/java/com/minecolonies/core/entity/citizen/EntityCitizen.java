@@ -28,6 +28,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
@@ -57,7 +58,6 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -161,10 +161,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private       ICitizenExperienceHandler citizenExperienceHandler;
     /**
-     * The citizen chat handler.
-     */
-    private       ICitizenChatHandler       citizenChatHandler;
-    /**
      * The citizen item handler.
      */
     private       ICitizenItemHandler       citizenItemHandler;
@@ -255,6 +251,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ITickRateStateMachine<IState> citizenAI = new TickRateStateMachine<>(CitizenAIState.IDLE, e -> {}, ENTITY_AI_TICKRATE);
 
     /**
+     * Maximum air supply
+     */
+    private int maxAir = 300;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -266,7 +267,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
@@ -773,12 +773,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public int getMaxAirSupply()
     {
-        if (getCitizenColonyHandler() != null && getCitizenColonyHandler().getColony() != null
-              && getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
-        {
-            return super.getMaxAirSupply() * 2;
-        }
-        return super.getMaxAirSupply();
+        return maxAir;
     }
 
     /**
@@ -1173,17 +1168,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * The Handler for all chat related methods.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenChatHandler getCitizenChatHandler()
-    {
-        return citizenChatHandler;
-    }
-
-    /**
      * The Handler for all item related methods.
      *
      * @return the instance of the handler.
@@ -1314,12 +1298,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
     {
         this.citizenItemHandler = citizenItemHandler;
-    }
-
-    @Override
-    public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler)
-    {
-        this.citizenChatHandler = citizenChatHandler;
     }
 
     @Override
@@ -1630,7 +1608,19 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
                 }
             }
-            citizenChatHandler.notifyDeath(damageSource, !(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>), graveSpawned);
+
+            if (getCitizenColonyHandler().getColony() != null && getCitizenData() != null)
+            {
+                MessageUtils.format(getCombatTracker().getDeathMessage())
+                  .append(Component.literal("! "))
+                  .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(getX()), Math.round(getY()), Math.round(getZ())))
+                  .append(!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>)
+                            ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN, getCitizenData().getName())
+                            : Component.empty())
+                  .append(graveSpawned ? Component.translatable(WARNING_GRAVE_SPAWNED) : Component.empty())
+                  .withPriority(MessagePriority.DANGER)
+                  .sendTo(getCitizenColonyHandler().getColony()).forManagers();
+            }
 
             if (citizenData.getJob() != null)
             {
@@ -1869,23 +1859,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         return super.getRestrictCenter();
     }
 
-    /**
-     * Prevent riding entities except ours.
-     *
-     * @param entity entity to ride on
-     * @param force  force flag
-     * @return true if successful.
-     */
-    @Override
-    public boolean startRiding(final Entity entity, final boolean force)
-    {
-        if (entity instanceof SittingEntity || force)
-        {
-            return super.startRiding(entity, force);
-        }
-        return false;
-    }
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
@@ -2008,5 +1981,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean isCurrentlyGlowing()
     {
         return level.isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+    }
+
+    /**
+     * Sets the max air
+     *
+     * @param maxAir
+     */
+    public void setMaxAir(final int maxAir)
+    {
+        this.maxAir = maxAir;
     }
 }

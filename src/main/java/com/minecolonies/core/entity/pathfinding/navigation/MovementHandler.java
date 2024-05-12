@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.navigation;
 
+import com.minecolonies.api.util.ShapeUtil;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -126,7 +127,8 @@ public class MovementHandler extends MoveControl
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
             if ((yDif > (double) stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
-                  || (!voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(
+                  || (!ShapeUtil.isEmpty(voxelshape) && this.mob.getY() < ShapeUtil.max(voxelshape, Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS)
+                        && !blockstate.is(
               BlockTags.FENCES) && !blockstate.is(BlockTags.FENCE_GATES))
                        && !block.isLadder(blockstate, this.mob.level, blockpos, this.mob))
             {

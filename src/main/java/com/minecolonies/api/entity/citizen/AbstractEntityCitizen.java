@@ -32,7 +32,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -617,13 +616,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ICitizenExperienceHandler getCitizenExperienceHandler();
 
     /**
-     * The Handler for all chat related methods.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenChatHandler getCitizenChatHandler();
-
-    /**
      * The Handler for all item related methods.
      *
      * @return the instance of the handler.
@@ -682,8 +674,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
 
     public abstract void setCitizenItemHandler(ICitizenItemHandler citizenItemHandler);
-
-    public abstract void setCitizenChatHandler(ICitizenChatHandler citizenChatHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
 
@@ -762,24 +752,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     {
         return false;
     }
-
-    /**
-     * Queue a sound at the citizen.
-     *
-     * @param soundEvent  the sound event to play.
-     * @param length      the length of the event.
-     * @param repetitions the number of times to play it.
-     */
-    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions);
-
-    /**
-     * Queue a sound at the citizen.
-     *
-     * @param soundEvent  the sound event to play.
-     * @param length      the length of the event.
-     * @param repetitions the number of times to play it.
-     */
-    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
 
     /**
      * Get the entities state controller

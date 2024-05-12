@@ -1,30 +1,38 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Find and return a path to the nearest water. Created: March 25, 2016
  */
 public class PathJobFindWater extends AbstractPathJob
 {
-    private static final int                                  MIN_DISTANCE = 40;
-    private static final int                                  MAX_RANGE    = 100;
-    private final        BlockPos                             hutLocation;
+    private static final int                             MIN_DISTANCE = 40;
+    private static final int                             MAX_RANGE    = 100;
+    private final        BlockPos                        hutLocation;
     @NotNull
-    private final        ArrayList<Tuple<BlockPos, BlockPos>> ponds;
+    private final        List<Tuple<BlockPos, BlockPos>> ponds;
 
     /**
      * AbstractPathJob constructor.
@@ -47,8 +55,6 @@ public class PathJobFindWater extends AbstractPathJob
         super(world, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);
         hutLocation = home;
-        getPathingOptions().swimCostEnter = 0;
-        getPathingOptions().swimCost = 0.2;
     }
 
     @NotNull
@@ -64,7 +70,6 @@ public class PathJobFindWater extends AbstractPathJob
         return BlockPosUtil.distManhattan(hutLocation, x, y, z);
     }
 
-    //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
@@ -73,80 +78,85 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (isNearWater(n))
+        if (n.isSwimming() && Pond.checkWater(world, tempWorldPos.set(n.x, n.y - 1, n.z)))
         {
-            getResult().parent = new BlockPos(n.x, n.y, n.z);
-            getResult().isEmpty = ponds.isEmpty();
-
-            return SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                     == SurfaceType.WALKABLE;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if a certain location is water.
-     *
-     * @param n the location.
-     * @return true if so.
-     */
-    private boolean isNearWater(@NotNull final MNode n)
-    {
-        if (n.parent == null)
-        {
-            return false;
-        }
-
-        if (cachedBlockLookup.getBlockState(n.x, n.y, n.z).getBlock() != Blocks.WATER && cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z).getBlock() != Blocks.WATER)
-        {
-            if (n.x == n.parent.x)
+            for (Tuple<BlockPos, BlockPos> existingPond : ponds)
             {
-                final int dz = n.z > n.parent.z ? 1 : -1;
-                return Pond.checkWater(cachedBlockLookup, tempWorldPos.set(n.x, n.y - 1, n.z + dz), getResult()) || Pond.checkWater(cachedBlockLookup,
-                  tempWorldPos.set(n.x - 1, n.y - 1, n.z),
-                  getResult()) || Pond.checkWater(cachedBlockLookup,
-                  tempWorldPos.set(n.x + 1, n.y - 1, n.z),
-                  getResult());
+                if (BlockPosUtil.distManhattan(existingPond.getA(), n.x, n.y, n.z) < Pond.WATER_POOL_WIDTH_REQUIREMENT + 2)
+                {
+                    return false;
+                }
             }
-            else
+
+            final PathJobFindFishingPos job = new PathJobFindFishingPos(world, new BlockPos(n.x, n.y, n.z), hutLocation, 10);
+            job.setPathingOptions(getPathingOptions());
+            final Path path = job.search();
+            if (path != null && path.canReach())
             {
-                final int dx = n.x > n.parent.x ? 1 : -1;
-                return Pond.checkWater(cachedBlockLookup, tempWorldPos.set(n.x + dx, n.y - 1, n.z), getResult()) || Pond.checkWater(cachedBlockLookup,
-                  tempWorldPos.set(n.x, n.y - 1, n.z - 1),
-                  getResult()) || Pond.checkWater(cachedBlockLookup,
-                  tempWorldPos.set(n.x, n.y - 1, n.z + 1),
-                  getResult());
-            }
-        }
-
-        // TODO: Recheck condition, might want a different data structure than a list<tuple> aswell? since creating a new tuple and searching the whole list is kinda slow
-        return getResult().pond != null && !ponds.contains(new Tuple<>(new BlockPos(n.x, n.y, n.z), new BlockPos(n.parent.x, n.parent.y, n.parent.z))) && !pondsAreNear(ponds,
-          tempWorldPos.set(n.x, n.y, n.z));
-    }
-
-    /**
-     * Checks if there are close ponds to a position.
-     *
-     * @param ponds   all ponds.
-     * @param newPond the position.
-     * @return true if so.
-     */
-    private static boolean pondsAreNear(@NotNull final ArrayList<Tuple<BlockPos, BlockPos>> ponds, @NotNull final BlockPos newPond)
-    {
-        if (ponds.isEmpty())
-        {
-            return false;
-        }
-
-        for (Tuple<BlockPos, BlockPos> p : ponds)
-        {
-            if (BlockPosUtil.distSqr(p.getB(), newPond) < MIN_DISTANCE * MIN_DISTANCE)
-            {
+                getResult().pond = new BlockPos(n.x, n.y, n.z);
+                getResult().parent = path.getTarget();
                 return true;
             }
         }
+
         return false;
+    }
+
+    @Override
+    public void setPathingOptions(final PathingOptions pathingOptions)
+    {
+        super.setPathingOptions(pathingOptions);
+        getPathingOptions().swimCostEnter = 0;
+        getPathingOptions().swimCost = 0;
+    }
+
+    /**
+     * Simple reverse lookup to find a fitting shore for a pond location
+     */
+    private class PathJobFindFishingPos extends AbstractPathJob
+    {
+        private final BlockPos direction;
+        private final int      distance;
+
+        public PathJobFindFishingPos(
+          final LevelReader world,
+          final @NotNull BlockPos start,
+          final @NotNull BlockPos direction,
+          final int distance)
+        {
+            super(world, start, distance + 100, new PathResult(), null);
+            this.direction = direction;
+            this.distance = distance;
+        }
+
+        @Override
+        protected double computeHeuristic(final int x, final int y, final int z)
+        {
+            return BlockPosUtil.distManhattan(direction, x, y, z);
+        }
+
+        @Override
+        protected boolean isAtDestination(final MNode n)
+        {
+            return !n.isSwimming()
+                     && BlockPosUtil.distManhattan(start, n.x, n.y, n.z) < distance
+                     && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                          == SurfaceType.WALKABLE
+                     && canSeeTargetFromPos(n);
+        }
+
+        /**
+         * Checks visibility
+         *
+         * @param n
+         * @return
+         */
+        private boolean canSeeTargetFromPos(final MNode n)
+        {
+            Vec3 vec3d = new Vec3(start.getX(), start.getY() + 1.8, start.getZ());
+            Vec3 vec3d1 = new Vec3(n.x, n.y, n.z);
+            return this.world.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;
+        }
     }
 }
 
