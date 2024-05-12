@@ -191,6 +191,30 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     }
 
     /**
+     * Internal constructor, for secondary pathjobs within another one
+     *
+     * @param chunkCache
+     * @param start
+     * @param range
+     * @param result
+     * @param entity
+     */
+    protected AbstractPathJob(final LevelReader chunkCache, @NotNull final BlockPos start, final int range, final PathResult result, @Nullable final Mob entity)
+    {
+        this.maxNodes = Math.min(MAX_NODES, range * range);
+        nodesToVisit = new PriorityQueue<>(range * 2);
+        this.start = new BlockPos(start);
+
+        world = chunkCache;
+        cachedBlockLookup = new CachingBlockLookup(start, this.world);
+
+        this.result = result;
+        result.setJob(this);
+
+        this.entity = entity;
+    }
+
+    /**
      * AbstractPathJob constructor.
      *
      * @param world  the world within which to path.
