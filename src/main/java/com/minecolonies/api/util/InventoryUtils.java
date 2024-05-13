@@ -373,7 +373,7 @@ public class InventoryUtils
 
         for (int i = 0, slots = itemHandler.getSlots(); i < slots; i++)
         {
-            final ItemStack stack = itemHandler.getStackInSlot(0);
+            final ItemStack stack = itemHandler.getStackInSlot(i);
             if (stack == null || stack.isEmpty())
             {
                 return i;
