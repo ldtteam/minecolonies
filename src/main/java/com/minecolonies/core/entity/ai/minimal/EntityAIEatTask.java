@@ -16,6 +16,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -246,8 +247,8 @@ public class EntityAIEatTask implements IStateAI
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
               stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
-                         && !((BuildingCook) cookBuilding).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BuildingCook.FOOD_EXCLUSION_LIST))
-                               .isItemInList(new ItemStorage(stack)));
+                         && !(cookBuilding.getModule(BuildingModules.ITEMLIST_FOODEXCLUSION)
+                .isItemInList(new ItemStorage(stack))));
         }
 
         return WAIT_FOR_FOOD;
