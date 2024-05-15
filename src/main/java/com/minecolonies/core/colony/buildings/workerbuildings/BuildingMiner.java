@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -25,10 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -48,6 +46,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * Max depth the miner is going for.
      */
     public static final ISettingKey<IntSetting> MAX_DEPTH = new SettingKey<>(IntSetting.class, new ResourceLocation(Constants.MOD_ID, "maxdepth"));
+
+    /**
+     * Mine height levels:
+     * 48: Copper
+     * 16: Iron
+     * -16: Gold
+     * -100: Diamond
+     */
+    private static final List<Integer> MINING_LEVELS = ImmutableList.copyOf(new Integer[] {48, 16, -16, -100});
 
     /**
      * The job description.
@@ -159,26 +166,25 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public int getDepthLimit(final Level level)
     {
-        if (this.getBuildingLevel() == 1)
+        int buildingY = this.getLadderLocation().getY() - 5;
+
+        int buildingLevels = getBuildingLevel();
+        int yLevel = 0;
+        for (final Integer miningLevel : MINING_LEVELS)
         {
-            return normalizeMaxDepth(MAX_DEPTH_LEVEL_1, level);
+            if (miningLevel < buildingY)
+            {
+                yLevel = miningLevel;
+                buildingLevels--;
+            }
+
+            if (buildingLevels == 0)
+            {
+                break;
+            }
         }
-        else if (this.getBuildingLevel() == 2)
-        {
-            return normalizeMaxDepth(MAX_DEPTH_LEVEL_2, level);
-        }
-        else if (this.getBuildingLevel() == 3)
-        {
-            return normalizeMaxDepth(MAX_DEPTH_LEVEL_3, level);
-        }
-        else if (this.getBuildingLevel() == 4)
-        {
-            return normalizeMaxDepth(MAX_DEPTH_MAX, level);
-        }
-        else
-        {
-            return normalizeMaxDepth(-100, level);
-        }
+
+        return normalizeMaxDepth(yLevel, level);
     }
 
     /**

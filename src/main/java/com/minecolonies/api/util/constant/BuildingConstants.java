@@ -68,31 +68,6 @@ public final class BuildingConstants
     public static final String TAG_LLOCATION = "ladderlocation";
 
     /**
-     * Max depth the miner reaches at level 0.
-     */
-    public static final int MAX_DEPTH_LEVEL_0 = 70;
-
-    /**
-     * Max depth the miner reaches at level 1.
-     */
-    public static final int MAX_DEPTH_LEVEL_1 = 40;
-
-    /**
-     * Max depth the miner reaches at level 2.
-     */
-    public static final int MAX_DEPTH_LEVEL_2 = 20;
-
-    /**
-     * Max depth the miner reaches at level 3.
-     */
-    public static final int MAX_DEPTH_LEVEL_3 = 0;
-
-    /**
-     * Max depth the miner reaches ever.
-     */
-    public static final int MAX_DEPTH_MAX = -100;
-
-    /**
      * Florist and Beekeeper flower list filter.
      */
     public static final String BUILDING_FLOWER_LIST = "flowers";

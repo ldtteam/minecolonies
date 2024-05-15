@@ -367,7 +367,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         final BlockState blockState = world.getBlockState(position);
         final BlockHitResult blockHitResult = new BlockHitResult(Vec3.ZERO, Direction.UP, position, false);
-        final UseOnContext useOnContext = new UseOnContext(world, null, InteractionHand.MAIN_HAND, getInventory().getHeldItem(InteractionHand.MAIN_HAND), blockHitResult);
+        final UseOnContext useOnContext = new UseOnContext(world,
+          null,
+          InteractionHand.MAIN_HAND,
+          getInventory().getStackInSlot(InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())),
+          blockHitResult);
         final BlockState toolModifiedState = blockState.getToolModifiedState(useOnContext, ToolActions.HOE_TILL, true);
         if (toolModifiedState == null || !toolModifiedState.is(Blocks.FARMLAND))
         {

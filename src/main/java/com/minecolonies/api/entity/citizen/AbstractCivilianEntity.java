@@ -2,6 +2,8 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.entity.other.MinecoloniesMinecart;
+import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -139,5 +141,22 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
         final String id = data == null ? "none" : "" + data.getId();
         final String colony = data == null ? "none" : "" + data.getColony().getName();
         return "Enity: " + getDisplayName().getString() + " Type: [" + getClass().getSimpleName() + "] at pos: " + blockPosition() + " civilian id: " + id + " colony: " + colony;
+    }
+
+    /**
+     * Prevent riding entities except ours.
+     *
+     * @param entity entity to ride on
+     * @param force  force flag
+     * @return true if successful.
+     */
+    @Override
+    public boolean startRiding(final @NotNull Entity entity, final boolean force)
+    {
+        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart)
+        {
+            return super.startRiding(entity, force);
+        }
+        return false;
     }
 }
