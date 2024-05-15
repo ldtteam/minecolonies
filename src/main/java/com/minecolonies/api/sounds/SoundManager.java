@@ -32,6 +32,12 @@ public class SoundManager
             return;
         }
 
+        if (Minecraft.getInstance().level == null)
+        {
+            soundQueue.clear();
+            return;
+        }
+
         int playedSounds = 1;
         for (final Map.Entry<UUID, Deque<TimedSound>> entries : soundQueue.entrySet())
         {
