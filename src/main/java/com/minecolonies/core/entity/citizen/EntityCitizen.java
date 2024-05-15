@@ -1310,6 +1310,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return false;
         }
 
+        if (getCitizenColonyHandler().getColony() == null)
+        {
+            return super.hurt(damageSource, damage);
+        }
+
         // Maxdmg cap so citizens need a certain amount of hits to die, so we get more gameplay value and less scaling issues.
         return handleDamagePerformed(damageSource, damage, sourceEntity);
     }
