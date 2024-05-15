@@ -368,14 +368,19 @@ public class InventoryUtils
     {
         if (itemHandler == null)
         {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
             return -1;
         }
-        //Test with two different ItemStacks to insert in simulation mode.
-        return IntStream.range(0, itemHandler.getSlots())
-                 .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
-                 .findFirst()
-                 .orElse(-1);
+
+        for (int i = 0, slots = itemHandler.getSlots(); i < slots; i++)
+        {
+            final ItemStack stack = itemHandler.getStackInSlot(i);
+            if (stack == null || stack.isEmpty())
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /**
