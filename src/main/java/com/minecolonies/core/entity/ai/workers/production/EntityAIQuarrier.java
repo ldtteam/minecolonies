@@ -321,7 +321,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(0, progress.getY() + 1, 0), structurePlacer.getB().getStage());
+                    this.storeProgressPos(new BlockPos(-1, progress.getY() + 1, 0), structurePlacer.getB().getStage());
                 }
                 else
                 {
@@ -334,7 +334,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 if (progress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
                       structurePlacer.getB().getStage());
                     return getState();
                 }
@@ -353,13 +353,13 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
                       structurePlacer.getB().getStage());
                 }
                 else if (progress.getY() != -1 && result.getIteratorPos().getY() > progress.getY())
                 {
                     structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
                       structurePlacer.getB().getStage());
                 }
                 else
@@ -386,7 +386,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
                 {
                     structurePlacer.getB().setStage(BUILD_SOLID);
-                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1),
+                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
                       structurePlacer.getB().getStage());
                 }
                 else
@@ -445,9 +445,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             final AbstractBuildingStructureBuilder buildingWorker = building;
             buildingWorker.resetNeededResources();
-            requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+            requestProgress = new BlockPos(-1,
               structurePlacer.getB().getBluePrint().getSizeY() - 1,
-              structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+              0);
             requestState = RequestStage.SOLID;
         }
 
@@ -474,12 +474,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 if (requestProgress.getY() != -1 && result.getIteratorPos().getY() < requestProgress.getY())
                 {
-                    requestProgress = new BlockPos(0, requestProgress.getY() + 1, 0);
+                    requestProgress = new BlockPos(-1, requestProgress.getY() + 1, 0);
                     requestState = RequestStage.DECO;
                 }
                 else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    requestProgress = new BlockPos(0, structurePlacer.getB().getBluePrint().getSizeY() - 2, 0);
+                    requestProgress = new BlockPos(-1, structurePlacer.getB().getBluePrint().getSizeY() - 2, 0);
                     requestState = RequestStage.DECO;
                 }
                 else
@@ -492,9 +492,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 if (requestProgress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
                 {
                     requestState = RequestStage.ENTITIES;
-                    requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+                    requestProgress = new BlockPos(-1,
                       requestProgress.getY() - 1,
-                      structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                      0);
                     return false;
                 }
 
@@ -518,13 +518,13 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 {
                     requestState = RequestStage.ENTITIES;
                     requestProgress =
-                      new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), requestProgress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                      new BlockPos(-1, requestProgress.getY() - 1, 0);
                 }
                 else if (requestProgress.getY() != -1 && result.getIteratorPos().getY() > requestProgress.getY())
                 {
                     requestState = RequestStage.ENTITIES;
                     requestProgress =
-                      new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), requestProgress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                      new BlockPos(-1, requestProgress.getY() - 1, 0);
                 }
                 else
                 {
@@ -544,9 +544,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 else if (requestProgress.getY() != -1 && (result.getIteratorPos().getY() < requestProgress.getY()))
                 {
                     requestState = RequestStage.SOLID;
-                    requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+                    requestProgress = new BlockPos(-1,
                       requestProgress.getY() - 1,
-                      structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                      0);
                 }
                 else
                 {
