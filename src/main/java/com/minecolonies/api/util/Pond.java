@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.BlockGetter;
@@ -18,7 +19,7 @@ public final class Pond
      */
     public static final int WATER_POOL_WIDTH_REQUIREMENT  = 5;
     public static final int WATER_POOL_LENGTH_REQUIREMENT = 5;
-    public static final int WATER_DEPTH_REQUIREMENT       = 4;
+    public static final int WATER_DEPTH_REQUIREMENT       = 2;
 
     /**
      * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough (bigger then 20).
@@ -33,7 +34,7 @@ public final class Pond
 
         for (int i = 1; i < WATER_DEPTH_REQUIREMENT; i++)
         {
-            if (world.getBlockState(tempPos.set(water.getX(), water.getY() - i, water.getZ())).getBlock() != Blocks.WATER)
+            if (!isWaterForFishing(world, world.getBlockState(tempPos.set(water.getX(), water.getY() - i, water.getZ())), tempPos))
             {
                 return false;
             }
@@ -47,6 +48,12 @@ public final class Pond
                 final BlockState state = world.getBlockState(tempPos);
 
                 if (!isWaterForFishing(world, state, tempPos))
+                {
+                    return false;
+                }
+
+                // 70% chance to check, to on avg prefer cleared areas
+                if (ColonyConstants.rand.nextInt(100) >= 30 && !isWaterForFishing(world, world.getBlockState(tempPos.set(water.getX(), water.getY() - 1, water.getZ())), tempPos))
                 {
                     return false;
                 }
