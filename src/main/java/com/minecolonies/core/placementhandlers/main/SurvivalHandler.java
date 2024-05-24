@@ -88,7 +88,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
-        if (blueprint == null)
+        if (blueprint == null || blueprintPath.startsWith("scans/"))
         {
             // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
             MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
