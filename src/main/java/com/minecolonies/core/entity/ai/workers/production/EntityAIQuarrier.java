@@ -48,7 +48,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.IBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTIPLIER;
