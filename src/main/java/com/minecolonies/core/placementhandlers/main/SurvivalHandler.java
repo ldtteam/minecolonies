@@ -88,7 +88,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
-        if (blueprint == null || blueprintPath.startsWith("scans/"))
+        if (blueprint == null)
         {
             // This can happen if the file didnt finish synching with the server from the client, or something went wrong when synching (package dropped, etc).
             MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
@@ -138,7 +138,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
-            if (clientPack || !StructurePacks.hasPack(packName))
+            if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/"))
             {
                 MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
