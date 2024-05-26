@@ -1376,7 +1376,7 @@
   "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
   "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen",
 
-  "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
+  "entity.fisherman.messagewatertoofar": "I can't find any water to fish in! There should be an area of at least 7x7x2 water blocks nearby.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
   "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
