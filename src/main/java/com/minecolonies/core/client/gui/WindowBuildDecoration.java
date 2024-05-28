@@ -42,7 +42,7 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.placement.IBlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;

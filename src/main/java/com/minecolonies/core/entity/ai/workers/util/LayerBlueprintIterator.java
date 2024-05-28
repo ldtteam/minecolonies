@@ -1,14 +1,14 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
 import com.ldtteam.structurize.placement.AbstractBlueprintIterator;
-import com.ldtteam.structurize.placement.AbstractDelegateBlueprintIterator;
+import com.ldtteam.structurize.placement.AbstractBlueprintIteratorWrapper;
 import com.ldtteam.structurize.placement.StructureIterators;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import net.minecraft.core.BlockPos;
 
 import java.util.function.Supplier;
 
-public class LayerBlueprintIterator extends AbstractDelegateBlueprintIterator
+public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
 {
     private int layer;
 

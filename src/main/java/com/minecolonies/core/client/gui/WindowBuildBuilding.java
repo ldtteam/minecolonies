@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.placement.IBlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
 import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_UPGRADE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
