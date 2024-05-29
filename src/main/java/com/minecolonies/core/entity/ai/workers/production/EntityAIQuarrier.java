@@ -295,15 +295,19 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     protected BlockPos getPosToWorkAt()
     {
-        final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        return structurePlacer.getB().getProgressPosInWorld(progress);
+        final BlockPos progressPos = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
+        if (progressPos == NULL_POS)
+        {
+            return null;
+        }
+        return structurePlacer.getB().getProgressPosInWorld(progressPos);
     }
 
     @Override
     protected boolean goToNextStage(StructurePhasePlacementResult result)
     {
-        final int currentLayer = result.getIteratorPos().getY();
         final LayerBlueprintIterator iterator = (LayerBlueprintIterator) structurePlacer.getA().getIterator();
+        final int currentLayer = iterator.getLayer();
 
         if (!super.goToNextStage(result))
         {
