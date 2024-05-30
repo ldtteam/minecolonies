@@ -243,6 +243,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             }
 
             module.getMutableRequestList().removeAll(reqsToRemove);
+            module.markDirty();
 
             if (request == null)
             {
