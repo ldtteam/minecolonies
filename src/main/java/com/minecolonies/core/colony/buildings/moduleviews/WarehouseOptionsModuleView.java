@@ -40,7 +40,7 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return "info";
+        return "settings";
     }
 
     /**

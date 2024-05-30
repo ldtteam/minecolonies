@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
+import com.minecolonies.core.colony.buildings.moduleviews.RequestTaskModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
@@ -52,28 +53,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
     public void onOpened()
     {
         super.onOpened();
-        final List<IToken<?>> tasks = new ArrayList<>();
-
-
-        for (final WorkerBuildingModuleView moduleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
-        {
-            for (final int citizenId : moduleView.getAssignedCitizens())
-            {
-                ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
-                if (citizen != null)
-                {
-                    if (citizen.getJobView() instanceof CrafterJobView)
-                    {
-                        tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
-                    }
-                    else if (citizen.getJobView() instanceof DmanJobView)
-                    {
-                        tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
-                    }
-                }
-            }
-        }
-
+        final List<IToken<?>> tasks =  buildingView.getModuleViewByType(RequestTaskModuleView.class).getTasks();
         findPaneOfTypeByID(LIST_TASKS, ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
         {
             @Override

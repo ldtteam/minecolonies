@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
