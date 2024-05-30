@@ -205,8 +205,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
                 return null;
             }
 
-            final WarehouseRequestQueueModule module = wareHouse.getFirstModuleOccurance(WarehouseRequestQueueModule.class);
-            if (module == null || module.getMutableRequestList().isEmpty())
+            final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+            if (module.getMutableRequestList().isEmpty())
             {
                 return null;
             }

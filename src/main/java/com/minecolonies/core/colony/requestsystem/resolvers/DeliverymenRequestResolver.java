@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
@@ -61,7 +62,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return false;
         }
 
-       return !wareHouse.getFirstModuleOccurance(CourierAssignmentModule.class).getAssignedCitizen().isEmpty();
+       return !wareHouse.getModule(BuildingModules.WAREHOUSE_COURIERS).getAssignedCitizen().isEmpty();
     }
 
     @Override
@@ -92,16 +93,13 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return;
         }
 
-        if (wareHouse.getFirstModuleOccurance(CourierAssignmentModule.class).getAssignedCitizen().isEmpty())
+        if (wareHouse.getModule(BuildingModules.WAREHOUSE_COURIERS).getAssignedCitizen().isEmpty())
         {
             return;
         }
 
-        final WarehouseRequestQueueModule module = wareHouse.getFirstModuleOccurance(WarehouseRequestQueueModule.class);
-        if (module != null)
-        {
-            module.addRequest(request.getId());
-        }
+        final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+        module.addRequest(request.getId());
     }
 
     @Nullable
@@ -142,11 +140,8 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
                 return;
             }
 
-            final WarehouseRequestQueueModule module = wareHouse.getFirstModuleOccurance(WarehouseRequestQueueModule.class);
-            if (module != null)
-            {
-                module.getMutableRequestList().remove(request.getId());
-            }
+            final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+            module.getMutableRequestList().remove(request.getId());
         }
     }
 
