@@ -4,7 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.WindowHutCrafterTaskModule;
+import com.minecolonies.core.client.gui.modules.WindowHutRequestTaskModule;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Crafter task module to display tasks in the UI.
+ * Request task module to display tasks in the UI.
  */
 public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
 {
@@ -27,7 +27,7 @@ public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new WindowHutCrafterTaskModule(buildingView,Constants.MOD_ID + ":gui/layouthuts/layouttasklist.xml");
+        return new WindowHutRequestTaskModule(buildingView,Constants.MOD_ID + ":gui/layouthuts/layouttasklist.xml");
     }
 
     @Override

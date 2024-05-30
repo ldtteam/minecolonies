@@ -6,7 +6,6 @@ import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -15,15 +14,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDelive
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RequestTaskModuleView;
-import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
-import com.minecolonies.core.colony.jobs.views.CrafterJobView;
-import com.minecolonies.core.colony.jobs.views.DmanJobView;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY;
@@ -32,7 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Task list module.
  */
-public class WindowHutCrafterTaskModule extends AbstractModuleWindow
+public class WindowHutRequestTaskModule extends AbstractModuleWindow
 {
     /**
      * Id of the the task list inside the GUI.
@@ -44,7 +39,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
      * @param view the building view.
      * @param name the layout file.
      */
-    public WindowHutCrafterTaskModule(final IBuildingView view, final String name)
+    public WindowHutRequestTaskModule(final IBuildingView view, final String name)
     {
         super(view, name);
     }
