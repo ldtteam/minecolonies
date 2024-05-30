@@ -377,6 +377,13 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             requestLayer = structurePlacer.getB().getBluePrint().getSizeY() - 1;
             requestState = RequestStage.SOLID;
         }
+        else if (requestLayer < 0)
+        {
+            // Done
+            requestState = RequestStage.SOLID;
+            requestProgress = null;
+            return true;
+        }
         iterator.setLayer(requestLayer);
 
         final BlockPos worldPos = structure.getProgressPosInWorld(requestProgress);
@@ -414,8 +421,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             case DECO:
                 if (requestLayer >= structurePlacer.getB().getBluePrint().getSizeY())
                 {
-                    requestState = RequestStage.ENTITIES;
-                    requestLayer = requestLayer - 1;
+                    requestState = RequestStage.SOLID;
+                    requestLayer = requestLayer - 2;
                     requestProgress = NULL_POS;
                     return false;
                 }
@@ -437,33 +444,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    requestState = RequestStage.ENTITIES;
-                    requestLayer = requestLayer - 1;
+                    requestState = RequestStage.SOLID;
+                    requestLayer = requestLayer - 2;
                     requestProgress = NULL_POS;
-                }
-                else
-                {
-                    requestProgress = result.getIteratorPos();
-                }
-                return false;
-            case ENTITIES:
-                result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0 || pos.getY() < worldPos.getY())), true);
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    if (requestLayer == 0)
-                    {
-                        requestState = RequestStage.SOLID;
-                        requestProgress = null;
-                        return true;
-                    }
-                    else
-                    {
-                        requestState = RequestStage.SOLID;
-                        requestLayer = requestLayer - 1;
-                        requestProgress = NULL_POS;
-                    }
                 }
                 else
                 {
