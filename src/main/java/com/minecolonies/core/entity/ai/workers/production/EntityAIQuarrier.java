@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.ai.workers.production;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
-import com.ldtteam.structurize.placement.StructureIterators;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
@@ -328,22 +327,24 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
         else
         {
-            iterator.setLayer(
-              switch (structurePlacer.getB().getStage())
-                {
-                    // The quarrier decorates the level above the one they just placed solid blocks at (to support rails and torches standing on those blocks)
-                    case DECORATE -> currentLayer + 1;
-                    // After decorating, we need to go a layer lower again
-                    case CLEAR -> currentLayer - 1;
-                    default -> currentLayer;
-                }
-            );
-            if (iterator.getLayer() >= iterator.getSize().getY())
+            final int newLayer = switch (structurePlacer.getB().getStage())
+                                   {
+                                       // The quarrier decorates the level above the one they just placed solid blocks at (to support rails and torches standing on those blocks)
+                                       case DECORATE -> currentLayer + 1;
+                                       // After decorating, we need to go a layer lower again
+                                       case CLEAR -> currentLayer - 1;
+                                       default -> currentLayer;
+                                   };
+            if (newLayer >= iterator.getSize().getY())
             {
                 // This can happen at the first level when getting to the decoration stage. In that case, skip the decoration step and go to the CLEAR step immediately
                 super.goToNextStage(result);
                 building.nextStage();
                 iterator.setLayer(currentLayer);
+            }
+            else
+            {
+                iterator.setLayer(newLayer);
             }
         }
         return true;
@@ -408,9 +409,19 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    requestLayer = requestLayer + 1;
-                    requestProgress = NULL_POS;
-                    requestState = RequestStage.DECO;
+                    if (requestLayer + 1 >= structurePlacer.getB().getBluePrint().getSizeY())
+                    {
+                        // Skip decoration for the first layer, as we request the materials of the layer above
+                        // Continue with the next layer
+                        requestLayer = requestLayer - 1;
+                        requestProgress = NULL_POS;
+                    }
+                    else
+                    {
+                        requestLayer = requestLayer + 1;
+                        requestProgress = NULL_POS;
+                        requestState = RequestStage.DECO;
+                    }
                 }
                 else
                 {
@@ -419,14 +430,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 return false;
             case DECO:
-                if (requestLayer >= structurePlacer.getB().getBluePrint().getSizeY())
-                {
-                    requestState = RequestStage.SOLID;
-                    requestLayer = requestLayer - 2;
-                    requestProgress = NULL_POS;
-                    return false;
-                }
-
                 result = placer.executeStructureStep(world,
                   null,
                   requestProgress,
@@ -495,7 +498,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     public void setStructurePlacer(final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure)
     {
-        final LayerBlueprintIterator iterator = new LayerBlueprintIterator(StructureIterators.getIterator("default", structure));
+        final LayerBlueprintIterator iterator = new LayerBlueprintIterator("default", structure);
         structurePlacer = new Tuple<>(new StructurePlacer(structure, iterator), structure);
     }
 
