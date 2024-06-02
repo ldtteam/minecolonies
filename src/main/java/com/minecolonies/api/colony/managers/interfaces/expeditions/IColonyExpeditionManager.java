@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -136,7 +136,7 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
      * @param inventory        the inventory to check requirements against.
      * @return true if so.
      */
-    boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainer inventory);
+    boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager inventory);
 
     /**
      * Check if all requirements for a given expedition type are met.
@@ -145,7 +145,7 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
      * @param inventory      the inventory to check requirements against.
      * @return true if so.
      */
-    boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainer inventory);
+    boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager inventory);
 
     /**
      * Unlock nether expeditions.

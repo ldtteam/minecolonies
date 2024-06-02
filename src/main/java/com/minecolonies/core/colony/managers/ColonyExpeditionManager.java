@@ -16,7 +16,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
-import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -270,7 +270,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    public boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainer inventory)
+    public boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager inventory)
     {
         final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
         if (expeditionType == null)
@@ -283,7 +283,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    public boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainer inventory)
+    public boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager inventory)
     {
         return expeditionType.getRequirements().stream()
                  .map(m -> m.createHandler(() -> new InvWrapper(inventory)))

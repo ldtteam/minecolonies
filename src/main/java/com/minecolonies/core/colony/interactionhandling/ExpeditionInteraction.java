@@ -20,7 +20,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
-import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -207,7 +207,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
                 return false;
             }
 
-            return data.getColony().getExpeditionManager().meetsRequirements(createdExpedition.expeditionTypeId(), new ExpeditionSheetContainer(stack));
+            return data.getColony().getExpeditionManager().meetsRequirements(createdExpedition.expeditionTypeId(), new ExpeditionSheetContainerManager(stack));
         }).stream().findFirst();
 
         if (expeditionSheet.isEmpty())
@@ -216,14 +216,14 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         }
 
         // Create all the data needed for creating an expedition
-        final ExpeditionSheetContainer expeditionSheetContainer = new ExpeditionSheetContainer(expeditionSheet.get());
+        final ExpeditionSheetContainerManager expeditionSheetContainerManager = new ExpeditionSheetContainerManager(expeditionSheet.get());
         final IExpeditionMember<?> leader = new ExpeditionVisitorMember(data);
         final List<IExpeditionMember<?>> members = new ArrayList<>(List.of(leader));
-        for (final int id : expeditionSheetContainer.getMembers())
+        for (final int id : expeditionSheetContainerManager.getMembers())
         {
             members.add(new ExpeditionCitizenMember(data.getColony().getCitizenManager().getCivilian(id)));
         }
-        final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(new InvWrapper(expeditionSheetContainer));
+        final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(new InvWrapper(expeditionSheetContainerManager));
 
         // Attempt to start the expedition
         if (!data.getColony().getExpeditionManager().startExpedition(data.getId(), members, equipment))

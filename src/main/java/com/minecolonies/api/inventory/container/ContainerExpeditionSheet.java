@@ -2,7 +2,7 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,7 +34,7 @@ public class ContainerExpeditionSheet extends AbstractContainerMenu
     public ContainerExpeditionSheet(final int windowId, final Inventory playerInventory, final ItemStack stack)
     {
         super(ModContainers.expeditionSheet.get(), windowId);
-        final ExpeditionSheetContainer inventory = new ExpeditionSheetContainer(stack);
+        final ExpeditionSheetContainerManager inventory = new ExpeditionSheetContainerManager(stack);
 
         inventoryRows = inventory.getContainerSize() / INVENTORY_COLUMNS;
         final int size = inventory.getContainerSize();

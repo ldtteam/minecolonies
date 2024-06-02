@@ -2593,7 +2593,7 @@
   "entity.minecolonies.drownedchiefpirate": "Drowned Pirate Chief",
   "death.attack.entity.minecolonies.drownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
   "com.minecolonies.core.exit_interactions": "Exit Interactions",
-  "com.minecolonies.core.raidevent.spawnerbreaks": "One of the spawners of the raid misteriously broke, it seems you hit some sort of limit"
+  "com.minecolonies.core.raidevent.spawnerbreaks": "One of the spawners of the raid misteriously broke, it seems you hit some sort of limit",
 
   "item.minecolonies.expedition_sheet": "Expedition Guide",
 

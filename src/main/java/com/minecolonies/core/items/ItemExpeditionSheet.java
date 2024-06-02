@@ -99,7 +99,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             return InteractionResultHolder.fail(itemStack);
         }
 
-        final MainWindowExpeditionary windowExpeditionary = new MainWindowExpeditionary(colonyView, expeditionType, hand, new ExpeditionSheetContainer(itemStack));
+        final MainWindowExpeditionary windowExpeditionary = new MainWindowExpeditionary(colonyView, expeditionType, hand, new ExpeditionSheetContainerManager(itemStack));
         windowExpeditionary.open();
         return InteractionResultHolder.success(itemStack);
     }
@@ -130,7 +130,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
     /**
      * Container class for managing an expedition sheet.
      */
-    public static class ExpeditionSheetContainer extends SimpleContainer
+    public static class ExpeditionSheetContainerManager extends SimpleContainer
     {
         /**
          * Nbt tags.
@@ -159,7 +159,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
          *
          * @param stack the input item stack to fetch the data from.
          */
-        public ExpeditionSheetContainer(final ItemStack stack)
+        public ExpeditionSheetContainerManager(final ItemStack stack)
         {
             super(INVENTORY_SIZE);
             this.stack = stack;
@@ -173,11 +173,11 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
         @Override
         public void setChanged()
         {
-            super.setChanged();
             final CompoundTag rootTag = new CompoundTag();
             rootTag.put(TAG_INVENTORY, createTag());
             rootTag.putIntArray(TAG_MEMBERS, members.stream().toList());
             stack.getOrCreateTag().put(TAG_SHEET_DATA, rootTag);
+            super.setChanged();
         }
 
         public Set<Integer> getMembers()
@@ -185,15 +185,15 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             return members;
         }
 
-        public void toggleMember(final int memberId)
+        public void toggleMember(final int memberId, final boolean assign)
         {
-            if (members.contains(memberId))
+            if (assign)
             {
-                this.members.remove(memberId);
+                this.members.add(memberId);
             }
             else
             {
-                this.members.add(memberId);
+                this.members.remove(memberId);
             }
             setChanged();
         }

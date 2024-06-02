@@ -25,8 +25,10 @@ import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType.Difficulty;
-import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainer;
+import com.minecolonies.core.items.ItemExpeditionSheet;
 import com.minecolonies.core.network.messages.server.OpenExpeditionSheetInventoryMessage;
+import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.AssignGuardMessage;
+import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.TransferItemsMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -37,7 +39,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
@@ -69,6 +73,12 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     private static final String ID_EXPEDITION_GUARDS_ASSIGN     = "guardAssign";
 
     /**
+     * The colony view.
+     */
+    @NotNull
+    private final IColonyView colonyView;
+
+    /**
      * The current expedition type.
      */
     @NotNull
@@ -84,12 +94,17 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      * The container surrounding the item stack for the expedition.
      */
     @NotNull
-    private final ExpeditionSheetContainer container;
+    private final ItemExpeditionSheet.ExpeditionSheetContainerManager container;
 
     /**
      * The comparator instance for the resources list.
      */
     private final ResourceComparator resourceComparator;
+
+    /**
+     * The set of assigned guards.
+     */
+    private final Set<Integer> assignedGuards;
 
     /**
      * The comparator instance for the guards list.
@@ -116,9 +131,10 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
       final @NotNull IColonyView colonyView,
       final @NotNull ColonyExpeditionType expeditionType,
       final @NotNull InteractionHand hand,
-      final @NotNull ExpeditionSheetContainer container)
+      final @NotNull ItemExpeditionSheet.ExpeditionSheetContainerManager container)
     {
         super(Constants.MOD_ID + EXPEDITIONARY_MAIN_RESOURCE_SUFFIX);
+        this.colonyView = colonyView;
         this.expeditionType = expeditionType;
         this.hand = hand;
         this.container = container;
@@ -127,7 +143,8 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
         requirements.sort(resourceComparator);
 
-        guardsComparator = new GuardsComparator(container.getMembers());
+        assignedGuards = new HashSet<>(container.getMembers());
+        guardsComparator = new GuardsComparator(assignedGuards);
         guards = colonyView.getCitizens().values().stream()
                    .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard() && !f.getColony()
                                                                                                                            .getTravelingManager()
@@ -289,14 +306,22 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             @Override
             public boolean isChecked(final int index)
             {
-                return container.getMembers().contains(guards.get(index).getId());
+                return assignedGuards.contains(guards.get(index).getId());
             }
 
             @Override
             public void setChecked(final int index, final boolean checked)
             {
                 final ICitizenDataView guard = guards.get(index);
-                container.toggleMember(guard.getId());
+                Network.getNetwork().sendToServer(new AssignGuardMessage(guard, checked, hand));
+                if (checked)
+                {
+                    assignedGuards.add(guard.getId());
+                }
+                else
+                {
+                    assignedGuards.remove(guard.getId());
+                }
                 guards.sort(guardsComparator);
                 renderHeaders();
             }
@@ -348,11 +373,12 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             return;
         }
 
+        Network.getNetwork().sendToServer(new TransferItemsMessage(colonyView, expeditionType.getId(), requirement.getId(), hand));
+
         final int needed = requirement.getAmount() - requirement.getAmountAvailable();
         if (mc.player.isCreative())
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(container), requirement.getDefaultItemStack().copyWithCount(needed));
-            container.createTag();
         }
         else
         {

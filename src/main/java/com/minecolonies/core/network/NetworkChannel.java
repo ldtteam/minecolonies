@@ -26,6 +26,8 @@ import com.minecolonies.core.network.messages.server.colony.building.warehouse.S
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.*;
 import com.minecolonies.core.network.messages.server.colony.citizen.*;
+import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.AssignGuardMessage;
+import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.TransferItemsMessage;
 import com.minecolonies.core.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
@@ -204,6 +206,8 @@ public class NetworkChannel
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
         registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
         registerMessage(++idx, OpenExpeditionSheetInventoryMessage.class, OpenExpeditionSheetInventoryMessage::new);
+        registerMessage(++idx, AssignGuardMessage.class, AssignGuardMessage::new);
+        registerMessage(++idx, TransferItemsMessage.class, TransferItemsMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
