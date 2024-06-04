@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.citizen.citizenhandlers;
 
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -28,13 +29,18 @@ public class CitizenMournHandler implements ICitizenMournHandler
     private boolean isMourning;
 
     /**
+     * If mourning is enabled
+     */
+    private boolean isMourningEnabled;
+    
+    /**
      * Create a new instance of the citizen happiness handler.
      *
      * @param data the data to handle.
      */
     public CitizenMournHandler(final ICitizenData data)
     {
-
+        isMourningEnabled = MineColonies.getConfig().getServer().mourningEnabled.get();
     }
 
     @Override
@@ -63,7 +69,10 @@ public class CitizenMournHandler implements ICitizenMournHandler
     @Override
     public void addDeceasedCitizen(final String name)
     {
-        deceasedCitizens.add(name);
+        if(isMourningEnabled)
+        {
+            deceasedCitizens.add(name);
+        }
     }
 
     @Override
