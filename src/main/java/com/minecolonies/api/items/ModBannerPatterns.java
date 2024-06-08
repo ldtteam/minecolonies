@@ -40,6 +40,6 @@ public final class ModBannerPatterns
         BANNER_PATTERNS.register("cantabrian", () -> new BannerPattern("ctbr"));
         BANNER_PATTERNS.register("threetriangles", () -> new BannerPattern("ttan"));
         BANNER_PATTERNS.register("theart", () -> new BannerPattern("thrt"));
-
+        BANNER_PATTERNS.register("dragonhead", () -> new BannerPattern("drhd"));
     }
 }
