@@ -9,6 +9,7 @@ import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -56,6 +57,11 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
+        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z)
+        {
+            return false;
+        }
+
         return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) < distToDesired
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
@@ -64,7 +70,22 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
     @Override
     protected double getEndNodeScore(@NotNull final MNode n)
     {
-        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) * 2 + BlockPosUtil.distManhattan(nearbyPosition, n.x, n.y, n.z);
+        if (desiredPosition.getX() == n.x && desiredPosition.getZ() == n.z)
+        {
+            return 1000;
+        }
+
+        double dist = BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) * 2 + BlockPosUtil.distManhattan(nearbyPosition, n.x, n.y, n.z);
+        if (n.isSwimming())
+        {
+            dist += 50;
+        }
+        else if (cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z) == Blocks.WATER.defaultBlockState())
+        {
+            dist += 50;
+        }
+
+        return dist;
     }
 
     @Override

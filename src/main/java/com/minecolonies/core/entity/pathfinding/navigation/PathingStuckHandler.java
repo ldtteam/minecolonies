@@ -151,6 +151,7 @@ public class PathingStuckHandler implements IStuckHandler
     {
         if (navigator.getDesiredPos() == null || navigator.getDesiredPos().equals(BlockPos.ZERO))
         {
+            resetGlobalStuckTimers();
             return;
         }
 
