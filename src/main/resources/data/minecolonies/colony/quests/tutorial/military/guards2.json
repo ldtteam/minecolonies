@@ -1,0 +1,112 @@
+{
+  "name": "Expanding your Territory",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/military/guards",
+    "minecolonies:tutorial/builder2"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/military/guards"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "I see your colony is coming together nicely. I believe it'd be a good idea to place and upgrade some guard towers to expand the colony borders and bolster your defences!",
+      "options": [
+        {
+          "answer": "Sure, sounds good!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Excellent, then go craft some more guard tower blocks, place them and have your builder build and upgrade them. Let's target around 10 levels of guard towers. That's like 5 level 2 guard towers.'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:guardtower",
+        "count-existing": true,
+        "lvl": 10,
+        "qty": 0,
+        "target": 0,
+        "next-objective": 3
+      }
+    },
+    {
+      "unlocks-rewards": [0,1,2,3],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Awesome, your village is expanding and ready to face intruders. Come back in a bit and I'll help you with the next steps! Here, have a set of armor to equip your guards with!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:chainmail_helmet",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:chainmail_chestplate",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:chainmail_leggings",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:chainmail_boots",
+        "qty": 1
+      }
+    }
+  ]
+}

@@ -5,12 +5,18 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.quests.objectives.IBuildingUpgradeObjectiveTemplate;
+import com.minecolonies.core.quests.objectives.IResearchObjectiveTemplate;
+import com.minecolonies.core.quests.objectives.ResearchObjectiveTemplate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -19,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -31,6 +38,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RE
  */
 public class LocalResearchTree implements ILocalResearchTree
 {
+    /**
+     * Mine block objective tracker.
+     */
+    private static final Map<ResourceLocation, List<IQuestInstance>> researchObjectives = new HashMap<>();
+
     /**
      * The map containing all researches by ID.
      */
@@ -96,6 +108,18 @@ public class LocalResearchTree implements ILocalResearchTree
         {
             inProgress.remove(research.getId());
             isComplete.add(research.getId());
+
+            if (researchObjectives.containsKey(research.getId()))
+            {
+                for (final IQuestInstance instance : new ArrayList<>(researchObjectives.get(research.getId())))
+                {
+                    final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                    if (objective instanceof IResearchObjectiveTemplate researchTemplate)
+                    {
+                        researchTemplate.onResearchCompletion(instance);
+                    }
+                }
+            }
         }
 
         if (research.getDepth() == MAX_DEPTH)
@@ -121,6 +145,18 @@ public class LocalResearchTree implements ILocalResearchTree
     {
         inProgress.remove(id);
         isComplete.add(id);
+
+        if (researchObjectives.containsKey(id))
+        {
+            for (final IQuestInstance instance : new ArrayList<>(researchObjectives.get(id)))
+            {
+                final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                if (objective instanceof IResearchObjectiveTemplate researchTemplate)
+                {
+                    researchTemplate.onResearchCompletion(instance);
+                }
+            }
+        }
     }
 
     @Override
@@ -403,10 +439,30 @@ public class LocalResearchTree implements ILocalResearchTree
     /**
      * Get the list of all finished researches
      *
-     * @return
+     * @return a copy of the completed list.
      */
     public List<ResourceLocation> getCompletedList()
     {
         return new ArrayList<>(isComplete);
+    }
+
+    @Override
+    public void trackResearch(final ResourceLocation researchId, final IQuestInstance colonyQuest)
+    {
+        final List<IQuestInstance> currentMap = researchObjectives.getOrDefault(researchObjectives, new ArrayList<>());
+        currentMap.add(colonyQuest);
+        researchObjectives.put(researchId, currentMap);
+    }
+
+    @Override
+    public void stopTrackingResearch(final @NotNull ResourceLocation researchId, final @NotNull IQuestInstance colonyQuest)
+    {
+        researchObjectives.getOrDefault(researchId, new ArrayList<>()).remove(colonyQuest);
+    }
+
+    @Override
+    public boolean isComplete(final ResourceLocation location)
+    {
+        return isComplete.contains(location);
     }
 }

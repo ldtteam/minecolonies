@@ -1,0 +1,151 @@
+{
+  "name": "Assemble an Army",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/military/guards2",
+    "minecolonies:tutorial/university"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/guards2"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "The defences are starting to look good. But we're still lacking some offensive power in the case of a large scale invasion. We should get some barracks up and running!",
+      "options": [
+        {
+          "answer": "Yes!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Barracks come with up to 4 barrack towers (at level 4+) where each tower can house up to 5 guards (at level 5) giving you a whopping 20 guards! But before we do that, we need to first research it at the university!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! You know the drill, craft the barracks hut block in a crafting bench. This time surround a block of iron with planks and the build tool at the top.",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:research",
+      "details": {
+        "type": "minecolonies:combat/tactictraining",
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now that the research is done, the progress is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the barracks hut block in a crafting bench. This time surround a block of iron with planks and the build tool at the top.",
+      "options": [
+        {
+          "answer": "On it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:barracks",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 4
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Great. If you want to start having guards you should also build and upgrade the barracks towers. I will leave this to you. Here, some equipment to get your guards going!",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:iron_sword",
+        "qty": 2
+      }
+    }
+  ]
+}

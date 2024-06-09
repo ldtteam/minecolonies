@@ -1,10 +1,12 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -91,4 +93,25 @@ public interface ILocalResearchTree
      * @param effects  the effects.
      */
     void readFromNBT(final CompoundTag compound, final IResearchEffectManager effects);
+
+    /**
+     * Track a given research.
+     * @param researchId the research to track.
+     * @param colonyQuest the quest tracking it.
+     */
+    void trackResearch(ResourceLocation researchId, IQuestInstance colonyQuest);
+
+    /**
+     * Stop tracking a given research.
+     * @param researchId the research to track.
+     * @param colonyQuest the quest tracking it.
+     */
+    void stopTrackingResearch(@NotNull ResourceLocation researchId, @NotNull IQuestInstance colonyQuest);
+
+    /**
+     * Check if a given research is complete.
+     * @param location the unique id.
+     * @return true if so.
+     */
+    boolean isComplete(ResourceLocation location);
 }

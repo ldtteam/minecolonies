@@ -1,0 +1,157 @@
+{
+  "name": "Pill for the Ill",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/university"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/housing"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now that the university is finished, our first concern should be regarding our health. We should really get a hospital in this town.",
+      "options": [
+        {
+          "answer": "Sounds right.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "The doctors in the hospital will heal your citizens from all kinds of diseases, making it an essential part of your colony! But before we do that, we need to first research it at the university!'",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Alrighty then! You know the drill, craft the hospital hut block in a crafting bench. This time surround a carrot with planks and the build tool at the top.",
+                  "options": [
+                    {
+                      "answer": "Consider it done!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "Already done!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh nice, then we are done here and I will have more information on the next steps soon!",
+            "options": [
+              {
+                "answer": "Nice!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:research",
+      "details": {
+        "type": "minecolonies:civilian/stamina",
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Now that the research is done, the progress is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the hospital hut block in a crafting bench. This time surround a carrot with planks and the build tool at the top.",
+      "options": [
+        {
+          "answer": "On it!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:hospital",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 4
+      }
+    },
+    {
+      "unlocks-rewards": [0,1],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Awesome. I feel much better now knowing there is a hospital in the colony! Here have this for an initial stock of medicine in the hospital!",
+      "options": [
+        {
+          "answer": "See you in a bit!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:carrot",
+        "qty": 8
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potato",
+        "qty": 8
+      }
+    }
+  ]
+}
