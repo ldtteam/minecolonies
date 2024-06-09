@@ -62,7 +62,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DU
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
     /**
-     * Mine block objective tracker.
+     * Building building objective tracker.
      */
     private static final Map<BuildingEntry, List<IQuestInstance>> buildBuildingObjectives = new HashMap<>();
 

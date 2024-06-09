@@ -39,7 +39,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RE
 public class LocalResearchTree implements ILocalResearchTree
 {
     /**
-     * Mine block objective tracker.
+     * Research objective tracker.
      */
     private static final Map<ResourceLocation, List<IQuestInstance>> researchObjectives = new HashMap<>();
 
