@@ -32,6 +32,7 @@ import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -59,6 +60,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
@@ -149,7 +151,6 @@ public class VisitorCitizen extends AbstractEntityVisitor
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new VisitorColonyHandler(this);
@@ -450,12 +451,6 @@ public class VisitorCitizen extends AbstractEntityVisitor
     }
 
     @Override
-    public ICitizenChatHandler getCitizenChatHandler()
-    {
-        return citizenChatHandler;
-    }
-
-    @Override
     public ICitizenItemHandler getCitizenItemHandler()
     {
         return citizenItemHandler;
@@ -543,12 +538,6 @@ public class VisitorCitizen extends AbstractEntityVisitor
     public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
     {
         this.citizenItemHandler = citizenItemHandler;
-    }
-
-    @Override
-    public void setCitizenChatHandler(final ICitizenChatHandler citizenChatHandler)
-    {
-        this.citizenChatHandler = citizenChatHandler;
     }
 
     @Override

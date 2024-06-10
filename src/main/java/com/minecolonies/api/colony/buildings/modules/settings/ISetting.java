@@ -113,11 +113,11 @@ public interface ISetting<S>
      */
     default void setHoverPane(final ISettingKey<?> key, final Pane component, final ISettingsModuleView settingsModuleView)
     {
-        final String tooltipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
-        final Component tooltip = Component.translatable(tooltipKey);
+        final String generalSettingToolTipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
+        final Component tooltip = Component.translatable(generalSettingToolTipKey);
         final Component inActiveReason = getInactiveReason();
 
-        final boolean hasTooltip = !tooltip.getString().equals(tooltipKey);
+        final boolean hasTooltip = !tooltip.getString().equals(generalSettingToolTipKey);
         final boolean isActive = isActive(settingsModuleView);
 
         if (isActive && hasTooltip)
@@ -126,6 +126,10 @@ public interface ISetting<S>
               .append(tooltip)
               .hoverPane(component)
               .build();
+        }
+        else if (isActive && getToolTipText() != null)
+        {
+            PaneBuilders.tooltipBuilder().hoverPane(component).build().setText(getToolTipText());
         }
         else if (!isActive && (hasTooltip || inActiveReason != null))
         {
@@ -167,4 +171,15 @@ public interface ISetting<S>
      * @return the value.
      */
     S getValue();
+    
+    /**
+     * Get the tooltip text to render on the button, defaults to null.
+     *
+     * @return the tooltip component to render on the button.
+     */
+    @Nullable
+    default Component getToolTipText()
+    {
+        return null;
+    }
 }
