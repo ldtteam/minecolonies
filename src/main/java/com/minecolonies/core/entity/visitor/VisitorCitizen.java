@@ -32,7 +32,6 @@ import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -60,7 +59,6 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
@@ -99,11 +97,6 @@ public class VisitorCitizen extends AbstractEntityVisitor
      * Citizen data view.
      */
     private ICitizenDataView citizenDataView;
-
-    /**
-     * The citizen chat handler.
-     */
-    private ICitizenChatHandler citizenChatHandler;
 
     /**
      * The citizen item handler.
