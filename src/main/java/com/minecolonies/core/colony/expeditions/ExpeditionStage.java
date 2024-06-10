@@ -181,7 +181,10 @@ public final class ExpeditionStage
     {
         kills.putIfAbsent(encounterId, 0);
         kills.put(encounterId, kills.get(encounterId) + 1);
-        cachedKills.clear();
+        if (cachedKills != null)
+        {
+            cachedKills.clear();
+        }
     }
 
     /**

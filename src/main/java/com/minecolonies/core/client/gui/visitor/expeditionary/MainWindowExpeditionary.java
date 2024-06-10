@@ -39,9 +39,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
@@ -102,11 +100,6 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     private final ResourceComparator resourceComparator;
 
     /**
-     * The set of assigned guards.
-     */
-    private final Set<Integer> assignedGuards;
-
-    /**
      * The comparator instance for the guards list.
      */
     private final GuardsComparator guardsComparator;
@@ -143,8 +136,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
         requirements.sort(resourceComparator);
 
-        assignedGuards = new HashSet<>(container.getMembers());
-        guardsComparator = new GuardsComparator(assignedGuards);
+        guardsComparator = new GuardsComparator(container.getMembers());
         guards = colonyView.getCitizens().values().stream()
                    .filter(f -> f.getJobView() != null && f.getJobView().isGuard() && f.getJobView().isCombatGuard() && !f.getColony()
                                                                                                                            .getTravelingManager()
@@ -306,7 +298,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             @Override
             public boolean isChecked(final int index)
             {
-                return assignedGuards.contains(guards.get(index).getId());
+                return container.getMembers().contains(guards.get(index).getId());
             }
 
             @Override
@@ -314,14 +306,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             {
                 final ICitizenDataView guard = guards.get(index);
                 Network.getNetwork().sendToServer(new AssignGuardMessage(guard, checked, hand));
-                if (checked)
-                {
-                    assignedGuards.add(guard.getId());
-                }
-                else
-                {
-                    assignedGuards.remove(guard.getId());
-                }
+                container.toggleMember(guard.getId(), checked);
                 guards.sort(guardsComparator);
                 renderHeaders();
             }

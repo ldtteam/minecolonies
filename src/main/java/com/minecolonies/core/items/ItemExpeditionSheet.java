@@ -166,16 +166,16 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             this.members = new HashSet<>();
 
             final CompoundTag rootTag = stack.getOrCreateTag().getCompound(TAG_SHEET_DATA);
-            fromTag(rootTag.contains(TAG_INVENTORY) ? rootTag.getList(TAG_INVENTORY, Tag.TAG_COMPOUND) : new ListTag());
             members.addAll(rootTag.contains(TAG_MEMBERS) ? IntStream.of(rootTag.getIntArray(TAG_MEMBERS)).boxed().toList() : new ArrayList<>());
+            fromTag(rootTag.contains(TAG_INVENTORY) ? rootTag.getList(TAG_INVENTORY, Tag.TAG_COMPOUND) : new ListTag());
         }
 
         @Override
         public void setChanged()
         {
             final CompoundTag rootTag = new CompoundTag();
-            rootTag.put(TAG_INVENTORY, createTag());
             rootTag.putIntArray(TAG_MEMBERS, members.stream().toList());
+            rootTag.put(TAG_INVENTORY, createTag());
             stack.getOrCreateTag().put(TAG_SHEET_DATA, rootTag);
             super.setChanged();
         }
