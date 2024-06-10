@@ -1455,16 +1455,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     }
 
     /**
-     * Whether we can drop down multiple blocks
-     *
-     * @return
-     */
-    protected boolean canDrop()
-    {
-        return true;
-    }
-
-    /**
      * Handles goto position in liquid
      *
      * @param x
