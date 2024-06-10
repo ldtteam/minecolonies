@@ -1,10 +1,7 @@
 package com.minecolonies.core.quests;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.FinishedQuest;
-import com.minecolonies.api.quests.IQuestInstance;
-import com.minecolonies.api.quests.IQuestTemplate;
-import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;

@@ -8,6 +8,7 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -94,7 +95,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
                 return colonyQuest.advanceObjective(colonyQuest.getColony().getWorld().getPlayerByUUID(colonyQuest.getAssignedPlayer()), nextObjective);
             }
 
-            colony.getResearchManager().getResearchTree().trackResearch(this.researchId, colonyQuest);
+            QuestObjectiveEventHandler.trackResearch(this.researchId, colonyQuest);
         }
 
         return null;
@@ -127,7 +128,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            colonyQuest.getColony().getResearchManager().getResearchTree().stopTrackingResearch(this.researchId, colonyQuest);
+            QuestObjectiveEventHandler.stopTrackingResearch(this.researchId, colonyQuest);
         }
     }
 
@@ -151,7 +152,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
         super.onWorldLoad(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony colony && !advanceIfFinished(colonyQuest))
         {
-            colony.getResearchManager().getResearchTree().trackResearch(this.researchId, colonyQuest);
+            QuestObjectiveEventHandler.trackResearch(this.researchId, colonyQuest);
         }
     }
 
