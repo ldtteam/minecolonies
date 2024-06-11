@@ -95,7 +95,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Now that the research is done, the progress is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the barracks hut block in a crafting bench. This time surround a block of iron with planks and the build tool at the top.",
+      "text": "Now that the research is done, the process is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the barracks hut block in a crafting bench. This time surround a block of iron with planks and the build tool at the top.",
       "options": [
         {
           "answer": "On it!",

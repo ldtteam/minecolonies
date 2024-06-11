@@ -25,7 +25,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Now that the university is finished, our first concern should be regarding our health. We should really get a hospital in this town.",
+      "text": "Now that the university is finished, our next concern is our healthcare. We should really get a hospital in this town.",
       "options": [
         {
           "answer": "Sounds right.",
@@ -94,7 +94,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Now that the research is done, the progress is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the hospital hut block in a crafting bench. This time surround a carrot with planks and the build tool at the top.",
+      "text": "Now that the research is done, the process is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the hospital hut block in a crafting bench. This time surround a carrot with planks and the build tool at the top.",
       "options": [
         {
           "answer": "On it!",
