@@ -36,7 +36,7 @@ public final class SoundUtils
     /**
      * Standard pitch value.
      */
-    public static final double PITCH = 1.0D;
+    public static final float PITCH = 1.0f;
 
     /**
      * Random object.
@@ -291,12 +291,19 @@ public final class SoundUtils
         final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getA();
         if (chance > rand.nextDouble() * ONE_HUNDRED)
         {
-            worldIn.playSound(null,
-              position,
-              event,
-              SoundSource.NEUTRAL,
-              (float) volume,
-              (float) PITCH);
+            if (worldIn.isClientSide || !citizenData.getEntity().isPresent())
+            {
+                worldIn.playSound(null,
+                  position,
+                  event,
+                  SoundSource.NEUTRAL,
+                  (float) volume,
+                  PITCH);
+            }
+            else
+            {
+              citizenData.getEntity().get().queueSound(event, position, 60, 0, (float) volume, PITCH);
+            }
         }
     }
 

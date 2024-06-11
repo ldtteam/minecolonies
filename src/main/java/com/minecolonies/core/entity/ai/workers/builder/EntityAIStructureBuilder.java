@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSetting;
@@ -198,15 +199,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public boolean walkToConstructionSite(final BlockPos currentBlock)
     {
+        if (workFrom != null && workFrom.getX() == currentBlock.getX() && workFrom.getZ() == currentBlock.getZ() && workFrom.getY() >= currentBlock.getY())
+        {
+            // Reset working position when standing ontop
+            workFrom = null;
+        }
+
         if (workFrom == null)
         {
             if (gotoPath == null || gotoPath.isCancelled())
             {
-                gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveCloseToXNearY(world,
+                final PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(world,
                   currentBlock,
                   job.getWorkOrder().getLocation(),
                   5,
-                  worker), currentBlock, 1.0, false);
+                  worker);
+                gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
+                pathJob.getPathingOptions().canDrop = false;
             }
             else if (gotoPath.isDone())
             {
@@ -311,6 +320,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
-        worker.getCitizenChatHandler().sendLocalizedChat(message);
+        MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers());
     }
 }

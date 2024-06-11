@@ -32,6 +32,23 @@
         }
       ],
       "processor_type": "minecraft:block_ignore"
+    },
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:grass"
+          },
+          "input_predicate": {
+            "block": "structurize:blocksolidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
     }
   ]
 }

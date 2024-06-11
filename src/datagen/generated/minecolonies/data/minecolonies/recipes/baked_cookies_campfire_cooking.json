@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:smelting",
+  "type": "minecraft:campfire_cooking",
   "category": "food",
   "cookingtime": 75,
   "experience": 0.0475,

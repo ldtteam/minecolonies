@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingArchery;
@@ -18,11 +19,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
@@ -111,7 +114,8 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return DECIDE;
         }
         final BlockPos targetPos = archeryBuilding.getRandomShootingTarget(worker.getRandom());
-        if (targetPos == null)
+        if (targetPos == null || !WorldUtil.isBlockLoaded(world, targetPos) ||
+              !world.clip(new ClipContext(new Vec3(worker.getX(), worker.getEyeY(), worker.getZ()), new Vec3(targetPos.getX() + HALF_BLOCK, targetPos.getY() + HALF_BLOCK, targetPos.getZ() + HALF_BLOCK), ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, worker)).getBlockPos().equals(targetPos))
         {
             return DECIDE;
         }

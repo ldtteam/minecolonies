@@ -165,8 +165,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param result path result.
      * @param entity the entity.
      */
-    public AbstractPathJob(final Level world, @NotNull final BlockPos start, final int range, final PathResult result, @Nullable final Mob entity)
+    public AbstractPathJob(final Level world, @NotNull final BlockPos start, int range, final PathResult result, @Nullable final Mob entity)
     {
+        range = Math.max(10, range);
+
         // 30% Extra range to account for heuristics/cost based less circular exploring
         final int minX = (int) (start.getX() - range * 1.3);
         final int minZ = (int) (start.getZ() - range * 1.3);
@@ -189,6 +191,31 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             initDebug();
         }
+    }
+
+    /**
+     * Internal constructor, for secondary pathjobs within another one
+     *
+     * @param chunkCache
+     * @param start
+     * @param range
+     * @param result
+     * @param entity
+     */
+    protected AbstractPathJob(final LevelReader chunkCache, @NotNull final BlockPos start, int range, final PathResult result, @Nullable final Mob entity)
+    {
+        range = Math.max(10, range);
+        this.maxNodes = Math.min(MAX_NODES, range * range);
+        nodesToVisit = new PriorityQueue<>(range * 2);
+        this.start = new BlockPos(start);
+
+        world = chunkCache;
+        cachedBlockLookup = new CachingBlockLookup(start, this.world);
+
+        this.result = result;
+        result.setJob(this);
+
+        this.entity = entity;
     }
 
     /**
@@ -1426,16 +1453,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         return -100;
-    }
-
-    /**
-     * Whether we can drop down multiple blocks
-     *
-     * @return
-     */
-    protected boolean canDrop()
-    {
-        return true;
     }
 
     /**

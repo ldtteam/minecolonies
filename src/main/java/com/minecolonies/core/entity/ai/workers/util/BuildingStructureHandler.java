@@ -202,7 +202,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         final BlockState state = getBluePrint().getBlockState(pos);
         if (building != null)
         {
-            building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
+            building.registerBlockPosition(state, worldPos, this.getWorld());
         }
 
         if (placement)
@@ -218,6 +218,8 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
                   .getStatisticsManager()
                   .increment(BLOCKS_PLACED, structureAI.getWorker().getCitizenColonyHandler().getColony().getDay());
             }
+
+            structureAI.getWorker().queueSound(state.getSoundType().getPlaceSound(), worldPos, 10, 0);
         }
 
         if (state.getBlock() == ModBlocks.blockWayPoint)
