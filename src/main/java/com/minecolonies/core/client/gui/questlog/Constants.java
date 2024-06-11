@@ -15,7 +15,7 @@ public class Constants
     /**
      * Highlight manager key for the quest log tracking.
      */
-    public static final Duration HIGHLIGHT_QUEST_LOG_TRACKER_DURATION = Duration.ofSeconds(10);
+    public static final Duration HIGHLIGHT_QUEST_LOG_TRACKER_DURATION = Duration.ofSeconds(30);
 
     /**
      * ID of the quests list inside the GUI.

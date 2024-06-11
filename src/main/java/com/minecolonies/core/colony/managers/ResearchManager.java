@@ -40,7 +40,7 @@ public class ResearchManager implements IResearchManager
     /**
      * The research tree of the colony, containing completed or in-progress research.
      */
-    private final LocalResearchTree tree = new LocalResearchTree();
+    private final LocalResearchTree tree;
 
     /**
      * The active research effects of the colony.
@@ -116,6 +116,7 @@ public class ResearchManager implements IResearchManager
     {
         this.colony = colony;
         autoStartResearch.addAll(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getAutostartResearches());
+        this.tree = new LocalResearchTree(colony);
     }
 
     @Override
