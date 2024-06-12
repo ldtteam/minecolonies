@@ -84,7 +84,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param ponds a list of ponds.
      * @return the result of the search.
      */
-    public abstract WaterPathResult moveToWater(final int searchRange, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds);
+    public abstract WaterPathResult searchWater(final int searchRange, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds);
 
     /**
      * Used to path away from a ourEntity.

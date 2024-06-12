@@ -309,17 +309,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
         if (world.getBlockState(worker.blockPosition()).liquid())
         {
-            if (!BlockUtils.isAnySolid(world.getBlockState(job.getWater().getB())) && world.getBlockState(job.getWater().getB().below()).liquid())
+            if (!BlockUtils.isAnySolid(world.getBlockState(job.getWater().getB().below())))
             {
                 job.removeFromPonds(job.getWater());
                 job.setWater(null);
                 executedRotations = 0;
+                return START_WORKING;
             }
             else
             {
                 executedRotations++;
             }
-            return START_WORKING;
         }
 
         //Try a different angle to throw the hook not that far
@@ -368,7 +368,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
             if (pathResult == null || !pathResult.isInProgress())
             {
-                pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+                pathResult = worker.getNavigation().searchWater(SEARCH_RANGE, 1.0D, job.getPonds());
             }
 
             return START_WORKING;
@@ -387,7 +387,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (pathResult == null)
         {
-            pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE * 3, 1.0D, job.getPonds());
+            pathResult = worker.getNavigation().searchWater(SEARCH_RANGE * 3, 1.0D, job.getPonds());
             return getState();
         }
         if (pathResult.failedToReachDestination())
