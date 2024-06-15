@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -41,7 +42,7 @@ public class JobComposter extends AbstractJob<EntityAIWorkComposter, JobComposte
     @Override
     public int getDiseaseModifier()
     {
-        final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == this.getJobRegistryEntry()).getPrimarySkill());
+        final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(BuildingModules.COMPOSTER_WORK).getPrimarySkill());
         return (int) ((100 - skill)/25.0);
     }
 }

@@ -39,9 +39,11 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<MinimumStockModule,MinimumStockModuleView> MIN_STOCK =
       new BuildingEntry.ModuleProducer<>("min_stock", MinimumStockModule::new, () -> MinimumStockModuleView::new);
     public static final BuildingEntry.ModuleProducer<BedHandlingModule, IBuildingModuleView> BED             = new BuildingEntry.ModuleProducer<>("bed", BedHandlingModule::new, null);
-    public static final BuildingEntry.ModuleProducer<FurnaceUserModule,IBuildingModuleView>    FURNACE         = new BuildingEntry.ModuleProducer<>("furnace", FurnaceUserModule::new, null);
-    public static final BuildingEntry.ModuleProducer<IBuildingModule,CrafterTaskModuleView>                                         CRAFT_TASK_VIEW = new BuildingEntry.ModuleProducer<>("craft_task_view", null, () -> CrafterTaskModuleView::new);
-    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> SETTINGS_CRAFTER_RECIPE = new BuildingEntry.ModuleProducer<>("craft_settings",
+    public static final BuildingEntry.ModuleProducer<FurnaceUserModule,IBuildingModuleView>  FURNACE                 = new BuildingEntry.ModuleProducer<>("furnace", FurnaceUserModule::new, null);
+    public static final BuildingEntry.ModuleProducer<IBuildingModule, RequestTaskModuleView> CRAFT_TASK_VIEW         = new BuildingEntry.ModuleProducer<>("craft_task_view", null, () -> CrafterRequestTaskModuleView::new);
+    public static final BuildingEntry.ModuleProducer<IBuildingModule, RequestTaskModuleView> COURIER_TASK_VIEW         = new BuildingEntry.ModuleProducer<>("courier_task_view", null, () -> CourierRequestTaskModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView>      SETTINGS_CRAFTER_RECIPE = new BuildingEntry.ModuleProducer<>("craft_settings",
       () -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()),
       () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<EntityListModule,EntityListModuleView> GUARD_ENTITY_LIST       = new BuildingEntry.ModuleProducer<>("guard_entity_list",
@@ -357,6 +359,8 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("warehouse_couriers", CourierAssignmentModule::new, () -> CourierAssignmentModuleView::new);
     public static final BuildingEntry.ModuleProducer<WarehouseModule,WarehouseOptionsModuleView> WAREHOUSE_OPTIONS     =
       new BuildingEntry.ModuleProducer<>("warehouse_options", WarehouseModule::new, () -> WarehouseOptionsModuleView::new);
+    public static final BuildingEntry.ModuleProducer<WarehouseRequestQueueModule, WarehouseRequestTaskModuleView> WAREHOUSE_REQUEST_QUEUE     =
+      new BuildingEntry.ModuleProducer<>("warehouse_request_queue", WarehouseRequestQueueModule::new, () -> WarehouseRequestTaskModuleView::new);
 
     /**
      * Education

@@ -1,7 +1,10 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -23,7 +26,6 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.util.AttributeModifierUtils;
@@ -94,8 +96,8 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
-            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(
-              WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
+            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
+              BuildingModules.COURIER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
@@ -194,10 +196,60 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     @SuppressWarnings(UNCHECKED)
     public IRequest<IDeliverymanRequestable> getCurrentTask()
     {
-        final IToken<?> request = getTaskQueueFromDataStore().peekFirst();
+        IToken<?> request = getTaskQueueFromDataStore().peekFirst();
         if (request == null)
         {
-            return null;
+            IBuilding wareHouse = findWareHouse();
+            if (wareHouse == null)
+            {
+                return null;
+            }
+
+            final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+            if (module.getMutableRequestList().isEmpty())
+            {
+                return null;
+            }
+
+            final List<IToken<?>> reqsToRemove = new ArrayList<>();
+            int extendedReqs = 0;
+            for (final IToken<?> reqId : module.getMutableRequestList())
+            {
+                final IRequest localRequest = getColony().getRequestManager().getRequestForToken(reqId);
+                if (localRequest == null)
+                {
+                    reqsToRemove.add(reqId);
+                    continue;
+                }
+
+                if (request == null)
+                {
+                    addRequest(reqId, 0);
+                    request = reqId;
+                    reqsToRemove.add(reqId);
+                }
+                else if (localRequest instanceof StandardRequests.DeliveryRequest && hasSameDestinationDelivery(localRequest))
+                {
+                    addRequest(reqId, 0);
+                    extendedReqs++;
+                    reqsToRemove.add(reqId);
+                }
+
+                if (extendedReqs > 5)
+                {
+                    break;
+                }
+
+            }
+
+            module.getMutableRequestList().removeAll(reqsToRemove);
+            module.markDirty();
+
+            if (request == null)
+            {
+                return null;
+            }
+
         }
 
         return (IRequest<IDeliverymanRequestable>) getColony().getRequestManager().getRequestForToken(request);
@@ -381,7 +433,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * @param request the incoming request.
      * @return 0 if so, and 1 if not.
      */
-    public int hasSameDestinationDelivery(@NotNull final IRequest<? extends Delivery> request)
+    public boolean hasSameDestinationDelivery(@NotNull final IRequest<? extends Delivery> request)
     {
         for (final IToken<?> requestToken : getTaskQueue())
         {
@@ -392,12 +444,12 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
                 final Delivery newDev = request.getRequest();
                 if (haveTasksSameSourceAndDest(current, newDev))
                 {
-                    return 0;
+                    return true;
                 }
             }
         }
 
-        return 1;
+        return false;
     }
 
     /**

@@ -138,7 +138,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
-            if (clientPack || !StructurePacks.hasPack(packName))
+            if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/"))
             {
                 MessageUtils.format(BUILDING_MISSING).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());

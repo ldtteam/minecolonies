@@ -1378,7 +1378,7 @@
   "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
   "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen",
 
-  "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
+  "entity.fisherman.messagewatertoofar": "I can't find any suitable water for fishing! There should be an area of water at least 7 blocks long and wide, and 2 blocks deep nearby.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
   "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
@@ -2506,6 +2506,8 @@
   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress": "%d/%d %s buildings built",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative": "%d/%d totaling levels of %s buildings built",
+  "com.minecolonies.coremod.questobjectives.research.progress": "%s is not researched yet!",
+  "com.minecolonies.coremod.questobjectives.research":  "I am waiting for the research %s to be completed at the university!",
 
   "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
   "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers",

@@ -38,7 +38,7 @@ public class CitizenRenderData implements IHighlightRenderData
         final EntityCitizen citizenEntity = getCitizenEntity(context);
         if (citizenEntity != null)
         {
-            citizenEntity.setGlowingTag(true);
+            citizenEntity.setGlowing(true);
         }
     }
 
@@ -54,7 +54,7 @@ public class CitizenRenderData implements IHighlightRenderData
         final EntityCitizen citizenEntity = getCitizenEntity(context);
         if (citizenEntity != null)
         {
-            citizenEntity.setGlowingTag(false);
+            citizenEntity.setGlowing(false);
         }
     }
 

@@ -177,7 +177,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DELIVERYMAN_ID))
           .addBuildingModuleProducer(COURIER_WORK)
-          .addBuildingModuleProducer(CRAFT_TASK_VIEW)
+          .addBuildingModuleProducer(COURIER_TASK_VIEW)
           .createBuildingEntry());
 
         ModBuildings.farmer = DEFERRED_REGISTER.register(ModBuildings.FARMER_ID, () -> new BuildingEntry.Builder()
@@ -372,6 +372,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(WAREHOUSE_COURIERS)
           .addBuildingModuleProducer(WAREHOUSE_OPTIONS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(WAREHOUSE_REQUEST_QUEUE)
           .createBuildingEntry());
 
         ModBuildings.postBox = DEFERRED_REGISTER.register(ModBuildings.POSTBOX_ID, () -> new BuildingEntry.Builder()

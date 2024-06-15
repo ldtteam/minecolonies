@@ -33,7 +33,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     @Override
     public <T extends ISetting<?>> T getSetting(final ISettingKey<T> key)
     {
-        return (T) settings.getOrDefault(key, null);
+        return (T) settings.get(key);
     }
 
     @Override

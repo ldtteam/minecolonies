@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkChickenHerder;
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +46,8 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
     {
         if (pickedUpStack.getItem() == Items.FEATHER || pickedUpStack.getItem() == Items.EGG)
         {
-            return getCitizen().getRandom().nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill()))) > 1;
+            return getCitizen().getRandom()
+              .nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(BuildingModules.CHICKENHERDER_WORK).getPrimarySkill()))) > 1;
         }
         return true;
     }

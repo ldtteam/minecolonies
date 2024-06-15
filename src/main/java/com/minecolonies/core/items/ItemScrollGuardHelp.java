@@ -112,9 +112,9 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                 colony.getCitizenManager().spawnOrCreateCitizen(citizenData, world, player.blockPosition(), true);
                 citizenData.setNextRespawnPosition(buildingPos);
 
-                ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
+                building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
                 ((AbstractBuildingGuards) building).setPlayerToFollow(player);
-                final GuardFollowModeSetting grouping = ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.FOLLOW_MODE);
+                final GuardFollowModeSetting grouping = building.getSetting(AbstractBuildingGuards.FOLLOW_MODE);
                 if (grouping.getValue().equals(GuardFollowModeSetting.LOOSE))
                 {
                     grouping.trigger();

@@ -199,15 +199,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public boolean walkToConstructionSite(final BlockPos currentBlock)
     {
+        if (workFrom != null && workFrom.getX() == currentBlock.getX() && workFrom.getZ() == currentBlock.getZ() && workFrom.getY() >= currentBlock.getY())
+        {
+            // Reset working position when standing ontop
+            workFrom = null;
+        }
+
         if (workFrom == null)
         {
             if (gotoPath == null || gotoPath.isCancelled())
             {
-                gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveCloseToXNearY(world,
+                final PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(world,
                   currentBlock,
                   job.getWorkOrder().getLocation(),
                   5,
-                  worker), currentBlock, 1.0, false);
+                  worker);
+                gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
+                pathJob.getPathingOptions().canDrop = false;
             }
             else if (gotoPath.isDone())
             {
