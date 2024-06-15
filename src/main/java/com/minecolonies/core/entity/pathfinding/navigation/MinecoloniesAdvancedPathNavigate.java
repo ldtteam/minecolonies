@@ -1059,23 +1059,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         super.stop();
     }
 
-    @Nullable
-    @Override
-    public WaterPathResult searchWater(final int range, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds)
-    {
-        @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
-        final PathJobFindWater job = new PathJobFindWater(CompatibilityUtils.getWorldFromEntity(ourEntity),
-            start,
-            ((AbstractEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(),
-            range,
-            ponds,
-            ourEntity);
-        job.setPathingOptions(getPathingOptions());
-        final WaterPathResult waterPathresult = job.getResult();
-        waterPathresult.startJob(Pathfinding.getExecutor());
-        return waterPathresult;
-    }
-
     @Override
     public TreePathResult moveToTree(
       final BlockPos startRestriction,
