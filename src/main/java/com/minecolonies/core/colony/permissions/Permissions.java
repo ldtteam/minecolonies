@@ -113,7 +113,7 @@ public class Permissions implements IPermissions
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private static final int permissionsVersion = 4;
+    private static final int permissionsVersion = 5;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -172,9 +172,11 @@ public class Permissions implements IPermissions
                     rank.addPermission(Action.ATTACK_CITIZEN);
                     rank.addPermission(Action.ATTACK_ENTITY);
                     rank.addPermission(Action.TELEPORT_TO_COLONY);
+                    rank.addPermission(Action.ACCESS_TOGGLEABLES);
                     rank.addPermission(Action.MAP_BORDER);
                 case NEUTRAL:
                     rank.addPermission(Action.ACCESS_FREE_BLOCKS);
+                    rank.addPermission(Action.ACCESS_TOGGLEABLES);
                     rank.addPermission(Action.MAP_BORDER);
                     break;
                 case HOSTILE:
@@ -216,7 +218,13 @@ public class Permissions implements IPermissions
             this.setPermission(rank, Action.MAP_BORDER, true);
         }
 
-        // if (version < 5) ...
+        if (version < 5)
+        {
+            if (!rank.isHostile())
+            {
+                this.setPermission(rank, Action.ACCESS_TOGGLEABLES, true);
+            }
+        }
 
         // Fix bad saved values
         if (rank == getRankOwner())
