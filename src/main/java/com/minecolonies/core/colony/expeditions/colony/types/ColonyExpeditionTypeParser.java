@@ -52,6 +52,11 @@ public class ColonyExpeditionTypeParser
     private static final String REQUIREMENT_TYPE_ITEM = "item";
 
     /**
+     * Hidden constructor.
+     */
+    private ColonyExpeditionTypeParser() {}
+
+    /**
      * Attempt to parse a colony expedition type instance from a json object.
      *
      * @param id     the id of the expedition type.

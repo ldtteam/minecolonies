@@ -1,15 +1,9 @@
 package com.minecolonies.core.generation.defaults;
 
-import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
@@ -17,18 +11,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-import static com.minecolonies.core.colony.events.ColonyExpeditionEvent.*;
-import static com.minecolonies.core.generation.ExpeditionResourceManager.createEncounterLootItem;
-import static com.minecolonies.core.generation.ExpeditionResourceManager.getEncounterId;
+import static com.minecolonies.core.generation.ExpeditionResourceManager.*;
 
 /**
  * Loot table generator for expeditions.
  */
 public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvider
 {
+    /**
+     * Expedition structure constants.
+     */
+    public static final String STRONGHOLD_ID = "stronghold";
+
+    /**
+     * Default constructor.
+     */
     public DefaultExpeditionStructureLootProvider(final PackOutput output)
     {
         super(output);
+    }
+
+    @Override
+    @NotNull
+    public String getName()
+    {
+        return "Expedition Structure Loot";
     }
 
     /**
@@ -37,32 +44,17 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
      * @param id        the id of the structure.
      * @param registrar the loot table registrar.
      * @param configure the further configuration handler.
-     * @return the resource id of the loot table.
      */
-    public ResourceLocation createStructureLootTable(final String id, final @NotNull LootTableRegistrar registrar, final Consumer<Builder> configure)
+    public void createStructureLootTable(final String id, final @NotNull LootTableRegistrar registrar, final Consumer<Builder> configure)
     {
         final LootContextParamSet paramSet = LootContextParamSet.builder().build();
 
-        final CompoundTag structureStart = new CompoundTag();
-        structureStart.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START);
-        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, id);
-
-        final CompoundTag structureEnd = new CompoundTag();
-        structureStart.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_END);
-        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, id);
-
         final Builder builder = new Builder();
-        builder.withPool(new LootPool.Builder()
-                           .setRolls(ConstantValue.exactly(1))
-                           .add(LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureStart))));
+        builder.withPool(new LootPool.Builder().setRolls(ConstantValue.exactly(1)).add(createStructureStartItem(id)));
         configure.accept(builder);
-        builder.withPool(new LootPool.Builder()
-                           .setRolls(ConstantValue.exactly(1))
-                           .add(LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureEnd))));
+        builder.withPool(new LootPool.Builder().setRolls(ConstantValue.exactly(1)).add(createStructureEndItem(id)));
 
-        final ResourceLocation resId = new ResourceLocation(Constants.MOD_ID, "expeditions/structures/" + id);
-        registrar.register(resId, paramSet, builder);
-        return resId;
+        registrar.register(getStructureId(id), paramSet, builder);
     }
 
     /**
@@ -81,6 +73,6 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
     @Override
     protected void registerTables(final @NotNull LootTableRegistrar registrar)
     {
-        createStructureLootTable("stronghold", registrar, this::withStrongholdLootTable);
+        createStructureLootTable(STRONGHOLD_ID, registrar, this::withStrongholdLootTable);
     }
 }

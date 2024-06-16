@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
+import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -50,7 +51,7 @@ public class ExpeditionEncounterListener extends SimpleJsonResourceReloadListene
             final ResourceLocation key = entry.getKey();
             try
             {
-                final ExpeditionEncounter parsed = ExpeditionEncounter.parse(key, entry.getValue().getAsJsonObject());
+                final ExpeditionEncounter parsed = ExpeditionEncounterParser.parse(key, entry.getValue().getAsJsonObject());
                 newTypes.put(key, parsed);
             }
             catch (final JsonParseException | NullPointerException e)

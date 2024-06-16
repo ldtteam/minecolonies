@@ -95,10 +95,10 @@ public class DefaultExpeditionTypesProvider implements DataProvider
     @NotNull
     public CompletableFuture<?> run(final @NotNull CachedOutput cachedOutput)
     {
-        final PathProvider pathProvider = output.createPathProvider(Target.DATA_PACK, "expeditions");
+        final PathProvider pathProvider = output.createPathProvider(Target.DATA_PACK, "colony/expedition_types");
 
         final List<ColonyExpeditionTypeBuilder> colonyExpeditionTypes = generateTypes();
-        final CompletableFuture<?>[] futures = new CompletableFuture<?>[colonyExpeditionTypes.size() + 1];
+        final CompletableFuture<?>[] futures = new CompletableFuture<?>[colonyExpeditionTypes.size()];
         for (int i = 0; i < colonyExpeditionTypes.size(); i++)
         {
             futures[i] =

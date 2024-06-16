@@ -1,0 +1,95 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"stronghold\",type:\"structure_start\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:zombie\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -10,
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:skeleton\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -10,
+          "weight": 30
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:creeper\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -15,
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:enderman\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -20,
+          "weight": 10
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 6.0,
+        "min": 2.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"stronghold\",type:\"structure_end\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:expeditions/structures/stronghold"
+}

@@ -1,8 +1,0 @@
-{
-  "entity-type": "minecraft:skeleton",
-  "damage": 3,
-  "health": 20,
-  "armor": 0,
-  "loot-table": "minecraft:entities/skeleton.json",
-  "xp": 10
-}

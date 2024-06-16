@@ -1,36 +1,43 @@
 {
-  "name": "Expedition in the Nether",
-  "to-text": "the Nether",
   "difficulty": "medium",
-  "dimension": "minecraft:the_nether",
-  "loot-table": "minecolonies:expeditions/expedition_overworld",
+  "dimension": "ResourceKey[minecraft:dimension / minecraft:the_nether]",
+  "guards": 2,
+  "loot-table": "minecolonies:expedition_overworld",
+  "name": "Expedition in the The_nether",
   "requirements": [
     {
       "type": "tool",
+      "amount": 1,
       "tool": "weapon"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "pickaxe"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "shovel"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "helmet"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "chestplate"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "leggings"
     },
     {
       "type": "tool",
+      "amount": 1,
       "tool": "boots"
     },
     {
@@ -38,5 +45,5 @@
       "amount": 32
     }
   ],
-  "guards": 1
+  "to-text": "the The_nether"
 }
