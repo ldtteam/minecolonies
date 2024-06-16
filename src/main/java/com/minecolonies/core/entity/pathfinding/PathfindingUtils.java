@@ -248,7 +248,7 @@ public class PathfindingUtils
             state = world.getBlockState(pos);
         }
 
-        if (state.canOcclude())
+        if (state.isSolid())
         {
             return false;
         }
@@ -269,7 +269,7 @@ public class PathfindingUtils
         }
 
         if (state.getBlock() instanceof TrapdoorBlock
-              || state.getBlock() instanceof PanelBlock && !state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP)
+              || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
         {
             return false;
         }

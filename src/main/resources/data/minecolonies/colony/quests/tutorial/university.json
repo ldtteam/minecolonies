@@ -1,0 +1,131 @@
+{
+  "name": "Knowledge",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/warehouse"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/warehouse"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Forgive me for interrupting, Your Highness. I meant no disrespect. But now that we have a warehouse and a courier, I'm sure you would like to know how to automate crafting.",
+      "options": [
+        {
+          "answer": "Yes, please!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Unfortunately, at the moment your colony still lacks the know-how. But don't falter, this is the perfect moment to get a university to acquire all the necessary knowledge.",
+            "options": [
+              {
+                "answer": "I will do what I must!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Excellent. Craft the University hut block by putting a book in the middle and bottom slot of the crafting grid, surround it with planks and put a build tool in the top. Then find a suitable location in the colony to place it and let your builder build it to level 1.",
+                  "options": [
+                    {
+                      "answer": "On it!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 1
+                      }
+                    },
+                    {
+                      "answer": "Already done!",
+                      "result": {
+                        "type": "minecolonies:dialogue",
+                        "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+                        "options": [
+                          {
+                            "answer": "Noted!",
+                            "result": {
+                              "type": "minecolonies:advanceobjective",
+                              "go-to": 10
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "answer": "Already done!",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+                  "options": [
+                    {
+                      "answer": "Noted!",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 10
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:university",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Amazing. The university is the gateway to a rich selection of technologies that allow you to expand, grow and automate your colony. Upgrading the building unlocks additional research possibilities and allows you to hire more researchers.",
+      "options": [
+        {
+          "answer": "Thank you!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:book",
+        "qty": 8
+      }
+    }
+  ]
+}

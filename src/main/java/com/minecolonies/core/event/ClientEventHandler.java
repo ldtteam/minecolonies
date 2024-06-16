@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.WindowBuildingBrowser;
@@ -44,6 +45,7 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -75,6 +77,15 @@ public class ClientEventHandler
     public static void renderWorldLastEvent(@NotNull final RenderLevelStageEvent event)
     {
         WorldEventContext.INSTANCE.renderWorldLastEvent(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onwWorldTick(@NotNull final TickEvent.LevelTickEvent event)
+    {
+        if (event.level.isClientSide && event.phase == TickEvent.Phase.END && ColonyConstants.rand.nextInt(20) == 0)
+        {
+            WorldEventContext.INSTANCE.checkNearbyColony(event.level);
+        }
     }
 
     @SubscribeEvent

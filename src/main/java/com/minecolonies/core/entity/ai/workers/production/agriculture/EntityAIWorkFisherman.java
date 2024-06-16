@@ -6,6 +6,9 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobFindWater;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
@@ -18,6 +21,7 @@ import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -309,17 +313,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
         if (world.getBlockState(worker.blockPosition()).liquid())
         {
-            if (!BlockUtils.isAnySolid(world.getBlockState(job.getWater().getB())) && world.getBlockState(job.getWater().getB().below()).liquid())
+            if (!BlockUtils.isAnySolid(world.getBlockState(job.getWater().getB().below())))
             {
                 job.removeFromPonds(job.getWater());
                 job.setWater(null);
                 executedRotations = 0;
+                return START_WORKING;
             }
             else
             {
                 executedRotations++;
             }
-            return START_WORKING;
         }
 
         //Try a different angle to throw the hook not that far
@@ -349,6 +353,29 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     }
 
     /**
+     * Used to find a water.
+     *
+     * @param range in the range.
+     * @param speed walking speed.
+     * @param ponds a list of ponds.
+     * @return the result of the search.
+     */
+    public WaterPathResult searchWater(final int range, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds)
+    {
+        @NotNull final BlockPos start = PathfindingUtils.prepareStart(worker);
+        final PathJobFindWater job = new PathJobFindWater(CompatibilityUtils.getWorldFromEntity(worker),
+          start,
+          worker.getCitizenColonyHandler().getWorkBuilding().getPosition(),
+          range,
+          ponds,
+          worker);
+        job.setPathingOptions(worker.getNavigation().getPathingOptions());
+        final WaterPathResult waterPathresult = job.getResult();
+        waterPathresult.startJob(Pathfinding.getExecutor());
+        return waterPathresult;
+    }
+
+    /**
      * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot from the previously found ones.
      *
      * @return the next IAIState.
@@ -368,7 +395,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
             if (pathResult == null || !pathResult.isInProgress())
             {
-                pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+                pathResult = searchWater(SEARCH_RANGE, 1.0D, job.getPonds());
             }
 
             return START_WORKING;
@@ -387,7 +414,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (pathResult == null)
         {
-            pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE * 3, 1.0D, job.getPonds());
+            pathResult = searchWater(SEARCH_RANGE * 3, 1.0D, job.getPonds());
             return getState();
         }
         if (pathResult.failedToReachDestination())

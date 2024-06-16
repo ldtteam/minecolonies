@@ -10,10 +10,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
+import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.network.chat.MutableComponent;
@@ -21,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,7 +44,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return false;
         }
 
-        return !getResolveAbleDeliverymen(manager).isEmpty();
+        return hasCouriers(manager);
     }
 
     /**
@@ -53,25 +53,16 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
      * @param manager request manager
      * @return list of citizens
      */
-    public List<ICitizenData> getResolveAbleDeliverymen(@NotNull final IRequestManager manager)
+    public boolean hasCouriers(@NotNull final IRequestManager manager)
     {
-        final List<ICitizenData> citizenList = new ArrayList<>();
         final Colony colony = (Colony) manager.getColony();
         final IWareHouse wareHouse = colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
         if (wareHouse == null)
         {
-            return citizenList;
+            return false;
         }
 
-        for (final ICitizenData data : wareHouse.getFirstModuleOccurance(CourierAssignmentModule.class).getAssignedCitizen())
-        {
-            if (data.isWorking())
-            {
-                citizenList.add(data);
-            }
-        }
-
-        return citizenList;
+       return !wareHouse.getModule(BuildingModules.WAREHOUSE_COURIERS).getAssignedCitizen().isEmpty();
     }
 
     @Override
@@ -84,28 +75,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     @Override
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        if (manager.getColony().getWorld().isClientSide)
-        {
-            return null;
-        }
-
-        ICitizenData chosenCourier = null;
-
-        Tuple<Double, Integer> bestScore = null;
-        for (final ICitizenData citizen : getResolveAbleDeliverymen(manager))
-        {
-            if (citizen.isWorking())
-            {
-                Tuple<Double, Integer> localScore = ((JobDeliveryman) citizen.getJob()).getScoreForDelivery(request);
-                if (bestScore == null || localScore.getA() < bestScore.getA())
-                {
-                    bestScore = localScore;
-                    chosenCourier = citizen;
-                }
-            }
-        }
-
-        if (chosenCourier == null)
+        if (manager.getColony().getWorld().isClientSide || !hasCouriers(manager))
         {
             return null;
         }
@@ -116,29 +86,20 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) throws RuntimeException
     {
-        ICitizenData chosenCourier = null;
-
-        Tuple<Double, Integer> bestScore = null;
-        for (final ICitizenData citizen : getResolveAbleDeliverymen(manager))
-        {
-            if (citizen.isWorking())
-            {
-                Tuple<Double, Integer> localScore = ((JobDeliveryman) citizen.getJob()).getScoreForDelivery(request);
-                if (bestScore == null || localScore.getA() < bestScore.getA())
-                {
-                    bestScore = localScore;
-                    chosenCourier = citizen;
-                }
-            }
-        }
-
-        if (chosenCourier == null)
+        final Colony colony = (Colony) manager.getColony();
+        final IWareHouse wareHouse = colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        if (wareHouse == null)
         {
             return;
         }
 
-        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
-        job.addRequest(request.getId(), bestScore.getB());
+        if (wareHouse.getModule(BuildingModules.WAREHOUSE_COURIERS).getAssignedCitizen().isEmpty())
+        {
+            return;
+        }
+
+        final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+        module.addRequest(request.getId());
     }
 
     @Nullable
@@ -167,15 +128,20 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
                                                    .findFirst()
                                                    .orElse(null);
 
-            if (freeDeliveryMan == null)
-            {
-                Log.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId(), new Exception());
-            }
-            else
+            if (freeDeliveryMan != null)
             {
                 final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
                 job.onTaskDeletion(request.getId());
             }
+
+            final IWareHouse wareHouse = colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+            if (wareHouse == null)
+            {
+                return;
+            }
+
+            final WarehouseRequestQueueModule module = wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE);
+            module.getMutableRequestList().remove(request.getId());
         }
     }
 
