@@ -189,6 +189,7 @@ public class ColonyPermissionEventHandler
             {
                 MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
                 lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
+                playerAttempts.put(entity.getUUID(), 0);
             }
             else
             {
