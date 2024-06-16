@@ -39,7 +39,8 @@ public enum Action
     HURT_CITIZEN(26),
     HURT_VISITOR(27),
     MAP_BORDER(28),
-    MAP_DEATHS(29);
+    MAP_DEATHS(29),
+    ACCESS_TOGGLEABLES(30);
 
     // remember to update permissionsVersion and add some upgrade logic in upgradePermissions if you
     // add new actions that shouldn't just be off by default for everyone
