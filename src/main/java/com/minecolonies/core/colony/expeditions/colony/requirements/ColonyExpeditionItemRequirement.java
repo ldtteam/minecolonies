@@ -46,9 +46,25 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    @Override
     public RequirementHandler createHandler(final InventorySupplier inventory)
     {
         return new ItemRequirementHandler(inventory);
+    }
+
+    /**
+     * Get the item to request.
+     *
+     * @return the item.
+     */
+    public Item getItem()
+    {
+        return null;
     }
 
     /**

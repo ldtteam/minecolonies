@@ -26,6 +26,13 @@ public abstract class ColonyExpeditionRequirement
     public abstract ResourceLocation getId();
 
     /**
+     * Get the minimum amount to fulfill this requirement.
+     *
+     * @return the amount.
+     */
+    public abstract int getAmount();
+
+    /**
      * Create the handler for verifying if the given inventory satisfies this requirement.
      *
      * @param inventory the item handler instance.

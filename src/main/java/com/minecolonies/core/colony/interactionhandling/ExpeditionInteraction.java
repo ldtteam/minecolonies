@@ -17,22 +17,28 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
-import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DEFAULT_DESPAWN_TIME;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_DESPAWN_TIME;
 
 /**
  * The interaction for expeditionary visitors.
@@ -49,20 +55,20 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     /**
      * All possible questions.
      */
-    private static final Component acceptInquiry   = Component.translatable(EXPEDITION_INTERACTION_INQUIRY_ACCEPT);
-    private static final Component prepareInquiry  = Component.translatable(EXPEDITION_INTERACTION_INQUIRY_PREPARE);
-    private static final Component finishedInquiry = Component.translatable(EXPEDITION_INTERACTION_INQUIRY_FINISHED);
+    private static final Function<Component, Component> acceptInquiry   = (to) -> Component.translatable(EXPEDITION_INTERACTION_INQUIRY_ACCEPT, to);
+    private static final Component                      prepareInquiry  = Component.translatable(EXPEDITION_INTERACTION_INQUIRY_PREPARE);
+    private static final Component                      finishedInquiry = Component.translatable(EXPEDITION_INTERACTION_INQUIRY_FINISHED);
 
     /**
      * All possible answer fields.
      */
     private static final Component acceptOkAnswer        = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPT);
     private static final Component acceptCancelAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
-    private static final Component prepareFinishAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPT);
+    private static final Component prepareFinishAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_START);
     private static final Component prepareGetSheetAnswer = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_GET_SHEET);
     private static final Component prepareLaterAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_NOW);
     private static final Component prepareCancelAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
-    private static final Component finishedViewAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
+    private static final Component finishedViewAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_VIEW_RESULTS);
     private static final Component finishedLaterAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_NOW);
     private static final Component finishedCancelAnswer  = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
 
@@ -94,7 +100,12 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         final ExpeditionStatus currentState = data.getColony().getExpeditionManager().getExpeditionStatus(data.getId());
         return switch (currentState)
         {
-            case CREATED -> acceptInquiry;
+            case CREATED ->
+            {
+                final ResourceLocation expeditionTypeId = data.getColony().getExpeditionManager().getCreatedExpedition(data.getId()).expeditionTypeId();
+                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+                yield acceptInquiry.apply(expeditionType.toText());
+            }
             case ACCEPTED -> prepareInquiry;
             case FINISHED -> finishedInquiry;
             default -> Component.empty();
@@ -157,11 +168,17 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
 
         if (response.equals(acceptOkAnswer))
         {
+            // Accept the expedition and reset the despawn time
             data.getColony().getExpeditionManager().acceptExpedition(expeditionId);
+            if (data instanceof IVisitorData visitorData)
+            {
+                visitorData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+            }
         }
 
         if (response.equals(acceptOkAnswer) || response.equals(prepareGetSheetAnswer))
         {
+            // Give the player the expedition sheet item
             if (!player.level.isClientSide)
             {
                 final ItemStack expeditionSheet = ModItems.expeditionSheet.createItemStackForExpedition(new ExpeditionSheetInfo(data.getColony().getID(), expeditionId));
@@ -174,6 +191,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
 
         if (response.equals(prepareFinishAnswer))
         {
+            // Attempt to start the expedition
             if (!player.level.isClientSide && data instanceof IVisitorData visitorData)
             {
                 tryStartExpedition(visitorData, player);
@@ -182,6 +200,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
 
         if (response.equals(acceptCancelAnswer) || response.equals(prepareCancelAnswer))
         {
+            // Remove the visitor and remove the expedition
             if (!player.level.isClientSide && data instanceof IVisitorData visitorData)
             {
                 data.getColony().getVisitorManager().removeCivilian(visitorData);
@@ -192,6 +211,12 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         return true;
     }
 
+    /**
+     * Starts the expedition, assuming all preconditions are met to be able to start said expedition.
+     *
+     * @param data   the visitor that is being talked to.
+     * @param player the current player.
+     */
     private void tryStartExpedition(final IVisitorData data, final Player player)
     {
         // Try to find the first expedition sheet in the player their inventory that meets the requirements.
@@ -231,14 +256,16 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
             return;
         }
 
-        final ColonyExpedition expedition = Objects.requireNonNull(data.getColony().getExpeditionManager().getActiveExpedition(data.getId()));
-
         MessageUtils.format(EXPEDITION_START_MESSAGE, leader.getName())
           .withPriority(MessagePriority.IMPORTANT)
           .sendTo(data.getColony())
           .forManagers();
 
+        // Remove the expedition sheet from the inventory
+        InventoryUtils.tryRemoveStackFromItemHandler(new InvWrapper(player.getInventory()), expeditionSheet.get());
+
         // Create the event related to this expedition.
+        final ColonyExpedition expedition = Objects.requireNonNull(data.getColony().getExpeditionManager().getActiveExpedition(data.getId()));
         data.getColony().getEventManager().addEvent(new ColonyExpeditionEvent(data.getColony(), expedition));
 
         // Add all members to the travelling manager and de-spawn them.

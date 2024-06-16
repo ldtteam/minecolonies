@@ -80,7 +80,7 @@ public class TransferItemsMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final Optional<ColonyExpeditionRequirement> requirement = colonyExpeditionType.getRequirements().stream()
+        final Optional<ColonyExpeditionRequirement> requirement = colonyExpeditionType.requirements().stream()
                                                                     .filter(f -> f.getId().equals(requirementId))
                                                                     .findFirst();
         if (requirement.isPresent())

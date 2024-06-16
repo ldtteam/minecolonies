@@ -24,7 +24,8 @@ import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailabilit
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType.Difficulty;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty.Difficulty;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.items.ItemExpeditionSheet;
 import com.minecolonies.core.network.messages.server.OpenExpeditionSheetInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.visitor.expeditionary.AssignGuardMessage;
@@ -133,7 +134,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         this.container = container;
 
         resourceComparator = new ResourceComparator();
-        requirements = expeditionType.getRequirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
+        requirements = expeditionType.requirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
         requirements.sort(resourceComparator);
 
         guardsComparator = new GuardsComparator(container.getMembers());
@@ -187,12 +188,12 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private void renderDifficulty()
     {
-        final int maxDifficulty = Arrays.stream(Difficulty.values())
-                                    .filter(m -> m.equals(expeditionType.getDifficulty()) || !m.isHidden())
-                                    .mapToInt(Difficulty::getLevel)
+        final int maxDifficulty = Arrays.stream(ColonyExpeditionTypeDifficulty.Difficulty.values())
+                                    .filter(m -> m.equals(expeditionType.difficulty()) || !m.isHidden())
+                                    .mapToInt(ColonyExpeditionTypeDifficulty.Difficulty::getLevel)
                                     .max()
                                     .orElse(0);
-        final Difficulty currentDifficulty = expeditionType.getDifficulty();
+        final Difficulty currentDifficulty = expeditionType.difficulty();
 
         for (int i = currentDifficulty.getLevel(); i <= maxDifficulty; i++)
         {
@@ -236,10 +237,10 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private void renderHeaders()
     {
-        findPaneOfTypeByID(ID_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
+        findPaneOfTypeByID(ID_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
 
         findPaneOfTypeByID(ID_EXPEDITION_ITEMS_HEADER, Text.class).setText(Component.translatable(EXPEDITIONARY_ITEMS_HEADER));
-        findPaneOfTypeByID(ID_EXPEDITION_GUARDS_HEADER, Text.class).setText(Component.translatable(EXPEDITIONARY_GUARDS_HEADER, expeditionType.getGuards()));
+        findPaneOfTypeByID(ID_EXPEDITION_GUARDS_HEADER, Text.class).setText(Component.translatable(EXPEDITIONARY_GUARDS_HEADER, expeditionType.guards()));
 
         final boolean itemRequirementsMet = requirements.stream().allMatch(m -> m.getAvailabilityStatus().equals(ResourceAvailability.NOT_NEEDED));
         findPaneOfTypeByID(ID_EXPEDITION_ITEMS_SUBHEADER, Text.class)
@@ -248,11 +249,11 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
                      : Component.translatable(EXPEDITIONARY_ITEMS_SUBHEADER_NOT_MET));
 
         final int currentGuardCount = container.getMembers().size();
-        final boolean guardRequirementMet = currentGuardCount >= expeditionType.getGuards();
+        final boolean guardRequirementMet = currentGuardCount >= expeditionType.guards();
         findPaneOfTypeByID(ID_EXPEDITION_GUARDS_SUBHEADER, Text.class)
           .setText(guardRequirementMet
                      ? Component.translatable(EXPEDITIONARY_GUARDS_SUBHEADER_MET)
-                     : Component.translatable(EXPEDITIONARY_GUARDS_SUBHEADER_NOT_MET, expeditionType.getGuards() - currentGuardCount));
+                     : Component.translatable(EXPEDITIONARY_GUARDS_SUBHEADER_NOT_MET, expeditionType.guards() - currentGuardCount));
     }
 
     /**
@@ -358,7 +359,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
             return;
         }
 
-        Network.getNetwork().sendToServer(new TransferItemsMessage(colonyView, expeditionType.getId(), requirement.getId(), hand));
+        Network.getNetwork().sendToServer(new TransferItemsMessage(colonyView, expeditionType.id(), requirement.getId(), hand));
 
         final int needed = requirement.getAmount() - requirement.getAmountAvailable();
         if (mc.player.isCreative())

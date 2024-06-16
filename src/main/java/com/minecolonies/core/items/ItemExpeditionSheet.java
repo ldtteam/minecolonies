@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedition;
 import com.minecolonies.api.items.AbstractItemExpeditionSheet;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.client.gui.visitor.expeditionary.MainWindowExpeditionary;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
@@ -17,6 +18,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,12 +54,13 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
      *
      * @param itemStack the input item stack.
      */
-    public static void reduceAndDropContents(final ItemStack itemStack)
+    public static void reduceAndDropContents(final @NotNull Player player, final ItemStack itemStack)
     {
         itemStack.shrink(1);
         if (itemStack.isEmpty())
         {
-            // TODO
+            final ExpeditionSheetContainerManager container = new ExpeditionSheetContainerManager(itemStack);
+            InventoryUtils.dropItemHandler(new InvWrapper(container), player.level, player.getBlockX(), player.getBlockY() + 1, player.getBlockZ());
         }
     }
 
@@ -73,12 +76,6 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             return InteractionResultHolder.fail(itemStack);
         }
 
-        // If we're not on the client side, we cannot open the GUI, so we can pass.
-        if (!level.isClientSide())
-        {
-            return InteractionResultHolder.pass(itemStack);
-        }
-
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(expeditionSheetInfo.colonyId(), level.dimension());
         if (colonyView == null)
         {
@@ -88,15 +85,21 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
         final CreatedExpedition createdExpedition = colonyView.getExpeditionManager().getCreatedExpedition(expeditionSheetInfo.expeditionId());
         if (createdExpedition == null)
         {
-            reduceAndDropContents(itemStack);
+            reduceAndDropContents(player, itemStack);
             return InteractionResultHolder.fail(itemStack);
         }
 
         final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(createdExpedition.expeditionTypeId());
         if (expeditionType == null)
         {
-            reduceAndDropContents(itemStack);
+            reduceAndDropContents(player, itemStack);
             return InteractionResultHolder.fail(itemStack);
+        }
+
+        // If we're not on the client side, we cannot open the GUI, so we can pass.
+        if (!level.isClientSide())
+        {
+            return InteractionResultHolder.pass(itemStack);
         }
 
         final MainWindowExpeditionary windowExpeditionary = new MainWindowExpeditionary(colonyView, expeditionType, hand, new ExpeditionSheetContainerManager(itemStack));

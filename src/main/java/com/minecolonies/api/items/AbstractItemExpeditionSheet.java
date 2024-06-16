@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Interface for the expedition sheet item.
+ * Base class for the expedition sheet item.
  */
 public abstract class AbstractItemExpeditionSheet extends AbstractItemMinecolonies
 {

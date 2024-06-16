@@ -52,9 +52,25 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    @Override
     public ToolRequirementHandler createHandler(final InventorySupplier inventory)
     {
         return new ToolRequirementHandler(inventory);
+    }
+
+    /**
+     * Get the required tool type.
+     *
+     * @return the tool type.
+     */
+    public IToolType getToolType()
+    {
+        return toolType;
     }
 
     /**

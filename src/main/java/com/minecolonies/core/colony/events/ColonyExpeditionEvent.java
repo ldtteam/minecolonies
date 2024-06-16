@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.events;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
@@ -61,6 +62,18 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
  */
 public class ColonyExpeditionEvent implements IColonyEvent
 {
+    /**
+     * Tags for the adventure tokens.
+     */
+    public static final String TOKEN_TAG_EXPEDITION_TYPE                 = "type";
+    public static final String TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START = "structure_start";
+    public static final String TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_END   = "structure_end";
+    public static final String TOKEN_TAG_EXPEDITION_STRUCTURE            = "structure";
+    public static final String TOKEN_TAG_EXPEDITION_TYPE_ENCOUNTER       = "encounter";
+    public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER            = "encounter";
+    public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER_AMOUNT     = "amount";
+    public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE      = "scale";
+
     /**
      * The event ID.
      */
@@ -128,7 +141,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     public ColonyExpeditionEvent(final IColony colony, final ColonyExpedition expedition)
     {
         this.colony = colony;
-        this.random = colony.getWorld().getRandom().fork();
+        this.random = RandomSource.create();
         this.id = colony.getEventManager().getAndTakeNextEventID();
         this.expeditionId = expedition.getId();
     }
@@ -143,7 +156,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         this.id = id;
         this.expeditionId = expeditionId;
         this.colony = colony;
-        this.random = colony.getWorld().getRandom().fork();
+        this.random = RandomSource.create();
     }
 
     /**
@@ -215,7 +228,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         int amount = encounterAmount;
         if (scaleEncounterSize)
         {
-            amount *= expeditionType.getDifficulty().getMobEncounterMultiplier();
+            amount *= expeditionType.difficulty().getMobEncounterMultiplier();
         }
 
         // Determine the mob type
@@ -258,7 +271,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
 
                 if (encounterHealth > 0)
                 {
-                    final float damageAmount = handleDamageReduction(attacker, encounter.getDamage(), random);
+                    final float damageAmount = handleDamageReduction(attacker, encounter.getDamage());
                     attacker.setHealth(Math.max(0, attacker.getHealth() - damageAmount));
                     encounterHealth -= encounter.getReflectingDamage();
 
@@ -272,7 +285,8 @@ public class ColonyExpeditionEvent implements IColonyEvent
             if (encounterHealth <= 0)
             {
                 expedition.mobKilled(encounter.getId());
-                processLootTable(encounter.getLootTable(), expeditionType).forEach(expedition::rewardFound);
+                final List<ItemStack> loot = processLootTable(encounter.getLootTable(), expeditionType);
+                loot.forEach(expedition::rewardFound);
             }
         }
     }
@@ -322,12 +336,12 @@ public class ColonyExpeditionEvent implements IColonyEvent
             return;
         }
 
-        final String type = compound.getString("type");
+        final String type = compound.getString(TOKEN_TAG_EXPEDITION_TYPE);
         switch (type)
         {
-            case "encounter":
+            case TOKEN_TAG_EXPEDITION_TYPE_ENCOUNTER:
             {
-                final String encounterId = compound.getString("encounter");
+                final String encounterId = compound.getString(TOKEN_TAG_EXPEDITION_ENCOUNTER);
                 final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(new ResourceLocation(encounterId));
                 if (encounter == null)
                 {
@@ -335,15 +349,15 @@ public class ColonyExpeditionEvent implements IColonyEvent
                     break;
                 }
 
-                final int amount = compound.contains("amount") ? compound.getInt("amount") : 1;
-                final boolean scaleAmount = !compound.contains("scale") || compound.getBoolean("scale");
+                final int amount = compound.contains(TOKEN_TAG_EXPEDITION_ENCOUNTER_AMOUNT) ? compound.getInt(TOKEN_TAG_EXPEDITION_ENCOUNTER_AMOUNT) : 1;
+                final boolean scaleAmount = !compound.contains(TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE) || compound.getBoolean(TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE);
 
                 processMobFight(encounter, amount, scaleAmount);
                 break;
             }
-            case "structure_start":
+            case TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START:
             {
-                final ResourceLocation structureId = new ResourceLocation(compound.getString("structure"));
+                final ResourceLocation structureId = new ResourceLocation(compound.getString(TOKEN_TAG_EXPEDITION_STRUCTURE));
                 final Optional<StructureType<?>> structureType = BuiltInRegistries.STRUCTURE_TYPE.getOptional(structureId);
                 if (structureType.isEmpty())
                 {
@@ -351,7 +365,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
                     break;
                 }
 
-                getExpedition().advanceStage(Component.translatable(""));
+                getExpedition().advanceStage(Component.translatable(EXPEDITION_STAGE_STRUCTURE + structureId));
 
                 if (structureId.equals(new ResourceLocation("stronghold")))
                 {
@@ -363,7 +377,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
                 }
                 break;
             }
-            case "structure_end":
+            case TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_END:
             {
                 getExpedition().advanceStage(Component.translatable(EXPEDITION_STAGE_WILDERNESS));
                 break;
@@ -433,7 +447,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
             }
 
             // Calculate the end time
-            final int randomTimeOffset = expeditionType.getDifficulty().getRandomTime();
+            final int randomTimeOffset = expeditionType.difficulty().getRandomTime();
             final int randomTime = random.nextInt(-randomTimeOffset, randomTimeOffset);
 
             endTime = world.getGameTime() + 1; // TODO: expeditionType.getDifficulty().getBaseTime() + randomTime;
@@ -442,7 +456,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
             expedition.getEquipment().forEach(f -> InventoryUtils.addItemStackToItemHandler(inventory, f));
 
             // Generate the loot table
-            remainingItems = new ArrayDeque<>(processLootTable(expeditionType.getLootTable(), expeditionType));
+            remainingItems = new ArrayDeque<>(processLootTable(expeditionType.lootTable(), expeditionType));
         }
     }
 
@@ -450,6 +464,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     public void onFinish()
     {
         final ColonyExpedition expedition = getExpedition();
+        expedition.cleanStages();
 
         ExpeditionFinishedStatus finishedStatus = ExpeditionFinishedStatus.RETURNED;
         if (expedition.getActiveMembers().isEmpty())
@@ -488,6 +503,14 @@ public class ColonyExpeditionEvent implements IColonyEvent
             {
                 member.removeFromColony(colony);
             }
+        }
+
+        // Add all the loot to the leader inventory
+        final IVisitorData leaderData = expedition.getLeader().resolveCivilianData(colony);
+        if (leaderData != null)
+        {
+            InventoryUtils.clearItemHandler(leaderData.getInventory());
+            InventoryUtils.transferAllItemHandler(inventory, leaderData.getInventory());
         }
     }
 
@@ -582,10 +605,9 @@ public class ColonyExpeditionEvent implements IColonyEvent
      *
      * @param expeditionMember the expedition member.
      * @param damage           the amount of incoming damage.
-     * @param random           the random source.
      * @return the calculated damage after absorption.
      */
-    private float handleDamageReduction(final @NotNull IExpeditionMember<?> expeditionMember, final float damage, final RandomSource random)
+    private float handleDamageReduction(final @NotNull IExpeditionMember<?> expeditionMember, final float damage)
     {
         final Map<EquipmentSlot, Tuple<ItemStack, ArmorItem>> armor = new HashMap<>();
         armor.computeIfAbsent(EquipmentSlot.HEAD, getArmorPiece(expeditionMember));
@@ -643,7 +665,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     private List<ItemStack> processLootTable(final ResourceLocation lootTableId, final ColonyExpeditionType expeditionType)
     {
         final LootParams lootParams =
-          new Builder((ServerLevel) colony.getWorld()).withLuck(expeditionType.getDifficulty().getLuckLevel()).create(LootContextParamSet.builder().build());
+          new Builder((ServerLevel) colony.getWorld()).withLuck(expeditionType.difficulty().getLuckLevel()).create(LootContextParamSet.builder().build());
 
         final LootTable lootTable = colony.getWorld().getServer().getLootData().getLootTable(lootTableId);
         return lootTable.getRandomItems(lootParams);

@@ -16,13 +16,13 @@ public class ExpeditionConstants
     @NonNls
     public static final String EXPEDITION_INTERACTION_RESPONSE_ACCEPT         = "com.minecolonies.core.expedition.interaction.response.accept";
     @NonNls
+    public static final String EXPEDITION_INTERACTION_RESPONSE_START          = "com.minecolonies.core.expedition.interaction.response.start";
+    @NonNls
     public static final String EXPEDITION_INTERACTION_RESPONSE_GET_SHEET      = "com.minecolonies.core.expedition.interaction.response.get_sheet";
     @NonNls
     public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED = "com.minecolonies.core.expedition.interaction.response.not_interested";
     @NonNls
     public static final String EXPEDITION_INTERACTION_RESPONSE_NOT_NOW        = "com.minecolonies.core.expedition.interaction.response.not_now";
-    @NonNls
-    public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW           = "com.minecolonies.core.expedition.interaction.response.view";
     @NonNls
     public static final String EXPEDITION_INTERACTION_RESPONSE_VIEW_RESULTS   = "com.minecolonies.core.expedition.interaction.response.view_results";
     @NonNls
@@ -53,4 +53,6 @@ public class ExpeditionConstants
 
     @NonNls
     public static final String EXPEDITION_STAGE_WILDERNESS = "com.minecolonies.core.expedition.stages.wilderness";
+    @NonNls
+    public static final String EXPEDITION_STAGE_STRUCTURE  = "com.minecolonies.core.expedition.stages.structures.";
 }

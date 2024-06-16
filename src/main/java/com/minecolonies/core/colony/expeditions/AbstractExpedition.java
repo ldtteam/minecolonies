@@ -184,12 +184,7 @@ public abstract class AbstractExpedition implements IExpedition
     @Override
     public void advanceStage(final Component header)
     {
-        final ExpeditionStage current = getCurrentStage();
-        // If the last inserted stage has not yielded any results yet, simply remove the stage and append the next one.
-        if (current.getRewards().isEmpty() && current.getKills().isEmpty() && current.getMembersLost().isEmpty())
-        {
-            this.results.pop();
-        }
+        cleanStages();
         this.results.add(new ExpeditionStage(header));
     }
 
@@ -237,6 +232,24 @@ public abstract class AbstractExpedition implements IExpedition
             resultsCompound.add(resultCompound);
         }
         compound.put(TAG_RESULTS, resultsCompound);
+    }
+
+    /**
+     * Clean up empty stages from the last stage back to the front.
+     */
+    public void cleanStages()
+    {
+        if (results.isEmpty())
+        {
+            return;
+        }
+
+        final ExpeditionStage current = results.getLast();
+        if (current.getRewards().isEmpty() && current.getKills().isEmpty() && current.getMembersLost().isEmpty())
+        {
+            results.removeLast();
+            cleanStages();
+        }
     }
 
     /**

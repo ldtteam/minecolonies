@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
@@ -89,7 +90,7 @@ public class RegularVisitorType implements IVisitorType
                     visitor.getYRot(),
                     visitor.getEyeHeight()), visitor);
 
-                visitor.getCitizenChatHandler().sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
+                MessageUtils.forCitizen(visitor, MESSAGE_INTERACTION_VISITOR_FOOD).sendTo(player);
             }
             return InteractionResult.CONSUME;
         }

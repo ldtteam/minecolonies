@@ -43,20 +43,21 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     /**
      * ID constants.
      */
-    private static final String LIST_ACTIVE_EXPEDITIONS               = "active_expeditions";
-    private static final String LIST_FINISHED_EXPEDITIONS             = "finished_expeditions";
-    private static final String LABEL_EXPEDITION_NAME                 = "expedition_name";
-    private static final String LABEL_EXPEDITION_STATUS               = "expedition_status";
-    private static final String BUTTON_EXPEDITION_OPEN                = "expedition_open";
-    private static final String LABEL_EMPTY                           = "empty_text";
-    private static final String VIEW_EXPEDITION_DETAILS               = "expedition_details";
-    private static final String LIST_EXPEDITION_ITEMS                 = "expedition_items";
-    private static final String STATUS_EXPEDITION_RESULTS             = "expedition_results";
-    private static final String LIST_EXPEDITION_RESULTS               = "expedition_results_list";
-    private static final String LIST_EXPEDITION_RESULTS_CHILD_HEADER  = "child_header";
-    private static final String LIST_EXPEDITION_RESULTS_CHILD_REWARDS = "child_rewards";
-    private static final String LIST_EXPEDITION_RESULTS_CHILD_KILLS   = "child_kills";
-    private static final String PARTIAL_ITEM_PREFIX                   = "item_";
+    private static final String LIST_ACTIVE_EXPEDITIONS                   = "active_expeditions";
+    private static final String LIST_FINISHED_EXPEDITIONS                 = "finished_expeditions";
+    private static final String LABEL_EXPEDITION_NAME                     = "expedition_name";
+    private static final String LABEL_EXPEDITION_STATUS                   = "expedition_status";
+    private static final String BUTTON_EXPEDITION_OPEN                    = "expedition_open";
+    private static final String LABEL_EMPTY                               = "empty_text";
+    private static final String VIEW_EXPEDITION_DETAILS                   = "expedition_details";
+    private static final String LIST_EXPEDITION_ITEMS                     = "expedition_items";
+    private static final String STATUS_EXPEDITION_RESULTS                 = "expedition_results";
+    private static final String LIST_EXPEDITION_RESULTS                   = "expedition_results_list";
+    private static final String LIST_EXPEDITION_RESULTS_CHILD_HEADER      = "child_header";
+    private static final String LIST_EXPEDITION_RESULTS_CHILD_HEADER_TEXT = "header";
+    private static final String LIST_EXPEDITION_RESULTS_CHILD_REWARDS     = "child_rewards";
+    private static final String LIST_EXPEDITION_RESULTS_CHILD_KILLS       = "child_kills";
+    private static final String PARTIAL_ITEM_PREFIX                       = "item_";
 
     /**
      * The amount of item icons showing on a single list row.
@@ -127,7 +128,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                     return;
                 }
 
-                pane.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
+                pane.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
 
                 final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(expedition.getId());
                 if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
@@ -195,7 +196,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                 return;
             }
 
-            detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.getName());
+            detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
 
             final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(openedExpedition.getId());
             if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
@@ -230,7 +231,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                             final OpenedExpeditionResultData rowData = rows.get(i);
                             final ExpeditionStage currentStage = openedExpedition.getResults().get(rowData.stageIndex);
 
-                            final Text childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, Text.class);
+                            final View childHeader = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER, View.class);
                             final View childRewards = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_REWARDS, View.class);
                             final View childKills = pane.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_KILLS, View.class);
 
@@ -243,7 +244,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                 case HEADER ->
                                 {
                                     childHeader.on();
-                                    childHeader.setText(Component.empty());
+                                    childHeader.findPaneOfTypeByID(LIST_EXPEDITION_RESULTS_CHILD_HEADER_TEXT, Text.class).setText(currentStage.getHeader());
                                 }
                                 case REWARDS ->
                                 {
@@ -258,7 +259,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                         }
 
                                         final ItemStack item = currentStage.getRewards().get(itemIndex);
-                                        pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
+                                        childRewards.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
                                     }
                                 }
                                 case KILLS ->
@@ -274,7 +275,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                         }
 
                                         final MobKill item = currentStage.getKills().get(itemIndex);
-                                        final EntityIcon entityIcon = pane.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
+                                        final EntityIcon entityIcon = childKills.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
 
                                         final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
                                         if (encounter != null)

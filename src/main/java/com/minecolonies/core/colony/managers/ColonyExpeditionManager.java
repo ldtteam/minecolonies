@@ -32,6 +32,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,6 +208,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
         if (exists && createdExpeditions.get(id).accepted())
         {
             activeExpeditions.put(id, createdExpeditions.get(id).createExpedition(members, equipment));
+            createdExpeditions.remove(id);
             updateCaches();
 
             colony.markDirty();
@@ -285,10 +287,10 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     @Override
     public boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager inventory)
     {
-        return expeditionType.getRequirements().stream()
+        return expeditionType.requirements().stream()
                  .map(m -> m.createHandler(() -> new InvWrapper(inventory)))
                  .anyMatch(f -> f.getAvailabilityStatus().equals(ResourceAvailability.NOT_NEEDED))
-                 && inventory.getMembers().size() >= expeditionType.getGuards();
+                 && inventory.getMembers().size() >= expeditionType.guards();
     }
 
     @Override
@@ -398,7 +400,8 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     private void updateCaches()
     {
         activeExpeditionsCache = activeExpeditions.values().stream().toList();
-        finishedExpeditionsCache = finishedExpeditions.stream().map(FinishedExpedition::expedition).toList();
+        finishedExpeditionsCache = finishedExpeditions.stream().map(FinishedExpedition::expedition).collect(Collectors.toList());
+        Collections.reverse(finishedExpeditionsCache);
     }
 
     /**

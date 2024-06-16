@@ -129,6 +129,16 @@ public final class ExpeditionStage
     }
 
     /**
+     * Get the header for this stage.
+     *
+     * @return the component.
+     */
+    public Component getHeader()
+    {
+        return header;
+    }
+
+    /**
      * A list of items obtained during this expedition stage.
      * Note: Adventure tokens are mixed raw into this list. Parsing them is up to implementation to handle.
      *

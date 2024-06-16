@@ -269,7 +269,7 @@ public class VisitorManager implements IVisitorManager
             newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
             newVisitor.triggerInteraction(new ExpeditionInteraction());
 
-            if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.getId()))
+            if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.id()))
             {
                 spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
                   newVisitor,

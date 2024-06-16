@@ -100,9 +100,9 @@ public class ColonyExpeditionTypeManager
         while (!expeditionTypes.isEmpty() && chosenExpeditionType == null)
         {
             final ColonyExpeditionType colonyExpeditionType = expeditionTypes.get(random.nextInt(expeditionTypes.size()));
-            if (!expeditionManager.canGoToDimension(colonyExpeditionType.getDimension()))
+            if (!expeditionManager.canGoToDimension(colonyExpeditionType.dimension()))
             {
-                expeditionTypes.removeIf(type -> type.getDimension().equals(colonyExpeditionType.getDimension()));
+                expeditionTypes.removeIf(type -> type.dimension().equals(colonyExpeditionType.dimension()));
                 continue;
             }
 

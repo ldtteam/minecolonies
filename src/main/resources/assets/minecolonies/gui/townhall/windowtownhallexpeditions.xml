@@ -93,7 +93,9 @@
                               emptyscale="0.8"
                               emptycolor="black">
                             <view size="100% 20">
-                                <text id="child_header" size="100% 100%" color="black" enabled="false" visible="false"/>
+                                <view id="child_header" size="100% 100%" enabled="false" visible="false">
+                                    <text id="header" size="170 100%" pos="5 0" color="black"/>
+                                </view>
                                 <view id="child_rewards" size="100% 100%" enabled="false" visible="false">
                                     <itemicon id="item_0" pos="2 2" size="16 16"/>
                                     <itemicon id="item_1" pos="21 2" size="16 16"/>

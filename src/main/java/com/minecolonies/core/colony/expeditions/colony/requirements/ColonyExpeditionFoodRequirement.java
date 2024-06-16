@@ -45,6 +45,12 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    @Override
     public RequirementHandler createHandler(final InventorySupplier inventory)
     {
         return new FoodRequirementHandler(inventory);

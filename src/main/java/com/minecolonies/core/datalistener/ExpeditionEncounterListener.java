@@ -29,11 +29,11 @@ public class ExpeditionEncounterListener extends SimpleJsonResourceReloadListene
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
-     * Directory is: (namespace)/expedition_encounters/(path)
+     * Directory is: (namespace)/colony/expedition_encounters/(path)
      */
     public ExpeditionEncounterListener()
     {
-        super(GSON, "expedition_encounters");
+        super(GSON, "colony/expedition_encounters");
     }
 
     @Override
