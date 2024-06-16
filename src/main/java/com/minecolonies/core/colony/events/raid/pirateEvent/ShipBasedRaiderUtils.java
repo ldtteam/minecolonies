@@ -330,7 +330,7 @@ public final class ShipBasedRaiderUtils
                   startPos,
                   30,
                   3,
-                  (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && !world.getBlockState(
+                  (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).liquid()) && !world.getBlockState(
                     pos.above()).blocksMotion() && !world.getBlockState(pos.above(2)).blocksMotion());
             }
             else
@@ -339,7 +339,7 @@ public final class ShipBasedRaiderUtils
                   startPos,
                   30,
                   3,
-                  (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).liquid()) && world.getBlockState(
+                  (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).liquid()) && world.getBlockState(
                     pos.above()).isAir() && world.getBlockState(pos.above(2)).isAir());
             }
         }
