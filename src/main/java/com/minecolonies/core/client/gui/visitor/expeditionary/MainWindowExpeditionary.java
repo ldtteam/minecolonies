@@ -24,7 +24,6 @@ import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailabilit
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty.Difficulty;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.items.ItemExpeditionSheet;
 import com.minecolonies.core.network.messages.server.OpenExpeditionSheetInventoryMessage;
@@ -188,12 +187,12 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
      */
     private void renderDifficulty()
     {
-        final int maxDifficulty = Arrays.stream(ColonyExpeditionTypeDifficulty.Difficulty.values())
+        final int maxDifficulty = Arrays.stream(ColonyExpeditionTypeDifficulty.values())
                                     .filter(m -> m.equals(expeditionType.difficulty()) || !m.isHidden())
-                                    .mapToInt(ColonyExpeditionTypeDifficulty.Difficulty::getLevel)
+                                    .mapToInt(ColonyExpeditionTypeDifficulty::getLevel)
                                     .max()
                                     .orElse(0);
-        final Difficulty currentDifficulty = expeditionType.difficulty();
+        final ColonyExpeditionTypeDifficulty currentDifficulty = expeditionType.difficulty();
 
         for (int i = currentDifficulty.getLevel(); i <= maxDifficulty; i++)
         {

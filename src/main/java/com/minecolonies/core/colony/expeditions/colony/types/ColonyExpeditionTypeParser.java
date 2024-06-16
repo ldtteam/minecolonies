@@ -133,16 +133,14 @@ public class ColonyExpeditionTypeParser
      */
     public static JsonObject toJson(final ColonyExpeditionTypeBuilder expeditionTypeBuilder)
     {
-        final ColonyExpeditionType instance = expeditionTypeBuilder.build();
-
         final JsonObject object = new JsonObject();
-        object.addProperty(PROP_NAME, instance.name().getString());
-        object.addProperty(PROP_TO_TEXT, instance.toText().getString());
-        object.addProperty(PROP_DIFFICULTY, instance.difficulty().getKey());
-        object.addProperty(PROP_DIMENSION, instance.dimension().toString());
-        object.addProperty(PROP_LOOT_TABLE, instance.lootTable().toString());
+        object.addProperty(PROP_NAME, expeditionTypeBuilder.getName());
+        object.addProperty(PROP_TO_TEXT, expeditionTypeBuilder.getToText());
+        object.addProperty(PROP_DIFFICULTY, expeditionTypeBuilder.getDifficulty().getKey());
+        object.addProperty(PROP_DIMENSION, expeditionTypeBuilder.getDimension().toString());
+        object.addProperty(PROP_LOOT_TABLE, expeditionTypeBuilder.getLootTable().toString());
         final JsonArray requirements = new JsonArray();
-        for (final ColonyExpeditionRequirement requirement : instance.requirements())
+        for (final ColonyExpeditionRequirement requirement : expeditionTypeBuilder.getRequirements())
         {
             final JsonObject requirementObject = new JsonObject();
             requirementObject.addProperty(PROP_REQUIREMENT_AMOUNT, requirement.getAmount());
@@ -169,7 +167,7 @@ public class ColonyExpeditionTypeParser
             requirements.add(requirementObject);
         }
         object.add(PROP_REQUIREMENTS, requirements);
-        object.addProperty(PROP_GUARDS, instance.guards());
+        object.addProperty(PROP_GUARDS, expeditionTypeBuilder.getGuards());
         return object;
     }
 }

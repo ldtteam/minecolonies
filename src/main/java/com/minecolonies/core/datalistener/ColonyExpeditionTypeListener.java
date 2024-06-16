@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -50,7 +51,7 @@ public class ColonyExpeditionTypeListener extends SimpleJsonResourceReloadListen
             final ResourceLocation key = entry.getKey();
             try
             {
-                final ColonyExpeditionType parsed = ColonyExpeditionType.parse(key, entry.getValue().getAsJsonObject());
+                final ColonyExpeditionType parsed = ColonyExpeditionTypeParser.parse(key, entry.getValue().getAsJsonObject());
                 newTypes.put(key, parsed);
             }
             catch (final JsonParseException | NullPointerException e)
