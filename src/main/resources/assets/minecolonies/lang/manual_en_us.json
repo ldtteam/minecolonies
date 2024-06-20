@@ -720,6 +720,7 @@
   "com.minecolonies.coremod.permission.attack_citizen": "Attack Citizens",
   "com.minecolonies.coremod.permission.attack_entity": "Attack Entities",
   "com.minecolonies.coremod.permission.access_free_blocks": "Access Free-Blocks",
+  "com.minecolonies.coremod.permission.access_toggleables": "Access Doors/Gates",
   "com.minecolonies.coremod.permission.explode": "Explode",
   "com.minecolonies.coremod.permission.hurt_citizen": "Hurt Citizen",
   "com.minecolonies.coremod.permission.hurt_visitor": "Hurt Visitor",
