@@ -49,12 +49,12 @@ import net.minecraft.world.InteractionResult;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>  implements IMateriallyTexturedBlock
+public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack> implements IMateriallyTexturedBlock
 {
     /**
      * Normal translation we use.
      */
-    private static final  Long2ObjectMap<Direction> BY_NORMAL      = Arrays.stream(Direction.values()).collect(Collectors.toMap((p_235679_) -> {
+    private static final Long2ObjectMap<Direction> BY_NORMAL = Arrays.stream(Direction.values()).collect(Collectors.toMap((p_235679_) -> {
         return (new BlockPos(p_235679_.getNormal())).asLong();
     }, (p_235675_) -> {
         return p_235675_;
@@ -121,7 +121,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         final BlockPos pos = context.getClickedPos();
         final BlockState state = defaultBlockState();
 
-        for(Direction direction : UPDATE_SHAPE_ORDER)
+        for (Direction direction : UPDATE_SHAPE_ORDER)
         {
             if (direction != Direction.DOWN && direction != Direction.UP)
             {
@@ -139,8 +139,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         }
         return super.getStateForPlacement(context);
     }
-
-
 
     /**
      * Convert the BlockState into the correct metadata value.
@@ -171,34 +169,49 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public BlockState updateShape(
       @NotNull final BlockState state,
       @NotNull final Direction dir,
-      final BlockState state2,
+      final BlockState neighbourState,
       @NotNull final LevelAccessor level,
-      @NotNull final BlockPos pos1,
-      @NotNull final BlockPos pos2)
+      @NotNull final BlockPos pos,
+      @NotNull final BlockPos neighbourPos)
     {
-        final BlockEntity bEntity1 = level.getBlockEntity(pos1);
-        final BlockEntity bEntity2 = level.getBlockEntity(pos2);
+        final BlockEntity bEntity1 = level.getBlockEntity(pos);
+        final BlockEntity bEntity2 = level.getBlockEntity(neighbourPos);
 
-        if (pos1.subtract(pos2).getY() != 0)
+        if (pos.subtract(neighbourPos).getY() != 0)
         {
-            return super.updateShape(state, dir, state2, level, pos1, pos2);
+            return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
         }
 
         // Is this a double chest and our connection is being removed.
         if (bEntity1 instanceof TileEntityRack)
         {
-            if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos1.relative(state.getValue(FACING)).equals(pos2))
+            if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
             {
                 // Reset to single
                 return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
             // If its not a double variant and the new neighbor is neither, then connect.
-            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.hasProperty(VARIANT) && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(BY_NORMAL.get(((pos2.subtract(pos1)).asLong())).getOpposite()))
+            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && neighbourState.hasProperty(VARIANT) && neighbourState.getValue(VARIANT)
+              .isDoubleVariant() && neighbourState.getValue(FACING).equals(BY_NORMAL.get(((neighbourPos.subtract(pos)).asLong())).getOpposite()))
             {
-                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, BY_NORMAL.get(pos2.subtract(pos1).asLong()));
+                if (neighbourState.getValue(VARIANT) == RackType.EMPTYAIR)
+                {
+                    return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE)
+                      .setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
+                }
+                else
+                {
+                    return state.setValue(VARIANT, RackType.EMPTYAIR).setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
+                }
+            }
+            else if (bEntity2 instanceof TileEntityRack
+                       && neighbourState.getValue(FACING).equals(state.getValue(FACING).getOpposite())
+                       && neighbourState.getValue(VARIANT) != RackType.EMPTYAIR)
+            {
+                return state.setValue(VARIANT, RackType.EMPTYAIR);
             }
         }
-        return super.updateShape(state, dir, state2, level, pos1, pos2);
+        return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
     }
 
     @Override
