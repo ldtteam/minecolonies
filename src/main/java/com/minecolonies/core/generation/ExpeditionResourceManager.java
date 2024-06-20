@@ -25,7 +25,7 @@ public class ExpeditionResourceManager
     {
         final CompoundTag structureStart = new CompoundTag();
         structureStart.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START);
-        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, structureId);
+        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, new ResourceLocation(structureId).toString());
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureStart));
     }
@@ -40,7 +40,7 @@ public class ExpeditionResourceManager
     {
         final CompoundTag structureEnd = new CompoundTag();
         structureEnd.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_END);
-        structureEnd.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, structureId);
+        structureEnd.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, new ResourceLocation(structureId).toString());
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureEnd));
     }

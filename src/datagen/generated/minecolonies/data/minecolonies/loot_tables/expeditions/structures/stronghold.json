@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"stronghold\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:stronghold\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -82,7 +82,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"stronghold\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:stronghold\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"

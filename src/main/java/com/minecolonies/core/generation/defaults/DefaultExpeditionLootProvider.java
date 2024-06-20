@@ -14,9 +14,9 @@ public class DefaultExpeditionLootProvider extends SimpleLootTableProvider
     /**
      * Expedition constants.
      */
-    public static final ResourceLocation EXPEDITION_OVERWORLD_LOOT = new ResourceLocation(Constants.MOD_ID, "expedition_overworld");
-    public static final ResourceLocation EXPEDITION_NETHER_LOOT    = new ResourceLocation(Constants.MOD_ID, "expedition_nether");
-    public static final ResourceLocation EXPEDITION_END_LOOT       = new ResourceLocation(Constants.MOD_ID, "expedition_end");
+    public static final ResourceLocation EXPEDITION_OVERWORLD_LOOT = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_overworld");
+    public static final ResourceLocation EXPEDITION_NETHER_LOOT    = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_nether");
+    public static final ResourceLocation EXPEDITION_END_LOOT       = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_end");
 
     /**
      * Default constructor.

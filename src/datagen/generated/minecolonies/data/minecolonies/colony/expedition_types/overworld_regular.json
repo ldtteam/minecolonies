@@ -1,8 +1,8 @@
 {
   "difficulty": "easy",
-  "dimension": "ResourceKey[minecraft:dimension / minecraft:overworld]",
+  "dimension": "minecraft:overworld",
   "guards": 1,
-  "loot-table": "minecolonies:expedition_overworld",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
   "name": "Expedition in the Overworld",
   "requirements": [
     {

@@ -77,6 +77,8 @@ public class DefaultExpeditionTypesProvider implements DataProvider
                     .setGuards(2));
 
         types.add(new ColonyExpeditionTypeBuilder(END_REGULAR, Level.END, EXPEDITION_OVERWORLD_LOOT)
+                    .setName("Expedition to the End")
+                    .setToText("the End")
                     .setDifficulty(ColonyExpeditionTypeDifficulty.HARD)
                     .addToolRequirement(ToolType.SWORD)
                     .addToolRequirement(ToolType.PICKAXE)

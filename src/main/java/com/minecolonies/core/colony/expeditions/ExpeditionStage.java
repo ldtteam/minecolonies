@@ -6,7 +6,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public final class ExpeditionStage
     /**
      * The map of rewards.
      */
-    private final Map<ItemStack, Integer> rewards;
+    private final Map<Item, Integer> rewards;
 
     /**
      * The map of kills.
@@ -81,7 +83,7 @@ public final class ExpeditionStage
      * @param kills       the map of kills.
      * @param membersLost the list of members that died.
      */
-    public ExpeditionStage(final Component header, final Map<ItemStack, Integer> rewards, final Map<ResourceLocation, Integer> kills, final List<Integer> membersLost)
+    public ExpeditionStage(final Component header, final Map<Item, Integer> rewards, final Map<ResourceLocation, Integer> kills, final List<Integer> membersLost)
     {
         this.header = header;
         this.rewards = new HashMap<>(rewards);
@@ -100,18 +102,18 @@ public final class ExpeditionStage
     {
         final Component header = Component.Serializer.fromJson(compound.getString(TAG_HEADER));
 
-        final Map<ItemStack, Integer> rewards = new HashMap<>();
+        final Map<Item, Integer> rewards = new HashMap<>();
         final ListTag rewardsList = compound.getList(TAG_REWARDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < rewardsList.size(); ++i)
         {
             final CompoundTag rewardCompound = rewardsList.getCompound(i);
-            final ItemStack itemStack = ItemStack.of(rewardCompound.getCompound(TAG_REWARD_ITEM));
-            if (itemStack.equals(ItemStack.EMPTY))
+            final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(rewardCompound.getString(TAG_REWARD_ITEM)));
+            if (item == null)
             {
                 continue;
             }
 
-            rewards.put(itemStack, rewardCompound.getInt(TAG_REWARD_COUNT));
+            rewards.put(item, rewardCompound.getInt(TAG_REWARD_COUNT));
         }
 
         final Map<ResourceLocation, Integer> kills = new HashMap<>();
@@ -149,7 +151,7 @@ public final class ExpeditionStage
     {
         if (cachedRewards == null)
         {
-            cachedRewards = rewards.entrySet().stream().map(entry -> entry.getKey().copyWithCount(entry.getValue())).toList();
+            cachedRewards = rewards.entrySet().stream().map(entry -> new ItemStack(entry.getKey(), entry.getValue())).toList();
         }
         return cachedRewards;
     }
@@ -161,10 +163,14 @@ public final class ExpeditionStage
      */
     public void addReward(final ItemStack itemStack)
     {
-        final ItemStack identifier = itemStack.copyWithCount(1);
-        rewards.putIfAbsent(identifier, 0);
-        rewards.put(identifier, rewards.get(identifier) + itemStack.getCount());
-        cachedRewards.clear();
+        if (itemStack.isEmpty())
+        {
+            return;
+        }
+
+        rewards.putIfAbsent(itemStack.getItem(), 0);
+        rewards.put(itemStack.getItem(), rewards.get(itemStack.getItem()) + itemStack.getCount());
+        cachedRewards = null;
     }
 
     /**
@@ -191,10 +197,7 @@ public final class ExpeditionStage
     {
         kills.putIfAbsent(encounterId, 0);
         kills.put(encounterId, kills.get(encounterId) + 1);
-        if (cachedKills != null)
-        {
-            cachedKills.clear();
-        }
+        cachedKills = null;
     }
 
     /**
@@ -228,10 +231,10 @@ public final class ExpeditionStage
         compound.putString(TAG_HEADER, Component.Serializer.toJson(header));
 
         final ListTag rewardsList = new ListTag();
-        for (final Entry<ItemStack, Integer> rewardEntry : rewards.entrySet())
+        for (final Entry<Item, Integer> rewardEntry : rewards.entrySet())
         {
             final CompoundTag rewardCompound = new CompoundTag();
-            rewardCompound.put(TAG_REWARD_ITEM, rewardEntry.getKey().serializeNBT());
+            rewardCompound.putString(TAG_REWARD_ITEM, ForgeRegistries.ITEMS.getKey(rewardEntry.getKey()).toString());
             rewardCompound.putInt(TAG_REWARD_COUNT, rewardEntry.getValue());
             rewardsList.add(rewardCompound);
         }

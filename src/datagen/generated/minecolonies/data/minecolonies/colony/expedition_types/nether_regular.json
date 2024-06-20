@@ -1,8 +1,8 @@
 {
   "difficulty": "medium",
-  "dimension": "ResourceKey[minecraft:dimension / minecraft:the_nether]",
+  "dimension": "minecraft:the_nether",
   "guards": 2,
-  "loot-table": "minecolonies:expedition_overworld",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
   "name": "Expedition in the The_nether",
   "requirements": [
     {

@@ -176,6 +176,19 @@ public class ColonyExpeditionTypeBuilder
     }
 
     /**
+     * Set the name of the expedition, may be a translation string or a fixed text.
+     * Defaults to "Expedition in the (capitalized dimension name)".
+     *
+     * @param name the new name.
+     * @return the builder for chaining.
+     */
+    public ColonyExpeditionTypeBuilder setName(final String name)
+    {
+        this.name = name;
+        return this;
+    }
+
+    /**
      * Get the "to text" of the expedition, used as part of the interaction inquiry to give a real quick indication of what to expect from the expedition.
      *
      * @return the text.
@@ -183,6 +196,21 @@ public class ColonyExpeditionTypeBuilder
     public String getToText()
     {
         return toText;
+    }
+
+    /**
+     * Set the "to text" of the expedition, used as part of the interaction inquiry to give a real quick indication of what to expect from the expedition.
+     * Hence, this could be read as "go to ...".
+     * <p>
+     * Defaults to "the (capitalized dimension name)".
+     *
+     * @param toText the new "to text".
+     * @return the builder for chaining.
+     */
+    public ColonyExpeditionTypeBuilder setToText(final String toText)
+    {
+        this.toText = toText;
+        return this;
     }
 
     /**

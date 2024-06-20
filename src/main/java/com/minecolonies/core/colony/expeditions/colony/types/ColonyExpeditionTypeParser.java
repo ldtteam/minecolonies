@@ -142,7 +142,7 @@ public class ColonyExpeditionTypeParser
         object.addProperty(PROP_NAME, expeditionTypeBuilder.getName());
         object.addProperty(PROP_TO_TEXT, expeditionTypeBuilder.getToText());
         object.addProperty(PROP_DIFFICULTY, expeditionTypeBuilder.getDifficulty().getKey());
-        object.addProperty(PROP_DIMENSION, expeditionTypeBuilder.getDimension().toString());
+        object.addProperty(PROP_DIMENSION, expeditionTypeBuilder.getDimension().location().toString());
         object.addProperty(PROP_LOOT_TABLE, expeditionTypeBuilder.getLootTable().toString());
         final JsonArray requirements = new JsonArray();
         for (final ColonyExpeditionRequirement requirement : expeditionTypeBuilder.getRequirements())

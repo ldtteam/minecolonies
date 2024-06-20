@@ -1,9 +1,9 @@
 {
   "difficulty": "hard",
-  "dimension": "ResourceKey[minecraft:dimension / minecraft:the_end]",
+  "dimension": "minecraft:the_end",
   "guards": 2,
-  "loot-table": "minecolonies:expedition_overworld",
-  "name": "Expedition in the The_end",
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
+  "name": "Expedition to the End",
   "requirements": [
     {
       "type": "tool",
@@ -45,5 +45,5 @@
       "amount": 32
     }
   ],
-  "to-text": "the The_end"
+  "to-text": "the End"
 }
