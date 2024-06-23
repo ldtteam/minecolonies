@@ -56,7 +56,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     /**
      * Priority of the building in the pickUpList. This is the unscaled value (mainly for a more intuitive GUI).
      */
-    private int unscaledPickUpPriority = 1;
+    private int unscaledPickUpPriority = 5;
 
     /**
      * The constructor for the building container.

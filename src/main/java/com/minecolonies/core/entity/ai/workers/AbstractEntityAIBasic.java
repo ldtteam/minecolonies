@@ -139,7 +139,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Indicator if something has actually been dumped.
      */
-    private boolean hasDumpedItems = false;
+    private int dumpedItems = 0;
 
     /**
      * Delay for walking.
@@ -1104,7 +1104,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (building.getPickUpPriority() > 0)
             {
                 building.createPickupRequest(getMaxBuildingPriority(true));
-                hasDumpedItems = false;
+                dumpedItems = 0;
             }
             alreadyKept.clear();
             slotAt = 0;
@@ -1120,12 +1120,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         slotAt = 0;
         this.clearActionsDone();
 
-        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && hasDumpedItems)
+        // Worker is not currently crafting, pickup is allowed.
+        // Note that this will not create a pickup request when another request is already in progress.
+        if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && dumpedItems > 0)
         {
-            // Worker is not currently crafting, pickup is allowed.
-            // Note that this will not create a pickup request when another request is already in progress.
-            building.createPickupRequest(scaledPriority(building.getPickUpPriority()));
-            hasDumpedItems = false;
+            // Only create a pickup request probabilistically.
+            if (worker.getRandom().nextInt(STACKSIZE * 2) < dumpedItems)
+            {
+                building.createPickupRequest(0);
+            }
+            else
+            {
+                building.createPickupRequest(10 - building.getPickUpPriority());
+            }
+            dumpedItems = 0;
         }
         return afterDump();
     }
@@ -1210,7 +1218,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                     worker.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
                 }
 
-                hasDumpedItems = true;
+                dumpedItems += amount;
             }
         }
         slotAt++;

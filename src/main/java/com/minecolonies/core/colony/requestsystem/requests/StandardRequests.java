@@ -19,6 +19,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
@@ -288,6 +289,14 @@ public final class StandardRequests
                         break;
                     }
                 }
+                else if (view.getBuildingType() == ModBuildings.wareHouse.get())
+                {
+                    posInList = view.getModuleView(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getTasks().indexOf(getId());
+                    if (posInList >= 0)
+                    {
+                        break;
+                    }
+                }
             }
 
             if (posInList >= 0)
@@ -362,6 +371,14 @@ public final class StandardRequests
                 if (view.getBuildingType() == ModBuildings.deliveryman.get())
                 {
                     posInList = getPosInList(colony, view, getId());
+                    if (posInList >= 0)
+                    {
+                        break;
+                    }
+                }
+                else if (view.getBuildingType() == ModBuildings.wareHouse.get())
+                {
+                    posInList = view.getModuleView(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getTasks().indexOf(getId());
                     if (posInList >= 0)
                     {
                         break;
