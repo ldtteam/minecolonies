@@ -380,7 +380,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         updateRaidBar();
 
         MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(),
-                        BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+                        BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
                 .with(ChatFormatting.DARK_RED).sendTo(colony).forManagers();
         Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
