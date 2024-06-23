@@ -211,7 +211,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
             updateRaidBar();
 
-            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
               .withPriority(MessagePriority.DANGER)
               .sendTo(colony).forManagers();
             colony.markDirty();
@@ -320,7 +320,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void onFinish()
     {
-        MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+        MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
           .sendTo(colony).forManagers();
         for (final Entity entity : raiders.keySet())
         {

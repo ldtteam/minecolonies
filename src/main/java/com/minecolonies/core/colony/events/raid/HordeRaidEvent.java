@@ -379,7 +379,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         updateRaidBar();
 
-        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
           .withPriority(MessagePriority.DANGER)
           .sendTo(colony)
           .forManagers();
