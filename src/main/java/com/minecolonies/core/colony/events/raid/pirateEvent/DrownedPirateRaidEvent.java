@@ -108,7 +108,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
 
             updateRaidBar();
 
-            MessageUtils.format(RAID_EVENT_MESSAGE_U_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+            MessageUtils.format(RAID_EVENT_MESSAGE_U_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
               .withPriority(MessageUtils.MessagePriority.DANGER)
               .sendTo(colony).forManagers();
             colony.markDirty();
@@ -169,7 +169,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     @Override
     public void onFinish()
     {
-        MessageUtils.format(DROWNED_PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+        MessageUtils.format(DROWNED_PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
           .sendTo(colony).forManagers();
         for (final Entity entity : raiders.keySet())
         {
