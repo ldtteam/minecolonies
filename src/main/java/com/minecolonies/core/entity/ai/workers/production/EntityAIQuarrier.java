@@ -4,8 +4,10 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -13,10 +15,8 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -36,11 +36,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,15 +48,12 @@ import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
-import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_FINISHED_QUARRY;
 import static com.minecolonies.api.util.constant.TranslationConstants.QUARRY_MINER_NO_QUARRY;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
-import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.RECALC;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_PICKAXE;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_SHOVEL;
 import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
@@ -76,6 +71,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
      * Return to chest after 2x building level stacks.
      */
     private static final int MAX_BLOCKS_MINED = 128;
+
+    /**
+     * The current Y-level we're calculating the needed resources of
+     */
+    private int requestLayer;
 
     /**
      * Constructor for the Quarrier. Defines the tasks the miner executes.
@@ -269,166 +269,94 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         return quarry == null ? super.getBuildingToDump() : quarry;
     }
 
-    // TODO: Remove copied logic and override/add new super methods instead
     @Override
     protected IAIState structureStep()
     {
-        if (structurePlacer.getB().getStage() == null)
+        if (structurePlacer != null && structurePlacer.getA() != null)
         {
-            return PICK_UP_RESIDUALS;
-        }
-
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
-        {
-            return INVENTORY_FULL;
-        }
-
-        checkForExtraBuildingActions();
-
-        // some things to do first! then we go to the actual phase!
-
-        //Fill workFrom with the position from where the builder should build.
-        //also ensure we are at that position.
-        final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        final BlockPos worldPos = structurePlacer.getB().getProgressPosInWorld(progress);
-        if (getProgressPos() != null)
-        {
-            structurePlacer.getB().setStage(getProgressPos().getB());
-        }
-
-        if (!progress.equals(NULL_POS) && !limitReached && (blockToMine == null ? !walkToConstructionSite(worldPos) : !walkToConstructionSite(blockToMine)))
-        {
-            return getState();
-        }
-
-        limitReached = false;
-
-        final StructurePhasePlacementResult result;
-        final StructurePlacer placer = structurePlacer.getA();
-        switch (structurePlacer.getB().getStage())
-        {
-            case BUILD_SOLID:
-                result = placer.executeStructureStep(world,
-                  null,
-                  progress,
-                  StructurePlacer.Operation.BLOCK_PLACEMENT,
-                  () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                 || isDecoItem(info.getBlockInfo().getState().getBlock())
-                                                                                 || pos.getY() < worldPos.getY())),
-                  false);
-
-                if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
-                {
-                    structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(-1, progress.getY() + 1, 0), structurePlacer.getB().getStage());
-                }
-                else
-                {
-                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
-                }
-
-                break;
-            case DECORATE:
-
-                if (progress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
-                {
-                    structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
-                      structurePlacer.getB().getStage());
-                    return getState();
-                }
-
-                // not solid
-                result = placer.executeStructureStep(world,
-                  null,
-                  progress,
-                  StructurePlacer.Operation.BLOCK_PLACEMENT,
-                  () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> (BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                  && !isDecoItem(info.getBlockInfo().getState().getBlock()))
-                                                                                 || pos.getY() > worldPos.getY())),
-                  false);
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
-                      structurePlacer.getB().getStage());
-                }
-                else if (progress.getY() != -1 && result.getIteratorPos().getY() > progress.getY())
-                {
-                    structurePlacer.getB().nextStage();
-                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
-                      structurePlacer.getB().getStage());
-                }
-                else
-                {
-                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
-                }
-                break;
-            case CLEAR:
-            default:
-                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
-                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable
-                                                                                 || handler.getWorld().getBlockState(pos).getBlock() == Blocks.BEDROCK
-                                                                                 || handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
-                                                                                 || info.getBlockInfo().getState().getBlock()
-                                                                                      == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get()
-                                                                                 || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    building.nextStage();
-                    building.setProgressPos(null, null);
-                    worker.getCitizenData().setStatusPosition(null);
-                    return COMPLETE_BUILD;
-                }
-                else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
-                {
-                    structurePlacer.getB().setStage(BUILD_SOLID);
-                    this.storeProgressPos(new BlockPos(-1, progress.getY() - 1, 0),
-                      structurePlacer.getB().getStage());
-                }
-                else
-                {
-                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
-                }
-                break;
-        }
-
-        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
-        {
-            this.limitReached = true;
-        }
-
-        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
-        {
-            if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
+            // Make sure the iterator is at the right Y-level
+            final LayerBlueprintIterator layerBlueprintIterator = (LayerBlueprintIterator) structurePlacer.getA().getIterator();
+            final BlockPos progressPos = getProgressPos() == null ? null : getProgressPos().getA();
+            if (progressPos == null)
             {
-                job.getWorkOrder().setRequested(false);
-                return LOAD_STRUCTURE;
+                // The quarrier starts building at the top
+                layerBlueprintIterator.setLayer(layerBlueprintIterator.getSize().getY() - 1);
             }
-            return NEEDS_ITEM;
-        }
-
-        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
-        {
-            final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
-            if (currentWorldPos.getY() < worker.level.getMinBuildHeight() + 5)
+            else if (!progressPos.equals(NULL_POS))
             {
-                building.setProgressPos(null, null);
-                worker.getCitizenData().setStatusPosition(null);
-                return COMPLETE_BUILD;
+                layerBlueprintIterator.setLayer(progressPos.getY());
             }
-
-            blockToMine = currentWorldPos;
-            worker.getCitizenData().setStatusPosition(blockToMine);
-            return MINE_BLOCK;
         }
 
-        final double decrease = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
-        setDelay((int) ((BUILD_BLOCK_DELAY * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER)) * decrease));
-        return getState();
+        return super.structureStep();
+    }
+
+    @Override
+    protected BlockPos getPosToWorkAt()
+    {
+        final BlockPos progressPos = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
+        if (progressPos == NULL_POS)
+        {
+            return null;
+        }
+        return structurePlacer.getB().getProgressPosInWorld(progressPos);
+    }
+
+    @Override
+    protected boolean goToNextStage(StructurePhasePlacementResult result)
+    {
+        final LayerBlueprintIterator iterator = (LayerBlueprintIterator) structurePlacer.getA().getIterator();
+        final int currentLayer = iterator.getLayer();
+
+        if (!super.goToNextStage(result))
+        {
+            if (currentLayer == 0)
+            {
+                // Done
+                return false;
+            }
+            // Done with the last stage, going to the next layer
+            iterator.setLayer(currentLayer - 1);
+            building.setTotalStages(3);
+            structurePlacer.getB().setStage(BUILD_SOLID);
+        }
+        else if (structurePlacer.getB().getStage() == CLEAR && result.getBlockResult().getWorldPos().getY() <= worker.level.getMinBuildHeight())
+        {
+            // At bedrock level, so we're done
+            return false;
+        }
+        else
+        {
+            final int newLayer = switch (structurePlacer.getB().getStage())
+                                   {
+                                       // The quarrier decorates the level above the one they just placed solid blocks at (to support rails and torches standing on those blocks)
+                                       case DECORATE -> currentLayer + 1;
+                                       // After decorating, we need to go a layer lower again
+                                       case CLEAR -> currentLayer - 1;
+                                       default -> currentLayer;
+                                   };
+            if (newLayer >= iterator.getSize().getY())
+            {
+                // This can happen at the first level when getting to the decoration stage. In that case, skip the decoration step and go to the CLEAR step immediately
+                super.goToNextStage(result);
+                building.nextStage();
+                iterator.setLayer(currentLayer);
+            }
+            else
+            {
+                iterator.setLayer(newLayer);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean skipBuilding(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    {
+        final BlockState blockInfoState = info.getBlockInfo().getState();
+        return !BlockUtils.isAnySolid(blockInfoState)
+                 || isDecoItem(blockInfoState.getBlock())
+                 || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
     @Override
@@ -439,17 +367,25 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
         job.getWorkOrder().setIteratorType("default");
 
-        final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
+        final LayerBlueprintIterator iterator = new LayerBlueprintIterator(job.getWorkOrder().getIteratorType(), structure);
+        final StructurePlacer placer = new StructurePlacer(structure, iterator);
 
         if (requestProgress == null)
         {
             final AbstractBuildingStructureBuilder buildingWorker = building;
             buildingWorker.resetNeededResources();
-            requestProgress = new BlockPos(-1,
-              structurePlacer.getB().getBluePrint().getSizeY() - 1,
-              0);
+            requestProgress = NULL_POS;
+            requestLayer = structurePlacer.getB().getBluePrint().getSizeY() - 1;
             requestState = RequestStage.SOLID;
         }
+        else if (requestLayer < 0)
+        {
+            // Done
+            requestState = RequestStage.SOLID;
+            requestProgress = null;
+            return true;
+        }
+        iterator.setLayer(requestLayer);
 
         final BlockPos worldPos = structure.getProgressPosInWorld(requestProgress);
         final RequestStage currState = requestState;
@@ -462,8 +398,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
                           .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock())
-                                                                                       || pos.getY() < worldPos.getY())),
+                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -472,15 +407,21 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 }
 
 
-                if (requestProgress.getY() != -1 && result.getIteratorPos().getY() < requestProgress.getY())
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    requestProgress = new BlockPos(-1, requestProgress.getY() + 1, 0);
-                    requestState = RequestStage.DECO;
-                }
-                else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    requestProgress = new BlockPos(-1, structurePlacer.getB().getBluePrint().getSizeY() - 2, 0);
-                    requestState = RequestStage.DECO;
+                    if (requestLayer + 1 >= structurePlacer.getB().getBluePrint().getSizeY())
+                    {
+                        // Skip decoration for the first layer, as we request the materials of the layer above
+                        // Continue with the next layer
+                        requestLayer = requestLayer - 1;
+                        requestProgress = NULL_POS;
+                    }
+                    else
+                    {
+                        requestLayer = requestLayer + 1;
+                        requestProgress = NULL_POS;
+                        requestState = RequestStage.DECO;
+                    }
                 }
                 else
                 {
@@ -489,15 +430,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 return false;
             case DECO:
-                if (requestProgress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
-                {
-                    requestState = RequestStage.ENTITIES;
-                    requestProgress = new BlockPos(-1,
-                      requestProgress.getY() - 1,
-                      0);
-                    return false;
-                }
-
                 result = placer.executeStructureStep(world,
                   null,
                   requestProgress,
@@ -505,8 +437,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                                                                                                                                                             .getState()
-                                                                                                                                                            .getBlock())
-                                                                                       || pos.getY() > worldPos.getY())),
+                                                                                                                                                            .getBlock()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -516,37 +447,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    requestState = RequestStage.ENTITIES;
-                    requestProgress =
-                      new BlockPos(-1, requestProgress.getY() - 1, 0);
-                }
-                else if (requestProgress.getY() != -1 && result.getIteratorPos().getY() > requestProgress.getY())
-                {
-                    requestState = RequestStage.ENTITIES;
-                    requestProgress =
-                      new BlockPos(-1, requestProgress.getY() - 1, 0);
-                }
-                else
-                {
-                    requestProgress = result.getIteratorPos();
-                }
-                return false;
-            case ENTITIES:
-                result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0 || pos.getY() < worldPos.getY())), true);
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
                     requestState = RequestStage.SOLID;
-                    requestProgress = null;
-                    return true;
-                }
-                else if (requestProgress.getY() != -1 && (result.getIteratorPos().getY() < requestProgress.getY()))
-                {
-                    requestState = RequestStage.SOLID;
-                    requestProgress = new BlockPos(-1,
-                      requestProgress.getY() - 1,
-                      0);
+                    requestLayer = requestLayer - 2;
+                    requestProgress = NULL_POS;
                 }
                 else
                 {
@@ -595,7 +498,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     public void setStructurePlacer(final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure)
     {
-        structurePlacer = new Tuple<>(new StructurePlacer(structure, "default"), structure);
+        final LayerBlueprintIterator iterator = new LayerBlueprintIterator("default", structure);
+        structurePlacer = new Tuple<>(new StructurePlacer(structure, iterator), structure);
     }
 
     @Override
