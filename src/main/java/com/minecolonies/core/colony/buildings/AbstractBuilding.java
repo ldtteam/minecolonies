@@ -1520,8 +1520,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int daysToPickup)
+    public boolean createPickupRequest(final int pickUpPrio)
     {
+        int daysToPickup = 10 - pickUpPrio;
         if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
         {
             pickUpDay = colony.getDay() + daysToPickup;
@@ -1552,7 +1553,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        createRequest(new Pickup(MAX_BUILDING_PRIORITY), true);
+        if (pickUpPrio == getPlayerActionPriority(true))
+        {
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP)
+                                .sendTo(colony.getMessagePlayerEntities());
+        }
+        createRequest(new Pickup(pickUpPrio), true);
         return true;
     }
 

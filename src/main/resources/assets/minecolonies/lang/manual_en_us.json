@@ -365,7 +365,7 @@
   "entity.builder.messagebuildernecessary": "This building requires a Builder's Hut of level %d or higher to be upgraded, repaired, or deconstructed!",
   "entity.builder.inventoryfull": "Building inventory is full, could not insert %s",
 
-  "entity.deliveryman.forcepickup": "I will come along and do a pickup shortly!",
+  "entity.deliveryman.forcepickup": "A courier will come along and do a pickup shortly!",
   "entity.deliveryman.forcepickupfailed": "Unable to comply, pickup already in progress!",
 
   "entity.miner.messagerequiresbetterhut": "Please upgrade my hut to dig deeper!",
