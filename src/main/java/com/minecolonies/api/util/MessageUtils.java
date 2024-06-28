@@ -295,7 +295,7 @@ public class MessageUtils
         {
             for (Player player : players)
             {
-                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range*range)
+                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range * range)
                 {
                     player.displayClientMessage(create(), false);
                 }
