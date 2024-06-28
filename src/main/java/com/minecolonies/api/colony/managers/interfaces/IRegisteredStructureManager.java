@@ -3,12 +3,10 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -317,20 +315,6 @@ public interface IRegisteredStructureManager
      * @return the position of it.
      */
     BlockPos getRandomLeisureSite();
-
-    /**
-     * Track building leveling.
-     * @param buildingEntry the type of building to track.
-     * @param colonyQuest the quest.
-     */
-    void trackBuildingLevelUp(@NotNull final BuildingEntry buildingEntry, @NotNull final IQuestInstance colonyQuest);
-
-    /**
-     * Stop tracking building leveling.
-     * @param buildingEntry the type of building to track.
-     * @param colonyQuest the quest.
-     */
-    void stopTrackingBuildingLevelUp(@NotNull final BuildingEntry buildingEntry, @NotNull final IQuestInstance colonyQuest);
 
     /**
      * Get all the fields

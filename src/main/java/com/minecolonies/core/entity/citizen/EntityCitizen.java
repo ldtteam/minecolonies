@@ -256,6 +256,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private int maxAir = 300;
 
     /**
+     * Local client is glowing.
+     */
+    private boolean isGlowing;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -1977,15 +1982,20 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public CombatTracker getCombatTracker()
+    public boolean isCurrentlyGlowing()
     {
-        return combatTracker;
+        return isGlowing || super.isCurrentlyGlowing();
+    }
+
+    public void setGlowing(final boolean isGlowing)
+    {
+        this.isGlowing = isGlowing;
     }
 
     @Override
-    public boolean isCurrentlyGlowing()
+    public CombatTracker getCombatTracker()
     {
-        return level.isClientSide() && hasGlowingTag() || super.isCurrentlyGlowing();
+        return combatTracker;
     }
 
     /**

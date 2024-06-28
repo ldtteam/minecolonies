@@ -46,6 +46,8 @@ public final class ModQuestInitializer
           PlaceBlockObjectiveTemplate::createObjective));
         QuestRegistries.buildBuildingObjective = DEFERRED_REGISTER_OBJECTIVE.register(BUILD_BUILDING_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
           BuildBuildingObjectiveTemplate::createObjective));
+        QuestRegistries.researchObjective = DEFERRED_REGISTER_OBJECTIVE.register(RESEARCH_OBJECTIVE_ID.getPath(), () -> new QuestRegistries.ObjectiveEntry(
+          ResearchObjectiveTemplate::createObjective));
 
         QuestRegistries.randomTrigger = DEFERRED_REGISTER_TRIGGER.register(RANDOM_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(RandomQuestTriggerTemplate::createStateTrigger));
         QuestRegistries.stateTrigger = DEFERRED_REGISTER_TRIGGER.register(STATE_TRIGGER_ID.getPath(), () -> new QuestRegistries.TriggerEntry(StateQuestTriggerTemplate::createStateTrigger));

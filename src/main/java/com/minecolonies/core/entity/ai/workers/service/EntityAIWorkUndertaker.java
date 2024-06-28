@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -123,7 +122,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final BlockEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
-                building.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
@@ -249,7 +247,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (entity instanceof TileEntityGrave)
         {
             //at position
-            if (!digIfAble(gravePos))
+            if (!digIfAble(gravePos, entity))
             {
                 return getState();
             }
@@ -266,17 +264,20 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      * Checks if we can dig a grave, and does so if we can.
      *
      * @param position the grave to harvest.
+     * @param entity
      * @return true if we harvested or not supposed to.
      */
-    private boolean digIfAble(final BlockPos position)
+    private boolean digIfAble(final BlockPos position, final BlockEntity entity)
     {
         if (!checkForToolOrWeapon(ToolType.SHOVEL))
         {
             equipShovel();
+            final GraveData graveData = (GraveData) ((TileEntityGrave) entity).getGraveData();
             if (mineBlock(position))
             {
                 worker.decreaseSaturationForContinuousAction();
                 building.ClearCurrentGrave();
+                building.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData(graveData);
                 return true;
             }
         }
@@ -293,7 +294,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).getLastGraveData() == null
+        if (checkForToolOrWeapon(ToolType.SHOVEL)
               || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
@@ -342,11 +343,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 Network.getNetwork()
                   .sendToTrackingEntity(new VanillaParticleMessage(gravePos.getX() + 0.5f, gravePos.getY() + 0.05f, gravePos.getZ() + 0.5f, ParticleTypes.HEART), worker);
 
+                final GraveData graveData = (GraveData) ((TileEntityGrave) entity).getGraveData();
                 final ICitizenData citizenData = buildingGraveyard.getColony()
                                                    .getCitizenManager()
-                                                   .resurrectCivilianData(buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class)
-                                                                            .getLastGraveData()
-                                                                            .getCitizenDataNBT(), true, world, gravePos);
+                                                   .resurrectCivilianData(graveData.getCitizenDataNBT(), true, world, gravePos);
                 MessageUtils.format(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()).sendTo(buildingGraveyard.getColony()).forManagers();
                 worker.getCitizenColonyHandler().getColony().getCitizenManager().updateCitizenMourn(citizenData, false);
                 AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(),
@@ -443,7 +443,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
 
-        if (walkToBlock(burialPos.getA(), 3))
+        if (walkToBlock(burialPos.getA(), 4))
         {
             return getState();
         }

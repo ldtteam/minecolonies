@@ -91,4 +91,11 @@ public interface ILocalResearchTree
      * @param effects  the effects.
      */
     void readFromNBT(final CompoundTag compound, final IResearchEffectManager effects);
+
+    /**
+     * Check if a given research is complete.
+     * @param location the unique id.
+     * @return true if so.
+     */
+    boolean isComplete(ResourceLocation location);
 }

@@ -1,12 +1,14 @@
 package com.minecolonies.core.event;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.quests.objectives.IBreakBlockObjectiveTemplate;
-import com.minecolonies.core.quests.objectives.IKillEntityObjectiveTemplate;
-import com.minecolonies.core.quests.objectives.IPlaceBlockObjectiveTemplate;
+import com.minecolonies.core.quests.objectives.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
@@ -16,6 +18,7 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -25,6 +28,16 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class QuestObjectiveEventHandler
 {
+    /**
+     * Building building objective tracker.
+     */
+    private static final Map<BuildingEntry, Map<IColony, List<IQuestInstance>>> buildBuildingObjectives = new HashMap<>();
+
+    /**
+     * Research objective tracker.
+     */
+    private static final Map<ResourceLocation, Map<IColony, List<IQuestInstance>>> researchObjectives = new HashMap<>();
+
     /**
      * Mine block objective tracker.
      */
@@ -214,5 +227,93 @@ public class QuestObjectiveEventHandler
     public static void removeKillQuestObjectiveListener(final EntityType<?> entityToKill, final UUID assignedPlayer, final IQuestInstance colonyQuest)
     {
         entityKillObjectives.getOrDefault(entityToKill, new HashMap<>()).getOrDefault(assignedPlayer, new ArrayList<>()).remove(colonyQuest);
+    }
+
+    /**
+     * Research complete event.
+     * @param colony the colony the research happened in.
+     * @param id the research id.
+     */
+    public static void onResearchComplete(final IColony colony, final ResourceLocation id)
+    {
+        if (researchObjectives.containsKey(id))
+        {
+            for (final IQuestInstance instance : new ArrayList<>(researchObjectives.get(id).getOrDefault(colony, new ArrayList<>())))
+            {
+                final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                if (objective instanceof IResearchObjectiveTemplate researchTemplate)
+                {
+                    researchTemplate.onResearchCompletion(instance);
+                }
+            }
+        }
+    }
+
+    /**
+     * Building upgrade handling.
+     * @param building the building being upgraded.
+     * @param level its level.
+     */
+    public static void onBuildingUpgradeComplete(final IBuilding building, final int level)
+    {
+        if (buildBuildingObjectives.containsKey(building.getBuildingType()))
+        {
+            for (final IQuestInstance instance : new ArrayList<>(buildBuildingObjectives.get(building.getBuildingType()).getOrDefault(building.getColony(), new ArrayList<>())))
+            {
+                final IQuestObjectiveTemplate objective = IQuestManager.GLOBAL_SERVER_QUESTS.get(instance.getId()).getObjective(instance.getObjectiveIndex());
+                if (objective instanceof IBuildingUpgradeObjectiveTemplate buildingTemplate)
+                {
+                    buildingTemplate.onBuildingUpgrade(instance.getCurrentObjectiveInstance(), instance, level);
+                }
+            }
+        }
+    }
+
+    /**
+     * Track building leveling.
+     * @param buildingEntry the building to track.
+     * @param colonyQuest the quest tracking it.
+     */
+    public static void trackBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
+    {
+        final Map<IColony, List<IQuestInstance>> currentMap = buildBuildingObjectives.getOrDefault(buildingEntry, new HashMap<>());
+        final List<IQuestInstance> objectives = currentMap.getOrDefault(colonyQuest.getColony(), new ArrayList<>());
+        objectives.add(colonyQuest);
+        currentMap.put(colonyQuest.getColony(), objectives);
+        buildBuildingObjectives.put(buildingEntry, currentMap);
+    }
+
+    /**
+     * Stop tracking building leveling.
+     * @param buildingEntry the building to stop tracking.
+     * @param colonyQuest the quest tracking it.
+     */
+    public static void stopTrackingBuildingLevelUp(final @NotNull BuildingEntry buildingEntry, final @NotNull IQuestInstance colonyQuest)
+    {
+        buildBuildingObjectives.getOrDefault(buildingEntry, new HashMap<>()).getOrDefault(colonyQuest.getColony(), new ArrayList<>()).remove(colonyQuest);
+    }
+
+    /**
+     * Track research.
+     * @param researchId the research to track.
+     * @param colonyQuest the quest tracking it.
+     */
+    public static void trackResearch(final ResourceLocation researchId, final IQuestInstance colonyQuest)
+    {
+        final Map<IColony, List<IQuestInstance>> currentMap = researchObjectives.getOrDefault(researchId, new HashMap<>());
+        final List<IQuestInstance> objectives = currentMap.getOrDefault(colonyQuest.getColony(), new ArrayList<>());
+        objectives.add(colonyQuest);
+        currentMap.put(colonyQuest.getColony(), objectives);
+        researchObjectives.put(researchId, currentMap);
+    }
+
+    /**
+     * Stop tracking research.
+     * @param researchId the research to stop tracking.
+     * @param colonyQuest the quest tracking it.
+     */
+    public static void stopTrackingResearch(final @NotNull ResourceLocation researchId, final @NotNull IQuestInstance colonyQuest)
+    {
+        researchObjectives.getOrDefault(researchId, new HashMap<>()).getOrDefault(colonyQuest.getColony(), new ArrayList<>()).remove(colonyQuest);
     }
 }

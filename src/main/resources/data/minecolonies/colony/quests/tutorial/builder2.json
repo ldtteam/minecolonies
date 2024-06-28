@@ -1,5 +1,5 @@
 {
-  "name": "Bob the Builder",
+  "name": "Bob and Wendy",
   "max-occurrences": 1,
   "parents": [
     "minecolonies:tutorial/restaurant"
@@ -98,7 +98,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Awesome! This will now also allow you to upgrade all kinds of other buildings. Make sure to regularly check the quest log about future tasks!",
+      "text": "Awesome! This will now also allow you to upgrade all kinds of other buildings. If you want to construct multiple buildings in parallel, consider getting a second builder. Make sure to regularly check the quest log for future tasks!",
       "options": [
         {
           "answer": "Thank you. Bye!",

@@ -11,6 +11,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -50,6 +51,16 @@ public class LocalResearchTree implements ILocalResearchTree
      * Map containing all branches for which the max level research has been occupied already.
      */
     private final Set<ResourceLocation> maxLevelResearchCompleted = new HashSet<>();
+
+    /**
+     * The colony reference.
+     */
+    public final IColony colony;
+
+    public LocalResearchTree(final IColony colony)
+    {
+        this.colony = colony;
+    }
 
     @Override
     public ILocalResearch getResearch(final ResourceLocation branch, final ResourceLocation id)
@@ -96,6 +107,8 @@ public class LocalResearchTree implements ILocalResearchTree
         {
             inProgress.remove(research.getId());
             isComplete.add(research.getId());
+
+            QuestObjectiveEventHandler.onResearchComplete(colony, research.getId());
         }
 
         if (research.getDepth() == MAX_DEPTH)
@@ -121,6 +134,8 @@ public class LocalResearchTree implements ILocalResearchTree
     {
         inProgress.remove(id);
         isComplete.add(id);
+
+        QuestObjectiveEventHandler.onResearchComplete(colony, id);
     }
 
     @Override
@@ -403,10 +418,16 @@ public class LocalResearchTree implements ILocalResearchTree
     /**
      * Get the list of all finished researches
      *
-     * @return
+     * @return a copy of the completed list.
      */
     public List<ResourceLocation> getCompletedList()
     {
         return new ArrayList<>(isComplete);
+    }
+
+    @Override
+    public boolean isComplete(final ResourceLocation location)
+    {
+        return isComplete.contains(location);
     }
 }

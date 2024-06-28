@@ -1,9 +1,11 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -28,7 +31,6 @@ import java.util.Map;
  */
 public class PathJobFindWater extends AbstractPathJob
 {
-    private static final int                             MIN_DISTANCE = 40;
     private static final int                             MAX_RANGE    = 100;
     private final        BlockPos                        hutLocation;
     @NotNull
@@ -141,7 +143,7 @@ public class PathJobFindWater extends AbstractPathJob
             return !n.isSwimming()
                      && BlockPosUtil.distManhattan(start, n.x, n.y, n.z) < distance
                      && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
-                          == SurfaceType.WALKABLE
+                          == SurfaceType.WALKABLE && BlockUtils.isAnySolid(cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z))
                      && canSeeTargetFromPos(n);
         }
 

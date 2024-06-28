@@ -77,16 +77,6 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract PathResult<? extends IPathJob> moveToXYZ(final double x, final double y, final double z, final double speed);
 
     /**
-     * Used to find a water.
-     *
-     * @param searchRange in the range.
-     * @param speed walking speed.
-     * @param ponds a list of ponds.
-     * @return the result of the search.
-     */
-    public abstract WaterPathResult moveToWater(final int searchRange, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds);
-
-    /**
      * Used to path away from a ourEntity.
      *
      * @param target        the ourEntity.

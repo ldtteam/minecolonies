@@ -1,0 +1,153 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.tutorial.military.barracks",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.military.barracks.obj0.answer0.reply.answer1.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.barracks.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer2",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.barracks.obj0.answer2.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.barracks.obj0.answer2.reply"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.barracks.obj0"
+    },
+    {
+      "type": "minecolonies:research",
+      "details": {
+        "type": "minecolonies:combat/tactictraining",
+        "next-objective": 2,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj2.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj2.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.barracks.obj2"
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:barracks",
+        "count-existing": true,
+        "lvl": 1,
+        "next-objective": 4,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.barracks.obj4.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.barracks.obj4",
+      "unlocks-rewards": [
+        0
+      ]
+    }
+  ],
+  "parents": [
+    "minecolonies:tutorial/military/guards2",
+    "minecolonies:tutorial/university"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:iron_sword",
+        "qty": 2
+      }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/guards2"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {}
+    }
+  ]
+}

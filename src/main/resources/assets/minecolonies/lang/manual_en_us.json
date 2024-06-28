@@ -723,6 +723,7 @@
   "com.minecolonies.coremod.permission.attack_citizen": "Attack Citizens",
   "com.minecolonies.coremod.permission.attack_entity": "Attack Entities",
   "com.minecolonies.coremod.permission.access_free_blocks": "Access Free-Blocks",
+  "com.minecolonies.coremod.permission.access_toggleables": "Access Doors/Gates",
   "com.minecolonies.coremod.permission.explode": "Explode",
   "com.minecolonies.coremod.permission.hurt_citizen": "Hurt Citizen",
   "com.minecolonies.coremod.permission.hurt_visitor": "Hurt Visitor",
@@ -2066,7 +2067,8 @@
   "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
   "block.minecolonies.blockhutalchemist": "Alchemist Tower",
   "block.minecolonies.blockhutalchemist.name": "Alchemist Tower",
-
+  "block.minecolonies.blockhutkitchen": "Kitchen",
+  "block.minecolonies.blockhutkitchen.name": "Kitchen",
   "com.minecolonies.coremod.gui.maintab": "Main",
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
@@ -2268,6 +2270,7 @@
   "com.minecolonies.building.enchanter": "Enchanter's Tower",
   "com.minecolonies.building.composter": "Composter's Hut",
   "com.minecolonies.building.alchemist": "Alchemist Laboratory",
+  "com.minecolonies.building.kitchen": "Kitchen",
 
   "com.minecolonies.coremod.gui.chat.potatogod": "I used to be just Jack then I made a bet with the Devil.. What was his name?.. 'Ray', I think. Anyways, being a cactus has.. interrupted my relationships. I've been wandering these lands for as long as I can remember. Then finally, I saw your pathetic village and thought 'hmm.. someone that lame could definitely use my help!'",
   "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!",
@@ -2509,6 +2512,8 @@
   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress": "%d/%d %s buildings built",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative": "%d/%d totaling levels of %s buildings built",
+  "com.minecolonies.coremod.questobjectives.research.progress": "%s is not researched yet!",
+  "com.minecolonies.coremod.questobjectives.research":  "I am waiting for the research %s to be completed at the university!",
 
   "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
   "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers",
