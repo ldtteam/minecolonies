@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemStackHandler;
