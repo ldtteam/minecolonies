@@ -52,9 +52,9 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.getSender());
         if (building.createPickupRequest(getPlayerActionPriority(true)))
         {
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.getSender());
             building.markDirty();
         }
         else
