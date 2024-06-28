@@ -1127,11 +1127,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             // Only create a pickup request probabilistically.
             if (worker.getRandom().nextInt(STACKSIZE * 2) < dumpedItems)
             {
-                building.createPickupRequest(0);
+                building.createPickupRequest(getMaxBuildingPriority(true));
             }
             else
             {
-                building.createPickupRequest(10 - building.getPickUpPriority());
+                building.createPickupRequest(building.getPickUpPriority());
             }
             dumpedItems = 0;
         }

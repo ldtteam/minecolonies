@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Simple class for containing reusable player messaging logic.
@@ -281,6 +283,22 @@ public class MessageUtils
             for (Player player : players)
             {
                 player.displayClientMessage(create(), false);
+            }
+        }
+
+        /**
+         * Send the message to a collection of players close to a location.
+         *
+         * @param players the players to send the message to.
+         */
+        public void sendToClose(final BlockPos pos, final int range, final List<Player> players)
+        {
+            for (Player player : players)
+            {
+                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range * range)
+                {
+                    player.displayClientMessage(create(), false);
+                }
             }
         }
 

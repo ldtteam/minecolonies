@@ -1527,8 +1527,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int daysToPickup)
+    public boolean createPickupRequest(final int pickUpPrio)
     {
+        int daysToPickup = 10 - pickUpPrio;
         if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
         {
             pickUpDay = colony.getDay() + daysToPickup;
@@ -1559,7 +1560,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        createRequest(new Pickup(MAX_BUILDING_PRIORITY), true);
+        createRequest(new Pickup(pickUpPrio), true);
         return true;
     }
 

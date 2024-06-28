@@ -13,6 +13,7 @@ import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED;
 
 /**
@@ -41,6 +42,7 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
+        MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.getSender());
         if (building.createPickupRequest(getPlayerActionPriority(true)))
         {
             building.markDirty();
