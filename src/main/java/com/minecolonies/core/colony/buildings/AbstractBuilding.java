@@ -1553,11 +1553,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        if (pickUpPrio == getPlayerActionPriority(true))
-        {
-            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP)
-                                .sendTo(colony.getMessagePlayerEntities());
-        }
         createRequest(new Pickup(pickUpPrio), true);
         return true;
     }
