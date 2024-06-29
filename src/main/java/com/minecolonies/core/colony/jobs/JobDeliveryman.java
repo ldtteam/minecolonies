@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
 import net.minecraft.resources.ResourceLocation;
@@ -40,11 +39,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ONGOING;
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
 
 /**
  * Class of the deliveryman job.
@@ -285,13 +282,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
 
         getTaskQueueFromDataStore().add(Math.max(0, insertionIndex + offset), token);
-
-        if (newRequest instanceof StandardRequests.PickupRequest && newRequest.getRequest().getPriority() == getPlayerActionPriority(true))
-        {
-            getCitizen().getEntity()
-              .ifPresent(e -> MessageUtils.forCitizen(e, COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP)
-                .sendTo(e.getCitizenColonyHandler().getColony().getMessagePlayerEntities()));
-        }
     }
 
     /**

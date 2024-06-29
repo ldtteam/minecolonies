@@ -218,9 +218,13 @@ public class EntityAISleep implements IStateAI
      */
     private IState sleep()
     {
-        if (usedBed != null && usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
+        if (usedBed != null)
         {
-            return WALKING_HOME;
+            if (usedBed.distSqr(citizen.blockPosition()) > 3 * 3)
+            {
+                return WALKING_HOME;
+            }
+            citizen.setPose(Pose.SLEEPING);
         }
 
         Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(citizen.getX(), citizen.getY() + 1.0d, citizen.getZ()), citizen);
