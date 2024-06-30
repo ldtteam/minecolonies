@@ -11,6 +11,7 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED;
 
 /**
@@ -53,6 +54,7 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         if (building.createPickupRequest(getPlayerActionPriority(true)))
         {
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.getSender());
             building.markDirty();
         }
         else
