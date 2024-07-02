@@ -24,6 +24,7 @@ import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTyp
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -150,7 +151,13 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), responseId));
-        return handleResponse(responseId, player, data);
+        final boolean response = handleResponse(responseId, player, data);
+        if (!response)
+        {
+            window.close();
+            Minecraft.getInstance().popGuiLayer();
+        }
+        return response;
     }
 
     /**
@@ -208,7 +215,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
             data.getColony().getExpeditionManager().removeCreatedExpedition(expeditionId);
         }
 
-        return true;
+        return false;
     }
 
     /**

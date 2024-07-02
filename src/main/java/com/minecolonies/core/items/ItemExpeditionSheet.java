@@ -73,15 +73,19 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
         // If any of the required info is missing, delete the sheet.
         if (expeditionSheetInfo == null)
         {
+            reduceAndDropContents(player, itemStack);
             return InteractionResultHolder.fail(itemStack);
         }
 
+        // The colony does not exist, this is the only case in which we do not delete the sheet.
+        // This can appear when the player enters another dimension.
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(expeditionSheetInfo.colonyId(), level.dimension());
         if (colonyView == null)
         {
             return InteractionResultHolder.fail(itemStack);
         }
 
+        // The expedition instance does not exist, drop the contents in this case as this sheet is no longer useful.
         final CreatedExpedition createdExpedition = colonyView.getExpeditionManager().getCreatedExpedition(expeditionSheetInfo.expeditionId());
         if (createdExpedition == null)
         {
@@ -89,6 +93,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             return InteractionResultHolder.fail(itemStack);
         }
 
+        // The expedition type this sheet was made for no longer exists, delete the sheet.
         final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(createdExpedition.expeditionTypeId());
         if (expeditionType == null)
         {
