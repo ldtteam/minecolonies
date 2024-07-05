@@ -260,7 +260,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     public void addRequest(@NotNull final IToken<?> token, final int insertionIndex)
     {
         final IRequestManager requestManager = getColony().getRequestManager();
-        IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
+        //IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
 
@@ -268,7 +268,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         for (int i = insertionIndex; i < taskQueue.size(); i++)
         {
             final IToken theToken = taskQueue.get(i);
-            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
+            final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>)(requestManager.getRequestForToken(theToken));
             if (request == null || request.getState() == RequestState.COMPLETED)
             {
                 taskQueue.remove(theToken);
