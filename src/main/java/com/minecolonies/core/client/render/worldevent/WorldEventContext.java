@@ -92,6 +92,9 @@ public class WorldEventContext
      */
     public void checkNearbyColony(final Level level)
     {
-        nearestColony = IColonyManager.getInstance().getClosestColonyView(level, clientPlayer.blockPosition());
+        if (clientPlayer != null)
+        {
+            nearestColony = IColonyManager.getInstance().getClosestColonyView(level, clientPlayer.blockPosition());
+        }
     }
 }
