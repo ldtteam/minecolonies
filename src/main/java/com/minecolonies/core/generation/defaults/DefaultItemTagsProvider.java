@@ -148,6 +148,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.ENCHANTED_GOLDEN_APPLE)
           .add(Items.POISONOUS_POTATO)
           .add(Items.ROTTEN_FLESH)
+          .add(Items.SPIDER_EYE)
           .add(ModItems.chorusBread)
           .add(ModItems.goldenBread);
 

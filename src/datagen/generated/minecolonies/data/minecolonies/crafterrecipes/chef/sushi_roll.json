@@ -1,0 +1,25 @@
+{
+  "type": "recipe",
+  "count": 2,
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:cooked_rice"
+    },
+    {
+      "item": "minecraft:salmon"
+    },
+    {
+      "item": "minecolonies:bell_pepper"
+    },
+    {
+      "item": "minecraft:dried_kelp"
+    },
+    {
+      "item": "minecolonies:onion"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:sushi_roll"
+}

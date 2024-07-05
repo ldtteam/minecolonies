@@ -53,19 +53,6 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         this.resetToDefaultsAction = ItemListModule::clearItems;
     }
 
-    /**
-     * Change the action taken when resetting the list to defaults.
-     * (Intended to be called as a fluent builder.)
-     *
-     * @param action The action.
-     */
-    public ItemListModule onResetToDefaults(final Consumer<ItemListModule> action)
-    {
-        this.resetToDefaultsAction = action;
-        resetToDefaults();      // also actually call it for first-build
-        return this;
-    }
-
     @Override
     public void deserializeNBT(CompoundTag compound)
     {

@@ -761,6 +761,9 @@
     "item": "minecolonies:barrel_block"
   },
   {
+    "item": "minecolonies:bell_pepper"
+  },
+  {
     "item": "minecolonies:blockconstructiontape"
   },
   {
@@ -948,7 +951,13 @@
     "item": "minecolonies:build_goggles"
   },
   {
+    "item": "minecolonies:cabbage"
+  },
+  {
     "item": "minecolonies:cake_batter"
+  },
+  {
+    "item": "minecolonies:chickpea"
   },
   {
     "checkednbtkeys": [
@@ -983,7 +992,22 @@
     "item": "minecolonies:decorationcontroller"
   },
   {
+    "item": "minecolonies:durum"
+  },
+  {
+    "item": "minecolonies:eggplant"
+  },
+  {
+    "item": "minecolonies:farmland"
+  },
+  {
     "item": "minecolonies:firearrow"
+  },
+  {
+    "item": "minecolonies:floodedfarmland"
+  },
+  {
+    "item": "minecolonies:garlic"
   },
   {
     "item": "minecolonies:gate_iron"
@@ -1016,6 +1040,9 @@
   },
   {
     "item": "minecolonies:mistletoe"
+  },
+  {
+    "item": "minecolonies:onion"
   },
   {
     "checkednbtkeys": [
@@ -1170,6 +1197,9 @@
     "item": "minecolonies:resourcescroll"
   },
   {
+    "item": "minecolonies:rice"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1262,6 +1292,9 @@
     "item": "minecolonies:simplequarry"
   },
   {
+    "item": "minecolonies:soybean"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1280,6 +1313,9 @@
   },
   {
     "item": "minecolonies:supplychestdeployer"
+  },
+  {
+    "item": "minecolonies:tomato"
   },
   {
     "item": "minecraft:acacia_boat"

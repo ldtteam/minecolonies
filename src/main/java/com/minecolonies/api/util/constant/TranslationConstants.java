@@ -405,7 +405,12 @@ public final class TranslationConstants
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
     public static final String BP_OUTSIDE_COLONY                                                    = "com.minecolonies.coremod.placement.outofcolony";
-
+    @NonNls
+    public static final String CROP_TOOLTIP                                                         = "com.minecolonies.core.item.crop.tooltip";
+    @NonNls
+    public static final String FOOD_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip";
+    @NonNls
+    public static final String BIOME_TOOLTIP                                                        = "com.minecolonies.core.item.crop.tooltip.biome";
     @NonNls
     public static final String BP_NO_PERM                                         = "com.minecolonies.coremod.placement.noperm";
     @NonNls

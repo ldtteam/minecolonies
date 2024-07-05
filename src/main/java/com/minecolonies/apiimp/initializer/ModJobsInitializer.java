@@ -271,7 +271,7 @@ public final class ModJobsInitializer
           .createJobEntry());
 
         ModJobs.cookassistant = register(DEFERRED_REGISTER, ModJobs.COOKASSISTANT_ID.getPath(), () -> new JobEntry.Builder()
-          .setJobProducer(JobCookAssistant::new)
+          .setJobProducer(JobChef::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.COOKASSISTANT_ID)
           .createJobEntry());
@@ -299,6 +299,12 @@ public final class ModJobsInitializer
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.ALCHEMIST_ID)
           .createJobEntry());
+
+        ModJobs.chef = register(DEFERRED_REGISTER, ModJobs.CHEF_ID.getPath(), () -> new JobEntry.Builder()
+                                                                                                        .setJobProducer(JobChef::new)
+                                                                                                        .setJobViewProducer(() -> CrafterJobView::new)
+                                                                                                        .setRegistryName(ModJobs.CHEF_ID)
+                                                                                                        .createJobEntry());
     }
 
     /**

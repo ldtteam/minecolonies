@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.*;
 import com.minecolonies.core.blocks.decorative.BlockColonyFlagBanner;
@@ -19,6 +20,9 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
+import static com.minecolonies.core.blocks.MinecoloniesCropBlock.*;
+import static com.minecolonies.core.blocks.MinecoloniesFarmland.FLOODED_FARMLAND;
+import static com.minecolonies.core.blocks.MinecoloniesFarmland.FARMLAND;
 
 /**
  * This class deals with the initialization of blocks and their items.
@@ -114,6 +118,20 @@ public final class ModBlocksInitializer
         ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
         ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 6, 8).registerBlock(registry);
         ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 6, 5).registerBlock(registry);
+        ModBlocks.farmland = new MinecoloniesFarmland(FARMLAND, false).registerBlock(registry);
+        ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true).registerBlock(registry);
+
+        ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);
+        ModBlocks.blockCabbage = new MinecoloniesCropBlock(CABBAGE, ModBlocks.farmland, ModTags.coldBiomes).registerBlock(registry);
+        ModBlocks.blockChickpea = new MinecoloniesCropBlock(CHICKPEA, ModBlocks.farmland, ModTags.dryBiomes).registerBlock(registry);
+        ModBlocks.blockDurum = new MinecoloniesCropBlock(DURUM, ModBlocks.farmland, null).registerBlock(registry);
+        ModBlocks.blockEggplant = new MinecoloniesCropBlock(EGGPLANT, ModBlocks.farmland, null).registerBlock(registry);
+        ModBlocks.blockGarlic = new MinecoloniesCropBlock(GARLIC, ModBlocks.farmland, null).registerBlock(registry);
+        ModBlocks.blockOnion = new MinecoloniesCropBlock(ONION, ModBlocks.farmland, null).registerBlock(registry);
+        ModBlocks.blockSoyBean = new MinecoloniesCropBlock(SOYBEAN, ModBlocks.farmland, ModTags.humidBiomes).registerBlock(registry);
+        ModBlocks.blockTomato = new MinecoloniesCropBlock(TOMATO, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);
+        ModBlocks.blockRice = new MinecoloniesCropBlock(RICE, ModBlocks.floodedFarmland, ModTags.humidBiomes).registerBlock(registry);
+
         ModBlocks.blockSimpleQuarry = new SimpleQuarry().registerBlock(registry);
         ModBlocks.blockMediumQuarry = new MediumQuarry().registerBlock(registry);
         //ModBlocks.blockLargeQuarry = new LargeQuarry().registerBlock(registry);
@@ -198,6 +216,19 @@ public final class ModBlocksInitializer
         ModBlocks.blockStash.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
+        ModBlocks.farmland.registerBlockItem(registry, properties);
+        ModBlocks.floodedFarmland.registerBlockItem(registry, properties);
+
+        ModBlocks.blockBellPepper.registerBlockItem(registry, properties);
+        ModBlocks.blockCabbage.registerBlockItem(registry, properties);
+        ModBlocks.blockChickpea.registerBlockItem(registry, properties);
+        ModBlocks.blockDurum.registerBlockItem(registry, properties);
+        ModBlocks.blockEggplant.registerBlockItem(registry, properties);
+        ModBlocks.blockGarlic.registerBlockItem(registry, properties);
+        ModBlocks.blockOnion.registerBlockItem(registry, properties);
+        ModBlocks.blockSoyBean.registerBlockItem(registry, properties);
+        ModBlocks.blockTomato.registerBlockItem(registry, properties);
+        ModBlocks.blockRice.registerBlockItem(registry, properties);
 
         ModBlocks.blockSimpleQuarry.registerBlockItem(registry, properties);
         ModBlocks.blockMediumQuarry.registerBlockItem(registry, properties);

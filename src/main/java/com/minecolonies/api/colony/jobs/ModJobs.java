@@ -51,11 +51,15 @@ public final class ModJobs
     public static final ResourceLocation RABBIT_ID         = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
     public static final ResourceLocation CONCRETE_ID       = new ResourceLocation(Constants.MOD_ID, "concretemixer");
     public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
-    public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
     public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
     public static final ResourceLocation QUARRY_MINER_ID   = new ResourceLocation(Constants.MOD_ID, "quarrier");
     public static final ResourceLocation DRUID_ID          = new ResourceLocation(Constants.MOD_ID, "druid");
     public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
+    public static final ResourceLocation CHEF_ID           = new ResourceLocation(Constants.MOD_ID, "chef");
+
+    @Deprecated
+    public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
+
 
     public static RegistryObject<JobEntry> placeHolder;
     public static RegistryObject<JobEntry> builder;
@@ -98,11 +102,15 @@ public final class ModJobs
     public static RegistryObject<JobEntry> rabbitHerder;
     public static RegistryObject<JobEntry> concreteMixer;
     public static RegistryObject<JobEntry> beekeeper;
-    public static RegistryObject<JobEntry> cookassistant;
     public static RegistryObject<JobEntry> netherworker;
     public static RegistryObject<JobEntry> quarrier;
     public static RegistryObject<JobEntry> druid;
     public static RegistryObject<JobEntry> alchemist;
+    public static RegistryObject<JobEntry> chef;
+
+    @Deprecated
+    public static RegistryObject<JobEntry> cookassistant;
+
 
     /**
      * List of all jobs.
