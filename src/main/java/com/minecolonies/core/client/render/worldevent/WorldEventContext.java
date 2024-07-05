@@ -93,6 +93,19 @@ public class WorldEventContext
      */
     public void checkNearbyColony(final Level level)
     {
+        /*
+        * This insures that the player is loaded in before anything is called.
+        * Preventing the nullpointer exception when a player joins the server.
+        */
+        while(clientPlayer == null) {
+            System.out.println("Waiting for player to load in.");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Thread is already sleeping");
+            }
+        }
         nearestColony = IColonyManager.getInstance().getClosestColonyView(level, clientPlayer.blockPosition());
     }
 }
