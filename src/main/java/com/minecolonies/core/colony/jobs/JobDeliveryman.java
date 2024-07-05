@@ -260,7 +260,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     public void addRequest(@NotNull final IToken<?> token, final int insertionIndex)
     {
         final IRequestManager requestManager = getColony().getRequestManager();
-        //IRequest<? extends IDeliverymanRequestable> newRequest = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(token));
 
         LinkedList<IToken<?>> taskQueue = getTaskQueueFromDataStore();
 
