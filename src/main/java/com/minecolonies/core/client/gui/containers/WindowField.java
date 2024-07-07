@@ -130,7 +130,9 @@ public class WindowField extends AbstractWindowSkeleton
     {
         new WindowSelectRes(
           this,
-          stack -> stack.is(Tags.Items.SEEDS) || (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock) || (stack.getItem() instanceof ItemCrop  itemCrop && itemCrop.canBePlantedIn(Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos()))),
+          stack -> stack.is(Tags.Items.SEEDS)
+                     || (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock)
+                     || (stack.getItem() instanceof ItemCrop itemCrop && itemCrop.canBePlantedIn(Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos()))),
           (stack, qty) -> setSeed(stack),
           false).open();
     }

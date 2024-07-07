@@ -684,12 +684,26 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         position = getSurfacePos(position);
         if (position == null
               || farmField.isNoPartOfField(world, position)
-              || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
-              || (world.getBlockState(position.above()).getBlock() instanceof StemBlock)
-              || (world.getBlockState(position).getBlock() instanceof BlockScarecrow)
-              || !(world.getBlockState(position).getBlock() instanceof FarmBlock || world.getBlockState(position).getBlock() instanceof MinecoloniesFarmland)
-              || (world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock)
+              || world.getBlockState(position.above()).getBlock() instanceof CropBlock
+              || world.getBlockState(position.above()).getBlock() instanceof StemBlock
+              || world.getBlockState(position).getBlock() instanceof BlockScarecrow
+              || !(world.getBlockState(position).getBlock() instanceof FarmBlock)
+              || world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock
         )
+        {
+            return null;
+        }
+
+        if (farmField.getSeed().getItem() instanceof BlockItem blockItem
+              && blockItem.getBlock() instanceof MinecoloniesCropBlock)
+        {
+            if (!(world.getBlockState(position).getBlock() instanceof MinecoloniesFarmland))
+            {
+                return null;
+            }
+            return position;
+        }
+        else if (!(world.getBlockState(position).getBlock() instanceof FarmBlock))
         {
             return null;
         }

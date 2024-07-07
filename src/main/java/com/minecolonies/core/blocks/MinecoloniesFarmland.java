@@ -187,12 +187,6 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     }
 
     @Override
-    public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter getter, @NotNull BlockPos pos, @NotNull PathComputationType type)
-    {
-        return false;
-    }
-
-    @Override
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, blockName);

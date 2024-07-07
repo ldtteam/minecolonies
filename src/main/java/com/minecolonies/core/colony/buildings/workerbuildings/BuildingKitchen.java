@@ -190,7 +190,7 @@ public class BuildingKitchen extends AbstractBuilding
         {
             //Try to fulfill normally
             IRecipeStorage storage = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-
+            
             //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe.
             if(storage == null)
             {
