@@ -169,7 +169,7 @@ public class BuildingKitchen extends AbstractBuilding
 
             //First, do the normal check against taught recipes, and return those if found
             IRecipeStorage storage = super.getFirstRecipe(stackPredicate);
-            if(storage != null)
+            if (storage != null)
             {
                 return storage;
             }
@@ -177,7 +177,7 @@ public class BuildingKitchen extends AbstractBuilding
 
             //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it.
             storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-            if(storage != null && storage.getRecipeSource() != null && ISFOOD.test(storage.getPrimaryOutput()) && isRecipeCompatible(GenericRecipe.of(storage)))
+            if (storage != null && storage.getRecipeSource() != null && ISFOOD.test(storage.getPrimaryOutput()) && isRecipeCompatible(GenericRecipe.of(storage)))
             {
                 return storage;
             }
@@ -190,9 +190,9 @@ public class BuildingKitchen extends AbstractBuilding
         {
             //Try to fulfill normally
             IRecipeStorage storage = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-            
+
             //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe.
-            if(storage == null)
+            if (storage == null)
             {
                 storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
                 if (storage != null)

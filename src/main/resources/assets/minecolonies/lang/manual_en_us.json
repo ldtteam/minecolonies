@@ -2062,8 +2062,8 @@
   "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
   "block.minecolonies.blockhutalchemist": "Alchemist Tower",
   "block.minecolonies.blockhutalchemist.name": "Alchemist Tower",
-  "block.minecolonies.blockhutkitchen": "Kitchen",
-  "block.minecolonies.blockhutkitchen.name": "Kitchen",
+  "block.minecolonies.blockhutkitchen": "Cookery",
+  "block.minecolonies.blockhutkitchen.name": "Cookery",
   "com.minecolonies.coremod.gui.maintab": "Main",
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
@@ -2265,7 +2265,7 @@
   "com.minecolonies.building.enchanter": "Enchanter's Tower",
   "com.minecolonies.building.composter": "Composter's Hut",
   "com.minecolonies.building.alchemist": "Alchemist Laboratory",
-  "com.minecolonies.building.kitchen": "Kitchen",
+  "com.minecolonies.building.kitchen": "Cookery",
 
   "com.minecolonies.coremod.gui.chat.potatogod": "I used to be just Jack then I made a bet with the Devil.. What was his name?.. 'Ray', I think. Anyways, being a cactus has.. interrupted my relationships. I've been wandering these lands for as long as I can remember. Then finally, I saw your pathetic village and thought 'hmm.. someone that lame could definitely use my help!'",
   "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!",
@@ -2647,7 +2647,7 @@
   "item.minecolonies.sushi_roll": "Sushi Roll",
   "item.minecolonies.tofu": "Tofu",
 
-  "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Kitchen to cook this for you",
+  "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
   "com.minecolonies.coremod.entity.citizen.no.food": "I didn't have a decent meal in at least 3 days. The restaurant has a menu of food tiers!",
   "com.minecolonies.core.gui.restaurant.foodquality": "Eaten up to Residence level: %d",

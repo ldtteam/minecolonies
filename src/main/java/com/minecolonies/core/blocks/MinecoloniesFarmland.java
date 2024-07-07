@@ -56,7 +56,6 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
         this.blockName = blockName;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
-
     }
 
     @NotNull
@@ -77,6 +76,11 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, BlockPos pos)
     {
+        if (level == null)
+        {
+            // This is for our solid checks.
+            return true;
+        }
         BlockState aboveState = level.getBlockState(pos.above());
         return !aboveState.isSolid();
     }

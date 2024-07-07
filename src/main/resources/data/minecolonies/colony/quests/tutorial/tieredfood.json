@@ -41,7 +41,7 @@
           "answer": "Uhh, eehh, what doe that mean?",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "First, aside from the restaurant you should build a kitchen that is able to cook some of the special dishes and provide them to the restaurant!",
+            "text": "First, aside from the restaurant you should build a Cookery that is able to cook some of the special dishes and provide them to the restaurant!",
             "options": [
               {
                 "answer": "On it!",
@@ -92,7 +92,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Great, now that the kitchen is finished, make sure that your farmer grows the crops for the recipes. You can obtain the seeds from breaking blocks like grass, fern, bushes, etc! Here, have some Onion and Garlic to get started!",
+      "text": "Great, now that the Cookery is finished, make sure that your farmer grows the crops for the recipes. You can obtain the seeds from breaking blocks like grass, fern, bushes, etc! Here, have some Onion and Garlic to get started!",
       "options": [
         {
           "answer": "Thank you. Bye!",

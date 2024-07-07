@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
@@ -358,11 +359,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos findHoeableSurface(@NotNull BlockPos position, @NotNull final FarmField farmField)
     {
         position = getSurfacePos(position);
+        final BlockState blockState = world.getBlockState(position);
         if (position == null
               || farmField.isNoPartOfField(world, position)
               || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
               || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-              || !world.getBlockState(position).is(BlockTags.DIRT)
+              || (!blockState.is(BlockTags.DIRT) && isRightFarmLandForCrop(farmField, blockState))
               || (world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock)
         )
         {
@@ -375,7 +377,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             world.destroyBlock(position.above(), true);
         }
 
-        final BlockState blockState = world.getBlockState(position);
+        if (!isRightFarmLandForCrop(farmField, blockState))
+        {
+            return position;
+        }
+
         final BlockHitResult blockHitResult = new BlockHitResult(Vec3.ZERO, Direction.UP, position, false);
         final UseOnContext useOnContext = new UseOnContext(world,
           null,
@@ -591,7 +597,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         return true;
     }
 
-    public void createCorrectFarmlandForSeed(final ItemStack seed, final BlockPos pos)
+    /**
+     * Create the correct farmland for a given seed.
+     * @param seed the crop.
+     * @param pos the position.
+     */
+    private void createCorrectFarmlandForSeed(final ItemStack seed, final BlockPos pos)
     {
         if (seed.getItem() instanceof ItemCrop itemCrop)
         {
@@ -600,6 +611,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         else
         {
             world.setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+        }
+    }
+
+    /**
+     * Check if this is the right farm land for the specific crop.
+     * @param farmField the field we're testing this for.
+     * @param blockState the state we're testing this on.
+     * @return true if so.
+     */
+    private boolean isRightFarmLandForCrop(final FarmField farmField, final BlockState blockState)
+    {
+        if (farmField.getSeed().getItem() instanceof ItemCrop itemCrop)
+        {
+            return blockState.getBlock() == ((MinecoloniesCropBlock) itemCrop.getBlock()).getPreferredFarmland();
+        }
+        else
+        {
+            return blockState.getBlock() instanceof FarmBlock;
         }
     }
 
@@ -687,26 +716,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
               || world.getBlockState(position.above()).getBlock() instanceof CropBlock
               || world.getBlockState(position.above()).getBlock() instanceof StemBlock
               || world.getBlockState(position).getBlock() instanceof BlockScarecrow
-              || !(world.getBlockState(position).getBlock() instanceof FarmBlock)
+              || !isRightFarmLandForCrop(farmField, world.getBlockState(position))
               || world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock
         )
         {
             return null;
         }
 
-        if (farmField.getSeed().getItem() instanceof BlockItem blockItem
-              && blockItem.getBlock() instanceof MinecoloniesCropBlock)
-        {
-            if (!(world.getBlockState(position).getBlock() instanceof MinecoloniesFarmland))
-            {
-                return null;
-            }
-            return position;
-        }
-        else if (!(world.getBlockState(position).getBlock() instanceof FarmBlock))
-        {
-            return null;
-        }
         return position;
     }
 
