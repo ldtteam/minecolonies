@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 public class JobChef extends AbstractJobCrafter<EntityAIWorkChef, JobChef>
 {
     /**
-     * Instantiates the job for the CookAssistant.
+     * Instantiates the job for the Chef.
      *
-     * @param entity the citizen who becomes a CookAssistant.
+     * @param entity the citizen who becomes a Chef.
      */
     public JobChef(final ICitizenData entity)
     {

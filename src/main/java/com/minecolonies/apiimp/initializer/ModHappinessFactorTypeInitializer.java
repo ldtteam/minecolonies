@@ -47,6 +47,7 @@ public final class ModHappinessFactorTypeInitializer
         HappinessRegistry.idleatjobFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(IDLEATJOB_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isIdleAtJob() ? 0.5 : 1.0));
 
         HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0));
-
+        HappinessRegistry.foodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> (data.getHomeBuilding() == null || data.getHomeBuilding().getBuildingLevel() <= 2) ? 0.0 : data.getHomeBuilding().getBuildingLevel() - 2.0));
+        HappinessRegistry.greatFoodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(GREAT_FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> 2.0));
     }
 }

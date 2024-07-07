@@ -63,11 +63,6 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     private final String        blockName;
     private final TagKey<Biome> preferredBiome;
 
-    //todo general:
-    //todo: add food items
-    //todo: create the Chef position in the kitchen and move over from restaurant.
-    //todo add recipes to the baker/chef
-
     /**
      * Constructor to create a block of this type.
      * @param blockName the block id.

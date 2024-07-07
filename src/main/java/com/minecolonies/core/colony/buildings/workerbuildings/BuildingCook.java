@@ -5,19 +5,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
-import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -149,16 +144,6 @@ public class BuildingCook extends AbstractBuilding
     }
 
     @Override
-    public boolean canBeGathered()
-    {
-        return super.canBeGathered() &&
-                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant.get()).getAssignedCitizen().stream()
-                   .map(c -> c.getJob(AbstractJobCrafter.class))
-                   .filter(Objects::nonNull)
-                   .allMatch(AbstractJobCrafter::hasTask);
-    }
-
-    @Override
     public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
     {
         if (stack.isEmpty())
@@ -173,11 +158,6 @@ public class BuildingCook extends AbstractBuilding
 
         // Make the assistant cook drop everything. We don't want them to keep food.
         // Neither like the cook does here, nor how the average worker does in the super call.
-        if (jobEntry == ModJobs.cookassistant.get())
-        {
-            return stack.getCount();
-        }
-
         if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);

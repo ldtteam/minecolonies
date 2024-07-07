@@ -149,6 +149,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.POISONOUS_POTATO)
           .add(Items.ROTTEN_FLESH)
           .add(Items.SPIDER_EYE)
+          .add(Items.TROPICAL_FISH)
+          .add(Items.PUFFERFISH)
+          .add(Items.SUSPICIOUS_STEW)
           .add(ModItems.chorusBread)
           .add(ModItems.goldenBread);
 

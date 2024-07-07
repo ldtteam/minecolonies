@@ -54,6 +54,8 @@ public final class HappinessConstants
     public static final String RAIDWITHOUTDEATH = "raidwithoutdeath";
     public static final String SLEPTTONIGHT     = "slepttonight";
     public static final String QUEST            = "quest";
+    public static final String HADDECENTFOOD    = "food";
+    public static final String HADGREATFOOD     = "greatfood";
 
     /**
      * Private constructor to hide implicit public one.

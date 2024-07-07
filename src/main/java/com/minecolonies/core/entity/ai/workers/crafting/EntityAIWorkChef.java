@@ -12,11 +12,11 @@ public class EntityAIWorkChef extends AbstractEntityAIRequestSmelter<JobChef, Bu
     /**
      * Initialize the Cook Assistant.
      *
-     * @param cookAssistant the job he has.
+     * @param jobChef the job he has.
      */
-    public EntityAIWorkChef(@NotNull final JobChef cookAssistant)
+    public EntityAIWorkChef(@NotNull final JobChef jobChef)
     {
-        super(cookAssistant);
+        super(jobChef);
     }
 
     @Override

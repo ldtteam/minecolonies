@@ -649,6 +649,8 @@ public final class TranslationConstants
     public static final String MESSAGE_RESEARCH_STARTED                           = "com.minecolonies.coremod.research.started";
     @NonNls
     public static final String PACK_DESC                                          = "com.minecolonies.coremod.gui.colony.packdesc";
+    @NonNls
+    public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     //<editor-fold desc="Partial keys">
 
     @NonNls

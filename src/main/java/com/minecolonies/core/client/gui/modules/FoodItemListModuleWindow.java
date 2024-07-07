@@ -1,10 +1,8 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -18,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.FOOD_QUALITY_TOOLTIP;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
@@ -37,7 +36,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
       final IItemListModuleView moduleView)
     {
         super(res, building, moduleView);
-        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood));
+        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || c.getItemStack().getFoodProperties(null).getNutrition() < building.getBuildingLevel());
     }
 
     @Override
@@ -45,10 +44,11 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
     {
         displayedList.sort((o1, o2) -> {
 
-            int score = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 10 : -10;
-            int score2 = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 10 : -10;
-            score += o1.getItem() instanceof IMinecoloniesFoodItem ? -10 : 10;
-            score2 += o2.getItem() instanceof IMinecoloniesFoodItem ? -10 : 10;
+            int score = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 500 : -500;
+            int score2 = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 500 : -500;
+            score += o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier()* -100 : -o1.getItemStack().getFoodProperties(null).getNutrition();
+            score2 += o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier()* -100 : -o2.getItemStack().getFoodProperties(null).getNutrition();
+
 
             return score - score2;
         });
@@ -89,18 +89,36 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
                 itemIcon.setItem(resource);
                 final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
-
-                if (resource.getItem() instanceof IMinecoloniesFoodItem)
+                final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
+                if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)
                 {
-                    itemIcon.setPosition(16, itemIcon.getY());
-                    resourceLabel.setPosition(36, resourceLabel.getY());
-                    rowPane.findPaneOfTypeByID(STAR_IMAGE, Image.class).show();
+                   if (foodItem.getTier() == 3)
+                   {
+                       gradient.setGradientStart(255, 215, 0, 255);
+                       gradient.setGradientEnd(255, 215, 0, 255);
+                   }
+                   else if (foodItem.getTier() == 2)
+                   {
+                       gradient.setGradientStart(211, 211, 211, 255);
+                       gradient.setGradientEnd(211, 211, 211, 255);
+                   }
+                   else if (foodItem.getTier() == 1)
+                   {
+                       gradient.setGradientStart(205, 127, 50, 255);
+                       gradient.setGradientEnd(205, 127, 50, 255);
+                   }
                 }
                 else
                 {
-                    itemIcon.setPosition(0, itemIcon.getY());
-                    rowPane.findPaneOfTypeByID(STAR_IMAGE, Image.class).hide();
+                    gradient.setGradientStart(0, 0, 0, 0);
+                    gradient.setGradientEnd(0, 0, 0, 0);
                 }
+
+                PaneBuilders.tooltipBuilder()
+                  .append(Component.translatable(FOOD_QUALITY_TOOLTIP, Math.max(2, Math.min(resource.getFoodProperties(null).getNutrition() - 1, 5))))
+                  .hoverPane(gradient)
+                  .build();
+
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {

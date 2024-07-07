@@ -9,10 +9,22 @@
       "item": "minecolonies:garlic"
     },
     {
+      "item": "minecraft:carrot"
+    },
+    {
+      "item": "minecraft:potato"
+    },
+    {
+      "item": "minecraft:carrot"
+    },
+    {
+      "item": "minecraft:potato"
+    },
+    {
       "item": "minecraft:brown_mushroom"
     },
     {
-      "item": "minecolonies:tomato"
+      "item": "minecolonies:cabbage"
     },
     {
       "item": "minecraft:mutton"

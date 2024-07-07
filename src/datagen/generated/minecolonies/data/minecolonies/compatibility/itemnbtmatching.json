@@ -951,10 +951,19 @@
     "item": "minecolonies:build_goggles"
   },
   {
+    "item": "minecolonies:butter"
+  },
+  {
     "item": "minecolonies:cabbage"
   },
   {
+    "item": "minecolonies:cabochis"
+  },
+  {
     "item": "minecolonies:cake_batter"
+  },
+  {
+    "item": "minecolonies:cheddar_cheese"
   },
   {
     "item": "minecolonies:chickpea"
@@ -986,6 +995,12 @@
     "item": "minecolonies:composted_dirt"
   },
   {
+    "item": "minecolonies:congee"
+  },
+  {
+    "item": "minecolonies:cooked_rice"
+  },
+  {
     "item": "minecolonies:cookie_dough"
   },
   {
@@ -998,10 +1013,19 @@
     "item": "minecolonies:eggplant"
   },
   {
+    "item": "minecolonies:eggplant_dolma"
+  },
+  {
     "item": "minecolonies:farmland"
   },
   {
+    "item": "minecolonies:feta_cheese"
+  },
+  {
     "item": "minecolonies:firearrow"
+  },
+  {
+    "item": "minecolonies:flatbread"
   },
   {
     "item": "minecolonies:floodedfarmland"
@@ -1019,6 +1043,9 @@
     "item": "minecolonies:golden_bread"
   },
   {
+    "item": "minecolonies:hand_pie"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1030,7 +1057,19 @@
     "item": "minecolonies:iron_scimitar"
   },
   {
+    "item": "minecolonies:lamb_stew"
+  },
+  {
+    "item": "minecolonies:lembas_scone"
+  },
+  {
     "item": "minecolonies:magicpotion"
+  },
+  {
+    "item": "minecolonies:manchet_bread"
+  },
+  {
+    "item": "minecolonies:manchet_dough"
   },
   {
     "item": "minecolonies:mediumquarry"
@@ -1042,7 +1081,19 @@
     "item": "minecolonies:mistletoe"
   },
   {
+    "item": "minecolonies:muffin"
+  },
+  {
+    "item": "minecolonies:muffin_dough"
+  },
+  {
     "item": "minecolonies:onion"
+  },
+  {
+    "item": "minecolonies:pasta_plain"
+  },
+  {
+    "item": "minecolonies:pasta_tomato"
   },
   {
     "checkednbtkeys": [
@@ -1144,6 +1195,9 @@
     "item": "minecolonies:pirate_top"
   },
   {
+    "item": "minecolonies:pita_hummus"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1188,7 +1242,13 @@
     "item": "minecolonies:plate_armor_legs"
   },
   {
+    "item": "minecolonies:pottage"
+  },
+  {
     "item": "minecolonies:questlog"
+  },
+  {
+    "item": "minecolonies:raw_noodle"
   },
   {
     "item": "minecolonies:raw_pumpkin_pie"
@@ -1198,6 +1258,9 @@
   },
   {
     "item": "minecolonies:rice"
+  },
+  {
+    "item": "minecolonies:rice_ball"
   },
   {
     "checkednbtkeys": [
@@ -1306,6 +1369,15 @@
     "item": "minecolonies:spear"
   },
   {
+    "item": "minecolonies:stew_trencher"
+  },
+  {
+    "item": "minecolonies:stuffed_pepper"
+  },
+  {
+    "item": "minecolonies:stuffed_pita"
+  },
+  {
     "item": "minecolonies:sugary_bread"
   },
   {
@@ -1313,6 +1385,12 @@
   },
   {
     "item": "minecolonies:supplychestdeployer"
+  },
+  {
+    "item": "minecolonies:sushi_roll"
+  },
+  {
+    "item": "minecolonies:tofu"
   },
   {
     "item": "minecolonies:tomato"

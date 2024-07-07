@@ -258,7 +258,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
         if (citizen != null)
         {
-            final IBuilding building = citizen.getCitizenData().getWorkBuilding();
+            final IBuilding building = citizen.getCitizenData().getHomeBuilding();
             if (building != null)
             {
                 return building.canEat(stack);

@@ -128,12 +128,10 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         }
 
         final BlockState aboveState = level.getBlockState(pos.above());
-        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock)
+        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(25) == 0)
         {
-            // if (randomSource.nextInt(25) == 0)
-            {
-                cropBlock.attemptGrow(aboveState, level, pos.above());
-            }
+            // todo balance randomness after evaluating crop yield.
+            cropBlock.attemptGrow(aboveState, level, pos.above());
         }
     }
 

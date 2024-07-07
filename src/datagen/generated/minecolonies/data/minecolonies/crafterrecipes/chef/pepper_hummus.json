@@ -1,27 +1,25 @@
 {
   "type": "recipe",
+  "count": 2,
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:cooked_rice"
+      "item": "minecolonies:bell_pepper"
     },
     {
       "item": "minecolonies:bell_pepper"
     },
     {
-      "item": "minecolonies:tomato"
-    },
-    {
-      "item": "minecraft:carrot"
-    },
-    {
       "item": "minecolonies:garlic"
     },
     {
-      "item": "minecolonies:eggplant"
+      "item": "minecolonies:chickpea"
+    },
+    {
+      "item": "minecolonies:chickpea"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:stuffed_pepper"
+  "result": "minecolonies:pepper_hummus"
 }

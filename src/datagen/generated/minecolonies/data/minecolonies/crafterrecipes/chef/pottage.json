@@ -6,7 +6,16 @@
       "item": "minecolonies:durum"
     },
     {
+      "item": "minecolonies:onion"
+    },
+    {
       "item": "minecraft:bowl"
+    },
+    {
+      "item": "minecraft:potato"
+    },
+    {
+      "item": "minecraft:carrot"
     },
     {
       "item": "minecolonies:garlic"

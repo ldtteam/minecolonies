@@ -1,0 +1,123 @@
+{
+  "name": "Upgrade the Shed!",
+  "max-occurrences": 1,
+  "parents": [
+    "minecolonies:tutorial/housing2"
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:residence",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/housing2"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": { }
+    }
+  ],
+  "triggerOrder": "1 && (2 || 3)",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Hi, I've seen a fancy new residence was just recently completed. The people that live there start becoming a bit more picky with food.",
+      "options": [
+        {
+          "answer": "Uhh, eehh, what doe that mean?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "First, aside from the restaurant you should build a kitchen that is able to cook some of the special dishes and provide them to the restaurant!",
+            "options": [
+              {
+                "answer": "On it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Not right now. I will come back to you later!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I know all about that already!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Excellent. I'll leave you be for now then. Make sure to check on your quest log regularly.",
+            "options": [
+              {
+                "answer": "Noted!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:kitchen",
+        "count-existing": true,
+        "lvl": 1,
+        "qty": 1,
+        "target": 0,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Great, now that the kitchen is finished, make sure that your farmer grows the crops for the recipes. You can obtain the seeds from breaking blocks like grass, fern, bushes, etc! Here, have some Onion and Garlic to get started!",
+      "options": [
+        {
+          "answer": "Thank you. Bye!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:garlic",
+        "qty": 8
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:onion",
+        "qty": 8
+      }
+    }
+  ]
+}
