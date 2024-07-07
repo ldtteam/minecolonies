@@ -18,7 +18,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  */
 public class TileEntityStash extends TileEntityColonyBuilding
 {
-
     /**
      * Constructor of the stash based on a tile entity type
      *
@@ -64,11 +63,10 @@ public class TileEntityStash extends TileEntityColonyBuilding
                 if (colony != null)
                 {
                     final IBuilding building = colony.getBuildingManager().getBuilding(worldPosition);
-                    if (!isEmpty() && building != null)
+                    // Note that createPickupRequest will make sure to only create on request per building.
+                    if (!isEmpty() && building != null && building.createPickupRequest(getPlayerActionPriority(true)))
                     {
                         MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendToClose(getTilePos(), 6, colony.getMessagePlayerEntities());
-                        // Note that createPickupRequest will make sure to only create on request per building.
-                        building.createPickupRequest(getPlayerActionPriority(true));
                     }
                 }
             }
