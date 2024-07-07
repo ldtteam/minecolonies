@@ -17,10 +17,7 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
-import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
+import com.minecolonies.core.colony.buildings.modules.*;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
@@ -181,7 +178,7 @@ public class BuildingCook extends AbstractBuilding
      */
     public boolean getIsCooking()
     {
-        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant.get()).getFirstCitizen();
+        final ICitizenData citizen = this.getModule(BuildingModules.COOKASSISTENT_WORK).getFirstCitizen();
         return citizen != null && isCooking && isCookingTimeout > 0;
     }
 
