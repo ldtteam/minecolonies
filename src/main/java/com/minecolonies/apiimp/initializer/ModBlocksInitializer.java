@@ -121,6 +121,7 @@ public final class ModBlocksInitializer
         ModBlocks.farmland = new MinecoloniesFarmland(FARMLAND, false).registerBlock(registry);
         ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true).registerBlock(registry);
 
+        // Could in the future add alternative versions of these crops that can be planted by the player and grow at a slower rate.
         ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);
         ModBlocks.blockCabbage = new MinecoloniesCropBlock(CABBAGE, ModBlocks.farmland, ModTags.coldBiomes).registerBlock(registry);
         ModBlocks.blockChickpea = new MinecoloniesCropBlock(CHICKPEA, ModBlocks.farmland, ModTags.dryBiomes).registerBlock(registry);
