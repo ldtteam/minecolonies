@@ -59,11 +59,7 @@ public class BuildingModules
      * Item Lists
      */
     public static final BuildingEntry.ModuleProducer<ItemListModule,ItemListModuleView> ITEMLIST_FUEL = new BuildingEntry.ModuleProducer<>(
-      "itemlist_fuel", () -> new ItemListModule(FUEL_LIST).onResetToDefaults(m -> {
-        m.clearItems();
-        m.addItem(new ItemStorage(Items.COAL.getDefaultInstance()));
-        m.addItem(new ItemStorage(Items.CHARCOAL.getDefaultInstance()));
-    }),
+      "itemlist_fuel", () -> new ItemListModule(FUEL_LIST, new ItemStorage(Items.COAL), new ItemStorage(Items.CHARCOAL)),
       () -> () -> new ItemListModuleView(FUEL_LIST,
         RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE,
         false,
