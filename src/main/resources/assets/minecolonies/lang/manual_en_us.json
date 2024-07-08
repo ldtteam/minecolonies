@@ -2597,7 +2597,7 @@
   "death.attack.entity.minecolonies.drownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
   "com.minecolonies.core.exit_interactions": "Exit Interactions",
   "com.minecolonies.core.raidevent.spawnerbreaks": "One of the spawners of the raid misteriously broke, it seems you hit some sort of limit",
-  "com.minecolonies.core.crop.cantplant": "You do not possess the necessary knowledge to place this block. You should ask a Farmer to plant this for you!",
+  "com.minecolonies.core.crop.cantplant": "You do not possess the necessary knowledge to plant this crop. You should ask a Farmer to plant this for you!",
   "com.minecolonies.core.item.crop.tooltip": "Ask a Farmer to plant this for you",
   "com.minecolonies.core.item.crop.tooltip.biome.coldbiomes": "Only suitable for Cold Biomes",
   "com.minecolonies.core.item.crop.tooltip.biome.temperatebiomes": "Only suitable for Temperate Biomes",
