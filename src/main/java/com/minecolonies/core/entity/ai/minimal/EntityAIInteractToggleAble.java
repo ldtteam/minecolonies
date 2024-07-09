@@ -387,7 +387,7 @@ public class EntityAIInteractToggleAble extends Goal
         {
             return;
         }
-        updateTimer = ColonyConstants.rand.nextInt(40 + offSet);
+        updateTimer = ColonyConstants.rand.nextInt(30 - offSet);
 
         if (!checkPath())
         {
