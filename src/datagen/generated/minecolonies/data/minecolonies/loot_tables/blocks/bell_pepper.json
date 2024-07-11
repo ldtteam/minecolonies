@@ -11,7 +11,7 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "block": "minecraft:wheat",
+                  "block": "minecolonies:bell_pepper",
                   "condition": "minecraft:block_state_property",
                   "properties": {
                     "age": "6"
