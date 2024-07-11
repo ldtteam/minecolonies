@@ -163,24 +163,26 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         return plant.getBlock() instanceof IPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, (IPlantable) plant.getBlock());
     }
 
-    private static boolean isNearWater(LevelReader p_53259_, BlockPos p_53260_)
+    private static boolean isNearWater(LevelReader level, BlockPos thisPos)
     {
-        BlockState state = p_53259_.getBlockState(p_53260_);
-        Iterator<BlockPos> iterator = BlockPos.betweenClosed(p_53260_.offset(-4, 0, -4), p_53260_.offset(4, 1, 4)).iterator();
-
-        BlockPos blockpos;
-        do
+        BlockState state = level.getBlockState(thisPos);
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        for (int x = thisPos.getX() -4; x <= thisPos.getX() + 4; x++)
         {
-            if (!iterator.hasNext())
+            for (int z = thisPos.getZ() -4; z <= thisPos.getZ() + 4; z++)
             {
-                return FarmlandWaterManager.hasBlockWaterTicket(p_53259_, p_53260_);
+                for (int y = thisPos.getY() - 1; y <= thisPos.getY(); y++)
+                {
+                    blockPos.set(x,y,z);
+                    if (state.canBeHydrated(level, thisPos, level.getFluidState(blockPos), blockPos))
+                    {
+                        return true;
+                    }
+                }
             }
-
-            blockpos =  iterator.next();
         }
-        while (!state.canBeHydrated(p_53259_, p_53260_, p_53259_.getFluidState(blockpos), blockpos));
 
-        return true;
+        return FarmlandWaterManager.hasBlockWaterTicket(level, thisPos);
     }
 
     @Override
