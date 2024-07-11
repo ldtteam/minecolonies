@@ -2651,7 +2651,8 @@
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
   "com.minecolonies.coremod.entity.citizen.no.food": "I didn't have a decent meal in at least 3 days. The restaurant has a menu of food tiers!",
   "com.minecolonies.core.gui.restaurant.foodquality": "Eaten up to Residence level: %d",
-  "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Reduces happiness when the citizen didn't have at least a tier 2 meal recently",
-  "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Increases happiness when the colonist had a tier 3 meal recently."
-
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Didn't have at least a tier 2 meal recently",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.food": "Food Factor",
+  "com.minecolonies.coremod.gui.townhall.happiness.greatfood": "Food Factor"
 }

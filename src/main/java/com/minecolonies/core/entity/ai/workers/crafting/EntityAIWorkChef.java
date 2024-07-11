@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class EntityAIWorkChef extends AbstractEntityAIRequestSmelter<JobChef, BuildingKitchen>
 {
     /**
-     * Initialize the Cook Assistant.
+     * Initialize the Chef.
      *
      * @param jobChef the job he has.
      */

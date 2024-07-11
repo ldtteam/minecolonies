@@ -12,6 +12,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
@@ -60,8 +61,8 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
 
     private final Block preferredFarmland;
 
-    private final String        blockName;
-    private final TagKey<Biome> preferredBiome;
+    private final ResourceLocation blockId;
+    private final TagKey<Biome>    preferredBiome;
 
     /**
      * Constructor to create a block of this type.
@@ -71,7 +72,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
-        this.blockName = blockName;
+        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
         this.preferredBiome = preferredBiome;
     }
@@ -118,6 +119,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
                 if (i < this.getMaxAge())
                 {
                     level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
+                    BoneMealItem.addGrowthParticles(level, pos, 1);
                 }
             }
         }
@@ -181,7 +183,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     @Override
     public ResourceLocation getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, blockName);
+        return blockId;
     }
 
     @Override

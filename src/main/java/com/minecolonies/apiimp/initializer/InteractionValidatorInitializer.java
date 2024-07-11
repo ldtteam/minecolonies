@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
@@ -174,7 +174,7 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModule(ITEMLIST_FOODEXCLUSION).getList();
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles(citizen.getWorkBuilding().getBuildingLevel() - 1))
             {
                 if (!exclusionList.contains(storage))

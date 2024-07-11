@@ -136,7 +136,6 @@ public class HappinessRegistry
     public static ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
     public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
     public static ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
-    public static ResourceLocation SATURATION_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "saturation");
     public static ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
 
     public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
@@ -150,7 +149,6 @@ public class HappinessRegistry
     public static RegistryObject<HappinessFunctionEntry> schoolFunction;
     public static RegistryObject<HappinessFunctionEntry> securityFunction;
     public static RegistryObject<HappinessFunctionEntry> socialFunction;
-    public static RegistryObject<HappinessFunctionEntry> saturationFunction;
     public static RegistryObject<HappinessFunctionEntry> mysticalSiteFunction;
 
     public static RegistryObject<HappinessFunctionEntry> housingFunction;

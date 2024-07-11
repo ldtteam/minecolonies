@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -23,6 +22,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 
 /**
  * Class of the cook building.
@@ -80,7 +80,7 @@ public class BuildingCook extends AbstractBuilding
      */
     public boolean isAllowedFood(ItemStack stack)
     {
-        ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        ItemListModule listModule = this.getModule(ITEMLIST_FOODEXCLUSION);
         return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
           && !listModule.isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }

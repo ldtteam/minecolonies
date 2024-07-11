@@ -206,6 +206,35 @@ public class EventHandler
                                               .when(EntityInBiomeTag.of(ModTags.temperateBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
+        else if (event.getName().toString().equals("minecraft:blocks/dead_bush"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(EntityInBiomeTag.of(ModTags.dryBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:chests/simple_dungeon"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockOnion)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockEggplant)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockTomato)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockSoyBean)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockRice)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockBellPepper)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockDurum)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f))).build());
+        }
     }
 
     /**

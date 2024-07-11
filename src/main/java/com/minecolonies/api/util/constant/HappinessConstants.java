@@ -1,5 +1,9 @@
 package com.minecolonies.api.util.constant;
 
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Set;
+
 /**
  * Class for happiness constants.
  */
@@ -48,7 +52,6 @@ public final class HappinessConstants
     public static final String MYSTICAL_SITE    = "mysticalsite";
     public static final String SECURITY         = "security";
     public static final String SOCIAL           = "social";
-    public static final String SATURATION       = "saturation";
     public static final String DAMAGE           = "damage";
     public static final String DEATH            = "death";
     public static final String RAIDWITHOUTDEATH = "raidwithoutdeath";
@@ -56,6 +59,22 @@ public final class HappinessConstants
     public static final String QUEST            = "quest";
     public static final String HADDECENTFOOD    = "food";
     public static final String HADGREATFOOD     = "greatfood";
+
+    public static final Set<String> VALID_HAPPINESS_MODIFIERS = ImmutableSet.of(HOMELESSNESS,
+      UNEMPLOYMENT,
+      HEALTH,
+      IDLEATJOB,
+      SCHOOL,
+      MYSTICAL_SITE,
+      SECURITY,
+      SOCIAL,
+      DAMAGE,
+      DEATH,
+      RAIDWITHOUTDEATH,
+      SLEPTTONIGHT,
+      QUEST,
+      HADDECENTFOOD,
+      HADGREATFOOD);
 
     /**
      * Private constructor to hide implicit public one.

@@ -1,35 +1,23 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableSet;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
-import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
-import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +25,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
 
@@ -52,11 +38,6 @@ public class BuildingKitchen extends AbstractBuilding
      * The cook string.
      */
     private static final String KITCHEN_DESC = "kitchen";
-
-    /**
-     * Exclusion list id.
-     */
-    public static final String FOOD_EXCLUSION_LIST = "food";
 
     /**
      * Max building level of the cook.
@@ -162,7 +143,7 @@ public class BuildingKitchen extends AbstractBuilding
         @Nullable
         public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
         {
-            if (building.getBuildingLevel() < 3 || building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
+            if (building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
             {
                 return null;
             }

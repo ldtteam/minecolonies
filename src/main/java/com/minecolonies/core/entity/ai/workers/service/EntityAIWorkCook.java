@@ -41,7 +41,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.FOOD_SERVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FOOD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_COOK_SERVE_PLAYER;
-import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 
 /**
  * Cook AI class.
@@ -131,7 +131,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     {
         //Only return true if the item isn't queued for a recipe.
         return ItemStackUtils.ISCOOKABLE.test(stack)
-                 && !building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST))
+                 && !building.getModule(ITEMLIST_FOODEXCLUSION)
                        .isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
@@ -251,7 +251,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean canEat(final ItemStack stack, final AbstractEntityCitizen citizen)
     {
-        final ItemListModule module = worker.getCitizenData().getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        final ItemListModule module = worker.getCitizenData().getWorkBuilding().getModule(ITEMLIST_FOODEXCLUSION);
         if (module.isItemInList(new ItemStorage(stack)))
         {
             return false;
@@ -376,7 +376,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> blockedItems = new ArrayList<>(building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList());
+        final List<ItemStorage> blockedItems = new ArrayList<>(building.getModule(ITEMLIST_FOODEXCLUSION).getList());
         for (final Map.Entry<ItemStorage, Integer> content : building.getTileEntity().getAllContent().entrySet())
         {
             if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))

@@ -32,9 +32,9 @@ public final class ModCreativeTabs
               output.accept(hut);
           }
 
-          for (final Block hut : ModBlocks.getCrops())
+          for (final Block crop : ModBlocks.getCrops())
           {
-              output.accept(hut);
+              output.accept(crop);
           }
 
           output.accept(ModBlocks.blockScarecrow);

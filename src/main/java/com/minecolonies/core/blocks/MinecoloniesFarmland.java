@@ -31,7 +31,6 @@ import net.minecraft.world.level.gameevent.GameEvent.Context;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.FarmlandWaterManager;
@@ -47,14 +46,14 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     public static final String FLOODED_FARMLAND = "floodedfarmland";
 
     public static final    IntegerProperty MOISTURE     = BlockStateProperties.MOISTURE;
-    protected static final VoxelShape      SHAPE        = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
-    private final String blockName;
+    protected static final VoxelShape SHAPE        = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
+    private final ResourceLocation    blockId;
 
     public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
-        this.blockName = blockName;
+        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
     }
 
@@ -115,7 +114,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         }
 
         int i = state.getValue(MOISTURE);
-        if (!isNearWater(level, pos) && !level.isRainingAt(pos.above()))
+        if (!level.isRainingAt(pos.above()) && !isNearWater(level, pos))
         {
             if (i > 0)
             {
@@ -193,7 +192,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public ResourceLocation getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, blockName);
+        return blockId;
     }
 
     @Override
