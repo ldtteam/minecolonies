@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.core.colony.buildings.moduleviews.ItemListModuleView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +37,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
       final IItemListModuleView moduleView)
     {
         super(res, building, moduleView);
-        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || c.getItemStack().getFoodProperties(null).getNutrition() < building.getBuildingLevel());
+        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || !FoodUtils.canEat(c.getItemStack(), building.getBuildingLevel()));
     }
 
     @Override
@@ -112,7 +113,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
                 }
 
                 PaneBuilders.tooltipBuilder()
-                  .append(Component.translatable(FOOD_QUALITY_TOOLTIP, Math.max(2, Math.min(resource.getFoodProperties(null).getNutrition() - 1, 5))))
+                  .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
                   .hoverPane(gradient)
                   .build();
 

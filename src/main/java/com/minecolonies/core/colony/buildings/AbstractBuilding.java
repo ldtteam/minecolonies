@@ -1152,7 +1152,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return FoodUtils.canEat(stack, this);
+        return FoodUtils.canEat(stack, this.getBuildingLevel());
     }
 
     @Override
