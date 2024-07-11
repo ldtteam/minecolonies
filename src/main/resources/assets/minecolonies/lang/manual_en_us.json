@@ -2649,7 +2649,7 @@
 
   "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
-  "com.minecolonies.coremod.entity.citizen.no.food": "I didn't have a decent meal in at least 3 days. The restaurant has a menu of food tiers!",
+  "com.minecolonies.coremod.entity.citizen.no.food": "I didn't have a decent meal in at least 5 days. The restaurant has a menu of food tiers!",
   "com.minecolonies.core.gui.restaurant.foodquality": "Eaten up to Residence level: %d",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Didn't have at least a tier 2 meal recently",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",

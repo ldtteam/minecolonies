@@ -10,6 +10,8 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -35,8 +37,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
-import static com.minecolonies.api.util.constant.HappinessConstants.HADDECENTFOOD;
-import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD;
+import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
@@ -215,7 +216,7 @@ public class EntityAIEatTask implements IStateAI
         {
             if (foodItem.getTier() == 3)
             {
-                citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADGREATFOOD);
+                citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
             }
             citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
         }

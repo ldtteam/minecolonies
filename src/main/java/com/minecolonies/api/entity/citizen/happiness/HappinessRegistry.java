@@ -144,7 +144,6 @@ public class HappinessRegistry
     public static ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
     public static ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
     public static ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
-    public static ResourceLocation GREAT_FOOD_FUNCTION   = new ResourceLocation(Constants.MOD_ID, "greatfood");
 
     public static RegistryObject<HappinessFunctionEntry> schoolFunction;
     public static RegistryObject<HappinessFunctionEntry> securityFunction;

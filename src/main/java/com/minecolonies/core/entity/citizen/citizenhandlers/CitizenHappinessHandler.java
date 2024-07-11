@@ -77,7 +77,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
 
         addModifier(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), 3, true));
         addModifier(new ExpirationBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), 5, true));
-        addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new DynamicHappinessSupplier(GREAT_FOOD_FUNCTION), 5, false));
     }
 
     /**
