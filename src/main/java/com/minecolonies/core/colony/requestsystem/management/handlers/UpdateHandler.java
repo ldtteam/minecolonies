@@ -18,7 +18,8 @@ public class UpdateHandler implements IUpdateHandler
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
       new InitialUpdate(),
       new ResetRSToStoreJobInResolvers(),
-      new ResetRSToUpdateRestaurantResolver()
+      new ResetRSToUpdateRestaurantResolver(),
+      new ResetRSToRemoveAssistantCookResolver()
     );
 
     private final IStandardRequestManager manager;

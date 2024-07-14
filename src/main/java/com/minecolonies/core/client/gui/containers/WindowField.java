@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
@@ -129,7 +130,9 @@ public class WindowField extends AbstractWindowSkeleton
     {
         new WindowSelectRes(
           this,
-          stack -> stack.is(Tags.Items.SEEDS) || stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock,
+          stack -> stack.is(Tags.Items.SEEDS)
+                     || (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock)
+                     || (stack.getItem() instanceof ItemCrop itemCrop && itemCrop.canBePlantedIn(Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos()))),
           (stack, qty) -> setSeed(stack),
           false).open();
     }

@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smelting",
   "category": "blocks",
-  "cookingtime": 200,
+  "cookingtime": 300,
   "experience": 0.35,
   "ingredient": {
     "item": "minecolonies:cake_batter"

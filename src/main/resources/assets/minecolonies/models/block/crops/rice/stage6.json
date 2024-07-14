@@ -1,0 +1,52 @@
+{
+	"credit": "Made by Imrielle with Blockbench",
+	"parent": "block/cross",
+	"ambientocclusion": false,
+	"textures": {
+		"particle": "minecolonies:block/crops/rice/stage6",
+		"bottom": "minecolonies:block/crops/rice/stage6",
+		"top": "minecolonies:block/crops/rice/stage6t"
+	},
+	"elements": [
+		{
+			"from": [0.8, -3, 8],
+			"to": [15.2, 13, 8],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#bottom"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#bottom"}
+			}
+		},
+		{
+			"from": [0.8, 13, 8],
+			"to": [15.2, 29, 8],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#top"}
+			}
+		},
+		{
+			"from": [8, -3, 0.8],
+			"to": [8, 13, 15.2],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
+			"faces": {
+				"east": {"uv": [0, 0, 16, 16], "texture": "#bottom"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#bottom"}
+			}
+		},
+		{
+			"from": [8, 13, 0.8],
+			"to": [8, 29, 15.2],
+			"shade": false,
+			"rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8], "rescale": true},
+			"faces": {
+				"east": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#top"}
+			}
+		}
+	]
+}
