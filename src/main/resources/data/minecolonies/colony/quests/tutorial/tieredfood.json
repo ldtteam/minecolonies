@@ -38,7 +38,7 @@
       "text": "Hi, I've seen a fancy new residence was just recently completed. The people that live there start becoming a bit more picky with food.",
       "options": [
         {
-          "answer": "Uhh, eehh, what doe that mean?",
+          "answer": "Uhh, eehh, what does that mean?",
           "result": {
             "type": "minecolonies:dialogue",
             "text": "First, aside from the restaurant you should build a Cookery that is able to cook some of the special dishes and provide them to the restaurant!",
