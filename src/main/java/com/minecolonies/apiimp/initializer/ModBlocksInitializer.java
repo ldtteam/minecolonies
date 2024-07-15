@@ -118,8 +118,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
         ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 6, 8).registerBlock(registry);
         ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 6, 5).registerBlock(registry);
-        ModBlocks.farmland = new MinecoloniesFarmland(FARMLAND, false).registerBlock(registry);
-        ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true).registerBlock(registry);
+        ModBlocks.farmland = new MinecoloniesFarmland(FARMLAND, false, 15.0).registerBlock(registry);
+        ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true, 13.0).registerBlock(registry);
 
         // Could in the future add alternative versions of these crops that can be planted by the player and grow at a slower rate.
         ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);

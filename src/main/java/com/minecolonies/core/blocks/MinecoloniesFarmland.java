@@ -1,6 +1,5 @@
 package com.minecolonies.core.blocks;
 
-import java.util.Iterator;
 import javax.annotation.Nullable;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
@@ -46,15 +45,17 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     public static final String FLOODED_FARMLAND = "floodedfarmland";
 
     public static final    IntegerProperty MOISTURE     = BlockStateProperties.MOISTURE;
-    protected static final VoxelShape SHAPE        = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
+    protected final VoxelShape shape;
+
     private final ResourceLocation    blockId;
 
-    public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged)
+    public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
         this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
+        this.shape = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
     }
 
     @NotNull
@@ -100,7 +101,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext ctx)
     {
-        return SHAPE;
+        return shape;
     }
 
 
