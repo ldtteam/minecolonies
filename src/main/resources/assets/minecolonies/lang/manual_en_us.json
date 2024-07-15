@@ -1645,6 +1645,7 @@
   "com.minecolonies.coremod.jei.stonesmeltery": "Smelts various kinds of stone and terracotta.",
   "com.minecolonies.coremod.jei.swineherder": "Just happy with pigs in mud.",
   "com.minecolonies.coremod.jei.netherworker": "Makes periodic trips to the nether to retrieve materials, but it's a very dangerous job, and requires significant supplies.",
+  "com.minecolonies.coremod.jei.chef": "Cooks custom food on demand",
 
   "com.minecolonies.coremod.journeymap.deathpoint_name": "Death: %s",
   "com.minecolonies.coremod.journeymap.deathpoint_namejob": "Death: %s - %s",
