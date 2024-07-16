@@ -232,12 +232,10 @@ public class RecipeStorage implements IRecipeStorage
             items.add(storage);
         }
 
-        final List<ImmutableItemStorage> immutableItems = new ArrayList<>();
         for (final ItemStorage storage : items)
         {
-            immutableItems.add(new ImmutableItemStorage(storage));
+            this.cleanedInput.add(new ImmutableItemStorage(storage));
         }
-        this.cleanedInput.addAll(immutableItems);
     }
 
     @Override
