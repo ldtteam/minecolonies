@@ -3,7 +3,7 @@
   "dimension": "minecraft:the_end",
   "guards": 2,
   "loot-table": "minecolonies:expeditions/expedition_overworld",
-  "name": "Expedition to the End",
+  "name": "com.minecolonies.core.expedition_types.end.name",
   "requirements": [
     {
       "type": "tool",
@@ -45,5 +45,5 @@
       "amount": 32
     }
   ],
-  "to-text": "the End"
+  "to-text": "com.minecolonies.core.expedition_types.end.to_text"
 }

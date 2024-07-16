@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIKnight;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -66,12 +65,6 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
                 AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
-    }
-
-    @Override
-    public ToolType getPreferredWeapon()
-    {
-        return ToolType.SWORD;
     }
 
     @Override

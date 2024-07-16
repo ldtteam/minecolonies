@@ -3,7 +3,7 @@
   "dimension": "minecraft:the_nether",
   "guards": 2,
   "loot-table": "minecolonies:expeditions/expedition_overworld",
-  "name": "Expedition in the The_nether",
+  "name": "com.minecolonies.core.expedition_types.nether.name",
   "requirements": [
     {
       "type": "tool",
@@ -45,5 +45,5 @@
       "amount": 32
     }
   ],
-  "to-text": "the The_nether"
+  "to-text": "com.minecolonies.core.expedition_types.nether.to_text"
 }

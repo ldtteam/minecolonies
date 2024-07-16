@@ -3,7 +3,7 @@
   "dimension": "minecraft:overworld",
   "guards": 1,
   "loot-table": "minecolonies:expeditions/expedition_overworld",
-  "name": "Expedition in the Overworld",
+  "name": "com.minecolonies.core.expedition_types.overworld.name",
   "requirements": [
     {
       "type": "tool",
@@ -45,5 +45,5 @@
       "amount": 32
     }
   ],
-  "to-text": "the Overworld"
+  "to-text": "com.minecolonies.core.expedition_types.overworld.to_text"
 }

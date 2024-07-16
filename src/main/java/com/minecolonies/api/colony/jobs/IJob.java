@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -300,16 +299,6 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
     default boolean isCombatGuard()
     {
         return false;
-    }
-
-    /**
-     * Which tool the guard prefers to use.
-     *
-     * @return the relevant tool type.
-     */
-    default ToolType getPreferredWeapon()
-    {
-        return ToolType.NONE;
     }
 
     /**

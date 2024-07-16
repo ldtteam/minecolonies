@@ -1,7 +1,6 @@
 package com.minecolonies.core.generation;
 
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -21,11 +20,11 @@ public class ExpeditionResourceManager
      * @param structureId the structure id.
      * @return the item builder.
      */
-    public static LootPoolSingletonContainer.Builder<?> createStructureStartItem(final String structureId)
+    public static LootPoolSingletonContainer.Builder<?> createStructureStartItem(final ResourceLocation structureId)
     {
         final CompoundTag structureStart = new CompoundTag();
         structureStart.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START);
-        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, new ResourceLocation(structureId).toString());
+        structureStart.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, structureId.toString());
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureStart));
     }
@@ -36,11 +35,11 @@ public class ExpeditionResourceManager
      * @param structureId the structure id.
      * @return the item builder.
      */
-    public static LootPoolSingletonContainer.Builder<?> createStructureEndItem(final String structureId)
+    public static LootPoolSingletonContainer.Builder<?> createStructureEndItem(final ResourceLocation structureId)
     {
         final CompoundTag structureEnd = new CompoundTag();
         structureEnd.putString(TOKEN_TAG_EXPEDITION_TYPE, TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_END);
-        structureEnd.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, new ResourceLocation(structureId).toString());
+        structureEnd.putString(TOKEN_TAG_EXPEDITION_STRUCTURE, structureId.toString());
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(structureEnd));
     }
@@ -85,27 +84,5 @@ public class ExpeditionResourceManager
         encounter.putBoolean(TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE, scale);
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(encounter));
-    }
-
-    /**
-     * Generate a resource id for an encounter.
-     *
-     * @param id the id of the encounter.
-     * @return the resource id.
-     */
-    public static ResourceLocation getEncounterId(final String id)
-    {
-        return new ResourceLocation(Constants.MOD_ID, id);
-    }
-
-    /**
-     * Generate a resource id for a structure.
-     *
-     * @param id the id of the structure.
-     * @return the resource id.
-     */
-    public static ResourceLocation getStructureId(final String id)
-    {
-        return new ResourceLocation(Constants.MOD_ID, "expeditions/structures/" + id);
     }
 }

@@ -55,6 +55,8 @@ public class DefaultExpeditionTypesProvider implements DataProvider
         final List<ColonyExpeditionTypeBuilder> types = new ArrayList<>();
 
         types.add(new ColonyExpeditionTypeBuilder(OVERWORLD_REGULAR, Level.OVERWORLD, EXPEDITION_OVERWORLD_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.overworld.name")
+                    .setToText("com.minecolonies.core.expedition_types.overworld.to_text")
                     .addToolRequirement(ToolType.SWORD)
                     .addToolRequirement(ToolType.PICKAXE)
                     .addToolRequirement(ToolType.SHOVEL)
@@ -65,6 +67,8 @@ public class DefaultExpeditionTypesProvider implements DataProvider
                     .addFoodRequirement(32));
 
         types.add(new ColonyExpeditionTypeBuilder(NETHER_REGULAR, Level.NETHER, EXPEDITION_OVERWORLD_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.nether.name")
+                    .setToText("com.minecolonies.core.expedition_types.nether.to_text")
                     .setDifficulty(ColonyExpeditionTypeDifficulty.MEDIUM)
                     .addToolRequirement(ToolType.SWORD)
                     .addToolRequirement(ToolType.PICKAXE)
@@ -77,8 +81,8 @@ public class DefaultExpeditionTypesProvider implements DataProvider
                     .setGuards(2));
 
         types.add(new ColonyExpeditionTypeBuilder(END_REGULAR, Level.END, EXPEDITION_OVERWORLD_LOOT)
-                    .setName("Expedition to the End")
-                    .setToText("the End")
+                    .setName("com.minecolonies.core.expedition_types.end.name")
+                    .setToText("com.minecolonies.core.expedition_types.end.to_text")
                     .setDifficulty(ColonyExpeditionTypeDifficulty.HARD)
                     .addToolRequirement(ToolType.SWORD)
                     .addToolRequirement(ToolType.PICKAXE)

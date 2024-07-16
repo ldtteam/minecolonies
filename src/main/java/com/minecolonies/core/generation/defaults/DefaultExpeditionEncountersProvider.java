@@ -27,6 +27,8 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     public static final ResourceLocation ZOMBIE   = new ResourceLocation(Constants.MOD_ID, "zombie");
     public static final ResourceLocation SKELETON = new ResourceLocation(Constants.MOD_ID, "skeleton");
     public static final ResourceLocation CREEPER  = new ResourceLocation(Constants.MOD_ID, "creeper");
+    public static final ResourceLocation ENDERMAN = new ResourceLocation(Constants.MOD_ID, "enderman");
+    public static final ResourceLocation WARDEN   = new ResourceLocation(Constants.MOD_ID, "warden");
 
     /**
      * The pack output path generator.
@@ -53,6 +55,8 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
         types.add(new ExpeditionEncounter(ZOMBIE, EntityType.ZOMBIE, 2.5f, 0, 20, 0, EntityType.ZOMBIE.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(SKELETON, EntityType.SKELETON, 3f, 0, 20, 0, EntityType.SKELETON.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(CREEPER, EntityType.CREEPER, 22f, 20, 20, 0, EntityType.CREEPER.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(ENDERMAN, EntityType.ENDERMAN, 7f, 0, 40, 0, EntityType.ENDERMAN.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(WARDEN, EntityType.WARDEN, 30f, 0, 500, 0, EntityType.WARDEN.getDefaultLootTable(), 5));
 
         return types;
     }
