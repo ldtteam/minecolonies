@@ -4,6 +4,8 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.MinecoloniesFarmland;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -70,6 +72,7 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockMediumQuarry;
     //public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockLargeQuarry;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutKitchen;
 
     /**
      * Utility blocks.
@@ -87,7 +90,20 @@ public final class ModBlocks
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyBanner;
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyWallBanner;
     public static AbstractBlockGate                                                                                 blockIronGate;
-    public static AbstractBlockGate                                                                                 blockWoodenGate;
+    public static AbstractBlockGate    blockWoodenGate;
+    public static MinecoloniesFarmland farmland;
+    public static MinecoloniesFarmland floodedFarmland;
+
+    public static MinecoloniesCropBlock blockBellPepper;
+    public static MinecoloniesCropBlock blockCabbage;
+    public static MinecoloniesCropBlock blockChickpea;
+    public static MinecoloniesCropBlock blockDurum;
+    public static MinecoloniesCropBlock blockEggplant;
+    public static MinecoloniesCropBlock blockGarlic;
+    public static MinecoloniesCropBlock blockOnion;
+    public static MinecoloniesCropBlock blockSoyBean;
+    public static MinecoloniesCropBlock blockTomato;
+    public static MinecoloniesCropBlock blockRice;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -150,9 +166,27 @@ public final class ModBlocks
           blockHutGraveyard,
           blockHutNetherWorker,
           blockHutAlchemist,
+          blockHutKitchen,
           blockSimpleQuarry,
           blockMediumQuarry,
           //blockLargeQuarry
+        };
+    }
+
+    @NotNull
+    public static MinecoloniesCropBlock[] getCrops()
+    {
+        return new MinecoloniesCropBlock[] {
+        blockBellPepper,
+        blockCabbage,
+        blockChickpea,
+        blockDurum,
+        blockEggplant,
+        blockGarlic,
+        blockOnion,
+        blockSoyBean,
+        blockTomato,
+        blockRice,
         };
     }
 }

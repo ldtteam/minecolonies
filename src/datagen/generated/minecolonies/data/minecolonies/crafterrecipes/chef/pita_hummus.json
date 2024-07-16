@@ -1,0 +1,27 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:flatbread"
+    },
+    {
+      "item": "minecolonies:chickpea"
+    },
+    {
+      "item": "minecolonies:chickpea"
+    },
+    {
+      "item": "minecolonies:eggplant"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecolonies:garlic"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:pita_hummus"
+}

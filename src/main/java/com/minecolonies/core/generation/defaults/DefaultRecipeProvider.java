@@ -110,6 +110,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutWareHouse, Tags.Items.CHESTS);
         registerHutRecipe1(consumer, ModBlocks.blockHutNetherWorker, Items.OBSIDIAN);
         registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
+        registerHutRecipe1(consumer, ModBlocks.blockHutKitchen, Items.SMOKER);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutCrusher)
                 .pattern("XTX")
@@ -420,24 +421,34 @@ public class DefaultRecipeProvider extends RecipeProvider
     private void buildFood(@NotNull final Consumer<FinishedRecipe> consumer)
     {
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
-            Items.BREAD, 0.35f, 200)
+            Items.BREAD, 0.35f, 300)
                 .unlockedBy("has_dough", has(ModItems.breadDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", ""));
 
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cakeBatter), RecipeCategory.FOOD,
-                Items.CAKE, 0.35f, 200)
+                Items.CAKE, 0.35f, 300)
                 .unlockedBy("has_dough", has(ModItems.cakeBatter))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", ""));
 
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cookieDough),  RecipeCategory.FOOD,
-                Items.COOKIE, 0.0475f, 200 / 8)
+                Items.COOKIE, 0.0475f, 300 / 8)
                 .unlockedBy("has_dough", has(ModItems.cookieDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", ""));
 
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.rawPumpkinPie),  RecipeCategory.FOOD,
-                Items.PUMPKIN_PIE, 0.35f, 200)
+                Items.PUMPKIN_PIE, 0.35f, 300)
                 .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", ""));
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
+            ModItems.manchet_bread, 0.35f, 300)
+          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", ""));
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
+            ModItems.muffin, 0.35f, 300)
+          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", ""));
 
         SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
             Items.BREAD, 0.35f, 100)
@@ -459,6 +470,16 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", "smoking"));
 
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
+            ModItems.manchet_bread, 0.35f, 100)
+          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", "smoking"));
+
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
+            ModItems.muffin, 0.35f, 100)
+          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", "smoking"));
+
         SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
             Items.BREAD, 0.35f, 600)
           .unlockedBy("has_dough", has(ModItems.breadDough))
@@ -478,6 +499,16 @@ public class DefaultRecipeProvider extends RecipeProvider
             Items.PUMPKIN_PIE, 0.35f, 600)
           .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", "campfire_cooking"));
+
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
+            ModItems.manchet_bread, 0.35f, 600)
+          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", "campfire_cooking"));
+
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
+            ModItems.muffin, 0.35f, 600)
+          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+          .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", "campfire_cooking"));
     }
 
     private void buildOtherItems(@NotNull final Consumer<FinishedRecipe> consumer)

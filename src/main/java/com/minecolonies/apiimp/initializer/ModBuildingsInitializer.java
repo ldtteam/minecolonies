@@ -138,13 +138,9 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
           .addBuildingModuleProducer(COOK_WORK)
-          .addBuildingModuleProducer(COOKASSISTENT_WORK)
-          .addBuildingModuleProducer(COOKASSISTENT_CRAFT)
-          .addBuildingModuleProducer(COOKASSISTENT_SMELT)
           .addBuildingModuleProducer(FURNACE)
           .addBuildingModuleProducer(ITEMLIST_FUEL)
           .addBuildingModuleProducer(ITEMLIST_FOODEXCLUSION)
-          .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .addBuildingModuleProducer(MIN_STOCK)
           .createBuildingEntry());
 
@@ -611,5 +607,19 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(ALCHEMIST_BREW)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .createBuildingEntry());
+
+        ModBuildings.kitchen = DEFERRED_REGISTER.register(ModBuildings.KITCHEN_ID, () -> new BuildingEntry.Builder()
+                                                                                           .setBuildingBlock(ModBlocks.blockHutKitchen)
+                                                                                           .setBuildingProducer(BuildingKitchen::new)
+                                                                                           .setBuildingViewProducer(() -> EmptyView::new)
+                                                                                           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.KITCHEN_ID))
+                                                                                           .addBuildingModuleProducer(MIN_STOCK)
+                                                                                           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
+                                                                                           .addBuildingModuleProducer(CHEF_WORK)
+                                                                                           .addBuildingModuleProducer(CHEF_CRAFT)
+                                                                                           .addBuildingModuleProducer(CHEF_SMELT)
+                                                                                           .addBuildingModuleProducer(FURNACE)
+                                                                                           .addBuildingModuleProducer(ITEMLIST_FUEL)
+                                                                                           .createBuildingEntry());
     }
 }

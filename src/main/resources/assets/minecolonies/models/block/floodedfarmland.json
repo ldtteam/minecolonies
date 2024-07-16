@@ -1,0 +1,23 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+      "dirt": "minecraft:block/dirt",
+      "top": "minecolonies:block/farmland_moist",
+		"particle": "#dirt"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 13, 16],
+			"faces": {
+				"north": {"uv": [0, 3, 16, 16], "texture": "#dirt", "cullface": "north"},
+				"east": {"uv": [0, 3, 16, 16], "texture": "#dirt", "cullface": "east"},
+				"south": {"uv": [0, 3, 16, 16], "texture": "#dirt", "cullface": "south"},
+				"west": {"uv": [0, 3, 16, 16], "texture": "#dirt", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#dirt", "cullface": "down"}
+			}
+		}
+	]
+}

@@ -4,6 +4,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
@@ -59,7 +60,12 @@ public class DynamicHappinessSupplier implements IHappinessSupplierWrapper
     @Override
     public double getValue(final ICitizenData citizenData)
     {
-        lastValue = IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry().getValue(key).getDoubleSupplier().apply(citizenData);
+        HappinessRegistry.HappinessFunctionEntry function = IMinecoloniesAPI.getInstance().getHappinessFunctionRegistry().getValue(key);
+        if (function == null)
+        {
+            return lastValue;
+        }
+        lastValue = function.getDoubleSupplier().apply(citizenData);
         return lastValue;
     }
 

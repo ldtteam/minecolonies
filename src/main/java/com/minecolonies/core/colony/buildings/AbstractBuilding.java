@@ -84,6 +84,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
@@ -149,6 +150,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     protected List<IBuildingModule>                  modules    = new ArrayList<>();
     protected Int2ObjectOpenHashMap<IBuildingModule> modulesMap = new Int2ObjectOpenHashMap<>();
+
+    /**
+     * Day the next pickup should happen.
+     */
+    public int pickUpDay = -1;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -1146,7 +1152,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return stack.getItem().getFoodProperties(stack, null).getNutrition() >= getBuildingLevel();
+        return FoodUtils.canEat(stack, this.getBuildingLevel());
     }
 
     @Override
@@ -1514,12 +1520,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int scaledPriority)
+    public boolean createPickupRequest(final int pickUpPrio)
     {
-        if (scaledPriority < 0 || scaledPriority > getPlayerActionPriority(true))
+        int daysToPickup = 10 - pickUpPrio;
+        if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
+        {
+            pickUpDay = colony.getDay() + daysToPickup;
+        }
+
+        if (colony.getDay() < pickUpDay)
         {
             return false;
         }
+
+        pickUpDay = -1;
 
         final List<IToken<?>> reqs = new ArrayList<>(getOpenRequestsByRequestableType().getOrDefault(TypeConstants.PICKUP, Collections.emptyList()));
         if (!reqs.isEmpty())
@@ -1539,7 +1553,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        createRequest(new Pickup(scaledPriority), true);
+        createRequest(new Pickup(pickUpPrio), true);
         return true;
     }
 

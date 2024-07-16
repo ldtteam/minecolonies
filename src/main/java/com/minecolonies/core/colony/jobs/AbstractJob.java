@@ -5,10 +5,13 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
@@ -16,11 +19,15 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
+import com.minecolonies.core.colony.interactionhandling.RequestBasedInteraction;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +51,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 {
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
     private static final String TAG_ACTIONS_DONE   = "actionsDone";
-    private static final String TAG_WORK_POS   = "workPos";
+    private static final String TAG_WORK_POS = "workPos";
 
     /**
      * Job associated to the abstract job.
@@ -89,7 +96,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     /**
      * The work module we're assigned to
      */
-    protected IAssignsJob workModule =  null;
+    protected IAssignsJob workModule = null;
 
     /**
      * Initialize citizen data.
@@ -153,7 +160,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 
         if (workBuilding != null && workBuilding != module.getBuilding())
         {
-            for(final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
+            for (final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
             {
                 if (oldJobModule.hasAssignedCitizen(citizen))
                 {
@@ -204,9 +211,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
         if (compound.contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Tag.TAG_COMPOUND))
-              .map(StandardFactoryController.getInstance()::deserialize)
-              .map(o -> (IToken<?>) o)
-              .collect(Collectors.toSet()));
+                                        .map(StandardFactoryController.getInstance()::deserialize)
+                                        .map(o -> (IToken<?>) o)
+                                        .collect(Collectors.toSet()));
         }
         if (compound.contains(TAG_ACTIONS_DONE))
         {
@@ -215,7 +222,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 
         if (compound.contains(TAG_WORK_POS))
         {
-            workBuildingPos = BlockPosUtil.read(compound,TAG_WORK_POS);
+            workBuildingPos = BlockPosUtil.read(compound, TAG_WORK_POS);
         }
     }
 
@@ -247,6 +254,14 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     @Override
     public void markRequestSync(final IToken<?> id)
     {
+        final IRequest<?> request = citizen.getColony().getRequestManager().getRequestForToken(id);
+
+        if (request != null)
+        {
+            citizen.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
+              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+        }
+
         asyncRequests.remove(id);
     }
 
@@ -420,7 +435,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
 
         if (workBuilding != null)
         {
-            for(final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
+            for (final IAssignsJob oldJobModule : workBuilding.getModulesByType(IAssignsJob.class))
             {
                 if (oldJobModule.hasAssignedCitizen(citizen))
                 {

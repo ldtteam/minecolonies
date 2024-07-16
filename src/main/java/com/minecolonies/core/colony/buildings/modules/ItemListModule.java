@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed/blocked items.
@@ -33,14 +32,14 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     private ImmutableList<ItemStorage> itemsAllowed = ImmutableList.of();
 
     /**
+     * List of default allowed items.
+     */
+    private ImmutableList<ItemStorage> defaultValues = ImmutableList.of();
+
+    /**
      * Unique id of this module.
      */
     private final String id;
-
-    /**
-     * Action to take when resetting to defaults.
-     */
-    private Consumer<ItemListModule> resetToDefaultsAction;
 
     /**
      * Construct a new grouped itemlist module with the unique list identifier.
@@ -50,20 +49,17 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     {
         super();
         this.id = id;
-        this.resetToDefaultsAction = ItemListModule::clearItems;
     }
 
     /**
-     * Change the action taken when resetting the list to defaults.
-     * (Intended to be called as a fluent builder.)
-     *
-     * @param action The action.
+     * Construct a new grouped itemlist module with the unique list identifier and default values.
+     * @param id the list id.
+     * @param defaultStacks the default values.
      */
-    public ItemListModule onResetToDefaults(final Consumer<ItemListModule> action)
+    public ItemListModule(final String id, final ItemStorage...defaultStacks)
     {
-        this.resetToDefaultsAction = action;
-        resetToDefaults();      // also actually call it for first-build
-        return this;
+        this(id);
+        defaultValues = ImmutableList.copyOf(defaultStacks);
     }
 
     @Override
@@ -144,7 +140,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     @Override
     public void resetToDefaults()
     {
-        this.resetToDefaultsAction.accept(this);
+        this.itemsAllowed = ImmutableList.copyOf(defaultValues);
     }
 
     @Override

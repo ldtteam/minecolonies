@@ -52,7 +52,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         addModifier(new StaticHappinessModifier(SCHOOL, 1.0, new DynamicHappinessSupplier(SCHOOL_FUNCTION)));
         addModifier(new StaticHappinessModifier(SECURITY, 4.0, new DynamicHappinessSupplier(SECURITY_FUNCTION)));
         addModifier(new StaticHappinessModifier(SOCIAL, 2.0, new DynamicHappinessSupplier(SOCIAL_FUNCTION)));
-        addModifier(new StaticHappinessModifier(SATURATION, 2.0, new DynamicHappinessSupplier(SATURATION_FUNCTION)));
         addModifier(new StaticHappinessModifier(MYSTICAL_SITE, 1.0, new DynamicHappinessSupplier(MYSTICAL_SITE_FUNCTION)));
 
         // Add time based modifiers. These modifiers change their value over time.
@@ -77,6 +76,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
         addModifier(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), 3, true));
+        addModifier(new ExpirationBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), 5, true));
     }
 
     /**
@@ -170,7 +170,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 {
                     happinessFactors.get(id).read(compoundTag);
                 }
-                else
+                else if (VALID_HAPPINESS_MODIFIERS.contains(id))
                 {
                     final IHappinessModifier modifier = HappinessRegistry.loadFrom(compoundTag);
                     if (modifier != null)
