@@ -358,9 +358,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos findHoeableSurface(@NotNull BlockPos position, @NotNull final FarmField farmField)
     {
         position = getSurfacePos(position);
+        if (position == null)
+        {
+            return null;
+        }
         final BlockState blockState = world.getBlockState(position);
-        if (position == null
-              || farmField.isNoPartOfField(world, position)
+        if (farmField.isNoPartOfField(world, position)
               || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
               || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
               || (!blockState.is(BlockTags.DIRT) && !(blockState.getBlock() instanceof MinecoloniesFarmland) && !(blockState.getBlock() instanceof FarmBlock))
