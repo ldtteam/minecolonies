@@ -252,14 +252,14 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void calculateTools()
     {
-        for (int index = 0; index < this.cleanedInput.size(); index++)
+        for (int index = 0; index < cleanedInput.size(); index++)
         {
-            final ItemStorage item = this.cleanedInput.get(index);
+            final ItemStorage item = cleanedInput.get(index);
             for (ItemStack result : getSecondaryOutputs())
             {
                 if (ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageableItem())
                 {
-                    this.cleanedInput.set(index, new ImmutableItemStorage(new ItemStorage(item.getItemStack(), item.getAmount(), true)));
+                    cleanedInput.set(index, new ImmutableItemStorage(new ItemStorage(item.getItemStack(), item.getAmount(), true)));
                     tools.add(result);
                     secondaryOutputs.remove(result);
                     break;
