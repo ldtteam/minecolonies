@@ -198,7 +198,7 @@ public class RecipeStorage implements IRecipeStorage
             }
 
             final ItemStack container = inputItem.getItemStack().getCraftingRemainingItem();
-            if (!ItemStackUtils.isEmpty(container))
+            if (secOutputs != null && !ItemStackUtils.isEmpty(container))
             {
                 container.setCount(inputItem.getAmount());
                 this.secondaryOutputs.add(container);
