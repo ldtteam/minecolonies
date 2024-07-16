@@ -25,7 +25,7 @@ public class ItemStorage
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    protected final boolean shouldIgnoreDamageValue;
+    protected boolean shouldIgnoreDamageValue;
 
     /**
      * Set this to ignore the damage value in comparisons.
@@ -321,5 +321,14 @@ public class ItemStorage
     public ImmutableItemStorage toImmutable()
     {
         return new ImmutableItemStorage(this);
+    }
+
+    /**
+     * Alter damage value ignoring.
+     * @param ignoreDamageValue true if so.
+     */
+    public void setIgnoreDamageValue(final boolean ignoreDamageValue)
+    {
+        this.shouldIgnoreDamageValue = ignoreDamageValue;
     }
 }
