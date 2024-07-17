@@ -1,13 +1,11 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
@@ -101,14 +99,6 @@ public class BuildingKitchen extends AbstractBuilding
             return ItemStackUtils.CAN_EAT.test(output)
                     || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
                     .getSmeltingResult(output));
-        }
-
-        @Override
-        public Set<CraftingType> getSupportedCraftingTypes()
-        {
-            return (building == null || building.getBuildingLevel() >= 3)
-                    ? super.getSupportedCraftingTypes()
-                    : ImmutableSet.of();
         }
     }
 
