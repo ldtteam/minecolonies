@@ -1645,6 +1645,7 @@
   "com.minecolonies.coremod.jei.stonesmeltery": "Smelts various kinds of stone and terracotta.",
   "com.minecolonies.coremod.jei.swineherder": "Just happy with pigs in mud.",
   "com.minecolonies.coremod.jei.netherworker": "Makes periodic trips to the nether to retrieve materials, but it's a very dangerous job, and requires significant supplies.",
+  "com.minecolonies.coremod.jei.chef": "Cooks custom food on demand",
 
   "com.minecolonies.coremod.journeymap.deathpoint_name": "Death: %s",
   "com.minecolonies.coremod.journeymap.deathpoint_namejob": "Death: %s - %s",
@@ -2654,5 +2655,6 @@
   "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Didn't have at least a tier 2 meal recently",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",
   "com.minecolonies.coremod.gui.townhall.happiness.food": "Food Factor",
-  "com.minecolonies.coremod.gui.townhall.happiness.greatfood": "Food Factor"
+  "com.minecolonies.coremod.gui.townhall.happiness.greatfood": "Food Factor",
+  "death.attack.nether": "%s succumbed to the depths of the nether."
 }
