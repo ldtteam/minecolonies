@@ -125,7 +125,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
     public BlockPos getSize()
     {
         final Blueprint blueprint = originalHandler.getBluePrint();
-        return new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeY());
+        return new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
     }
 
     @Override
