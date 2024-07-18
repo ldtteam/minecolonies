@@ -585,7 +585,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param handler
      * @return
      */
-    private boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    protected boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
         if (info.getBlockInfo().getState().getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get())
         {
