@@ -186,7 +186,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         if (bEntity1 instanceof TileEntityRack)
         {
             // ignore buildings/graves since for some weird reason they're also rack entities
-            if (bEntity2 instanceof TileEntityRack && !neighbourState.hasProperty(VARIANT))
+            if (!neighbourState.hasProperty(VARIANT))
             {
                 bEntity2 = null;
             }
