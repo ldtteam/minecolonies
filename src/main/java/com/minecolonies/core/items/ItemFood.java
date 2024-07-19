@@ -44,7 +44,8 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.FOOD_TOOLTIP + "." + this.producer));
+        tooltip.add(Component.translatable(TranslationConstants.FOOD_TOOLTIP + this.producer));
+        tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
     }
 
     @Override

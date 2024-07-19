@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
@@ -17,7 +18,12 @@ public class FoodUtils
      */
     public static boolean canEat(final ItemStack stack, final int buildingLevel)
     {
-        return buildingLevel < 3 || stack.getItem().getFoodProperties(stack, null).getNutrition() >= buildingLevel + 1;
+        if (buildingLevel < 3)
+        {
+            return stack.getItem().getFoodProperties(stack, null) != null;
+        }
+        final FoodProperties foodProperties = stack.getItem().getFoodProperties(stack, null);
+        return foodProperties != null && stack.getItem().getFoodProperties(stack, null).getNutrition() >= buildingLevel + 1;
     }
 
     /**

@@ -261,8 +261,10 @@ public class InteractionValidatorInitializer
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD),
-          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0);
+          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingKitchen) != null);
 
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD + NOKITCHEN),
+          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingKitchen) == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper
