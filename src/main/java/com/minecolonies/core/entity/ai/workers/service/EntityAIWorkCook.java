@@ -397,7 +397,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     return null;
                 }
             }
-            return new Food(STACKSIZE, blockedItems, building.getBuildingLevel() - 1);
+            return new Food(STACKSIZE, blockedItems, building.getBuildingLevel());
         }
         return new Food(STACKSIZE, building.getBuildingLevel());
     }
