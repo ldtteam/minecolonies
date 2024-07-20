@@ -162,7 +162,7 @@ public class EventHandler
                                               .when(EntityInBiomeTag.of(ModTags.humidBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().toString().equals("minecraft:blocks/sugarcane"))
+        else if (event.getName().toString().equals("minecraft:blocks/sugar_cane"))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockRice)
