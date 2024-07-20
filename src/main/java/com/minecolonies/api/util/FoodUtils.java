@@ -23,7 +23,7 @@ public class FoodUtils
             return stack.getItem().getFoodProperties(stack, null) != null;
         }
         final FoodProperties foodProperties = stack.getItem().getFoodProperties(stack, null);
-        return foodProperties != null && stack.getItem().getFoodProperties(stack, null).getNutrition() >= buildingLevel + 1;
+        return foodProperties != null && foodProperties.getNutrition() >= buildingLevel + 1;
     }
 
     /**
