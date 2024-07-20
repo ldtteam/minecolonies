@@ -3,7 +3,10 @@ package com.minecolonies.core.event;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -12,7 +15,6 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.util.*;
@@ -39,10 +41,8 @@ import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
 import com.minecolonies.core.network.messages.client.UpdateChunkRangeCapabilityMessage;
-import com.minecolonies.api.util.ChunkCapData;
 import com.minecolonies.core.util.ChunkClientDataHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -60,7 +60,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -70,13 +69,9 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
-import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -150,7 +145,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onLootTableLoad(@NotNull final LootTableLoadEvent event)
     {
-        if (event.getName().toString().equals("minecraft:blocks/fern"))
+        if (event.getName().equals(Blocks.FERN.getLootTable()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockCabbage)
@@ -162,21 +157,21 @@ public class EventHandler
                                               .when(EntityInBiomeTag.of(ModTags.humidBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().toString().equals("minecraft:blocks/sugar_cane"))
+        else if (event.getName().equals(Blocks.SUGAR_CANE.getLootTable()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockRice)
                                               .when(EntityInBiomeTag.of(ModTags.humidBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().toString().equals("minecraft:blocks/dead_bush"))
+        else if (event.getName().equals(Blocks.DEAD_BUSH.getLootTable()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
                                               .when(EntityInBiomeTag.of(ModTags.dryBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().toString().equals("minecraft:blocks/grass"))
+        else if (event.getName().equals(Blocks.GRASS.getLootTable()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
@@ -206,14 +201,7 @@ public class EventHandler
                                               .when(EntityInBiomeTag.of(ModTags.temperateBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().toString().equals("minecraft:blocks/dead_bush"))
-        {
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                              .when(EntityInBiomeTag.of(ModTags.dryBiomes))
-                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
-        }
-        else if (event.getName().toString().equals("minecraft:chests/simple_dungeon"))
+        else if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
