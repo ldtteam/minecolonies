@@ -2650,7 +2650,12 @@
 
   "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
-  "com.minecolonies.coremod.entity.citizen.no.food": "I didn't have a decent meal in at least 5 days. The restaurant has a menu of food tiers!",
+  "com.minecolonies.coremod.entity.citizen.no.food": "I haven't had a decent meal in at least a week. If you're not sure what kind of food I'd like to eat, verify the food list in the restaurant for the appropriate food tiers!",
+  "com.minecolonies.coremod.entity.citizen.no.food.nokitchen": "I haven't had a decent meal in at least a week. If you're not sure what kind of food I'd like to eat, verify the food list in the restaurant for the appropriate food tiers! The assistant cook demanded their own kitchen, so you might need to build a Cookery to produce these sophisticated meals!",
+  "com.minecolonies.core.item.food.tooltip.tier.1": "This food is somewhat acceptable for your citizens.",
+  "com.minecolonies.core.item.food.tooltip.tier.2": "This food will keep your citizens satisfied.",
+  "com.minecolonies.core.item.food.tooltip.tier.3": "This food will make your citizens happy for sure!",
+
   "com.minecolonies.core.gui.restaurant.foodquality": "Eaten up to Residence level: %d",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Didn't have at least a tier 2 meal recently",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",
