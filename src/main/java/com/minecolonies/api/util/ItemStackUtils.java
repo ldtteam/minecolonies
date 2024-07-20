@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -111,7 +112,7 @@ public final class ItemStackUtils
       {
           final FoodProperties foodProperties = stack.isEdible() ? stack.getFoodProperties(null) : null;
           return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.getNutrition() > 0
-                     && foodProperties.getSaturationModifier() > 0;
+                     && foodProperties.getSaturationModifier() > 0 && !stack.is(ModTags.excludedFood);
       };
 
     /**
