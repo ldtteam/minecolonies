@@ -9,7 +9,6 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
@@ -49,7 +48,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -1118,12 +1116,8 @@ public final class ItemStackUtils
     public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
         ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
-        final int housingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
-        final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : (1.0 / (housingLevel + 1));
-
-        final double satIncrease = itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION)) * saturationNerf;
+        final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
 
         citizenData.increaseSaturation(satIncrease / 2.0);
 
