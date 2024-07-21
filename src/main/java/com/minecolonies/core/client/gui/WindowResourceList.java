@@ -108,7 +108,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             resource.setAmountInDelivery(0);
             for (final Delivery delivery : deliveries)
             {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, false))
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true))
                 {
                     resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
                 }
