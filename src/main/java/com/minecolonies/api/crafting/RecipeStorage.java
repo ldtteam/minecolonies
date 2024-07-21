@@ -190,8 +190,9 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         final List<ItemStorage> items = new ArrayList<>();
-        for (final ItemStorage inputItem : input)
+        for (final ItemStorage input : input)
         {
+            ItemStorage inputItem = input;
             if (inputItem.isEmpty() || inputItem.getItem() == ModItems.buildTool.get())
             {
                 continue;
@@ -204,11 +205,11 @@ public class RecipeStorage implements IRecipeStorage
                 this.secondaryOutputs.add(container);
             }
 
-            for(ItemStack result: this.secondaryOutputs)
+            for (ItemStack result : this.secondaryOutputs)
             {
-                if(ItemStackUtils.compareItemStacksIgnoreStackSize(inputItem.getItemStack(), result, false, true) && result.isDamageableItem())
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(inputItem.getItemStack(), result, false, true) && result.isDamageableItem())
                 {
-                    inputItem.setIgnoreDamageValue(true);
+                    inputItem = new ItemStorage(inputItem.getItemStack(), inputItem.getAmount(), true, inputItem.shouldIgnoreNBTValue);
                     this.tools.add(result);
                     this.secondaryOutputs.remove(result);
                     break;

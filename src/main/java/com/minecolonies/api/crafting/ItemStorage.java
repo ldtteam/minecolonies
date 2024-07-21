@@ -25,7 +25,7 @@ public class ItemStorage
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    protected boolean shouldIgnoreDamageValue;
+    protected final boolean shouldIgnoreDamageValue;
 
     /**
      * Set this to ignore the damage value in comparisons.
@@ -49,6 +49,22 @@ public class ItemStorage
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
+        this.amount = amount;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param stack             the stack.
+     * @param amount            the amount.
+     * @param ignoreDamageValue should the damage value be ignored?
+     * @param ignoreNBTValue    should the nbt value be ignored?
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue, final boolean ignoreNBTValue)
+    {
+        this.stack = stack;
+        this.shouldIgnoreDamageValue = ignoreDamageValue;
+        this.shouldIgnoreNBTValue = ignoreNBTValue;
         this.amount = amount;
     }
 
@@ -321,14 +337,5 @@ public class ItemStorage
     public ImmutableItemStorage toImmutable()
     {
         return new ImmutableItemStorage(this);
-    }
-
-    /**
-     * Alter damage value ignoring.
-     * @param ignoreDamageValue true if so.
-     */
-    public void setIgnoreDamageValue(final boolean ignoreDamageValue)
-    {
-        this.shouldIgnoreDamageValue = ignoreDamageValue;
     }
 }
