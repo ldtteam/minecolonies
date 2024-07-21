@@ -203,10 +203,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
-                    if (stack.isEdible())
-                    {
-                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFoodProperties(stack, worker).getNutrition() / 2.0);
-                    }
+                    citizenToServe.get(0).getCitizenData().increaseSaturation(FoodUtils.getFoodValue(stack, worker));
                     worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED, worker.getCitizenColonyHandler().getColony().getDay());
                 }
             }
