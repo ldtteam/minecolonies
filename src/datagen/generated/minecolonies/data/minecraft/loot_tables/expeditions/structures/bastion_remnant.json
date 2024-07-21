@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:ancient_city\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:bastion_remnant\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -17,16 +17,21 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 2.0,
+      "bonus_rolls": 3.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:coal",
+          "name": "minecraft:arrow",
           "weight": 200
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:book",
+          "name": "minecraft:iron_ingot",
+          "weight": 200
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
           "weight": 200
         },
         {
@@ -86,12 +91,6 @@
         },
         {
           "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "hard"
-            }
-          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",
@@ -99,30 +98,13 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "nightmare"
-            }
-          ],
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:warden\",scale:1b,type:\"encounter\"}"
-            }
-          ],
-          "name": "minecolonies:adventure_token",
-          "weight": 20
+          "weight": 3
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 5.0,
-        "min": 2.0
+        "max": 10.0,
+        "min": 5.0
       }
     },
     {
@@ -133,7 +115,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:ancient_city\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:bastion_remnant\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -142,5 +124,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:expeditions/structures/ancient_city"
+  "random_sequence": "minecraft:expeditions/structures/bastion_remnant"
 }

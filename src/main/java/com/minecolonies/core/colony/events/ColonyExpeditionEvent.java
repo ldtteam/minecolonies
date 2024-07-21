@@ -43,7 +43,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -56,6 +55,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
+import static com.minecolonies.core.loot.ExpeditionDifficultyCondition.PARAM_EXPEDITION_DIFFICULTY;
 
 /**
  * Event class for simulating colony expeditions.
@@ -73,6 +73,11 @@ public class ColonyExpeditionEvent implements IColonyEvent
     public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER            = "encounter";
     public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER_AMOUNT     = "amount";
     public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE      = "scale";
+
+    /**
+     * The difficulty loot param.
+     */
+    public static final ResourceLocation LOOT_DIFFICULTY_PARAM = new ResourceLocation(Constants.MOD_ID, "difficulty");
 
     /**
      * The event ID.
@@ -664,10 +669,11 @@ public class ColonyExpeditionEvent implements IColonyEvent
      */
     private List<ItemStack> processLootTable(final ResourceLocation lootTableId, final ColonyExpeditionType expeditionType)
     {
-        final LootParams lootParams =
-          new Builder((ServerLevel) colony.getWorld()).withLuck(expeditionType.difficulty().getLuckLevel()).create(LootContextParamSet.builder().build());
+        final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
+                                        .withLuck(expeditionType.difficulty().getLuckLevel())
+                                        .withParameter(PARAM_EXPEDITION_DIFFICULTY, expeditionType.difficulty())
+                                        .create(LootContextParamSet.builder().build());
 
-        final LootTable lootTable = colony.getWorld().getServer().getLootData().getLootTable(lootTableId);
-        return lootTable.getRandomItems(lootParams);
+        return colony.getWorld().getServer().getLootData().getLootTable(lootTableId).getRandomItems(lootParams);
     }
 }
