@@ -661,6 +661,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return;
         }
 
+        final Set<ItemStorage> tempDuplicates = new HashSet<>();
         final Set<ItemStorage> tempFlowers = new HashSet<>();
 
         final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(level.enabledFeatures(), false, level.registryAccess());
@@ -672,7 +673,7 @@ public class CompatibilityManager implements ICompatibilityManager
             final Object2IntLinkedOpenHashMap<Item> mapping = new Object2IntLinkedOpenHashMap<>();
             for (final ItemStack item : stacks)
             {
-                if (mapping.addTo(item.getItem(), 1) > MAX_DEPTH)
+                if (!tempDuplicates.add(new ItemStorage(item)) || mapping.addTo(item.getItem(), 1) > MAX_DEPTH)
                 {
                     continue;
                 }

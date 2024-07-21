@@ -9,6 +9,8 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -32,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -318,7 +321,11 @@ public class CraftingTagAuditor
                                     @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
-        writer.write(",nutrition,maxlevel");
+        writer.write(",nutrition,maxlevel,tier");
+        for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
+        {
+            writer.write(",actual" + level);
+        }
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
@@ -333,10 +340,17 @@ public class CraftingTagAuditor
             writer.write(',');
             writer.write(Integer.toString(properties.getNutrition()));
             writer.write(',');
-
-            // minNutrition = getBuildingLevel() - 1
-            // maxLevel     = getNutrition()     + 1
-            writer.write(Integer.toString(Math.min(5, properties.getNutrition() + 1)));
+            writer.write(Integer.toString(FoodUtils.getBuildingLevelForFood(item)));
+            writer.write(',');
+            if (item.getItem() instanceof final IMinecoloniesFoodItem mcolFood)
+            {
+                writer.write(Integer.toString(mcolFood.getTier()));
+            }
+            for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
+            {
+                writer.write(',');
+                writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, level, 0)));
+            }
 
             writer.newLine();
         }
