@@ -484,7 +484,6 @@ public class PermissionsMessage
             final Player player = ctxIn.getSender();
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
             {
-                Log.getLogger().error(rank.getName());
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());
             }
         }
