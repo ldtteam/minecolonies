@@ -175,7 +175,8 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
       @NotNull final BlockPos neighbourPos)
     {
         final BlockEntity bEntity1 = level.getBlockEntity(pos);
-        final BlockEntity bEntity2 = level.getBlockEntity(neighbourPos);
+        // ignore buildings/graves since for some weird reason they're also rack entities
+        final BlockEntity bEntity2 = neighbourState.hasProperty(VARIANT) ? level.getBlockEntity(neighbourPos) : null;
 
         if (pos.subtract(neighbourPos).getY() != 0)
         {
@@ -183,20 +184,20 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         }
 
         // Is this a double chest and our connection is being removed.
-        if (bEntity1 instanceof TileEntityRack)
+        if (bEntity1 instanceof final TileEntityRack myRack)
         {
-            if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
+            if (!(bEntity2 instanceof TileEntityRack) && state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
             {
                 // Reset to single
                 return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
             // If its not a double variant and the new neighbor is neither, then connect.
-            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && neighbourState.hasProperty(VARIANT) && neighbourState.getValue(VARIANT)
+            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && neighbourState.getValue(VARIANT)
               .isDoubleVariant() && neighbourState.getValue(FACING).equals(BY_NORMAL.get(((neighbourPos.subtract(pos)).asLong())).getOpposite()))
             {
                 if (neighbourState.getValue(VARIANT) == RackType.EMPTYAIR)
                 {
-                    return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE)
+                    return state.setValue(VARIANT, myRack.isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE)
                       .setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
                 }
                 else
