@@ -7,6 +7,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -87,7 +88,7 @@ public final class ItemStackUtils
      */
     public static final Predicate<ItemStack> ISFOOD =
       stack -> ItemStackUtils.isNotEmpty(stack) && stack.isEdible() && stack.getItem().getFoodProperties() != null && stack.getItem().getFoodProperties().getNutrition() > 0
-                 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
+                 && stack.getItem().getFoodProperties().getSaturationModifier() > 0 && !stack.is(ModTags.excludedFood);
 
     /**
      * Predicate describing things which work in the furnace.
