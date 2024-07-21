@@ -8,12 +8,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -100,7 +100,7 @@ public final class ItemStackUtils
      */
     public static final Predicate<ItemStack> ISFOOD =
       stack -> ItemStackUtils.isNotEmpty(stack) && stack.isEdible() && stack.getFoodProperties(null) != null && stack.getFoodProperties(null).getNutrition() > 0
-                 && stack.getFoodProperties(null).getSaturationModifier() > 0;
+                 && stack.getFoodProperties(null).getSaturationModifier() > 0 && !stack.is(ModTags.excludedFood);
 
     /**
      * Predicate describing things which work in the furnace.
