@@ -22,53 +22,91 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:coal",
-          "weight": 200
+          "weight": 100
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:book",
-          "weight": 200
+          "weight": 100
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:name_tag",
-          "quality": 1,
           "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:lead",
-          "quality": 1,
+          "quality": 5,
           "weight": 50
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_leggings",
+          "quality": 5,
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:experience_bottle",
-          "quality": 1,
+          "quality": 5,
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sculk",
           "weight": 40
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:sculk_sensor",
-          "quality": 1,
+          "quality": 5,
           "weight": 30
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:sculk_catalyst",
-          "quality": 1,
-          "weight": 25
+          "quality": 10,
+          "weight": 20
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:iron_leggings",
-          "quality": 2,
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
           "name": "minecraft:diamond_leggings",
-          "quality": 2,
+          "quality": 10,
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_golden_apple",
+          "quality": 5,
           "weight": 5
         },
         {
@@ -142,5 +180,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:expeditions/structures/ancient_city"
+  "random_sequence": "minecolonies:expeditions/structures/ancient_city"
 }

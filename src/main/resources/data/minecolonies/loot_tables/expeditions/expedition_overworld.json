@@ -11,7 +11,7 @@
       ]
     },
     {
-      "rolls": 1.0,
+      "rolls": 2.0,
       "entries" : [
         {
           "type": "loot_table",

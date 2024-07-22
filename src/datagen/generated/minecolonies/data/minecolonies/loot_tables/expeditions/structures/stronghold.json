@@ -91,5 +91,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:expeditions/structures/stronghold"
+  "random_sequence": "minecolonies:expeditions/structures/stronghold"
 }

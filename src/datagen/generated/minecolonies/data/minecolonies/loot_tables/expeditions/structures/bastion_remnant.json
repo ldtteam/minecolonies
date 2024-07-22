@@ -22,71 +22,67 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:arrow",
-          "weight": 200
+          "weight": 150
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:string",
+          "weight": 150
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:iron_ingot",
-          "weight": 200
+          "weight": 100
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:gold_ingot",
-          "weight": 200
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:name_tag",
-          "quality": 1,
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:lead",
-          "quality": 1,
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:experience_bottle",
-          "quality": 1,
-          "weight": 40
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk_sensor",
-          "quality": 1,
-          "weight": 30
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk_catalyst",
-          "quality": 1,
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:iron_leggings",
-          "quality": 2,
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:diamond_leggings",
-          "quality": 2,
-          "weight": 5
+          "weight": 100
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:enchant_with_levels",
-              "levels": 3.0,
-              "treasure": false
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
             }
           ],
-          "name": "minecraft:enchanted_book",
-          "quality": 2,
+          "name": "minecraft:crossbow",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_block",
+          "quality": 5,
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:spectral_arrow",
+          "quality": 5,
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crying_obsidian",
+          "quality": 5,
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gilded_blackstone",
+          "quality": 10,
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_upgrade_smithing_template",
+          "quality": 5,
           "weight": 5
         },
         {
@@ -94,11 +90,35 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:warden\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:piglin\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 3
+          "weight": 150
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:piglin_brute\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -10,
+          "weight": 150
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:hoglin\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -10,
+          "weight": 100
         }
       ],
       "rolls": {
@@ -124,5 +144,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecraft:expeditions/structures/bastion_remnant"
+  "random_sequence": "minecolonies:expeditions/structures/bastion_remnant"
 }

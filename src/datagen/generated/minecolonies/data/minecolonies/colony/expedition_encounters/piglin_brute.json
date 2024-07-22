@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 13.0,
+  "entity-type": "minecraft:piglin_brute",
+  "health": 50.0,
+  "loot-table": "minecraft:entities/piglin_brute",
+  "reflect": 0.0,
+  "xp": 20.0
+}

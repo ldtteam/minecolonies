@@ -3,6 +3,10 @@ package com.minecolonies.core.generation;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
@@ -84,5 +88,18 @@ public class ExpeditionResourceManager
         encounter.putBoolean(TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE, scale);
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(encounter));
+    }
+
+    /**
+     * Create a potion loot item.
+     *
+     * @param potion the potion type.
+     * @return the item builder.
+     */
+    public static LootPoolSingletonContainer.Builder<?> createPotionItem(final Potion potion)
+    {
+        final ItemStack stack = new ItemStack(Items.POTION);
+        PotionUtils.setPotion(stack, potion);
+        return LootItem.lootTableItem(Items.POTION).apply(SetNbtFunction.setTag(stack.getTag()));
     }
 }

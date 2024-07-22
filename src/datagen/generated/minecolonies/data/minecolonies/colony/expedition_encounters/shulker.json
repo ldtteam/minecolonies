@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 4.0,
+  "entity-type": "minecraft:shulker",
+  "health": 30.0,
+  "loot-table": "minecraft:entities/shulker",
+  "reflect": 0.0,
+  "xp": 5.0
+}

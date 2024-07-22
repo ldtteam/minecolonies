@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 4.0,
+  "entity-type": "minecraft:magma_cube",
+  "health": 4.0,
+  "loot-table": "minecraft:entities/magma_cube",
+  "reflect": 0.0,
+  "xp": 2.0
+}

@@ -75,11 +75,6 @@ public class ColonyExpeditionEvent implements IColonyEvent
     public static final String TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE      = "scale";
 
     /**
-     * The difficulty loot param.
-     */
-    public static final ResourceLocation LOOT_DIFFICULTY_PARAM = new ResourceLocation(Constants.MOD_ID, "difficulty");
-
-    /**
      * The event ID.
      */
     public static final ResourceLocation COLONY_EXPEDITION_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "colony_expedition");
