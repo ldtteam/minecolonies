@@ -40,6 +40,9 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     public static final ResourceLocation MAGMA_CUBE_LARGE  = new ResourceLocation(Constants.MOD_ID, "magma_cube_large");
     public static final ResourceLocation WITHER_SKELETON   = new ResourceLocation(Constants.MOD_ID, "wither_skeleton");
     public static final ResourceLocation ZOMBIFIED_PIGLIN  = new ResourceLocation(Constants.MOD_ID, "zombified_piglin");
+    public static final ResourceLocation VINDICATOR        = new ResourceLocation(Constants.MOD_ID, "vindicator");
+    public static final ResourceLocation EVOKER            = new ResourceLocation(Constants.MOD_ID, "evoker");
+    public static final ResourceLocation VEX               = new ResourceLocation(Constants.MOD_ID, "vex");
 
     /**
      * Boss encounter constants.
@@ -84,6 +87,9 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
         types.add(new ExpeditionEncounter(MAGMA_CUBE_LARGE, EntityType.MAGMA_CUBE, 6f, 0, 16, 0, EntityType.MAGMA_CUBE.getDefaultLootTable(), 4));
         types.add(new ExpeditionEncounter(WITHER_SKELETON, EntityType.WITHER_SKELETON, 11f, 0, 20, 0, EntityType.WITHER_SKELETON.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(ZOMBIFIED_PIGLIN, EntityType.ZOMBIFIED_PIGLIN, 11f, 0, 20, 0, EntityType.ZOMBIFIED_PIGLIN.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(VINDICATOR, EntityType.VINDICATOR, 13f, 0, 24, 0, EntityType.VINDICATOR.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(EVOKER, EntityType.EVOKER, 6f, 0, 24, 0, EntityType.EVOKER.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(VEX, EntityType.VEX, 9f, 0, 14, 0, EntityType.VEX.getDefaultLootTable(), 5));
 
         types.add(new ExpeditionEncounter(WARDEN, EntityType.WARDEN, 30f, 0, 500, 0, EntityType.WARDEN.getDefaultLootTable(), 5));
 

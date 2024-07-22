@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:ancient_city\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:mansion\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -17,11 +17,16 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 2.0,
+      "bonus_rolls": 3.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:book",
+          "name": "minecraft:iron_ingot",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
           "weight": 100
         },
         {
@@ -38,45 +43,24 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:redstone",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple",
+          "quality": 5,
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:enchant_randomly"
-            },
-            {
-              "add": false,
-              "damage": {
-                "type": "minecraft:uniform",
-                "max": 0.95,
-                "min": 0.75
-              },
-              "function": "minecraft:set_damage"
             }
           ],
-          "name": "minecraft:iron_leggings",
+          "name": "minecraft:book",
           "quality": 5,
-          "weight": 40
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:experience_bottle",
-          "quality": 5,
-          "weight": 40
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk",
-          "weight": 40
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk_sensor",
-          "quality": 5,
-          "weight": 30
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:sculk_catalyst",
-          "quality": 10,
           "weight": 20
         },
         {
@@ -95,68 +79,57 @@
               "function": "minecraft:set_damage"
             }
           ],
-          "name": "minecraft:diamond_leggings",
-          "quality": 10,
-          "weight": 5
+          "name": "minecraft:diamond_chestplate",
+          "quality": 5,
+          "weight": 15
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:enchanted_golden_apple",
-          "quality": 5,
+          "quality": 3,
           "weight": 5
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:enchant_with_levels",
-              "levels": 3.0,
-              "treasure": false
-            }
-          ],
-          "name": "minecraft:enchanted_book",
-          "quality": 2,
-          "weight": 5
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "hard"
-            }
-          ],
-          "functions": [
-            {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:warden\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:vindicator\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 10
+          "quality": -10,
+          "weight": 100
         },
         {
           "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "nightmare"
-            }
-          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:warden\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:evoker\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 20
+          "quality": -5,
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:vex\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "quality": -10,
+          "weight": 50
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 5.0,
-        "min": 2.0
+        "max": 10.0,
+        "min": 5.0
       }
     },
     {
@@ -167,7 +140,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:ancient_city\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:mansion\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -176,5 +149,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:expeditions/structures/ancient_city"
+  "random_sequence": "minecolonies:expeditions/structures/mansion"
 }

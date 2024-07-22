@@ -116,10 +116,9 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
           new LootPool.Builder()
             .setRolls(SPECIAL_STRUCTURE_ROLLS)
             .setBonusRolls(SPECIAL_STRUCTURE_BONUS_ROLLS)
-            .add(LootItem.lootTableItem(Items.COAL).setWeight(100))
             .add(LootItem.lootTableItem(Items.BOOK).setWeight(100))
-            .add(LootItem.lootTableItem(Items.NAME_TAG).setWeight(50))
-            .add(LootItem.lootTableItem(Items.LEAD).setWeight(50).setQuality(5))
+            .add(LootItem.lootTableItem(Items.NAME_TAG).setWeight(75).setQuality(5))
+            .add(LootItem.lootTableItem(Items.LEAD).setWeight(75).setQuality(5))
             .add(LootItem.lootTableItem(Items.IRON_LEGGINGS)
                    .setWeight(40)
                    .setQuality(5)
@@ -277,6 +276,28 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(createEncounterLootItem(MAGMA_CUBE_LARGE).setWeight(5).setQuality(-1))
             .add(createEncounterLootItem(MAGMA_CUBE_MEDIUM).setWeight(10).setQuality(-1))
             .add(createEncounterLootItem(MAGMA_CUBE_SMALL).setWeight(20).setQuality(-1))
+        ));
+
+        createStructureLootTable(MANSION_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
+            .setBonusRolls(UNCOMMON_STRUCTURE_BONUS_ROLLS)
+            .add(LootItem.lootTableItem(Items.IRON_INGOT).setWeight(100))
+            .add(LootItem.lootTableItem(Items.GOLD_INGOT).setWeight(100))
+            .add(LootItem.lootTableItem(Items.NAME_TAG).setWeight(75).setQuality(5))
+            .add(LootItem.lootTableItem(Items.LEAD).setWeight(75).setQuality(5))
+            .add(LootItem.lootTableItem(Items.REDSTONE).setWeight(50))
+            .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(25).setQuality(5))
+            .add(LootItem.lootTableItem(Items.BOOK).setWeight(20).setQuality(5).apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
+            .add(LootItem.lootTableItem(Items.DIAMOND_CHESTPLATE)
+                   .setWeight(15)
+                   .setQuality(5)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(AVERAGE_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.ENCHANTED_GOLDEN_APPLE).setWeight(5).setQuality(3))
+            .add(createEncounterLootItem(VINDICATOR).setWeight(100).setQuality(-10))
+            .add(createEncounterLootItem(EVOKER).setWeight(50).setQuality(-5))
+            .add(createEncounterLootItem(VEX).setWeight(50).setQuality(-10))
         ));
 
         createStructureLootTable(STRONGHOLD_ID, registrar, builder -> builder.withPool(
