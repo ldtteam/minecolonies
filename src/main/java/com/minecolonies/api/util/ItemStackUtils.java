@@ -1119,7 +1119,7 @@ public final class ItemStackUtils
         ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
 
-        citizenData.increaseSaturation(satIncrease / 2.0);
+        citizenData.increaseSaturation(satIncrease);
 
         // Special handling for these as those are stackable + have a return per item.
         if (foodStack.getItem() instanceof HoneyBottleItem)
