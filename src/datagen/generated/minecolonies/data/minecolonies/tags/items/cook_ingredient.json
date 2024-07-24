@@ -11,6 +11,9 @@
     "minecraft:dried_kelp",
     "minecraft:dried_kelp_block",
     "minecraft:egg",
+    "minecolonies:milk_jug",
+    "minecolonies:soy_milk_jug",
+    "minecolonies:water_jug",
     "minecraft:milk_bucket"
   ]
 }

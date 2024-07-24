@@ -11,11 +11,13 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -70,6 +72,12 @@ public class BuildingCowboy extends AbstractBuilding
     public static final ISettingKey<IntSetting> MILKING_DAYS  = new SettingKey<>(IntSetting.class, new ResourceLocation(MOD_ID, "milking_days"));
 
     /**
+     * Milking days setting.
+     */
+    public static final ISettingKey<StringSetting> MILK_ITEM  = new SettingKey<>(StringSetting.class, new ResourceLocation(MOD_ID, "milk_item"));
+
+
+    /**
      * Instantiates the building.
      *
      * @param c the colony.
@@ -101,6 +109,32 @@ public class BuildingCowboy extends AbstractBuilding
             return false;
         }
         return super.canEat(stack);
+    }
+
+    /**
+     * Get the milking input item.
+     * @return the input item.
+     */
+    public ItemStack getMilkInputItem()
+    {
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.milk_jug.getDescriptionId()))
+        {
+            return ModItems.empty_jug.getDefaultInstance();
+        }
+        return Items.BUCKET.getDefaultInstance();
+    }
+
+    /**
+     * Get the milking output item.
+     * @return the output item.
+     */
+    public ItemStack getMilkOutputItem()
+    {
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.milk_jug.getDescriptionId()))
+        {
+            return ModItems.milk_jug.getDefaultInstance();
+        }
+        return Items.MILK_BUCKET.getDefaultInstance();
     }
 
     /**

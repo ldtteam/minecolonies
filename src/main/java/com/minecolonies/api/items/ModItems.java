@@ -107,6 +107,12 @@ public final class ModItems
     public static Item sushi_roll;
     public static Item tofu;
 
+    public static Item water_jug;
+    public static Item milk_jug;
+    public static Item soy_milk_jug;
+    public static Item empty_jug;
+
+
     /**
      * Private constructor to hide the implicit public one.
      */

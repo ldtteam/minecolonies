@@ -1016,6 +1016,9 @@
     "item": "minecolonies:eggplant_dolma"
   },
   {
+    "item": "minecolonies:empty_jug"
+  },
+  {
     "item": "minecolonies:farmland"
   },
   {
@@ -1073,6 +1076,9 @@
   },
   {
     "item": "minecolonies:mediumquarry"
+  },
+  {
+    "item": "minecolonies:milk_jug"
   },
   {
     "item": "minecolonies:milky_bread"
@@ -1355,6 +1361,9 @@
     "item": "minecolonies:simplequarry"
   },
   {
+    "item": "minecolonies:soy_milk_jug"
+  },
+  {
     "item": "minecolonies:soybean"
   },
   {
@@ -1394,6 +1403,9 @@
   },
   {
     "item": "minecolonies:tomato"
+  },
+  {
+    "item": "minecolonies:water_jug"
   },
   {
     "item": "minecraft:acacia_boat"

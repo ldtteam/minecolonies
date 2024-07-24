@@ -42,7 +42,7 @@ public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
     {
         CustomRecipeBuilder.create(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.mistletoe)),
-                        new ItemStorage(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))))
+                        new ItemStorage(ModItems.water_jug.getDefaultInstance())))
                 .result(new ItemStack(ModItems.magicpotion))
                 .minResearchId(ResearchConstants.DRUID_USE_POTIONS)
                 .showTooltip(true)

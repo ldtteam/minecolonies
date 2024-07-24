@@ -2661,5 +2661,14 @@
   "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",
   "com.minecolonies.coremod.gui.townhall.happiness.food": "Food Factor",
   "com.minecolonies.coremod.gui.townhall.happiness.greatfood": "Food Factor",
-  "death.attack.nether": "%s succumbed to the depths of the nether."
+  "death.attack.nether": "%s succumbed to the depths of the nether.",
+  "com.minecolonies.creativetab.huts": "Minecolonies Huts",
+  "com.minecolonies.creativetab.general": "Minecolonies General",
+  "com.minecolonies.creativetab.food": "Minecolonies Food",
+
+  "item.minecolonies.empty_jug": "Empty Jug",
+  "item.minecolonies.water_jug": "Water Jug",
+  "item.minecolonies.milk_jug": "Milk Jug",
+  "item.minecolonies.soy_milk_jug": "Soy Milk Jug",
+  "com.minecolonies.coremod.setting.minecolonies:milk_item": "Milk Item:"
 }

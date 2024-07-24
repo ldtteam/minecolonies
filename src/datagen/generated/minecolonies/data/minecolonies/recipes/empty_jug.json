@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "item": "minecraft:glass_pane"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "PSP",
+    "P P",
+    "PGP"
+  ],
+  "result": {
+    "count": 4,
+    "item": "minecolonies:empty_jug"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,11 @@
+{
+  "type": "recipe",
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:empty_jug"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "minecolonies:water_jug"
+}

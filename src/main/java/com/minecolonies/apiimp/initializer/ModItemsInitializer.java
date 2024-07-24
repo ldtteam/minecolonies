@@ -189,6 +189,11 @@ public final class ModItemsInitializer
         ModItems.raw_noodle = new Item((new Item.Properties()));
         ModItems.butter = new Item((new Item.Properties()));
 
+        ModItems.empty_jug = new ItemJug((new Item.Properties()));
+        ModItems.milk_jug = new ItemJug((new Item.Properties().craftRemainder(ModItems.empty_jug)));
+        ModItems.water_jug = new ItemJug((new Item.Properties().craftRemainder(ModItems.empty_jug)));
+        ModItems.soy_milk_jug = new ItemJug((new Item.Properties().craftRemainder(ModItems.empty_jug)));
+
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplychestdeployer"), ModItems.supplyChest);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scan_analyzer"), ModItems.scanAnalyzer);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
@@ -278,6 +283,11 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "stuffed_pita"), ModItems.stuffed_pita);
         registry.register(new ResourceLocation(Constants.MOD_ID, "sushi_roll"), ModItems.sushi_roll);
         registry.register(new ResourceLocation(Constants.MOD_ID, "tofu"), ModItems.tofu);
+
+        registry.register(new ResourceLocation(Constants.MOD_ID, "empty_jug"), ModItems.empty_jug);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "water_jug"), ModItems.water_jug);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "milk_jug"), ModItems.milk_jug);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "soy_milk_jug"), ModItems.soy_milk_jug);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,

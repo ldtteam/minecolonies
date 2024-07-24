@@ -7,7 +7,7 @@
       "item": "minecraft:wheat"
     },
     {
-      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+      "item": "minecolonies:water_jug"
     }
   ],
   "intermediate": "minecraft:air",

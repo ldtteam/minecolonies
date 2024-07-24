@@ -9,7 +9,7 @@
       "item": "minecolonies:durum"
     },
     {
-      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+      "item": "minecolonies:water_jug"
     }
   ],
   "intermediate": "minecraft:air",
