@@ -107,10 +107,10 @@ public final class ModItems
     public static Item sushi_roll;
     public static Item tofu;
 
-    public static Item water_jug;
-    public static Item milk_jug;
-    public static Item soy_milk_jug;
-    public static Item empty_jug;
+    public static Item large_water_bottle;
+    public static Item large_milk_bottle;
+    public static Item large_soy_milk_bottle;
+    public static Item large_empty_bottle;
 
 
     /**

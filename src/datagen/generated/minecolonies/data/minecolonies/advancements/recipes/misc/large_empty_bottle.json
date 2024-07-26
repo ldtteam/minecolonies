@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecolonies:empty_jug"
+        "recipe": "minecolonies:large_empty_bottle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecolonies:empty_jug"
+      "minecolonies:large_empty_bottle"
     ]
   },
   "sends_telemetry_event": false

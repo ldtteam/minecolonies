@@ -8,7 +8,7 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:milk_jug"
+      "item": "minecolonies:large_milk_bottle"
     }
   ],
   "intermediate": "minecraft:air",

@@ -6,10 +6,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.common.Mod;
@@ -150,10 +147,10 @@ public final class ModCreativeTabs
           output.accept(ModItems.sushi_roll);
           output.accept(ModItems.tofu);
 
-          output.accept(ModItems.water_jug);
-          output.accept(ModItems.milk_jug);
-          output.accept(ModItems.soy_milk_jug);
-          output.accept(ModItems.empty_jug);
+          output.accept(ModItems.large_water_bottle);
+          output.accept(ModItems.large_milk_bottle);
+          output.accept(ModItems.large_soy_milk_bottle);
+          output.accept(ModItems.large_empty_bottle);
 
           output.accept(ModItems.muffin);
           output.accept(ModItems.muffin_dough);

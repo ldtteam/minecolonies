@@ -59,7 +59,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "bread_dough3")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT)), new ItemStorage(ModItems.water_jug.getDefaultInstance())))
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT)), new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(ModItems.breadDough, 2))
                 .minBuildingLevel(3)
                 .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_BOTTLE)
@@ -82,7 +82,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "milky_bread")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
-                        new ItemStorage(new ItemStack(ModItems.milk_jug))))
+                        new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
                 .result(new ItemStack(ModItems.milkyBread, 4))
                 .minBuildingLevel(4)
                 .showTooltip(true)
@@ -90,7 +90,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "smilky_bread")
           .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
-            new ItemStorage(new ItemStack(ModItems.soy_milk_jug))))
+            new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle))))
           .result(new ItemStack(ModItems.milkyBread, 4))
           .minBuildingLevel(4)
           .showTooltip(true)
@@ -145,7 +145,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "cake_batter")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
-                        new ItemStorage(new ItemStack(ModItems.milk_jug, 3)),
+                        new ItemStorage(new ItemStack(ModItems.large_milk_bottle, 3)),
                         new ItemStorage(new ItemStack(Items.SUGAR, 2)),
                         new ItemStorage(new ItemStack(Items.EGG))))
                 .result(new ItemStack(ModItems.cakeBatter))
@@ -155,7 +155,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "scake_batter")
           .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
-            new ItemStorage(new ItemStack(ModItems.soy_milk_jug, 3)),
+            new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle, 3)),
             new ItemStorage(new ItemStack(Items.SUGAR, 2)),
             new ItemStorage(new ItemStack(Items.EGG))))
           .result(new ItemStack(ModItems.cakeBatter))
@@ -203,7 +203,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(ModItems.water_jug.getDefaultInstance())))
+            new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
           .result(new ItemStack(ModItems.flatbread, 1))
           .minBuildingLevel(1)
           .build(consumer);
@@ -223,8 +223,8 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
           .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "water_jug")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.empty_jug))))
-          .result(ModItems.water_jug.getDefaultInstance())
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_empty_bottle))))
+          .result(ModItems.large_water_bottle.getDefaultInstance())
           .build(consumer);
     }
 }

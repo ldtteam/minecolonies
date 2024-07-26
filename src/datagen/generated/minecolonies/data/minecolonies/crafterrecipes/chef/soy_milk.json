@@ -3,7 +3,7 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:water_jug"
+      "item": "minecolonies:large_water_bottle"
     },
     {
       "item": "minecolonies:soybean"
@@ -17,5 +17,5 @@
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:soy_milk_jug"
+  "result": "minecolonies:large_soy_milk_bottle"
 }

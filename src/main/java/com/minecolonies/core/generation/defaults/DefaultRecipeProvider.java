@@ -637,7 +637,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_boat", has(ItemTags.BOATS))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.empty_jug, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.large_empty_bottle, 4)
           .pattern("PSP")
           .pattern("P P")
           .pattern("PGP")

@@ -70,7 +70,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     protected void updateRenderMetaData()
     {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET) || worker.getCitizenInventoryHandler().hasItemInInventory(ModItems.empty_jug))
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET) || worker.getCitizenInventoryHandler().hasItemInInventory(ModItems.large_empty_bottle))
         {
             renderMeta += RENDER_META_BUCKET;
         }

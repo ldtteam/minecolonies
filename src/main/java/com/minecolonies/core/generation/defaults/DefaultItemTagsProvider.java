@@ -213,9 +213,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.DRIED_KELP)
           .add(Items.DRIED_KELP_BLOCK)
           .add(Items.EGG)
-          .add(ModItems.milk_jug)
-          .add(ModItems.soy_milk_jug)
-          .add(ModItems.water_jug)
+          .add(ModItems.large_milk_bottle)
+          .add(ModItems.large_soy_milk_bottle)
+          .add(ModItems.large_water_bottle)
           .add(Items.MILK_BUCKET);
 
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_COOK))

@@ -9,8 +9,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -48,7 +46,7 @@ public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(FARMER, MODULE_CRAFTING, "mud")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.DIRT)),
-                        new ItemStorage(ModItems.water_jug.getDefaultInstance())))
+                        new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(Items.MUD))
                 .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_BOTTLE)
                 .build(consumer);

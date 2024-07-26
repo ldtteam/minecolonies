@@ -172,7 +172,7 @@ public class BuildingModules
         .with(BuildingCowboy.MILKING_AMOUNT, new IntSetting(1))
         .with(BuildingCowboy.STEWING_AMOUNT, new IntSetting(1))
         .with(BuildingCowboy.MILKING_DAYS, new IntSetting(1))
-       .with(BuildingCowboy.MILK_ITEM, new StringSetting("item.minecolonies.milk_jug", "item.minecraft.milk_bucket")), () -> SettingsModuleView::new);
+       .with(BuildingCowboy.MILK_ITEM, new StringSetting("item.minecolonies.large_milk_bottle", "item.minecraft.milk_bucket")), () -> SettingsModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<BuildingCowboy.HerdingModule,IBuildingModuleView> COWHERDER_HERDING   =
       new BuildingEntry.ModuleProducer<>("cowherder_herding", BuildingCowboy.HerdingModule::new, null);
