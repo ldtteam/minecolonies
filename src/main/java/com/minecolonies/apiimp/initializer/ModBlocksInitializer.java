@@ -98,6 +98,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGraveyard = new BlockHutGraveyard().registerBlock(registry);
         ModBlocks.blockHutNetherWorker = new BlockHutNetherWorker().registerBlock(registry);
         ModBlocks.blockHutAlchemist = new BlockHutAlchemist().registerBlock(registry);
+        ModBlocks.blockHutKitchen = new BlockHutKitchen().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
@@ -185,6 +186,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGraveyard.registerBlockItem(registry, properties);
         ModBlocks.blockHutNetherWorker.registerBlockItem(registry, properties);
         ModBlocks.blockHutAlchemist.registerBlockItem(registry, properties);
+        ModBlocks.blockHutKitchen.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockRack.registerBlockItem(registry, properties);

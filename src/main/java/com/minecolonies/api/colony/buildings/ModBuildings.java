@@ -58,6 +58,7 @@ public final class ModBuildings
     public static final String MEDIUM_QUARRY_ID  = "mediumquarry";
     public static final String LARGE_QUARRY_ID   = "largequarry";
     public static final String ALCHEMIST_ID      = "alchemist";
+    public static final String KITCHEN_ID      = "kitchen";
 
     public static DeferredHolder<BuildingEntry, BuildingEntry> archery;
     public static DeferredHolder<BuildingEntry, BuildingEntry> bakery;
@@ -111,6 +112,7 @@ public final class ModBuildings
     public static DeferredHolder<BuildingEntry, BuildingEntry> mediumQuarry;
     //public static DeferredHolder<BuildingEntry, BuildingEntry> largeQuarry;
     public static DeferredHolder<BuildingEntry, BuildingEntry> alchemist;
+    public static DeferredHolder<BuildingEntry, BuildingEntry> kitchen;
 
     private ModBuildings()
     {

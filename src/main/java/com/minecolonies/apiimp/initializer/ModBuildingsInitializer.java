@@ -612,5 +612,19 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(ALCHEMIST_BREW)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .createBuildingEntry());
+
+        ModBuildings.kitchen = DEFERRED_REGISTER.register(ModBuildings.KITCHEN_ID, () -> new BuildingEntry.Builder()
+                                                                                           .setBuildingBlock(ModBlocks.blockHutKitchen)
+                                                                                           .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.KITCHEN_ID, 5))
+                                                                                           .setBuildingViewProducer(() -> EmptyView::new)
+                                                                                           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.KITCHEN_ID))
+                                                                                           //.addBuildingModuleProducer(MIN_STOCK)
+                                                                                           //.addBuildingModuleProducer(CRAFT_TASK_VIEW)
+                                                                                           //.addBuildingModuleProducer(COOKASSISTENT_WORK)
+                                                                                           //.addBuildingModuleProducer(COOKASSISTENT_CRAFT)
+                                                                                           //.addBuildingModuleProducer(COOKASSISTENT_SMELT)
+                                                                                           //.addBuildingModuleProducer(FURNACE)
+                                                                                           //.addBuildingModuleProducer(ITEMLIST_FUEL)
+                                                                                           .createBuildingEntry());
     }
 }
