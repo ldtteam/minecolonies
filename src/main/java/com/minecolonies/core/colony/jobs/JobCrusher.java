@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +29,7 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
     @Override
     public int getDiseaseModifier()
     {
-        final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill());
+        final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(BuildingModules.CRUSHER_WORK).getPrimarySkill());
         return (int) ((100 - skill)/25.0);
     }
 

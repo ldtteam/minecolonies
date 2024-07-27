@@ -15,6 +15,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -284,7 +285,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     {
         final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getModuleForJob().getPrimarySkill()) / 10) * 2;
         final Level world = building.getColony().getWorld();
-        for (final BlockPos pos : building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
+        for (final BlockPos pos : building.getModule(BuildingModules.FURNACE).getFurnaces())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {

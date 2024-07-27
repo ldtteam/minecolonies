@@ -14,6 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.*;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
@@ -298,7 +299,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Override
     public String getTask()
     {
-        return this.getSetting(GUARD_TASK).getValue();
+        return getModule(BuildingModules.GUARD_SETTINGS).getSetting(GUARD_TASK).getValue();
     }
 
     @Override
