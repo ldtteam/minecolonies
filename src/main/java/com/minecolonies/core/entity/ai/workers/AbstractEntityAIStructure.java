@@ -366,16 +366,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         //Fill workFrom with the position from where the builder should build.
         //also ensure we are at that position.
         final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        final BlockPos worldPos;
-        if (gotoPos != null)
-        {
-            worldPos = structurePlacer.getB().getProgressPosInWorld(gotoPos);
-        }
-        else
-        {
-            worldPos = job.getWorkOrder().getLocation();
-        }
-        
+        final BlockPos worldPos = getPosToWorkAt();
+
         if (getProgressPos() != null)
         {
             structurePlacer.getB().setStage(getProgressPos().getB());
@@ -407,7 +399,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   progress,
                   StructurePlacer.Operation.BLOCK_PLACEMENT,
                   () -> placer.getIterator()
-                    .increment(((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()) || DONT_TOUCH_PREDICATE.test(info, pos, handler))),
+                          .increment(((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()) || DONT_TOUCH_PREDICATE.test(info, pos, handler))),
                   false);
                 break;
             case CLEAR_WATER:
@@ -468,8 +460,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
+
             building.nextStage();
-            if (!structurePlacer.getB().nextStage())
+            if (!goToNextStage(result))
             {
                 building.setProgressPos(null, null);
                 worker.getCitizenData().setStatusPosition(null);
@@ -528,6 +521,33 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
+     * Get the position the citizen needs to walk to in order to build
+     *
+     * @return the position to go to
+     */
+    protected BlockPos getPosToWorkAt()
+    {
+        if (gotoPos != null)
+        {
+            return structurePlacer.getB().getProgressPosInWorld(gotoPos);
+        }
+        else
+        {
+            return job.getWorkOrder().getLocation();
+        }
+    }
+
+    /**
+     * This method is called when a stage is finished, and it is needed to go to the next stage
+     *
+     * @return whether it succeeded, i.e. there was a next stage to go to.
+     */
+    protected boolean goToNextStage(StructurePhasePlacementResult result)
+    {
+        return structurePlacer.getB().nextStage();
+    }
+
+    /**
      * Checks which blocks are skipped on decorate
      *
      * @param info
@@ -549,7 +569,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param handler
      * @return
      */
-    private boolean skipBuilding(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    protected boolean skipBuilding(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
         return !BlockUtils.canBlockFloatInAir(blockInfoState)
@@ -809,8 +829,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             requestedMap.entrySet()
               .removeIf(entry -> ItemStackUtils.isEmpty(entry.getKey().getItemStack()) || foundStacks.stream()
-                .anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target,
-                  entry.getKey().getItemStack())));
+                                                                                            .anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target,
+                                                                                              entry.getKey().getItemStack())));
         }
 
         for (final Map.Entry<ItemStorage, Integer> placedStack : requestedMap.entrySet())
@@ -822,16 +842,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.building
-              .getOpenRequestsOfTypeFiltered(
-                placer.getWorker().getCitizenData(),
-                TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
+                                                                               .getOpenRequestsOfTypeFiltered(
+                                                                                 placer.getWorker().getCitizenData(),
+                                                                                 TypeConstants.DELIVERABLE,
+                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.building
-              .getCompletedRequestsOfTypeFiltered(
-                placer.getWorker().getCitizenData(),
-                TypeConstants.DELIVERABLE,
-                (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
+                                                                                        .getCompletedRequestsOfTypeFiltered(
+                                                                                          placer.getWorker().getCitizenData(),
+                                                                                          TypeConstants.DELIVERABLE,
+                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             if (requests.isEmpty() && completedRequests.isEmpty())
             {
