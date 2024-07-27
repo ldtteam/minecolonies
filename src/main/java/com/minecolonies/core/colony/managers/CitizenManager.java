@@ -22,7 +22,7 @@ import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenMod
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.WorkAtHomeBuildingModule;
-import com.minecolonies.core.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
+import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
 import com.minecolonies.core.entity.citizen.EntityCitizen;

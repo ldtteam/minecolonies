@@ -34,6 +34,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.events.raid.RaidManager;
 import com.minecolonies.core.colony.managers.*;
 import com.minecolonies.core.colony.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.core.colony.permissions.Permissions;
@@ -883,6 +884,8 @@ public class Colony implements IColony
      */
     public CompoundTag write(@NotNull final CompoundTag compound)
     {
+        compound.putInt(DATA_VERSION_TAG, DATA_VERSION);
+
         //  Core attributes
         compound.putInt(TAG_ID, id);
         compound.putString(TAG_DIMENSION, dimensionId.location().toString());

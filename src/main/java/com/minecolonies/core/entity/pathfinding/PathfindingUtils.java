@@ -5,6 +5,7 @@ import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,8 +33,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
 
 public class PathfindingUtils
 {
