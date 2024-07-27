@@ -59,6 +59,11 @@ public class DefaultSoundProvider implements DataProvider
             for (final File file : list)
             {
                 final String name = file.getName();
+                if (name.equals("child"))
+                {
+                    continue;
+                }
+
                 if (file.isDirectory())
                 {
                     final List<String> soundList = new ArrayList<>();
@@ -80,6 +85,16 @@ public class DefaultSoundProvider implements DataProvider
                     }
                 }
             }
+        }
+
+        final List<String> childSounds = new ArrayList<>();
+        childSounds.add("minecolonies:mob/citizen/child/laugh1");
+        childSounds.add("minecolonies:mob/citizen/child/laugh2");
+
+        for (final EventType soundEvents : EventType.values())
+        {
+            sounds.add(CITIZEN_SOUND_EVENT_PREFIX + "child.male." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
+            sounds.add(CITIZEN_SOUND_EVENT_PREFIX + "child.female." + soundEvents.name().toLowerCase(Locale.US), createSoundJson("neutral", getDefaultProperties(), childSounds));
         }
 
         for (final RaiderType type : RaiderType.values())
