@@ -1,6 +1,8 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -18,6 +20,96 @@ import java.util.Collection;
  */
 public class MessageUtils
 {
+    /**
+     * No operation builders for failed/empty returns
+     */
+    private static MessageBuilder NOOP = new MessageBuilder(Component.literal(""))
+    {
+        @Override
+        public void sendTo(final Player... players)
+        {
+            // Noop
+        }
+
+        @Override
+        public void sendTo(final Collection<Player> players)
+        {
+            // Noop
+        }
+
+        @Override
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony)
+        {
+            return NOOPColony;
+        }
+
+        @Override
+        public MessageBuilderColonyPlayerSelector sendTo(final IColony colony, final boolean alwaysShowColony)
+        {
+            return NOOPColony;
+        }
+    };
+
+    private static MessageBuilderColonyPlayerSelector NOOPColony = new MessageBuilderColonyPlayerSelector(null, null, false)
+    {
+        public void forAllPlayers()
+        {
+            // Noop
+        }
+
+        public void forManagers()
+        {
+            // Noop
+        }
+    };
+
+    /**
+     * Appends the citizen name to a message and returns the messagebuilder
+     *
+     * @param citizen
+     * @param keyIn
+     * @param msg
+     * @return
+     */
+    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, final String keyIn, final Object... msg)
+    {
+        return forCitizen(citizen, Component.translatable(keyIn, msg));
+    }
+
+    /**
+     * Appends the citizen name to a message and returns the messagebuilder
+     *
+     * @param citizen
+     * @return
+     */
+    public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, Component component)
+    {
+        if (citizen.getCitizenColonyHandler().getColony() != null)
+        {
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+
+            MessageUtils.MessageBuilder builder;
+            if (job != null)
+            {
+                builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
+                  .append(Component.literal(" "))
+                  .append(citizen.getCustomName())
+                  .append(Component.literal(": "))
+                  .append(component);
+            }
+            else
+            {
+                builder = MessageUtils.format(citizen.getCustomName())
+                  .append(Component.literal(": "))
+                  .append(component);
+            }
+
+            return builder;
+        }
+
+        return NOOP;
+    }
+
     /**
      * Starts a new message builder.
      *
@@ -159,8 +251,8 @@ public class MessageUtils
         public MutableComponent create()
         {
             final Style newStyle = Style.EMPTY
-                                     .withColor(priority.color)
-                                     .withClickEvent(clickEvent);
+              .withColor(priority.color)
+              .withClickEvent(clickEvent);
 
             fullComponent.withStyle(newStyle);
             fullComponent.getSiblings().stream()
