@@ -12,7 +12,7 @@
             <itemicon id="detailIcon" size="9 9" pos="80 1" visible="false"/>
             <text id="priority" size="130 9" pos="20 12" color="black"/>
 
-            <text id="requester" size="130 9" pos="2 22" color="black"/>
+            <text id="requester" size="150 9" pos="2 22" color="black"/>
         </box>
     </list>
 </window>
