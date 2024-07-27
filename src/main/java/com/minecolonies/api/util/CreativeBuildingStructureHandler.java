@@ -5,11 +5,12 @@ import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.operations.PlaceStructureOperation;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.TickedWorldOperation;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -178,7 +179,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             if (structure.hasBluePrint())
             {
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
-                Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
+                Manager.addToQueue(new PlaceStructureOperation(instantPlacer, player));
             }
             return structure.getBluePrint();
         }

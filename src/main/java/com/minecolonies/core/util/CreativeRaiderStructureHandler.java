@@ -5,20 +5,23 @@ import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.operations.PlaceStructureOperation;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.TickedWorldOperation;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -183,8 +186,8 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, RotationMirror.NONE, fancyPlacement, event, colonyId);
-            Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)
         {
@@ -211,8 +214,8 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, RotationMirror.NONE, fancyPlacement, event, colonyId);
-            Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)
         {
