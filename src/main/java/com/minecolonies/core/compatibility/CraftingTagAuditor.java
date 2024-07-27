@@ -178,7 +178,8 @@ public class CraftingTagAuditor
         final List<Animal> animals = RecipeAnalyzer.createAnimals(server.overworld());
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
-                .sorted(Comparator.comparing(m -> m instanceof SimpleCraftingModule).reversed())
+                .sorted(Comparator.comparing((ICraftingBuildingModule m) -> m instanceof SimpleCraftingModule).reversed()
+                        .thenComparing(ICraftingBuildingModule::getCustomRecipeKey))
                 .toList();  // sort the simple modules first (2x2 crafting, personal only)
         final List<AnimalHerdingModule> herders = getHerdingModules();
         final Map<ItemStorage, Map<Object, List<IGenericRecipe>>> craftingMap = new HashMap<>();
@@ -246,6 +247,7 @@ public class CraftingTagAuditor
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
                 .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER.get()))
+                .sorted(Comparator.comparing(ICraftingBuildingModule::getCustomRecipeKey))
                 .toList();
 
         writer.write("type,");
