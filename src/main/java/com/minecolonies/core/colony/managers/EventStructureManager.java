@@ -1,17 +1,14 @@
 package com.minecolonies.core.colony.managers;
 
-import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.management.Manager;
-import com.ldtteam.structurize.operations.PlaceStructureOperation;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;

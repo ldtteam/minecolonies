@@ -6,12 +6,14 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
@@ -29,7 +31,6 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -187,9 +188,9 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     }
 
     @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
+    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
     {
-        registry.register(getRegistryName(), new ItemCrop(this, properties, preferredBiome));
+        Registry.register(registry, getRegistryName(), new ItemCrop(this, properties, preferredBiome));
     }
 
     /**

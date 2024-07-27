@@ -32,9 +32,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.FarmlandWaterManager;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.FarmlandWaterManager;
+import net.neoforged.neoforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 
 public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
@@ -142,7 +142,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public void fallOn(Level level, @NotNull BlockState state, @NotNull BlockPos pos, @NotNull Entity entity, float light)
     {
-        if (!level.isClientSide && ForgeHooks.onFarmlandTrample(level, pos, Blocks.DIRT.defaultBlockState(), light, entity))
+        if (!level.isClientSide && CommonHooks.onFarmlandTrample(level, pos, Blocks.DIRT.defaultBlockState(), light, entity))
         {
             turnToDirt(entity, state, level, pos);
         }

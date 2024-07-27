@@ -48,7 +48,7 @@ public class SoundManager
             final TimedSound instance = entries.getValue().peek();
             if (instance.timeout <= 0)
             {
-                Minecraft.getInstance().player.level.playSound(Minecraft.getInstance().player,
+                Minecraft.getInstance().player.level().playSound(Minecraft.getInstance().player,
                   instance.pos,
                   instance.soundEvent,
                   instance.source,

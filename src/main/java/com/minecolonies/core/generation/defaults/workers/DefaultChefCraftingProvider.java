@@ -6,7 +6,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "butter")
           .inputs(List.of(new ItemStorage(new ItemStack(Items.MILK_BUCKET))))

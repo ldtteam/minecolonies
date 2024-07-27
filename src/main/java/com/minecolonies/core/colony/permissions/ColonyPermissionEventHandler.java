@@ -186,7 +186,7 @@ public class ColonyPermissionEventHandler
             return;
         }
 
-            final long worldTime = entity.level.getGameTime();
+            final long worldTime = entity.level().getGameTime();
             if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
                   || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10)
                        < worldTime)
@@ -207,7 +207,7 @@ public class ColonyPermissionEventHandler
                 }
             }
         }
-    }
+
 
     /**
      * BlockEvent.BreakEvent handler.

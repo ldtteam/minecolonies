@@ -100,7 +100,6 @@ public final class ModJobs
     public static DeferredHolder<JobEntry, JobEntry> rabbitHerder;
     public static DeferredHolder<JobEntry, JobEntry> concreteMixer;
     public static DeferredHolder<JobEntry, JobEntry> beekeeper;
-    public static DeferredHolder<JobEntry, JobEntry> cookassistant;
     public static DeferredHolder<JobEntry, JobEntry> netherworker;
     public static DeferredHolder<JobEntry, JobEntry> quarrier;
     public static DeferredHolder<JobEntry, JobEntry> druid;

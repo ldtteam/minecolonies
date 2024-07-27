@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.client.colony;
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
+import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -173,7 +174,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     {
         if (player.level().getEntity(this.entityid) instanceof final AbstractCivilianEntity citizen)
         {
-            SoundManager.addToQueue(entity.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
+            SoundManager.addToQueue(citizen.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
         }
     }
 }

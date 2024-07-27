@@ -15,7 +15,7 @@ import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModu
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

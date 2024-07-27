@@ -18,6 +18,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 /**

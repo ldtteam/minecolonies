@@ -9,7 +9,6 @@ import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -318,7 +317,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             building.setTotalStages(3);
             structurePlacer.getB().setStage(BUILD_SOLID);
         }
-        else if (structurePlacer.getB().getStage() == CLEAR && result.getBlockResult().getWorldPos().getY() <= worker.level.getMinBuildHeight())
+        else if (structurePlacer.getB().getStage() == CLEAR && result.getBlockResult().getWorldPos().getY() <= worker.level().getMinBuildHeight())
         {
             // At bedrock level, so we're done
             return false;

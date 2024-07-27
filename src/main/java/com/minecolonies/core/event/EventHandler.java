@@ -59,9 +59,14 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -159,7 +164,7 @@ public class EventHandler
                                               .when(EntityInBiomeTag.of(ModTags.dryBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().equals(Blocks.GRASS.getLootTable()))
+        else if (event.getName().equals(Blocks.GRASS_BLOCK.getLootTable()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockGarlic)

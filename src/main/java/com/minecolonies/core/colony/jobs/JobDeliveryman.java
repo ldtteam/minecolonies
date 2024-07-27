@@ -94,7 +94,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
-            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
+            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD_NAME, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
               BuildingModules.COURIER_WORK).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }

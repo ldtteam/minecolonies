@@ -51,7 +51,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ToolActions;
+import net.neoforged.neoforge.common.ToolActions;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -829,8 +829,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
-                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
-                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                new CompostParticleMessage(position.above())
+                  .sendToTargetPoint(new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
                 minecoloniesCrop.attemptGrow(state, (ServerLevel) world, position.above());
                 state = world.getBlockState(position.above());
                 block = state.getBlock();

@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.FoodItemListModuleWindow;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Set;
 import java.util.function.Function;

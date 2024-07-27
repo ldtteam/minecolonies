@@ -1,26 +1,20 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.placement.AbstractBlueprintIterator;
-import com.ldtteam.structurize.placement.AbstractBlueprintIteratorWrapper;
 import com.ldtteam.structurize.placement.StructureIterators;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.TriPredicate;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * A BlueprintIterator which only iterates over one Y-level (layer) of a blueprint, using the iterator pattern of a different iterator
