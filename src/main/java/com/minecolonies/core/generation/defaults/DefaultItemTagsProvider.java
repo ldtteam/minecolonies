@@ -371,6 +371,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
+        tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_SAWMILL))
+                .add(Items.BAMBOO_BLOCK, Items.BAMBOO_MOSAIC, Items.BAMBOO_PLANKS, Items.STRIPPED_BAMBOO_BLOCK)
+                .add(Items.CRIMSON_NYLIUM, Items.WARPED_NYLIUM);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
           .add(Items.BRICK, Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS)
@@ -430,10 +433,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(paperExtras);
 
         tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
-                .add(Items.STONE)
+                .add(Items.STONE, Items.CALCITE)
+                .add(Items.MUD_BRICKS)
+                .add(Items.QUARTZ_BLOCK, Items.SMOOTH_QUARTZ, Items.QUARTZ_BRICKS, Items.QUARTZ_PILLAR, Items.CHISELED_QUARTZ_BLOCK)
                 .add(Items.NETHERRACK)
-                .add(Items.PRISMARINE)
-                .add(Items.DARK_PRISMARINE);
+                .add(Items.BLACKSTONE, Items.CHISELED_POLISHED_BLACKSTONE, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE)
+                .add(Items.END_STONE_BRICKS);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
