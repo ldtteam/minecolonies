@@ -225,15 +225,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_DYER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
           .addTag(Tags.Items.DYES)
-          .addTag(Tags.Items.GLASS).addTag(Tags.Items.STAINED_GLASS)
-          .addTag(Tags.Items.GLASS_PANES).addTag(Tags.Items.STAINED_GLASS_PANES)
-          .addTag(ItemTags.TERRACOTTA)
-          .addTag(ItemTags.WOOL)
-          .addTag(ItemTags.WOOL_CARPETS)
-          .addTag(ItemTags.BEDS)
-          .addTag(ItemTags.CANDLES)
-          .addTag(shulkerBoxes)
-          .add(Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS, Items.LEATHER_HORSE_ARMOR)
           .add(Items.FIREWORK_STAR)
           .add(Items.RED_NETHER_BRICKS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_DYER))

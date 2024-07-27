@@ -3516,6 +3516,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3526,6 +3529,9 @@
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },
@@ -3538,6 +3544,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3547,10 +3556,18 @@
     "item": "minecraft:leather_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "display"
+      }
+    ],
     "item": "minecraft:leather_horse_armor"
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },
