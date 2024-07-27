@@ -57,7 +57,6 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -1824,23 +1823,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         return super.getRestrictCenter();
-    }
-
-    /**
-     * Prevent riding entities except ours.
-     *
-     * @param entity entity to ride on
-     * @param force  force flag
-     * @return true if successful.
-     */
-    @Override
-    public boolean startRiding(final Entity entity, final boolean force)
-    {
-        if (entity instanceof SittingEntity || force)
-        {
-            return super.startRiding(entity, force);
-        }
-        return false;
     }
 
     @Nullable
