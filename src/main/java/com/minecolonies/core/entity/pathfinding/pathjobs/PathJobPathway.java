@@ -111,7 +111,7 @@ public class PathJobPathway extends AbstractPathJob
       final int x,
       final int y,
       final int z,
-      final BlockState state)
+      final BlockState state, final BlockState below)
     {
         if (parent.parent != null && parent.x == parent.parent.x && x != parent.x)
         {

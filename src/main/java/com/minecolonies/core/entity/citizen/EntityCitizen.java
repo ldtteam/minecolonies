@@ -28,6 +28,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -360,7 +361,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         new CitizenAI(this);
 
         int priority = 0;
-        this.goalSelector.addGoal(priority, new FloatGoal(this));
+        this.goalSelector.addGoal(priority, new EntityAIFloat(this));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
         this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
@@ -753,10 +754,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             EventHandler.onEnteringChunkEntity(this, currentChunk);
         }
 
-        if (!this.getEyeInFluidType().isAir() && !this.level().getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
-        {
-            this.moveTo(this.position().add(random.nextBoolean() ? 1 : 0, 0, random.nextBoolean() ? 1 : 0));
-        }
         return false;
     }
 

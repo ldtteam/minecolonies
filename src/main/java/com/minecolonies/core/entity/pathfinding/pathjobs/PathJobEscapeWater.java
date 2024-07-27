@@ -2,12 +2,14 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -21,17 +23,13 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
 /**
  * Job that handles moving away from something.
  */
-public class PathJobMoveAwayFromLocation extends AbstractPathJob
+public class PathJobEscapeWater extends AbstractPathJob
 {
     /**
      * Position to run to, in order to avoid something.
      */
     @NotNull
     protected final BlockPos avoid;
-    /**
-     * Required avoidDistance.
-     */
-    protected final int      avoidDistance;
 
     /**
      * The blockposition we're trying to move away to
@@ -41,26 +39,20 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * Prepares the PathJob for the path finding system.
      *
-     * @param world         world the entity is in.
-     * @param start         starting location.
-     * @param avoid         location to avoid.
-     * @param avoidDistance how far to move away.
-     * @param range         max range to search.
-     * @param entity        the entity.
+     * @param world  world the entity is in.
+     * @param start  starting location.
+     * @param range  max range to search.
+     * @param entity the entity.
      */
-    public PathJobMoveAwayFromLocation(
+    public PathJobEscapeWater(
       final Level world,
       @NotNull final BlockPos start,
-      @NotNull final BlockPos avoid,
-      final int avoidDistance,
       final int range,
       final Mob entity)
     {
-        super(world, start, range, new PathResult<PathJobMoveAwayFromLocation>(), entity);
+        super(world, start, 500, new PathResult<PathJobEscapeWater>(), entity);
 
-        this.avoid = new BlockPos(avoid);
-        this.avoidDistance = avoidDistance;
-
+        this.avoid = start;
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
         if (entity instanceof AbstractEntityCitizen)
         {
@@ -98,26 +90,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.dist(preferredDirection, x, y, z);
-    }
-
-    @Override
-    protected double modifyCost(
-      final double cost,
-      final MNode parent,
-      final boolean swimstart,
-      final boolean swimming,
-      final int x,
-      final int y,
-      final int z,
-      final BlockState state, final BlockState below)
-    {
-        if (BlockPosUtil.dist(avoid, x, y, z) < 3)
-        {
-            return cost + 100;
-        }
-
-        return cost;
+        return BlockPosUtil.dist(preferredDirection, x, y, z) * 2;
     }
 
     /**
@@ -129,20 +102,18 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final MNode n)
     {
-        return BlockPosUtil.dist(avoid, n.x, n.y, n.z) > avoidDistance
+        return cachedBlockLookup.getBlockState(n.x, n.y, n.z).isAir() && cachedBlockLookup.getBlockState(n.x, n.y + 1, n.z).isAir()
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
     }
 
-    /**
-     * Calculate the distance to the target.
-     *
-     * @param n Node to test.
-     * @return double amount.
-     */
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
+    public void setPathingOptions(final PathingOptions pathingOptions)
     {
-        return -BlockPosUtil.dist(avoid, n.x, n.y, n.z);
+        super.setPathingOptions(pathingOptions);
+        getPathingOptions().setWalkUnderWater(true);
+        getPathingOptions().swimCost = 1;
+        getPathingOptions().swimCostEnter = 1;
+        getPathingOptions().nonLadderClimbableCost = 1;
     }
 }
