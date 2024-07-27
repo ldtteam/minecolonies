@@ -66,9 +66,15 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     }
 
     @Override
-    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    public int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        final int distance = (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+        if (wareHouse == null)
+        {
+            return distance;
+        }
+        return Math.min(distance/10, 1) + wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getMutableRequestList().size();
     }
 
     @Nullable
