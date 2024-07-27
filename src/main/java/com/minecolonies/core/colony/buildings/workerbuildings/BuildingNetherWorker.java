@@ -297,20 +297,6 @@ public class BuildingNetherWorker extends AbstractBuilding
         return PERIOD_DAYS;
     }
 
-    /**
-     * On initial construction or reset request, excludes the tagged food by default.
-     *
-     * @param listModule The food exclusion module.
-     */
-    public static void onResetFoodExclusionList(final ItemListModule listModule)
-    {
-        listModule.clearItems();
-        for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.excludedFood))
-        {
-            listModule.addItem(new ItemStorage(new ItemStack(item)));
-        }
-    }
-
     @Override
     public void onPlacement()
     {

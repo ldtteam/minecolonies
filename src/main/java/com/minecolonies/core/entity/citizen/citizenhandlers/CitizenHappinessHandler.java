@@ -76,7 +76,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
         addModifier(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), 3, true));
-        addModifier(new ExpirationBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), 5, true));
+        addModifier(new ExpirationBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), 7, true));
     }
 
     /**

@@ -408,7 +408,9 @@ public final class TranslationConstants
     @NonNls
     public static final String CROP_TOOLTIP                                                         = "com.minecolonies.core.item.crop.tooltip";
     @NonNls
-    public static final String FOOD_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip";
+    public static final String FOOD_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.";
+    @NonNls
+    public static final String TIER_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.tier.";
     @NonNls
     public static final String BIOME_TOOLTIP                                                        = "com.minecolonies.core.item.crop.tooltip.biome";
     @NonNls
@@ -651,6 +653,9 @@ public final class TranslationConstants
     public static final String PACK_DESC                                          = "com.minecolonies.coremod.gui.colony.packdesc";
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
+    @NonNls
+    public static final String NOKITCHEN                                          = ".nokitchen";
+
     //<editor-fold desc="Partial keys">
 
     @NonNls
