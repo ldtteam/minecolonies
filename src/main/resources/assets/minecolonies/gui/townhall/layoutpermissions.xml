@@ -1,9 +1,9 @@
-<window size="524 243" pause="false" lightbox="false">
+<window size="524 290" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <switch id="pages" size="374 100%" pos="75 0">
-        <view id="pageAddPlayer">
-            <text size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
+    <switch id="pages" size="374 290" pos="75 0">
+        <view id="pageAddPlayer" size="374 290">
+            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
             <buttonimage id="addPlayer" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
@@ -15,8 +15,8 @@
                     <dropdown id="rankPicker"
                               size="129 17"
                               pos="2 17"
-                              maxContentHeight="100"
-                              dropDownSize="129 100"
+                              maxContentHeight="45"
+                              dropDownSize="129 45"
                               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                               color="black"
                               scrollbarOffset="9 0"

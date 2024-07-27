@@ -337,6 +337,12 @@ public class PermissionsMessage
             final Rank rank = colony.getPermissions().getRanks().get(rankId);
             if (rank != colony.getPermissions().getRankOwner())
             {
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
+                return;
+            }
+            final Player player = ctxIn.getSender();
+            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
+            {
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());
             }
         }
