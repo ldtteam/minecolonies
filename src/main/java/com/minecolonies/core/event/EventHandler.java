@@ -1,6 +1,7 @@
 package com.minecolonies.core.event;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,7 +12,9 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockScarecrow;
@@ -45,8 +48,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SpawnerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -121,6 +126,96 @@ public class EventHandler
             {
                 event.setCanceled(true);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLootTableLoad(@NotNull final LootTableLoadEvent event)
+    {
+        if (event.getName().toString().equals("minecraft:blocks/fern"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockCabbage)
+                                              .when(EntityInBiomeTag.of(ModTags.coldBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockSoyBean)
+                                              .when(EntityInBiomeTag.of(ModTags.humidBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:blocks/sugarcane"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockRice)
+                                              .when(EntityInBiomeTag.of(ModTags.humidBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:blocks/dead_bush"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(EntityInBiomeTag.of(ModTags.dryBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:blocks/grass"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockOnion)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockEggplant)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockDurum)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(EntityInBiomeTag.of(ModTags.dryBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockSoyBean)
+                                              .when(EntityInBiomeTag.of(ModTags.humidBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockTomato)
+                                              .when(EntityInBiomeTag.of(ModTags.temperateBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockBellPepper)
+                                              .when(EntityInBiomeTag.of(ModTags.temperateBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:blocks/dead_bush"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(EntityInBiomeTag.of(ModTags.dryBiomes))
+                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+        }
+        else if (event.getName().toString().equals("minecraft:chests/simple_dungeon"))
+        {
+            event.getTable().addPool(LootPool.lootPool()
+                                       .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockOnion)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockEggplant)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockTomato)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockSoyBean)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockRice)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockBellPepper)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockDurum)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f))).build());
         }
     }
 

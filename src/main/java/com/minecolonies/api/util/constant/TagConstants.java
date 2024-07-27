@@ -2,7 +2,10 @@ package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -46,6 +49,10 @@ public final class TagConstants
     public static final ResourceLocation RAIDERS                   = new ResourceLocation(MOD_ID, "raiders");
     public static final ResourceLocation IGNORE_NBT                = new ResourceLocation(MOD_ID, "ignore_nbt");
     public static final ResourceLocation ALLOW_INTERACT            = new ResourceLocation(MOD_ID, "allowinteract");
+    public static final ResourceLocation COLD_BIOMES               = new ResourceLocation(MOD_ID, "coldbiomes");
+    public static final ResourceLocation TEMPERATE_BIOMES          = new ResourceLocation(MOD_ID, "temperatebiomes");
+    public static final ResourceLocation HUMID_BIOMES              = new ResourceLocation(MOD_ID, "humidbiomes");
+    public static final ResourceLocation DRY_BIOMES                = new ResourceLocation(MOD_ID, "drybiomes");
 
     public static final String CRAFTING_BAKER                = ModJobs.BAKER_ID.getPath();
     public static final String CRAFTING_BLACKSMITH           = ModJobs.BLACKSMITH_ID.getPath();

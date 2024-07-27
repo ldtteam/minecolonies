@@ -321,6 +321,9 @@ public class ClientRegistryHandler
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.floodedFarmland, RenderType.cutout());
+
+        Arrays.stream(ModBlocks.getCrops()).forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, RenderType.cutout()));
 
         ItemProperties.register(ModItems.spear, new ResourceLocation("throwing"), (item, world, entity, light) ->
                                                                            (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);

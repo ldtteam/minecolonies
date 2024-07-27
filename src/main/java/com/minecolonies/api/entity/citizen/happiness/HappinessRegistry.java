@@ -53,6 +53,7 @@ public class HappinessRegistry
 
         /**
          * Get the modifier.
+         *
          * @return the modifier.
          */
         public IHappinessModifier create()
@@ -105,6 +106,7 @@ public class HappinessRegistry
 
         /**
          * Create a new entry type.
+         *
          * @param doubleSupplier th
          */
         public HappinessFunctionEntry(final Function<ICitizenData, Double> doubleSupplier)
@@ -114,6 +116,7 @@ public class HappinessRegistry
 
         /**
          * Get the double supplier.
+         *
          * @return the function.
          */
         public Function<ICitizenData, Double> getDoubleSupplier()
@@ -126,26 +129,25 @@ public class HappinessRegistry
     public static ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
     public static ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
 
+    public static ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
+    public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
+    public static ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
+    public static ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
+
+    public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
+    public static ResourceLocation UNEMPLOYMENT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "unemployment");
+    public static ResourceLocation HEALTH_FUNCTION       = new ResourceLocation(Constants.MOD_ID, "health");
+    public static ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
+    public static ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
+    public static ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
+
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> staticHappinessModifier;
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> expirationBasedHappinessModifier;
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> timeBasedHappinessModifier;
 
-    public static ResourceLocation SCHOOL_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "school");
-    public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
-    public static ResourceLocation SOCIAL_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "social");
-    public static ResourceLocation SATURATION_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "saturation");
-    public static ResourceLocation MYSTICAL_SITE_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "mystical");
-
-    public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
-    public static ResourceLocation UNEMPLOYMENT_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "unemployment");
-    public static ResourceLocation HEALTH_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "health");
-    public static ResourceLocation IDLEATJOB_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "idleatjob");
-    public static ResourceLocation SLEPTTONIGHT_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "slepttonight");
-
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> schoolFunction;
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> securityFunction;
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> socialFunction;
-    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> saturationFunction;
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> mysticalSiteFunction;
 
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> housingFunction;
@@ -153,5 +155,6 @@ public class HappinessRegistry
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> healthFunction;
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> idleatjobFunction;
     public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> sleptTonightFunction;
-
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> foodFunction;
+    public static DeferredHolder<HappinessFunctionEntry, HappinessFunctionEntry> greatFoodFunction;
 }

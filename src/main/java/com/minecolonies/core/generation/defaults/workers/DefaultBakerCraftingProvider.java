@@ -1,5 +1,6 @@
 package com.minecolonies.core.generation.defaults.workers;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
@@ -149,5 +150,57 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .minBuildingLevel(4)
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "lembas_scone")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModItems.butter)),
+            new ItemStorage(new ItemStack(Items.HONEY_BOTTLE))))
+          .result(new ItemStack(ModItems.lembas_scone))
+          .minBuildingLevel(1)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "manchet_dough")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModItems.butter))))
+          .result(new ItemStack(ModItems.manchet_dough, 2))
+          .minBuildingLevel(1)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "muffin_dough")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModItems.butter)),
+            new ItemStorage(new ItemStack(Items.SUGAR)),
+            new ItemStorage(new ItemStack(Items.SWEET_BERRIES))))
+          .result(new ItemStack(ModItems.muffin_dough, 2))
+          .minBuildingLevel(1)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "flatbread")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+            new ItemStorage(waterBottle)))
+          .result(new ItemStack(ModItems.flatbread, 1))
+          .minBuildingLevel(1)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "muffin")
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.muffin_dough))))
+          .result(new ItemStack(ModItems.muffin))
+          .minBuildingLevel(1)
+          .intermediate(Blocks.FURNACE)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "manchet")
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.manchet_dough))))
+          .result(new ItemStack(ModItems.manchet_bread))
+          .minBuildingLevel(1)
+          .intermediate(Blocks.FURNACE)
+          .build(consumer);
     }
 }

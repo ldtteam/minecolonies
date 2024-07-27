@@ -496,6 +496,8 @@ public final class WindowConstants
     public static final String RESOURCE_ID               = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
     public static final String RESOURCE_ICON             = "resourceIcon";
+    public static final String STAR_IMAGE                = "star";
+
     public static final String STOCK_ADD                 = "addStock";
     public static final String STOCK_REMOVE              = "removeStock";
     public static final String QUANTITY_LABEL            = "resourceQty";

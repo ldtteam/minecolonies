@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#minecraft:is_jungle",
+    "#forge:is_wet/overworld",
+    "minecraft:bamboo_jungle",
+    "minecraft:beach",
+    "minecraft:warm_ocean",
+    "minecraft:dripstone_caves",
+    "minecraft:jungle",
+    "minecraft:lush_caves",
+    "minecraft:mangrove_swamp",
+    "minecraft:sparse_jungle"
+  ]
+}

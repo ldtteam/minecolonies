@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 300,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "minecolonies:muffin_dough"
+  },
+  "result": "minecolonies:muffin"
+}

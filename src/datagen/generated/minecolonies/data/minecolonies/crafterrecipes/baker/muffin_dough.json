@@ -1,0 +1,25 @@
+{
+  "type": "recipe",
+  "count": 2,
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecolonies:butter"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:sweet_berries"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:muffin_dough"
+}

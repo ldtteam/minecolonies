@@ -26,7 +26,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     /**
      * Resource scrolling list.
      */
-    private final ScrollingList resourceList;
+    protected final ScrollingList resourceList;
 
     /**
      * The building this belongs to.
@@ -41,17 +41,17 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     /**
      * Check for inversion of the list.
      */
-    private final boolean isInverted;
+    protected final boolean isInverted;
 
     /**
      * Grouped list that can be further filtered.
      */
-    private List<ItemStorage> groupedItemList;
+    protected List<ItemStorage> groupedItemList;
 
     /**
      * Grouped list after applying the current temporary filter.
      */
-    private final List<ItemStorage> currentDisplayedList = new ArrayList<>();
+    protected final List<ItemStorage> currentDisplayedList = new ArrayList<>();
 
     /**
      * Update delay.
@@ -172,7 +172,14 @@ public class ItemListModuleWindow extends AbstractModuleWindow
             }
         }
 
-        currentDisplayedList.sort((o1, o2) -> {
+        applySorting(currentDisplayedList);
+
+        updateResourceList();
+    }
+
+    protected void applySorting(final List<ItemStorage> displayedList)
+    {
+        displayedList.sort((o1, o2) -> {
 
             boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1);
 
@@ -191,14 +198,12 @@ public class ItemListModuleWindow extends AbstractModuleWindow
                 return 0;
             }
         });
-
-        updateResourceList();
     }
 
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    private void updateResourceList()
+    protected void updateResourceList()
     {
         resourceList.enable();
         resourceList.show();

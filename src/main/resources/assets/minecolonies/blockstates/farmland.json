@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "moisture=0": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=1": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=2": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=3": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=4": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=5": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=6": {
+      "model": "minecolonies:block/farmland"
+    },
+    "moisture=7": {
+      "model": "minecolonies:block/farmland_moist"
+    }
+  }
+}

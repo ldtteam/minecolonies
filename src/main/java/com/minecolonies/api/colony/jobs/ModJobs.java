@@ -50,11 +50,14 @@ public final class ModJobs
     public static final ResourceLocation RABBIT_ID         = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
     public static final ResourceLocation CONCRETE_ID       = new ResourceLocation(Constants.MOD_ID, "concretemixer");
     public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
-    public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
     public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
     public static final ResourceLocation QUARRY_MINER_ID   = new ResourceLocation(Constants.MOD_ID, "quarrier");
     public static final ResourceLocation DRUID_ID          = new ResourceLocation(Constants.MOD_ID, "druid");
     public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
+    public static final ResourceLocation CHEF_ID           = new ResourceLocation(Constants.MOD_ID, "chef");
+
+    @Deprecated
+    public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
 
     public static DeferredHolder<JobEntry, JobEntry> placeHolder;
     public static DeferredHolder<JobEntry, JobEntry> builder;
@@ -102,6 +105,10 @@ public final class ModJobs
     public static DeferredHolder<JobEntry, JobEntry> quarrier;
     public static DeferredHolder<JobEntry, JobEntry> druid;
     public static DeferredHolder<JobEntry, JobEntry> alchemist;
+    public static DeferredHolder<JobEntry, JobEntry> chef;
+
+    @Deprecated
+    public static DeferredHolder<JobEntry, JobEntry> cookassistant;
 
     /**
      * List of all jobs.

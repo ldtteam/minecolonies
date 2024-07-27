@@ -1764,16 +1764,16 @@ public class CitizenData implements ICitizenData
     @Override
     public boolean needsBetterFood()
     {
-        if (this.getWorkBuilding() == null)
+        if (this.getHomeBuilding() == null)
         {
             return false;
         }
         else
         {
             int slotBadFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-              stack -> CAN_EAT.test(stack) && !this.getWorkBuilding().canEat(stack));
+              stack -> CAN_EAT.test(stack) && !this.getHomeBuilding().canEat(stack));
             int slotGoodFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-              stack -> CAN_EAT.test(stack) && this.getWorkBuilding().canEat(stack));
+              stack -> CAN_EAT.test(stack) && this.getHomeBuilding().canEat(stack));
             return slotBadFood != -1 && slotGoodFood == -1;
         }
     }

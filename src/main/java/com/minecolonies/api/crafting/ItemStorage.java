@@ -95,6 +95,16 @@ public class ItemStorage
     }
 
     /**
+     * Creates an instance of the storage.
+     *
+     * @param item the item.
+     */
+    public ItemStorage(@NotNull final Item item)
+    {
+        this(item.getDefaultInstance());
+    }
+
+    /**
      * Creates an instance of the storage from JSON
      * 
      * @param jObject the JSON Object to parse

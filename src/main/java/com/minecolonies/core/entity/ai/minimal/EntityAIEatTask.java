@@ -10,14 +10,15 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
@@ -35,6 +36,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
+import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
@@ -169,7 +171,7 @@ public class EntityAIEatTask implements IStateAI
      */
     private boolean canEat(final ICitizenData citizenData, final ItemStack stack)
     {
-        return citizenData.getWorkBuilding() == null || citizenData.getWorkBuilding().canEat(stack);
+        return citizenData.getHomeBuilding() == null || citizenData.getHomeBuilding().canEat(stack);
     }
 
     /**
@@ -208,7 +210,14 @@ public class EntityAIEatTask implements IStateAI
         {
             return EAT;
         }
-
+        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem)
+        {
+            if (foodItem.getTier() == 3)
+            {
+                citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
+            }
+            citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
+        }
         ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
