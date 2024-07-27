@@ -9,6 +9,7 @@ import com.minecolonies.api.quests.IQuestDialogueAnswer;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -151,7 +152,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
 
         if (colonyQuest.getColony() instanceof Colony)
         {
-            colonyQuest.getColony().getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
+            QuestObjectiveEventHandler.trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
         return instance;
     }
@@ -217,7 +218,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         if (colonyQuest.getColony() instanceof Colony)
         {
             // Only serverside cleanup.
-            colonyQuest.getColony().getBuildingManager().stopTrackingBuildingLevelUp(this.buildingEntry, colonyQuest);
+            QuestObjectiveEventHandler.stopTrackingBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
     }
 
@@ -256,7 +257,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         super.onWorldLoad(colonyQuest);
         if (colonyQuest.getColony() instanceof Colony colony && !advanceIfFinished(colonyQuest))
         {
-            colony.getBuildingManager().trackBuildingLevelUp(this.buildingEntry, colonyQuest);
+            QuestObjectiveEventHandler.trackBuildingLevelUp(this.buildingEntry, colonyQuest);
         }
     }
 

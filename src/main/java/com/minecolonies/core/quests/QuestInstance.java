@@ -191,10 +191,7 @@ public class QuestInstance implements IQuestInstance
     @Override
     public void onWorldLoad()
     {
-        if (currentObjectiveInstance != null)
-        {
-            IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(this.objectiveProgress).onWorldLoad(this);
-        }
+        IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(this.objectiveProgress).onWorldLoad(this);
     }
 
     @Override

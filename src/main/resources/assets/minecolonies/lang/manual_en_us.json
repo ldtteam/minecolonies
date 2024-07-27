@@ -2504,6 +2504,8 @@
   "com.minecolonies.coremod.questobjectives.buildbuilding.cumulative.existing": "I am still waiting for you to reach %s totaling %d levels!",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress": "%d/%d %s buildings built",
   "com.minecolonies.coremod.questobjectives.buildbuilding.progress.cumulative": "%d/%d totaling levels of %s buildings built",
+  "com.minecolonies.coremod.questobjectives.research.progress": "%s is not researched yet!",
+  "com.minecolonies.coremod.questobjectives.research":  "I am waiting for the research %s to be completed at the university!",
 
   "com.minecolonies.coremod.gui.townhall.patreon": "Patreon",
   "com.minecolonies.coremod.gui.townhall.patreon.hover": "Unlock Custom Colonist Skins, Name Packs and get Access to Official Servers",

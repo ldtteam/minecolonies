@@ -162,6 +162,7 @@ public class QuestRegistries
     public static ResourceLocation KILLENTITY_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "killentity");
     public static ResourceLocation PLACEBLOCK_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "placeblock");
     public static ResourceLocation BUILD_BUILDING_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "buildbuilding");
+    public static ResourceLocation RESEARCH_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "research");
 
     public static ResourceLocation STATE_TRIGGER_ID       = new ResourceLocation(Constants.MOD_ID, "state");
     public static ResourceLocation RANDOM_TRIGGER_ID      = new ResourceLocation(Constants.MOD_ID, "random");
@@ -191,6 +192,7 @@ public class QuestRegistries
     public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> killEntityObjective;
     public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> placeBlockObjective;
     public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> buildBuildingObjective;
+    public static DeferredHolder<ObjectiveEntry, ObjectiveEntry> researchObjective;
 
     public static DeferredHolder<TriggerEntry, TriggerEntry> stateTrigger;
     public static DeferredHolder<TriggerEntry, TriggerEntry> randomTrigger;
