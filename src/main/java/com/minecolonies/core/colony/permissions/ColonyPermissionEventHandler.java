@@ -14,18 +14,23 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
@@ -58,6 +63,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PERMISSION_DENIED;
 
 /**
@@ -73,7 +79,12 @@ public class ColonyPermissionEventHandler
     /**
      * The last time the player was notified about not having permission.
      */
-    private Map<UUID, Long> lastPlayerNotificationTick = new HashMap<>();
+    private final Map<UUID, Long> lastPlayerNotificationTick = new HashMap<>();
+
+    /**
+     * Number of attempts within a notif tick.
+     */
+    private final Object2IntMap<UUID> playerAttempts = new Object2IntOpenHashMap<>();
 
     /**
      * Create this EventHandler.
@@ -175,13 +186,26 @@ public class ColonyPermissionEventHandler
             return;
         }
 
-        final long worldTime = entity.level().getGameTime();
-        if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
-                || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * 10)
-                    < worldTime)
-        {
-            MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
-            lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
+            final long worldTime = entity.level.getGameTime();
+            if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
+                  || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10)
+                       < worldTime)
+            {
+                MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
+                lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
+                playerAttempts.put(entity.getUUID(), 0);
+            }
+            else
+            {
+                if (playerAttempts.compute(entity.getUUID(), (uuid, count) -> count == null ? 1 : count + 1) > 10)
+                {
+                    if (entity instanceof LivingEntity living)
+                    {
+                        playerAttempts.put(entity.getUUID(), 0);
+                        living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, TICKS_SECOND * 10));
+                    }
+                }
+            }
         }
     }
 
@@ -318,7 +342,8 @@ public class ColonyPermissionEventHandler
     {
         if (colony.isCoordInColony(event.getLevel(), event.getPos()))
         {
-            final Block block = event.getLevel().getBlockState(event.getPos()).getBlock();
+            final BlockState state = event.getLevel().getBlockState(event.getPos());
+            final Block block = state.getBlock();
 
             // Huts
             if (event instanceof PlayerInteractEvent.RightClickBlock && block instanceof AbstractBlockHut && !colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_HUTS))
@@ -330,6 +355,11 @@ public class ColonyPermissionEventHandler
             final Permissions perms = colony.getPermissions();
 
             if (isFreeToInteractWith(block, event.getPos()) && perms.hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+            {
+                return;
+            }
+
+            if ((state.is(BlockTags.DOORS) || state.is(BlockTags.FENCE_GATES)) && perms.hasPermission(event.getEntity(), Action.ACCESS_TOGGLEABLES))
             {
                 return;
             }
@@ -428,6 +458,11 @@ public class ColonyPermissionEventHandler
     {
         if (isFreeToInteractWith(null, event.getPos())
               && colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+        {
+            return;
+        }
+
+        if (event.getEntity().getType().is(ModTags.freeToInteractWith))
         {
             return;
         }
