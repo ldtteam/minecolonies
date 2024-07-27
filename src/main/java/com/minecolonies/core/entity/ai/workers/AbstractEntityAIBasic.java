@@ -206,7 +206,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 5),
 
           /*
             Dumps inventory as long as needs be.
@@ -516,7 +516,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         if (delay > 0)
         {
-            if (delay % HIT_EVERY_X_TICKS == 0 && currentWorkingLocation != null && EntityUtils.isLivingAtSite(worker,
+            if (currentWorkingLocation != null && EntityUtils.isLivingAtSite(worker,
               currentWorkingLocation.getX(),
               currentWorkingLocation.getY(),
               currentWorkingLocation.getZ(),
