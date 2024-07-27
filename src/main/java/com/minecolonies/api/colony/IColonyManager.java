@@ -9,6 +9,7 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.core.colony.Colony;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

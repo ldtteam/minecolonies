@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
@@ -81,6 +82,11 @@ public final class ColonyManager implements IColonyManager
      * Global claim data from all colonies
      */
     private Map<ResourceKey<Level>, Long2ObjectMap<ChunkClaimData>> chunkClaimData = new HashMap<>();
+
+    /**
+     * Client side sound manager.
+     */
+    private SoundManager clientSoundManager;
 
     @Nullable
     private IServerColonySaveData getColonySaveData(final ServerLevel w)
@@ -609,10 +615,20 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level == null && !colonyViews.isEmpty())
+        if (event.phase == TickEvent.Phase.END)
         {
-            //  Player has left the game, clear the Colony View cache
-            colonyViews.clear();
+            if (Minecraft.getInstance().level == null && !colonyViews.isEmpty())
+            {
+                //  Player has left the game, clear the Colony View cache
+                colonyViews.clear();
+            }
+
+
+            if (clientSoundManager == null)
+            {
+                clientSoundManager = new SoundManager();
+            }
+            clientSoundManager.tick();
         }
     }
 

@@ -173,7 +173,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     {
         if (player.level().getEntity(this.entityid) instanceof final AbstractCivilianEntity citizen)
         {
-            citizen.getSoundManager().addToQueue(this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
+            SoundManager.addToQueue(entity.getUUID(), this.soundEvent, this.soundSource, this.repetitions, this.length, this.pos, this.volume, this.pitch);
         }
     }
 }
