@@ -9,6 +9,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,6 @@ public class WorldEventContext
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();
-        nearestColony = IColonyManager.getInstance().getClosestColonyView(clientLevel, clientPlayer.blockPosition());
         clientRenderDist = Minecraft.getInstance().options.renderDistance().get();
 
         final Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -83,5 +83,15 @@ public class WorldEventContext
     boolean hasNearestColony()
     {
         return nearestColony != null;
+    }
+
+    /**
+     * Checks for a nearby colony
+     *
+     * @param level
+     */
+    public void checkNearbyColony(final Level level)
+    {
+        nearestColony = IColonyManager.getInstance().getClosestColonyView(level, clientPlayer.blockPosition());
     }
 }
