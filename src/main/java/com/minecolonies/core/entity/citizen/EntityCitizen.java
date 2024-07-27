@@ -1912,7 +1912,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean isCurrentlyGlowing()
     {
-        return level().isClientSide() ? hasGlowingTag() : super.isCurrentlyGlowing();
+        return level.isClientSide() && hasGlowingTag() || super.isCurrentlyGlowing();
     }
 
     /**
