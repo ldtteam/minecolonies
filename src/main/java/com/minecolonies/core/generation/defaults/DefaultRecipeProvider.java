@@ -637,6 +637,16 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_boat", has(ItemTags.BOATS))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.large_empty_bottle, 4)
+          .pattern("PSP")
+          .pattern("P P")
+          .pattern("PGP")
+          .define('P', Items.GLASS_PANE)
+          .define('G', Items.GLASS)
+          .define('S', ItemTags.WOODEN_SLABS)
+          .unlockedBy("has_glass", has(Tags.Items.GLASS))
+          .save(consumer);
+
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.scimitar), RecipeCategory.MISC, Items.IRON_NUGGET, 0.1f, 200)
                 .unlockedBy("has_scimitar", has(ModItems.scimitar))
                 .save(consumer, new ResourceLocation(MOD_ID, "iron_nugget_from_iron_scimitar_smelting"));
