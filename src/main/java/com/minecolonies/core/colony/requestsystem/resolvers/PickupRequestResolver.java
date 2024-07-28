@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.TypeConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,12 @@ public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup>
       @NotNull final IToken<?> token)
     {
         super(location, token);
+    }
+
+    @Override
+    public int getSuitabilityMetric(final @NotNull IRequestManager manager, final @NotNull IRequest<? extends Pickup> request)
+    {
+        return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
     }
 
     @Override
