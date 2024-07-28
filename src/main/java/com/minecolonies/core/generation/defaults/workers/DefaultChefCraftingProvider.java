@@ -38,7 +38,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "butter")
-          .inputs(List.of(new ItemStorage(new ItemStack(Items.MILK_BUCKET))))
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.butter))
           .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
           .minBuildingLevel(1)
@@ -55,7 +55,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cheddar_cheese")
-          .inputs(List.of(new ItemStorage(new ItemStack(Items.MILK_BUCKET))))
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.cheddar_cheese))
           .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
           .minBuildingLevel(1)
@@ -92,7 +92,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "feta_cheese")
-          .inputs(List.of(new ItemStorage(new ItemStack(Items.MILK_BUCKET))))
+          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.feta_cheese))
           .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
           .minBuildingLevel(1)
@@ -245,6 +245,16 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
             new ItemStorage(new ItemStack(ModBlocks.blockChickpea))))
           .result(new ItemStack(ModItems.pepper_hummus, 2))
+          .minBuildingLevel(1)
+          .build(consumer);
+
+        CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "soy_milk")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModItems.large_water_bottle)),
+            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)),
+            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)),
+            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean))))
+          .result(new ItemStack(ModItems.large_soy_milk_bottle))
           .minBuildingLevel(1)
           .build(consumer);
     }
