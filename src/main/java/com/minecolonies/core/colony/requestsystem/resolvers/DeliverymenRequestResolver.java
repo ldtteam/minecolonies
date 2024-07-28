@@ -74,7 +74,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
         {
             return distance;
         }
-        return Math.min(distance/10, 1) + wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getMutableRequestList().size();
+        return Math.max(distance/10, 1) + wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getMutableRequestList().size();
     }
 
     @Nullable
