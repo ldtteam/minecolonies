@@ -119,13 +119,13 @@ public class BuildingMechanic extends AbstractBuilding
          */
         public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
-            final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
+            final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL, true)
                     .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
 
             final Predicate<ItemStack> handled = sawmill
-                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER))
-                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON))
-                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER))
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER, true))
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON, true))
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER, true))
                     .orElse(false);
 
             // mechanic accepts every ingredient not otherwise handled

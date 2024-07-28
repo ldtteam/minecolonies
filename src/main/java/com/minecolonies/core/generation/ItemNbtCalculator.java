@@ -16,10 +16,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -90,6 +87,10 @@ public class ItemNbtCalculator implements DataProvider
             final CompoundTag tag = (stack.hasTag() && !stack.is(ModTags.ignoreNBT)) ? stack.getTag() : new CompoundTag();
             final Set<String> keys = tag.isEmpty() ? new HashSet<>() : new HashSet<>(tag.getAllKeys());
 
+            if (stack.getItem() instanceof DyeableLeatherItem)
+            {
+                keys.add("display");
+            }
             if (stack.isEnchantable())
             {
                 keys.add("Enchantments");
