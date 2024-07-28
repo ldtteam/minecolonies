@@ -8,21 +8,21 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.MultiOutputRecipe;
+import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -102,6 +102,44 @@ public class BuildingDyer extends AbstractBuilding
         public void improveRecipe(final IRecipeStorage recipe, final int count, final ICitizenData citizen)
         {
             // don't improve any dyeing recipes
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull Level world)
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
+
+            // show dyeable leather items (at least for the single-dye recipes)
+            final List<TagKey<Item>> dyes = List.of(
+                    Tags.Items.DYES_WHITE, Tags.Items.DYES_ORANGE, Tags.Items.DYES_MAGENTA, Tags.Items.DYES_LIGHT_BLUE,
+                    Tags.Items.DYES_YELLOW, Tags.Items.DYES_LIME, Tags.Items.DYES_PINK, Tags.Items.DYES_GRAY,
+                    Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_CYAN, Tags.Items.DYES_PURPLE, Tags.Items.DYES_BLUE,
+                    Tags.Items.DYES_BROWN, Tags.Items.DYES_GREEN, Tags.Items.DYES_RED, Tags.Items.DYES_BLACK);
+            for (final ItemStack item : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+            {
+                if (!(item.getItem() instanceof DyeableLeatherItem)) { continue; }
+
+                for (final TagKey<Item> dyeTag : dyes)
+                {
+                    final List<ItemStack> dyeItems = ForgeRegistries.ITEMS.tags().getTag(dyeTag)
+                            .stream().map(ItemStack::new).toList();
+                    if (dyeItems.isEmpty()) { continue; }
+
+                    if (dyeItems.get(0).getItem() instanceof final DyeItem dye)
+                    {
+                        final ItemStack result = DyeableLeatherItem.dyeArmor(item, List.of(dye));
+                        if (!result.isEmpty())
+                        {
+                            recipes.add(new GenericRecipe(null, result, List.of(),
+                                    List.of(List.of(item), dyeItems), 2, Blocks.AIR,
+                                    null, ToolType.NONE, List.of(), 0));
+                        }
+                    }
+                }
+            }
+
+            return recipes;
         }
 
         @Override
