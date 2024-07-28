@@ -101,7 +101,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public int getSuitabilityMetric(@NotNull IRequest<? extends IDeliverable> request)
+    public int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull IRequest<? extends IDeliverable> request)
     {
         return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
     }

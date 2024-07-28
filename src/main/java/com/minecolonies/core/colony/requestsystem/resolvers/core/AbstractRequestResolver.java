@@ -43,7 +43,7 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
     }
 
     @Override
-    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    public int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         return 0;
     }

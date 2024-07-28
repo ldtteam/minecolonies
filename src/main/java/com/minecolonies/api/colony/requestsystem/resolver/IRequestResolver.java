@@ -119,10 +119,11 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
 
     /**
      * Check how suitable this resolver is for the request.
+     * @param manager the req manager.
      * @param request the request to check.
      * @return the suitability metric (an int for easy comparison).
      */
-    default int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    default int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         return 0;
     }
