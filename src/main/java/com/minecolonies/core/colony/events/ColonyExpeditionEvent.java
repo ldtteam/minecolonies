@@ -49,12 +49,15 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
+import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.RUINED_PORTAL_ID;
+import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.STRONGHOLD_ID;
 import static com.minecolonies.core.loot.ExpeditionDifficultyCondition.PARAM_EXPEDITION_DIFFICULTY;
 
 /**
@@ -90,6 +93,12 @@ public class ColonyExpeditionEvent implements IColonyEvent
      * The size of the expedition inventory.
      */
     private static final int EXPEDITION_INVENTORY_SIZE = 27;
+
+    /**
+     * Usage damage percentages.
+     */
+    private static final float MIN_PERCENTAGE_USAGE_DAMAGE = 0.05f;
+    private static final float MAX_PERCENTAGE_USAGE_DAMAGE = 0.15f;
 
     /**
      * The id of this event.
@@ -367,13 +376,13 @@ public class ColonyExpeditionEvent implements IColonyEvent
 
                 getExpedition().advanceStage(Component.translatable(EXPEDITION_STAGE_STRUCTURE + structureId));
 
-                if (structureId.equals(new ResourceLocation("stronghold")))
-                {
-                    colony.getExpeditionManager().unlockEnd();
-                }
-                else if (structureId.getNamespace().equals("minecraft") && structureId.getPath().startsWith("ruined_portal"))
+                if (structureId.equals(RUINED_PORTAL_ID))
                 {
                     colony.getExpeditionManager().unlockNether();
+                }
+                else if (structureId.equals(STRONGHOLD_ID))
+                {
+                    colony.getExpeditionManager().unlockEnd();
                 }
                 break;
             }
@@ -503,6 +512,12 @@ public class ColonyExpeditionEvent implements IColonyEvent
             {
                 member.removeFromColony(colony);
             }
+
+            // Apply usage damage to all armor of all members.
+            final ArmorList armor = getArmor(member);
+            damageArmor(armor,
+              armor.getTotalArmor() * Mth.randomBetween(random, MIN_PERCENTAGE_USAGE_DAMAGE, MAX_PERCENTAGE_USAGE_DAMAGE),
+              slot -> member.setArmor(slot, ItemStack.EMPTY));
         }
 
         // Add all the loot to the leader inventory
@@ -521,7 +536,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     {
         // Process the next item in the loot table deque.
         final ItemStack nextItem = remainingItems.pop();
-        if (nextItem.equals(ItemStack.EMPTY))
+        if (nextItem.isEmpty())
         {
             return;
         }
@@ -618,23 +633,54 @@ public class ColonyExpeditionEvent implements IColonyEvent
         final int armorPieces = armor.size();
         if (armorPieces > 0)
         {
-            final float dividedDamage = damage / armorPieces;
-
             float finalDamage = damage;
             for (final Map.Entry<EquipmentSlot, Tuple<ItemStack, ArmorItem>> entry : armor.entrySet())
             {
-                if (entry.getValue().getA().hurt(Math.round(dividedDamage), random, null))
-                {
-                    expeditionMember.setArmor(entry.getKey(), ItemStack.EMPTY);
-                }
-
                 final ArmorItem armorItem = entry.getValue().getB();
                 finalDamage = CombatRules.getDamageAfterAbsorb(finalDamage, armorItem.getDefense(), armorItem.getToughness());
             }
+
+            damageArmor(getArmor(expeditionMember), finalDamage, slot -> expeditionMember.setArmor(slot, ItemStack.EMPTY));
             return finalDamage;
         }
 
         return damage;
+    }
+
+    /**
+     * Get the list of armor a member is wearing.
+     *
+     * @param expeditionMember the member.
+     * @return the armor list.
+     */
+    private ArmorList getArmor(final @NotNull IExpeditionMember<?> expeditionMember)
+    {
+        final ArmorList armor = new ArmorList();
+        armor.computeIfAbsent(EquipmentSlot.HEAD, getArmorPiece(expeditionMember));
+        armor.computeIfAbsent(EquipmentSlot.CHEST, getArmorPiece(expeditionMember));
+        armor.computeIfAbsent(EquipmentSlot.LEGS, getArmorPiece(expeditionMember));
+        armor.computeIfAbsent(EquipmentSlot.FEET, getArmorPiece(expeditionMember));
+        return armor;
+    }
+
+    /**
+     * Damage all armor in an armor list.
+     *
+     * @param list    the armor list.
+     * @param damage  the amount of damage dealt.
+     * @param onBreak function called when an armor slot breaks.
+     */
+    private void damageArmor(final @NotNull ArmorList list, final float damage, final Consumer<EquipmentSlot> onBreak)
+    {
+        final int armorPieces = list.size();
+        final float dividedDamage = damage / armorPieces;
+        for (final Map.Entry<EquipmentSlot, Tuple<ItemStack, ArmorItem>> entry : list.entrySet())
+        {
+            if (entry.getValue().getA().hurt(Math.round(damage / dividedDamage), random, null))
+            {
+                onBreak.accept(entry.getKey());
+            }
+        }
     }
 
     /**
@@ -670,5 +716,26 @@ public class ColonyExpeditionEvent implements IColonyEvent
                                         .create(LootContextParamSet.builder().build());
 
         return colony.getWorld().getServer().getLootData().getLootTable(lootTableId).getRandomItems(lootParams);
+    }
+
+    /**
+     * Wrapper for a combination of all armor.
+     */
+    private static class ArmorList extends HashMap<EquipmentSlot, Tuple<ItemStack, ArmorItem>>
+    {
+        /**
+         * Get the total armor level.
+         *
+         * @return the armor level.
+         */
+        public int getTotalArmor()
+        {
+            int armor = 0;
+            for (Tuple<ItemStack, ArmorItem> entry : this.values())
+            {
+                armor += entry.getB().getDefense();
+            }
+            return armor;
+        }
     }
 }

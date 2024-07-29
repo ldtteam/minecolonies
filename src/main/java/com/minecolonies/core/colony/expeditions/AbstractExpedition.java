@@ -185,7 +185,13 @@ public abstract class AbstractExpedition implements IExpedition
     public void advanceStage(final Component header)
     {
         cleanStages();
-        this.results.add(new ExpeditionStage(header));
+
+        // In case 2 identical structures hit back-to-back, we want to assume its one large structure.
+        final ExpeditionStage stage = getCurrentStage();
+        if (!stage.getHeader().equals(header))
+        {
+            this.results.add(new ExpeditionStage(header));
+        }
     }
 
     @Override
