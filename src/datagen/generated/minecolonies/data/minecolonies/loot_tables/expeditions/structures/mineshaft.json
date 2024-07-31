@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:fortress\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:mineshaft\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -32,23 +32,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:nether_bricks",
-          "weight": 100
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:iron_ingot",
+          "name": "minecraft:rail",
           "weight": 100
         },
         {
@@ -64,8 +48,40 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:gold_ingot",
-          "weight": 100
+          "name": "minecraft:powered_rail",
+          "weight": 75
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:detector_rail",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:activator_rail",
+          "weight": 50
         },
         {
           "type": "minecraft:item",
@@ -80,34 +96,66 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:nether_wart",
-          "weight": 75
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:obsidian",
-          "weight": 60
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:diamond",
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:saddle",
+          "name": "minecraft:iron_ingot",
           "weight": 50
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_ingot",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:name_tag",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_golden_apple",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:zombified_piglin\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:zombie\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 20
+          "quality": -10,
+          "weight": 100
         },
         {
           "type": "minecraft:item",
@@ -118,67 +166,56 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "weight": 20
+          "quality": -10,
+          "weight": 50
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:wither_skeleton\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:creeper\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -2,
-          "weight": 10
+          "quality": -5,
+          "weight": 30
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:blaze\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:spider\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -2,
-          "weight": 10
+          "quality": -5,
+          "weight": 30
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:magma_cube_large\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:cave_spider\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -1,
-          "weight": 5
+          "quality": -5,
+          "weight": 30
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:magma_cube_medium\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:enderman\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -1,
-          "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:magma_cube_small\",scale:1b,type:\"encounter\"}"
-            }
-          ],
-          "name": "minecolonies:adventure_token",
-          "quality": -1,
-          "weight": 20
+          "quality": -3,
+          "weight": 15
         }
       ],
       "rolls": {
@@ -195,7 +232,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:fortress\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:mineshaft\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -204,5 +241,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:expeditions/structures/fortress"
+  "random_sequence": "minecolonies:expeditions/structures/mineshaft"
 }

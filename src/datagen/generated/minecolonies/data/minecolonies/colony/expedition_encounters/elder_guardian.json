@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 8.0,
+  "entity-type": "minecraft:elder_guardian",
+  "health": 80.0,
+  "loot-table": "minecraft:entities/elder_guardian",
+  "reflect": 0.0,
+  "xp": 10.0
+}

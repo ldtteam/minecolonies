@@ -17,25 +17,53 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 3.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:arrow",
-          "weight": 150
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:polished_blackstone_bricks",
+          "weight": 100
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:string",
-          "weight": 150
-        },
-        {
-          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:iron_ingot",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:gold_ingot",
           "weight": 100
         },
@@ -58,31 +86,26 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:gold_block",
-          "quality": 5,
           "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:spectral_arrow",
-          "quality": 5,
           "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:crying_obsidian",
-          "quality": 5,
           "weight": 25
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:gilded_blackstone",
-          "quality": 10,
           "weight": 15
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_upgrade_smithing_template",
-          "quality": 5,
           "weight": 5
         },
         {
@@ -123,8 +146,8 @@
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 10.0,
-        "min": 5.0
+        "max": 5.0,
+        "min": 3.0
       }
     },
     {

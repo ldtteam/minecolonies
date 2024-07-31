@@ -17,15 +17,69 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 3.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:end_stone_bricks",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:purpur_block",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:iron_ingot",
           "weight": 200
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:gold_ingot",
           "weight": 200
         },
@@ -37,13 +91,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond",
-          "quality": 1,
           "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:emerald",
-          "quality": 1,
           "weight": 50
         },
         {
@@ -63,7 +115,6 @@
             }
           ],
           "name": "minecraft:iron_helmet",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -83,7 +134,6 @@
             }
           ],
           "name": "minecraft:iron_chestplate",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -103,7 +153,6 @@
             }
           ],
           "name": "minecraft:iron_leggings",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -123,7 +172,6 @@
             }
           ],
           "name": "minecraft:iron_boots",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -143,7 +191,6 @@
             }
           ],
           "name": "minecraft:iron_sword",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -163,7 +210,6 @@
             }
           ],
           "name": "minecraft:iron_pickaxe",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -183,7 +229,6 @@
             }
           ],
           "name": "minecraft:iron_shovel",
-          "quality": 1,
           "weight": 25
         },
         {
@@ -203,7 +248,6 @@
             }
           ],
           "name": "minecraft:diamond_helmet",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -223,7 +267,6 @@
             }
           ],
           "name": "minecraft:diamond_chestplate",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -243,7 +286,6 @@
             }
           ],
           "name": "minecraft:diamond_leggings",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -263,7 +305,6 @@
             }
           ],
           "name": "minecraft:diamond_boots",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -283,7 +324,6 @@
             }
           ],
           "name": "minecraft:diamond_sword",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -303,7 +343,6 @@
             }
           ],
           "name": "minecraft:diamond_pickaxe",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -323,13 +362,11 @@
             }
           ],
           "name": "minecraft:diamond_shovel",
-          "quality": 2,
           "weight": 5
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:elytra",
-          "quality": 3
+          "name": "minecraft:elytra"
         },
         {
           "type": "minecraft:item",
@@ -358,8 +395,8 @@
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 10.0,
-        "min": 5.0
+        "max": 5.0,
+        "min": 3.0
       }
     },
     {

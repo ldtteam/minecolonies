@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public enum ColonyExpeditionTypeDifficulty
 {
-    EASY("easy", 1, 0, Items.IRON_SWORD, false, Style.EMPTY, 30, 5, 1, 1f),
-    MEDIUM("medium", 2, 1, Items.IRON_SWORD, false, Style.EMPTY, 45, 10, 2, 1.2f),
-    HARD("hard", 3, 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15, 3, 1.5f),
-    NIGHTMARE("nightmare", 4, 5, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30, 4, 2f);
+    EASY("easy", 1, Items.IRON_SWORD, false, Style.EMPTY, 30, 5, 1, 1f),
+    MEDIUM("medium", 2, Items.IRON_SWORD, false, Style.EMPTY, 45, 10, 2, 1.2f),
+    HARD("hard", 3, Items.IRON_SWORD, false, Style.EMPTY, 60, 15, 3, 1.5f),
+    NIGHTMARE("nightmare", 4, Items.NETHERITE_SWORD, true, Style.EMPTY.withColor(ChatFormatting.DARK_RED).withItalic(true), 120, 30, 4, 2f);
 
     /**
      * The key of the difficulty, used in the json files.
@@ -25,11 +25,6 @@ public enum ColonyExpeditionTypeDifficulty
      * The level of the difficulty.
      */
     private final int level;
-
-    /**
-     * The luck level an expedition of the given difficulty will have.
-     */
-    private final int luckLevel;
 
     /**
      * The sword item which should be rendered for the difficulty icons.
@@ -72,7 +67,6 @@ public enum ColonyExpeditionTypeDifficulty
     ColonyExpeditionTypeDifficulty(
       final String key,
       final int level,
-      final int luckLevel,
       final Item icon,
       final boolean hidden,
       final Style style,
@@ -83,7 +77,6 @@ public enum ColonyExpeditionTypeDifficulty
     {
         this.key = key;
         this.level = level;
-        this.luckLevel = luckLevel;
         this.icon = icon;
         this.hidden = hidden;
         this.style = style;
@@ -160,16 +153,6 @@ public enum ColonyExpeditionTypeDifficulty
     public Style getStyle()
     {
         return style;
-    }
-
-    /**
-     * Get the luck level an expedition of the given difficulty will have.
-     *
-     * @return the luck level.
-     */
-    public int getLuckLevel()
-    {
-        return luckLevel;
     }
 
     /**

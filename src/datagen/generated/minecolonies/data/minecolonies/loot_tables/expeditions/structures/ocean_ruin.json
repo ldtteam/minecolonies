@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:buried_treasure\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:ocean_ruin\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -21,49 +21,58 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:cooked_cod",
-          "weight": 100
+          "name": "minecolonies:durum",
+          "weight": 50
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
               "add": false,
-              "count": {
+              "damage": {
                 "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
+                "max": 0.95,
+                "min": 0.75
               },
-              "function": "minecraft:set_count"
+              "function": "minecraft:set_damage"
             }
           ],
-          "name": "minecraft:iron_ingot",
-          "weight": 75
+          "name": "minecraft:stone_axe",
+          "weight": 35
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:gold_ingot",
-          "weight": 75
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:diamond",
-          "weight": 25
+          "name": "minecraft:bone_meal",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:emerald",
+          "weight": 35
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:fishing_rod",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
           "weight": 25
         },
         {
@@ -71,28 +80,12 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{Potion:\"minecraft:water_breathing\"}"
-            }
-          ],
-          "name": "minecraft:potion",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:heart_of_the_sea",
-          "weight": 5
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:drowned\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:zombified_piglin\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -10,
-          "weight": 100
+          "quality": -5,
+          "weight": 25
         }
       ],
       "rolls": {
@@ -109,7 +102,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:buried_treasure\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:ocean_ruin\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -118,5 +111,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:expeditions/structures/buried_treasure"
+  "random_sequence": "minecolonies:expeditions/structures/ocean_ruin"
 }

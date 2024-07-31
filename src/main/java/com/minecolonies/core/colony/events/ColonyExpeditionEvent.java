@@ -711,7 +711,6 @@ public class ColonyExpeditionEvent implements IColonyEvent
     private List<ItemStack> processLootTable(final ResourceLocation lootTableId, final ColonyExpeditionType expeditionType)
     {
         final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
-                                        .withLuck(expeditionType.difficulty().getLuckLevel())
                                         .withParameter(PARAM_EXPEDITION_DIFFICULTY, expeditionType.difficulty())
                                         .create(LootContextParamSet.builder().build());
 

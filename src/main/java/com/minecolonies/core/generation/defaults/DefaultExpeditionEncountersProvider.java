@@ -27,6 +27,8 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     public static final ResourceLocation ZOMBIE            = new ResourceLocation(Constants.MOD_ID, "zombie");
     public static final ResourceLocation SKELETON          = new ResourceLocation(Constants.MOD_ID, "skeleton");
     public static final ResourceLocation CREEPER           = new ResourceLocation(Constants.MOD_ID, "creeper");
+    public static final ResourceLocation SPIDER            = new ResourceLocation(Constants.MOD_ID, "spider");
+    public static final ResourceLocation CAVE_SPIDER       = new ResourceLocation(Constants.MOD_ID, "cave_spider");
     public static final ResourceLocation ENDERMAN          = new ResourceLocation(Constants.MOD_ID, "enderman");
     public static final ResourceLocation SHULKER           = new ResourceLocation(Constants.MOD_ID, "shulker");
     public static final ResourceLocation PIGLIN            = new ResourceLocation(Constants.MOD_ID, "piglin");
@@ -43,6 +45,10 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     public static final ResourceLocation VINDICATOR        = new ResourceLocation(Constants.MOD_ID, "vindicator");
     public static final ResourceLocation EVOKER            = new ResourceLocation(Constants.MOD_ID, "evoker");
     public static final ResourceLocation VEX               = new ResourceLocation(Constants.MOD_ID, "vex");
+    public static final ResourceLocation GUARDIAN          = new ResourceLocation(Constants.MOD_ID, "guardian");
+    public static final ResourceLocation ELDER_GUARDIAN    = new ResourceLocation(Constants.MOD_ID, "elder_guardian");
+    public static final ResourceLocation PILLAGER          = new ResourceLocation(Constants.MOD_ID, "pillager");
+    public static final ResourceLocation PILLAGER_CAPTAIN  = new ResourceLocation(Constants.MOD_ID, "pillager_captain");
 
     /**
      * Boss encounter constants.
@@ -71,9 +77,12 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     {
         final List<ExpeditionEncounter> types = new ArrayList<>();
 
+        // Standard mobs
         types.add(new ExpeditionEncounter(ZOMBIE, EntityType.ZOMBIE, 2.5f, 0, 20, 0, EntityType.ZOMBIE.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(SKELETON, EntityType.SKELETON, 3f, 0, 20, 0, EntityType.SKELETON.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(CREEPER, EntityType.CREEPER, 22f, 20, 20, 0, EntityType.CREEPER.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(SPIDER, EntityType.SPIDER, 2f, 0, 16, 0, EntityType.SPIDER.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(CAVE_SPIDER, EntityType.CAVE_SPIDER, 4f, 0, 12, 0, EntityType.CAVE_SPIDER.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(ENDERMAN, EntityType.ENDERMAN, 7f, 0, 40, 0, EntityType.ENDERMAN.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(SHULKER, EntityType.SHULKER, 4f, 0, 30, 0, EntityType.SHULKER.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(PIGLIN, EntityType.PIGLIN, 8f, 0, 16, 0, EntityType.PIGLIN.getDefaultLootTable(), 5));
@@ -90,7 +99,12 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
         types.add(new ExpeditionEncounter(VINDICATOR, EntityType.VINDICATOR, 13f, 0, 24, 0, EntityType.VINDICATOR.getDefaultLootTable(), 5));
         types.add(new ExpeditionEncounter(EVOKER, EntityType.EVOKER, 6f, 0, 24, 0, EntityType.EVOKER.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(VEX, EntityType.VEX, 9f, 0, 14, 0, EntityType.VEX.getDefaultLootTable(), 5));
+        types.add(new ExpeditionEncounter(GUARDIAN, EntityType.GUARDIAN, 6f, 0, 30, 0, EntityType.GUARDIAN.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(ELDER_GUARDIAN, EntityType.ELDER_GUARDIAN, 8f, 0, 80, 0, EntityType.ELDER_GUARDIAN.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(PILLAGER, EntityType.PILLAGER, 8f, 0, 80, 0, EntityType.PILLAGER.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(PILLAGER_CAPTAIN, EntityType.PILLAGER, 8f, 0, 80, 0, EntityType.PILLAGER.getDefaultLootTable(), 10));
 
+        // Boss mobs
         types.add(new ExpeditionEncounter(WARDEN, EntityType.WARDEN, 30f, 0, 500, 0, EntityType.WARDEN.getDefaultLootTable(), 5));
 
         return types;

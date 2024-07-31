@@ -8,7 +8,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:stronghold\",type:\"structure_start\"}"
+              "tag": "{structure:\"minecraft:monument\",type:\"structure_start\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -21,14 +21,34 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "minecraft:prismarine_bricks",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:dark_prismarine",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sea_lantern",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:wet_sponge",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:zombie\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:guardian\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -10,
+          "quality": -5,
           "weight": 50
         },
         {
@@ -36,42 +56,18 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:skeleton\",scale:1b,type:\"encounter\"}"
+              "tag": "{amount:1,encounter:\"minecolonies:elder_guardian\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -10,
-          "weight": 30
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:creeper\",scale:1b,type:\"encounter\"}"
-            }
-          ],
-          "name": "minecolonies:adventure_token",
-          "quality": -15,
-          "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:enderman\",scale:1b,type:\"encounter\"}"
-            }
-          ],
-          "name": "minecolonies:adventure_token",
-          "quality": -20,
-          "weight": 10
+          "quality": -1,
+          "weight": 5
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 3.0,
-        "min": 1.0
+        "max": 5.0,
+        "min": 3.0
       }
     },
     {
@@ -82,7 +78,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{structure:\"minecraft:stronghold\",type:\"structure_end\"}"
+              "tag": "{structure:\"minecraft:monument\",type:\"structure_end\"}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -91,5 +87,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:expeditions/structures/stronghold"
+  "random_sequence": "minecolonies:expeditions/structures/monument"
 }

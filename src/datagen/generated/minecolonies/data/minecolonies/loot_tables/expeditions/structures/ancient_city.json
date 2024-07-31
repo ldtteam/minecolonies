@@ -17,8 +17,24 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 2.0,
+      "bonus_rolls": 0.0,
       "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:deepslate_bricks",
+          "weight": 100
+        },
         {
           "type": "minecraft:item",
           "name": "minecraft:book",
@@ -27,13 +43,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:name_tag",
-          "quality": 5,
           "weight": 75
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:lead",
-          "quality": 5,
           "weight": 75
         },
         {
@@ -53,13 +67,11 @@
             }
           ],
           "name": "minecraft:iron_leggings",
-          "quality": 5,
           "weight": 40
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:experience_bottle",
-          "quality": 5,
           "weight": 40
         },
         {
@@ -70,13 +82,11 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:sculk_sensor",
-          "quality": 5,
           "weight": 30
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:sculk_catalyst",
-          "quality": 10,
           "weight": 20
         },
         {
@@ -96,26 +106,24 @@
             }
           ],
           "name": "minecraft:diamond_leggings",
-          "quality": 10,
           "weight": 5
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:enchanted_golden_apple",
-          "quality": 5,
           "weight": 5
         },
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:enchant_with_levels",
-              "levels": 3.0,
-              "treasure": false
+              "enchantments": [
+                "minecraft:mending"
+              ],
+              "function": "minecraft:enchant_randomly"
             }
           ],
           "name": "minecraft:enchanted_book",
-          "quality": 2,
           "weight": 5
         },
         {
@@ -155,8 +163,8 @@
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 5.0,
-        "min": 2.0
+        "max": 3.0,
+        "min": 1.0
       }
     },
     {

@@ -17,28 +17,48 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 3.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:iron_ingot",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:gold_ingot",
           "weight": 100
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:name_tag",
-          "quality": 5,
           "weight": 75
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:lead",
-          "quality": 5,
           "weight": 75
         },
         {
@@ -49,7 +69,6 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:golden_apple",
-          "quality": 5,
           "weight": 25
         },
         {
@@ -59,8 +78,7 @@
               "function": "minecraft:enchant_randomly"
             }
           ],
-          "name": "minecraft:book",
-          "quality": 5,
+          "name": "minecraft:enchanted_book",
           "weight": 20
         },
         {
@@ -80,13 +98,11 @@
             }
           ],
           "name": "minecraft:diamond_chestplate",
-          "quality": 5,
           "weight": 15
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:enchanted_golden_apple",
-          "quality": 3,
           "weight": 5
         },
         {
@@ -128,8 +144,8 @@
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 10.0,
-        "min": 5.0
+        "max": 5.0,
+        "min": 3.0
       }
     },
     {
