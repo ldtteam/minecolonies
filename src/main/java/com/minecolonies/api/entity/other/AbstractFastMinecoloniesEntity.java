@@ -13,6 +13,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +52,11 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     private List<Entity> entityPushCache = new ArrayList<>();
 
     /**
+     * The timepoint at which the entity last collided
+     */
+    public long lastHorizontalCollision = 0;
+
+    /**
      * Create a new instance.
      *
      * @param type    from type.
@@ -83,6 +89,24 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     {
         this.canBeStuck = canBeStuck;
     }
+
+    @Override
+    protected boolean isHorizontalCollisionMinor(Vec3 vec3)
+    {
+        lastHorizontalCollision = level.getGameTime();
+        return super.isHorizontalCollisionMinor(vec3);
+    }
+
+    /**
+     * Whether the citizen collided in the last 10 ticks
+     *
+     * @return
+     */
+    public boolean recentHorizontalCollision()
+    {
+        return level.getGameTime() - lastHorizontalCollision < 10;
+    }
+
 
     @Override
     public boolean checkBedExists()
