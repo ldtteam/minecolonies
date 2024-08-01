@@ -301,7 +301,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
         currentWorkingLocation = blockToMine;
 
-        return hasNotDelayed(getBlockMiningDelay(curBlock, blockToMine));
+        return hasNotDelayed(getBlockMiningTime(curBlock, blockToMine));
     }
 
     /**
@@ -311,7 +311,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
+    public int getBlockMiningTime(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         if (worker.getMainHandItem() == null)
         {

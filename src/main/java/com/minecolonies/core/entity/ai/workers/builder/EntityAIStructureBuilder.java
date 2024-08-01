@@ -251,9 +251,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
+    public int getBlockMiningTime(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
-        return (int) (super.getBlockMiningDelay(state, pos) * SPEED_BUFF_0);
+        return (int) (super.getBlockMiningTime(state, pos) * SPEED_BUFF_0);
     }
 
     /**
