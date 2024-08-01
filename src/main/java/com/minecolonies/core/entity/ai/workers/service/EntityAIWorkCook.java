@@ -144,7 +144,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
         final int buildingLimit = Math.max(1, building.getBuildingLevel() * building.getBuildingLevel()) * SLOT_PER_LINE;
         return InventoryUtils.getCountFromBuildingWithLimit(building,
-          ItemStackUtils.CAN_EAT.and(stack -> FoodUtils.canEat(stack, building.getBuildingLevel())),
+          ItemStackUtils.CAN_EAT.and(stack -> FoodUtils.canEat(stack, building.getBuildingLevel() - 1)),
           stack -> stack.getMaxStackSize() * 6) > buildingLimit;
     }
 
@@ -203,10 +203,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
-                    if (stack.isEdible())
-                    {
-                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFoodProperties(stack, worker).getNutrition() / 2.0);
-                    }
+                    citizenToServe.get(0).getCitizenData().increaseSaturation(FoodUtils.getFoodValue(stack, worker));
                     worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED, worker.getCitizenColonyHandler().getColony().getDay());
                 }
             }
@@ -385,7 +382,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             }
         }
 
-        blockedItems.removeIf(item -> item.getItemStack().getFoodProperties(worker) == null || !FoodUtils.canEat(item.getItemStack(), building.getBuildingLevel()));
+        blockedItems.removeIf(item -> item.getItemStack().getFoodProperties(worker) == null || !FoodUtils.canEat(item.getItemStack(), building.getBuildingLevel() - 1));
         if (!blockedItems.isEmpty())
         {
             if (IColonyManager.getInstance().getCompatibilityManager().getEdibles(building.getBuildingLevel() - 1).size() <= blockedItems.size())
@@ -397,8 +394,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     return null;
                 }
             }
-            return new Food(STACKSIZE, blockedItems, building.getBuildingLevel() - 1);
+            return new Food(STACKSIZE, blockedItems, building.getBuildingLevel());
         }
-        return new Food(STACKSIZE, building.getBuildingLevel() - 1);
+        return new Food(STACKSIZE, building.getBuildingLevel());
     }
 }

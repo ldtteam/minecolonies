@@ -144,8 +144,6 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         final IRecipeStorage data = module.getRecipes().get(row);
-        module.removeRecipe(row);
-        recipeList.refreshElementPanes();
         Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getProducer().getRuntimeID()));
     }
 

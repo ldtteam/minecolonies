@@ -37,7 +37,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
       final IItemListModuleView moduleView)
     {
         super(res, building, moduleView);
-        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || !FoodUtils.canEat(c.getItemStack(), building.getBuildingLevel()));
+        groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || !FoodUtils.canEat(c.getItemStack(), building.getBuildingLevel() - 1));
     }
 
     @Override

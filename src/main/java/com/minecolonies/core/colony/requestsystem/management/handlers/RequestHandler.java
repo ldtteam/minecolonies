@@ -189,12 +189,12 @@ public class RequestHandler implements IRequestHandler
                 if (attemptResult != null)
                 {
                     previousResolver = resolver;
-                    previousMetric = resolver.getSuitabilityMetric(request);
+                    previousMetric = resolver.getSuitabilityMetric(manager, request);
                 }
             }
             else
             {
-                final int currentResolverMetric = resolver.getSuitabilityMetric(request);
+                final int currentResolverMetric = resolver.getSuitabilityMetric(manager, request);
                 if (currentResolverMetric < previousMetric)
                 {
                     @Nullable List<IToken<?>> tempAttemptResolveRequest =
@@ -202,7 +202,7 @@ public class RequestHandler implements IRequestHandler
                     if (tempAttemptResolveRequest != null)
                     {
                         previousResolver = resolver;
-                        previousMetric = resolver.getSuitabilityMetric(request);
+                        previousMetric = resolver.getSuitabilityMetric(manager, request);
                         attemptResult = tempAttemptResolveRequest;
                     }
                 }

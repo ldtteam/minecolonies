@@ -1060,6 +1060,18 @@
     "item": "minecolonies:lamb_stew"
   },
   {
+    "item": "minecolonies:large_empty_bottle"
+  },
+  {
+    "item": "minecolonies:large_milk_bottle"
+  },
+  {
+    "item": "minecolonies:large_soy_milk_bottle"
+  },
+  {
+    "item": "minecolonies:large_water_bottle"
+  },
+  {
     "item": "minecolonies:lembas_scone"
   },
   {
@@ -3516,6 +3528,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3526,6 +3541,9 @@
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },
@@ -3538,6 +3556,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3547,10 +3568,18 @@
     "item": "minecraft:leather_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "display"
+      }
+    ],
     "item": "minecraft:leather_horse_armor"
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },

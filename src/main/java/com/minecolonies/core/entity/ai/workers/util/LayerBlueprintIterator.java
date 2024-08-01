@@ -72,9 +72,12 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
      */
     public void setLayer(final int newLevel)
     {
-        layer = newLevel;
-        // Reset the blueprint, as we now need a new layer of the blueprint
-        handler.setLayerBlueprint();
+        if (layer != newLevel)
+        {
+            layer = newLevel;
+            // Reset the blueprint, as we now need a new layer of the blueprint
+            handler.setLayerBlueprint();
+        }
         delegate.setProgressPos(NULL_POS);
     }
 
@@ -122,7 +125,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
     public BlockPos getSize()
     {
         final Blueprint blueprint = originalHandler.getBluePrint();
-        return new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeY());
+        return new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
     }
 
     @Override

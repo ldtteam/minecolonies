@@ -8,7 +8,7 @@
       "item": "minecraft:wheat"
     },
     {
-      "item": "minecraft:milk_bucket"
+      "item": "minecolonies:large_milk_bottle"
     }
   ],
   "intermediate": "minecraft:air",

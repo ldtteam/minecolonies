@@ -695,8 +695,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             final ColonyPlayer user = users.get(row);
             if (user.getRank().getId() != IPermissions.OWNER_RANK_ID)
             {
-                users.remove(user);
-                userList.removeChild(button.getParent());
                 Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(building.getColony(), user.getID()));
             }
         }

@@ -1,6 +1,5 @@
 package com.minecolonies.core.compatibility.jei.transfer;
 
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -58,7 +57,7 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
             final JobEntry jobEntry = moduleView.getJobEntry();
             if (jobEntry != null)
             {
-                final ResourceLocation uid = ICraftingBuildingModule.getUid(jobEntry, moduleView.getId());
+                final ResourceLocation uid = jobEntry.getKey();
                 final JobBasedRecipeCategory<?> category = this.categories.get(uid);
                 if (category != null)
                 {

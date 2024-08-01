@@ -109,6 +109,12 @@ public final class ModItems
     public static Item sushi_roll;
     public static Item tofu;
 
+    public static Item large_water_bottle;
+    public static Item large_milk_bottle;
+    public static Item large_soy_milk_bottle;
+    public static Item large_empty_bottle;
+
+
     /**
      * Private constructor to hide the implicit public one.
      */
