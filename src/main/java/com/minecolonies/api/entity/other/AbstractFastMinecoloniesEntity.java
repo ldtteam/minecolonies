@@ -54,7 +54,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     /**
      * The timepoint at which the entity last collided
      */
-    public long lastHorizontalCollision = 0;
+    private long lastHorizontalCollision = 0;
 
     /**
      * Create a new instance.

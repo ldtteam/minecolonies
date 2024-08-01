@@ -123,11 +123,6 @@ public class EntityAIInteractToggleAble extends Goal
             updateTimer = 10;
             return checkPath();
         }
-        else
-        {
-            Log.getLogger()
-              .info(entity + "Time since:" + (entity.level.getGameTime() - entity.lastHorizontalCollision) + " recent collision:" + entity.recentHorizontalCollision());
-        }
 
         // Occasional checks for current path, collisions do not cover all cases
         if (executeTimerSlow-- <= 0)
