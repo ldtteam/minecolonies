@@ -2,13 +2,11 @@ package com.minecolonies.core.entity.ai.minimal;
 
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
@@ -118,7 +116,7 @@ public class EntityAIInteractToggleAble extends Goal
     public boolean canUse()
     {
         // Reactive check for detected collisions
-        if ((entity.recentHorizontalCollision() || entity.verticalCollision && !entity.onGround()) && updateTimer-- <= 0)
+        if ((entity.hadHorizontalCollission() || entity.verticalCollision && !entity.onGround()) && updateTimer-- <= 0)
         {
             updateTimer = 10;
             return checkPath();

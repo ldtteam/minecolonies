@@ -102,11 +102,10 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      *
      * @return
      */
-    public boolean recentHorizontalCollision()
+    public boolean hadHorizontalCollission()
     {
         return level.getGameTime() - lastHorizontalCollision < 10;
     }
-
 
     @Override
     public boolean checkBedExists()
