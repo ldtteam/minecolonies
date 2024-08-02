@@ -51,6 +51,12 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .minBuildingLevel(3)
                 .build(consumer);
 
+        CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "water_bucket")
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.BUCKET))))
+                .result(new ItemStack(Items.WATER_BUCKET))
+                .minBuildingLevel(3)
+                .build(consumer);
+
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "bread_dough")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3))))
                 .result(new ItemStack(ModItems.breadDough))
