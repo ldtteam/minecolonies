@@ -48,7 +48,7 @@ public final class LootTableAnalyzer
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param lootTableManager the {@link LootTables}
+     * @param lootTableManager the {@link LootDataManager}
      * @param lootTableId the loot table id
      * @return the list of possible drops
      */
@@ -61,7 +61,7 @@ public final class LootTableAnalyzer
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param lootTableManager the {@link LootTables}
+     * @param lootTableManager the {@link LootDataManager}
      * @param lootTable the loot table
      * @return the list of possible drops
      */
@@ -85,7 +85,7 @@ public final class LootTableAnalyzer
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param lootTableManager the {@link LootTables}
+     * @param lootTableManager the {@link LootDataManager}
      * @param lootTableJson the loot table json
      * @return the list of possible drops
      */
@@ -112,6 +112,10 @@ public final class LootTableAnalyzer
                     })
                     .mapToInt(entry -> GsonHelper.getAsInt(entry.getAsJsonObject(), "weight", 1))
                     .sum();
+            final JsonArray conditions = GsonHelper.getAsJsonArray(pool.getAsJsonObject(), "conditions", new JsonArray());
+            final boolean conditional = !conditions.isEmpty();
+            if (conditionsSeemImpossible(conditions)) { continue; }
+            final float modifier = adjustModifier(1f, conditions);
 
             for (final JsonElement ej : entries)
             {
@@ -120,7 +124,7 @@ public final class LootTableAnalyzer
                 final List<LootDrop> entryDrops = entryToDrops(lootTableManager, entryJson);
                 for (final LootDrop drop : entryDrops)
                 {
-                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight) * rolls, drop.getQuality() * rolls, drop.getConditional()));
+                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight) * rolls * modifier, drop.getQuality() * rolls, conditional || drop.getConditional()));
                 }
             }
         }
@@ -132,7 +136,7 @@ public final class LootTableAnalyzer
     /**
      * Parse a specific entry and try to determine the possible drops.
      *
-     * @param lootTableManager the {@link LootTables}
+     * @param lootTableManager the {@link LootDataManager}
      * @param entryJson the entry json
      * @return the list of possible drops
      */
@@ -149,7 +153,7 @@ public final class LootTableAnalyzer
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 float modifier = 1.0F;
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
-                final boolean conditional = conditions.size() > 0;
+                final boolean conditional = !conditions.isEmpty();
                 if (conditionsSeemImpossible(conditions)) { break; }
                 ItemStack stack = new ItemStack(item);
                 if (entryJson.has("functions"))
@@ -158,6 +162,7 @@ public final class LootTableAnalyzer
                     stack = result.getA();
                     modifier = result.getB();
                 }
+                modifier = adjustModifier(modifier, conditions);
                 if (stack.getItem().equals(ModItems.adventureToken))
                 {
                     final List<LootDrop> mobDrops = expandAdventureToken(lootTableManager, stack);
@@ -176,7 +181,7 @@ public final class LootTableAnalyzer
                 final List<LootDrop> tableDrops = toDrops(lootTableManager, table);
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
-                final boolean conditional = conditions.size() > 0;
+                final boolean conditional = !conditions.isEmpty();
                 if (conditionsSeemImpossible(conditions)) { break; }
                 for (final LootDrop drop : tableDrops)
                 {
@@ -211,7 +216,7 @@ public final class LootTableAnalyzer
         for (final JsonElement condition : conditions)
         {
             final String json = condition.toString();
-            if (json.contains("damage_source_properties") && !json.contains("minecraft:inverted"))
+            if ((json.contains("killed_by_player") || json.contains("damage_source_properties")) && !json.contains("minecraft:inverted"))
             {
                 // very unlikely that colonists would match any specific damage sources (disables froglights)
                 return true;
@@ -221,9 +226,33 @@ public final class LootTableAnalyzer
     }
 
     /**
+     * Attempts to adjust the drop probability according to conditions present on the loot pool and/or entry.
+     * @param modifier   the current probability modifier.
+     * @param conditions The conditions JSON array.
+     * @return the new probability modifier.
+     */
+    private static float adjustModifier(float modifier, @NotNull final JsonArray conditions)
+    {
+        for (final JsonElement cj : conditions)
+        {
+            final JsonObject condition = cj.getAsJsonObject();
+            switch (GsonHelper.getAsString(condition, "condition", ""))
+            {
+                case "minecraft:random_chance":
+                case "minecraft:random_chance_with_looting":
+                    final float chance = GsonHelper.getAsFloat(condition, "chance", 1f);
+                    modifier *= chance;
+                    // for now, just ignore the looting adjustment
+                    break;
+            }
+        }
+        return modifier;
+    }
+
+    /**
      * Replaces an {@link ModItems#adventureToken} with the drops from defeating the corresponding monster.
      *
-     * @param lootTableManager the {@link LootTables}
+     * @param lootTableManager the {@link LootDataManager}
      * @param token the adventure token
      * @return the list of possible drops
      */
