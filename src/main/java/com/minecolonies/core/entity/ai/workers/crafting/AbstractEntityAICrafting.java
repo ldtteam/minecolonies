@@ -509,7 +509,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
         new BlockParticleEffectMessage(blockPos, blockState, facing.ordinal())
-            .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, worker.level().dimension()));
+            .sendToTargetPoint((ServerLevel) worker.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE);
 
         job.playSound(blockPos, (EntityCitizen) worker);
     }
@@ -605,8 +605,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             builder = builder
                         .withParameter(LootContextParams.DAMAGE_SOURCE, playerDamageSource)
-                        .withParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
-                        .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
+                        .withParameter(LootContextParams.ATTACKING_ENTITY, playerDamageSource.getEntity())
+                        .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, playerDamageSource.getDirectEntity());
         }
 
         return builder.create(RecipeStorage.recipeLootParameters);

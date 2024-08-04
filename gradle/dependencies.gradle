@@ -13,10 +13,14 @@ repositories {
         name "Rei"
         url "https://maven.shedaniel.me/"
     }
+    maven {
+        name 'LDTTeam - Modding'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+    }
 }
 
 dependencies {
-    implementation ("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal"){
+    implementation ("com.ldtteam:domum-ornamentum:${project.domumOrnamentumVersion}"){
         transitive = false
     }
 

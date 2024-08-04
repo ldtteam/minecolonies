@@ -302,20 +302,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(final SynchedEntityData.Builder builder)
     {
-        super.defineSynchedData();
-        entityData.define(DATA_TEXTURE_SUFFIX, "_b");
-        entityData.define(DATA_TEXTURE, 0);
-        entityData.define(DATA_LEVEL, 0);
-        entityData.define(DATA_STYLE, "default");
-        entityData.define(DATA_IS_FEMALE, 0);
-        entityData.define(DATA_MODEL, ModModelTypes.SETTLER_ID.toString());
-        entityData.define(DATA_RENDER_METADATA, "");
-        entityData.define(DATA_IS_ASLEEP, false);
-        entityData.define(DATA_IS_CHILD, false);
-        entityData.define(DATA_BED_POS, new BlockPos(0, 0, 0));
-        entityData.define(DATA_JOB, "");
+        super.defineSynchedData(builder);
+        builder.define(DATA_TEXTURE_SUFFIX, "_b");
+        builder.define(DATA_TEXTURE, 0);
+        builder.define(DATA_LEVEL, 0);
+        builder.define(DATA_STYLE, "default");
+        builder.define(DATA_IS_FEMALE, 0);
+        builder.define(DATA_MODEL, ModModelTypes.SETTLER_ID.toString());
+        builder.define(DATA_RENDER_METADATA, "");
+        builder.define(DATA_IS_ASLEEP, false);
+        builder.define(DATA_IS_CHILD, false);
+        builder.define(DATA_BED_POS, new BlockPos(0, 0, 0));
+        builder.define(DATA_JOB, "");
     }
 
     /**
@@ -726,7 +726,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
     {
-        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
+        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers().);
     }
 
     /**

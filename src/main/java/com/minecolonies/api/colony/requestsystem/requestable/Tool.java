@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -213,37 +213,37 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        if (stack.canPerformAction(ToolActions.AXE_DIG))
+        if (stack.canPerformAction(ItemAbilities.AXE_DIG))
         {
             set.add(ToolType.AXE.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.PICKAXE_DIG))
+        if (stack.canPerformAction(ItemAbilities.PICKAXE_DIG))
         {
             set.add(ToolType.PICKAXE.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.SHOVEL_DIG))
+        if (stack.canPerformAction(ItemAbilities.SHOVEL_DIG))
         {
             set.add(ToolType.SHOVEL.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.HOE_DIG))
+        if (stack.canPerformAction(ItemAbilities.HOE_DIG))
         {
             set.add(ToolType.HOE.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.SWORD_SWEEP))
+        if (stack.canPerformAction(ItemAbilities.SWORD_SWEEP))
         {
             set.add(ToolType.SWORD.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.SHEARS_DIG))
+        if (stack.canPerformAction(ItemAbilities.SHEARS_DIG))
         {
             set.add(ToolType.SHEARS.getName());
         }
 
-        if (stack.canPerformAction(ToolActions.FISHING_ROD_CAST))
+        if (stack.canPerformAction(ItemAbilities.FISHING_ROD_CAST))
         {
             set.add(ToolType.FISHINGROD.getName());
         }

@@ -56,6 +56,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -1165,7 +1166,7 @@ public final class ColonyView implements IColonyView
      * @return the ListNBT of flag (banner) patterns
      */
     @Override
-    public ListTag getColonyFlag() { return colonyFlag; }
+    public BannerPatternLayers getColonyFlag() { return colonyFlag; }
 
     /**
      * Sets the name of the view.
@@ -1419,7 +1420,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void setColonyFlag(ListTag colonyFlag)
+    public void setColonyFlag(BannerPatternLayers colonyFlag)
     {
         this.colonyFlag = colonyFlag;
         new ColonyFlagChangeMessage(this, colonyFlag).sendToServer();

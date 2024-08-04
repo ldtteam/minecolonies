@@ -1,10 +1,7 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.jobs.AbstractJob;
@@ -196,7 +193,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             if (!tool.isEmpty() && shouldSilkTouchBlock(curBlockState))
             {
                 final ItemStack fakeTool = tool.copy();
-                fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
+                fakeTool.enchant(Utils.getRegistryValue(Enchantments.SILK_TOUCH, worker.level()), 1);
                 localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, fakeTool, worker));
             }
             //If Silk Touch doesn't work, get blocks with Fortune value as normal.

@@ -32,7 +32,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jetbrains.annotations.NotNull;
 
@@ -296,8 +296,8 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     {
         final ItemStack itemstack = this.angler.getMainHandItem();
         final ItemStack itemstack1 = this.angler.getOffhandItem();
-        final boolean flag = itemstack.canPerformAction(ToolActions.FISHING_ROD_CAST);
-        final boolean flag1 = itemstack1.canPerformAction(ToolActions.FISHING_ROD_CAST);
+        final boolean flag = itemstack.canPerformAction(ItemAbilities.FISHING_ROD_CAST);
+        final boolean flag1 = itemstack1.canPerformAction(ItemAbilities.FISHING_ROD_CAST);
         if (!this.angler.isRemoved() && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
         {
             return false;

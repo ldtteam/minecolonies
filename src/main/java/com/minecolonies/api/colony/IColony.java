@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -11,18 +10,20 @@ import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +40,12 @@ public interface IColony
 
     void onWorldUnload(@NotNull Level w);
 
-    void onServerTick(@NotNull TickEvent.ServerTickEvent event);
+    void onServerTick(@NotNull ServerTickEvent event);
 
     @NotNull
     IWorkManager getWorkManager();
 
-    void onWorldTick(@NotNull TickEvent.LevelTickEvent event);
+    void onWorldTick(@NotNull LevelTickEvent event);
 
     /**
      * Returns the position of the colony.
@@ -140,7 +141,7 @@ public interface IColony
      *
      * @return a list of pattern-color pairs
      */
-    ListTag getColonyFlag();
+    BannerPatternLayers getColonyFlag();
 
     /**
      * Whether it is day for the colony
@@ -338,7 +339,7 @@ public interface IColony
 
     void setColonyColor(ChatFormatting color);
 
-    void setColonyFlag(ListTag patterns);
+    void setColonyFlag(BannerPatternLayers patterns);
 
     void addWayPoint(BlockPos pos, BlockState newWayPointState);
 
@@ -354,9 +355,9 @@ public interface IColony
 
     void setCanBeAutoDeleted(boolean canBeDeleted);
 
-    CompoundTag write(CompoundTag colonyCompound);
+    CompoundTag write(CompoundTag colonyCompound, @NotNull final HolderLookup.Provider provider);
 
-    void read(CompoundTag compound);
+    void read(CompoundTag compound, @NotNull final HolderLookup.Provider provider);
 
     /**
      * Returns a set of players receiving important messages for the colony.

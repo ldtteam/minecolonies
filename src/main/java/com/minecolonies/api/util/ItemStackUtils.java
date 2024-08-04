@@ -36,9 +36,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.ItemAbilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -389,24 +390,24 @@ public final class ItemStackUtils
             return false;
         }
 
-        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ToolActions.AXE_DIG))
+        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ItemAbilities.AXE_DIG))
         {
             return true;
         }
 
-        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
+        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ItemAbilities.SHOVEL_DIG))
         {
             return true;
         }
 
-        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
+        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ItemAbilities.PICKAXE_DIG))
         {
             return true;
         }
 
         if (ToolType.HOE.equals(toolType))
         {
-            for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
+            for (final ItemAbility action : ItemAbilities.DEFAULT_HOE_ACTIONS)
             {
                 if (!itemStack.canPerformAction(action))
                 {
@@ -421,13 +422,13 @@ public final class ItemStackUtils
         }
         if (ToolType.SWORD.equals(toolType))
         {
-            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
+            return itemStack.canPerformAction(ItemAbilities.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
         }
-        if (ToolType.FISHINGROD.equals(toolType) && itemStack.canPerformAction(ToolActions.FISHING_ROD_CAST))
+        if (ToolType.FISHINGROD.equals(toolType) && itemStack.canPerformAction(ItemAbilities.FISHING_ROD_CAST))
         {
             return true;
         }
-        if (ToolType.SHEARS.equals(toolType) && itemStack.canPerformAction(ToolActions.SHEARS_DIG) && itemStack.canPerformAction(ToolActions.SHEARS_HARVEST))
+        if (ToolType.SHEARS.equals(toolType) && itemStack.canPerformAction(ItemAbilities.SHEARS_DIG) && itemStack.canPerformAction(ItemAbilities.SHEARS_HARVEST))
         {
             return true;
         }
@@ -449,7 +450,7 @@ public final class ItemStackUtils
         }
         if (ToolType.SHIELD.equals(toolType))
         {
-            return itemStack.getItem() instanceof ShieldItem;   //canPerformAction(ToolActions.SHIELD_BLOCK) ?
+            return itemStack.getItem() instanceof ShieldItem;   //canPerformAction(ItemAbilities.SHIELD_BLOCK) ?
         }
         if (ToolType.FLINT_N_STEEL.equals(toolType))
         {

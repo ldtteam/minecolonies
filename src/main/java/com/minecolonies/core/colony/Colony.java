@@ -23,11 +23,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
@@ -44,11 +40,11 @@ import com.minecolonies.core.colony.workorders.WorkManager;
 import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
-import com.minecolonies.api.util.ColonyUtils;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
@@ -63,13 +59,14 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -285,9 +282,7 @@ public class Colony implements IColony
     /**
      * The colony flag, as a list of patterns.
      */
-    private ListTag colonyFlag = new BannerPattern.Builder()
-      .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-      .toListTag();
+    private BannerPatternLayers colonyFlag;
 
     /**
      * The last time the mercenaries were used.
@@ -360,6 +355,7 @@ public class Colony implements IColony
         requestManager = new StandardRequestManager(this);
         researchManager = new ResearchManager(this);
         questManager = new QuestManager(this);
+        this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, w), DyeColor.WHITE).build();
     }
 
     /**
@@ -374,6 +370,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
+            this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, world), DyeColor.WHITE).build();
             this.dimensionId = world.dimension();
             onWorldLoad(world);
             checkOrCreateTeam();
@@ -683,7 +680,7 @@ public class Colony implements IColony
      * @param colonyFlag the list of pattern-color pairs
      */
     @Override
-    public void setColonyFlag(ListTag colonyFlag)
+    public void setColonyFlag(BannerPatternLayers colonyFlag)
     {
         this.colonyFlag = colonyFlag;
         markDirty();
@@ -705,10 +702,10 @@ public class Colony implements IColony
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
-            c.dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+            c.dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(compound.getString(TAG_DIMENSION)));
 
             c.setRequestManager();
-            c.read(compound);
+            c.read(compound, world.registryAccess());
 
             return c;
         }
@@ -732,9 +729,9 @@ public class Colony implements IColony
      *
      * @param compound compound to read from.
      */
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+        dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(compound.getString(TAG_DIMENSION)));
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
@@ -754,8 +751,8 @@ public class Colony implements IColony
         eventManager.readFromNBT(compound);
         statisticManager.readFromNBT(compound);
 
-        questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
-        eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
+        questManager.deserializeNBT(provider, compound.getCompound(TAG_QUEST_MANAGER));
+        eventDescManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.contains(TAG_RESEARCH))
         {
@@ -784,7 +781,7 @@ public class Colony implements IColony
         final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, Tag.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
-            tempFreeBlocks.add(BuiltInRegistries.BLOCK.get(new ResourceLocation(freeBlockTagList.getString(i))));
+            tempFreeBlocks.add(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(freeBlockTagList.getString(i))));
         }
         freeBlocks = ImmutableSet.copyOf(tempFreeBlocks);
 
@@ -830,13 +827,13 @@ public class Colony implements IColony
 
         if (compound.contains(TAG_FLAG_PATTERNS))
         {
-            this.setColonyFlag(compound.getList(TAG_FLAG_PATTERNS, Constants.TAG_COMPOUND));
+            this.setColonyFlag(Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_FLAG_PATTERNS)));
         }
 
         this.requestManager.reset();
         if (compound.contains(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
+            this.requestManager.deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
         }
         this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         if (compound.contains(TAG_COL_TEXT))
@@ -882,7 +879,7 @@ public class Colony implements IColony
      *
      * @param compound compound to write to.
      */
-    public CompoundTag write(@NotNull final CompoundTag compound)
+    public CompoundTag write(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         compound.putInt(DATA_VERSION_TAG, DATA_VERSION);
 
@@ -923,8 +920,8 @@ public class Colony implements IColony
         eventManager.writeToNBT(compound);
         statisticManager.writeToNBT(compound);
 
-        compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
-        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT(provider));
+        compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT(provider));
         raidManager.write(compound);
 
         @NotNull final CompoundTag researchManagerCompound = new CompoundTag();
@@ -961,11 +958,11 @@ public class Colony implements IColony
         compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
         compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
-        compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
+        compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT(provider));
         compound.putString(TAG_PACK, pack);
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
-        compound.put(TAG_FLAG_PATTERNS, colonyFlag);
+        compound.put(TAG_FLAG_PATTERNS, Utils.serializeCodecMess(BannerPatternLayers.CODEC, provider, colonyFlag));
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
@@ -1060,8 +1057,9 @@ public class Colony implements IColony
     }
 
     @Override
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    public void onServerTick(@NotNull final ServerTickEvent event)
     {
+
     }
 
     /**
@@ -1166,12 +1164,12 @@ public class Colony implements IColony
      * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
      * run.
      *
-     * @param event {@link TickEvent.LevelTickEvent}
+     * @param event {@link net.neoforged.neoforge.event.tick.LevelTickEvent}
      */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
+    public void onWorldTick(@NotNull final LevelTickEvent event)
     {
-        if (event.level != getWorld())
+        if (event.getLevel() != getWorld())
         {
             /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.
@@ -1674,7 +1672,7 @@ public class Colony implements IColony
         {
             if (this.colonyTag == null || this.isDirty)
             {
-                this.write(new CompoundTag());
+                this.write(new CompoundTag(), world.registryAccess());
             }
         }
         catch (final Exception e)
@@ -1788,7 +1786,7 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public ListTag getColonyFlag()
+    public BannerPatternLayers getColonyFlag()
     {
         return colonyFlag;
     }

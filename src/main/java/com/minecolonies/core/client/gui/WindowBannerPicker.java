@@ -2,10 +2,10 @@ package com.minecolonies.core.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,14 +18,14 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -97,7 +97,7 @@ public class WindowBannerPicker extends Screen
     private final List<Holder<BannerPattern>> patterns;
 
     /** The final list of patterns and colors of the flag */
-    private final List<Pair<Holder<BannerPattern>, DyeColor>> layers;
+    private final List<BannerPatternLayers.Layer> layers;
 
     /** The colony this flag refers to */
     private final IColonyView colony;
@@ -139,11 +139,11 @@ public class WindowBannerPicker extends Screen
         {
             for (final ResourceKey key : EXCLUSION[i])
             {
-                exclusion.add((Holder<BannerPattern>) BuiltInRegistries.BANNER_PATTERN.getHolder(key).get());
+                exclusion.add(Utils.getRegistryValue(key, colony.getWorld()));
             }
         }
 
-        this.patterns = BuiltInRegistries.BANNER_PATTERN.holders().collect(Collectors.toCollection(LinkedList::new));
+        this.patterns = colony.getWorld().registryAccess().registry(Registries.BANNER_PATTERN).get().holders().collect(Collectors.toCollection(LinkedList::new));
         this.patterns.removeAll(exclusion);
         if (!isFeatureUnlocked.get())
         {
@@ -151,7 +151,7 @@ public class WindowBannerPicker extends Screen
         }
 
         // Fetch the patterns as a List and not ListNBT
-        this.layers = BannerBlockEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
+        this.layers = colony.getColonyFlag().layers();
         // Remove the extra base layer created by the above function
         if (this.layers.size() > 1)
             this.layers.remove(0);
@@ -222,11 +222,11 @@ public class WindowBannerPicker extends Screen
                 80, SIDE,
                 Component.translatableEscape(BASE_GUI_DONE),
                 pressed -> {
-                    BannerPattern.Builder builder = new BannerPattern.Builder();
-                    for (Pair<Holder<BannerPattern>, DyeColor> pair : layers)
-                        builder.addPattern(pair.getFirst(), pair.getSecond());
+                    BannerPatternLayers.Builder builder = new BannerPatternLayers.Builder();
+                    for (BannerPatternLayers.Layer layer : layers)
+                        builder.add(layer);
 
-                    colony.setColonyFlag(builder.toListTag());
+                    colony.setColonyFlag(builder.build());
                     window.open();
                 }, DEFAULT_NARRATION
         ));
@@ -265,14 +265,14 @@ public class WindowBannerPicker extends Screen
         {
             // Drop out if only the color was selected.
             if (activeLayer == layers.size()) return;
-            else if (activeLayer == 0) pattern = BuiltInRegistries.BANNER_PATTERN.getHolderOrThrow(BannerPatterns.BASE);
-            else pattern = layers.get(activeLayer).getFirst();
+            else if (activeLayer == 0) pattern = Utils.getRegistryValue(BannerPatterns.BASE, colony.getWorld());
+            else pattern = layers.get(activeLayer).pattern();
         }
 
         if (activeLayer == layers.size())
-            layers.add(new Pair<>(pattern, color));
+            layers.add(new BannerPatternLayers.Layer(pattern, color));
         else
-            layers.set(activeLayer, new Pair<>(pattern, color));
+            layers.set(activeLayer, new BannerPatternLayers.Layer(pattern, color));
     }
 
     @Override
@@ -332,9 +332,9 @@ public class WindowBannerPicker extends Screen
     {
         Lighting.setupForFlatItems();
 
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = new ArrayList<>();
-        list.add(new Pair<>(BuiltInRegistries.BANNER_PATTERN.getHolder(BannerPatterns.BASE).get(), DyeColor.GRAY));
-        list.add(new Pair<>(pattern, DyeColor.WHITE));
+        List<BannerPatternLayers.Layer> list = new ArrayList<>();
+        list.add(new BannerPatternLayers.Layer(Utils.getRegistryValue(BannerPatterns.BASE, colony.getWorld()), DyeColor.GRAY));
+        list.add(new BannerPatternLayers.Layer(pattern, DyeColor.WHITE));
 
         PoseStack transform = new PoseStack();
         transform.pushPose();
@@ -351,10 +351,15 @@ public class WindowBannerPicker extends Screen
      * @param transform the transformation matrix stack to render with
      * @param layers the pattern-color pairs that form the banner
      */
-    public void renderBanner(PoseStack transform, List<Pair<Holder<BannerPattern>, DyeColor>> layers)
+    public void renderBanner(PoseStack transform, List<BannerPatternLayers.Layer> layers)
     {
         this.modelRender.xRot= 0.0F;
         this.modelRender.y = -32.0F;
+        final BannerPatternLayers.Builder builder = new BannerPatternLayers.Builder();
+        for (BannerPatternLayers.Layer layer : layers)
+        {
+            builder.add(layer);
+        }
 
         // TODO: move to guigraphics buffer
         MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();
@@ -365,7 +370,8 @@ public class WindowBannerPicker extends Screen
                 this.modelRender,
                 ModelBakery.BANNER_BASE,
                 true,
-                layers
+                colors.getSelected(),
+          builder.build()
         );
         transform.popPose();
         source.endBatch();
@@ -453,9 +459,9 @@ public class WindowBannerPicker extends Screen
             activeLayer = this.layer;
 
             if (this.layer >= layers.size())
-                colors.setSelected(layers.get(0).getSecond().equals(DyeColor.BLACK) ? DyeColor.WHITE : DyeColor.BLACK);
+                colors.setSelected(layers.get(0).color().equals(DyeColor.BLACK) ? DyeColor.WHITE : DyeColor.BLACK);
             else
-                colors.setSelected(layers.get(activeLayer).getSecond());
+                colors.setSelected(layers.get(activeLayer).color());
         }
 
         @Override
@@ -490,7 +496,7 @@ public class WindowBannerPicker extends Screen
             int tempIndex = 0;
             for (final Holder<BannerPattern> pat : WindowBannerPicker.this.patterns)
             {
-                if (pat.value().getHashname().equals(pattern.value().getHashname()))
+                if (pat.value().assetId().equals(pattern.value().assetId()))
                 {
                     this.index = tempIndex;
                     break;
@@ -521,7 +527,7 @@ public class WindowBannerPicker extends Screen
                 if (this.isHovered && this.active)
                     stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);
 
-                if (activeLayer < layers.size() && layers.get(activeLayer).getFirst() == this.pattern)
+                if (activeLayer < layers.size() && layers.get(activeLayer).pattern() == this.pattern)
                     stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFFDD88FF);
 
                 else
@@ -534,7 +540,7 @@ public class WindowBannerPicker extends Screen
             }
             catch (final Exception ex)
             {
-                Log.getLogger().warn(pattern.value().getHashname());
+                Log.getLogger().warn(pattern.value().translationKey());
                 Log.getLogger().error(ex);
             }
         }

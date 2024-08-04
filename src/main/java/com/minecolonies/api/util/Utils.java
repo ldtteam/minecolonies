@@ -1,8 +1,15 @@
 package com.minecolonies.api.util;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -216,5 +223,22 @@ public final class Utils
         }
 
         return -1;
+    }
+
+    public static <T extends Object> Holder<T> getRegistryValue(final ResourceKey<T> resourceKey, final Level level)
+    {
+        return level.holderOrThrow(resourceKey);
+    }
+
+    public static <T extends Object> Tag serializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final T obj)
+    {
+        return codec.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), obj).getOrThrow();
+    }
+
+    public static <T extends Object> T deserializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final Tag tag)
+    {
+        return codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).resultOrPartial((res) -> {
+            Log.getLogger().error("Failed to parse thing: '{}'", res);
+        }).get();
     }
 }

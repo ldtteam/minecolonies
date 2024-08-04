@@ -9,7 +9,6 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.core.colony.Colony;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +17,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -237,9 +238,9 @@ public interface IColonyManager
     /**
      * On server tick, tick every Colony. NOTE: Review this for performance.
      *
-     * @param event {@link net.neoforged.neoforge.event.TickEvent.ServerTickEvent}
+     * @param event {@link net.neoforged.neoforge.event.tick.ServerTickEvent}
      */
-    void onServerTick(@NotNull TickEvent.ServerTickEvent event);
+    void onServerTick(@NotNull ServerTickEvent event);
 
     /**
      * Write colonies to NBT data for saving.
@@ -258,14 +259,14 @@ public interface IColonyManager
     /**
      * On Client tick, clears views when player left.
      *
-     * @param event {@link TickEvent.ClientTickEvent}.
+     * @param event {@link net.neoforged.neoforge.client.event.ClientTickEvent}.
      */
-    void onClientTick(@NotNull TickEvent.ClientTickEvent event);
+    void onClientTick(@NotNull ClientTickEvent event);
 
     /**
      * On world tick, tick every Colony in that world. NOTE: Review this for performance.
      */
-    void onWorldTick(@NotNull TickEvent.LevelTickEvent event);
+    void onWorldTick(@NotNull LevelTickEvent event);
 
     /**
      * When a world is loaded, Colonies in that world need to grab the reference to the World. Additionally, when loading the first world, load the manager data.

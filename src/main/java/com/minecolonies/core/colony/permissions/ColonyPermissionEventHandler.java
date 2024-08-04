@@ -49,7 +49,6 @@ import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
@@ -160,13 +159,17 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private <T extends Event & ICancellableEvent> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
+    private <T extends Event> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos)
     {
+        if (event instanceof ICancellableEvent cancellableEvent)
+        {
+            cancellableEvent.setCanceled(true);
+        }
         if (event.hasResult())
         {
             event.setResult(Event.Result.DENY);
         }
-        event.setCanceled(true);
+
         if (entity == null)
         {
             if (colony.hasTownHall())
@@ -550,9 +553,9 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final EntityItemPickupEvent event)
+    public void on(final ItemEntityPickupEvent event)
     {
-        checkEventCancelation(Action.PICKUP_ITEM, event.getEntity(), event.getEntity().getCommandSenderWorld(), event, event.getEntity().blockPosition());
+        checkEventCancelation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPlayer().blockPosition());
     }
 
     /**

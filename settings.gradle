@@ -1,3 +1,21 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name 'LDTTeam - Modding'
+            url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
+}
+
 gradle.startParameter.setProjectProperties(new HashMap<>(gradle.startParameter.getProjectProperties()))
 gradle.startParameter.getProjectProperties().put("build.start", Long.toString(System.currentTimeMillis()))
 
