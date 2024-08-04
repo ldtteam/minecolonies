@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
@@ -12,7 +11,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -30,6 +28,7 @@ import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFarmer;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
+import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.network.messages.client.CompostParticleMessage;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
@@ -81,9 +80,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private static final int MAX_BLOCKS_MINED = 64;
 
     /**
-     * The standard delay the farmer should have.
+     * The default delay the farmer should have.
      */
-    private static final int STANDARD_DELAY = 40;
+    private static final int DEFAULT_DELAY = 40;
 
     /**
      * The smallest delay the farmer should have.
@@ -680,7 +679,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, DEFAULT_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
     }
 
     /**

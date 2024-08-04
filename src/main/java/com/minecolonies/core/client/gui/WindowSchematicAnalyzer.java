@@ -136,7 +136,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
         b.setVisible(false);
         SchemAnalyzerUtil.SchematicAnalyzationResult selected = getCurrentSelectionData(b);
         final List<ItemStorage> resources = new ArrayList<>(selected.differentBlocks);
-        resources.sort(Comparator.comparingInt(ItemStorage::getAmount).reversed());
+        resources.sort(Comparator.comparingInt((ItemStorage itemStorage) -> itemStorage.getAmount() * itemStorage.getItemStack().getCount()).reversed());
 
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
