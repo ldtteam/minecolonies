@@ -40,7 +40,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "butter")
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.butter))
-          .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
+          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
           .minBuildingLevel(1)
           .build(consumer);
 
@@ -57,7 +57,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cheddar_cheese")
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.cheddar_cheese))
-          .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
+          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
           .minBuildingLevel(1)
           .build(consumer);
 
@@ -94,7 +94,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "feta_cheese")
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.feta_cheese))
-          .secondaryOutputs(List.of(new ItemStack(Items.BUCKET)))
+          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
           .minBuildingLevel(1)
           .build(consumer);
 
