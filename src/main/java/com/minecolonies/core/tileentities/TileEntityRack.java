@@ -534,7 +534,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                         return new CombinedItemHandler(RACK, getInventory());
                     }
 
-                    if (type != RackType.EMPTYAIR)
+                    if (type != RackType.NO_RENDER)
                     {
                         return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
                     }
