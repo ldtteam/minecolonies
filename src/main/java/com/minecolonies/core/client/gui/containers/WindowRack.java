@@ -70,7 +70,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         super(container, playerInventory, iTextComponent);
         if (container.neighborRack != null)
         {
-            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.EMPTYAIR)
+            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
             {
                 this.jointChestInventory = new CombinedInvWrapper(container.rack.getInventory(), container.neighborRack.getInventory());
             }

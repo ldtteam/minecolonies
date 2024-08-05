@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum RackType implements StringRepresentable
 {
-    DEFAULT("blockrackemptysingle", "emptysingle", false),
+    EMPTY("blockrackemptysingle", "emptysingle", false),
     FULL( "blockrackfullsingle", "fullsingle", false),
-    DEFAULTDOUBLE( "blockrackempty", "empty", true),
-    FULLDOUBLE( "blockrackfull", "full", true),
-    EMPTYAIR( "blockrackair", "dontrender", true);
+    EMPTY_DOUBLE("blockrackempty", "empty", true),
+    FULL_DOUBLE("blockrackfull", "full", true),
+    NO_RENDER("blockrackair", "dontrender", true);
 
     private final String name;
     private final String unlocalizedName;
@@ -52,17 +52,17 @@ public enum RackType implements StringRepresentable
     {
         switch (this)
         {
-            case FULL, DEFAULT ->
+            case FULL, EMPTY ->
             {
-                return empty ? DEFAULT : FULL;
+                return empty ? EMPTY : FULL;
             }
-            case DEFAULTDOUBLE, FULLDOUBLE ->
+            case EMPTY_DOUBLE, FULL_DOUBLE ->
             {
-                return empty ? DEFAULTDOUBLE : FULLDOUBLE;
+                return empty ? EMPTY_DOUBLE : FULL_DOUBLE;
             }
             default ->
             {
-                return EMPTYAIR;
+                return NO_RENDER;
             }
         }
     }

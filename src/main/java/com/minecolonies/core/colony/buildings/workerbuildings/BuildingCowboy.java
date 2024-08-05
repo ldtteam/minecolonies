@@ -199,6 +199,12 @@ public class BuildingCowboy extends AbstractBuilding
                         Collections.emptyList(),                                                            // extra output
                         Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
                         1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+                recipes.add(new GenericRecipe(null,
+                        new ItemStack(ModItems.large_milk_bottle),                                          // output
+                        Collections.emptyList(),                                                            // alt output
+                        Collections.emptyList(),                                                            // extra output
+                        Collections.singletonList(Collections.singletonList(new ItemStack(ModItems.large_empty_bottle))),  // input
+                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
             }
 
             return recipes;
