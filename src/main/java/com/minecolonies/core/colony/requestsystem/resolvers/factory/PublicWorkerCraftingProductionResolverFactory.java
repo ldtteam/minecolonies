@@ -50,7 +50,7 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final PublicWorkerCraftingProductionResolver publicWorkerCraftingProductionResolverFactory)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final PublicWorkerCraftingProductionResolver publicWorkerCraftingProductionResolverFactory)
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serialize(publicWorkerCraftingProductionResolverFactory.getId()));
@@ -63,8 +63,8 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     @Override
     public PublicWorkerCraftingProductionResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
         final JobEntry entry = IJobRegistry.getInstance().get(ResourceLocation.parse(nbt.getString(NBT_JOB)));
         return new PublicWorkerCraftingProductionResolver(location, token, entry);
     }
@@ -80,8 +80,8 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     @Override
     public PublicWorkerCraftingProductionResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserialize(buffer);
-        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
+        final ILocation location = controller.deserializeTag(buffer);
         final JobEntry entry = buffer.readById(IMinecoloniesAPI.getInstance().getJobRegistry()::byIdOrThrow);
         return new PublicWorkerCraftingProductionResolver(location, token, entry);
     }

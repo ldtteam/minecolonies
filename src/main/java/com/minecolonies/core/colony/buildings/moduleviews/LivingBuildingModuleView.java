@@ -72,7 +72,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         residents.clear();
         final int numResidents = buf.readInt();

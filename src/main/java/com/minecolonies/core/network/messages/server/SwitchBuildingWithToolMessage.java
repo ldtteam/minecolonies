@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.server;
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.items.ModItems;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,7 +42,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
     protected SwitchBuildingWithToolMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        stack = buf.readItem();
+        stack = Utils.deserializeCodecMess(buf);
     }
 
     /**
@@ -52,7 +53,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeItem(stack);
+        Utils.serializeCodecMess(buf, stack);
     }
 
     @Override

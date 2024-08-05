@@ -82,7 +82,7 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void serialize(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
+    public void serialize(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
     {
         buf.writeBoolean(fullSync);
         buf.writeVarInt(fullSync ? stats.size() : dirtyStats.size());
@@ -121,7 +121,7 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final boolean fullSync = buf.readBoolean();
         if (fullSync)

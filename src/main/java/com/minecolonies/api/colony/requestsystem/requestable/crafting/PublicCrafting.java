@@ -6,9 +6,11 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,10 +42,10 @@ public class PublicCrafting extends AbstractCrafting
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(final IFactoryController controller, final PublicCrafting input)
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PublicCrafting input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_STACK, input.getStack().save(new CompoundTag()));
+        compound.put(NBT_STACK, input.getStack().save(provider));
         compound.putInt(NBT_COUNT, input.getCount());
         final CompoundTag tokenCompound = StandardFactoryController.getInstance().serialize(input.getRecipeID());
         compound.put(NBT_TOKEN, tokenCompound);
@@ -57,14 +59,14 @@ public class PublicCrafting extends AbstractCrafting
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static PublicCrafting deserialize(final IFactoryController controller, final CompoundTag compound)
+    public static PublicCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
         final int count = compound.getInt(NBT_COUNT);
         IToken<?> token = null;
         if (compound.contains(NBT_TOKEN))
         {
-            token = StandardFactoryController.getInstance().deserialize(compound.getCompound(NBT_TOKEN));
+            token = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(NBT_TOKEN));
         }
         return new PublicCrafting(stack, count, token);
     }
@@ -76,11 +78,11 @@ public class PublicCrafting extends AbstractCrafting
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final PublicCrafting input)
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final PublicCrafting input)
     {
-        buffer.writeItem(input.getStack());
+        Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getCount());
-        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
+        StandardFactoryController.getInstance().serializeTag(buffer, input.getRecipeID());
     }
 
     /**
@@ -90,11 +92,11 @@ public class PublicCrafting extends AbstractCrafting
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static PublicCrafting deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static PublicCrafting deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final ItemStack stack = buffer.readItem();
+        final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int count = buffer.readInt();
-        final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
+        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(buffer);
 
         return new PublicCrafting(stack, count, token);
     }

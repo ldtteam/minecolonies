@@ -580,7 +580,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     }
 
     @Override
-    public void writeSpawnData(final FriendlyByteBuf buffer)
+    public void writeSpawnData(final RegistryFriendlyByteBuf buffer)
     {
         if (angler != null)
         {

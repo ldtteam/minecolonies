@@ -69,7 +69,7 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenGrownUpEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
+    public static CitizenGrownUpEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final CitizenGrownUpEvent growUpEvent = new CitizenGrownUpEvent();
         growUpEvent.deserialize(buf);

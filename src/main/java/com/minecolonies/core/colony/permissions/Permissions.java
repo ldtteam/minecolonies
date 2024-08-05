@@ -911,7 +911,7 @@ public class Permissions implements IPermissions
      * @param buf        {@link FriendlyByteBuf} to write to.
      * @param viewerRank Rank of the viewer.
      */
-    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf, @NotNull final Rank viewerRank)
+    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf, @NotNull final Rank viewerRank)
     {
         buf.writeVarInt(ranks.size());
         for (Rank rank : ranks.values())

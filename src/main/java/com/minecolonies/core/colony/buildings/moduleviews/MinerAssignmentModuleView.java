@@ -54,7 +54,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final int size = buf.readInt();
         workerIDs.clear();

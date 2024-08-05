@@ -116,12 +116,12 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
-                final IToken<?> id = controller.deserialize(CompoundTag.getCompound(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserialize(CompoundTag.getCompound(TAG_RESOLVER));
+                final IToken<?> id = controller.deserializeTag(CompoundTag.getCompound(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserializeTag(CompoundTag.getCompound(TAG_RESOLVER));
 
                 return new Tuple<IToken<?>, IRequestResolver<?>>(id, resolver);
             }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));
@@ -149,12 +149,12 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
           IFactoryController controller,
           FriendlyByteBuf buffer) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(buffer);
+            final IToken<?> token = controller.deserializeTag(buffer);
             final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                identities.put(controller.deserializeTag(buffer), controller.deserializeTag(buffer));
             }
 
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(identities);

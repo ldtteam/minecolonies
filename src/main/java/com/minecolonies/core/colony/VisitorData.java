@@ -3,7 +3,9 @@ package com.minecolonies.core.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -94,10 +96,10 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.serializeViewNetworkData(buf);
-        buf.writeItem(recruitCost);
+        Utils.serializeCodecMess(buf, recruitCost);
         buf.writeInt(recruitCost.getCount());
     }
 

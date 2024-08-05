@@ -104,7 +104,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
 
         final ItemStack itemstack = playerIn.getItemInHand(handIn);
-        final PosSelection component = itemstack.getComponents().get(ModDataComponents.POS_SELECTION.get());
+        final PosSelection component = itemstack.getOrDefault(PosSelection.TYPE, PosSelection.EMPTY);
         final BlockPos firstPos = component.startPos().orElse(null);
         final BlockPos secondPos = component.endPos().orElse(null);
 
@@ -149,7 +149,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      */
     private void openAreaBox(final ItemStack tool)
     {
-        final PosSelection component = tool.getComponents().get(ModDataComponents.POS_SELECTION.get());
+        final PosSelection component = tool.getOrDefault(PosSelection.TYPE, PosSelection.EMPTY);
         final BlockPos start = component.startPos().orElse(null);
         final BlockPos end = component.endPos().orElse(null);
         RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
@@ -165,7 +165,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             return;
         }
 
-        final Timestamp component = stack.getComponents().get(TIME_COMPONENT.get());
+        final Timestamp component = stack.getOrDefault(TIME_COMPONENT, Timestamp.EMPTY);;
         if (component.time != 0)
         {
             final long prevTime = component.time;

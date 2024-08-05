@@ -43,7 +43,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final ILocalResearch research)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ILocalResearch research)
     {
         final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_STATE, research.getState().ordinal());

@@ -229,7 +229,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);
     }
 
-    public void serializeNetworkData(final FriendlyByteBuf buf)
+    public void serializeNetworkData(final RegistryFriendlyByteBuf buf)
     {
         buf.writeVarInt(researchTree.size());
         for(final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values())
@@ -249,7 +249,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
+    public void handleGlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
     {
         researchTree.clear();
         branchDatas.clear();
@@ -258,7 +258,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)
             {
-                final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserialize(buf);
+                final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserializeTag(buf);
                 addResearch(newResearch.getBranch(), newResearch, true);
             }
         }

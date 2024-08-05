@@ -51,7 +51,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(buildingToGatherFrom.size());
         for (final BlockPos pos : buildingToGatherFrom.keySet())

@@ -64,8 +64,8 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     @Override
     public PrivateWorkerCraftingProductionResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
         final JobEntry entry = IJobRegistry.getInstance().get(ResourceLocation.parse(nbt.getString(NBT_JOB)));
 
         return new PrivateWorkerCraftingProductionResolver(location, token, entry);
@@ -82,8 +82,8 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     @Override
     public PrivateWorkerCraftingProductionResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserialize(buffer);
-        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
+        final ILocation location = controller.deserializeTag(buffer);
         final JobEntry entry = buffer.readById(IMinecoloniesAPI.getInstance().getJobRegistry()::byIdOrThrow);
 
         return new PrivateWorkerCraftingProductionResolver(location, token, entry);

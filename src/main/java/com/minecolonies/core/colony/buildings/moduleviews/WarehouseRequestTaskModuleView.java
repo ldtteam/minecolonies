@@ -32,7 +32,7 @@ public class WarehouseRequestTaskModuleView extends RequestTaskModuleView
         int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            tasks.add(StandardFactoryController.getInstance().deserialize(buf));
+            tasks.add(StandardFactoryController.getInstance().deserializeTag(buf));
         }
     }
 }

@@ -38,7 +38,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final TypeToken<?> typeToken)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final TypeToken<?> typeToken)
     {
         CompoundTag compound = new CompoundTag();
 

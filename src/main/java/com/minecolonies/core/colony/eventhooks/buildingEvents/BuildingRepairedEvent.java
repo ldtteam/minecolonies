@@ -69,7 +69,7 @@ public class BuildingRepairedEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingRepairedEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
+    public static BuildingRepairedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final BuildingRepairedEvent buildEvent = new BuildingRepairedEvent();
         buildEvent.deserialize(buf);

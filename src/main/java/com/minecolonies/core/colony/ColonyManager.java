@@ -728,7 +728,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final RegistryFriendlyByteBuf buf, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -739,7 +739,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyViewWorkOrderMessage(final int colonyId, final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyViewWorkOrderMessage(final int colonyId, final RegistryFriendlyByteBuf buf, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -762,7 +762,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final RegistryFriendlyByteBuf buf, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)

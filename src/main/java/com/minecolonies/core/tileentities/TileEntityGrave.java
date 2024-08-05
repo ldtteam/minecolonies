@@ -205,7 +205,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
-        final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         buffer.writeBlockPos(this.getBlockPos());
 
         return new ContainerGrave(id, inv, buffer);

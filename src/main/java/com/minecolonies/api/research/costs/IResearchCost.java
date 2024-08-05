@@ -66,14 +66,14 @@ public interface IResearchCost
      *
      * @param buf the network buffer.
      */
-    void serialize(@NotNull final FriendlyByteBuf buf);
+    void serialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
      * Deserialize the {@link FriendlyByteBuf} to this cost instance.
      *
      * @param buf the network buffer.
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf);
+    void deserialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
      * Checks if this json object has the correct fields for this cost instance.

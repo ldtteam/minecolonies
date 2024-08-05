@@ -195,7 +195,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         id = buf.readInt();
         priority = buf.readInt();

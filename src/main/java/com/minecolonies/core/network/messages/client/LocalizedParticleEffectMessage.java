@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -57,7 +58,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
     protected LocalizedParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        stack = buf.readItem();
+        stack = Utils.deserializeCodecMess(buf);;
         posX = buf.readDouble();
         posY = buf.readDouble();
         posZ = buf.readDouble();
@@ -66,7 +67,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeItem(stack);
+        Utils.serializeCodecMess(buf, stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
         buf.writeDouble(posZ);

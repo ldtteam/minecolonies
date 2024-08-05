@@ -13,6 +13,7 @@ import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -59,7 +61,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IGlobalResearch research)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final IGlobalResearch research)
     {
         final CompoundTag compound = new CompoundTag();
         compound.putString(TAG_PARENT, research.getParent().toString());
@@ -159,7 +161,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     }
 
     @Override
-    public void serialize(@NotNull IFactoryController controller, IGlobalResearch input, FriendlyByteBuf packetBuffer)
+    public void serialize(@NotNull IFactoryController controller, IGlobalResearch input, RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeResourceLocation(input.getParent());
         packetBuffer.writeResourceLocation(input.getId());
@@ -168,7 +170,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeVarInt(input.getDepth());
         packetBuffer.writeVarInt(input.getSortOrder());
         packetBuffer.writeBoolean(input.hasOnlyChild());
-        packetBuffer.writeItem(input.getIconItemStack());
+        Utils.serializeCodecMess(packetBuffer, input.getIconItemStack());
         packetBuffer.writeResourceLocation(input.getIconTextureResourceLocation());
         packetBuffer.writeUtf(input.getSubtitle().getKey());
         packetBuffer.writeBoolean(input.isInstant());
@@ -202,7 +204,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch deserialize(@NotNull IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public IGlobalResearch deserialize(@NotNull IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
@@ -211,7 +213,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int depth = buffer.readVarInt();
         final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
-        final ItemStack iconStack = buffer.readItem();
+        final ItemStack iconStack = Utils.deserializeCodecMess(buffer);
         final ResourceLocation iconTexture = buffer.readResourceLocation();
         final TranslatableContents subtitle = new TranslatableContents(buffer.readUtf(), null, TranslatableContents.NO_ARGS);
         final boolean instant = buffer.readBoolean();

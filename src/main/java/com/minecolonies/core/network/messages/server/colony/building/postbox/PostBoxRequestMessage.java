@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.server.colony.building.postbox;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
@@ -52,7 +53,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     {
         super.toBytes(buf);
 
-        buf.writeItem(itemStack);
+        Utils.serializeCodecMess(buf, itemStack);
         buf.writeBoolean(deliverAvailable);
         buf.writeInt(reqQuantity);
     }
@@ -61,7 +62,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     {
         super(buf, type);
 
-        itemStack = buf.readItem();
+        itemStack = Utils.deserializeCodecMess(buf);
         deliverAvailable = buf.readBoolean();
         reqQuantity = buf.readInt();
     }

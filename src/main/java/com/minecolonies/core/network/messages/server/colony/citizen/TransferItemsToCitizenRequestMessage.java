@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
@@ -66,7 +67,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     {
         super(buf, type);
         citizenId = buf.readInt();
-        itemStack = buf.readItem();
+        itemStack = Utils.deserializeCodecMess(buf);
         quantity = buf.readInt();
     }
 
@@ -75,7 +76,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     {
         super.toBytes(buf);
         buf.writeInt(citizenId);
-        buf.writeItem(itemStack);
+        Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(quantity);
     }
 

@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowBannerRallyGuards;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
@@ -167,7 +166,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final List<ILocation> resultList = new ArrayList<>(guardTowersListNBT.size());
         for (final Tag guardTowerNBT : guardTowersListNBT)
         {
-            ILocation location = StandardFactoryController.getInstance().deserialize((CompoundTag) guardTowerNBT);
+            ILocation location = StandardFactoryController.getInstance().deserializeTag((CompoundTag) guardTowerNBT);
             if (location.getDimension().equals(world.dimension()))
             {
                 final IBuilding building = getGuardBuilding(world, location.getInDimensionLocation());
@@ -343,7 +342,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final List<ILocation> resultList = new ArrayList<>(guardTowersListNBT.size());
         for (final Tag guardTowerNBT : guardTowersListNBT)
         {
-            resultList.add(StandardFactoryController.getInstance().deserialize((CompoundTag) guardTowerNBT));
+            resultList.add(StandardFactoryController.getInstance().deserializeTag((CompoundTag) guardTowerNBT));
         }
         return ImmutableList.copyOf(resultList);
     }
@@ -475,7 +474,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
         for (int i = 0; i < guardTowers.size(); i++)
         {
-            if (StandardFactoryController.getInstance().deserialize((CompoundTag) guardTowers.get(i)).equals(guardTowerLocation))
+            if (StandardFactoryController.getInstance().deserializeTag((CompoundTag) guardTowers.get(i)).equals(guardTowerLocation))
             {
                 guardTowers.remove(i);
                 banner.setTag(compound);

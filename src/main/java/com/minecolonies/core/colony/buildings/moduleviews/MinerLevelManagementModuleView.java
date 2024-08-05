@@ -37,7 +37,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     private List<WorkOrderMinerView> workOrders = new ArrayList<>();
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         current = buf.readInt();
         final int size = buf.readInt();

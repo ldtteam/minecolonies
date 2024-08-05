@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
@@ -140,7 +141,7 @@ public class CompostRecipe implements Recipe<Container>
     {
         @Nullable
         @Override
-        public CompostRecipe fromNetwork(@NotNull final FriendlyByteBuf buffer)
+        public CompostRecipe fromNetwork(@NotNull final RegistryFriendlyByteBuf buffer)
         {
             final Ingredient ingredient = Ingredient.fromNetwork(buffer);
             final int strength = buffer.readVarInt();
@@ -149,7 +150,7 @@ public class CompostRecipe implements Recipe<Container>
         }
 
         @Override
-        public void toNetwork(@NotNull final FriendlyByteBuf buffer, @NotNull final CompostRecipe recipe)
+        public void toNetwork(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final CompostRecipe recipe)
         {
             recipe.getInput().toNetwork(buffer);
             buffer.writeVarInt(recipe.getStrength());

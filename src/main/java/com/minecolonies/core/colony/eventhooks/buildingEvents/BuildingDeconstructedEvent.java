@@ -69,7 +69,7 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingDeconstructedEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
+    public static BuildingDeconstructedEvent loadFromFriendlyByteBuf(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final BuildingDeconstructedEvent deconstructionEvent = new BuildingDeconstructedEvent();
         deconstructionEvent.deserialize(buf);

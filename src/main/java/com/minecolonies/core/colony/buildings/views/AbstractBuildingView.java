@@ -375,7 +375,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
@@ -396,7 +396,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             final CompoundTag compound = buf.readNbt();
             if (compound != null)
             {
-                list.add(StandardFactoryController.getInstance().deserialize(compound));
+                list.add(StandardFactoryController.getInstance().deserializeTag(compound));
             }
         }
 
@@ -404,7 +404,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final CompoundTag compound = buf.readNbt();
         if (compound != null)
         {
-            requesterId = StandardFactoryController.getInstance().deserialize(compound);
+            requesterId = StandardFactoryController.getInstance().deserializeTag(compound);
         }
         containerlist.clear();
         final int racks = buf.readInt();
@@ -433,7 +433,7 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     private void loadRequestSystemFromNBT(final CompoundTag compound)
     {
-        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
     }
 
     private IRequestSystemBuildingDataStore getDataStore()

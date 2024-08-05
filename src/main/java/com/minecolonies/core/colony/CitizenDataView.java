@@ -321,7 +321,7 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         name = buf.readUtf(32767);
         female = buf.readBoolean();

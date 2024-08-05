@@ -155,7 +155,7 @@ public interface IGlobalResearchTree
      * Only used for remote clients.
      * @param buf       the buffer of received network data.
      */
-    void handleGlobalResearchTreeMessage(final FriendlyByteBuf buf);
+    void handleGlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf);
 
     /**
      * Sends messages to the client from the server describing the Global Research Tree.

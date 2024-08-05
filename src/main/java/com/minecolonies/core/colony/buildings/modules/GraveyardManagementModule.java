@@ -95,7 +95,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final IColony colony = building.getColony();
         final List<BlockPos> graves = new ArrayList<>(colony.getGraveManager().getGraves().keySet());

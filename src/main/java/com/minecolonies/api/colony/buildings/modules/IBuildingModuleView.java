@@ -18,7 +18,7 @@ public interface IBuildingModuleView
      * Deserialize the data on the client side.
      * @param buf the buffer to read it from.
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf);
+    void deserialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
      * Set the building view of this module view.

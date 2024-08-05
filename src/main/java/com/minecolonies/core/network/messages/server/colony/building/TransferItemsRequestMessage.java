@@ -5,10 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
@@ -66,7 +63,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     protected TransferItemsRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStack = buf.readItem();
+        itemStack = Utils.deserializeCodecMess(buf);
         quantity = buf.readInt();
         attemptResolve = buf.readBoolean();
     }
@@ -75,7 +72,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeItem(itemStack);
+        Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(quantity);
         buf.writeBoolean(attemptResolve);
     }

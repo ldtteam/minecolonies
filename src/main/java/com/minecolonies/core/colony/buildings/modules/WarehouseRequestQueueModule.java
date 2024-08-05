@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class WarehouseRequestQueueModule extends AbstractBuildingModule implemen
         final ListTag requestTagList = compound.getList(TAG_REQUEST, Tag.TAG_COMPOUND);
         for (int i = 0; i < requestTagList.size(); ++i)
         {
-            requestList.add(StandardFactoryController.getInstance().deserialize(requestTagList.getCompound(i)));
+            requestList.add(StandardFactoryController.getInstance().deserializeTag(requestTagList.getCompound(i)));
         }
     }
 
@@ -51,7 +50,7 @@ public class WarehouseRequestQueueModule extends AbstractBuildingModule implemen
     }
 
     @Override
-    public void serializeToView(final FriendlyByteBuf buf)
+    public void serializeToView(final RegistryFriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(requestList.size());

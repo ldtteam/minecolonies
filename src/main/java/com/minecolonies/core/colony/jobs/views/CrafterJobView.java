@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemCrafterJobDataStore;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Extended Crafter job information on the client side, valid for all job types.
@@ -29,10 +28,10 @@ public class CrafterJobView extends DefaultJobView
     }
 
     @Override
-    public void deserialize(final FriendlyByteBuf buffer)
+    public void deserialize(final RegistryFriendlyByteBuf buffer)
     {
         super.deserialize(buffer);
-        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(buffer);
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(buffer);
     }
 
     /**

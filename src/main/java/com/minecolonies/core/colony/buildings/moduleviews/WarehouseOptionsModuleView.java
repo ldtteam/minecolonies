@@ -25,7 +25,7 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         storageUpgrade = buf.readInt();
     }

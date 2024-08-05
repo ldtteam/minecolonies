@@ -5,8 +5,10 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +36,13 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         minimumStock.clear();
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItem()), buf.readInt()));
+            minimumStock.add(new Tuple<>(new ItemStorage(Utils.deserializeCodecMess(buf)), buf.readInt()));
         }
         reachedLimit = buf.readBoolean();
     }

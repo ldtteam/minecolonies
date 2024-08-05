@@ -4,6 +4,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
@@ -56,7 +57,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
         super(buf, type);
 
         this.assign = buf.readBoolean();
-        this.item = new ItemStorage(buf.readItem());
+        this.item = new ItemStorage(Utils.deserializeCodecMess(buf));
         this.id = buf.readInt();
     }
 
@@ -66,7 +67,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
         super.toBytes(buf);
 
         buf.writeBoolean(this.assign);
-        buf.writeItem(this.item.getItemStack());
+        Utils.serializeCodecMess(buf, this.item.getItemStack());
         buf.writeInt(this.id);
     }
 

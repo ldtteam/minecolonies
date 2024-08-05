@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.server.colony.building.fields;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
@@ -57,14 +58,14 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeItem(newSeed);
+        Utils.serializeCodecMess(buf, newSeed);
         buf.writeBlockPos(position);
     }
 
     protected FarmFieldUpdateSeedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        newSeed = buf.readItem();
+        newSeed = Utils.deserializeCodecMess(buf);
         position = buf.readBlockPos();
     }
 }

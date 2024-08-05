@@ -56,7 +56,7 @@ public class ChunkCapData
      *
      * @param buf the buffer to write it to.
      */
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(x);
         buf.writeInt(z);
@@ -75,7 +75,7 @@ public class ChunkCapData
      * @param buffer the bytebuffer.
      * @return the cap data.
      */
-    public static ChunkCapData fromBytes(@NotNull final FriendlyByteBuf buffer)
+    public static ChunkCapData fromBytes(@NotNull final RegistryFriendlyByteBuf buffer)
     {
         int x = buffer.readInt();
         int z = buffer.readInt();

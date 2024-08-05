@@ -143,7 +143,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
     {
         super.serializeToView(buf, fullSync);
 
@@ -268,7 +268,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         }
 
         @Override
-        public void deserialize(@NotNull final FriendlyByteBuf buf)
+        public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.deserialize(buf);
 

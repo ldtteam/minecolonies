@@ -37,7 +37,7 @@ public class ToolModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
 
     }

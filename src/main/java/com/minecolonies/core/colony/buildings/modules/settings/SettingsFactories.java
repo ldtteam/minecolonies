@@ -6,9 +6,11 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -57,7 +59,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final T storage)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final T storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putBoolean(TAG_VALUE, storage.getValue());
@@ -74,7 +76,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
         }
@@ -130,7 +132,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting storage)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StringSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getCurrentIndex());
@@ -174,7 +176,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final int currentIndex = buffer.readInt();
             final int size = buffer.readInt();
@@ -251,7 +253,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putString(TAG_VALUE, BuiltInRegistries.ITEM.getKey(storage.getValue()).toString());
@@ -269,18 +271,18 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting input, @NotNull final RegistryFriendlyByteBuf packetBuffer)
         {
-            packetBuffer.writeItem(new ItemStack(input.getValue()));
-            packetBuffer.writeItem(new ItemStack(input.getDefault()));
+            Utils.serializeCodecMess(packetBuffer, new ItemStack(input.getValue()));
+            Utils.serializeCodecMess(packetBuffer, new ItemStack(input.getDefault()));
         }
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            final BlockItem value = (BlockItem) buffer.readItem().getItem();
-            final BlockItem def = (BlockItem) buffer.readItem().getItem();
+            final BlockItem value = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
+            final BlockItem def = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
             return this.getNewInstance(value, def);
         }
 
@@ -315,7 +317,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting storage)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final IntSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getValue());
@@ -339,7 +341,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readInt(), buffer.readInt());
         }
@@ -613,7 +615,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
             if (storage.selectedRecipe != null)
@@ -631,7 +633,7 @@ public class SettingsFactories
             IToken<?> token = null;
             if (nbt.contains(TAG_TOKEN))
             {
-                token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+                token = StandardFactoryController.getInstance().deserializeTag(nbt.getCompound(TAG_TOKEN));
             }
             final String moduleId = nbt.getString(TAG_MODULE);
             return this.getNewInstance(token, moduleId);
@@ -650,12 +652,12 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             IToken<?> token = null;
             if (buffer.readBoolean())
             {
-                token = StandardFactoryController.getInstance().deserialize(buffer);
+                token = StandardFactoryController.getInstance().deserializeTag(buffer);
             }
             final String moduleId = buffer.readUtf(32767);
             return this.getNewInstance(token, moduleId);

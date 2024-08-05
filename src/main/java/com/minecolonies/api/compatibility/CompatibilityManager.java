@@ -17,6 +17,7 @@ import com.minecolonies.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -24,6 +25,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -222,7 +224,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void serialize(@NotNull final FriendlyByteBuf buf)
+    public void serialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         serializeItemStorageList(buf, saplings);
         serializeBlockList(buf, oreBlocks);
@@ -240,7 +242,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void deserialize(@NotNull final FriendlyByteBuf buf, final ClientLevel level)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level)
     {
         clear();
         discoverAllItems(level);
@@ -276,29 +278,29 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     private static void serializeItemStorageList(
-      @NotNull final FriendlyByteBuf buf,
+      @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Collection<ItemStorage> list)
     {
-        buf.writeCollection(list, StandardFactoryController.getInstance()::serialize);
+        buf.writeCollection(list, (buffer, storage) -> StandardFactoryController.getInstance().serialize((RegistryFriendlyByteBuf) buffer, storage));
     }
 
     @NotNull
-    private static List<ItemStorage> deserializeItemStorageList(@NotNull final FriendlyByteBuf buf)
+    private static List<ItemStorage> deserializeItemStorageList(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        return buf.readList(StandardFactoryController.getInstance()::deserialize);
+        return buf.readList((buffer) -> StandardFactoryController.getInstance().deserialize((RegistryFriendlyByteBuf) buffer));
     }
 
     private static void serializeBlockList(
-      @NotNull final FriendlyByteBuf buf,
+      @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Collection<Block> list)
     {
-        buf.writeCollection(list.stream().map(ItemStack::new).toList(), FriendlyByteBuf::writeItem);
+        buf.writeCollection(list.stream().map(ItemStack::new).toList(), (b, stack) -> Utils.serializeCodecMess((RegistryFriendlyByteBuf) b, stack));
     }
 
     @NotNull
-    private static List<Block> deserializeBlockList(@NotNull final FriendlyByteBuf buf)
+    private static List<Block> deserializeBlockList(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        final List<ItemStack> stacks = buf.readList(FriendlyByteBuf::readItem);
+        final List<ItemStack> stacks = buf.readList(b -> Utils.deserializeCodecMess((RegistryFriendlyByteBuf) b));
         return stacks.stream()
           .flatMap(stack -> stack.getItem() instanceof BlockItem blockItem
                               ? Stream.of(blockItem.getBlock()) : Stream.empty())
@@ -306,7 +308,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     private static void serializeRegistryIds(
-      @NotNull final FriendlyByteBuf buf,
+      @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Registry<?> registry,
       @NotNull final Collection<ResourceLocation> ids)
     {
@@ -316,14 +318,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @NotNull
     private static <T> List<ResourceLocation>
     deserializeRegistryIds(
-      @NotNull final FriendlyByteBuf buf,
+      @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Registry<T> registry)
     {
         return buf.readList(b -> b.readResourceLocation());
     }
 
     private static void serializeCompostRecipes(
-      @NotNull final FriendlyByteBuf buf,
+      @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes)
     {
         final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
@@ -335,11 +337,11 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @NotNull
-    private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final FriendlyByteBuf buf)
+    private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
         return buf.readList(b -> {
-            return new RecipeHolder<>(b.readResourceLocation(), serializer.fromNetwork(b));
+            return new RecipeHolder<>(b.readResourceLocation(), serializer.fromNetwork((RegistryFriendlyByteBuf) b));
         });
     }
 
@@ -431,7 +433,7 @@ public class CompatibilityManager implements ICompatibilityManager
         final Set<ItemStorage> filteredEdibles = new HashSet<>();
         for (final ItemStorage storage : edibles)
         {
-            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).getNutrition() >= minNutrition))
+            if ((storage.getItemStack().getFoodProperties(null) != null && storage.getItemStack().getFoodProperties(null).nutrition() >= minNutrition))
             {
                 filteredEdibles.add(storage);
             }
@@ -545,22 +547,22 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compound)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         @NotNull final ListTag saplingsLeavesTagList =
           leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().defaultBlockState(), entry.getValue()))
+            .map(entry -> writeLeafSaplingEntryToNBT(provider, entry.getKey().defaultBlockState(), entry.getValue()))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Tag.TAG_COMPOUND))
-          .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
+          .map(nbt -> CompatibilityManager.readLeafSaplingEntryFromNBT(provider, nbt))
           .filter(key -> !key.getA().isAir() && !leavesToSaplingMap.containsKey(key.getA().getBlock()) && !leavesToSaplingMap.containsValue(key.getB()))
           .forEach(key -> leavesToSaplingMap.put(key.getA().getBlock(), key.getB()));
     }
@@ -841,7 +843,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0]));
+                final Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(split[0]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
@@ -909,7 +911,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0]));
+                final Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(split[0]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid recruitment item: " + item);
@@ -981,16 +983,16 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Finished discovering diseases");
     }
 
-    private static CompoundTag writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
+    private static CompoundTag writeLeafSaplingEntryToNBT(@NotNull final HolderLookup.Provider provider, final BlockState state, final ItemStorage storage)
     {
         final CompoundTag compound = NbtUtils.writeBlockState(state);
-        storage.getItemStack().save(compound);
+        storage.getItemStack().save(provider);
         return compound;
     }
 
-    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundTag compound)
+    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.of(compound), false, true));
+        return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.parseOptional(provider, compound), false, true));
     }
 
     /**
@@ -1002,7 +1004,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             try
             {
-                final Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(s));
+                final Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
                 if (block != null && !(block instanceof AirBlock))
                 {
                     freeBlocks.add(block);

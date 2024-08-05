@@ -15,17 +15,19 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestable.SmeltableOre;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests.*;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -96,9 +98,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
         {
-            return serializeToNBT(controller, request, Stack::serialize);
+            return serializeToNBT(provider, controller, request, Stack::serialize);
         }
 
         /**
@@ -111,9 +113,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Stack::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Stack::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
                 requested,
                 token,
@@ -123,16 +125,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Stack::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Stack::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Stack::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
@@ -196,9 +198,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackListRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackListRequest request)
         {
-            return serializeToNBT(controller, request, StackList::serialize);
+            return serializeToNBT(provider, controller, request, StackList::serialize);
         }
 
         /**
@@ -211,9 +213,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemStackListRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.ItemStackListRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, StackList::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, StackList::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
                 requested,
                 token,
@@ -222,15 +224,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, ItemStackListRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, ItemStackListRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, StackList::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, StackList::serialize);
         }
 
         @Override
-        public ItemStackListRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public ItemStackListRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               StackList::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
@@ -294,9 +296,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
         {
-            return serializeToNBT(controller, request, RequestTag::serialize);
+            return serializeToNBT(provider, controller, request, RequestTag::serialize);
         }
 
         /**
@@ -309,9 +311,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, RequestTag::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, RequestTag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,
@@ -321,16 +323,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, itemTagRequest, packetBuffer, RequestTag::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, itemTagRequest, packetBuffer, RequestTag::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               RequestTag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
@@ -376,9 +378,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.DeliveryRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.DeliveryRequest request)
         {
-            return serializeToNBT(controller, request, Delivery::serialize);
+            return serializeToNBT(provider, controller, request, Delivery::serialize);
         }
 
         /**
@@ -391,9 +393,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.DeliveryRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Delivery::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Delivery::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
                 requested,
                 token,
@@ -421,15 +423,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, DeliveryRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, DeliveryRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Delivery::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Delivery::serialize);
         }
 
         @Override
-        public DeliveryRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public DeliveryRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Delivery::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
@@ -475,9 +477,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
         {
-            return serializeToNBT(controller, request, Pickup::serialize);
+            return serializeToNBT(provider, controller, request, Pickup::serialize);
         }
 
         /**
@@ -490,9 +492,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.PickupRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.PickupRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Pickup::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Pickup::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
                 requested,
                 token,
@@ -520,15 +522,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, PickupRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, PickupRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Pickup::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Pickup::serialize);
         }
 
         @Override
-        public PickupRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public PickupRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Pickup::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
@@ -555,7 +557,7 @@ public final class StandardRequestFactories
         private final IObjectToNBTConverter<C>       nbtSerializer;
         private final INBTToObjectConverter<C>       nbtDeserializer;
         private final IObjectToPackBufferWriter<C>   packetSerializer;
-        private final IFriendlyByteBufToObjectReader<C> packetDeserializer;
+        private final IRegistryFriendlyByteBufToObjectReader<C> packetDeserializer;
 
         protected AbstractCraftingRequestFactory(
           final IObjectConstructor<C, R> constructor,
@@ -564,7 +566,7 @@ public final class StandardRequestFactories
           final IObjectToNBTConverter<C> nbtSerializer,
           final INBTToObjectConverter<C> nbtDeserializer,
           final IObjectToPackBufferWriter<C> packetSerializer,
-          final IFriendlyByteBufToObjectReader<C> packetDeserializer)
+          final IRegistryFriendlyByteBufToObjectReader<C> packetDeserializer)
         {
             this.constructor = constructor;
             this.cClass = cClass;
@@ -598,16 +600,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final R r)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final R r)
         {
-            return serializeToNBT(controller, r, nbtSerializer);
+            return serializeToNBT(provider, controller, r, nbtSerializer);
         }
 
         @NotNull
         @Override
-        public R deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+        public R deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            return deserializeFromNBT(controller, nbt, nbtDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+            return deserializeFromNBT(provider, controller, nbt, nbtDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
               requested,
               token,
               requester,
@@ -615,15 +617,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, R input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, R input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, packetSerializer);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, packetSerializer);
         }
 
         @Override
-        public R deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public R deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               packetDeserializer,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
@@ -709,16 +711,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ToolRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.ToolRequest request)
         {
-            return serializeToNBT(controller, request, Tool::serialize);
+            return serializeToNBT(provider, controller, request, Tool::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.ToolRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Tool::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Tool::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
                 requested,
                 token,
@@ -727,15 +729,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, ToolRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, ToolRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Tool::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Tool::serialize);
         }
 
         @Override
-        public ToolRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public ToolRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Tool::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
@@ -782,16 +784,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.FoodRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.FoodRequest request)
         {
-            return serializeToNBT(controller, request, Food::serialize);
+            return serializeToNBT(provider, controller, request, Food::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.FoodRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.FoodRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Food::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Food::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
                 requested,
                 token,
@@ -800,15 +802,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, FoodRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, FoodRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Food::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Food::serialize);
         }
 
         @Override
-        public FoodRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public FoodRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Food::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
@@ -855,16 +857,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.SmeltAbleOreRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.SmeltAbleOreRequest request)
         {
-            return serializeToNBT(controller, request, SmeltableOre::serialize);
+            return serializeToNBT(provider, controller, request, SmeltableOre::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, SmeltableOre::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, SmeltableOre::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
                 requested,
                 token,
@@ -873,15 +875,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, SmeltableOre::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, SmeltableOre::serialize);
         }
 
         @Override
-        public SmeltAbleOreRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public SmeltAbleOreRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               SmeltableOre::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
@@ -928,16 +930,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.BurnableRequest request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.BurnableRequest request)
         {
-            return serializeToNBT(controller, request, Burnable::serialize);
+            return serializeToNBT(provider, controller, request, Burnable::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.BurnableRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.BurnableRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Burnable::deserialize,
+            return deserializeFromNBT(provider, controller, nbt, Burnable::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
                 requested,
                 token,
@@ -946,15 +948,15 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, BurnableRequest input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, BurnableRequest input, RegistryFriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, input, packetBuffer, Burnable::serialize);
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Burnable::serialize);
         }
 
         @Override
-        public BurnableRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public BurnableRequest deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromFriendlyByteBuf(controller,
+            return deserializeFromRegistryFriendlyByteBuf(controller,
               buffer,
               Burnable::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
@@ -979,6 +981,7 @@ public final class StandardRequestFactories
     }
 
     public static <T extends IRequestable> CompoundTag serializeToNBT(
+      @NotNull final HolderLookup.Provider provider,
       final IFactoryController controller,
       final IRequest<T> request,
       final IObjectToNBTConverter<T> typeSerialization)
@@ -988,7 +991,7 @@ public final class StandardRequestFactories
         final CompoundTag requesterCompound = controller.serialize(request.getRequester());
         final CompoundTag tokenCompound = controller.serialize(request.getId());
         final IntTag stateCompound = request.getState().serialize();
-        final CompoundTag requestedCompound = typeSerialization.apply(controller, request.getRequest());
+        final CompoundTag requestedCompound = typeSerialization.apply(provider, controller, request.getRequest());
 
         final ListTag childrenCompound = new ListTag();
         for (final IToken<?> token : request.getChildren())
@@ -1003,7 +1006,7 @@ public final class StandardRequestFactories
 
         if (request.hasResult())
         {
-            compound.put(NBT_RESULT, typeSerialization.apply(controller, request.getResult()));
+            compound.put(NBT_RESULT, typeSerialization.apply(provider, controller, request.getResult()));
         }
 
         if (request.hasParent())
@@ -1014,29 +1017,29 @@ public final class StandardRequestFactories
         compound.put(NBT_CHILDREN, childrenCompound);
 
         final ListTag deliveriesList = new ListTag();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(new CompoundTag())));
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(provider)));
 
         compound.put(NBT_DELIVERIES, deliveriesList);
 
         return compound;
     }
 
-    public static <T extends IRequestable> void serializeToFriendlyByteBuf(
+    public static <T extends IRequestable> void serializeToRegistryFriendlyByteBuf(
       final IFactoryController controller,
       final IRequest<T> request,
-      final FriendlyByteBuf packetBuffer,
+      final RegistryFriendlyByteBuf packetBuffer,
       final IObjectToPackBufferWriter<T> typeSerialization)
     {
 
-        controller.serialize(packetBuffer, request.getRequester());
-        controller.serialize(packetBuffer, request.getId());
+        controller.serializeTag(packetBuffer, request.getRequester());
+        controller.serializeTag(packetBuffer, request.getId());
         request.getState().serialize(packetBuffer);
         typeSerialization.apply(controller, packetBuffer, request.getRequest());
 
         packetBuffer.writeInt(request.getChildren().size());
         for (final IToken<?> token : request.getChildren())
         {
-            controller.serialize(packetBuffer, token);
+            controller.serializeTag(packetBuffer, token);
         }
 
         packetBuffer.writeBoolean(request.hasResult());
@@ -1048,29 +1051,30 @@ public final class StandardRequestFactories
         packetBuffer.writeBoolean(request.hasParent());
         if (request.hasParent())
         {
-            controller.serialize(packetBuffer, request.getParent());
+            controller.serializeTag(packetBuffer, request.getParent());
         }
 
         packetBuffer.writeInt(request.getDeliveries().size());
-        request.getDeliveries().forEach(packetBuffer::writeItem);
+        request.getDeliveries().forEach(b -> Utils.serializeCodecMess(packetBuffer, b));
     }
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
+      @NotNull final HolderLookup.Provider provider,
       final IFactoryController controller,
       final CompoundTag compound,
       final INBTToObjectConverter<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
-        final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
-        final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
+        final IRequester requester = controller.deserializeTag(compound.getCompound(NBT_REQUESTER));
+        final IToken<?> token = controller.deserializeTag(compound.getCompound(NBT_TOKEN));
         final RequestState state = RequestState.deserialize((IntTag) compound.get(NBT_STATE));
-        final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
+        final T requested = typeDeserialization.apply(provider, controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
         final ListTag childCompound = compound.getList(NBT_CHILDREN, Tag.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
-            childTokens.add(controller.deserialize(childCompound.getCompound(i)));
+            childTokens.add(controller.deserializeTag(childCompound.getCompound(i)));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
@@ -1079,19 +1083,19 @@ public final class StandardRequestFactories
 
         if (compound.contains(NBT_PARENT))
         {
-            request.setParent(controller.deserialize(compound.getCompound(NBT_PARENT)));
+            request.setParent(controller.deserializeTag(compound.getCompound(NBT_PARENT)));
         }
 
         if (compound.contains(NBT_RESULT))
         {
-            request.setResult(typeDeserialization.apply(controller, compound.getCompound(NBT_RESULT)));
+            request.setResult(typeDeserialization.apply(provider, controller, compound.getCompound(NBT_RESULT)));
         }
 
         if (compound.contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
             final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Tag.TAG_COMPOUND);
-            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.of(itemStackCompound)));
+            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.parseOptional(provider, itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());
         }
@@ -1099,14 +1103,14 @@ public final class StandardRequestFactories
         return request;
     }
 
-    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromFriendlyByteBuf(
+    public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromRegistryFriendlyByteBuf(
       final IFactoryController controller,
-      final FriendlyByteBuf buffer,
-      final IFriendlyByteBufToObjectReader<T> typeDeserialization,
+      final RegistryFriendlyByteBuf buffer,
+      final IRegistryFriendlyByteBufToObjectReader<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
-        final IRequester requester = controller.deserialize(buffer);
-        final IToken<?> token = controller.deserialize(buffer);
+        final IRequester requester = controller.deserializeTag(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
         final RequestState state = RequestState.deserialize(buffer);
         final T requested = typeDeserialization.apply(controller, buffer);
 
@@ -1114,7 +1118,7 @@ public final class StandardRequestFactories
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            childTokens.add(controller.deserialize(buffer));
+            childTokens.add(controller.deserializeTag(buffer));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
@@ -1127,14 +1131,14 @@ public final class StandardRequestFactories
 
         if (buffer.readBoolean())
         {
-            request.setParent(controller.deserialize(buffer));
+            request.setParent(controller.deserializeTag(buffer));
         }
 
         final List<ItemStack> deliveries = new ArrayList<>();
         final int size2 = buffer.readInt();
         for (int i = 0; i < size2; i++)
         {
-            deliveries.add(buffer.readItem());
+            deliveries.add(Utils.deserializeCodecMess(buffer));
         }
 
         request.overrideCurrentDeliveries(ImmutableList.copyOf(deliveries));
@@ -1144,25 +1148,25 @@ public final class StandardRequestFactories
     @FunctionalInterface
     public interface IObjectToNBTConverter<O>
     {
-        CompoundTag apply(IFactoryController controller, O object);
+        CompoundTag apply(HolderLookup.Provider provider, IFactoryController controller, O object);
     }
 
     @FunctionalInterface
     public interface INBTToObjectConverter<O>
     {
-        O apply(IFactoryController controller, CompoundTag compound);
+        O apply(HolderLookup.Provider provider, IFactoryController controller, CompoundTag compound);
     }
 
     @FunctionalInterface
     public interface IObjectToPackBufferWriter<O>
     {
-        void apply(IFactoryController controller, FriendlyByteBuf buffer, O input);
+        void apply(IFactoryController controller, RegistryFriendlyByteBuf buffer, O input);
     }
 
     @FunctionalInterface
-    public interface IFriendlyByteBufToObjectReader<O>
+    public interface IRegistryFriendlyByteBufToObjectReader<O>
     {
-        O apply(IFactoryController controller, FriendlyByteBuf buffer);
+        O apply(IFactoryController controller, RegistryFriendlyByteBuf buffer);
     }
 
     @FunctionalInterface

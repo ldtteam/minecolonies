@@ -123,7 +123,7 @@ public enum RequestState
      * @param buffer The buffer to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserialize(final FriendlyByteBuf buffer)
+    public static RequestState deserialize(final RegistryFriendlyByteBuf buffer)
     {
         return indexList.get(buffer.readInt());
     }

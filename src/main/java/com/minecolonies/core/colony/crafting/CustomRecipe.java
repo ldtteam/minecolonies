@@ -14,12 +14,13 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.GsonHelper;
@@ -906,7 +907,7 @@ public class CustomRecipe
      *
      * @param packetBuffer buffer to serialize into.
      */
-    public void serialize(@NotNull final FriendlyByteBuf packetBuffer)
+    public void serialize(@NotNull final RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeUtf(getCrafter());
         packetBuffer.writeResourceLocation(getRecipeStorage().getRecipeSource());
@@ -925,18 +926,18 @@ public class CustomRecipe
         packetBuffer.writeVarInt(getInputs().size());
         for(final ItemStorage input : getInputs())
         {
-            StandardFactoryController.getInstance().serialize(packetBuffer, input);
+            StandardFactoryController.getInstance().serializeTag(packetBuffer, input);
         }
-        packetBuffer.writeItem(getPrimaryOutput());
+        Utils.serializeCodecMess(packetBuffer, getPrimaryOutput());
         packetBuffer.writeVarInt(getSecondaryOutput().size());
         for(final ItemStack secondary : getSecondaryOutput())
         {
-            packetBuffer.writeItem(secondary);
+            Utils.serializeCodecMess(packetBuffer, secondary);
         }
         packetBuffer.writeVarInt(getAltOutputs().size());
         for(final ItemStack alts : getAltOutputs())
         {
-            packetBuffer.writeItem(alts);
+            Utils.serializeCodecMess(packetBuffer, alts);
         }
         packetBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(getIntermediate()));
     }
@@ -946,7 +947,7 @@ public class CustomRecipe
      * @param buffer network buffer.
      * @return       deserialized recipe.
      */
-    public static CustomRecipe deserialize(@NotNull final FriendlyByteBuf buffer)
+    public static CustomRecipe deserialize(@NotNull final RegistryFriendlyByteBuf buffer)
     {
         final String crafter = buffer.readUtf();
         final ResourceLocation recipeId = buffer.readResourceLocation();
@@ -969,18 +970,18 @@ public class CustomRecipe
         final List<ItemStorage> inputs = new ArrayList<>();
         for(int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--)
         {
-            inputs.add(StandardFactoryController.getInstance().deserialize(buffer));
+            inputs.add(StandardFactoryController.getInstance().deserializeTag(buffer));
         }
-        final ItemStack primaryOutput = buffer.readItem();
+        final ItemStack primaryOutput = Utils.deserializeCodecMess(buffer);
         final List<ItemStack> secondaryOutput = new ArrayList<>();
         for(int numSec = buffer.readVarInt(); numSec > 0; numSec--)
         {
-            secondaryOutput.add(buffer.readItem());
+            secondaryOutput.add(Utils.deserializeCodecMess(buffer));
         }
         final List<ItemStack> altOutputs = new ArrayList<>();
         for(int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--)
         {
-            altOutputs.add(buffer.readItem());
+            altOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
         final Block intermediate = BuiltInRegistries.BLOCK.get(buffer.readResourceLocation());
@@ -995,7 +996,7 @@ public class CustomRecipe
      * @param buffer the buffer to serialize into.
      * @param ids    the set to be serialized.
      */
-    private static void serializeIds(@NotNull final FriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
+    private static void serializeIds(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
     {
         buffer.writeVarInt(ids.size());
         for (final ResourceLocation id : ids)
@@ -1009,7 +1010,7 @@ public class CustomRecipe
      * @param buffer the buffer to deserialize from.
      * @return       the deserialized set.
      */
-    private static Set<ResourceLocation> deserializeIds(@NotNull final FriendlyByteBuf buffer)
+    private static Set<ResourceLocation> deserializeIds(@NotNull final RegistryFriendlyByteBuf buffer)
     {
         final Set<ResourceLocation> ids = new HashSet<>();
 

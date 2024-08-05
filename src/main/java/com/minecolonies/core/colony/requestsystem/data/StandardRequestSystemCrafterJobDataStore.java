@@ -133,12 +133,12 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         @Override
         public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getList(TAG_ASSIGNED_LIST, Tag.TAG_COMPOUND))
-                                               .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
+                                               .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
                                                .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);
@@ -160,19 +160,19 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
           throws Throwable
         {
-            final IToken<?> id = controller.deserialize(buffer);
+            final IToken<?> id = controller.deserializeTag(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();
             final int queueSize = buffer.readInt();
             for (int i = 0; i < queueSize; ++i)
             {
-                queue.add(controller.deserialize(buffer));
+                queue.add(controller.deserializeTag(buffer));
             }
 
             final List<IToken<?>> tasks = new ArrayList<>();
             final int tasksSize = buffer.readInt();
             for (int i = 0; i < tasksSize; ++i)
             {
-                tasks.add(controller.deserialize(buffer));
+                tasks.add(controller.deserializeTag(buffer));
             }
 
             return new StandardRequestSystemCrafterJobDataStore(id, queue, tasks);

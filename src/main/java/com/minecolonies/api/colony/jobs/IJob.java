@@ -237,7 +237,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      * Serialize the job to a buffer.
      * @param buffer the buffer to serialize it to.
      */
-    void serializeToView(final FriendlyByteBuf buffer);
+    void serializeToView(final RegistryFriendlyByteBuf buffer);
 
     /**
      * Get the time limit in seconds after which the job considers itself inactive.

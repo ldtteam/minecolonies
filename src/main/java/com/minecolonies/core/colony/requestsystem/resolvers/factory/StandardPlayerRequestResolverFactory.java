@@ -72,7 +72,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serialize(playerRequestResolver.getId()));
@@ -85,11 +85,11 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @Override
     public StandardPlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
 
         final Set<IToken<?>> assignedRequests =
-          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Tag.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
+          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Tag.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserializeTag(c)).collect(Collectors.toSet());
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);
@@ -109,14 +109,14 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @Override
     public StandardPlayerRequestResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserialize(buffer);
-        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
+        final ILocation location = controller.deserializeTag(buffer);
 
         final Set<IToken<?>> requests = new HashSet<>();
         final int requestsSize = buffer.readInt();
         for (int i = 0; i < requestsSize; ++i)
         {
-            requests.add(controller.deserialize(buffer));
+            requests.add(controller.deserializeTag(buffer));
         }
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);

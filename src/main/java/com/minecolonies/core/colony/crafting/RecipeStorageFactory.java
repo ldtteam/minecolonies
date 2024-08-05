@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -115,7 +116,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
     {
         final CompoundTag compound = new CompoundTag();
         @NotNull final ListTag inputTagList = new ListTag();
@@ -178,7 +179,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             final CompoundTag inputTag = inputTagList.getCompound(i);
             if(inputTag.contains(NEW_NBT_TYPE) || inputTag.contains(NBT_TYPE)) //Check to see if it's something the factorycontroller can handle
             {
-                input.add(StandardFactoryController.getInstance().deserialize(inputTag));
+                input.add(StandardFactoryController.getInstance().deserializeTag(inputTag));
             }
             else
             {
@@ -192,7 +193,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final Block intermediate = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound(BLOCK_TAG)).getBlock();
 
         final int gridSize = nbt.getInt(TAG_GRID);
-        final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(nbt.getCompound(TAG_TOKEN));
 
         final ResourceLocation source = nbt.contains(SOURCE_TAG) ? new ResourceLocation(nbt.getString(SOURCE_TAG)) : null; 
 
@@ -224,11 +225,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     }
 
     @Override
-    public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final FriendlyByteBuf packetBuffer)
+    public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeVarInt(input.getInput().size());
-        input.getInput().forEach(stack -> StandardFactoryController.getInstance().serialize(packetBuffer, stack));
-        packetBuffer.writeItem(input.getPrimaryOutput());
+        input.getInput().forEach(stack -> StandardFactoryController.getInstance().serializeTag(packetBuffer, stack));
+        Utils.serializeCodecMess(packetBuffer, input.getPrimaryOutput());
 
         packetBuffer.writeBoolean(input.getIntermediate() != null);
         if (input.getIntermediate() != null)
@@ -241,10 +242,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeResourceLocation(input.getRecipeType().getId());
 
         packetBuffer.writeVarInt(input.getAlternateOutputs().size());
-        input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItem(stack));
+        input.getAlternateOutputs().forEach(stack -> Utils.serializeCodecMess(packetBuffer, stack));
 
         packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
-        input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
+        input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> Utils.serializeCodecMess(packetBuffer, stack));
 
         packetBuffer.writeUtf(input.getRequiredTool().getName());
 
@@ -260,21 +261,21 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             packetBuffer.writeResourceLocation(input.getRecipeSource());
         }
 
-        controller.serialize(packetBuffer, input.getToken());
+        controller.serializeTag(packetBuffer, input.getToken());
     }
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final FriendlyByteBuf buffer) throws Throwable
+    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final List<ItemStorage> input = new ArrayList<>();
         final int inputSize = buffer.readVarInt();
         for (int i = 0; i < inputSize; ++i)
         {
-            input.add(StandardFactoryController.getInstance().deserialize(buffer));
+            input.add(StandardFactoryController.getInstance().deserializeTag(buffer));
         }
 
-        final ItemStack primaryOutput = buffer.readItem();
+        final ItemStack primaryOutput = Utils.deserializeCodecMess(buffer);
         final Block intermediate = buffer.readBoolean() ? Block.stateById(buffer.readVarInt()).getBlock() : Blocks.AIR;
         final int gridSize = buffer.readVarInt();
         final ResourceLocation type = buffer.readResourceLocation();
@@ -283,14 +284,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final int altOutputSize = buffer.readVarInt();
         for (int i = 0; i < altOutputSize; ++i)
         {
-            altOutputs.add(buffer.readItem());
+            altOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
         final List<ItemStack> secOutputs = new ArrayList<>();
         final int secOutputSize = buffer.readVarInt();
         for (int i = 0; i < secOutputSize; ++i)
         {
-            secOutputs.add(buffer.readItem());
+            secOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
         final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
@@ -307,7 +308,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             source = buffer.readResourceLocation();
         }
 
-        final IToken<?> token = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 

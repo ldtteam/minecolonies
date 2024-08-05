@@ -29,7 +29,7 @@ public class WorkOrderListModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
 
     }

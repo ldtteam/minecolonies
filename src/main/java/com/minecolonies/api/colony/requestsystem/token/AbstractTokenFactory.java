@@ -35,7 +35,7 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
      */
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardToken request)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardToken request)
     {
         final CompoundTag compound = new CompoundTag();
 

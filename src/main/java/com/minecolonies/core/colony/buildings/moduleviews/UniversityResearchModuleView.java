@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class UniversityResearchModuleView extends AbstractBuildingModuleView
 {
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
 
     }

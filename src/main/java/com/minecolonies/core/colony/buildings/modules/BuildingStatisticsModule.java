@@ -31,7 +31,7 @@ public class BuildingStatisticsModule extends AbstractBuildingModule implements 
     }
 
     @Override
-    public void serializeToView(final FriendlyByteBuf buf, final boolean fullSync)
+    public void serializeToView(final RegistryFriendlyByteBuf buf, final boolean fullSync)
     {
         statisticsManager.serialize(buf, fullSync);
     }

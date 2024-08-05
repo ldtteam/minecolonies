@@ -112,12 +112,12 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
         public StandardRequestableTypeRequestResolverAssignmentDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
           throws Throwable
         {
-            IToken<?> token = controller.deserialize(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
+            IToken<?> token = controller.deserializeTag(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             Map<TypeToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND))
                                                              .map(CompoundTag -> {
-                                                                 final TypeToken<?> elementToken = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                                 final TypeToken<?> elementToken = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
                                                                  final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundTag.getList(NbtTagConstants.TAG_LIST,
-                                                                   Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
+                                                                   Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserializeTag(elementCompound))
                                                                                                           .collect(Collectors.toList());
 
                                                                  return new Tuple<>(elementToken, elements);
@@ -145,17 +145,17 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
           IFactoryController controller,
           FriendlyByteBuf buffer) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(buffer);
+            final IToken<?> token = controller.deserializeTag(buffer);
             final Map<TypeToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                final TypeToken<?> key = controller.deserialize(buffer);
+                final TypeToken<?> key = controller.deserializeTag(buffer);
                 final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
                 for (int ii = 0; ii < tokensSize; ++ii)
                 {
-                    tokens.add(controller.deserialize(buffer));
+                    tokens.add(controller.deserializeTag(buffer));
                 }
                 assignments.put(key, tokens);
             }

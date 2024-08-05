@@ -95,7 +95,7 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
         {
             final CompoundTag compound = new CompoundTag();
 
@@ -116,8 +116,8 @@ public class StandardDataStoreManager implements IDataStoreManager
         public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundTag -> {
-                final IToken<?> token = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
-                final IDataStore store = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
+                final IToken<?> token = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                final IDataStore store = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
 
                 return new Tuple<>(token, store);
             }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
@@ -143,7 +143,7 @@ public class StandardDataStoreManager implements IDataStoreManager
             final int storeSize = buffer.readInt();
             for (int i = 0; i < storeSize; ++i)
             {
-                storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                storeMap.put(controller.deserializeTag(buffer), controller.deserializeTag(buffer));
             }
 
             return new StandardDataStoreManager(storeMap);

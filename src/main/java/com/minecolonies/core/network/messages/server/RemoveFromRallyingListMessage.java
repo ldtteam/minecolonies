@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,14 +52,14 @@ public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage
     protected RemoveFromRallyingListMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        banner = buf.readItem();
-        location = StandardFactoryController.getInstance().deserialize(buf.readNbt());
+        banner = Utils.deserializeCodecMess(buf);
+        location = StandardFactoryController.getInstance().deserializeTag(buf.readNbt());
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeItem(banner);
+        Utils.serializeCodecMess(buf, banner);
         buf.writeNbt(StandardFactoryController.getInstance().serialize(location));
     }
 

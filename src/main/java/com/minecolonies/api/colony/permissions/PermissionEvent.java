@@ -54,7 +54,7 @@ public class PermissionEvent
      *
      * @param buf the ByteBuf.
      */
-    public PermissionEvent(final FriendlyByteBuf buf)
+    public PermissionEvent(final RegistryFriendlyByteBuf buf)
     {
         final UUID uuid = buf.readUUID();
         if (uuid.equals(UUID.fromString("1-2-3-4-5")))
@@ -116,7 +116,7 @@ public class PermissionEvent
      *
      * @param buf the buffer.
      */
-    public void serialize(final FriendlyByteBuf buf)
+    public void serialize(final RegistryFriendlyByteBuf buf)
     {
         if (id == null)
         {

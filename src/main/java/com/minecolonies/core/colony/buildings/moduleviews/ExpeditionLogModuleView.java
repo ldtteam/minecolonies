@@ -19,7 +19,7 @@ public class ExpeditionLogModuleView extends AbstractBuildingModuleView
     private ExpeditionLog log = new ExpeditionLog();
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         this.unlocked = buf.readBoolean();
         if (this.unlocked)

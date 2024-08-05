@@ -7,8 +7,9 @@ import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -43,7 +44,7 @@ public interface ICompatibilityManager
      *
      * @param buf serialization buffer
      */
-    void serialize(@NotNull final FriendlyByteBuf buf);
+    void serialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
      * Receive and update lists based on incoming server discovery data.
@@ -54,7 +55,7 @@ public interface ICompatibilityManager
      *
      * @param buf deserialization buffer
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf, final ClientLevel level);
+    void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level);
 
     /**
      * Gets the sapling matching a leaf.
@@ -205,14 +206,14 @@ public interface ICompatibilityManager
      *
      * @param compound NBT-Tag.
      */
-    void write(@NotNull final CompoundTag compound);
+    void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void read(@NotNull final CompoundTag compound);
+    void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound);
 
     /**
      * Connect a certain block as leave to an ItemStack as sapling.

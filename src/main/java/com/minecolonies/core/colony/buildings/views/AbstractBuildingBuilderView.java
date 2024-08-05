@@ -27,7 +27,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingView
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.deserialize(buf);
         workerName = buf.readUtf(32767);

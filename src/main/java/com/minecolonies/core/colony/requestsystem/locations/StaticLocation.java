@@ -150,7 +150,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StaticLocation request)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putLong(NBT_POS, request.getInDimensionLocation().asLong());

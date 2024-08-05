@@ -167,7 +167,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeById(IMinecoloniesAPI.getInstance().getJobRegistry()::getIdOrThrow, jobEntry);

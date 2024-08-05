@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,13 +42,13 @@ public class DefaultJobView implements IJobView
     }
 
     @Override
-    public void deserialize(final FriendlyByteBuf buffer)
+    public void deserialize(final RegistryFriendlyByteBuf buffer)
     {
         this.asyncRequests.clear();
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
+            asyncRequests.add(StandardFactoryController.getInstance().deserializeTag(buffer));
         }
         entry = buffer.readById(IJobRegistry.getInstance()::byIdOrThrow);
     }

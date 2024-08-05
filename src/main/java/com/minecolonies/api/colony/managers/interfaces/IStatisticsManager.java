@@ -50,13 +50,13 @@ public interface IStatisticsManager
      * @param buf               the buffer to write to.
      * @param hasNewSubscribers
      */
-    void serialize(@NotNull final FriendlyByteBuf buf, final boolean hasNewSubscribers);
+    void serialize(@NotNull final RegistryFriendlyByteBuf buf, final boolean hasNewSubscribers);
 
     /**
      * Deserialize from bytebuf.
      * @param buf the buffer to read from.
      */
-    void deserialize(@NotNull final FriendlyByteBuf buf);
+    void deserialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
      * Reads the eventManager nbt and creates events from it

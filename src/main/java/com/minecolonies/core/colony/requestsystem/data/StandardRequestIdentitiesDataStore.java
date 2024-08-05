@@ -114,12 +114,12 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         @Override
         public StandardRequestIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(tag -> {
-                final IToken<?> id = controller.deserialize(tag.getCompound(TAG_TOKEN));
-                final IRequest<?> request = controller.deserialize(tag.getCompound(TAG_REQUEST));
+                final IToken<?> id = controller.deserializeTag(tag.getCompound(TAG_TOKEN));
+                final IRequest<?> request = controller.deserializeTag(tag.getCompound(TAG_REQUEST));
 
                 return new Tuple<IToken<?>, IRequest<?>>(id, request);
             }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getB()));
@@ -144,12 +144,12 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         public StandardRequestIdentitiesDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
           throws Throwable
         {
-            final IToken<?> token = controller.deserialize(buffer);
+            final IToken<?> token = controller.deserializeTag(buffer);
             final Map<IToken<?>, IRequest<?>> identities = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                identities.put(controller.deserializeTag(buffer), controller.deserializeTag(buffer));
             }
 
             final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(identities);

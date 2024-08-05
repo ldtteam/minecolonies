@@ -37,7 +37,7 @@ public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
 
     @NotNull
     @Override
-    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final Integer integer)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final Integer integer)
     {
         CompoundTag compound = new CompoundTag();
 

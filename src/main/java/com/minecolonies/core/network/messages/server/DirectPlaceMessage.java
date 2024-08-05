@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -76,7 +77,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
         super(buf, type);
         state = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
-        stack = buf.readItem();
+        stack = Utils.deserializeCodecMess(buf);
     }
 
     /**
@@ -89,7 +90,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     {
         buf.writeInt(Block.getId(state));
         buf.writeBlockPos(pos);
-        buf.writeItem(stack);
+        Utils.serializeCodecMess(buf, stack);
     }
 
     @Override

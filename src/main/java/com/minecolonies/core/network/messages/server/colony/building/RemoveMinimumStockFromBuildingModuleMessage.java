@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -46,7 +47,7 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
     protected RemoveMinimumStockFromBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStack = buf.readItem();
+        itemStack = Utils.deserializeCodecMess(buf);
         moduleId = buf.readInt();
     }
 
@@ -54,7 +55,7 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeItem(itemStack);
+        Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(moduleId);
     }
 

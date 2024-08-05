@@ -249,7 +249,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static IWorkOrderView createWorkOrderView(final FriendlyByteBuf buf)
+    public static IWorkOrderView createWorkOrderView(final RegistryFriendlyByteBuf buf)
     {
         @Nullable AbstractWorkOrderView orderView = null;
         String mappingName = buf.readUtf(32767);
@@ -624,7 +624,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param buf Buffer to write to
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeUtf(getMappingName());
         buf.writeInt(id);

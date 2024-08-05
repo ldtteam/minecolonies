@@ -225,7 +225,7 @@ public class PermissionsView implements IPermissions
      *
      * @param buf the buffer.
      */
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final int ranksSize = buf.readVarInt();
         for (int i = 0; i < ranksSize; ++i)

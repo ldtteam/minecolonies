@@ -10,8 +10,9 @@ import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -259,19 +260,19 @@ public final class StandardFactoryController implements IFactoryController
 
     @Override
     @SuppressWarnings(Suppression.UNCHECKED)
-    public <OUTPUT> CompoundTag serialize(@NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> CompoundTag serializeTag(@NotNull final HolderLookup.Provider provider, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final CompoundTag compound = new CompoundTag();
 
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
         compound.putShort(NEW_NBT_TYPE, factory.getSerializationId());
-        compound.put(NBT_DATA, factory.serialize(this, object));
+        compound.put(NBT_DATA, factory.serialize(provider, this, object));
 
         return compound;
     }
 
     @Override
-    public <OUTPUT> OUTPUT deserialize(@NotNull final CompoundTag compound) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT deserializeTag(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) throws IllegalArgumentException
     {
         final IFactory<?, OUTPUT> factory;
         if (compound.contains(NEW_NBT_TYPE))
@@ -301,7 +302,7 @@ public final class StandardFactoryController implements IFactoryController
 
         try
         {
-            return factory.deserialize(this, compound.getCompound(NBT_DATA));
+            return factory.deserialize(provider, this, compound.getCompound(NBT_DATA));
         }
         catch (Throwable throwable)
         {
@@ -311,7 +312,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> void serialize(@NotNull final FriendlyByteBuf buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> void serialize(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
         buffer.writeShort(factory.getSerializationId());
@@ -319,7 +320,7 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> OUTPUT deserialize(@NotNull final FriendlyByteBuf buffer) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT deserialize(@NotNull final RegistryFriendlyByteBuf buffer) throws IllegalArgumentException
     {
         short classId = buffer.readShort();
         final IFactory<?, OUTPUT> factory;

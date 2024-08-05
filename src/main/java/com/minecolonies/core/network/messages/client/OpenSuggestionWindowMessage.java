@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowSuggestBuildTool;
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,7 @@ public class OpenSuggestionWindowMessage extends AbstractClientPlayMessage
         super(buf, type);
         state = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
-        stack = buf.readItem();
+        stack = Utils.deserializeCodecMess(buf);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class OpenSuggestionWindowMessage extends AbstractClientPlayMessage
     {
         buf.writeInt(Block.getId(state));
         buf.writeBlockPos(pos);
-        buf.writeItem(stack);
+        Utils.serializeCodecMess(buf, stack);
     }
 
     @Override

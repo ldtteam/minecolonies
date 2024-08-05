@@ -27,20 +27,20 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
      *
      * @param buf               the bytebuffer.
      */
-    public GlobalResearchTreeMessage(final FriendlyByteBuf buf)
+    public GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
         this.treeBuffer = new FriendlyByteBuf(buf.copy());
     }
 
-    protected GlobalResearchTreeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         treeBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeByteArray(treeBuffer.array());
     }

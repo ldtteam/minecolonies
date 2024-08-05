@@ -30,7 +30,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     private List<String> restingCitizen = new ArrayList<>();
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         graves = new ArrayList<>();
         final int size = buf.readInt();

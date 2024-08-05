@@ -4,6 +4,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
@@ -47,7 +48,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     protected AddMinimumStockToBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStack = buf.readItem();
+        itemStack = Utils.deserializeCodecMess(buf);
         quantity = buf.readInt();
     }
 
@@ -55,7 +56,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeItem(itemStack);
+        Utils.serializeCodecMess(buf, itemStack);
         buf.writeInt(quantity);
     }
 

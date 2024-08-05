@@ -33,7 +33,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     private int maxFieldCount;
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         shouldAssignFieldManually = buf.readBoolean();
         maxFieldCount = buf.readInt();

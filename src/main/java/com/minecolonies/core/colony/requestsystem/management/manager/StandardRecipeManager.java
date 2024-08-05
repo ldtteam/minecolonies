@@ -111,7 +111,7 @@ public class StandardRecipeManager implements IRecipeManager
         final ListTag list = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
+            IRecipeStorage recipe = StandardFactoryController.getInstance().deserializeTag(list.getCompound(i));
             if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty())
             {
                 try

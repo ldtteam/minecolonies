@@ -80,7 +80,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final int size = buf.readInt();
         workerIDs.clear();

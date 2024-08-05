@@ -86,7 +86,7 @@ public final class FieldDataManager
      */
     public static FriendlyByteBuf fieldToBuffer(final @NotNull IField field)
     {
-        final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeById(FieldRegistries.getFieldRegistry()::getIdOrThrow, field.getFieldType());
         buf.writeBlockPos(field.getPosition());
         field.serialize(buf);

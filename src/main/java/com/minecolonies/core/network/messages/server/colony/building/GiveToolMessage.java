@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
@@ -45,13 +46,13 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeItem(new ItemStack(item, 1));
+        Utils.serializeCodecMess(buf, new ItemStack(item, 1));
     }
 
     protected GiveToolMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        item = buf.readItem().getItem();
+        item = Utils.deserializeCodecMess(buf).getItem();
     }
 
     @Override

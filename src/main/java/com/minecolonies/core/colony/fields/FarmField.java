@@ -3,10 +3,12 @@ package com.minecolonies.core.colony.fields;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -104,20 +106,20 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         super.serialize(buf);
-        buf.writeItem(getSeed());
+        Utils.serializeCodecMess(buf, getSeed());
         buf.writeVarIntArray(radii);
         buf.writeInt(maxRadius);
         buf.writeEnum(fieldStage);
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.deserialize(buf);
-        setSeed(buf.readItem());
+        setSeed(Utils.deserializeCodecMess(buf));
         radii = buf.readVarIntArray();
         maxRadius = buf.readInt();
         fieldStage = buf.readEnum(Stage.class);

@@ -3,12 +3,14 @@ package com.minecolonies.core.colony.crafting;
 import com.google.gson.*;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
@@ -504,12 +506,12 @@ public final class LootTableAnalyzer
         }
 
         /** Copy a LootDrop to a packet buffer */
-        public void serialize(@NotNull final FriendlyByteBuf buffer)
+        public void serialize(@NotNull final RegistryFriendlyByteBuf buffer)
         {
             buffer.writeVarInt(stacks.size());
             for (final ItemStack stack : stacks)
             {
-                buffer.writeItem(stack);
+                Utils.serializeCodecMess(buffer, stack);
             }
             buffer.writeFloat(probability);
             buffer.writeFloat(quality);
@@ -517,13 +519,13 @@ public final class LootTableAnalyzer
         }
 
         /** Recover a LootDrop from a packet buffer */
-        public static LootDrop deserialize(@NotNull final FriendlyByteBuf buffer)
+        public static LootDrop deserialize(@NotNull final RegistryFriendlyByteBuf buffer)
         {
             final int size = buffer.readVarInt();
             final List<ItemStack> stacks = new ArrayList<>(size);
             for (int i = 0; i < size; ++i)
             {
-                stacks.add(buffer.readItem());
+                stacks.add(Utils.deserializeCodecMess(buffer));
             }
             final float probability = buffer.readFloat();
             final float quality = buffer.readFloat();

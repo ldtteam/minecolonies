@@ -21,7 +21,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     private List<BlockPos> buildingToGatherFrom = new ArrayList<>();
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final int size = buf.readInt();
         buildingToGatherFrom.clear();

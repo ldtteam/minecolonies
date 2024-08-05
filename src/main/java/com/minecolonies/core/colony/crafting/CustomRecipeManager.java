@@ -396,7 +396,7 @@ public class CustomRecipeManager
      * Ingests the custom recipes packet, and applies it to the recipe manager.
      * @param buff packet buffer containing the received data.
      */
-    public void handleCustomRecipeManagerMessage(final FriendlyByteBuf buff)
+    public void handleCustomRecipeManagerMessage(final RegistryFriendlyByteBuf buff)
     {
         reset();
 

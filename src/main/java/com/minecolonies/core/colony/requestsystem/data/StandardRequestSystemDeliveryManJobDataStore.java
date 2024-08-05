@@ -106,12 +106,12 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         @Override
         public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
                                                   .collect(Collectors.toCollection(HashSet::new));
             return new StandardRequestSystemDeliveryManJobDataStore(token, queue, ongoingDeliveries);
         }
@@ -134,20 +134,20 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
           IFactoryController controller,
           @NotNull FriendlyByteBuf buffer) throws Throwable
         {
-            final IToken<?> id = controller.deserialize(buffer);
+            final IToken<?> id = controller.deserializeTag(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();
             final Set<IToken<?>> ongoingDeliveries = new HashSet<>();
 
             final int queueSize = buffer.readInt();
             for (int i = 0; i < queueSize; ++i)
             {
-                queue.add(controller.deserialize(buffer));
+                queue.add(controller.deserializeTag(buffer));
             }
 
             final int ongoingSize = buffer.readInt();
             for (int i = 0; i < ongoingSize; ++i)
             {
-                queue.add(controller.deserialize(buffer));
+                queue.add(controller.deserializeTag(buffer));
             }
 
             return new StandardRequestSystemDeliveryManJobDataStore(id, queue, ongoingDeliveries);

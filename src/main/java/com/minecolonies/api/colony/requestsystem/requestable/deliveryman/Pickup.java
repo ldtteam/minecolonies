@@ -4,8 +4,8 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -33,7 +33,7 @@ public class Pickup extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static CompoundTag serialize(@NotNull final IFactoryController controller, final Pickup pickup)
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, final Pickup pickup)
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_PRIORITY, controller.serialize(pickup.getPriority()));
@@ -41,9 +41,9 @@ public class Pickup extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static Pickup deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
+    public static Pickup deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
-        final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
+        final int priority = controller.deserializeTag(compound.getCompound(NBT_PRIORITY));
         return new Pickup(priority);
     }
 
@@ -54,7 +54,7 @@ public class Pickup extends AbstractDeliverymanRequestable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Pickup input)
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Pickup input)
     {
         buffer.writeInt(input.getPriority());
     }
@@ -66,7 +66,7 @@ public class Pickup extends AbstractDeliverymanRequestable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Pickup deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static Pickup deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
         final int priority = buffer.readInt();
 

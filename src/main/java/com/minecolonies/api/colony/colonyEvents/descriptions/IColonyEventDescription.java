@@ -54,12 +54,12 @@ public interface IColonyEventDescription extends INBTSerializable<CompoundTag>
      * 
      * @param buf the {@link FriendlyByteBuf} to serialize to.
      */
-    void serialize(final FriendlyByteBuf buf);
+    void serialize(final RegistryFriendlyByteBuf buf);
 
     /**
      * Deserializes this event from the given {@link FriendlyByteBuf}.
      * 
      * @param buf the {@link FriendlyByteBuf} to deserialize from.
      */
-    void deserialize(final FriendlyByteBuf buf);
+    void deserialize(final RegistryFriendlyByteBuf buf);
 }

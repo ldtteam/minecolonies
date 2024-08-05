@@ -943,7 +943,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeUtf(name);
         buf.writeBoolean(female);

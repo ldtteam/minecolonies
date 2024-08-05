@@ -10,7 +10,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.SettingsModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.colony.building.TriggerSettingMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -30,14 +29,14 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     final Map<ISettingKey<? extends ISetting>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         final Map<ISettingKey<?>, ISetting> tempSettings = new LinkedHashMap<>();
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
             final ResourceLocation key = buf.readResourceLocation();
-            final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
+            final ISetting setting = StandardFactoryController.getInstance().deserializeTag(buf);
             if (setting != null)
             {
                 final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);

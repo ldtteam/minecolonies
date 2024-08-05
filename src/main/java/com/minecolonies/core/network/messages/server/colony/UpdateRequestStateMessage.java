@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -54,9 +55,9 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     protected UpdateRequestStateMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        token = StandardFactoryController.getInstance().deserialize(buf.readNbt());
+        token = StandardFactoryController.getInstance().deserializeTag(buf.readNbt());
         state = RequestState.values()[buf.readInt()];
-        itemStack = state == RequestState.OVERRULED ? buf.readItem() : ItemStack.EMPTY;
+        itemStack = state == RequestState.OVERRULED ? Utils.deserializeCodecMess(buf) : ItemStack.EMPTY;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
         {
-            buf.writeItem(itemStack);
+            Utils.serializeCodecMess(buf, itemStack);
         }
     }
 

@@ -12,7 +12,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +61,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
             final ResourceLocation key = new ResourceLocation(entryCompound.getString("key"));
             try
             {
-                final ISetting setting = StandardFactoryController.getInstance().deserialize(entryCompound.getCompound("value"));
+                final ISetting setting = StandardFactoryController.getInstance().deserializeTag(entryCompound.getCompound("value"));
                 final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
                 if (settings.containsKey(settingsKey))
                 {
@@ -92,7 +91,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     }
 
     @Override
-    public void serializeToView(final FriendlyByteBuf buf)
+    public void serializeToView(final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(settings.size());
         for (final Map.Entry<ISettingKey<?>, ISetting<?>> setting : settings.entrySet())

@@ -236,7 +236,7 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
      * @param controller the controller.
      * @param buffer     the {@link FriendlyByteBuf} to serialize to.
      */
-    void serialize(final IFactoryController controller, final FriendlyByteBuf buffer);
+    void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer);
 
     /**
      * deserialize this request manager from the give {@link FriendlyByteBuf}
@@ -244,5 +244,5 @@ public interface IRequestManager extends INBTSerializable<CompoundTag>, ITickabl
      * @param controller the controller.
      * @param buffer     the {@link FriendlyByteBuf} to deserialize from.
      */
-    void deserialize(final IFactoryController controller, final FriendlyByteBuf buffer);
+    void deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer);
 }

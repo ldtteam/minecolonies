@@ -56,7 +56,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeBoolean(shouldAssignManually);
         buf.writeInt(getMaxFieldCount());

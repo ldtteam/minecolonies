@@ -228,7 +228,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     }
 
     @Override
-    public void serializeToView(final FriendlyByteBuf buffer)
+    public void serializeToView(final RegistryFriendlyByteBuf buffer)
     {
         buffer.writeUtf(getJobRegistryEntry().getKey().toString());
         buffer.writeInt(getAsyncRequests().size());

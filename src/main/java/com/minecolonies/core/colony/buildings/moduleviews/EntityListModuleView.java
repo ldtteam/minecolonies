@@ -102,7 +102,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         listOfEntities.clear();
         final int size = buf.readInt();

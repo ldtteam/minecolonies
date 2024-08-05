@@ -5,6 +5,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,13 +43,13 @@ public class ToggleBannerRallyGuardsMessage extends AbstractServerPlayMessage
     protected ToggleBannerRallyGuardsMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        banner = buf.readItem();
+        banner = Utils.deserializeCodecMess(buf);
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeItem(banner);
+        Utils.serializeCodecMess(buf, banner);
     }
 
     @Override

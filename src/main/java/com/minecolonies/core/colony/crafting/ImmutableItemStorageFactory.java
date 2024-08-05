@@ -51,7 +51,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     @Override
     public ImmutableItemStorage deserialize(IFactoryController controller, CompoundTag nbt) throws Throwable
     {
-        final ItemStorage readStorage = StandardFactoryController.getInstance().deserialize(nbt);
+        final ItemStorage readStorage = StandardFactoryController.getInstance().deserializeTag(nbt);
         return readStorage.toImmutable();
     }
 
@@ -64,7 +64,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     @Override
     public ImmutableItemStorage deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
-        @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserialize(buffer);
+        @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserializeTag(buffer);
         return newItem.toImmutable();
     }
 

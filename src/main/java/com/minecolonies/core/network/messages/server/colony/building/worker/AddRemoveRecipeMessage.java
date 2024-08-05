@@ -144,7 +144,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     protected AddRemoveRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        storage = StandardFactoryController.getInstance().deserialize(buf);
+        storage = StandardFactoryController.getInstance().deserializeTag(buf);
         remove = buf.readBoolean();
         this.id = buf.readInt();
     }
@@ -158,7 +158,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        StandardFactoryController.getInstance().serialize(buf, storage);
+        StandardFactoryController.getInstance().serializeTag(buf, storage);
         buf.writeBoolean(remove);
         buf.writeInt(id);
     }

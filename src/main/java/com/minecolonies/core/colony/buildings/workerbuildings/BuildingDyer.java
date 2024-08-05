@@ -17,14 +17,16 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -119,17 +121,21 @@ public class BuildingDyer extends AbstractBuilding
                     Tags.Items.DYES_BROWN, Tags.Items.DYES_GREEN, Tags.Items.DYES_RED, Tags.Items.DYES_BLACK);
             for (final ItemStack item : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
             {
-                if (!(item.getItem() instanceof DyeableLeatherItem)) { continue; }
+                if (!(item.getItem() instanceof ArmorItem armorItem) || !item.has(DataComponents.DYED_COLOR))
+                {
+                    continue;
+                }
 
                 for (final TagKey<Item> dyeTag : dyes)
                 {
-                    final List<ItemStack> dyeItems = ForgeRegistries.ITEMS.tags().getTag(dyeTag)
+                    final List<ItemStack> dyeItems = BuiltInRegistries.ITEM.getTag(dyeTag).get()
                             .stream().map(ItemStack::new).toList();
                     if (dyeItems.isEmpty()) { continue; }
 
                     if (dyeItems.get(0).getItem() instanceof final DyeItem dye)
                     {
-                        final ItemStack result = DyeableLeatherItem.dyeArmor(item, List.of(dye));
+
+                        final ItemStack result = DyedItemColor.applyDyes(item, List.of(dye));
                         if (!result.isEmpty())
                         {
                             recipes.add(new GenericRecipe(null, result, List.of(),

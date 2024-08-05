@@ -105,7 +105,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     }
 
     @Override
-    public void serializeToView(final FriendlyByteBuf buf)
+    public void serializeToView(final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());

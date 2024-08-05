@@ -36,7 +36,6 @@ import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCrafting
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -225,7 +224,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -238,7 +237,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final ListTag disabledRecipeTag = compound.getList(TAG_DISABLED_RECIPES, Tag.TAG_COMPOUND);
             for (int i = 0; i < disabledRecipeTag.size(); i++)
             {
-                final IToken<?> token = StandardFactoryController.getInstance().deserialize(disabledRecipeTag.getCompound(i));
+                final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(disabledRecipeTag.getCompound(i));
                 if (!disabledRecipes.contains(token))
                 {
                     disabledRecipes.add(token);
@@ -248,7 +247,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         if (jobEntry != null)
         {

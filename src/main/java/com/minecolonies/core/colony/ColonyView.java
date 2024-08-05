@@ -777,7 +777,7 @@ public final class ColonyView implements IColonyView
      */
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, final boolean isNewSubscription)
+    public void handleColonyViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final boolean isNewSubscription)
     {
         //  General Attributes
         name = buf.readUtf(32767);
@@ -922,7 +922,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response
      */
     @Override
-    public void handlePermissionsViewMessage(@NotNull final FriendlyByteBuf buf)
+    public void handlePermissionsViewMessage(@NotNull final RegistryFriendlyByteBuf buf)
     {
         permissions.deserialize(buf);
     }
@@ -934,7 +934,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    public void handleColonyViewWorkOrderMessage(final FriendlyByteBuf buf)
+    public void handleColonyViewWorkOrderMessage(final RegistryFriendlyByteBuf buf)
     {
         boolean claimsChanged = false;
 
@@ -967,7 +967,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    public void handleColonyViewCitizensMessage(final int id, final FriendlyByteBuf buf)
+    public void handleColonyViewCitizensMessage(final int id, final RegistryFriendlyByteBuf buf)
     {
         final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf, this);
         if (citizen != null)
@@ -1052,7 +1052,7 @@ public final class ColonyView implements IColonyView
      * @return null == no response.
      */
     @Override
-    public void handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final RegistryFriendlyByteBuf buf)
     {
         if (buildings.containsKey(buildingId))
         {

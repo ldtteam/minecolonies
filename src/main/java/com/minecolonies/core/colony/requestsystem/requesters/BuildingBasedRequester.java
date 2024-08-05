@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +39,8 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
 
     public static BuildingBasedRequester deserialize(final IFactoryController controller, final CompoundTag compound)
     {
-        final ILocation location = controller.deserialize(compound.getCompound(NBT_LOCATION));
-        final IToken<?> token = controller.deserialize(compound.getCompound(NBT_ID));
+        final ILocation location = controller.deserializeTag(compound.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(compound.getCompound(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
@@ -56,16 +55,16 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         return compound;
     }
 
-    public void serialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
         controller.serialize(buffer, getLocation());
         controller.serialize(buffer, getId());
     }
 
-    public static BuildingBasedRequester deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final ILocation location = controller.deserialize(buffer);
-        final IToken<?> id = controller.deserialize(buffer);
+        final ILocation location = controller.deserializeTag(buffer);
+        final IToken<?> id = controller.deserializeTag(buffer);
         return new BuildingBasedRequester(location, id);
     }
 

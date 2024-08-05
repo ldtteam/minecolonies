@@ -94,21 +94,21 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     public StandardRetryingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
+            IToken<?> token = controller.deserializeTag(assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
         final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
+            IToken<?> token = controller.deserializeTag(assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
 
         final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver(token, location);
         retryingRequestResolver.updateData(assignments, delays);
@@ -141,18 +141,18 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
         final int requestsSize = buffer.readInt();
         for (int i = 0; i < requestsSize; ++i)
         {
-            requests.put(controller.deserialize(buffer), buffer.readInt());
+            requests.put(controller.deserializeTag(buffer), buffer.readInt());
         }
 
         final Map<IToken<?>, Integer> delays = new HashMap<>();
         final int delaysSize = buffer.readInt();
         for (int i = 0; i < delaysSize; ++i)
         {
-            delays.put(controller.deserialize(buffer), buffer.readInt());
+            delays.put(controller.deserializeTag(buffer), buffer.readInt());
         }
 
-        final IToken<?> token = controller.deserialize(buffer);
-        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserializeTag(buffer);
+        final ILocation location = controller.deserializeTag(buffer);
 
         final StandardRetryingRequestResolver resolver = new StandardRetryingRequestResolver(token, location);
         resolver.updateData(requests, delays);

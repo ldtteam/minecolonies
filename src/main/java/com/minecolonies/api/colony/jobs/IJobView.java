@@ -26,7 +26,7 @@ public interface IJobView
      * Deserialize the job from the buffer.
      * @param buffer the buffer to read it from.
      */
-    void deserialize(final FriendlyByteBuf buffer);
+    void deserialize(final RegistryFriendlyByteBuf buffer);
 
     /**
      * Getter for the job entry of the job.

@@ -171,7 +171,7 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final EntityLocation request)
         {
             final CompoundTag compound = new CompoundTag();
 

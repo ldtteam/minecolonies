@@ -6,11 +6,12 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -318,7 +319,7 @@ public class ExpeditionLog
         final ListTag loot = compound.getList(TAG_LOOT, Tag.TAG_COMPOUND);
         for (int i = 0; i < loot.size(); i++)
         {
-            final ItemStorage storage = StandardFactoryController.getInstance().deserialize(loot.getCompound(i));
+            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(loot.getCompound(i));
             this.loot.put(storage, storage);
         }
     }
@@ -327,7 +328,7 @@ public class ExpeditionLog
      * Save to network
      * @param buf target
      */
-    public void serialize(@NotNull final FriendlyByteBuf buf)
+    public void serialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeVarInt(this.status.ordinal());
         buf.writeVarInt(this.id);
@@ -341,7 +342,7 @@ public class ExpeditionLog
         buf.writeVarInt(this.equipment.size());
         for (final ItemStack stack : this.equipment)
         {
-            buf.writeItem(stack);
+            Utils.serializeCodecMess(buf, stack);
         }
 
         buf.writeVarInt(this.mobs.size());
@@ -354,7 +355,7 @@ public class ExpeditionLog
         buf.writeVarInt(this.loot.size());
         for (final ItemStorage storage : this.loot.values())
         {
-            StandardFactoryController.getInstance().serialize(buf, storage);
+            StandardFactoryController.getInstance().serializeTag(buf, storage);
         }
     }
 
@@ -362,7 +363,7 @@ public class ExpeditionLog
      * Reload from network
      * @param buf source
      */
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         this.status = Status.values()[buf.readVarInt()];
         this.id = buf.readVarInt();
@@ -378,7 +379,7 @@ public class ExpeditionLog
         this.equipment.clear();
         for (int size = buf.readVarInt(); size > 0; --size)
         {
-            this.equipment.add(buf.readItem());
+            this.equipment.add(Utils.deserializeCodecMess(buf));
         }
 
         this.mobs.clear();
@@ -395,7 +396,7 @@ public class ExpeditionLog
         this.loot.clear();
         for (int size = buf.readVarInt(); size > 0; --size)
         {
-            final ItemStorage storage = StandardFactoryController.getInstance().deserialize(buf);
+            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(buf);
             this.loot.put(storage, storage);
         }
     }

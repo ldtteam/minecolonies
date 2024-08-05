@@ -4,11 +4,13 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -122,14 +124,14 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
+    public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
         listsOfItems.clear();
         final int size = buf.readInt();
 
         for (int j = 0; j < size; j++)
         {
-            listsOfItems.add(new ItemStorage(buf.readItem()));
+            listsOfItems.add(new ItemStorage(Utils.deserializeCodecMess(buf)));
         }
     }
 
