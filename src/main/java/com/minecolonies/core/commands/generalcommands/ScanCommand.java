@@ -226,21 +226,21 @@ public class ScanCommand extends AbstractCommand
                     }
                     if (isHut)
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + piecesName+ "/roads")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
+                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
                     }
                     else if (jigsawBlockEntity.getPool().location().getPath().contains("building"))
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + piecesName+ "/buildings")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies:building_entrance"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:building_entrance"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/buildings")));
+                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
                     }
                     else
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies:" + piecesName+ "/roads")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies:street"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies:street"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
+                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "street"));
+                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "street"));
                     }
                 }
                 jigsawBlockEntity.setChanged();

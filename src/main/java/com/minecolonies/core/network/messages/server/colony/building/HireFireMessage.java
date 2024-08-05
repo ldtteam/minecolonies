@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,7 +55,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      *
      * @param buf the used byteBuffer.
      */
-    protected HireFireMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected HireFireMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         hire = buf.readBoolean();
@@ -69,7 +69,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBoolean(hire);
@@ -78,7 +78,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.getModule(moduleId) instanceof final IAssignsJob module)
         {

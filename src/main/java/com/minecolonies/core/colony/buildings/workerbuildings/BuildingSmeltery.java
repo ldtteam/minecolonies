@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -259,7 +260,7 @@ public class BuildingSmeltery extends AbstractBuilding
             int fortuneLevel = building.getBuildingLevel() - 1;
             if (fortuneLevel > 0)
             {
-                pick.enchant(Enchantments.BLOCK_FORTUNE, fortuneLevel);
+                pick.enchant(Utils.getRegistryValue(Enchantments.FORTUNE, worker.level()), fortuneLevel);
             }
             return pick;
         }
@@ -269,7 +270,7 @@ public class BuildingSmeltery extends AbstractBuilding
             if (item instanceof BlockItem)
             {
                 Block itemBlock = Block.byItem(item);
-                return itemBlock.getLootTable();
+                return itemBlock.getLootTable().location();
             }
             return null;
         }

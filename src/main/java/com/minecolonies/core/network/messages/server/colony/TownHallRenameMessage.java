@@ -6,10 +6,10 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +35,7 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
         this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
     }
 
-    protected TownHallRenameMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected TownHallRenameMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         final String nameLong = buf.readUtf(32767);
@@ -43,14 +43,14 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeUtf(name);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setName(name);
         NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));

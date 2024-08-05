@@ -13,10 +13,10 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -40,13 +40,13 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
         super(TYPE, building);
     }
 
-    protected RecallCitizenHutMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected RecallCitizenHutMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final  IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final  IBuilding building)
     {
         final BlockPos location = building.getPosition();
         final Level world = colony.getWorld();

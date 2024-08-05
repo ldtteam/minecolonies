@@ -178,7 +178,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeVarInt(input.getCostList().size());
         for (IResearchCost cost : input.getCostList())
         {
-            packetBuffer.writeId(IMinecoloniesAPI.getInstance().getResearchCostRegistry(), cost.getType());
+            packetBuffer.writeById(IMinecoloniesAPI.getInstance().getResearchCostRegistry()::getIdOrThrow, cost.getType());
             cost.serialize(packetBuffer);
         }
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
@@ -224,7 +224,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
-            final ResearchCostType researchCostType = buffer.readById(IMinecoloniesAPI.getInstance().getResearchCostRegistry());
+            final ResearchCostType researchCostType = buffer.readById(IMinecoloniesAPI.getInstance().getResearchCostRegistry()::byIdOrThrow);
             final IResearchCost cost = researchCostType.createInstance();
             cost.deserialize(buffer);
             research.addCost(cost);

@@ -9,12 +9,12 @@ import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,7 +48,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         this.researchManagerData = researchCompound;
     }
 
-    public ColonyViewResearchManagerViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public ColonyViewResearchManagerViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
@@ -57,7 +57,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
@@ -65,7 +65,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (colonyView != null)

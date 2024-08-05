@@ -2,9 +2,11 @@ package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -61,7 +63,7 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
@@ -70,7 +72,7 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         citizenName = compound.getString(TAG_CITIZEN_NAME);

@@ -8,9 +8,9 @@ import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message to change the farmer field plot size.
@@ -48,7 +48,7 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.getBuildingManager()
           .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
@@ -57,7 +57,7 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(size);
@@ -65,7 +65,7 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
         buf.writeBlockPos(position);
     }
 
-    protected FarmFieldPlotResizeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected FarmFieldPlotResizeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         size = buf.readInt();

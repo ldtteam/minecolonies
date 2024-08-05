@@ -4,9 +4,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message to set the colony default structure style.
@@ -33,19 +33,19 @@ public class ColonyStructureStyleMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setStructurePack(pack);
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeUtf(pack);
     }
 
-    protected ColonyStructureStyleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyStructureStyleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.pack = buf.readUtf(32767);

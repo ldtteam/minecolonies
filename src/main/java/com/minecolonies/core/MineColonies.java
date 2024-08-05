@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -15,7 +16,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModBannerPatterns;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
@@ -67,8 +67,8 @@ import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,6 +121,7 @@ public class MineColonies
         ModQuestInitializer.DEFERRED_REGISTER_ANSWER_RESULT.register(modBus);
         ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FACTOR.register(modBus);
         ModHappinessFactorTypeInitializer.DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(modBus);
+        ModDataComponents.REGISTRY.register(modBus);
 
         ModCreativeTabs.TAB_REG.register(modBus);
 
@@ -242,10 +243,10 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    public static void onNetworkRegistry(final RegisterPayloadHandlerEvent event)
+    public static void onNetworkRegistry(final RegisterPayloadHandlersEvent event)
     {
         final String modVersion = ModList.get().getModContainerById(Constants.MOD_ID).get().getModInfo().getVersion().toString();
-        final IPayloadRegistrar registry = event.registrar(Constants.MOD_ID).versioned(modVersion);
+        final PayloadRegistrar registry = event.registrar(Constants.MOD_ID).versioned(modVersion);
         
         //  ColonyView messages
         ColonyViewMessage.TYPE.register(registry);

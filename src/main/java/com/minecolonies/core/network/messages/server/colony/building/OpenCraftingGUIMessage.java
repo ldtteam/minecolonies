@@ -11,14 +11,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,21 +44,21 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         this.id = id;
     }
 
-    protected OpenCraftingGUIMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected OpenCraftingGUIMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.id = buf.readInt();
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(id);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.getModule(id) instanceof final AbstractCraftingBuildingModule module)
         {
@@ -79,7 +79,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                     {
                         return new ContainerCraftingFurnace(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
-                }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
+                }, buffer -> new RegistryFriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
             }
             else if (module.canLearn(ModCraftingTypes.BREWING.get()))
             {
@@ -98,7 +98,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                     {
                         return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
-                }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
+                }, buffer -> new RegistryFriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
             }
             else
             {
@@ -118,7 +118,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                           return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()), building.getID(), module.getProducer().getRuntimeID());
                       }
                   },
-                  buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))).writeBlockPos(building.getID())
+                  buffer -> new RegistryFriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))).writeBlockPos(building.getID())
                     .writeInt(module.getProducer().getRuntimeID()));
             }
         }

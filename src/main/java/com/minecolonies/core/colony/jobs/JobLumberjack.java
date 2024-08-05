@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
 import com.minecolonies.core.util.AttributeModifierUtils;
@@ -15,7 +14,6 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD_NAME;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TREE;
 
@@ -88,8 +86,8 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD_NAME, (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
-              BuildingModules.FORESTER_WORK).getSecondarySkill()) / 2.0) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
-            AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
+              BuildingModules.FORESTER_WORK).getSecondarySkill()) / 2.0) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
+            AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED.value());
         }
     }
 

@@ -70,7 +70,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     {
         if (buf.readBoolean())
         {
-            this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry());
+            this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry()::byIdOrThrow);
         }
         else
         {
@@ -81,7 +81,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         final int size = buf.readVarInt();
         for (int i = 0; i < size; ++i)
         {
-            final CraftingType type = buf.readById(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry());
+            final CraftingType type = buf.readById(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry()::byIdOrThrow);
             if (type != null)
             {
                 recipeTypeSet.add(type);

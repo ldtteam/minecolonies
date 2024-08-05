@@ -11,10 +11,10 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +53,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
         this.moduleID = moduleID;
     }
 
-    protected TriggerSettingMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected TriggerSettingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.moduleID = buf.readInt();
@@ -62,7 +62,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(moduleID);
@@ -71,7 +71,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
         if (building.getModule(moduleID) instanceof final SettingsModule module)
         {

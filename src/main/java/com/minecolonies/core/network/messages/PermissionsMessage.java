@@ -15,13 +15,13 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class PermissionsMessage
         public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "permission_view", View::new, true, false);
 
         private final int          colonyID;
-        private final FriendlyByteBuf data;
+        private final RegistryFriendlyByteBuf data;
 
         /**
          * The dimension of the
@@ -58,28 +58,28 @@ public class PermissionsMessage
         {
             super(TYPE);
             this.colonyID = colony.getID();
-            this.data = new FriendlyByteBuf(Unpooled.buffer());
+            this.data = new RegistryFriendlyByteBuf(Unpooled.buffer());
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
             this.dimension = colony.getDimension();
         }
 
-        protected View(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected View(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             colonyID = buf.readInt();
             dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-            data = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+            data = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
         }
 
         
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, @Nullable final Player player)
+        protected void onExecute(final IPayloadContext ctxIn, @Nullable final Player player)
         {
             IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             data.resetReaderIndex();
             buf.writeInt(colonyID);
@@ -116,13 +116,13 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().alterPermission(colony.getPermissions().getRank(player), colony.getPermissions().getRanks().get(rankId), action, enable);
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeBoolean(enable);
@@ -130,7 +130,7 @@ public class PermissionsMessage
             buf.writeUtf(action.name());
         }
 
-        protected Permission(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected Permission(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             enable = buf.readBoolean();
@@ -161,20 +161,20 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeUtf(playerName);
         }
 
-        protected AddPlayer(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected AddPlayer(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             playerName = buf.readUtf(32767);
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRank(IPermissions.NEUTRAL_RANK_ID), colony.getWorld());
         }
@@ -211,20 +211,20 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(final FriendlyByteBuf buf)
+        protected void toBytes(final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeUtf(rankName);
         }
 
-        protected AddRank(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected AddRank(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             this.rankName = buf.readUtf(32767);
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().addRank(rankName);
         }
@@ -262,14 +262,14 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeUtf(playerName);
             buf.writeUUID(id);
         }
 
-        protected AddPlayerOrFakePlayer(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected AddPlayerOrFakePlayer(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             playerName = buf.readUtf(32767);
@@ -277,7 +277,7 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(IPermissions.NEUTRAL_RANK_ID));
             Optional.ofNullable(colony.getBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
@@ -317,14 +317,14 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeUUID(playerID);
             buf.writeInt(rankId);
         }
 
-        protected ChangePlayerRank(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected ChangePlayerRank(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             playerID = buf.readUUID();
@@ -332,7 +332,7 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             final Rank rank = colony.getPermissions().getRanks().get(rankId);
             if (rank != colony.getPermissions().getRankOwner())
@@ -375,20 +375,20 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeUUID(playerID);
         }
 
-        protected RemovePlayer(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected RemovePlayer(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             playerID = buf.readUUID();
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             final ColonyPlayer permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
             if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
@@ -433,20 +433,20 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(@NotNull final FriendlyByteBuf buf)
+        protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeInt(rankId);
         }
 
-        protected RemoveRank(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected RemoveRank(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             rankId = buf.readInt();
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().removeRank(colony.getPermissions().getRanks().get(rankId));
         }
@@ -489,14 +489,14 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(final FriendlyByteBuf buf)
+        protected void toBytes(final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeInt(rankId);
             buf.writeInt(rankType);
         }
 
-        protected EditRankType(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected EditRankType(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             this.rankId = buf.readInt();
@@ -504,7 +504,7 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             final Rank rank = colony.getPermissions().getRank(rankId);
             switch (rankType)
@@ -563,14 +563,14 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void toBytes(final FriendlyByteBuf buf)
+        protected void toBytes(final RegistryFriendlyByteBuf buf)
         {
             super.toBytes(buf);
             buf.writeInt(rankId);
             buf.writeBoolean(isSubscriber);
         }
 
-        protected SetSubscriber(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+        protected SetSubscriber(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
         {
             super(buf, type);
             this.rankId = buf.readInt();
@@ -578,7 +578,7 @@ public class PermissionsMessage
         }
 
         @Override
-        protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().getRank(rankId).setSubscriber(isSubscriber);
             colony.markDirty();

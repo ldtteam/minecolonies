@@ -15,14 +15,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
@@ -67,11 +67,11 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     }
 
     /**
-     * Reads this packet from a {@link FriendlyByteBuf}.
+     * Reads this packet from a {@link RegistryFriendlyByteBuf}.
      *
      * @param buf The buffer begin read from.
      */
-    protected DirectPlaceMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected DirectPlaceMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         state = Block.stateById(buf.readInt());
@@ -80,12 +80,12 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     }
 
     /**
-     * Writes this packet to a {@link FriendlyByteBuf}.
+     * Writes this packet to a {@link RegistryFriendlyByteBuf}.
      *
      * @param buf The buffer being written to.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(Block.getId(state));
         buf.writeBlockPos(pos);
@@ -93,7 +93,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);

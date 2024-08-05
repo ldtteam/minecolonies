@@ -59,6 +59,7 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.ChunkDataHelper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -337,7 +338,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
@@ -375,7 +376,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(final HolderLookup.Provider provider)
     {
         final CompoundTag compound = super.serializeNBT();
         final ListTag list = new ListTag();
@@ -1011,7 +1012,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         try
         {
-            final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
+            final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath(), te.getLevel().registryAccess());
             if (blueprint == null)
             {
                 setCorners(getPosition(), getPosition());

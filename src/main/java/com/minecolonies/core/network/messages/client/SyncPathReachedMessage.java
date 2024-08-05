@@ -6,9 +6,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.PathfindingDebugRenderer;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,19 +36,19 @@ public class SyncPathReachedMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeCollection(reached, FriendlyByteBuf::writeBlockPos);
+        buf.writeCollection(reached, RegistryFriendlyByteBuf::writeBlockPos);
     }
 
-    protected SyncPathReachedMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SyncPathReachedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        reached = buf.readCollection(HashSet::new, FriendlyByteBuf::readBlockPos);
+        reached = buf.readCollection(HashSet::new, RegistryFriendlyByteBuf::readBlockPos);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath)
         {

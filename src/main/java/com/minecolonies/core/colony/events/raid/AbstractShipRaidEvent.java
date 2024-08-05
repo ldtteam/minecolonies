@@ -10,11 +10,8 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipSize;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -44,6 +41,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -512,7 +510,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         for (@NotNull final BlockPos entry : spawners)
         {
             @NotNull final CompoundTag spawnerCompound = new CompoundTag();
-            spawnerCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            spawnerCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             spawnerListCompound.add(spawnerCompound);
         }
         compound.put(TAG_SPAWNERS, spawnerListCompound);
@@ -537,7 +535,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
-            spawners.add(NbtUtils.readBlockPos(spawnerListCompound.getCompound(i).getCompound(TAG_POS)));
+            spawners.add(NBTUtils.readBlockPos(spawnerListCompound.getCompound(i), TAG_POS));
         }
 
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);

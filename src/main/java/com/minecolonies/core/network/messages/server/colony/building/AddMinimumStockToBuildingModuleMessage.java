@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,7 +44,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
         this.quantity = quantity;
     }
 
-    protected AddMinimumStockToBuildingModuleMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AddMinimumStockToBuildingModuleMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         itemStack = buf.readItem();
@@ -52,7 +52,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeItem(itemStack);
@@ -60,7 +60,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.hasModule(BuildingModules.MIN_STOCK))
         {

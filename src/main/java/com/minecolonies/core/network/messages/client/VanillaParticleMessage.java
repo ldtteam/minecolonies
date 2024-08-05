@@ -5,10 +5,10 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Random;
 
@@ -43,7 +43,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
         this.type = type;
     }
 
-    protected VanillaParticleMessage(final FriendlyByteBuf byteBuf, final PlayMessageType<?> type)
+    protected VanillaParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type)
     {
         super(byteBuf, type);
         x = byteBuf.readDouble();
@@ -53,7 +53,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf byteBuf)
+    protected void toBytes(final RegistryFriendlyByteBuf byteBuf)
     {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
@@ -62,7 +62,7 @@ public class VanillaParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    public void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         spawnParticles(type, player.level(), x, y, z);
     }

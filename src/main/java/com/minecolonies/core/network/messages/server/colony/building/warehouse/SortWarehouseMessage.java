@@ -8,9 +8,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.SortingUtils;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Sort the warehouse if level bigger than 3.
@@ -29,13 +29,13 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
         super(TYPE, building);
     }
 
-    protected SortWarehouseMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SortWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
     {
         if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
         {

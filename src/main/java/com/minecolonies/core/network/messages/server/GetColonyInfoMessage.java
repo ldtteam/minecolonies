@@ -15,11 +15,11 @@ import com.minecolonies.core.network.messages.client.OpenDeleteAbandonColonyMess
 import com.minecolonies.core.network.messages.client.OpenReactivateColonyMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -37,7 +37,7 @@ public class GetColonyInfoMessage extends AbstractServerPlayMessage
      */
     BlockPos pos;
 
-    public GetColonyInfoMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public GetColonyInfoMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         pos = buf.readBlockPos();
@@ -50,13 +50,13 @@ public class GetColonyInfoMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    public void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer sender)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         if (sender == null)
         {

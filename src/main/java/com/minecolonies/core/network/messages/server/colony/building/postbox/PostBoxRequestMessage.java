@@ -7,10 +7,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,7 +48,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
 
@@ -57,7 +57,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
         buf.writeInt(reqQuantity);
     }
 
-    protected PostBoxRequestMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected PostBoxRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
 
@@ -67,7 +67,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final PostBox building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final PostBox building)
     {
 
         final int minCount = (deliverAvailable) ? 1 : reqQuantity;

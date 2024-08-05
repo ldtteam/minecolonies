@@ -8,10 +8,10 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,7 +51,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
         this.reset = reset;
     }
 
-    protected TryResearchMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected TryResearchMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         researchId = buf.readResourceLocation();
@@ -60,7 +60,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeResourceLocation(researchId);
@@ -69,7 +69,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingUniversity building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingUniversity building)
     {
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchId);
         if(reset)

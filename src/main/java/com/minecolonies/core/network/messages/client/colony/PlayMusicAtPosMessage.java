@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Asks the client to play a specific music
@@ -65,7 +65,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
         buf.writeBlockPos(pos);
@@ -74,7 +74,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
         buf.writeFloat(pitch);
     }
 
-    protected PlayMusicAtPosMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected PlayMusicAtPosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
@@ -86,7 +86,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
 
     
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         if (player.level().dimension() == dimensionID)
         {

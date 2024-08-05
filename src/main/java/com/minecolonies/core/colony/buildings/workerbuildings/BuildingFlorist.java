@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import net.minecraft.core.BlockPos;
@@ -106,7 +107,7 @@ public class BuildingFlorist extends AbstractBuilding
         final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            plantGround.add(NbtUtils.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
+            plantGround.add(NBTUtils.readBlockPos(compostBinTagList.getCompound(i), TAG_POS));
         }
     }
 
@@ -118,7 +119,7 @@ public class BuildingFlorist extends AbstractBuilding
         for (@NotNull final BlockPos entry : plantGround)
         {
             @NotNull final CompoundTag compostBinCompound = new CompoundTag();
-            compostBinCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            compostBinCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             compostBinTagList.add(compostBinCompound);
         }
         compound.put(TAG_PLANTGROUND, compostBinTagList);

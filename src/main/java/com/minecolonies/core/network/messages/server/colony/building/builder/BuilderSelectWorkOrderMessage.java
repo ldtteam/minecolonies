@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage<BuildingBuilder>
@@ -29,21 +29,21 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
         this.workOrder = workOrder;
     }
 
-    protected BuilderSelectWorkOrderMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected BuilderSelectWorkOrderMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         workOrder = buf.readInt();
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(workOrder);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingBuilder building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingBuilder building)
     {
         building.setWorkOrder(workOrder);
     }

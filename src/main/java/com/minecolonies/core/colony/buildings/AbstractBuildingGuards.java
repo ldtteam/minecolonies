@@ -13,6 +13,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.*;
@@ -201,7 +202,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             {
                 if (optCitizen.getEntity().isPresent())
                 {
-                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
+                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADD_VALUE);
                     AttributeModifierUtils.addHealthModifier(optCitizen.getEntity().get(), healthModBuildingHP);
                 }
             }
@@ -227,10 +228,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             patrolTargets.add(pos);
         }
 
-        guardPos = NbtUtils.readBlockPos(compound.getCompound(NBT_GUARD));
+        guardPos = NBTUtils.readBlockPos(compound, NBT_GUARD);
         if (compound.contains(NBT_MINE_POS))
         {
-            minePos = NbtUtils.readBlockPos(compound.getCompound(NBT_MINE_POS));
+            minePos = NBTUtils.readBlockPos(compound, NBT_MINE_POS);
         }
 
         if (compound.contains(NBT_PLAYER_UUID))
@@ -254,10 +255,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             wayPointTagList.add(wayPointCompound);
         }
         compound.put(NBT_PATROL_TARGETS, wayPointTagList);
-        compound.put(NBT_GUARD, NbtUtils.writeBlockPos(guardPos));
+        compound.put(NBT_GUARD, NBTUtils.writeBlockPos(guardPos));
         if (minePos != null)
         {
-            compound.put(NBT_MINE_POS, NbtUtils.writeBlockPos(minePos));
+            compound.put(NBT_MINE_POS, NBTUtils.writeBlockPos(minePos));
         }
 
         if (followPlayerUUID != null)

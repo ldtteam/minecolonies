@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.PlantationFieldBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 /**
  * Message to open the plantation field build window on the client.
@@ -33,7 +33,7 @@ public class OpenPlantationFieldBuildWindowMessage extends OpenBuildWindowMessag
         super(TYPE, pos, packName, path, rotMir);
     }
 
-    protected OpenPlantationFieldBuildWindowMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected OpenPlantationFieldBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }

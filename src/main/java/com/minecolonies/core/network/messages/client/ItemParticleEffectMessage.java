@@ -2,15 +2,16 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -84,10 +85,10 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
         this.eyeHeight = eyeHeight;
     }
 
-    protected ItemParticleEffectMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ItemParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        stack = buf.readItem();
+        stack = Utils.deserializeCodecMess(ItemStack.STREAM_CODEC, buf);
         posX = buf.readDouble();
         posY = buf.readDouble();
         posZ = buf.readDouble();
@@ -97,9 +98,9 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeItem(stack);
+        Utils.serializeCodecMess(ItemStack.STREAM_CODEC, buf, stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
         buf.writeDouble(posZ);
@@ -109,7 +110,7 @@ public class ItemParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         if (stack.getUseAnimation() == UseAnim.EAT)
         {

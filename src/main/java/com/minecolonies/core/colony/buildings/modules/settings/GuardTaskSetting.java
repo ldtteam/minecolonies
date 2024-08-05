@@ -67,7 +67,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutguardtasksetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutguardtasksetting.xml");
     }
 
     @Override

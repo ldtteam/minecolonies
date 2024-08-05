@@ -118,7 +118,7 @@ public class RecipeSetting implements ICraftingSetting
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutcraftingsetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutcraftingsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)

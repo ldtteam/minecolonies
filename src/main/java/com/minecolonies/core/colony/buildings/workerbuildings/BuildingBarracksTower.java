@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_UPGRADE_BARRACKS;
 
 /**
@@ -130,7 +132,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        barracks = NbtUtils.readBlockPos(compound.getCompound(TAG_POS));
+        barracks = NBTUtils.readBlockPos(compound, TAG_POS);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         final CompoundTag compound = super.serializeNBT();
         if (barracks != null)
         {
-            compound.put(TAG_POS, NbtUtils.writeBlockPos(barracks));
+            compound.put(TAG_POS, NBTUtils.writeBlockPos(barracks));
         }
 
         return compound;

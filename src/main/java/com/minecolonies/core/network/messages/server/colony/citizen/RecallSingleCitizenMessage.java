@@ -11,9 +11,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
         this.citizenId = citizenid;
     }
 
-    protected RecallSingleCitizenMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected RecallSingleCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
 
@@ -52,7 +52,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
 
@@ -60,7 +60,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         citizenData.setLastPosition(building.getPosition());

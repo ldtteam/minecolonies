@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,7 +43,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
         this.moduleId = moduleId;
     }
 
-    protected BuildingHiringModeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected BuildingHiringModeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         mode = HiringMode.values()[buf.readInt()];
@@ -51,7 +51,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(mode.ordinal());
@@ -59,7 +59,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (building.getModule(moduleId) instanceof final IAssignsCitizen module)
         {

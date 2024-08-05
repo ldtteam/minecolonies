@@ -12,9 +12,9 @@ import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenMod
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -60,12 +60,12 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      *
      * @param buf the used byteBuffer.
      */
-    protected AssignUnassignMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AssignUnassignMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         assign = buf.readBoolean();
         citizenID = buf.readInt();
-        jobEntry = buf.readBoolean() ? buf.readById(IMinecoloniesAPI.getInstance().getJobRegistry()) : null;
+        jobEntry = buf.readBoolean() ? buf.readById(IMinecoloniesAPI.getInstance().getJobRegistry()::byIdOrThrow) : null;
     }
 
     /**
@@ -74,7 +74,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBoolean(assign);
@@ -82,12 +82,12 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
         buf.writeBoolean(jobEntry != null);
         if (jobEntry != null)
         {
-            buf.writeId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
+            buf.writeById(IMinecoloniesAPI.getInstance().getJobRegistry()::getIdOrThrow, jobEntry);
         }
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final DefaultBuildingInstance building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final DefaultBuildingInstance building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         final AbstractAssignedCitizenModule module;

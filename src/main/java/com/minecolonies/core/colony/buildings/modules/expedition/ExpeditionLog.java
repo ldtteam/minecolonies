@@ -347,7 +347,7 @@ public class ExpeditionLog
         buf.writeVarInt(this.mobs.size());
         for (final Map.Entry<EntityType<?>, Integer> entry : this.mobs.entrySet())
         {
-            buf.writeId(BuiltInRegistries.ENTITY_TYPE, entry.getKey());
+            buf.writeById(BuiltInRegistries.ENTITY_TYPE::getIdOrThrow, entry.getKey());
             buf.writeVarInt(entry.getValue());
         }
 
@@ -384,7 +384,7 @@ public class ExpeditionLog
         this.mobs.clear();
         for (int size = buf.readVarInt(); size > 0; --size)
         {
-            final EntityType<?> entityType = buf.readById(BuiltInRegistries.ENTITY_TYPE);
+            final EntityType<?> entityType = buf.readById(BuiltInRegistries.ENTITY_TYPE::byIdOrThrow);
             final int count = buf.readVarInt();
             if (entityType != null)
             {

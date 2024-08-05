@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -109,19 +110,19 @@ public class BuildingAlchemist extends AbstractBuilding
         final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < sandPos.size(); ++i)
         {
-            soulsand.add(NbtUtils.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
+            soulsand.add(NBTUtils.readBlockPos(sandPos.getCompound(i), TAG_POS));
         }
 
         final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < leavesPos.size(); ++i)
         {
-            leaves.add(NbtUtils.readBlockPos(leavesPos.getCompound(i).getCompound(TAG_POS)));
+            leaves.add(NBTUtils.readBlockPos(leavesPos.getCompound(i), TAG_POS));
         }
 
         final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < brewingStandPos.size(); ++i)
         {
-            brewingStands.add(NbtUtils.readBlockPos(brewingStandPos.getCompound(i).getCompound(TAG_POS)));
+            brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.getCompound(i), TAG_POS));
         }
     }
 
@@ -133,7 +134,7 @@ public class BuildingAlchemist extends AbstractBuilding
         for (@NotNull final BlockPos entry : soulsand)
         {
             @NotNull final CompoundTag sandCompound = new CompoundTag();
-            sandCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            sandCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             sandCompoundList.add(sandCompound);
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
@@ -142,7 +143,7 @@ public class BuildingAlchemist extends AbstractBuilding
         for (@NotNull final BlockPos entry : leaves)
         {
             @NotNull final CompoundTag leaveCompound = new CompoundTag();
-            leaveCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            leaveCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             leavesCompoundList.add(leaveCompound);
         }
         compound.put(TAG_LEAVES, leavesCompoundList);
@@ -151,7 +152,7 @@ public class BuildingAlchemist extends AbstractBuilding
         for (@NotNull final BlockPos entry : brewingStands)
         {
             @NotNull final CompoundTag brewingStandCompound = new CompoundTag();
-            brewingStandCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            brewingStandCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             brewingStandCompoundList.add(brewingStandCompound);
         }
         compound.put(TAG_BREWING_STAND, brewingStandCompoundList);

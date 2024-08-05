@@ -7,10 +7,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,7 +51,7 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
         this.id = id;
     }
 
-    protected AssignFilterableEntityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AssignFilterableEntityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.assign = buf.readBoolean();
@@ -60,7 +60,7 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBoolean(this.assign);
@@ -69,7 +69,7 @@ public class AssignFilterableEntityMessage extends AbstractBuildingServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
         if (building.getModule(id) instanceof final EntityListModule module)
         {

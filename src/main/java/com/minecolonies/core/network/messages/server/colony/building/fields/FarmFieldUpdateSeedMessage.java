@@ -7,10 +7,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,7 +45,7 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.getBuildingManager()
           .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
@@ -54,14 +54,14 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeItem(newSeed);
         buf.writeBlockPos(position);
     }
 
-    protected FarmFieldUpdateSeedMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected FarmFieldUpdateSeedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         newSeed = buf.readItem();

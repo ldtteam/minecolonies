@@ -7,7 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -15,7 +15,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
 
@@ -56,14 +56,14 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
     }
 
-    protected PlayAudioMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected PlayAudioMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.category = SoundSource.values()[buf.readVarInt()];
@@ -72,7 +72,7 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
           soundEvent, category,

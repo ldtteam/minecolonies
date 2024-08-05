@@ -96,7 +96,7 @@ public class ListItemCost implements IResearchCost
         buf.writeInt(this.items.size());
         for (final Item item : this.items)
         {
-            buf.writeId(BuiltInRegistries.ITEM, item);
+            buf.writeById(BuiltInRegistries.ITEM::getIdOrThrow, item);
         }
     }
 
@@ -108,7 +108,7 @@ public class ListItemCost implements IResearchCost
         final int itemCount = buf.readInt();
         for (int i = 0; i < itemCount; i++)
         {
-            this.items.add(buf.readById(BuiltInRegistries.ITEM));
+            this.items.add(buf.readById(BuiltInRegistries.ITEM::byIdOrThrow));
         }
     }
 

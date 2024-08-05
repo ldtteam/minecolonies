@@ -7,12 +7,12 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Issues the upgrade of the warehouse pos level 5.
@@ -21,7 +21,7 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "upgrade_warehouse", UpgradeWarehouseMessage::new);
 
-    protected UpgradeWarehouseMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected UpgradeWarehouseMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
@@ -32,7 +32,7 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingWareHouse building)
     {
         building.upgradeContainers(player.level());
 

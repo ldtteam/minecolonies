@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,7 +34,7 @@ public class ColonyViewRemoveBuildingMessage extends AbstractClientPlayMessage
         this.buildingId = building;
     }
 
-    protected ColonyViewRemoveBuildingMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewRemoveBuildingMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
@@ -42,14 +42,14 @@ public class ColonyViewRemoveBuildingMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(colonyId, buildingId, player.level().dimension());
     }

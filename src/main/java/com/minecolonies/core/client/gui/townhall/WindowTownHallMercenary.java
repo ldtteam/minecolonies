@@ -53,7 +53,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         {
 
             final Image newImage = new Image();
-            newImage.setImage(new ResourceLocation("minecolonies:textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
+            newImage.setImage(new ResourceLocation("minecolonies", "textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
             this.addChild(newImage);

@@ -11,12 +11,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.fields.registry.FieldDataManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -62,20 +62,20 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
         for (final IField field : fields.keySet())
         {
-            final FriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
+            final RegistryFriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
             fieldBuffer.resetReaderIndex();
             buf.writeByteArray(fieldBuffer.array());
         }
     }
 
-    protected ColonyViewFieldsUpdateMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewFieldsUpdateMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
@@ -84,13 +84,13 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         final int fieldCount = buf.readInt();
         for (int i = 0; i < fieldCount; i++)
         {
-            final IField parsedField = FieldDataManager.bufferToField(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())));
+            final IField parsedField = FieldDataManager.bufferToField(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())));
             fields.put(parsedField, parsedField);
         }
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
@@ -99,7 +99,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
             view.getFields(field -> true).forEach(existingField -> {
                 if (this.fields.containsKey(existingField))
                 {
-                    final FriendlyByteBuf copyBuffer = new FriendlyByteBuf(Unpooled.buffer());
+                    final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
                     this.fields.get(existingField).serialize(copyBuffer);
                     existingField.deserialize(copyBuffer);
                     updatedFields.add(existingField);

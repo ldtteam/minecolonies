@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -22,12 +22,12 @@ public class ColonyDeleteOwnMessage extends AbstractServerPlayMessage
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_delete_own", ColonyDeleteOwnMessage::new);
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {        
         // noop
     }
 
-    protected ColonyDeleteOwnMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyDeleteOwnMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
@@ -38,7 +38,7 @@ public class ColonyDeleteOwnMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         if (player == null)
         {

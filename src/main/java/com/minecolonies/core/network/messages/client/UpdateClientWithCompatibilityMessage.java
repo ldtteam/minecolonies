@@ -9,9 +9,9 @@ import com.minecolonies.core.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +21,7 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "update_client_with_compatibility", UpdateClientWithCompatibilityMessage::new, true, false);
 
-    private final FriendlyByteBuf buffer;
+    private final RegistryFriendlyByteBuf buffer;
 
     /**
      * Message creation.
@@ -32,25 +32,25 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
     {
         super(TYPE);
 
-        this.buffer = new FriendlyByteBuf(Unpooled.buffer());
+        this.buffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().serialize(this.buffer);
     }
 
-    protected UpdateClientWithCompatibilityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected UpdateClientWithCompatibilityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.buffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        this.buffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeByteArray(this.buffer.array());
         this.buffer.resetWriterIndex();
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         final ClientLevel world = Minecraft.getInstance().level;
         FurnaceRecipes.getInstance().loadUtilityPredicates();

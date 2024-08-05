@@ -4,9 +4,9 @@ import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.ModParticleTypesInitializer;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message for sleeping particles
@@ -30,7 +30,7 @@ public class SleepingParticleMessage extends AbstractClientPlayMessage
         this.z = z;
     }
 
-    protected SleepingParticleMessage(final FriendlyByteBuf byteBuf, final PlayMessageType<?> type)
+    protected SleepingParticleMessage(final RegistryFriendlyByteBuf byteBuf, final PlayMessageType<?> type)
     {
         super(byteBuf, type);
         x = byteBuf.readDouble();
@@ -39,7 +39,7 @@ public class SleepingParticleMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf byteBuf)
+    protected void toBytes(final RegistryFriendlyByteBuf byteBuf)
     {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
@@ -48,7 +48,7 @@ public class SleepingParticleMessage extends AbstractClientPlayMessage
 
     @Override
     
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         player.level().addParticle(ModParticleTypesInitializer.SLEEPINGPARTICLE_TYPE,
           x,

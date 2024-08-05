@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -55,10 +56,10 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromNBT(@NotNull final CompoundTag compound)
+    public static CitizenBornEvent loadFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
-        birthEvent.deserializeNBT(compound);
+        birthEvent.deserializeNBT(provider, compound);
         return birthEvent;
     }
 

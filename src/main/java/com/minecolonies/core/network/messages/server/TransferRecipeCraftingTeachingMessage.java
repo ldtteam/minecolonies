@@ -7,10 +7,10 @@ import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Map;
 
@@ -44,22 +44,22 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
         this.complete = complete;
     }
 
-    protected TransferRecipeCraftingTeachingMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected TransferRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStacks = buf.readMap(FriendlyByteBuf::readInt, FriendlyByteBuf::readItem);
+        itemStacks = buf.readMap(RegistryFriendlyByteBuf::readInt, RegistryFriendlyByteBuf::readItem);
         complete = buf.readBoolean();
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, FriendlyByteBuf::writeItem);
+        buf.writeMap(itemStacks, RegistryFriendlyByteBuf::writeInt, RegistryFriendlyByteBuf::writeItem);
         buf.writeBoolean(complete);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         if (player.containerMenu instanceof final ContainerCrafting container)
         {

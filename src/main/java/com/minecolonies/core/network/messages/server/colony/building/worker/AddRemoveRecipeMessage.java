@@ -17,13 +17,13 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.AdvancementUtils;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -141,7 +141,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      *
      * @param buf the used byteBuffer.
      */
-    protected AddRemoveRecipeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AddRemoveRecipeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         storage = StandardFactoryController.getInstance().deserialize(buf);
@@ -155,7 +155,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         StandardFactoryController.getInstance().serialize(buf, storage);
@@ -164,7 +164,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if (!(building.getModule(id) instanceof final AbstractCraftingBuildingModule module))
         {

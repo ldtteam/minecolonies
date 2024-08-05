@@ -4,9 +4,9 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
 {
@@ -30,13 +30,13 @@ public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeUtf(this.resource);
         buf.writeUtf(this.buttonId);
     }
 
-    protected ClickGuiButtonTriggerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ClickGuiButtonTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.resource = buf.readUtf(32767);
@@ -44,7 +44,7 @@ public class ClickGuiButtonTriggerMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         AdvancementTriggers.CLICK_GUI_BUTTON.get().trigger(player, this.buttonId, this.resource);
     }

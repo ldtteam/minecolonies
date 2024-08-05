@@ -32,7 +32,7 @@ public final class FieldDataManager
      */
     public static IField compoundToField(final @NotNull CompoundTag compound)
     {
-        ResourceLocation fieldName = new ResourceLocation(compound.getString(TAG_FIELD_NAME));
+        ResourceLocation fieldName = ResourceLocation.parse(compound.getString(TAG_FIELD_NAME));
         BlockPos position = BlockPosUtil.read(compound, TAG_FIELD_POSITION);
 
         IField field = resourceLocationToField(fieldName, position);
@@ -71,7 +71,7 @@ public final class FieldDataManager
      */
     public static IField bufferToField(final @NotNull FriendlyByteBuf buf)
     {
-        final FieldRegistries.FieldEntry fieldType = buf.readById(FieldRegistries.getFieldRegistry());
+        final FieldRegistries.FieldEntry fieldType = buf.readById(FieldRegistries.getFieldRegistry()::byIdOrThrow);
         final BlockPos position = buf.readBlockPos();
         final IField field = fieldType.produceField(position);
         field.deserialize(buf);
@@ -87,7 +87,7 @@ public final class FieldDataManager
     public static FriendlyByteBuf fieldToBuffer(final @NotNull IField field)
     {
         final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-        buf.writeId(FieldRegistries.getFieldRegistry(), field.getFieldType());
+        buf.writeById(FieldRegistries.getFieldRegistry()::getIdOrThrow, field.getFieldType());
         buf.writeBlockPos(field.getPosition());
         field.serialize(buf);
         return buf;

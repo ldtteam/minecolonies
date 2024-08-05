@@ -6,11 +6,11 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -54,7 +54,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
         this.posZ = pos.getZ() + 0.5;
     }
 
-    protected LocalizedParticleEffectMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected LocalizedParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         stack = buf.readItem();
@@ -64,7 +64,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeItem(stack);
         buf.writeDouble(posX);
@@ -73,7 +73,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         for (int i = 0; i < 5; ++i)
         {

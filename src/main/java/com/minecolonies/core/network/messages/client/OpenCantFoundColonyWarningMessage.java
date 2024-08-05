@@ -5,11 +5,11 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallCantCreateColony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message to open the colony founding covenant.
@@ -36,7 +36,7 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     /**
      * Default constructor
      **/
-    public OpenCantFoundColonyWarningMessage(FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public OpenCantFoundColonyWarningMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         this.warningMessageTranslationKey = buf.readComponent();
@@ -53,13 +53,13 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         new WindowTownHallCantCreateColony(townHallPos, (MutableComponent) warningMessageTranslationKey, displayConfigTooltip).open();
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf)
+    public void toBytes(RegistryFriendlyByteBuf buf)
     {
         buf.writeComponent(warningMessageTranslationKey);
         buf.writeBlockPos(townHallPos);

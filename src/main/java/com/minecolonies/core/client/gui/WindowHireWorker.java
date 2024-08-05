@@ -505,7 +505,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             final JobEntry entry = hireModule.getJobEntry();
 
             final ButtonImage jobButton = new ButtonImage();
-            jobButton.setImage(new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"));
+            jobButton.setImage(new ResourceLocation("minecolonies", "textures/gui/builderhut/builder_button_medium.png"));
             jobButton.setPosition(xOffset, 30);
             if (hireModule.getAssignedCitizens().size() > 0)
             {

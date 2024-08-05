@@ -313,7 +313,7 @@ public final class StandardRequests
         @Override
         public ResourceLocation getDisplayIcon()
         {
-            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
+            return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
         }
     }
 
@@ -357,7 +357,7 @@ public final class StandardRequests
         public ResourceLocation getDisplayIcon()
         {
             // This can be just the delivery icon. For the user, it's no big deal.
-            return new ResourceLocation("minecolonies:textures/gui/citizen/delivery.png");
+            return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
         }
 
         @Override

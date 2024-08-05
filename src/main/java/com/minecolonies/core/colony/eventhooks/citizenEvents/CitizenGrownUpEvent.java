@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -55,10 +56,10 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenGrownUpEvent loadFromNBT(@NotNull final CompoundTag compound)
+    public static CitizenGrownUpEvent loadFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final CitizenGrownUpEvent growUpEvent = new CitizenGrownUpEvent();
-        growUpEvent.deserializeNBT(compound);
+        growUpEvent.deserializeNBT(provider, compound);
         return growUpEvent;
     }
 

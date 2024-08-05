@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +53,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected WorkOrderChangeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected WorkOrderChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         workOrderId = buf.readInt();
@@ -67,7 +67,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeInt(workOrderId);
@@ -76,7 +76,7 @@ public class WorkOrderChangeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         if (removeWorkOrder)
         {

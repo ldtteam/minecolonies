@@ -8,9 +8,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage<IBuilding>
@@ -39,7 +39,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected ChangeDeliveryPriorityMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ChangeDeliveryPriorityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.up = buf.readBoolean();
@@ -51,14 +51,14 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBoolean(this.up);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         if ((building != null && building.hasModule(WorkerBuildingModule.class)) || building instanceof Stash)
         {

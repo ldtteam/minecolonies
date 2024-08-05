@@ -1,5 +1,7 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.UUID;
 
 /**
@@ -178,7 +180,7 @@ public final class CitizenConstants
     /**
      * The Guard Building health modifier Name
      */
-    public static final String GUARD_HEALTH_MOD_BUILDING_NAME = "MinecoloniesGuardBuildingHP";
+    public static final ResourceLocation GUARD_HEALTH_MOD_BUILDING_NAME = new ResourceLocation(Constants.MOD_ID, "guardbuildinghp");
 
     /**
      * The Research health modifier name.
@@ -189,17 +191,17 @@ public final class CitizenConstants
      * The addition skill bonus speed modifier
      */
     public static final UUID SKILL_BONUS_ADD = UUID.fromString("e44226c1-dac3-441e-938e-3a94960f3675");
-    public static final String SKILL_BONUS_ADD_NAME = "SkillSpeedBonus";
+    public static final ResourceLocation SKILL_BONUS_ADD_NAME = new ResourceLocation(Constants.MOD_ID, "skillspeedbonus");
 
     /**
      * The Config guard health modifier name
      */
-    public static final String GUARD_HEALTH_MOD_CONFIG_NAME = "MinecoloniesGuardConfigHP";
+    public static final ResourceLocation GUARD_HEALTH_MOD_CONFIG_NAME = new ResourceLocation(Constants.MOD_ID, "guardconfighp");
 
     /**
      * The guard's level based health bonus mod's name
      */
-    public static final String GUARD_HEALTH_MOD_LEVEL_NAME = "MinecoloniesGuardLevelHealth";
+    public static final ResourceLocation GUARD_HEALTH_MOD_LEVEL_NAME = new ResourceLocation(Constants.MOD_ID, "guardlevelhealth");
 
     /**
      * At this stack size or smaller the chance to dump is 50%.

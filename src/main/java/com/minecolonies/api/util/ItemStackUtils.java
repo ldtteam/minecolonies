@@ -15,9 +15,14 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -32,6 +37,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -39,7 +46,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.ItemAbility;
-import net.neoforged.neoforge.common.ItemAbilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,26 +85,6 @@ public final class ItemStackUtils
     public static final Predicate<ItemStack> NOT_EMPTY_PREDICATE = EMPTY_PREDICATE.negate();
 
     /**
-     * The compound tag for fortune enchantment id.
-     */
-    private static final String NBT_TAG_ENCHANT_ID = "id";
-
-    /**
-     * The compound tag for fortune enchantment level.
-     */
-    private static final String NBT_TAG_ENCHANT_LEVEL = "lvl";
-
-    /**
-     * The compound id for fortune enchantment.
-     */
-    private static final int FORTUNE_ENCHANT_ID = 35;
-
-    /**
-     * The compound id for Silk Touch enchantment.
-     */
-    private static final int SILK_TOUCH_ENCHANT_ID = 33;
-
-    /**
      * List of the checked nbt sets for itemstack comparisons.
      */
     public static HashMap<Item, Set<CheckedNbtKey>> CHECKED_NBT_KEYS = new HashMap<>();
@@ -109,9 +95,9 @@ public final class ItemStackUtils
     public static final Predicate<ItemStack> ISFOOD =
       stack ->
       {
-          final FoodProperties foodProperties = stack.isEdible() ? stack.getFoodProperties(null) : null;
-          return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.getNutrition() > 0
-                     && foodProperties.getSaturationModifier() > 0 && !stack.is(ModTags.excludedFood);
+          final FoodProperties foodProperties = stack.getFoodProperties(null);
+          return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
+                     && foodProperties.saturation() > 0 && !stack.is(ModTags.excludedFood);
       };
 
     /**
@@ -243,8 +229,8 @@ public final class ItemStackUtils
             else if (entity instanceof ArmorStand)
             {
                 request.add(new ItemStorage(entity.getPickedResult(new EntityHitResult(placer))));
-                entity.getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
-                entity.getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
+                ((ArmorStand) entity).getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
+                ((ArmorStand) entity).getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
             }
 
             /*
@@ -334,12 +320,12 @@ public final class ItemStackUtils
         {
             if (stack.getItem() instanceof final ArmorItem armorItem)
             {
-                return getArmorLevel(armorItem.getMaterial());
+                return getArmorLevel(armorItem.getMaterial().value());
             }
         }
         else if (stack.getItem() instanceof final TieredItem tieredItem)  // most tools
         {
-            return tieredItem.getTier().getLevel();
+            return (int) tieredItem.getTier().getAttackDamageBonus();
         }
         else if (toolType.equals(ToolType.FISHINGROD))
         {
@@ -488,23 +474,23 @@ public final class ItemStackUtils
     {
         final float armorLevel = getArmorValue(material);
 
-        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER))
+        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER.value()))
         {
             return 0;
         }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD.value()))
         {
             return 1;
         }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN.value()))
         {
             return 2;
         }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON.value()))
         {
             return 3;
         }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND))
+        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND.value()))
         {
             return 4;
         }
@@ -523,9 +509,9 @@ public final class ItemStackUtils
         int value = 0;
         for (final ArmorItem.Type type : ArmorItem.Type.values())
         {
-            value += material.getDefenseForType(type);
+            value += material.defense().get(type);
         }
-        return value + material.getToughness() * 4;
+        return value + material.toughness() * 4;
     }
 
     /**
@@ -569,19 +555,13 @@ public final class ItemStackUtils
             return 0;
         }
         int maxLevel = 0;
-        if (itemStack != null)
-        {
-            final ListTag ListNBT = itemStack.getEnchantmentTags();
 
-            if (ListNBT != null)
-            {
-                for (int j = 0; j < ListNBT.size(); ++j)
-                {
-                    final int level = ListNBT.getCompound(j).getShort("lvl");
-                    maxLevel = level > maxLevel ? level : maxLevel;
-                }
-            }
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemStack.getTagEnchantments().entrySet())
+        {
+            final int level = entry.getIntValue();
+            maxLevel = Math.max(level, maxLevel);
         }
+
         return Math.max(maxLevel - 1, 0);
     }
 
@@ -591,7 +571,7 @@ public final class ItemStackUtils
      * @param tool the tool to check.
      * @return fortune level.
      */
-    public static int getFortuneOf(@Nullable final ItemStack tool)
+    public static int getFortuneOf(@Nullable final ItemStack tool, final Level level)
     {
         if (tool == null)
         {
@@ -601,16 +581,7 @@ public final class ItemStackUtils
         int fortune = 0;
         if (tool.isEnchanted())
         {
-            final ListTag t = tool.getEnchantmentTags();
-
-            for (int i = 0; i < t.size(); i++)
-            {
-                final int id = t.getCompound(i).getShort(NBT_TAG_ENCHANT_ID);
-                if (id == FORTUNE_ENCHANT_ID)
-                {
-                    fortune = t.getCompound(i).getShort(NBT_TAG_ENCHANT_LEVEL);
-                }
-            }
+            return tool.getTagEnchantments().getLevel(Utils.getRegistryValue(Enchantments.FORTUNE, level));
         }
         return fortune;
     }
@@ -787,39 +758,19 @@ public final class ItemStackUtils
                 return false;
             }
 
-            if (itemStack1.hasTag() || itemStack2.hasTag())
+            for (TypedDataComponent<?> component : itemStack1.getComponents())
             {
-                if (matchNBTExactly)
+                if (!matchDamage && component.type() == DataComponents.DAMAGE)
                 {
-                    return Objects.equals(itemStack1.getTag(), itemStack2.getTag());
+                    continue;
                 }
-                final Set<CheckedNbtKey> checkedKeys = CHECKED_NBT_KEYS.getOrDefault(itemStack1.getItem(), null);
-                if (checkedKeys == null)
-                {
-                    return itemStack1.hasTag() && itemStack2.hasTag() && itemStack1.getTag().equals(itemStack2.getTag());
-                }
-                if (itemStack1.hasTag() != itemStack2.hasTag() && !checkedKeys.isEmpty())
+                if (!component.equals(itemStack2.getComponents().get(component.type())))
                 {
                     return false;
                 }
-
-                if (checkedKeys.isEmpty())
-                {
-                    return true;
-                }
-
-                CompoundTag nbt1 = itemStack1.getTag();
-                CompoundTag nbt2 = itemStack2.getTag();
-
-                for (final CheckedNbtKey key : checkedKeys)
-                {
-                    if (!key.matches(nbt1, nbt2))
-                    {
-                        return false;
-                    }
-                }
             }
-            return true;
+
+            return itemStack1.getComponents().size() == itemStack2.getComponents().size();
         }
         return false;
     }
@@ -886,9 +837,9 @@ public final class ItemStackUtils
      * @return The ItemStack stored in the NBT Data.
      */
     @NotNull
-    public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound)
+    public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        return ItemStack.of(compound);
+        return ItemStack.parseOptional(provider, compound);
     }
 
     /**
@@ -985,7 +936,7 @@ public final class ItemStackUtils
      * @param itemData ie: minecraft:potion{Potion=minecraft:water}
      * @return stack with any defined NBT
      */
-    public static ItemStack idToItemStack(final String itemData)
+    public static ItemStack idToItemStack(final String itemData, final HolderLookup.Provider provider)
     {
         String itemId = itemData;
         final int tagIndex = itemId.indexOf("{");
@@ -1010,7 +961,8 @@ public final class ItemStackUtils
         {
             try
             {
-                stack.setTag(TagParser.parseTag(tag));
+
+                stack.applyComponents(Utils.deserializeCodecMess(DataComponentPatch.CODEC, provider, TagParser.parseTag(tag)));
             }
             catch (CommandSyntaxException e1)
             {
@@ -1060,7 +1012,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(new ResourceLocation(itemId)),
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)),
                 itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
     }
 
@@ -1071,7 +1023,7 @@ public final class ItemStackUtils
      */
     public static boolean hasTag(@NotNull final ItemStack stack)
     {
-        return stack.getTag() != null && stack.getTag().size() > (stack.isDamageableItem() ? 1 : 0);
+        return stack.getComponents() != null && stack.getComponents().size() > (stack.isDamageableItem() ? 1 : 0);
     }
 
     /**

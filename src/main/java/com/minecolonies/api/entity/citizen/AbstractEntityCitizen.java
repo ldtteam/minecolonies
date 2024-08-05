@@ -40,12 +40,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -726,7 +729,15 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void onArmorRemove(final ItemStack stack, final EquipmentSlot equipmentSlot)
     {
-        this.getAttributes().removeAttributeModifiers(stack.getAttributeModifiers().);
+        AttributeMap attributemap = this.getAttributes();
+        stack.forEachModifier(equipmentSlot, (attributeHolder, modifier) -> {
+            AttributeInstance attributeinstance = attributemap.getInstance(attributeHolder);
+            if (attributeinstance != null) {
+                attributeinstance.removeModifier(modifier);
+            }
+
+            EnchantmentHelper.stopLocationBasedEffects(stack, this, equipmentSlot);
+        });
     }
 
     /**
@@ -735,7 +746,17 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void onArmorAdd(final ItemStack stack, final EquipmentSlot equipmentSlot)
     {
-        this.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(equipmentSlot));
+        stack.forEachModifier(equipmentSlot, (attributeHolder, modifier) -> {
+            AttributeInstance attributeinstance = this.getAttributes().getInstance(attributeHolder);
+            if (attributeinstance != null) {
+                attributeinstance.removeModifier(modifier.id());
+                attributeinstance.addTransientModifier(modifier);
+            }
+
+            if (this.level() instanceof ServerLevel serverlevel) {
+                EnchantmentHelper.runLocationChangedEffects(serverlevel, stack, this, equipmentSlot);
+            }
+        });
     }
 
     /**

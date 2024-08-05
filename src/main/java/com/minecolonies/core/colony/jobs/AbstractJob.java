@@ -24,6 +24,7 @@ import com.minecolonies.api.util.constant.translation.RequestSystemTranslationCo
 import com.minecolonies.core.colony.interactionhandling.RequestBasedInteraction;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -184,7 +185,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = new CompoundTag();
 
@@ -205,7 +206,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         this.asyncRequests.clear();
         if (compound.contains(TAG_ASYNC_REQUESTS))
@@ -235,7 +236,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
         {
             StandardFactoryController.getInstance().serialize(buffer, token);
         }
-        buffer.writeId(IJobRegistry.getInstance(), getJobRegistryEntry());
+        buffer.writeById(IJobRegistry.getInstance()::getIdOrThrow, getJobRegistryEntry());
     }
 
     /**

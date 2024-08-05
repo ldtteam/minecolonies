@@ -8,12 +8,12 @@ import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +25,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
 
     private final int          colonyId;
     private final BlockPos     buildingId;
-    private final FriendlyByteBuf buildingData;
+    private final RegistryFriendlyByteBuf buildingData;
 
     /**
      * Dimension of the colony.
@@ -53,22 +53,22 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.buildingData = new FriendlyByteBuf(Unpooled.buffer());
+        this.buildingData = new RegistryFriendlyByteBuf(Unpooled.buffer());
         building.serializeToView(this.buildingData, fullSync);
         this.dimension = building.getColony().getDimension();
     }
 
-    protected ColonyViewBuildingViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewBuildingViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        buildingData = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        buildingData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buildingData.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -78,7 +78,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyBuildingViewMessage(colonyId, buildingId, buildingData, dimension);
     }

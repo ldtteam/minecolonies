@@ -105,7 +105,7 @@ public class BlockSetting implements ISetting<BlockItem>
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutblocksetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutblocksetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)

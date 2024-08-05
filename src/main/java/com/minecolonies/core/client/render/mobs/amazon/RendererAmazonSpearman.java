@@ -15,7 +15,7 @@ public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntit
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/amazon_spearman.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/amazon_spearman.png");
 
     /**
      * Constructor method for renderer

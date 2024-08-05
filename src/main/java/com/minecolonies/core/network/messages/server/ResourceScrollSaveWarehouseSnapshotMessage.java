@@ -7,9 +7,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemResourceScroll;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -60,28 +60,28 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
         this.workOrderHash = workOrderHash;
     }
 
-    protected ResourceScrollSaveWarehouseSnapshotMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ResourceScrollSaveWarehouseSnapshotMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         builderPos = buf.readBoolean() ? buf.readBlockPos() : null;
-        snapshot = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
+        snapshot = buf.readMap(RegistryFriendlyByteBuf::readUtf, RegistryFriendlyByteBuf::readInt);
         workOrderHash = buf.readUtf(32767);
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeBoolean(builderPos != null);
         if (builderPos != null)
         {
             buf.writeBlockPos(builderPos);
         }
-        buf.writeMap(snapshot, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
+        buf.writeMap(snapshot, RegistryFriendlyByteBuf::writeUtf, RegistryFriendlyByteBuf::writeInt);
         buf.writeUtf(workOrderHash);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         player.getInventory().items.stream()
           .filter(stack -> stack.getItem() instanceof ItemResourceScroll)

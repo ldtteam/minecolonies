@@ -15,8 +15,8 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies:textures/entity/raiders/norsemen_archer1.png");
-    private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies:textures/entity/raiders/norsemen_archer2.png");
+    private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies", "textures/entity/raiders/norsemen_archer1.png");
+    private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies", "textures/entity/raiders/norsemen_archer2.png");
 
     /**
      * Constructor method for renderer

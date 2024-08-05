@@ -91,7 +91,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         this.hiringMode = HiringMode.values()[buf.readInt()];
         this.maxInhabitants = buf.readInt();
 
-        this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry());
+        this.jobEntry = buf.readById(MinecoloniesAPIProxy.getInstance().getJobRegistry()::byIdOrThrow);
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
     }

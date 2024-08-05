@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class ColonyListMessage extends AbstractPlayMessage
         this.colonyInfo = null;
     }
 
-    protected ColonyListMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyListMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonies = null;
@@ -59,7 +59,7 @@ public class ColonyListMessage extends AbstractPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeCollection(colonies, (b, colony) ->{
             b.writeInt(colony.getID());
@@ -71,13 +71,13 @@ public class ColonyListMessage extends AbstractPlayMessage
     }
 
     @Override
-    protected void onClientExecute(final PlayPayloadContext context, final Player player)
+    protected void onClientExecute(final IPayloadContext context, final Player player)
     {
         WindowColonyMap.setColonies(colonyInfo);
     }
 
     @Override
-    protected void onServerExecute(final PlayPayloadContext context, final ServerPlayer player)
+    protected void onServerExecute(final IPayloadContext context, final ServerPlayer player)
     {
         new ColonyListMessage(IColonyManager.getInstance().getColonies(player.level())).sendToPlayer(player);
     }

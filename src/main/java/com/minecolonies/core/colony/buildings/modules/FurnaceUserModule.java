@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.IModuleWithExternalBlocks;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -67,11 +68,11 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
         {
             if(furnaceTagList.getCompound(i).contains(TAG_POS))
             {
-                furnaces.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+                furnaces.add(NBTUtils.readBlockPos(furnaceTagList.getCompound(i), TAG_POS));
             }
             if(furnaceTagList.getCompound(i).contains(TAG_POS_COMPAT))
             {
-                furnaces.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS_COMPAT)));
+                furnaces.add(NBTUtils.readBlockPos(furnaceTagList.getCompound(i), TAG_POS_COMPAT));
             }
         }
     }
@@ -83,7 +84,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
         for (@NotNull final BlockPos entry : furnaces)
         {
             @NotNull final CompoundTag furnaceCompound = new CompoundTag();
-            furnaceCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            furnaceCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             furnacesTagList.add(furnaceCompound);
         }
         compound.put(TAG_FURNACES, furnacesTagList);

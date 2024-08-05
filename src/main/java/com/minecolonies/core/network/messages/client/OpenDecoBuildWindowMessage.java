@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.DecorationBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 /**
  * Message to open the deco build window on the client.
@@ -33,7 +33,7 @@ public class OpenDecoBuildWindowMessage extends OpenBuildWindowMessage
         super(TYPE, pos, packName, path, rotationMirror);
     }
 
-    protected OpenDecoBuildWindowMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected OpenDecoBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }

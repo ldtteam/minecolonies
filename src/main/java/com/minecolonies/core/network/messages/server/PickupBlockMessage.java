@@ -9,12 +9,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BUILDING_PICKUP_PLAYER_INVENTORY_FULL;
 
@@ -30,7 +30,7 @@ public class PickupBlockMessage extends AbstractServerPlayMessage
      */
     BlockPos pos;
 
-    public PickupBlockMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public PickupBlockMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         pos = buf.readBlockPos();
@@ -43,13 +43,13 @@ public class PickupBlockMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    public void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer sender)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         if (sender == null)
         {

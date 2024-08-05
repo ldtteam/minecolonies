@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -103,7 +104,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
             @NotNull final ListTag waterList = new ListTag();
             for (@NotNull final BlockPos pos : entry.getValue())
             {
-                waterList.add(NbtUtils.writeBlockPos(pos));
+                waterList.add(NBTUtils.writeBlockPos(pos));
             }
             waterCompound.put(TAG_WATER, waterList);
             waterMap.add(waterCompound);
@@ -129,9 +130,8 @@ public class BuildingConcreteMixer extends AbstractBuilding
             final List<BlockPos> water = new ArrayList<>();
             for (int j = 0; j < waterTagList.size(); ++j)
             {
-                final CompoundTag waterSubCompound = waterTagList.getCompound(j);
-
-                final BlockPos waterPos = NbtUtils.readBlockPos(waterSubCompound);
+                final Tag waterSubCompound = waterTagList.getCompound(j);
+                final BlockPos waterPos = NBTUtils.readBlockPos(waterSubCompound);
                 if (!water.contains(waterPos))
                 {
                     water.add(waterPos);

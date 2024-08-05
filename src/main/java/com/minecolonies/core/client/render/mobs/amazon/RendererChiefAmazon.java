@@ -15,7 +15,7 @@ public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAm
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/amazon_chief.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/amazon_chief.png");
 
     /**
      * Constructor method for renderer

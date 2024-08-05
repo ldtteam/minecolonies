@@ -68,7 +68,7 @@ public class IntSetting implements ISetting<Integer>
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutintsetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutintsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -12,7 +13,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
 import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
 /**
  * The Knight's job class
@@ -62,7 +61,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             final AttributeModifier healthModLevel =
               new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
                 getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
-                AttributeModifier.Operation.ADDITION);
+                AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }
@@ -87,10 +86,8 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             worker.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
             worker.startUsingItem(InteractionHand.OFF_HAND);
 
-            // Apply the colony Flag to the shield
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
-            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
+            shieldStack.set(DataComponents.BANNER_PATTERNS, getColony().getColonyFlag());
 
             worker.decreaseSaturationForContinuousAction();
             return true;

@@ -10,12 +10,12 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -45,7 +45,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     /**
      * Visitor buf to read on client side.
      */
-    private final FriendlyByteBuf visitorBuf;
+    private final RegistryFriendlyByteBuf visitorBuf;
 
     /**
      * If a general refresh is necessary,
@@ -65,7 +65,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         this.visitors = visitors;
         this.refresh = refresh;
 
-        visitorBuf = new FriendlyByteBuf(Unpooled.buffer());
+        visitorBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
         visitorBuf.writeInt(visitors.size());
         for (final IVisitorData data : visitors)
         {
@@ -74,17 +74,17 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         }
     }
 
-    public ColonyVisitorViewDataMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public ColonyVisitorViewDataMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-        this.visitorBuf = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        this.visitorBuf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         visitorBuf.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -94,7 +94,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
 

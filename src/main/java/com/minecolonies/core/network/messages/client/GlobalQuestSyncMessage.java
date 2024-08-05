@@ -5,9 +5,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.datalistener.QuestJsonListener;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,34 +20,34 @@ public class GlobalQuestSyncMessage extends AbstractClientPlayMessage
     /**
      * The buffer with the data.
      */
-    private final FriendlyByteBuf questBuffer;
+    private final RegistryFriendlyByteBuf questBuffer;
 
     /**
      * Add or Update QuestData on the client.
      *
      * @param buf the bytebuffer.
      */
-    public GlobalQuestSyncMessage(final FriendlyByteBuf buf)
+    public GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.questBuffer = new FriendlyByteBuf(buf.copy());
+        this.questBuffer = new RegistryFriendlyByteBuf(buf.copy());
     }
 
-    protected GlobalQuestSyncMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected GlobalQuestSyncMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        questBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        questBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         questBuffer.resetReaderIndex();
         buf.writeByteArray(questBuffer.array());
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         QuestJsonListener.readGlobalQuestPackets(questBuffer);
     }

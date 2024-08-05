@@ -51,7 +51,7 @@ public class DefaultJobView implements IJobView
         {
             asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
-        entry = buffer.readById(IJobRegistry.getInstance());
+        entry = buffer.readById(IJobRegistry.getInstance()::byIdOrThrow);
     }
 
     @Override

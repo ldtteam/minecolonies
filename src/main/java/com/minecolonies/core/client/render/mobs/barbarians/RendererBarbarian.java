@@ -14,7 +14,7 @@ public class RendererBarbarian extends AbstractRendererBarbarian<AbstractEntityB
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/barbarian1.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/barbarian1.png");
 
     /**
      * Constructor method for renderer

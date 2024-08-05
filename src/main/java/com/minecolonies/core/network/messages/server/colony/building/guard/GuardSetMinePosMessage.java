@@ -8,9 +8,9 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,14 +46,14 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
         this.minePos = null;
     }
 
-    protected GuardSetMinePosMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected GuardSetMinePosMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.minePos = buf.readBoolean() ? buf.readBlockPos() : null;
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBoolean(this.minePos != null);
@@ -64,7 +64,7 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuildingGuards building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuildingGuards building)
     {
         final IBuilding miner = building.getColony().getBuildingManager().getBuilding(minePos == null ? building.getMinePos() : minePos);
         if (miner instanceof BuildingMiner)

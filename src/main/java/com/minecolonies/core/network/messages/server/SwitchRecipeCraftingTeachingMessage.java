@@ -4,9 +4,9 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Creates a message to switch recipe outputs when multiple are available.
@@ -23,18 +23,18 @@ public class SwitchRecipeCraftingTeachingMessage extends AbstractServerPlayMessa
         super(TYPE);
     }
 
-    protected SwitchRecipeCraftingTeachingMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SwitchRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
 
     @Override
-    public void toBytes(final FriendlyByteBuf buf)
+    public void toBytes(final RegistryFriendlyByteBuf buf)
     {
     }
 
     @Override
-    public void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    public void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         if (player.containerMenu instanceof final ContainerCrafting container)
         {

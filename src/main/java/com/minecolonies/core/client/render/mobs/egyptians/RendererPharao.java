@@ -14,7 +14,7 @@ public class RendererPharao extends AbstractRendererEgyptian<AbstractEntityEgypt
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/pharao.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/pharao.png");
 
     /**
      * Constructor method for renderer

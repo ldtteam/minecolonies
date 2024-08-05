@@ -5,9 +5,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +33,7 @@ public class ColonyViewRemoveWorkOrderMessage extends AbstractClientPlayMessage
         this.workOrderId = workOrderId;
     }
 
-    protected ColonyViewRemoveWorkOrderMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewRemoveWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
@@ -41,14 +41,14 @@ public class ColonyViewRemoveWorkOrderMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, player.level().dimension());
     }

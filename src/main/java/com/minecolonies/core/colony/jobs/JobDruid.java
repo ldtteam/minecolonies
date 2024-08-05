@@ -46,7 +46,7 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
             final AttributeModifier healthModLevel =
               new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
                 getCitizen().getCitizenSkillHandler().getLevel(Skill.Mana) / 2.0 + DRUID_HP_BONUS,
-                AttributeModifier.Operation.ADDITION);
+                AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }

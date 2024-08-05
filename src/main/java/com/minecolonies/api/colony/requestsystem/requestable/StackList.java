@@ -4,11 +4,13 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -178,13 +180,13 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(final IFactoryController controller, final StackList input)
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final StackList input)
     {
         final CompoundTag compound = new CompoundTag();
         @NotNull final ListTag neededResTagList = new ListTag();
         for (@NotNull final ItemStack resource : input.theStacks)
         {
-            neededResTagList.add(resource.save(new CompoundTag()));
+            neededResTagList.add(resource.save(provider));
         }
         compound.put(NBT_STACK_LIST, neededResTagList);
 
@@ -194,7 +196,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.put(NBT_RESULT, input.result.save(new CompoundTag()));
+            compound.put(NBT_RESULT, input.result.save(provider));
         }
         compound.putString(TAG_DESCRIPTION, input.description);
         compound.putInt(NBT_COUNT, input.getCount());
@@ -211,7 +213,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final CompoundTag compound)
+    public static StackList deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
@@ -219,13 +221,13 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundTag neededRes = neededResTagList.getCompound(i);
-            stacks.add(ItemStack.of(neededRes));
+            stacks.add(ItemStack.parseOptional(provider, neededRes));
         }
 
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
         final String desc = compound.contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
@@ -246,10 +248,10 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final StackList input)
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final StackList input)
     {
         buffer.writeInt(input.theStacks.size());
-        input.theStacks.forEach(res -> buffer.writeItem(res));
+        input.theStacks.forEach(res -> Utils.serializeCodecMess(buffer, res));
 
         buffer.writeBoolean(input.matchMeta);
         buffer.writeBoolean(input.matchNBT);
@@ -258,7 +260,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItem(input.result);
+            Utils.serializeCodecMess(buffer, input.result);
         }
         buffer.writeUtf(input.description);
         buffer.writeInt(input.getCount());
@@ -273,20 +275,20 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static StackList deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
         final int stacksSize = buffer.readInt();
         for (int i = 0; i < stacksSize; ++i)
         {
-            stacks.add(buffer.readItem());
+            stacks.add(Utils.deserializeCodecMess(buffer));
         }
 
         final boolean matchMeta = buffer.readBoolean();
         final boolean matchNBT = buffer.readBoolean();
         final boolean matchOreDic = buffer.readBoolean();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? Utils.deserializeCodecMess(buffer) : ItemStack.EMPTY;
         final String desc = buffer.readUtf(32767);
         int count = buffer.readInt();
         int minCount = buffer.readInt();

@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.BedBlock;
@@ -35,8 +36,8 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
-            final CompoundTag bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NbtUtils.readBlockPos(bedCompound);
+            final Tag bedCompound = bedTagList.getCompound(i);
+            final BlockPos bedPos = NBTUtils.readBlockPos(bedCompound);
             bedList.add(bedPos);
         }
     }
@@ -49,7 +50,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
             @NotNull final ListTag bedTagList = new ListTag();
             for (@NotNull final BlockPos pos : bedList)
             {
-                bedTagList.add(NbtUtils.writeBlockPos(pos));
+                bedTagList.add(NBTUtils.writeBlockPos(pos));
             }
             compound.put(TAG_BEDS, bedTagList);
         }

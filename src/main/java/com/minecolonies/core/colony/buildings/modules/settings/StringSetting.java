@@ -91,7 +91,7 @@ public class StringSetting implements IStringSetting<String>
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutstringsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)

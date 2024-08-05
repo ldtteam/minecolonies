@@ -5,9 +5,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.PathfindingDebugRenderer;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +58,7 @@ public class SyncPathMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(lastDebugNodesVisited.size());
         for (final MNode node : lastDebugNodesVisited)
@@ -97,7 +97,7 @@ public class SyncPathMessage extends AbstractClientPlayMessage
         }
     }
 
-    protected SyncPathMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SyncPathMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         int size = buf.readInt();
@@ -138,7 +138,7 @@ public class SyncPathMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         PathfindingDebugRenderer.lastDebugNodesVisited = lastDebugNodesVisited;
         PathfindingDebugRenderer.lastDebugNodesNotVisited = lastDebugNodesNotVisited;

@@ -5,10 +5,10 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -59,7 +59,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
         this.type = type;
     }
 
-    public CircleParticleEffectMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public CircleParticleEffectMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.posX = buf.readDouble();
@@ -70,7 +70,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeDouble(this.posX);
         buf.writeDouble(this.posY);
@@ -80,7 +80,7 @@ public class CircleParticleEffectMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         final double x = 1.0 * Math.cos(stage * 45.0) + posX;
         final double z = 1.0 * Math.sin(stage * 45.0) + posZ;

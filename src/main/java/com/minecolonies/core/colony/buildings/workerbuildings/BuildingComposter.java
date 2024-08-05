@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
@@ -117,7 +118,7 @@ public class BuildingComposter extends AbstractBuilding
         final ListTag compostBinTagList = compound.getList(TAG_BARRELS, Tag.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            barrels.add(NbtUtils.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
+            barrels.add(NBTUtils.readBlockPos(compostBinTagList.getCompound(i), TAG_POS));
         }
     }
 
@@ -129,7 +130,7 @@ public class BuildingComposter extends AbstractBuilding
         for (@NotNull final BlockPos entry : barrels)
         {
             @NotNull final CompoundTag compostBinCompound = new CompoundTag();
-            compostBinCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            compostBinCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             compostBinTagList.add(compostBinCompound);
         }
         compound.put(TAG_BARRELS, compostBinTagList);

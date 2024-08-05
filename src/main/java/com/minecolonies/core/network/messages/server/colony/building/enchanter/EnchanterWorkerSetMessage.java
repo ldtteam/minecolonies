@@ -8,9 +8,9 @@ import com.minecolonies.core.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,7 +44,7 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
         this.add = add;
     }
 
-    protected EnchanterWorkerSetMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected EnchanterWorkerSetMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         worker = buf.readBlockPos();
@@ -52,7 +52,7 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBlockPos(worker);
@@ -60,7 +60,7 @@ public class EnchanterWorkerSetMessage extends AbstractBuildingServerMessage<Bui
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingEnchanter building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final BuildingEnchanter building)
     {
         if (add)
         {

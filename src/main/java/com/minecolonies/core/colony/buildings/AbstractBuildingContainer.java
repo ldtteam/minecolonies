@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
@@ -77,8 +78,8 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.size(); ++i)
         {
-            final CompoundTag containerCompound = containerTagList.getCompound(i);
-            containerList.add(NbtUtils.readBlockPos(containerCompound));
+            final Tag containerCompound = containerTagList.getCompound(i);
+            containerList.add(NBTUtils.readBlockPos(containerCompound));
         }
         if (compound.contains(TAG_PRIO))
         {
@@ -102,7 +103,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         @NotNull final ListTag containerTagList = new ListTag();
         for (@NotNull final BlockPos pos : containerList)
         {
-            containerTagList.add(NbtUtils.writeBlockPos(pos));
+            containerTagList.add(NBTUtils.writeBlockPos(pos));
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.unscaledPickUpPriority);

@@ -13,10 +13,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "recall_citizen", RecallCitizenMessage::new);
 
-    protected RecallCitizenMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected RecallCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
@@ -44,7 +44,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         final List<ICitizenData> citizens = new ArrayList<>(building.getAllAssignedCitizen());
         for (int i = 0; i < building.getAllAssignedCitizen().size(); i++)

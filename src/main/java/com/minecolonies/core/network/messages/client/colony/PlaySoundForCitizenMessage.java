@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.SoundUtils.PITCH;
 import static com.minecolonies.api.util.SoundUtils.VOLUME;
@@ -141,7 +141,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
         buf.writeInt(this.soundSource.ordinal());
@@ -154,7 +154,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
         buf.writeInt(this.entityid);
     }
 
-    public PlaySoundForCitizenMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public PlaySoundForCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
@@ -170,7 +170,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
 
     
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         if (player.level().getEntity(this.entityid) instanceof final AbstractCivilianEntity citizen)
         {

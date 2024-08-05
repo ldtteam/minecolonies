@@ -12,10 +12,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -49,10 +49,10 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
         this.compoundNBT = CompoundNBT;
     }
 
-    protected SaveStructureNBTMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SaveStructureNBTMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        final FriendlyByteBuf buffer = new FriendlyByteBuf(buf);
+        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(buf);
         CompoundTag compoundNBT = null;
         String fileName = null;
         try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
@@ -74,13 +74,13 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         final CompoundTag wrapperCompound = new CompoundTag();
         wrapperCompound.putString(TAG_MILLIS, fileName);
         wrapperCompound.put(TAG_SCHEMATIC, compoundNBT);
 
-        final FriendlyByteBuf buffer = new FriendlyByteBuf(buf);
+        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(buf);
         try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer))
         {
             NbtIo.writeCompressed(wrapperCompound, stream);
@@ -92,7 +92,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         if (compoundNBT != null)
         {

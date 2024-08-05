@@ -4,10 +4,10 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,29 +34,29 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
     }
 
     /**
-     * Reads this packet from a {@link FriendlyByteBuf}.
+     * Reads this packet from a {@link RegistryFriendlyByteBuf}.
      *
      * @param buf The buffer begin read from.
      */
-    protected SwitchBuildingWithToolMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected SwitchBuildingWithToolMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         stack = buf.readItem();
     }
 
     /**
-     * Writes this packet to a {@link FriendlyByteBuf}.
+     * Writes this packet to a {@link RegistryFriendlyByteBuf}.
      *
      * @param buf The buffer being written to.
      */
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeItem(stack);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         int stackSlot = -1;
         int buildToolSlot = -1;

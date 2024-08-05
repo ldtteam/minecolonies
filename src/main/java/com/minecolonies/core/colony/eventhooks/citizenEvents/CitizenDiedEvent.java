@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.eventhooks.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -56,17 +57,17 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        CompoundTag compound = super.serializeNBT();
+        CompoundTag compound = super.serializeNBT(provider);
         compound.putString(TAG_DEATH_CAUSE, deathCause);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         deathCause = compound.getString(TAG_DEATH_CAUSE);
     }
 

@@ -8,12 +8,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +25,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
 
     private final int          colonyId;
     private final int          citizenId;
-    private final FriendlyByteBuf citizenBuffer;
+    private final RegistryFriendlyByteBuf citizenBuffer;
 
     /**
      * The dimension the citizen is in.
@@ -43,22 +43,22 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
-        this.citizenBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        this.citizenBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
         this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
-    protected ColonyViewCitizenViewMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewCitizenViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
         citizenId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        this.citizenBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        this.citizenBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         citizenBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -68,7 +68,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewCitizensMessage(colonyId, citizenId, citizenBuffer, dimension);
     }

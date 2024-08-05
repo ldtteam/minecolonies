@@ -5,11 +5,14 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -70,14 +73,14 @@ public class Tool implements IDeliverable
      * @return The CompoundTag containing the tool data.
      */
     @NotNull
-    public static CompoundTag serialize(final IFactoryController controller, final Tool tool)
+    public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final Tool tool)
     {
         final CompoundTag compound = new CompoundTag();
 
         compound.putString(NBT_TYPE, tool.getToolClass().getName());
         compound.putInt(NBT_MIN_LEVEL, tool.getMinLevel());
         compound.putInt(NBT_MAX_LEVEL, tool.getMaxLevel());
-        compound.put(NBT_RESULT, tool.getResult().save(new CompoundTag()));
+        compound.put(NBT_RESULT, tool.getResult().save(provider));
 
         return compound;
     }
@@ -90,13 +93,13 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(final IFactoryController controller, final CompoundTag nbt)
+    public static Tool deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = ItemStack.of(nbt.getCompound(NBT_RESULT));
+        final ItemStack result = ItemStack.parseOptional(provider, nbt.getCompound(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -108,7 +111,7 @@ public class Tool implements IDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Tool input)
+    public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Tool input)
     {
         buffer.writeUtf(input.getToolClass().getName());
         buffer.writeInt(input.getMinLevel());
@@ -116,7 +119,7 @@ public class Tool implements IDeliverable
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItem(input.result);
+            Utils.serializeCodecMess(buffer, input.result);
         }
     }
 
@@ -127,12 +130,12 @@ public class Tool implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static Tool deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
         final IToolType type = ToolType.getToolType(buffer.readUtf(32767));
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? Utils.deserializeCodecMess(buffer) : ItemStack.EMPTY;
 
         return new Tool(type, minLevel, maxLevel, result);
     }

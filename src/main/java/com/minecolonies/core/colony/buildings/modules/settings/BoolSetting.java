@@ -76,7 +76,7 @@ public class BoolSetting implements ISetting<Boolean>
     @Override
     public ResourceLocation getLayoutItem()
     {
-        return new ResourceLocation("minecolonies:gui/layouthuts/layoutboolsetting.xml");
+        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutboolsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)

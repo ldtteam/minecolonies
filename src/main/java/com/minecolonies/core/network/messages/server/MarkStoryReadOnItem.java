@@ -4,11 +4,11 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.items.ISupplyItem;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
@@ -28,7 +28,7 @@ public class MarkStoryReadOnItem extends AbstractServerPlayMessage
     /**
      * Empty constructor used when registering the message
      */
-    public MarkStoryReadOnItem(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public MarkStoryReadOnItem(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         hand = InteractionHand.values()[buf.readInt()];
@@ -46,13 +46,13 @@ public class MarkStoryReadOnItem extends AbstractServerPlayMessage
     }
 
     @Override
-    public void toBytes(@NotNull final FriendlyByteBuf buf)
+    public void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(hand.ordinal());
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer sender)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         final ItemStack stackInHand = sender.getItemInHand(this.hand);
         if (stackInHand.getItem() instanceof ISupplyItem)

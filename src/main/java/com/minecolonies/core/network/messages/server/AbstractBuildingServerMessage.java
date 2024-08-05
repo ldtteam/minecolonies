@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage
 {
@@ -42,16 +42,16 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
         this.buildingId = buildingId;
     }
 
-    protected abstract void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final T building);
+    protected abstract void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final T building);
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeBlockPos(buildingId);
     }
 
-    protected AbstractBuildingServerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AbstractBuildingServerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.buildingId = buf.readBlockPos();
@@ -59,7 +59,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
 
     @Override
     @SuppressWarnings("unchecked")
-    protected final void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected final void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (building == null)

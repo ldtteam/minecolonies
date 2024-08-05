@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.workers.util.StudyItem;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
@@ -131,7 +132,7 @@ public class BuildingLibrary extends AbstractBuilding
         final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Tag.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            bookCases.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+            bookCases.add(NBTUtils.readBlockPos(furnaceTagList.getCompound(i), TAG_POS));
         }
     }
 
@@ -143,7 +144,7 @@ public class BuildingLibrary extends AbstractBuilding
         for (@NotNull final BlockPos entry : bookCases)
         {
             @NotNull final CompoundTag bookCompound = new CompoundTag();
-            bookCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
+            bookCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
             bookcaseTagList.add(bookCompound);
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);

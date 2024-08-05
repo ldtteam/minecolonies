@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * The message sent when activating mercenaries
@@ -22,13 +22,13 @@ public class HireMercenaryMessage extends AbstractColonyServerMessage
         super(TYPE, colony);
     }
 
-    protected HireMercenaryMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected HireMercenaryMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         EntityMercenary.spawnMercenariesInColony(colony);
         colony.getWorld()

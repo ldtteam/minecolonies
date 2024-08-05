@@ -6,7 +6,11 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -240,5 +244,25 @@ public final class Utils
         return codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).resultOrPartial((res) -> {
             Log.getLogger().error("Failed to parse thing: '{}'", res);
         }).get();
+    }
+
+    public static <T extends Object> void serializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, RegistryFriendlyByteBuf buf, final T obj)
+    {
+        codec.encode(buf, obj);
+    }
+
+    public static <T extends Object> T deserializeCodecMess(final StreamCodec<RegistryFriendlyByteBuf, T> codec, final RegistryFriendlyByteBuf buf)
+    {
+        return codec.decode(buf);
+    }
+
+    public static void serializeCodecMess(RegistryFriendlyByteBuf buf, final ItemStack obj)
+    {
+        ItemStack.STREAM_CODEC.encode(buf, obj);
+    }
+
+    public static ItemStack deserializeCodecMess(final RegistryFriendlyByteBuf buf)
+    {
+        return ItemStack.STREAM_CODEC.decode(buf);
     }
 }

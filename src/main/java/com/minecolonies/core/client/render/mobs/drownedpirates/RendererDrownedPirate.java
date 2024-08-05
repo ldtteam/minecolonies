@@ -15,10 +15,10 @@ public class RendererDrownedPirate extends AbstractRendererDrownedPirate<Abstrac
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies:textures/entity/raiders/drowned_pirate1.png");
-    private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies:textures/entity/raiders/drowned_pirate2.png");
-    private static final ResourceLocation TEXTURE3 = new ResourceLocation("minecolonies:textures/entity/raiders/drowned_pirate3.png");
-    private static final ResourceLocation TEXTURE4 = new ResourceLocation("minecolonies:textures/entity/raiders/drowned_pirate4.png");
+    private static final ResourceLocation TEXTURE1 = new ResourceLocation("minecolonies", "textures/entity/raiders/drowned_pirate1.png");
+    private static final ResourceLocation TEXTURE2 = new ResourceLocation("minecolonies", "textures/entity/raiders/drowned_pirate2.png");
+    private static final ResourceLocation TEXTURE3 = new ResourceLocation("minecolonies", "textures/entity/raiders/drowned_pirate3.png");
+    private static final ResourceLocation TEXTURE4 = new ResourceLocation("minecolonies", "textures/entity/raiders/drowned_pirate4.png");
 
     /**
      * Constructor method for renderer

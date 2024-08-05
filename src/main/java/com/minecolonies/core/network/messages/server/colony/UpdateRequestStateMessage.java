@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,7 +51,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
         this.itemStack = itemStack;
     }
 
-    protected UpdateRequestStateMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected UpdateRequestStateMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         token = StandardFactoryController.getInstance().deserialize(buf.readNbt());
@@ -60,7 +60,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         buf.writeNbt(StandardFactoryController.getInstance().serialize(token));
@@ -72,7 +72,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         if (state == RequestState.OVERRULED)
         {

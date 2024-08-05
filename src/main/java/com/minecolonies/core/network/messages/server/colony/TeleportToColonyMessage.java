@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.core.util.TeleportHelper;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,7 +25,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
         super(TYPE, dimensionId, colonyId);
     }
 
-    protected TeleportToColonyMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected TeleportToColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
     }
@@ -38,7 +38,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         if (colony.getPermissions().getRank(player.getUUID()) != colony.getPermissions().getRankNeutral())
         {

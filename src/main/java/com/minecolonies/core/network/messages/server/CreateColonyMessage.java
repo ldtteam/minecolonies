@@ -15,12 +15,12 @@ import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
 
@@ -70,7 +70,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(townHall);
         buf.writeBoolean(claim);
@@ -79,7 +79,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         buf.writeUtf(pathName);
     }
 
-    protected CreateColonyMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected CreateColonyMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         townHall = buf.readBlockPos();
@@ -90,7 +90,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer sender)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         final ServerLevel world = sender.serverLevel();
 

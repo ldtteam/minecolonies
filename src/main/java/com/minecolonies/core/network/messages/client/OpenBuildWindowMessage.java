@@ -6,9 +6,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.minecolonies.core.client.gui.WindowBuildDecoration;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message to open the build window, for example for decorations.
@@ -52,7 +52,7 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.path);
@@ -60,7 +60,7 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
         buf.writeByte(this.rotationMirror.ordinal());
     }
 
-    protected OpenBuildWindowMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected OpenBuildWindowMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.pos = buf.readBlockPos();
@@ -70,7 +70,7 @@ public abstract class OpenBuildWindowMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public final void onExecute(final PlayPayloadContext context, final Player player)
+    public final void onExecute(final IPayloadContext context, final Player player)
     {
         new WindowBuildDecoration(this.pos, this.packName, this.path, this.rotationMirror, this::createWorkOrderMessage).open();
     }

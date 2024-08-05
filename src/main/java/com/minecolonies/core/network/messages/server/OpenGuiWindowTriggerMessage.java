@@ -4,9 +4,9 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
 {
@@ -24,19 +24,19 @@ public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeUtf(this.resource);
     }
 
-    protected OpenGuiWindowTriggerMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected OpenGuiWindowTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.resource = buf.readUtf(32767);
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         AdvancementTriggers.OPEN_GUI_WINDOW.get().trigger(player, this.resource);
     }

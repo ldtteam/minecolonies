@@ -5,9 +5,9 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallColonyReactivate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Message to open the colony founding covenant.
@@ -26,7 +26,7 @@ public class OpenReactivateColonyMessage extends AbstractClientPlayMessage
     /**
      * Default constructor
      **/
-    public OpenReactivateColonyMessage(FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public OpenReactivateColonyMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         this.closestName = buf.readUtf(32767);
@@ -43,13 +43,13 @@ public class OpenReactivateColonyMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         new WindowTownHallColonyReactivate(townHallPos, closestName, closestDistance).open();
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf)
+    public void toBytes(RegistryFriendlyByteBuf buf)
     {
         buf.writeUtf(closestName);
         buf.writeInt(closestDistance);

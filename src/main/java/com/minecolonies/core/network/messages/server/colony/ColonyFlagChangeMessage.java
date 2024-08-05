@@ -7,10 +7,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
@@ -37,7 +37,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setColonyFlag(patterns);
 
@@ -45,7 +45,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytes(final FriendlyByteBuf buf)
+    protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         final CompoundTag nbt = new CompoundTag();
@@ -53,7 +53,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
         buf.writeNbt(nbt);
     }
 
-    protected ColonyFlagChangeMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyFlagChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.patterns = buf.readNbt().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);

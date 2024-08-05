@@ -18,13 +18,13 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.workorders.WorkOrderDecoration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +93,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
         this.builder = builder;
     }
 
-    protected DecorationBuildRequestMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected DecorationBuildRequestMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.workOrderType = WorkOrderType.values()[buf.readInt()];
@@ -106,7 +106,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(this.workOrderType.ordinal());
         buf.writeBlockPos(this.pos);
@@ -118,7 +118,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(dimension, pos);
         if (colony == null)

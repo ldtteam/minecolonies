@@ -3,3 +3,10 @@ plugins {
 }
 
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/ng7/gradle/mod.gradle'
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

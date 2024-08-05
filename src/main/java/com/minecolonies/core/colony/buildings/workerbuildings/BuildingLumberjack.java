@@ -12,6 +12,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -158,7 +159,7 @@ public class BuildingLumberjack extends AbstractBuilding
 
         if (compound.contains(TAG_RESTRICT_START))
         {
-            startRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
+            startRestriction = NBTUtils.readBlockPos(compound, TAG_RESTRICT_START);
         }
         else
         {
@@ -167,7 +168,7 @@ public class BuildingLumberjack extends AbstractBuilding
 
         if (compound.contains(TAG_RESTRICT_END))
         {
-            endRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
+            endRestriction = NBTUtils.readBlockPos(compound, TAG_RESTRICT_END);
         }
         else
         {
@@ -188,12 +189,12 @@ public class BuildingLumberjack extends AbstractBuilding
 
         if (startRestriction != null)
         {
-            compound.put(TAG_RESTRICT_START, NbtUtils.writeBlockPos(startRestriction));
+            compound.put(TAG_RESTRICT_START, NBTUtils.writeBlockPos(startRestriction));
         }
 
         if (endRestriction != null)
         {
-            compound.put(TAG_RESTRICT_END, NbtUtils.writeBlockPos(endRestriction));
+            compound.put(TAG_RESTRICT_END, NBTUtils.writeBlockPos(endRestriction));
         }
 
         @NotNull final ListTag netherTreeBinCompoundList = new ListTag();

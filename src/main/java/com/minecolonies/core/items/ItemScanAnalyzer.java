@@ -3,15 +3,20 @@ package com.minecolonies.core.items;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
+import com.ldtteam.structurize.component.ModDataComponents;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.client.gui.WindowSchematicAnalyzer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,13 +28,13 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.constants.NbtTagConstants.FIRST_POS_STRING;
-import static com.ldtteam.structurize.api.constants.NbtTagConstants.SECOND_POS_STRING;
 import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+import static com.minecolonies.api.items.ModDataComponents.TIME_COMPONENT;
 
 /**
  * Item used to analyze schematics or selected blocks
@@ -99,19 +104,9 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
 
         final ItemStack itemstack = playerIn.getItemInHand(handIn);
-        final CompoundTag compound = itemstack.getOrCreateTag();
-
-        BlockPos firstPos = null;
-        if (compound.contains(FIRST_POS_STRING))
-        {
-            firstPos = NbtUtils.readBlockPos(compound.getCompound(FIRST_POS_STRING));
-        }
-
-        BlockPos secondPos = null;
-        if (compound.contains(SECOND_POS_STRING))
-        {
-            secondPos = NbtUtils.readBlockPos(compound.getCompound(SECOND_POS_STRING));
-        }
+        final PosSelection component = itemstack.getComponents().get(ModDataComponents.POS_SELECTION.get());
+        final BlockPos firstPos = component.startPos().orElse(null);
+        final BlockPos secondPos = component.endPos().orElse(null);
 
         return new InteractionResultHolder<>(
           onAirRightClick(
@@ -154,14 +149,10 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      */
     private void openAreaBox(final ItemStack tool)
     {
-        final CompoundTag tag = tool.getOrCreateTag();
-        if (tag.contains(FIRST_POS_STRING) && tag.contains(SECOND_POS_STRING))
-        {
-            final BlockPos start = NbtUtils.readBlockPos(tag.getCompound(FIRST_POS_STRING));
-            final BlockPos end = NbtUtils.readBlockPos(tag.getCompound(SECOND_POS_STRING));
-            RenderingCache.queue("analyzer",
-              new BoxPreviewData(start, end, Optional.empty()));
-        }
+        final PosSelection component = tool.getComponents().get(ModDataComponents.POS_SELECTION.get());
+        final BlockPos start = component.startPos().orElse(null);
+        final BlockPos end = component.endPos().orElse(null);
+        RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
     }
 
     /**
@@ -174,17 +165,17 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             return;
         }
 
-        if (stack.getOrCreateTag().contains(LAST_TIME))
+        final Timestamp component = stack.getComponents().get(TIME_COMPONENT.get());
+        if (component.time != 0)
         {
-            final long prevTime = stack.getOrCreateTag().getLong(LAST_TIME);
+            final long prevTime = component.time;
             if ((level.getGameTime() - prevTime) > TIMEOUT_DELAY)
             {
-                stack.getOrCreateTag().remove(FIRST_POS_STRING);
-                stack.getOrCreateTag().remove(SECOND_POS_STRING);
+                stack.set(ModDataComponents.POS_SELECTION.get(), PosSelection.EMPTY);
             }
         }
 
-        stack.getOrCreateTag().putLong(LAST_TIME, level.getGameTime());
+        stack.set(TIME_COMPONENT.get(), new Timestamp(level.getGameTime()));
     }
 
     /**
@@ -207,5 +198,21 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
           BlueprintUtil.createBlueprint(world, zero, false, (short) (box.getXsize() + 1), (short) (box.getYsize() + 1), (short) (box.getZsize() + 1), fileName, Optional.empty());
 
         return bp;
+    }
+
+    public record Timestamp(long time)
+    {
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<ItemScanAnalyzer.Timestamp>> TYPE  = null;
+        public static final ItemScanAnalyzer.Timestamp EMPTY = new ItemScanAnalyzer.Timestamp(0);
+
+        public static final Codec<ItemScanAnalyzer.Timestamp> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(Codec.LONG.fieldOf("timestamp").forGetter(ItemScanAnalyzer.Timestamp::time))
+                       .apply(builder, ItemScanAnalyzer.Timestamp::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ItemScanAnalyzer.Timestamp> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.LONG),
+            ItemScanAnalyzer.Timestamp::time,
+            ItemScanAnalyzer.Timestamp::new);
     }
 }

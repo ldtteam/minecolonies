@@ -9,12 +9,12 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.workorders.view.AbstractWorkOrderView;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
 
     private final int                colonyId;
     private final ResourceKey<Level> dimension;
-    private final FriendlyByteBuf       workOrderBuffer;
+    private final RegistryFriendlyByteBuf       workOrderBuffer;
 
     /**
      * Updates a {@link AbstractWorkOrderView} of the workOrders.
@@ -40,7 +40,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     {
         super(TYPE);
         this.colonyId = colony.getID();
-        this.workOrderBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        this.workOrderBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
@@ -50,16 +50,16 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
         }
     }
 
-    public ColonyViewWorkOrderMessage(@NotNull final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    public ColonyViewWorkOrderMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        workOrderBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        workOrderBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         workOrderBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
@@ -68,7 +68,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final Player player)
+    protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
         IColonyManager.getInstance().handleColonyViewWorkOrderMessage(colonyId, workOrderBuffer, dimension);
     }

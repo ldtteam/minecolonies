@@ -14,7 +14,7 @@ public class RendererArcherMummy extends AbstractRendererEgyptian<AbstractEntity
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/archer_mummy.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/archer_mummy.png");
 
     /**
      * Constructor method for renderer

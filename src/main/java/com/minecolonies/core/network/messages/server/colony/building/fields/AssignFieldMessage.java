@@ -10,9 +10,9 @@ import com.minecolonies.core.colony.buildings.modules.FieldsModule;
 import com.minecolonies.core.colony.fields.registry.FieldDataManager;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,7 +30,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     /**
      * The field to (un)assign.
      */
-    private final FriendlyByteBuf fieldData;
+    private final RegistryFriendlyByteBuf fieldData;
 
     /**
      * Whether to assign or un-assign this field.
@@ -53,7 +53,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    protected void toBytes(@NotNull final FriendlyByteBuf buf)
+    protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
         fieldData.resetReaderIndex();
@@ -62,16 +62,16 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         buf.writeByteArray(fieldData.array());
     }
 
-    protected AssignFieldMessage(final FriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected AssignFieldMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         assign = buf.readBoolean();
         moduleID = buf.readInt();
-        fieldData = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        fieldData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override
-    protected void onExecute(final PlayPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         final IField parsedField = FieldDataManager.bufferToField(fieldData);
         colony.getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
