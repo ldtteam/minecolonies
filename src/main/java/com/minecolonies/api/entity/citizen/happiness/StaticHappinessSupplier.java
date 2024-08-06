@@ -1,7 +1,9 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.colony.ICitizenData;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
 
@@ -33,7 +35,7 @@ public class StaticHappinessSupplier implements IHappinessSupplierWrapper
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compoundTag = new CompoundTag();
         compoundTag.putDouble(TAG_VALUE, this.value);
@@ -41,7 +43,7 @@ public class StaticHappinessSupplier implements IHappinessSupplierWrapper
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag nbt)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
         this.value = nbt.getDouble(TAG_VALUE);
     }

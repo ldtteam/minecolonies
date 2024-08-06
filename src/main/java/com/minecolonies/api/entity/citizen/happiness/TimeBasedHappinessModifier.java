@@ -4,8 +4,10 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,9 +96,9 @@ public final class TimeBasedHappinessModifier extends AbstractHappinessModifier 
     }
 
     @Override
-    public void read(final CompoundTag compoundNBT)
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
     {
-        super.read(compoundNBT);
+        super.read(provider, compoundNBT);
         this.days = compoundNBT.getInt(TAG_DAY);
         final ListTag listTag = compoundNBT.getList(TAG_LIST, Constants.TAG_COMPOUND);
         final List<Tuple<Integer, Double>> list = new ArrayList<>();
@@ -109,9 +111,9 @@ public final class TimeBasedHappinessModifier extends AbstractHappinessModifier 
     }
 
     @Override
-    public void write(final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
     {
-        super.write(compoundNBT);
+        super.write(provider, compoundNBT);
         compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.TIME_PERIOD_MODIFIER.toString());
 
         compoundNBT.putInt(TAG_DAY, days);

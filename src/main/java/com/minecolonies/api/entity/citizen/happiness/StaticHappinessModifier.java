@@ -1,7 +1,9 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Static modifier that doesn't change.
@@ -29,9 +31,9 @@ public final class StaticHappinessModifier extends AbstractHappinessModifier
     }
 
     @Override
-    public void write(final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
     {
-        super.write(compoundNBT);
+        super.write(provider, compoundNBT);
         compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.STATIC_MODIFIER.toString());
     }
 }

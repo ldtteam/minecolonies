@@ -9,10 +9,12 @@ import com.minecolonies.api.entity.citizen.happiness.*;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,7 +158,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void read(final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         // Only deserialize for new version. Old can keep the above defaults just fine.
         if (compound.contains(TAG_NEW_HAPPINESS))
@@ -168,7 +170,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 final String id = compoundTag.getString(TAG_ID);
                 if (happinessFactors.containsKey(id))
                 {
-                    happinessFactors.get(id).read(compoundTag);
+                    happinessFactors.get(id).read(provider, compoundTag);
                 }
                 else if (VALID_HAPPINESS_MODIFIERS.contains(id))
                 {
@@ -183,13 +185,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void write(final CompoundTag compound)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final ListTag listTag = new ListTag();
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             final CompoundTag compoundNbt = new CompoundTag();
-            happinessModifier.write(compoundNbt);
+            happinessModifier.write(provider, compoundNbt);
             listTag.add(compoundNbt);
         }
 

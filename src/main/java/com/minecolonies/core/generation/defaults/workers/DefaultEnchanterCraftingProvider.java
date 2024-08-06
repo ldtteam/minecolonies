@@ -197,7 +197,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.FORTUNE, 1).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage.getKey(), 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
         ));
 
         // building level 4
@@ -250,7 +250,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.FORTUNE, 1).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage.getKey(), 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
                 // plus new level 4 enchants
                 .add(enchantedBook(Enchantments.AQUA_AFFINITY, 4).setWeight(5))
                 .add(enchantedBook(Enchantments.BANE_OF_ARTHROPODS, 4).setWeight(5))
@@ -303,7 +303,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .add(enchantedBook(Enchantments.SMITE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
-                .add(enchantedBook(ModEnchants.raiderDamage.getKey(), 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
                 .add(enchantedBook(Enchantments.FORTUNE, 1).setWeight(1))
                 // plus level 4 enchants
                 .add(enchantedBook(Enchantments.AQUA_AFFINITY, 4).setWeight(5))
@@ -357,7 +357,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 5).setWeight(1))
                 .add(enchantedBook(Enchantments.UNBREAKING, 5).setWeight(1))
                 .add(enchantedBook(Enchantments.FORTUNE, 3).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage.getKey(), 2).setWeight(1))
+                .add(enchantedBook(ModEnchants.raiderDamage, 2).setWeight(1))
         ));
     }
 

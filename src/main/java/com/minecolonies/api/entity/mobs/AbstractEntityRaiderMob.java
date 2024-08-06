@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
-import com.minecolonies.api.enchants.ModEnchants;
-import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTable;
@@ -199,8 +197,6 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
         this.setPersistenceRequired();
-        this.goalSelector = new CustomGoalSelector(this.goalSelector);
-        this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.xpReward = BARBARIAN_EXP_DROP;
         IMinecoloniesAPI.getInstance().getMobAIRegistry().applyToMob(this);
         this.setInvulnerable(true);
@@ -628,12 +624,10 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
                     source.hurt(level().damageSources().thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = player.getMainHandItem().getEnchantmentLevel(ModEnchants.raiderDamage.get());
-
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
                 float totalWithScaled =
-                  Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth() * (1 + (raiderDamageEnchantLevel / 5)));
+                  Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth());
                 return super.hurt(damageSource, totalWithScaled);
             }
         }

@@ -11,6 +11,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.ColonyList;
 import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -61,9 +62,9 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
     @NotNull
     @Override
-    public CompoundTag save(final @NotNull CompoundTag tag)
+    public CompoundTag save(final @NotNull CompoundTag tag, @NotNull final HolderLookup.Provider provider)
     {
-        return writeNBT(tag);
+        return writeNBT(provider, tag);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
         return true;
     }
 
-    private CompoundTag writeNBT(final CompoundTag inputTag)
+    private CompoundTag writeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(TAG_COLONIES, colonies.stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
@@ -116,7 +117,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
         if (overworld)
         {
             final CompoundTag managerCompound = new CompoundTag();
-            IColonyManager.getInstance().write(managerCompound);
+            IColonyManager.getInstance().write(provider, managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
         }
         Log.getLogger().warn("Writing " + colonies.getSize() + " colonies to disk!");
@@ -132,7 +133,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
         return this;
     }
 
-    private void readNBT(final CompoundTag inputTag)
+    private void readNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
     {
         final CompoundTag compound = inputTag.getCompound(Constants.MOD_ID);
 
@@ -156,7 +157,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
         if (compound.contains(TAG_COLONY_MANAGER))
         {
-            IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
+            IColonyManager.getInstance().read(provider, compound.getCompound(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
         Log.getLogger().warn("Loaded: " + colonies.getSize() + " colonies from disk!");

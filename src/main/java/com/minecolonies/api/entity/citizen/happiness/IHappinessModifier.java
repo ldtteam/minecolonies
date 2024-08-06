@@ -1,7 +1,9 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.colony.ICitizenData;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,12 +37,12 @@ public interface IHappinessModifier
      *
      * @param compoundNBT the compound to read it from.
      */
-    void read(final CompoundTag compoundNBT);
+    void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT);
 
     /**
      * Write it to NBT.
      *
      * @param compoundNBT the compound to write it to.
      */
-    void write(final CompoundTag compoundNBT);
+    void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT);
 }

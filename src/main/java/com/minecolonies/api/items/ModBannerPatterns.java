@@ -2,6 +2,7 @@ package com.minecolonies.api.items;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -30,16 +31,16 @@ public final class ModBannerPatterns
      */
     static
     {
-        BANNER_PATTERNS.register("horse", () -> new BannerPattern("hsy"));
-        BANNER_PATTERNS.register("eagle", () -> new BannerPattern("egl"));
-        BANNER_PATTERNS.register("lion", () -> new BannerPattern("lin"));
-        BANNER_PATTERNS.register("tower", () -> new BannerPattern("twr"));
-        BANNER_PATTERNS.register("bear", () -> new BannerPattern("ber"));
-        BANNER_PATTERNS.register("fleur", () -> new BannerPattern("flr"));
-        BANNER_PATTERNS.register("tinycross", () -> new BannerPattern("tcr"));
-        BANNER_PATTERNS.register("cantabrian", () -> new BannerPattern("ctbr"));
-        BANNER_PATTERNS.register("threetriangles", () -> new BannerPattern("ttan"));
-        BANNER_PATTERNS.register("theart", () -> new BannerPattern("thrt"));
-        BANNER_PATTERNS.register("dragonhead", () -> new BannerPattern("drhd"));
+        BANNER_PATTERNS.register("horse", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "hsy"), "com.minecolonies.core.pattern.horse"));
+        BANNER_PATTERNS.register("eagle", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "egl"), "com.minecolonies.core.pattern.eagle"));
+        BANNER_PATTERNS.register("lion", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "lin"), "com.minecolonies.core.pattern.lion"));
+        BANNER_PATTERNS.register("tower", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "twr"), "com.minecolonies.core.pattern.tower"));
+        BANNER_PATTERNS.register("bear", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "ber"), "com.minecolonies.core.pattern.bear"));
+        BANNER_PATTERNS.register("fleur", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "flr"), "com.minecolonies.core.pattern.fleur"));
+        BANNER_PATTERNS.register("tinycross", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "tcr"), "com.minecolonies.core.pattern.tinycross"));
+        BANNER_PATTERNS.register("cantabrian", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "ctbr"), "com.minecolonies.core.pattern.cantabrian"));
+        BANNER_PATTERNS.register("threetriangles", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "ttan"), "com.minecolonies.core.pattern.threetriangles"));
+        BANNER_PATTERNS.register("theart", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "thrt"), "com.minecolonies.core.pattern.theart"));
+        BANNER_PATTERNS.register("dragonhead", () -> new BannerPattern(new ResourceLocation(Constants.MOD_ID, "drhd"), "com.minecolonies.core.pattern.dragonhead"));
     }
 }

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.*;
 
@@ -25,7 +26,7 @@ import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataPro
  */
 public class SchemFixerUtil
 {
-    public static void fixSchematics(final HolderLookup.Provider provider)
+    public static void fixSchematics(final CompletableFuture<HolderLookup.Provider> provider)
     {
         String baseFolder = Paths.get("").toAbsolutePath().getParent().toString() + "/src/main/resources/assets/minecolonies/schematics";
         File baseFolderFile = new File(baseFolder);
@@ -81,7 +82,7 @@ public class SchemFixerUtil
                 try
                 {
                     CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())), NbtAccounter.unlimitedHeap());
-                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT, provider);
+                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT, provider.get());
                     if (fixSchematicNameAndCorners(blueprint))
                     {
                         BlueprintUtil.writeToStream(new FileOutputStream(blueprintFile), blueprint);
