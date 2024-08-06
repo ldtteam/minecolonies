@@ -126,6 +126,7 @@ public class ColonyBorderRenderer
         final ChunkPos playerChunkPos,
         final int playerRenderDist)
     {
+        //todo nightenom, all of this.
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
         final Map<Integer, Color> colonyColours = new HashMap<>();
         final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();

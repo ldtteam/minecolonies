@@ -34,14 +34,14 @@ public class ExpeditionLogModule extends AbstractBuildingModule implements IPers
     @Override
     public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        this.log.serializeNBT(compound);
+        this.log.serializeNBT(provider, compound);
     }
 
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final CompoundTag log = compound.contains(TAG_LOG) ? compound.getCompound(TAG_LOG) : compound;
-        this.log.deserializeNBT(log);
+        this.log.deserializeNBT(provider, log);
     }
 
     @Override

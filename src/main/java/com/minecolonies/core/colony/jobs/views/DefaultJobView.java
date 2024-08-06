@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import java.util.HashSet;
 import java.util.Set;

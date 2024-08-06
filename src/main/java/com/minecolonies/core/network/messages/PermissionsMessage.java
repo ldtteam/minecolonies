@@ -12,9 +12,11 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.entity.other.FireArrowEntity;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -58,7 +60,7 @@ public class PermissionsMessage
         {
             super(TYPE);
             this.colonyID = colony.getID();
-            this.data = new RegistryFriendlyByteBuf(Unpooled.buffer());
+            this.data = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
             this.dimension = colony.getDimension();
         }
@@ -68,7 +70,7 @@ public class PermissionsMessage
             super(buf, type);
             colonyID = buf.readInt();
             dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
-            data = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+            data = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
         }
 
         

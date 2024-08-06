@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.SettingsModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.colony.building.TriggerSettingMessage;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -36,7 +37,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         for (int i = 0; i < size; i++)
         {
             final ResourceLocation key = buf.readResourceLocation();
-            final ISetting setting = StandardFactoryController.getInstance().deserializeTag(buf);
+            final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
             if (setting != null)
             {
                 final SettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);

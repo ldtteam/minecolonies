@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ImmutableItemStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -41,17 +42,17 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     }
 
     @Override
-    public CompoundTag serialize(IFactoryController controller, ImmutableItemStorage output)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, IFactoryController controller, ImmutableItemStorage output)
     {
-        @NotNull final CompoundTag compound = StandardFactoryController.getInstance().serialize(output.copy());
+        @NotNull final CompoundTag compound = StandardFactoryController.getInstance().serializeTag(provider, output.copy());
 
         return compound;
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, CompoundTag nbt) throws Throwable
+    public ImmutableItemStorage deserialize(@NotNull final HolderLookup.Provider provider, IFactoryController controller, CompoundTag nbt) throws Throwable
     {
-        final ItemStorage readStorage = StandardFactoryController.getInstance().deserializeTag(nbt);
+        final ItemStorage readStorage = StandardFactoryController.getInstance().deserializeTag(provider, nbt);
         return readStorage.toImmutable();
     }
 
@@ -64,7 +65,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     @Override
     public ImmutableItemStorage deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
-        @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserializeTag(buffer);
+        @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserialize(buffer);
         return newItem.toImmutable();
     }
 

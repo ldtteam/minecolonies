@@ -8,6 +8,7 @@ import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -358,7 +359,7 @@ public class CustomRecipeManager
      */
     public void sendCustomRecipeManagerPackets(final ServerPlayer player)
     {
-        final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
         new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf).sendToPlayer(player);
     }

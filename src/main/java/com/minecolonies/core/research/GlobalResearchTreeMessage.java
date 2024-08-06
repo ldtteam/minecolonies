@@ -7,7 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,7 +46,7 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public void onExecute(final PlayPayloadContext context, final Player player)
+    public void onExecute(final IPayloadContext context, final Player player)
     {
         IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
     }

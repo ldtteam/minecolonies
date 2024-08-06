@@ -4,9 +4,10 @@ import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,13 +30,13 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     public CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.managerBuffer = new RegistryFriendlyByteBuf(buf.copy());
+        this.managerBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf.copy()), buf.registryAccess());
     }
 
     protected CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        managerBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        managerBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override
@@ -45,7 +46,7 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     }
 
     @Override
-    public void onExecute(final PlayPayloadContext context, final Player player)
+    public void onExecute(final IPayloadContext context, final Player player)
     {
         CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
     }

@@ -657,7 +657,7 @@ public class SettingsFactories
             IToken<?> token = null;
             if (buffer.readBoolean())
             {
-                token = StandardFactoryController.getInstance().deserializeTag(buffer);
+                token = StandardFactoryController.getInstance().deserialize(buffer);
             }
             final String moduleId = buffer.readUtf(32767);
             return this.getNewInstance(token, moduleId);

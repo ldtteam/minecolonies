@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 /**
  * Extended dman job information on the client side, valid for all job types.

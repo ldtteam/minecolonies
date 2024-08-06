@@ -82,7 +82,7 @@ public class PublicCrafting extends AbstractCrafting
     {
         Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getCount());
-        StandardFactoryController.getInstance().serializeTag(buffer, input.getRecipeID());
+        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
     }
 
     /**
@@ -96,7 +96,7 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int count = buffer.readInt();
-        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(buffer);
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
 
         return new PublicCrafting(stack, count, token);
     }

@@ -89,8 +89,8 @@ public class Delivery extends AbstractDeliverymanRequestable
      */
     public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Delivery input)
     {
-        controller.serializeTag(buffer, input.getStart());
-        controller.serializeTag(buffer, input.getTarget());
+        controller.serialize(buffer, input.getStart());
+        controller.serialize(buffer, input.getTarget());
         Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getPriority());
     }
@@ -104,8 +104,8 @@ public class Delivery extends AbstractDeliverymanRequestable
      */
     public static Delivery deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final ILocation start = controller.deserializeTag(buffer);
-        final ILocation target = controller.deserializeTag(buffer);
+        final ILocation start = controller.deserialize(buffer);
+        final ILocation target = controller.deserialize(buffer);
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int priority = buffer.readInt();
 

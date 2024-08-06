@@ -13,6 +13,7 @@ import com.minecolonies.core.quests.*;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -55,7 +56,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      */
     public static void sendGlobalQuestPackets(final ServerPlayer player)
     {
-        final RegistryFriendlyByteBuf byteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf byteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         byteBuf.writeInt(globalJsonElementMap.size());
         for (final Map.Entry<ResourceLocation, JsonElement> entry : globalJsonElementMap.entrySet())
         {
