@@ -646,7 +646,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .define('P', Items.GLASS_PANE)
           .define('G', Items.GLASS)
           .define('S', ItemTags.WOODEN_SLABS)
-          .unlockedBy("has_glass", has(Tags.Items.GLASS))
+          .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
           .save(consumer);
 
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.scimitar), RecipeCategory.MISC, Items.IRON_NUGGET, 0.1f, 200)

@@ -58,7 +58,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput()));
