@@ -21,11 +21,6 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecolonies:durum",
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
           "functions": [
             {
               "add": false,

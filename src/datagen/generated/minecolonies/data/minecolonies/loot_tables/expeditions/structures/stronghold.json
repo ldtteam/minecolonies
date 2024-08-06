@@ -23,12 +23,89 @@
           "type": "minecraft:item",
           "functions": [
             {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:stone_bricks",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:cracked_stone_bricks",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:ender_pearl",
+          "weight": 75
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:book",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bookshelf",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
               "function": "minecraft:set_nbt",
               "tag": "{amount:1,encounter:\"minecolonies:zombie\",scale:1b,type:\"encounter\"}"
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -10,
           "weight": 50
         },
         {
@@ -40,7 +117,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -10,
           "weight": 30
         },
         {
@@ -52,7 +128,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -15,
           "weight": 10
         },
         {
@@ -64,7 +139,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -20,
           "weight": 10
         }
       ],

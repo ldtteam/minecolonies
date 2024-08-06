@@ -1,7 +1,10 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import com.minecolonies.core.loot.ExpeditionDifficultyCondition;
@@ -23,6 +26,8 @@ import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static com.minecolonies.core.generation.ExpeditionResourceManager.*;
@@ -326,7 +331,6 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
         createStructureLootTable(OCEAN_RUIN_ID, registrar, builder -> builder.withPool(
           new LootPool.Builder()
             .setRolls(UNCOMMON_STRUCTURE_ROLLS)
-            .add(LootItem.lootTableItem(ModBlocks.blockDurum.asItem()).setWeight(50))
             .add(LootItem.lootTableItem(Items.STONE_AXE).setWeight(35).apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
             .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(10))
             .add(LootItem.lootTableItem(Items.EMERALD).setWeight(35))
@@ -356,10 +360,197 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
         createStructureLootTable(STRONGHOLD_ID, registrar, builder -> builder.withPool(
           new LootPool.Builder()
             .setRolls(SPECIAL_STRUCTURE_ROLLS)
-            .add(createEncounterLootItem(ZOMBIE).setWeight(50).setQuality(-10))
-            .add(createEncounterLootItem(SKELETON).setWeight(30).setQuality(-10))
-            .add(createEncounterLootItem(CREEPER).setWeight(10).setQuality(-15))
-            .add(createEncounterLootItem(ENDERMAN).setWeight(10).setQuality(-20))
+            .add(LootItem.lootTableItem(Items.STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.CRACKED_STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(75))
+            .add(LootItem.lootTableItem(Items.BOOK).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.BOOKSHELF).setWeight(25))
+            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(25))
+            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
+            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                   .setWeight(20)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
+            .add(createEncounterLootItem(SKELETON).setWeight(30))
+            .add(createEncounterLootItem(CREEPER).setWeight(10))
+            .add(createEncounterLootItem(ENDERMAN).setWeight(10))
         ));
+
+        createStructureLootTable(SHIPWRECK_ID, registrar, builder -> {
+            MinecoloniesCropBlock[] crops = ModBlocks.getCrops();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.OAK_PLANKS)
+                                                   .setWeight(crops.length * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.SPRUCE_PLANKS)
+                                                   .setWeight(crops.length * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.IRON_INGOT).setWeight(crops.length * 15))
+                                            .add(LootItem.lootTableItem(Items.GOLD_INGOT).setWeight(crops.length * 10))
+                                            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(crops.length * 5))
+                                            .add(createEncounterLootItem(DROWNED).setWeight(crops.length * 20))
+                                            .add(createEncounterLootItem(DROWNED_TRIDENT).setWeight(crops.length * 10));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
+
+        createStructureLootTable(VILLAGE_DESERT_ID, registrar, builder -> {
+            List<MinecoloniesCropBlock> crops =
+              Arrays.stream(ModBlocks.getCrops()).filter(f -> f.getPreferredBiome() == null || f.getPreferredBiome().equals(ModTags.dryBiomes)).toList();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.SANDSTONE)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.SMOOTH_SANDSTONE)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.CACTUS).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.DEAD_BUSH).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.CLAY_BALL).setWeight(crops.size() * 20).apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.flatbread)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pottage)
+                                                   .setWeight(crops.size() * 20)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pepper_hummus)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pita_hummus).setWeight(crops.size() * 20));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
+
+        createStructureLootTable(VILLAGE_PLAINS_ID, registrar, builder -> {
+            List<MinecoloniesCropBlock> crops =
+              Arrays.stream(ModBlocks.getCrops()).filter(f -> f.getPreferredBiome() == null || f.getPreferredBiome().equals(ModTags.temperateBiomes)).toList();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.COBBLESTONE)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.OAK_PLANKS)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.OAK_SAPLING).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.DANDELION).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.POPPY).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.cheddar_cheese)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pasta_plain)
+                                                   .setWeight(crops.size() * 20)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pasta_tomato)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.stuffed_pita).setWeight(crops.size() * 20));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
+
+        createStructureLootTable(VILLAGE_SAVANNA_ID, registrar, builder -> {
+            List<MinecoloniesCropBlock> crops =
+              Arrays.stream(ModBlocks.getCrops()).filter(f -> f.getPreferredBiome() == null || f.getPreferredBiome().equals(ModTags.dryBiomes)).toList();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.YELLOW_TERRACOTTA)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.ACACIA_PLANKS)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.ACACIA_SAPLING).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.GRASS).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.TALL_GRASS).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.tofu)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.lembas_scone)
+                                                   .setWeight(crops.size() * 20)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pepper_hummus)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.pita_hummus).setWeight(crops.size() * 20));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
+
+        createStructureLootTable(VILLAGE_SNOWY_ID, registrar, builder -> {
+            List<MinecoloniesCropBlock> crops =
+              Arrays.stream(ModBlocks.getCrops()).filter(f -> f.getPreferredBiome() == null || f.getPreferredBiome().equals(ModTags.coldBiomes)).toList();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.SNOW_BLOCK)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.ICE)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.SNOWBALL).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.BEETROOT).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.BEETROOT_SOUP).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.feta_cheese)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.manchet_bread)
+                                                   .setWeight(crops.size() * 20)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.cabochis)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.lamb_stew).setWeight(crops.size() * 20));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
+
+        createStructureLootTable(VILLAGE_TAIGA_ID, registrar, builder -> {
+            List<MinecoloniesCropBlock> crops =
+              Arrays.stream(ModBlocks.getCrops()).filter(f -> f.getPreferredBiome() == null || f.getPreferredBiome().equals(ModTags.coldBiomes)).toList();
+            final LootPool.Builder pool = new LootPool.Builder()
+                                            .setRolls(COMMON_STRUCTURE_ROLLS)
+                                            .add(LootItem.lootTableItem(Items.COBBLESTONE)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.SPRUCE_PLANKS)
+                                                   .setWeight(crops.size() * 50)
+                                                   .apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.FERN).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.LARGE_FERN).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(Items.SWEET_BERRIES).setWeight(crops.size() * 30).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.cooked_rice)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.muffin)
+                                                   .setWeight(crops.size() * 20)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.cabochis)
+                                                   .setWeight(crops.size() * 30)
+                                                   .apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+                                            .add(LootItem.lootTableItem(ModItems.lamb_stew).setWeight(crops.size() * 20));
+            for (MinecoloniesCropBlock crop : crops)
+            {
+                pool.add(LootItem.lootTableItem(crop.asItem()).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)));
+            }
+            builder.withPool(pool);
+        });
     }
 }
