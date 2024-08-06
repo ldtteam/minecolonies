@@ -10,6 +10,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "loot-table": "minecolonies:recipes/glass_bottle",
+  "loot-table": "minecolonies:recipes/large_bottle",
   "result": "minecraft:mud"
 }

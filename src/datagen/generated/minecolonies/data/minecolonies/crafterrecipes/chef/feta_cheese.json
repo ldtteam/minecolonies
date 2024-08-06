@@ -2,7 +2,7 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:bucket"
+      "item": "minecolonies:large_empty_bottle"
     }
   ],
   "crafter": "chef_crafting",

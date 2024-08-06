@@ -79,7 +79,7 @@ public class ContainerRack extends AbstractContainerMenu
 
         if (neighborRack != null)
         {
-            if (abstractTileEntityRack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.EMPTYAIR)
+            if (abstractTileEntityRack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
             {
                 this.inventory = new CombinedInvWrapper(abstractTileEntityRack.getInventory(), neighborRack.getInventory());
             }
