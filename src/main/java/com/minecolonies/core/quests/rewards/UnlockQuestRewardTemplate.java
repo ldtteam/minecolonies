@@ -37,7 +37,7 @@ public class UnlockQuestRewardTemplate implements IQuestRewardTemplate
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final String id = details.get(ID_KEY).getAsString();
 
-        return new UnlockQuestRewardTemplate(new ResourceLocation(id));
+        return new UnlockQuestRewardTemplate(ResourceLocation.parse(id));
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

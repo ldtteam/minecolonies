@@ -40,12 +40,12 @@ public interface IColony
 
     void onWorldUnload(@NotNull Level w);
 
-    void onServerTick(@NotNull ServerTickEvent event);
+    void onServerTick(@NotNull ServerTickEvent.Pre event);
 
     @NotNull
     IWorkManager getWorkManager();
 
-    void onWorldTick(@NotNull LevelTickEvent event);
+    void onWorldTick(@NotNull LevelTickEvent.Pre event);
 
     /**
      * Returns the position of the colony.

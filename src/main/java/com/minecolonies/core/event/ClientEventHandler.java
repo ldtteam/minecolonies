@@ -49,9 +49,9 @@ import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.common.util.Lazy;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,11 +81,11 @@ public class ClientEventHandler
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onwWorldTick(@NotNull final TickEvent.LevelTickEvent event)
+    public static void onwWorldTick(@NotNull final LevelTickEvent.Pre event)
     {
-        if (event.level.isClientSide && event.phase == TickEvent.Phase.END && ColonyConstants.rand.nextInt(20) == 0)
+        if (event.getLevel().isClientSide && ColonyConstants.rand.nextInt(20) == 0)
         {
-            WorldEventContext.INSTANCE.checkNearbyColony(event.level);
+            WorldEventContext.INSTANCE.checkNearbyColony(event.getLevel());
         }
     }
 

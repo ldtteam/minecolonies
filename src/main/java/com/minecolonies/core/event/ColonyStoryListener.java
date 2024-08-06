@@ -15,6 +15,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -25,12 +26,12 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_STORIES_DIR;
-import static net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+import static net.neoforged.fml.common.EventBusSubscriber.Bus.MOD;
 
 /**
  * Loads and listens to colony story changes.
  */
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = MOD)
 public class ColonyStoryListener extends SimpleJsonResourceReloadListener
 {
     /**

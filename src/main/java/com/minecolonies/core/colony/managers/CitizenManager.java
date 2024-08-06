@@ -181,7 +181,7 @@ public class CitizenManager implements ICitizenManager
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getList(TAG_CITIZENS, Tag.TAG_COMPOUND))
-                          .map(this::deserializeCitizen)
+                          .map(s -> deserializeCitizen(provider, s))
                           .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
 
         // Update child state after loading citizen data
@@ -194,9 +194,9 @@ public class CitizenManager implements ICitizenManager
      * @param compound NBT
      * @return citizen data
      */
-    private ICitizenData deserializeCitizen(@NotNull final CompoundTag compound)
+    private ICitizenData deserializeCitizen(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(compound, colony);
+        final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(provider, compound, colony);
         topCitizenId = Math.max(topCitizenId, data.getId());
         return data;
     }
@@ -353,7 +353,7 @@ public class CitizenManager implements ICitizenManager
             compoundNBT.putInt(TAG_ID, topCitizenId);
         }
 
-        final ICitizenData citizenData = deserializeCitizen(compoundNBT);
+        final ICitizenData citizenData = deserializeCitizen(world.registryAccess(), compoundNBT);
         citizenData.onResurrect();
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);

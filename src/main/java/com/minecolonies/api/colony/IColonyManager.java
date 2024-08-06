@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.core.colony.Colony;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -240,33 +241,33 @@ public interface IColonyManager
      *
      * @param event {@link net.neoforged.neoforge.event.tick.ServerTickEvent}
      */
-    void onServerTick(@NotNull ServerTickEvent event);
+    void onServerTick(@NotNull ServerTickEvent.Pre event);
 
     /**
      * Write colonies to NBT data for saving.
      *
      * @param compound NBT-Tag.
      */
-    void write(@NotNull CompoundTag compound);
+    void write(final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void read(@NotNull CompoundTag compound);
+    void read(final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * On Client tick, clears views when player left.
      *
      * @param event {@link net.neoforged.neoforge.client.event.ClientTickEvent}.
      */
-    void onClientTick(@NotNull ClientTickEvent event);
+    void onClientTick(@NotNull ClientTickEvent.Pre event);
 
     /**
      * On world tick, tick every Colony in that world. NOTE: Review this for performance.
      */
-    void onWorldTick(@NotNull LevelTickEvent event);
+    void onWorldTick(@NotNull LevelTickEvent.Pre event);
 
     /**
      * When a world is loaded, Colonies in that world need to grab the reference to the World. Additionally, when loading the first world, load the manager data.
@@ -302,7 +303,7 @@ public interface IColonyManager
     IColonyView getColonyView(int id, final ResourceKey<Level> dimension);
 
     /**
-     * Returns result of {@link IColonyView#handlePermissionsViewMessage(FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)}. gives a not-null result. If {@link #getColonyView(int,
+     * Returns result of {@link IColonyView#handlePermissionsViewMessage(RegistryFriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)}. gives a not-null result. If {@link #getColonyView(int,
      * ResourceKey)} is null, returns null.
      *
      * @param colonyID ID of the colony.
@@ -323,7 +324,7 @@ public interface IColonyManager
     void handleColonyViewCitizensMessage(int colonyId, int citizenId, RegistryFriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(FriendlyByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(RegistryFriendlyByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
      * @param colonyId ID of the colony.

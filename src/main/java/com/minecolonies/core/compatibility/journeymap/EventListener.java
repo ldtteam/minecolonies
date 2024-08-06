@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -168,10 +169,8 @@ public class EventListener
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
+    public void onClientTick(@NotNull final ClientTickEvent.Pre event)
     {
-        if (event.phase != TickEvent.Phase.END) return;
-
         final Level world = Minecraft.getInstance().level;
         if (world != null)
         {

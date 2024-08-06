@@ -43,7 +43,7 @@ public class ItemRewardTemplate implements IQuestRewardTemplate
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
-        final ItemStack item = BuiltInRegistries.ITEM.get(new ResourceLocation(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
+        final ItemStack item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
         if (details.has(NBT_KEY))
         {
             try

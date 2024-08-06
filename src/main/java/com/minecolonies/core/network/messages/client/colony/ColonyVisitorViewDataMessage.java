@@ -10,6 +10,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -65,7 +66,7 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         this.visitors = visitors;
         this.refresh = refresh;
 
-        visitorBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        visitorBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
         visitorBuf.writeInt(visitors.size());
         for (final IVisitorData data : visitors)
         {
@@ -78,9 +79,9 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     {
         super(buf, type);
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-        this.visitorBuf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        this.visitorBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override

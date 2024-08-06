@@ -1057,7 +1057,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public void onServerTick(@NotNull final ServerTickEvent event)
+    public void onServerTick(@NotNull final ServerTickEvent.Pre event)
     {
 
     }
@@ -1167,7 +1167,7 @@ public class Colony implements IColony
      * @param event {@link net.neoforged.neoforge.event.tick.LevelTickEvent}
      */
     @Override
-    public void onWorldTick(@NotNull final LevelTickEvent event)
+    public void onWorldTick(@NotNull final LevelTickEvent.Pre event)
     {
         if (event.getLevel() != getWorld())
         {

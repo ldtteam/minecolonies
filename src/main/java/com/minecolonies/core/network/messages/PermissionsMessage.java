@@ -67,7 +67,7 @@ public class PermissionsMessage
         {
             super(buf, type);
             colonyID = buf.readInt();
-            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
             data = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
         }
 

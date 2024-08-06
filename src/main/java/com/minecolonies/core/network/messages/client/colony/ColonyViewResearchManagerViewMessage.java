@@ -52,7 +52,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
     {
         super(buf, type);
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         researchManagerData = buf.readNbt();
     }
 

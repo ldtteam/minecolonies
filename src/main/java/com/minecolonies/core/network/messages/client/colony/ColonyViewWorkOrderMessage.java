@@ -9,6 +9,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.workorders.view.AbstractWorkOrderView;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -40,7 +41,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     {
         super(TYPE);
         this.colonyId = colony.getID();
-        this.workOrderBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        this.workOrderBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
@@ -54,8 +55,8 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
     {
         super(buf, type);
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
-        workOrderBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        workOrderBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override

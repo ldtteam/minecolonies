@@ -40,7 +40,7 @@ public class ColonyViewRemoveMessage extends AbstractClientPlayMessage
     {
         super(buf, type);
         id = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
     }
 
     @Override

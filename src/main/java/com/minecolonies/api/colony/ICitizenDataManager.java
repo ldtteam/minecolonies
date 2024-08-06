@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public interface ICitizenDataManager
      * @param colony   The colony to create an instance in.
      * @return The citizen data, loaded from the nbt into the colony.
      */
-    ICitizenData createFromNBT(@NotNull CompoundTag compound, IColony colony);
+    ICitizenData createFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound, IColony colony);
 
     /**
      * Creates a citizen data view from a given network buffer, containing the views data.

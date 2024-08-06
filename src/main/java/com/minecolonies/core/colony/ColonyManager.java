@@ -29,6 +29,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -38,8 +39,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -574,70 +577,64 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    public void onServerTick(@NotNull final ServerTickEvent.Pre event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        for (@NotNull final IColony c : getAllColonies())
         {
-            for (@NotNull final IColony c : getAllColonies())
-            {
-                c.onServerTick(event);
-            }
+            c.onServerTick(event);
         }
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compound)
+    public void write(final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         //Get the colonies NBT tags and store them in a ListNBT.
         final CompoundTag compCompound = new CompoundTag();
-        compatibilityManager.write(compCompound);
+        compatibilityManager.write(provider, compCompound);
         compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
 
         compound.putBoolean(TAG_DISTANCE, true);
         final CompoundTag recipeCompound = new CompoundTag();
-        recipeManager.write(recipeCompound);
+        recipeManager.write(provider, recipeCompound);
 
         compound.put(RECIPE_MANAGER_TAG, recipeCompound);
     }
 
     // File read for compat/recipe
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_COMPATABILITY_MANAGER))
         {
-            compatibilityManager.read(compound.getCompound(TAG_COMPATABILITY_MANAGER));
+            compatibilityManager.read(provider, compound.getCompound(TAG_COMPATABILITY_MANAGER));
         }
 
-        recipeManager.read(compound.getCompound(RECIPE_MANAGER_TAG));
+        recipeManager.read(provider, compound.getCompound(RECIPE_MANAGER_TAG));
     }
 
     @Override
-    public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
+    public void onClientTick(@NotNull final ClientTickEvent.Pre event)
     {
-        if (event.phase == TickEvent.Phase.END)
+        if (Minecraft.getInstance().level == null && !colonyViews.isEmpty())
         {
-            if (Minecraft.getInstance().level == null && !colonyViews.isEmpty())
-            {
-                //  Player has left the game, clear the Colony View cache
-                colonyViews.clear();
-            }
-
-
-            if (clientSoundManager == null)
-            {
-                clientSoundManager = new SoundManager();
-            }
-            clientSoundManager.tick();
+            //  Player has left the game, clear the Colony View cache
+            colonyViews.clear();
         }
+
+
+        if (clientSoundManager == null)
+        {
+            clientSoundManager = new SoundManager();
+        }
+        clientSoundManager.tick();
     }
 
     @Override
-    public void onWorldTick(final TickEvent.@NotNull LevelTickEvent event)
+    public void onWorldTick(final @NotNull LevelTickEvent.Pre event)
     {
-        if (event.phase == TickEvent.Phase.END && !event.level.isClientSide)
+        if (!event.getLevel().isClientSide)
         {
-            getColonies(event.level).forEach(c -> c.onWorldTick(event));
+            getColonies(event.getLevel()).forEach(c -> c.onWorldTick(event));
         }
     }
 

@@ -63,7 +63,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         super(buf, type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         buildingData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 

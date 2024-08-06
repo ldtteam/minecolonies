@@ -37,7 +37,7 @@ public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
     public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
-        final ResourceLocation research = new ResourceLocation(details.get(ID_KEY).getAsString());
+        final ResourceLocation research = ResourceLocation.parse(details.get(ID_KEY).getAsString());
         return new ResearchCompleteRewardTemplate(research);
     }
     @Override

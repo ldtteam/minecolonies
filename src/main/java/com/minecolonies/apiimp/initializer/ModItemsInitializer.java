@@ -13,6 +13,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GA
 import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
 import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class ModItemsInitializer
 {
     /**

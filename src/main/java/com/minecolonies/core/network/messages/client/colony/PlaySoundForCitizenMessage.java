@@ -160,7 +160,7 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
         this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
         this.soundSource = SoundSource.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
-        this.dimensionID = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        this.dimensionID = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
         this.length = buf.readInt();

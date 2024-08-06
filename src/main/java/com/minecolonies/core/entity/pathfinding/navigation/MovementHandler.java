@@ -10,11 +10,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -43,7 +43,7 @@ public class MovementHandler extends MoveControl
     {
         super(mob);
         this.speedAtr = this.mob.getAttribute(Attributes.MOVEMENT_SPEED);
-        stepHeight = mob.getStepHeight();
+        stepHeight = mob.maxUpStep();
         speedValue = (float) speedAtr.getValue();
     }
 
@@ -52,7 +52,7 @@ public class MovementHandler extends MoveControl
     {
         if (mob.tickCount % 20 == 0)
         {
-            stepHeight = this.mob.getStepHeight();
+            stepHeight = this.mob.maxUpStep();
             speedValue = (float) speedAtr.getValue();
         }
 
@@ -77,15 +77,9 @@ public class MovementHandler extends MoveControl
             final float rot2 = strafe * cosRotation + forward * sinRotation;
             final PathNavigation pathnavigator = this.mob.getNavigation();
 
-            final NodeEvaluator nodeprocessor = pathnavigator.getNodeEvaluator();
-            if (nodeprocessor.getBlockPathType(this.mob.level(),
-              Mth.floor(this.mob.getX() + (double) rot1),
-              Mth.floor(this.mob.getY()),
-              Mth.floor(this.mob.getZ() + (double) rot2)) != BlockPathTypes.WALKABLE)
-            {
+            if (!this.isWalkable(rot1, rot2)) {
                 this.strafeForwards = 1.0F;
                 this.strafeRight = 0.0F;
-                speed = speedAtt;
             }
 
             this.mob.setSpeed(speed);
@@ -159,5 +153,24 @@ public class MovementHandler extends MoveControl
     {
         super.setWantedPosition(x, y, z, speedIn);
         this.operation = MoveControl.Operation.MOVE_TO;
+    }
+
+    private boolean isWalkable(float p_24997_, float p_24998_)
+    {
+        PathNavigation pathnavigation = this.mob.getNavigation();
+        if (pathnavigation != null)
+        {
+            NodeEvaluator nodeevaluator = pathnavigation.getNodeEvaluator();
+            if (nodeevaluator != null
+                  && nodeevaluator.getPathType(
+              this.mob, BlockPos.containing(this.mob.getX() + (double) p_24997_, (double) this.mob.getBlockY(), this.mob.getZ() + (double) p_24998_)
+            )
+                       != PathType.WALKABLE)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

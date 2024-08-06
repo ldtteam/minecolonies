@@ -6,12 +6,14 @@ import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,13 +22,13 @@ import org.jetbrains.annotations.NotNull;
 public class FMLEventHandler
 {
     @SubscribeEvent
-    public static void onServerTick(final TickEvent.ServerTickEvent event)
+    public static void onServerTick(final ServerTickEvent.Pre event)
     {
         IColonyManager.getInstance().onServerTick(event);
     }
 
     @SubscribeEvent
-    public static void onClientTick(final TickEvent.ClientTickEvent event)
+    public static void onClientTick(final ClientTickEvent.Pre event)
     {
         IColonyManager.getInstance().onClientTick(event);
     }
@@ -60,7 +62,7 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onWorldTick(final TickEvent.LevelTickEvent event)
+    public static void onWorldTick(final LevelTickEvent.Pre event)
     {
         IColonyManager.getInstance().onWorldTick(event);
     }

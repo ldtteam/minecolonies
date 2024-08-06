@@ -119,7 +119,7 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
         this.pos = buf.readBlockPos();
         this.packName = buf.readUtf(32767);
         this.path = buf.readUtf(32767);
-        this.dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        this.dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         this.rotationMirror = RotationMirror.values()[buf.readByte()];
         this.builder = buf.readBlockPos();
     }

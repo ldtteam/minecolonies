@@ -35,6 +35,7 @@ import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.core.util.ChunkDataHelper;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -66,21 +67,24 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
+import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -349,22 +353,22 @@ public class EventHandler
      * Event called when the player enters a new chunk.
      */
     @SubscribeEvent
-    public static void onEnteringChunk(final TickEvent.PlayerTickEvent event)
+    public static void onEnteringChunk(final PlayerTickEvent.Pre event)
     {
-        if (event.phase != TickEvent.Phase.END || !(event.player.level() instanceof final ServerLevel world) || event.player.level().getGameTime() % 100 != 0)
+        if (!(event.getEntity().level() instanceof final ServerLevel world) || event.getEntity().level().getGameTime() % 100 != 0)
         {
             return;
         }
 
-        final ChunkPos chunkPos = event.player.chunkPosition();
+        final ChunkPos chunkPos = event.getEntity().chunkPosition();
 
-        final ChunkPos oldPos = playerPositions.get(event.player.getUUID());
+        final ChunkPos oldPos = playerPositions.get(event.getEntity().getUUID());
         if (oldPos != null && oldPos.equals(chunkPos))
         {
             return;
         }
 
-        playerPositions.put(event.player.getUUID(), chunkPos);
+        playerPositions.put(event.getEntity().getUUID(), chunkPos);
 
         final LevelChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
 
@@ -384,8 +388,8 @@ public class EventHandler
             final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapData.getOwningColony(), world);
             if (colony != null)
             {
-                colony.addVisitingPlayer(event.player);
-                colony.getPackageManager().addCloseSubscriber((ServerPlayer) event.player);
+                colony.addVisitingPlayer(event.getEntity());
+                colony.getPackageManager().addCloseSubscriber((ServerPlayer) event.getEntity());
             }
         }
 
@@ -402,7 +406,7 @@ public class EventHandler
                         IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
-                            building.onPlayerEnterNearby(event.player);
+                            building.onPlayerEnterNearby(event.getEntity());
                         }
                     }
                 }
@@ -446,7 +450,7 @@ public class EventHandler
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
-                event.setResult(Event.Result.DENY);
+                event.setResult(MobDespawnEvent.PositionCheck.Result.FAIL);
                 return;
             }
         }
@@ -865,7 +869,7 @@ public class EventHandler
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event)
+    public static void onServerTick(ServerTickEvent.Pre event)
     {
         final double lastTickMs = event.getServer().getTickTimesNanos()[event.getServer().getTickCount() % 100] * 1.0E-6D;
         if (lastTickMs > 50)

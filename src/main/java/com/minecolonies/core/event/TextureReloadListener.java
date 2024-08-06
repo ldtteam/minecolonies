@@ -8,6 +8,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +18,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static net.neoforged.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+import static net.neoforged.fml.common.EventBusSubscriber.Bus.MOD;
 
 /**
  * Specific texture reload listener.
  */
-@Mod.EventBusSubscriber(value= Dist.CLIENT, modid= Constants.MOD_ID, bus=MOD)
+@EventBusSubscriber(value= Dist.CLIENT, modid= Constants.MOD_ID, bus=MOD)
 public class TextureReloadListener extends SimplePreparableReloadListener<TextureReloadListener.TexturePacks>
 {
     /**

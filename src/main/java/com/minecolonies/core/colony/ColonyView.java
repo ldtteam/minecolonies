@@ -1350,7 +1350,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onServerTick(@NotNull final ServerTickEvent event)
+    public void onServerTick(@NotNull final ServerTickEvent.Pre event)
     {
 
     }
@@ -1363,7 +1363,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onWorldTick(@NotNull final LevelTickEvent event)
+    public void onWorldTick(@NotNull final LevelTickEvent.Pre event)
     {
 
     }
