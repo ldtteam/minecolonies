@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.nbt.CompoundTag;
@@ -54,8 +55,8 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final PublicWorkerCraftingRequestResolver publicWorkerCraftingRequestResolverFactory)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_TOKEN, controller.serialize(publicWorkerCraftingRequestResolverFactory.getId()));
-        compound.put(NBT_LOCATION, controller.serialize(publicWorkerCraftingRequestResolverFactory.getLocation()));
+        compound.put(NBT_TOKEN, controller.serializeTag(provider, publicWorkerCraftingRequestResolverFactory.getId()));
+        compound.put(NBT_LOCATION, controller.serializeTag(provider, publicWorkerCraftingRequestResolverFactory.getLocation()));
         compound.putString(NBT_JOB, IJobRegistry.getInstance().getKey(publicWorkerCraftingRequestResolverFactory.getJobEntry()).toString());
 
         return compound;
@@ -83,8 +84,8 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     @Override
     public PublicWorkerCraftingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserializeTag(buffer);
-        final ILocation location = controller.deserializeTag(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
         final JobEntry entry = buffer.readById(IMinecoloniesAPI.getInstance().getJobRegistry()::byIdOrThrow);
         return new PublicWorkerCraftingRequestResolver(location, token, entry);
     }

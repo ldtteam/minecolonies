@@ -679,7 +679,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void handleColonyViewMessage(
       final int colonyId,
-      @NotNull final FriendlyByteBuf colonyData,
+      @NotNull final RegistryFriendlyByteBuf colonyData,
       final boolean isNewSubscription,
       final ResourceKey<Level> dim)
     {
@@ -714,7 +714,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handlePermissionsViewMessage(final int colonyID, @NotNull final FriendlyByteBuf data, final ResourceKey<Level> dim)
+    public void handlePermissionsViewMessage(final int colonyID, @NotNull final RegistryFriendlyByteBuf data, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyID, dim);
         if (view == null)

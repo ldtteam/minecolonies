@@ -6,12 +6,11 @@ import com.minecolonies.core.blocks.decorative.BlockColonyFlagBanner;
 import com.minecolonies.core.blocks.decorative.BlockColonyFlagWallBanner;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,12 +23,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
-
-import java.util.List;
 
 /**
  * The custom renderer to render the colony flag patterns if they exist,
@@ -50,10 +46,11 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
         this.crossbar = modelpart.getChild("bar");
     }
 
+
     @Override
     public void render(TileEntityColonyFlag flagIn, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = flagIn.getPatternList();
+        BannerPatternLayers list = flagIn.getPatterns();
 
         boolean noWorld = flagIn.getLevel() == null;
         transform.pushPose();
@@ -108,7 +105,7 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
         float f2 = ((float)Math.floorMod((long)(blockpos.getX() * 7 + blockpos.getY() * 9 + blockpos.getZ() * 13) + i, 100L) + partialTicks) / 100.0F;
         this.cloth.xRot = (-0.0125F + 0.01F * Mth.cos(((float)Math.PI * 2F) * f2)) * (float)Math.PI;
         this.cloth.y = -32.0F;
-        BannerRenderer.renderPatterns(transform, bufferIn, combinedLightIn, combinedOverlayIn, this.cloth, ModelBakery.BANNER_BASE, true, list);
+        BannerRenderer.renderPatterns(transform, bufferIn, combinedLightIn, combinedOverlayIn, this.cloth, ModelBakery.BANNER_BASE, true, DyeColor.WHITE, list);
         transform.popPose();
         transform.popPose();
     }

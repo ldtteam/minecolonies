@@ -908,7 +908,7 @@ public class Permissions implements IPermissions
     /**
      * Serializes network data.
      *
-     * @param buf        {@link FriendlyByteBuf} to write to.
+     * @param buf        {@link RegistryFriendlyByteBuf} to write to.
      * @param viewerRank Rank of the viewer.
      */
     public void serializeViewNetworkData(@NotNull final RegistryFriendlyByteBuf buf, @NotNull final Rank viewerRank)

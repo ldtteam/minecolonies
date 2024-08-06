@@ -359,17 +359,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             {
                 if (compound.getCompound(TAG_BUILDING_MODULES).contains(module.getProducer().key))
                 {
-                    module.deserializeNBT(compound.getCompound(TAG_BUILDING_MODULES).getCompound(module.getProducer().key));
+                    module.deserializeNBT(provider, compound.getCompound(TAG_BUILDING_MODULES).getCompound(module.getProducer().key));
                 }
                 else
                 {
-                    module.deserializeNBT(compound);
+                    module.deserializeNBT(provider, compound);
                 }
             }
         }
         else
         {
-            getModulesByType(IPersistentModule.class).forEach(module -> module.deserializeNBT(compound));
+            getModulesByType(IPersistentModule.class).forEach(module -> module.deserializeNBT(provider, compound));
         }
     }
 
@@ -392,7 +392,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         for (IPersistentModule module : getModulesByType(IPersistentModule.class))
         {
             final CompoundTag tag = new CompoundTag();
-            module.serializeNBT(tag);
+            module.serializeNBT(provider, tag);
             modules.put(module.getProducer().key, tag);
         }
 
@@ -679,7 +679,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Serializes to view.
      *
-     * @param buf FriendlyByteBuf to write to.
+     * @param buf RegistryFriendlyByteBuf to write to.
      */
     @Override
     public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)

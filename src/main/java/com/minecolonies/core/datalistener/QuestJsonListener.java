@@ -55,7 +55,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      */
     public static void sendGlobalQuestPackets(final ServerPlayer player)
     {
-        final FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf byteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
         byteBuf.writeInt(globalJsonElementMap.size());
         for (final Map.Entry<ResourceLocation, JsonElement> entry : globalJsonElementMap.entrySet())
         {
@@ -69,7 +69,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
      * Read the data from the packet and parse it.
      * @param byteBuf pck.
      */
-    public static void readGlobalQuestPackets(final FriendlyByteBuf byteBuf)
+    public static void readGlobalQuestPackets(final RegistryFriendlyByteBuf byteBuf)
     {
         globalJsonElementMap.clear();
         final int size = byteBuf.readInt();

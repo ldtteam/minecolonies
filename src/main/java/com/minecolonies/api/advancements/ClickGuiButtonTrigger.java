@@ -35,9 +35,9 @@ public class ClickGuiButtonTrigger extends SimpleCriterionTrigger<ClickGuiButton
     public static record ClickGuiButtonTriggerInstance(Optional<ContextAwarePredicate> player, Optional<String> buttonId, Optional<String> windowResource) implements SimpleInstance
     {
         public static final Codec<ClickGuiButtonTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(ClickGuiButtonTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "button_id").forGetter(ClickGuiButtonTriggerInstance::buttonId),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "window_resource_location").forGetter(ClickGuiButtonTriggerInstance::windowResource))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(ClickGuiButtonTriggerInstance::player),
+              Codec.STRING.optionalFieldOf("button_id").forGetter(ClickGuiButtonTriggerInstance::buttonId),
+                Codec.STRING.optionalFieldOf("window_resource_location").forGetter(ClickGuiButtonTriggerInstance::windowResource))
             .apply(builder, ClickGuiButtonTriggerInstance::new));
 
         public static Criterion<ClickGuiButtonTriggerInstance> clickGuiButton()

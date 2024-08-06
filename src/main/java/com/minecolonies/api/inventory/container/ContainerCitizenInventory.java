@@ -189,52 +189,56 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
 
 
         index = 3;
-        for (int j = 0; j < 4; ++j)
+        int eqIndex = 0;
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
-                final EquipmentSlot equipmentSlot = EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, index);
-                    this.addSlot(
-                      new Slot(new SimpleContainer(inventory.getArmorInSlot(equipmentSlot)), 0,INVENTORY_BAR_SIZE + 215,
-                        23 + j * PLAYER_INVENTORY_OFFSET_EACH)
+            if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
+            {
+                eqIndex++;
+                this.addSlot(
+                  new Slot(new SimpleContainer(inventory.getArmorInSlot(equipmentSlot)), 0, INVENTORY_BAR_SIZE + 215,
+                    23 + eqIndex * PLAYER_INVENTORY_OFFSET_EACH)
+                  {
+                      @Override
+                      public void set(@NotNull final ItemStack stack)
                       {
-                          @Override
-                          public void set(@NotNull final ItemStack stack)
+                          if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                           {
-                              if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
-                              {
-                                  final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
-                                  final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+                              final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
+                              final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
-                                  building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-                              }
-                              super.set(stack);
-                              inventory.forceArmorStackToSlot(equipmentSlot, stack);
+                              building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                           }
+                          super.set(stack);
+                          inventory.forceArmorStackToSlot(equipmentSlot, stack);
+                      }
 
-                          @Override
-                          public ItemStack remove(final int slot)
-                          {
-                              inventory.forceClearArmorInSlot(equipmentSlot, inventory.getArmorInSlot(equipmentSlot));
-                              return super.remove(slot);
-                          }
+                      @Override
+                      public ItemStack remove(final int slot)
+                      {
+                          inventory.forceClearArmorInSlot(equipmentSlot, inventory.getArmorInSlot(equipmentSlot));
+                          return super.remove(slot);
+                      }
 
-                          @Override
-                          public boolean mayPlace(final ItemStack stack)
+                      @Override
+                      public boolean mayPlace(final ItemStack stack)
+                      {
+                          if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
                           {
-                              if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
+                              for (final GuardGear gear : guardGear)
                               {
-                                  for (final GuardGear gear : guardGear)
+                                  if (gear.test(stack))
                                   {
-                                      if (gear.test(stack))
-                                      {
-                                        return true;
-                                      }
+                                      return true;
                                   }
-                                  return false;
                               }
                               return false;
                           }
-                      });
-                    index--;
+                          return false;
+                      }
+                  });
+                index--;
+            }
         }
 
         // Player inventory slots
@@ -253,6 +257,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                 ));
             }
         }
+
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {

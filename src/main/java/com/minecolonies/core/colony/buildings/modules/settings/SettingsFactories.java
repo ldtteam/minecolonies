@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.BlockItem;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
         }
@@ -176,7 +176,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final int currentIndex = buffer.readInt();
             final int size = buffer.readInt();
@@ -265,8 +265,8 @@ public class SettingsFactories
         @Override
         public BlockSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_VALUE)));
-            final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_DEF)));
+            final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString(TAG_VALUE)));
+            final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString(TAG_DEF)));
             return this.getNewInstance(value, def);
         }
 
@@ -279,7 +279,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final BlockItem value = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
             final BlockItem def = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
@@ -341,7 +341,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readInt(), buffer.readInt());
         }
@@ -652,7 +652,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public RecipeSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             IToken<?> token = null;
             if (buffer.readBoolean())

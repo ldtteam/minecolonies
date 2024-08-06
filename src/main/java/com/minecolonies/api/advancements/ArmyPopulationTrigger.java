@@ -37,7 +37,7 @@ public class ArmyPopulationTrigger extends SimpleCriterionTrigger<ArmyPopulation
     public static record ArmyPopulationTriggerInstance(Optional<ContextAwarePredicate> player, int populationCount) implements SimpleInstance
     {
         public static final Codec<ArmyPopulationTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(ArmyPopulationTriggerInstance::player),
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(ArmyPopulationTriggerInstance::player),
                 ExtraCodecs.NON_NEGATIVE_INT.fieldOf("population_count").forGetter(ArmyPopulationTriggerInstance::populationCount))
             .apply(builder, ArmyPopulationTriggerInstance::new));
 

@@ -5,8 +5,10 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.managers.StatisticsManager;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Building statistic module.
@@ -19,13 +21,13 @@ public class BuildingStatisticsModule extends AbstractBuildingModule implements 
     private IStatisticsManager statisticsManager = new StatisticsManager();
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         statisticsManager.readFromNBT(compound);
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         statisticsManager.writeToNBT(compound);
     }

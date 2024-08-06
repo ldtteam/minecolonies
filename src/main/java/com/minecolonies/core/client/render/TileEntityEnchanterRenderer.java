@@ -74,7 +74,7 @@ public class TileEntityEnchanterRenderer implements BlockEntityRenderer<TileEnti
             float bookSpread = Mth.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
             this.modelBook.setupAnim(tick, Mth.clamp(flipA, 0.0F, 1.0F), Mth.clamp(flipB, 0.0F, 1.0F), bookSpread);
             VertexConsumer vertexConsumer = TEXTURE_BOOK.buffer(renderTypeBuffer, RenderType::entitySolid);
-            this.modelBook.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.modelBook.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB);
             matrixStack.popPose();
         }
     }

@@ -370,7 +370,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Read this view from a {@link FriendlyByteBuf}.
+     * Read this view from a {@link RegistryFriendlyByteBuf}.
      *
      * @param buf The buffer to read this view from.
      */

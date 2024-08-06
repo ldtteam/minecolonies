@@ -59,7 +59,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         // this is mostly redundant with the standard root, but it lets people see a Minecolonies
         // advancement before that tab is visible...
         Advancement.Builder.advancement()
-          .parent(new ResourceLocation("story/root"))
+          .parent(ResourceLocation.parse("story/root"))
           .display(ModItems.supplyChest,
             Component.translatableEscape("advancements.minecolonies.root.title"),
             Component.translatableEscape("advancements.minecolonies.root.description"),
@@ -87,7 +87,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .display(ModItems.supplyChest,
                         Component.translatableEscape("advancements.minecolonies.root.title"),
                         Component.translatableEscape("advancements.minecolonies.root.description"),
-                        new ResourceLocation("textures/block/light_gray_wool.png"),
+                        ResourceLocation.parse("textures/block/light_gray_wool.png"),
                         AdvancementType.TASK, true, true, false)
                 .addCriterion("supply_ship_placed", PlaceSupplyTriggerInstance.placeSupply())
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);
@@ -253,7 +253,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .display(ModBlocks.blockHutBuilder,
                         Component.translatableEscape("advancements.minecolonies.root.production.title"),
                         Component.translatableEscape("advancements.minecolonies.root.production.description"),
-                        new ResourceLocation("structurize:textures/block/cactus/cactus_planks.png"),
+                        ResourceLocation.parse("structurize:textures/block/cactus/cactus_planks.png"),
                         AdvancementType.TASK, false, false, false)
                 .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);
@@ -450,7 +450,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .display(ModBlocks.blockHutBarracks,
                         Component.translatableEscape("advancements.minecolonies.root.military.title"),
                         Component.translatableEscape("advancements.minecolonies.root.military.description"),
-                        new ResourceLocation("textures/block/stone_bricks.png"),
+                        ResourceLocation.parse("textures/block/stone_bricks.png"),
                         AdvancementType.TASK, true, false, false)
                 .addCriterion("guardtower", completeBuildRequest(ModBuildings.guardTower.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);

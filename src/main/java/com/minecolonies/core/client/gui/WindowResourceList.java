@@ -213,7 +213,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(false);
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_AMOUNT, Text.class).clearText();
 
-        int resourceHashcode = resource.getItemStack().hasTag() ? resource.getItemStack().getTag().hashCode() : 0;
+        int resourceHashcode = resource.getItemStack().getComponentsPatch().hashCode();
         int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId() + "-" + resourceHashcode, 0);
 
         if (resource.getAmountInDelivery() > 0)
@@ -267,8 +267,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
-        final ItemStack stack = new ItemStack(resource.getItem(), 1);
-        stack.setTag(resource.getItemStack().getTag());
+        final ItemStack stack = resource.getItemStack().copy();
+        stack.setCount(1);
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 

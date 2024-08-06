@@ -16,6 +16,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -120,14 +121,14 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     @Override
     public IGlobalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final ResourceLocation parent = new ResourceLocation(nbt.getString(TAG_PARENT));
-        final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
-        final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
+        final ResourceLocation parent = ResourceLocation.parse(nbt.getString(TAG_PARENT));
+        final ResourceLocation id = ResourceLocation.parse(nbt.getString(TAG_ID));
+        final ResourceLocation branch = ResourceLocation.parse(nbt.getString(TAG_BRANCH));
         final TranslatableContents desc = new TranslatableContents(nbt.getString(TAG_NAME), null, TranslatableContents.NO_ARGS);
         final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int sortOrder =  nbt.getInt(TAG_RESEARCH_SORT);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
-        final ResourceLocation iconTexture = new ResourceLocation(nbt.getString(TAG_ICON_TEXTURE));
+        final ResourceLocation iconTexture = ResourceLocation.parse(nbt.getString(TAG_ICON_TEXTURE));
         final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
         final ItemStack iconStack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
         iconStack.setCount(Integer.parseInt(iconStackParts[2]));
@@ -141,7 +142,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
         {
-            final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? new ResourceLocation(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
+            final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? ResourceLocation.parse(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
             final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().get(res);
             final IResearchCost instance = researchCostType.createInstance();
             instance.read(compound);
@@ -156,7 +157,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance()
                                                         .get(ResourceLocation.tryParse(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Tag.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Tag.TAG_COMPOUND)).forEach(compound -> research.addChild(ResourceLocation.parse(compound.getString(TAG_RESEARCH_CHILD))));
         return research;
     }
 

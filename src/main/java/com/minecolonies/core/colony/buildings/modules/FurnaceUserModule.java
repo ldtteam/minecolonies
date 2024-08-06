@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -61,7 +62,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Tag.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
@@ -78,7 +79,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         @NotNull final ListTag furnacesTagList = new ListTag();
         for (@NotNull final BlockPos entry : furnaces)

@@ -105,10 +105,7 @@ public class ScarecrowModel extends Model
       final @NotNull VertexConsumer iVertexBuilder,
       final int p_225598_3_,
       final int p_225598_4_,
-      final float p_225598_5_,
-      final float p_225598_6_,
-      final float p_225598_7_,
-      final float p_225598_8_)
+      final int p_350308_)
     {
         head.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);
         post.render(stack, iVertexBuilder, p_225598_3_, p_225598_4_);

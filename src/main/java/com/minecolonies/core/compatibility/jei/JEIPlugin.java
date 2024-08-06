@@ -42,7 +42,7 @@ public class JEIPlugin implements IModPlugin
     @Override
     public ResourceLocation getPluginUid()
     {
-        return new ResourceLocation(Constants.MOD_ID);
+        return new ResourceLocation(Constants.MOD_ID, Constants.MOD_ID);
     }
 
     private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
@@ -124,7 +124,7 @@ public class JEIPlugin implements IModPlugin
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
-        registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
+        registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes(Minecraft.getInstance().level));
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 

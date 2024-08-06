@@ -37,8 +37,8 @@ public class PlaceStructureTrigger extends SimpleCriterionTrigger<PlaceStructure
     public static record PlaceStructureTriggerInstance(Optional<ContextAwarePredicate> player, Optional<String> structureName) implements SimpleInstance
     {
         public static final Codec<PlaceStructureTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(PlaceStructureTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "hut_name").forGetter(PlaceStructureTriggerInstance::structureName))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(PlaceStructureTriggerInstance::player),
+                Codec.STRING.optionalFieldOf("hut_name").forGetter(PlaceStructureTriggerInstance::structureName))
             .apply(builder, PlaceStructureTriggerInstance::new));
 
         public static Criterion<PlaceStructureTriggerInstance> placeStructure()

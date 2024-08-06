@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.util.BuildingUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,9 +48,9 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         if (compound.contains(getModuleSerializationIdentifier()))
         {
@@ -68,9 +69,9 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.serializeNBT(compound);
+        super.serializeNBT(provider, compound);
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];

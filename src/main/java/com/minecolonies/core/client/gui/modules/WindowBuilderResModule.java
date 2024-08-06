@@ -213,8 +213,8 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
-        final ItemStack stack = new ItemStack(resource.getItem(), 1);
-        stack.setTag(resource.getItemStack().getTag());
+        final ItemStack stack = resource.getItemStack().copy();
+        stack.setCount(1);
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 

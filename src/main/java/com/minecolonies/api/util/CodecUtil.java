@@ -2,17 +2,13 @@ package com.minecolonies.api.util;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.ChunkPos;
 import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -66,21 +62,5 @@ public class CodecUtil
     public static <T> Codec<Set<T>> set(final Codec<T> codec, final Function<Collection<T>, Set<T>> setFactory)
     {
         return codec.listOf().xmap(setFactory, List::copyOf);
-    }
-
-    /**
-     * {@link ExtraCodecs#strictOptionalField(Codec, String, Object)} but with supplier and for collections
-     */
-    public static <T, A extends Collection<T>> MapCodec<A> strictOptionalField(final Codec<A> codec, final String fieldName, final Supplier<A> defaultSupplier)
-    {
-        return ExtraCodecs.strictOptionalField(codec, fieldName).xmap(opt -> opt.orElseGet(defaultSupplier), data -> data.isEmpty() ? Optional.empty() : Optional.of(data));
-    }
-
-    /**
-     * {@link ExtraCodecs#strictOptionalField(Codec, String, Object)} but with supplier and for collections
-     */
-    public static <K, V, A extends Map<K, V>> MapCodec<A> strictOptionalFieldMap(final Codec<A> codec, final String fieldName, final Supplier<A> defaultSupplier)
-    {
-        return ExtraCodecs.strictOptionalField(codec, fieldName).xmap(opt -> opt.orElseGet(defaultSupplier), data -> data.isEmpty() ? Optional.empty() : Optional.of(data));
     }
 }

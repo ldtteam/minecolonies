@@ -286,11 +286,11 @@ public interface IColonyManager
      * Sends view message to the right view.
      *
      * @param colonyId          ID of the colony.
-     * @param colonyData        {@link FriendlyByteBuf} with colony data.
+     * @param colonyData        {@link RegistryFriendlyByteBuf} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
      */
-    void handleColonyViewMessage(int colonyId, @NotNull FriendlyByteBuf colonyData, boolean isNewSubscription, ResourceKey<Level> dim);
+    void handleColonyViewMessage(int colonyId, @NotNull RegistryFriendlyByteBuf colonyData, boolean isNewSubscription, ResourceKey<Level> dim);
 
     /**
      * Get IColonyView by ID.
@@ -306,31 +306,31 @@ public interface IColonyManager
      * ResourceKey)} is null, returns null.
      *
      * @param colonyID ID of the colony.
-     * @param data     {@link FriendlyByteBuf} with colony data.
+     * @param data     {@link RegistryFriendlyByteBuf} with colony data.
      * @param dim      the dimension.
      */
-    void handlePermissionsViewMessage(int colonyID, @NotNull FriendlyByteBuf data, ResourceKey<Level> dim);
+    void handlePermissionsViewMessage(int colonyID, @NotNull RegistryFriendlyByteBuf data, ResourceKey<Level> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int, RegistryFriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
-     * @param buf       {@link FriendlyByteBuf} with colony data.
+     * @param buf       {@link RegistryFriendlyByteBuf} with colony data.
      * @param dim       the dimension.
      */
-    void handleColonyViewCitizensMessage(int colonyId, int citizenId, FriendlyByteBuf buf, ResourceKey<Level> dim);
+    void handleColonyViewCitizensMessage(int colonyId, int citizenId, RegistryFriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(FriendlyByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
      * @param colonyId ID of the colony.
-     * @param buf      {@link FriendlyByteBuf} with colony data.
+     * @param buf      {@link RegistryFriendlyByteBuf} with colony data.
      * @param dim      the dimension.
      */
-    void handleColonyViewWorkOrderMessage(int colonyId, FriendlyByteBuf buf, ResourceKey<Level> dim);
+    void handleColonyViewWorkOrderMessage(int colonyId, RegistryFriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link #getColonyView(int,
@@ -343,15 +343,15 @@ public interface IColonyManager
     void handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId, ResourceKey<Level> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos, RegistryFriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
-     * @param buf        {@link FriendlyByteBuf} with colony data.
+     * @param buf        {@link RegistryFriendlyByteBuf} with colony data.
      * @param dim        the dimension.
      */
-    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
+    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull RegistryFriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link

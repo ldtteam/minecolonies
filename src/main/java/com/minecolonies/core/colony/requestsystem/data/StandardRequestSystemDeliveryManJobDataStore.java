@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -93,12 +94,13 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         @NotNull
         @Override
         public CompoundTag serialize(
+          @NotNull final HolderLookup.Provider provider,
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemDeliveryManJobDataStore standardRequestSystemDeliveryManJobDataStore)
         {
             final CompoundTag compound = new CompoundTag();
-            compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
-            compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
-            compound.put(TAG_ONGOING_LIST, standardRequestSystemDeliveryManJobDataStore.ongoingDeliveries.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_TOKEN, controller.serializeTag(provider, standardRequestSystemDeliveryManJobDataStore.id));
+            compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(s -> controller.serializeTag(provider, s)).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_ONGOING_LIST, standardRequestSystemDeliveryManJobDataStore.ongoingDeliveries.stream().map(s -> controller.serializeTag(provider, s)).collect(NBTUtils.toListNBT()));
             return compound;
         }
 
@@ -108,10 +110,10 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         {
             final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
+                                                  .map(tag -> (IToken<?>) controller.deserializeTag(provider, tag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
+                                                  .map(tag -> (IToken<?>) controller.deserializeTag(provider, tag))
                                                   .collect(Collectors.toCollection(HashSet::new));
             return new StandardRequestSystemDeliveryManJobDataStore(token, queue, ongoingDeliveries);
         }
@@ -134,20 +136,20 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
           IFactoryController controller,
           @NotNull RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            final IToken<?> id = controller.deserializeTag(buffer);
+            final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();
             final Set<IToken<?>> ongoingDeliveries = new HashSet<>();
 
             final int queueSize = buffer.readInt();
             for (int i = 0; i < queueSize; ++i)
             {
-                queue.add(controller.deserializeTag(buffer));
+                queue.add(controller.deserialize(buffer));
             }
 
             final int ongoingSize = buffer.readInt();
             for (int i = 0; i < ongoingSize; ++i)
             {
-                queue.add(controller.deserializeTag(buffer));
+                queue.add(controller.deserialize(buffer));
             }
 
             return new StandardRequestSystemDeliveryManJobDataStore(id, queue, ongoingDeliveries);

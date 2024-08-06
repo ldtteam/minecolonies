@@ -12,6 +12,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -102,8 +103,8 @@ public class StandardDataStoreManager implements IDataStoreManager
             compound.put(NbtTagConstants.TAG_LIST, standardDataStoreManager.storeMap.keySet().stream().map(iToken -> {
                 final CompoundTag entryCompound = new CompoundTag();
 
-                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(iToken));
-                entryCompound.put(NbtTagConstants.TAG_VALUE, controller.serialize(standardDataStoreManager.storeMap.get(iToken)));
+                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serializeTag(provider, iToken));
+                entryCompound.put(NbtTagConstants.TAG_VALUE, controller.serializeTag(provider, standardDataStoreManager.storeMap.get(iToken)));
 
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
@@ -116,8 +117,8 @@ public class StandardDataStoreManager implements IDataStoreManager
         public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundTag -> {
-                final IToken<?> token = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
-                final IDataStore store = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
+                final IToken<?> token = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                final IDataStore store = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
 
                 return new Tuple<>(token, store);
             }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
@@ -143,7 +144,7 @@ public class StandardDataStoreManager implements IDataStoreManager
             final int storeSize = buffer.readInt();
             for (int i = 0; i < storeSize; ++i)
             {
-                storeMap.put(controller.deserializeTag(buffer), controller.deserializeTag(buffer));
+                storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
             }
 
             return new StandardDataStoreManager(storeMap);

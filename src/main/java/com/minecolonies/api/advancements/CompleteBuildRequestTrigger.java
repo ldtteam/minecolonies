@@ -37,9 +37,9 @@ public class CompleteBuildRequestTrigger extends SimpleCriterionTrigger<Complete
         public static final int DEFAULT_LEVEL = -1;
 
         public static final Codec<CompleteBuildRequestTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(CompleteBuildRequestTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "hut_name").forGetter(CompleteBuildRequestTriggerInstance::hutName),
-                ExtraCodecs.strictOptionalField(ExtraCodecs.intRange(0, 5), "level", DEFAULT_LEVEL).forGetter(CompleteBuildRequestTriggerInstance::level))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(CompleteBuildRequestTriggerInstance::player),
+                Codec.STRING.optionalFieldOf("hut_name").forGetter(CompleteBuildRequestTriggerInstance::hutName),
+              ExtraCodecs.intRange(0, 5).optionalFieldOf("level", DEFAULT_LEVEL).forGetter(CompleteBuildRequestTriggerInstance::level))
             .apply(builder, CompleteBuildRequestTriggerInstance::new));
 
         public static Criterion<CompleteBuildRequestTriggerInstance> completeBuildRequest()

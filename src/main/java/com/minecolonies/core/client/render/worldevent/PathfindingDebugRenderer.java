@@ -113,8 +113,8 @@ public class PathfindingDebugRenderer
 
             final VertexConsumer buffer = ctx.bufferSource.getBuffer(WorldRenderMacros.LINES);
 
-            buffer.vertex(lineMatrix, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            buffer.vertex(lineMatrix, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            buffer.addVertex(lineMatrix, 0.5f, 0.5f, 0.5f).setColor(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            buffer.addVertex(lineMatrix, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).setColor(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
         }
 
         ctx.poseStack.popPose();

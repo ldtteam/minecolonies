@@ -13,7 +13,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.neoforged.neoforge.common.util.ITeleporter;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +69,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    public boolean canBeLeashed(Player player)
+    public boolean canBeLeashed()
     {
         return false;
     }
@@ -93,7 +93,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     @Override
     protected boolean isHorizontalCollisionMinor(Vec3 vec3)
     {
-        lastHorizontalCollision = level.getGameTime();
+        lastHorizontalCollision = level().getGameTime();
         return super.isHorizontalCollisionMinor(vec3);
     }
 
@@ -104,7 +104,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      */
     public boolean hadHorizontalCollission()
     {
-        return level.getGameTime() - lastHorizontalCollision < 10;
+        return level().getGameTime() - lastHorizontalCollision < 10;
     }
 
     @Override
@@ -144,7 +144,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    protected void onChangedBlock(final BlockPos pos)
+    protected void onChangedBlock(final ServerLevel level, final BlockPos pos)
     {
         // This just tries to apply soulspeed or frostwalker
     }
@@ -185,7 +185,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      */
     @Nullable
     @Override
-    public Entity changeDimension(@NotNull final ServerLevel serverWorld, @NotNull final ITeleporter teleporter)
+    public Entity changeDimension(final DimensionTransition dimensionTransition)
     {
         return null;
     }
@@ -227,7 +227,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    protected void handleNetherPortal()
+    protected void handlePortal()
     {
         // Noop our entities dont use portals
     }
@@ -258,24 +258,6 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
             return super.isInWaterRainOrBubble();
         }
 
-        return false;
-    }
-
-    @Override
-    protected void tryAddSoulSpeed()
-    {
-
-    }
-
-    @Override
-    protected void removeSoulSpeed()
-    {
-
-    }
-
-    @Override
-    public boolean canSpawnSoulSpeedParticle()
-    {
         return false;
     }
 

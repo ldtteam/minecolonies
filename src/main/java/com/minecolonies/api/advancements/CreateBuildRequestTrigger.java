@@ -40,9 +40,9 @@ public class CreateBuildRequestTrigger extends SimpleCriterionTrigger<CreateBuil
         public static final int DEFAULT_LEVEL = -1;
 
         public static final Codec<CreateBuildRequestTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(CreateBuildRequestTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "hut_name").forGetter(CreateBuildRequestTriggerInstance::hutName),
-                ExtraCodecs.strictOptionalField(ExtraCodecs.intRange(0, 5), "level", DEFAULT_LEVEL).forGetter(CreateBuildRequestTriggerInstance::level))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(CreateBuildRequestTriggerInstance::player),
+                Codec.STRING.optionalFieldOf("hut_name").forGetter(CreateBuildRequestTriggerInstance::hutName),
+              ExtraCodecs.intRange(0, 5).optionalFieldOf("level", DEFAULT_LEVEL).forGetter(CreateBuildRequestTriggerInstance::level))
             .apply(builder, CreateBuildRequestTriggerInstance::new));
 
         public static Criterion<CreateBuildRequestTriggerInstance> createBuildRequest()

@@ -21,6 +21,7 @@ import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -54,14 +55,14 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     private int currentStage = 0;
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         currentStage = compound.getInt(TAG_CURR_STAGE);
         totalStages = compound.getInt(TAG_TOTAL_STAGES);
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         compound.putInt(TAG_TOTAL_STAGES, totalStages);
         compound.putInt(TAG_CURR_STAGE, currentStage);

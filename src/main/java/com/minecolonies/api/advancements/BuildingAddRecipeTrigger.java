@@ -44,9 +44,9 @@ public class BuildingAddRecipeTrigger extends SimpleCriterionTrigger<BuildingAdd
         public static final List<ItemPredicate> DEFAULT_OUTPUT_ITEM_PREDICATES = Collections.emptyList();
 
         public static final Codec<BuildingAddRecipeTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(BuildingAddRecipeTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(ItemPredicate.CODEC.listOf(), "items", DEFAULT_OUTPUT_ITEM_PREDICATES).forGetter(BuildingAddRecipeTriggerInstance::outputItemPredicates),
-                ExtraCodecs.strictOptionalField(ExtraCodecs.intRange(0, 10), "crafting_size", DEFAULT_CRAFTING_SIZE).forGetter(BuildingAddRecipeTriggerInstance::craftingSize))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(BuildingAddRecipeTriggerInstance::player),
+              ItemPredicate.CODEC.listOf().optionalFieldOf("items", DEFAULT_OUTPUT_ITEM_PREDICATES).forGetter(BuildingAddRecipeTriggerInstance::outputItemPredicates),
+              ExtraCodecs.intRange(0, 10).optionalFieldOf("crafting_size", DEFAULT_CRAFTING_SIZE).forGetter(BuildingAddRecipeTriggerInstance::craftingSize))
             .apply(builder, BuildingAddRecipeTriggerInstance::new));
 
         /**

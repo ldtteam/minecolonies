@@ -88,7 +88,7 @@ public interface ICitizenDataView extends ICitizen
      *
      * @param buf Byte buffer to deserialize.
      */
-    void deserialize(@NotNull FriendlyByteBuf buf);
+    void deserialize(@NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * @return current health.

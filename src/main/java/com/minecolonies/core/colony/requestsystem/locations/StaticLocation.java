@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -171,7 +172,7 @@ public class StaticLocation implements ILocation
         {
             final BlockPos pos = BlockPos.of(nbt.getLong(NBT_POS));
             final String dim = nbt.getString(NBT_DIM);
-            return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, new ResourceLocation(dim)));
+            return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(dim)));
         }
 
         @NotNull
@@ -225,26 +226,26 @@ public class StaticLocation implements ILocation
     }
 
     /**
-     * Serialize this location to the given {@link FriendlyByteBuf}.
+     * Serialize this location to the given {@link RegistryFriendlyByteBuf}.
      *
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(FriendlyByteBuf buffer, StaticLocation location)
+    public static void serialize(RegistryFriendlyByteBuf buffer, StaticLocation location)
     {
         buffer.writeBlockPos(location.pos);
         buffer.writeUtf(location.dimension.location().toString());
     }
 
     /**
-     * Deserialize the location from the given {@link FriendlyByteBuf}
+     * Deserialize the location from the given {@link RegistryFriendlyByteBuf}
      *
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static StaticLocation deserialize(FriendlyByteBuf buffer)
+    public static StaticLocation deserialize(RegistryFriendlyByteBuf buffer)
     {
         final BlockPos pos = buffer.readBlockPos();
-        final ResourceLocation dimension = new ResourceLocation(buffer.readUtf(32767));
+        final ResourceLocation dimension = ResourceLocation.parse(buffer.readUtf(32767));
 
         return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, dimension));
     }

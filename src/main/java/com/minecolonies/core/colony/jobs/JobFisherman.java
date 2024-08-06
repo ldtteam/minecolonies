@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -61,9 +62,9 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
 
         @NotNull final CompoundTag waterTag = new CompoundTag();
         if (water != null)
@@ -86,9 +87,9 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         if (compound.contains(TAG_WATER_POND))
         {

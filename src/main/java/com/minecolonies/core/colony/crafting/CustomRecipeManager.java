@@ -358,7 +358,7 @@ public class CustomRecipeManager
      */
     public void sendCustomRecipeManagerPackets(final ServerPlayer player)
     {
-        final FriendlyByteBuf recipeMgrFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(recipeMgrFriendlyByteBuf);
         new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf).sendToPlayer(player);
     }
@@ -368,7 +368,7 @@ public class CustomRecipeManager
      * This version sends the full Custom Recipe Manager.
      * @param recipeMgrFriendlyByteBuf packet buffer to encode the data into.
      */
-    private void serializeNetworkData(final FriendlyByteBuf recipeMgrFriendlyByteBuf)
+    private void serializeNetworkData(final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf)
     {
         recipeMgrFriendlyByteBuf.writeVarInt(recipeMap.size());
         for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())

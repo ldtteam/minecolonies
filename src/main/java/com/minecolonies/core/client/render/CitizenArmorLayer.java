@@ -3,7 +3,6 @@ package com.minecolonies.core.client.render;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -21,20 +20,18 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.WalkAnimationState;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.level.block.AbstractSkullBlock;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.block.SkullBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -49,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends HumanoidArmorLayer<T, M, A>
 {
     private final Map<SkullBlock.Type, SkullModelBase> skullModels;
-    private final Map<UUID, GameProfile> gameProfileMap = new HashMap<>();
+    private final Map<UUID, ResolvableProfile> gameProfileMap = new HashMap<>();
 
     public CitizenArmorLayer(RenderLayerParent<T, M> parentLayer, A innerModel, A outerModel, ModelManager modelManager, final EntityModelSet modelSet)
     {
@@ -89,7 +86,7 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
         if (citizenDataView.getCustomTextureUUID() != null )
         {
             final UUID textureUUID = citizenDataView.getCustomTextureUUID();
-            final GameProfile gameProfile = gameProfileMap.get(textureUUID);
+            final ResolvableProfile gameProfile = gameProfileMap.get(textureUUID);
             if (gameProfile != null)
             {
                 poseStack.pushPose();
@@ -106,21 +103,20 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                 poseStack.scale(-1.0F, -1.0F, 1.0F);
                 VertexConsumer vertexconsumer = bufferSource.getBuffer(rendertype);
                 skullmodelbase.setupAnim(0f, headRotY, headRotX);
-
-                skullmodelbase.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+                skullmodelbase.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY);
 
                 poseStack.popPose();
             }
             else
             {
-                gameProfileMap.put(citizenDataView.getCustomTextureUUID(), new GameProfile(textureUUID, "mcoltexturequery"));
+                gameProfileMap.put(citizenDataView.getCustomTextureUUID(), new ResolvableProfile(new GameProfile(textureUUID, "mcoltexturequery")));
                 Util.backgroundExecutor().execute(() ->
                 {
                     Minecraft minecraft = Minecraft.getInstance();
                     final ProfileResult profile = minecraft.getMinecraftSessionService().fetchProfile(textureUUID, true);
                     if (profile != null)
                     {
-                        minecraft.submit(() -> gameProfileMap.put(textureUUID, profile.profile()));
+                        minecraft.submit(() -> gameProfileMap.put(textureUUID, new ResolvableProfile(profile.profile())));
                     }
                 });
             }
@@ -148,23 +144,23 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                 this.setPartVisibility(armor, equipmentSlot);
                 net.minecraft.client.model.Model model = getArmorModelHook(citizen, itemstack, equipmentSlot, armor);
                 boolean flag = this.usesInnerModel(equipmentSlot);
-                if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem)
+                ArmorMaterial armormaterial = armoritem.getMaterial().value();
+
+                int i = itemstack.is(ItemTags.DYEABLE) ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemstack, -6265536)) : -1;
+
+                for (ArmorMaterial.Layer armormaterial$layer : armormaterial.layers())
                 {
-                    int i = ((net.minecraft.world.item.DyeableLeatherItem) armoritem).getColor(itemstack);
-                    float f = (float) (i >> 16 & 255) / 255.0F;
-                    float f1 = (float) (i >> 8 & 255) / 255.0F;
-                    float f2 = (float) (i & 255) / 255.0F;
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, f, f1, f2, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, "overlay"));
-                }
-                else
-                {
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
+                    int j = armormaterial$layer.dyeable() ? i : -1;
+                    var texture = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(citizen, itemstack, armormaterial$layer, flag, equipmentSlot);
+                    this.renderModel(poseStack, bufferSource, light, model, j, texture);
                 }
 
-                ArmorTrim.getTrim(citizen.level().registryAccess(), itemstack, true).ifPresent((p_289638_) -> {
-                    this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, p_289638_, model, flag);
-                });
+                ArmorTrim armortrim = itemstack.get(DataComponents.TRIM);
+                if (armortrim != null)
+                {
+                    this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, armortrim, model, flag);
+                }
+
                 if (itemstack.hasFoil())
                 {
                     this.renderGlint(poseStack, bufferSource, light, model);
@@ -173,21 +169,21 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
         }
     }
 
-    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int light, ArmorItem armorItem, net.minecraft.client.model.Model model, boolean ignore, float red, float green, float blue, ResourceLocation armorResource)
-    {
+    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int light, net.minecraft.client.model.Model armorItem, int color, ResourceLocation armorResource) {
         VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(armorResource));
-        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, red, green, blue, 1.0F);
+        armorItem.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, color);
     }
 
     private void renderGlint(PoseStack poseStack, MultiBufferSource bufferSource, int light, net.minecraft.client.model.Model model)
     {
-        model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY);
     }
 
-    private void renderTrim(ArmorMaterial armorMaterial, PoseStack poseStack, MultiBufferSource bufferSource, int light, ArmorTrim armorItem, net.minecraft.client.model.Model model, boolean inner)
+    private void renderTrim(Holder<ArmorMaterial> armorMaterial, PoseStack p_289687_, MultiBufferSource p_289643_, int p_289683_, ArmorTrim p_289692_, net.minecraft.client.model.Model p_289663_, boolean p_289651_)
     {
-        TextureAtlasSprite textureatlassprite = super.armorTrimAtlas.getSprite(inner ? armorItem.innerTexture(armorMaterial) : armorItem.outerTexture(armorMaterial));
-        VertexConsumer vertexconsumer = textureatlassprite.wrap(bufferSource.getBuffer(Sheets.armorTrimsSheet(armorItem.pattern().value().decal())));
-        model.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas
+                                                  .getSprite(p_289651_ ? p_289692_.innerTexture(armorMaterial) : p_289692_.outerTexture(armorMaterial));
+        VertexConsumer vertexconsumer = textureatlassprite.wrap(p_289643_.getBuffer(Sheets.armorTrimsSheet(p_289692_.pattern().value().decal())));
+        p_289663_.renderToBuffer(p_289687_, vertexconsumer, p_289683_, OverlayTexture.NO_OVERLAY);
     }
 }

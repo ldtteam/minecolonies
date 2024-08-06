@@ -11,6 +11,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -87,18 +88,19 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
         @NotNull
         @Override
         public CompoundTag serialize(
+          @NotNull final HolderLookup.Provider provider,
           @NotNull final IFactoryController controller,
           @NotNull final StandardRequestableTypeRequestResolverAssignmentDataStore standardRequestableTypeRequestResolverAssignmentDataStore)
         {
             CompoundTag compound = new CompoundTag();
 
-            compound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(standardRequestableTypeRequestResolverAssignmentDataStore.id));
+            compound.put(NbtTagConstants.TAG_TOKEN, controller.serializeTag(provider, standardRequestableTypeRequestResolverAssignmentDataStore.id));
             compound.put(NbtTagConstants.TAG_LIST, standardRequestableTypeRequestResolverAssignmentDataStore.assignments.keySet().stream().map(t -> {
                 CompoundTag entryCompound = new CompoundTag();
 
-                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
+                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serializeTag(provider, t));
                 entryCompound.put(NbtTagConstants.TAG_LIST, standardRequestableTypeRequestResolverAssignmentDataStore.assignments.get(t).stream()
-                                                              .map(StandardFactoryController.getInstance()::serialize)
+                                                              .map(s -> StandardFactoryController.getInstance().serializeTag(provider, s))
                                                               .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
@@ -115,9 +117,9 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
             IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             Map<TypeToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND))
                                                              .map(CompoundTag -> {
-                                                                 final TypeToken<?> elementToken = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                                 final TypeToken<?> elementToken = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
                                                                  final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundTag.getList(NbtTagConstants.TAG_LIST,
-                                                                   Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserializeTag(elementCompound))
+                                                                   Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserializeTag(provider, elementCompound))
                                                                                                           .collect(Collectors.toList());
 
                                                                  return new Tuple<>(elementToken, elements);
@@ -145,17 +147,17 @@ public class StandardRequestableTypeRequestResolverAssignmentDataStore implement
           IFactoryController controller,
           RegistryFriendlyByteBuf buffer) throws Throwable
         {
-            final IToken<?> token = controller.deserializeTag(buffer);
+            final IToken<?> token = controller.deserialize(buffer);
             final Map<TypeToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                final TypeToken<?> key = controller.deserializeTag(buffer);
+                final TypeToken<?> key = controller.deserialize(buffer);
                 final List<IToken<?>> tokens = new ArrayList<>();
                 final int tokensSize = buffer.readInt();
                 for (int ii = 0; ii < tokensSize; ++ii)
                 {
-                    tokens.add(controller.deserializeTag(buffer));
+                    tokens.add(controller.deserialize(buffer));
                 }
                 assignments.put(key, tokens);
             }

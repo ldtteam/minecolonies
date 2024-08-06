@@ -593,7 +593,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     }
 
     @Override
-    public void readSpawnData(final FriendlyByteBuf additionalData)
+    public void readSpawnData(final RegistryFriendlyByteBuf additionalData)
     {
         final int citizenId = additionalData.readInt();
         if (citizenId != -1)

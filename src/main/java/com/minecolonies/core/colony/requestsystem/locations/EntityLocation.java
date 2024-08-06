@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
@@ -231,22 +232,22 @@ public class EntityLocation implements ILocation
     }
 
     /**
-     * Serialize this location to the given {@link FriendlyByteBuf}.
+     * Serialize this location to the given {@link RegistryFriendlyByteBuf}.
      *
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(FriendlyByteBuf buffer, EntityLocation location)
+    public static void serialize(RegistryFriendlyByteBuf buffer, EntityLocation location)
     {
         buffer.writeUUID(location.uuid);
     }
 
     /**
-     * Deserialize the location from the given {@link FriendlyByteBuf}
+     * Deserialize the location from the given {@link RegistryFriendlyByteBuf}
      *
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static EntityLocation deserialize(FriendlyByteBuf buffer)
+    public static EntityLocation deserialize(RegistryFriendlyByteBuf buffer)
     {
         final UUID uuid = buffer.readUUID();
 

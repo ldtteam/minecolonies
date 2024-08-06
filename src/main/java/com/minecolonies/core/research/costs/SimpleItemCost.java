@@ -97,14 +97,14 @@ public class SimpleItemCost implements IResearchCost
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(this.count);
         buf.writeById(BuiltInRegistries.ITEM::getIdOrThrow, this.item);
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         this.count = buf.readInt();
         this.item = buf.readById(BuiltInRegistries.ITEM::byIdOrThrow);

@@ -83,8 +83,8 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     @Override
     public PrivateWorkerCraftingProductionResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserializeTag(buffer);
-        final ILocation location = controller.deserializeTag(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
         final JobEntry entry = buffer.readById(IMinecoloniesAPI.getInstance().getJobRegistry()::byIdOrThrow);
 
         return new PrivateWorkerCraftingProductionResolver(location, token, entry);

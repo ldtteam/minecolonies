@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -52,9 +53,9 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
      * Generate the list of {@link ToolUsage}.
      */
     @NotNull
-    public static List<ToolUsage> findRecipes()
+    public static List<ToolUsage> findRecipes(final Level level)
     {
-        return ToolsAnalyzer.findTools();
+        return ToolsAnalyzer.findTools(level);
     }
 
     @NotNull

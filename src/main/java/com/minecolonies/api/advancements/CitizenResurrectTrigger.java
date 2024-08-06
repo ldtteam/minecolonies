@@ -36,7 +36,7 @@ public class CitizenResurrectTrigger extends SimpleCriterionTrigger<CitizenResur
     public static record CitizenResurrectTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<CitizenResurrectTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(CitizenResurrectTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(CitizenResurrectTriggerInstance::player))
             .apply(builder, CitizenResurrectTriggerInstance::new));
 
         public static Criterion<CitizenResurrectTriggerInstance> citizenResurrect()

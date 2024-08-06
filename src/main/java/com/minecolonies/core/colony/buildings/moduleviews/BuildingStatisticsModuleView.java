@@ -19,7 +19,7 @@ public class BuildingStatisticsModuleView extends AbstractBuildingModuleView
     private IStatisticsManager statisticsManager = new StatisticsManager();
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         statisticsManager.deserialize(buf);
     }

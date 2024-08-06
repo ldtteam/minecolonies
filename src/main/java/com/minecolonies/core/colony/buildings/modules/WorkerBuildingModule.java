@@ -17,6 +17,7 @@ import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResol
 import com.minecolonies.core.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.core.util.BuildingUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -95,9 +96,9 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_WORKER))
         {
             final ListTag workersTagList = compound.getList(TAG_WORKER, Tag.TAG_COMPOUND);
@@ -152,9 +153,9 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.serializeNBT(compound);
+        super.serializeNBT(provider, compound);
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];

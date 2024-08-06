@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -31,13 +32,13 @@ public class ExpeditionLogModule extends AbstractBuildingModule implements IPers
     }
 
     @Override
-    public void serializeNBT(@NotNull final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         this.log.serializeNBT(compound);
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final CompoundTag log = compound.contains(TAG_LOG) ? compound.getCompound(TAG_LOG) : compound;
         this.log.deserializeNBT(log);

@@ -76,8 +76,8 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     @Override
     public DeliveryRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserializeTag(buffer);
-        final ILocation location = controller.deserializeTag(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new DeliveryRequestResolver(location, token);
     }

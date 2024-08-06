@@ -9,8 +9,10 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
+import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -126,7 +128,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
         if (stack.isEmpty()) return false;
 
-        final MaterialTextureData textureData = MaterialTextureData.deserializeFromItemStack(stack);
+        final MaterialTextureData textureData = stack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
         if (textureData.isEmpty()) return false;
 
         for (final Block block : textureData.getTexturedComponents().values())
@@ -146,7 +148,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         {
             final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
             final IMateriallyTexturedBlock block = DomumOrnamentumUtils.getBlock(stack);
-            final MaterialTextureData textureData = MaterialTextureData.deserializeFromItemStack(stack);
+            final MaterialTextureData textureData = stack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);;
             if (block != null && !textureData.isEmpty())     // should always be true due to predicate, but hey you never know...
             {
                 int slot = 0;
@@ -171,7 +173,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
     private void addRecipe()
     {
-        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
+        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
         if (inputInventory.isEmpty() || list.isEmpty())
@@ -181,7 +183,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
         for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
         {
-            final ItemStack result = recipe.value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
+            final ItemStack result = recipe.value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null)
             {
@@ -212,7 +214,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ItemStack> additionalOutput = new ArrayList<>();
         for (int i = 1; i < inputIndizes.size(); i++)
         {
-            additionalOutput.add(list.get(inputIndizes.get(i)).value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy());
+            additionalOutput.add(list.get(inputIndizes.get(i)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy());
         }
 
         final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
@@ -220,7 +222,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
           input,
           3,
-          list.get(inputIndizes.get(0)).value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy(),
+          list.get(inputIndizes.get(0)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy(),
           Blocks.AIR,
           null,
           com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
@@ -245,7 +247,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         resourceList.enable();
         resourceList.show();
 
-        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
+        final List<RecipeHolder<ArchitectsCutterRecipe>> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level);
         int inputCount = 0;
         for (int i = 0; i < inputInventory.getContainerSize(); i++)
         {
@@ -258,7 +260,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ArchitectsCutterRecipe> filteredList = new ArrayList<>();
         for (final RecipeHolder<ArchitectsCutterRecipe> recipe : list)
         {
-            final ItemStack result = recipe.value().assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
+            final ItemStack result = recipe.value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
             final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null && doBlock.getComponents().size() == inputCount)
             {
@@ -287,7 +289,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = filteredList.get(index).assemble(inputInventory, Minecraft.getInstance().level.registryAccess()).copy();
+                final ItemStack resource = filteredList.get(index).assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy();
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(Component.literal(String.valueOf(resource.getCount())));

@@ -20,7 +20,7 @@ public class CitizenDataManager implements ICitizenDataManager
     }
 
     @Override
-    public ICitizenDataView createFromNetworkData(final int id, @NotNull final FriendlyByteBuf networkBuffer, final IColonyView colonyView)
+    public ICitizenDataView createFromNetworkData(final int id, @NotNull final RegistryFriendlyByteBuf networkBuffer, final IColonyView colonyView)
     {
         ICitizenDataView citizenDataView = colonyView.getCitizen(id) == null ? new CitizenDataView(id, colonyView) : colonyView.getCitizen(id);
 

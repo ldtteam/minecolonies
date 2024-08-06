@@ -223,7 +223,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void sendGlobalResearchTreePackets(final ServerPlayer player)
     {
-        final FriendlyByteBuf researchTreeFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf researchTreeFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 
         new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);

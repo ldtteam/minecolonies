@@ -225,7 +225,7 @@ public class BuildingPlantation extends AbstractBuilding
     public static class PlantationFieldsModule extends FieldsModule
     {
         @Override
-        public void serializeToView(final @NotNull FriendlyByteBuf buf)
+        public void serializeToView(final @NotNull RegistryFriendlyByteBuf buf)
         {
             super.serializeToView(buf);
             buf.writeInt(getMaxConcurrentPlants());
@@ -321,7 +321,7 @@ public class BuildingPlantation extends AbstractBuilding
         private int maxConcurrentPlants = 0;
 
         @Override
-        public void deserialize(final @NotNull FriendlyByteBuf buf)
+        public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
         {
             super.deserialize(buf);
             maxConcurrentPlants = buf.readInt();

@@ -8,6 +8,7 @@ import com.minecolonies.api.research.factories.ILocalResearchFactory;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -60,8 +61,8 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public ILocalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final int state = nbt.getInt(TAG_STATE);
-        final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
-        final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
+        final ResourceLocation id = ResourceLocation.parse(nbt.getString(TAG_ID));
+        final ResourceLocation branch = ResourceLocation.parse(nbt.getString(TAG_BRANCH));
         final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int progress = nbt.getInt(TAG_PROGRESS);
 

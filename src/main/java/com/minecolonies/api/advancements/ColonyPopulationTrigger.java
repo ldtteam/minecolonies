@@ -33,7 +33,7 @@ public class ColonyPopulationTrigger extends SimpleCriterionTrigger<ColonyPopula
     public static record ColonyPopulationTriggerInstance(Optional<ContextAwarePredicate> player, int populationCount) implements SimpleInstance
     {
         public static final Codec<ColonyPopulationTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(ColonyPopulationTriggerInstance::player),
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(ColonyPopulationTriggerInstance::player),
                 ExtraCodecs.NON_NEGATIVE_INT.fieldOf("population_count").forGetter(ColonyPopulationTriggerInstance::populationCount))
             .apply(builder, ColonyPopulationTriggerInstance::new));
 

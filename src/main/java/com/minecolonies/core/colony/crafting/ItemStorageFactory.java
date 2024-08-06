@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -69,7 +70,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final CompoundTag compound = new CompoundTag();
         @NotNull CompoundTag stackTag = new CompoundTag();
-        storage.getItemStack().save(stackTag);
+        storage.getItemStack().save(provider, stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
         compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
@@ -81,7 +82,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
+        final ItemStack stack = ItemStack.parseOptional(provider, nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
         final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);

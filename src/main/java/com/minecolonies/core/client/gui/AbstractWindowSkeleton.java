@@ -62,7 +62,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      */
     public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent)
     {
-        super(new ResourceLocation(resource));
+        super(ResourceLocation.parse(resource));
         this.resource = resource;
         this.parent = parent;
 

@@ -37,8 +37,8 @@ public class OpenGuiWindowTrigger extends SimpleCriterionTrigger<OpenGuiWindowTr
     public static record OpenGuiWindowTriggerInstance(Optional<ContextAwarePredicate> player, Optional<String> windowResource) implements SimpleInstance
     {
         public static final Codec<OpenGuiWindowTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(OpenGuiWindowTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(Codec.STRING, "window_resource_location").forGetter(OpenGuiWindowTriggerInstance::windowResource))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(OpenGuiWindowTriggerInstance::player),
+                Codec.STRING.optionalFieldOf("window_resource_location").forGetter(OpenGuiWindowTriggerInstance::windowResource))
             .apply(builder, OpenGuiWindowTriggerInstance::new));
 
         public static Criterion<OpenGuiWindowTriggerInstance> openGuiWindow()

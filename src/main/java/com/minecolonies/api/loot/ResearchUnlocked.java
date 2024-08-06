@@ -26,8 +26,8 @@ public class ResearchUnlocked implements LootItemCondition
 {
     public static final Codec<ResearchUnlocked> CODEC = RecordCodecBuilder.create(builder -> builder
         .group(ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.effectId),
-            ExtraCodecs.strictOptionalField(Codec.DOUBLE, "minStrength", Double.MIN_VALUE).forGetter(r -> r.minStrength),
-            ExtraCodecs.strictOptionalField(Codec.DOUBLE, "maxStrength", Double.MAX_VALUE).forGetter(r -> r.maxStrength))
+            Codec.DOUBLE.optionalFieldOf("minStrength", Double.MIN_VALUE).forGetter(r -> r.minStrength),
+          Codec.DOUBLE.optionalFieldOf("maxStrength", Double.MAX_VALUE).forGetter(r -> r.maxStrength))
         .apply(builder, ResearchUnlocked::new));
 
     private final ResourceLocation effectId;

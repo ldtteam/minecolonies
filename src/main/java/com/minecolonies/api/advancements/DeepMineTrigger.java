@@ -36,7 +36,7 @@ public class DeepMineTrigger extends SimpleCriterionTrigger<DeepMineTrigger.Deep
     public static record DeepMineTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<DeepMineTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(DeepMineTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(DeepMineTriggerInstance::player))
             .apply(builder, DeepMineTriggerInstance::new));
 
         public static Criterion<DeepMineTriggerInstance> deepMine()

@@ -233,7 +233,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         @NotNull final ListTag buildingTagList = new ListTag();
         for (@NotNull final IBuilding b : buildings.values())
         {
-            @NotNull final CompoundTag buildingCompound = b.serializeNBT();
+            @NotNull final CompoundTag buildingCompound = b.serializeNBT(provider);
             buildingTagList.add(buildingCompound);
         }
         compound.put(TAG_BUILDINGS, buildingTagList);

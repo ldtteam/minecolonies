@@ -7,7 +7,9 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -37,20 +39,20 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(final IFactoryController controller, final CompoundTag compound)
+    public static BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final ILocation location = controller.deserializeTag(compound.getCompound(NBT_LOCATION));
-        final IToken<?> token = controller.deserializeTag(compound.getCompound(NBT_ID));
+        final ILocation location = controller.deserializeTag(provider, compound.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, compound.getCompound(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public CompoundTag serialize(final IFactoryController controller)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller)
     {
         final CompoundTag compound = new CompoundTag();
 
-        compound.put(NBT_LOCATION, controller.serialize(getLocation()));
-        compound.put(NBT_ID, controller.serialize(getId()));
+        compound.put(NBT_LOCATION, controller.serializeTag(provider, getLocation()));
+        compound.put(NBT_ID, controller.serializeTag(provider, getId()));
 
         return compound;
     }
@@ -63,8 +65,8 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
 
     public static BuildingBasedRequester deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final ILocation location = controller.deserializeTag(buffer);
-        final IToken<?> id = controller.deserializeTag(buffer);
+        final ILocation location = controller.deserialize(buffer);
+        final IToken<?> id = controller.deserialize(buffer);
         return new BuildingBasedRequester(location, id);
     }
 

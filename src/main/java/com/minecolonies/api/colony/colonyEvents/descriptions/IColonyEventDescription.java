@@ -50,16 +50,16 @@ public interface IColonyEventDescription extends INBTSerializable<CompoundTag>
     void setEventPos(BlockPos pos);
 
     /**
-     * Serializes this event to the given {@link FriendlyByteBuf}.
+     * Serializes this event to the given {@link RegistryFriendlyByteBuf}.
      * 
-     * @param buf the {@link FriendlyByteBuf} to serialize to.
+     * @param buf the {@link RegistryFriendlyByteBuf} to serialize to.
      */
     void serialize(final RegistryFriendlyByteBuf buf);
 
     /**
-     * Deserializes this event from the given {@link FriendlyByteBuf}.
+     * Deserializes this event from the given {@link RegistryFriendlyByteBuf}.
      * 
-     * @param buf the {@link FriendlyByteBuf} to deserialize from.
+     * @param buf the {@link RegistryFriendlyByteBuf} to deserialize from.
      */
     void deserialize(final RegistryFriendlyByteBuf buf);
 }

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -65,7 +66,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         if (compound.contains(id))
         {
@@ -83,13 +84,13 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         @NotNull final ListTag filteredItems = new ListTag();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
             @NotNull final CompoundTag itemCompound = new CompoundTag();
-            item.getItemStack().save(itemCompound);
+            item.getItemStack().save(provider, itemCompound);
             filteredItems.add(itemCompound);
         }
         compound.put(TAG_ITEMLIST, filteredItems);

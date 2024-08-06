@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -211,7 +212,7 @@ public class BuildingCowboy extends AbstractBuilding
         }
 
         @Override
-        public void serializeNBT(@NotNull CompoundTag compound)
+        public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound)
         {
             compound.putInt("milkValue", currentMilk);
             compound.putInt("stewValue", currentStew);
@@ -219,7 +220,7 @@ public class BuildingCowboy extends AbstractBuilding
         }
 
         @Override
-        public void deserializeNBT(CompoundTag compound)
+        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
         {
             this.currentMilk = compound.getInt("milkValue");
             this.currentStew = compound.getInt("stewValue");

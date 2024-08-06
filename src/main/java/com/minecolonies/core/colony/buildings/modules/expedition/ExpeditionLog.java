@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -235,7 +236,7 @@ public class ExpeditionLog
      * Save to NBT
      * @param compound target
      */
-    public void serializeNBT(@NotNull final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         compound.putString(TAG_STATUS, this.status.name());
         compound.putInt(TAG_ID, this.id);
@@ -251,7 +252,7 @@ public class ExpeditionLog
         final ListTag equipment = new ListTag();
         for (final ItemStack stack : this.equipment)
         {
-            equipment.add(stack.save(new CompoundTag()));
+            equipment.add(stack.save(provider));
         }
         compound.put(TAG_EQUIPMENT, equipment);
 
@@ -268,7 +269,7 @@ public class ExpeditionLog
         final ListTag loot = new ListTag();
         for (final ItemStorage storage : this.loot.values())
         {
-            loot.add(StandardFactoryController.getInstance().serialize(storage));
+            loot.add(StandardFactoryController.getInstance().serializeTag(provider, storage));
         }
         compound.put(TAG_LOOT, loot);
     }
@@ -277,7 +278,7 @@ public class ExpeditionLog
      * Reload from NBT
      * @param compound source
      */
-    public void deserializeNBT(@NotNull final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         this.status = Enums.getIfPresent(Status.class, compound.getString(TAG_STATUS)).or(Status.NONE);
         this.id = compound.getInt(TAG_ID);
@@ -299,7 +300,7 @@ public class ExpeditionLog
         final ListTag equipment = compound.getList(TAG_EQUIPMENT, Tag.TAG_COMPOUND);
         for (int i = 0; i < equipment.size(); i++)
         {
-            this.equipment.add(ItemStack.of(equipment.getCompound(i)));
+            this.equipment.add(ItemStack.parseOptional(provider, equipment.getCompound(i)));
         }
 
         this.mobs.clear();
@@ -307,7 +308,7 @@ public class ExpeditionLog
         for (int i = 0; i < mobs.size(); ++i)
         {
             final CompoundTag mob = mobs.getCompound(i);
-            final ResourceLocation type = new ResourceLocation(mob.getString(TAG_TYPE));
+            final ResourceLocation type = ResourceLocation.parse(mob.getString(TAG_TYPE));
             final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(type);
             if (entityType != null)
             {
@@ -319,7 +320,7 @@ public class ExpeditionLog
         final ListTag loot = compound.getList(TAG_LOOT, Tag.TAG_COMPOUND);
         for (int i = 0; i < loot.size(); i++)
         {
-            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(loot.getCompound(i));
+            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(provider, loot.getCompound(i));
             this.loot.put(storage, storage);
         }
     }
@@ -355,7 +356,7 @@ public class ExpeditionLog
         buf.writeVarInt(this.loot.size());
         for (final ItemStorage storage : this.loot.values())
         {
-            StandardFactoryController.getInstance().serializeTag(buf, storage);
+            StandardFactoryController.getInstance().serialize(buf, storage);
         }
     }
 

@@ -13,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -177,25 +178,25 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         minimumStock.clear();
         final ListTag minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Tag.TAG_COMPOUND);
         for (int i = 0; i < minimumStockTagList.size(); i++)
         {
             final CompoundTag compoundNBT = minimumStockTagList.getCompound(i);
-            minimumStock.put(new ItemStorage(ItemStack.of(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
+            minimumStock.put(new ItemStorage(ItemStack.parseOptional(provider, compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
         }
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         @NotNull final ListTag minimumStockTagList = new ListTag();
         for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final CompoundTag compoundNBT = new CompoundTag();
-            entry.getKey().getItemStack().save(compoundNBT);
+            entry.getKey().getItemStack().save(provider, compoundNBT);
             compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
             minimumStockTagList.add(compoundNBT);
         }

@@ -6,6 +6,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -55,7 +56,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     private int startingLevelShaft = 0;
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
@@ -76,7 +77,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);

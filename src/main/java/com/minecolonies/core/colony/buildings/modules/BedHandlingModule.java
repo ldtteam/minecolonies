@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +32,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
     private final Set<BlockPos> bedList = new HashSet<>();
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
@@ -43,7 +44,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         if (!bedList.isEmpty())
         {

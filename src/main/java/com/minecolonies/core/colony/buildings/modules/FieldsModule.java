@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.core.util.CollectorUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -44,13 +45,13 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     private boolean shouldAssignManually = false;
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
     }

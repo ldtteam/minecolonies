@@ -36,7 +36,7 @@ public class MaxFieldsTrigger extends SimpleCriterionTrigger<MaxFieldsTrigger.Ma
     public static record MaxFieldsTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<MaxFieldsTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(MaxFieldsTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(MaxFieldsTriggerInstance::player))
             .apply(builder, MaxFieldsTriggerInstance::new));
 
         public static Criterion<MaxFieldsTriggerInstance> maxFields()

@@ -33,9 +33,11 @@ import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -190,10 +192,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeNBT(@NotNull final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         @NotNull final ListTag recipesTagList = recipes.stream()
-                                                  .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
+                                                  .map(iToken -> StandardFactoryController.getInstance().serializeTag(provider, iToken))
                                                   .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
 
@@ -202,14 +204,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             if (disabledRecipes.contains(recipe))
             {
-                disabledRecipesTag.add(StandardFactoryController.getInstance().serialize(recipe));
+                disabledRecipesTag.add(StandardFactoryController.getInstance().serializeTag(provider, recipe));
             }
         }
         compound.put(TAG_DISABLED_RECIPES, disabledRecipesTag);
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         if (compound.contains(getId()))
         {
@@ -224,7 +226,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -237,7 +239,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final ListTag disabledRecipeTag = compound.getList(TAG_DISABLED_RECIPES, Tag.TAG_COMPOUND);
             for (int i = 0; i < disabledRecipeTag.size(); i++)
             {
-                final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(disabledRecipeTag.getCompound(i));
+                final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, disabledRecipeTag.getCompound(i));
                 if (!disabledRecipes.contains(token))
                 {
                     disabledRecipes.add(token);
@@ -290,13 +292,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeInt(storages.size());
         for (final IRecipeStorage storage : storages)
         {
-            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+            StandardFactoryController.getInstance().serialize(buf, storage);
         }
 
         buf.writeInt(disabledStorages.size());
         for (final IRecipeStorage storage : disabledStorages)
         {
-            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+            StandardFactoryController.getInstance().serialize(buf, storage);
         }
 
         buf.writeInt(getMaxRecipes());

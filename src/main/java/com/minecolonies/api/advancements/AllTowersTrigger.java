@@ -36,7 +36,7 @@ public class AllTowersTrigger extends SimpleCriterionTrigger<AllTowersTrigger.Al
     public static record AllTowersTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<AllTowersTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(AllTowersTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(AllTowersTriggerInstance::player))
             .apply(builder, AllTowersTriggerInstance::new));
 
         public static Criterion<AllTowersTriggerInstance> allTowers()

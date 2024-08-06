@@ -40,8 +40,8 @@ public class CitizenEatFoodTrigger extends SimpleCriterionTrigger<CitizenEatFood
         public static final List<ItemPredicate> DEFAULT_OUTPUT_ITEM_PREDICATES = Collections.emptyList();
 
         public static final Codec<CitizenEatFoodTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(CitizenEatFoodTriggerInstance::player),
-                ExtraCodecs.strictOptionalField(ItemPredicate.CODEC.listOf(), "items", DEFAULT_OUTPUT_ITEM_PREDICATES).forGetter(CitizenEatFoodTriggerInstance::itemPredicates))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(CitizenEatFoodTriggerInstance::player),
+              ItemPredicate.CODEC.listOf().optionalFieldOf("items", DEFAULT_OUTPUT_ITEM_PREDICATES).forGetter(CitizenEatFoodTriggerInstance::itemPredicates))
             .apply(builder, CitizenEatFoodTriggerInstance::new));
 
         public static Criterion<CitizenEatFoodTriggerInstance> citizenEatFood()

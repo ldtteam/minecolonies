@@ -156,7 +156,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     /**
      * Serializes to view.
      *
-     * @param buf      FriendlyByteBuf to write to.
+     * @param buf      RegistryFriendlyByteBuf to write to.
      * @param fullSync Whether it's a full sync
      */
     void serializeToView(@NotNull RegistryFriendlyByteBuf buf, final boolean fullSync);

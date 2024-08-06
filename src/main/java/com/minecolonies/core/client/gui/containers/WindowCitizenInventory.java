@@ -156,7 +156,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     public static void renderEntityInInventory(GuiGraphics stack, int x, int y, int scale, Quaternionf quaternionf, @Nullable Quaternionf quaternionf1, LivingEntity entity) {
         stack.pose().pushPose();
         stack.pose().translate(x, y, 50.0D);
-        stack.pose().mulPoseMatrix((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        stack.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
         stack.pose().mulPose(quaternionf);
         Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityrenderdispatcher = Minecraft.getInstance().getEntityRenderDispatcher();

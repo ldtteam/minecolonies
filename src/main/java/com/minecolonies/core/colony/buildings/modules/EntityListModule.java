@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -47,7 +48,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         if (compound.contains(id))
         {
@@ -57,7 +58,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         final ListTag filterableList = compound.getList(TAG_MOBLIST, Tag.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
-            final ResourceLocation res = new ResourceLocation(filterableList.getString(i));
+            final ResourceLocation res = ResourceLocation.parse(filterableList.getString(i));
             if (BuiltInRegistries.ENTITY_TYPE.containsKey(res))
             {
                 mobsAllowed.add(res);
@@ -66,7 +67,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         @NotNull final ListTag filteredMobs = new ListTag();
         for (@NotNull final ResourceLocation mob : mobsAllowed)

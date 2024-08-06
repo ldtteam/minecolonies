@@ -20,7 +20,7 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     /**
      * The buffer with the data.
      */
-    private final FriendlyByteBuf treeBuffer;
+    private final RegistryFriendlyByteBuf treeBuffer;
 
     /**
      * Add or Update a GlobalResearchTree on the client.
@@ -30,13 +30,13 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     public GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.treeBuffer = new FriendlyByteBuf(buf.copy());
+        this.treeBuffer = new RegistryFriendlyByteBuf(buf.copy());
     }
 
     protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        treeBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        treeBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override

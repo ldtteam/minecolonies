@@ -25,12 +25,12 @@ public class CountedIngredient extends Ingredient
 {
     public static final Codec<CountedIngredient> CODEC = RecordCodecBuilder.create(builder -> builder
         .group(Ingredient.CODEC.fieldOf("item").forGetter(CountedIngredient::getChild),
-            ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(CountedIngredient::getCount))
+          ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::getCount))
         .apply(builder, CountedIngredient::new));
 
     public static final Codec<CountedIngredient> CODEC_NONEMPTY = RecordCodecBuilder.create(builder -> builder
         .group(Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(CountedIngredient::getChild),
-            ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "count", 1).forGetter(CountedIngredient::getCount))
+          ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::getCount))
         .apply(builder, CountedIngredient::new));
 
     @NotNull

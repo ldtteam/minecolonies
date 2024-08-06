@@ -26,6 +26,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
@@ -279,23 +280,23 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return saveWithId();
+        return saveWithId(provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
     {
-        this.load(tag);
+        this.loadAdditional(tag, provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = packet.getTag();
         colonyId = compound.getInt(TAG_COLONY);
-        super.onDataPacket(net, packet);
+        super.onDataPacket(net, packet, provider);
     }
 
     @Override
@@ -353,9 +354,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void load(@NotNull final CompoundTag compound)
+    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.load(compound);
+        super.loadAdditional(compound, provider);
         if (compound.contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);
@@ -425,15 +426,15 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (compound.contains(TAG_BUILDING_TYPE))
         {
-            registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+            registryName = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
         }
         buildingPos = worldPosition;
     }
 
     @Override
-    public void saveAdditional(@NotNull final CompoundTag compound)
+    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, provider);
         compound.putInt(TAG_COLONY, colonyId);
         if (rotationMirror != null)
         {
@@ -512,7 +513,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (rotationMirror == null)
         {
-            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint")));
+            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint"), level.registryAccess()));
         }
         return rotationMirror;
     }

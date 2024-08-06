@@ -30,7 +30,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/entity/fishing_hook.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/fishing_hook.png");
 
     /**
      * The render type of the hook.
@@ -66,10 +66,10 @@ public class RenderFishHook extends EntityRenderer<Entity>
             Matrix4f matrix4f = posestack$pose.pose();
             Matrix3f matrix3f = posestack$pose.normal();
             VertexConsumer vertexconsumer = buffer.getBuffer(RENDER_TYPE);
-            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 0.0F, 0, 0, 1);
-            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 1.0F, 0, 1, 1);
-            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 1.0F, 1, 1, 0);
-            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 0.0F, 1, 0, 0);
+            vertex(vertexconsumer, matrix4f, posestack$pose, partialTicks, 0.0F, 0, 0, 1);
+            vertex(vertexconsumer, matrix4f, posestack$pose, partialTicks, 1.0F, 0, 1, 1);
+            vertex(vertexconsumer, matrix4f, posestack$pose, partialTicks, 1.0F, 1, 1, 0);
+            vertex(vertexconsumer, matrix4f, posestack$pose, partialTicks, 0.0F, 1, 0, 0);
             poseStack.popPose();
             int i = citizen.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
             ItemStack itemstack = citizen.getMainHandItem();
@@ -118,15 +118,14 @@ public class RenderFishHook extends EntityRenderer<Entity>
         return (float) first / (float) second;
     }
 
-    private static void vertex(VertexConsumer p_114712_, Matrix4f p_114713_, Matrix3f p_114714_, int p_114715_, float p_114716_, int p_114717_, int p_114718_, int p_114719_)
+    private static void vertex(VertexConsumer consumer, Matrix4f p_114713_, PoseStack.Pose p_114714_, int p_114715_, float p_114716_, int p_114717_, int p_114718_, int p_114719_)
     {
-        p_114712_.vertex(p_114713_, p_114716_ - 0.5F, (float) p_114717_ - 0.5F, 0.0F)
-          .color(255, 255, 255, 255)
-          .uv((float) p_114718_, (float) p_114719_)
-          .overlayCoords(OverlayTexture.NO_OVERLAY)
-          .uv2(p_114715_)
-          .normal(p_114714_, 0.0F, 1.0F, 0.0F)
-          .endVertex();
+        consumer.addVertex(p_114713_, p_114716_ - 0.5F, (float) p_114717_ - 0.5F, 0.0F)
+          .setColor(255, 255, 255, 255)
+          .setUv((float) p_114718_, (float) p_114719_)
+          .setOverlay(OverlayTexture.NO_OVERLAY)
+          .setLight(p_114715_)
+          .setNormal(p_114714_, 0.0F, 1.0F, 0.0F);
     }
 
     private static void stringVertex(float p_174119_, float p_174120_, float p_174121_, VertexConsumer p_174122_, PoseStack.Pose p_174123_, float p_174124_, float p_174125_)
@@ -138,10 +137,10 @@ public class RenderFishHook extends EntityRenderer<Entity>
         float f4 = p_174120_ * (p_174125_ * p_174125_ + p_174125_) * 0.5F + 0.25F - f1;
         float f5 = p_174121_ * p_174125_ - f2;
         float f6 = Mth.sqrt(f3 * f3 + f4 * f4 + f5 * f5);
-        f3 = f3 / f6;
-        f4 = f4 / f6;
-        f5 = f5 / f6;
-        p_174122_.vertex(p_174123_.pose(), f, f1, f2).color(0, 0, 0, 255).normal(p_174123_.normal(), f3, f4, f5).endVertex();
+        f3 /= f6;
+        f4 /= f6;
+        f5 /= f6;
+        p_174122_.addVertex(p_174123_, f, f1, f2).setColor(-16777216).setNormal(p_174123_, f3, f4, f5);
     }
 
     /**

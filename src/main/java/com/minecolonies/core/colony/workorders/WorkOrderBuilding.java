@@ -239,7 +239,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull FriendlyByteBuf buf)
+    public void serializeViewNetworkData(@NotNull RegistryFriendlyByteBuf buf)
     {
         super.serializeViewNetworkData(buf);
         buf.writeUtf(customName);

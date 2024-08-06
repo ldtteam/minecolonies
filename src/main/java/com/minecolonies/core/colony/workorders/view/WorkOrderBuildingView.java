@@ -65,7 +65,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     }
 
     @Override
-    public void deserialize(@NotNull FriendlyByteBuf buf)
+    public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
     {
         super.deserialize(buf);
         customBuildingName = buf.readUtf(32767);

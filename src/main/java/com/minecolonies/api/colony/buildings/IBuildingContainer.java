@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -14,10 +15,10 @@ import java.util.List;
 public interface IBuildingContainer extends ISchematicProvider, IItemHandlerCapProvider
 {
     @Override
-    void deserializeNBT(CompoundTag compound);
+    void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound);
 
     @Override
-    CompoundTag serializeNBT();
+    CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider);
 
     /**
      * Get the pick up priority of the building.

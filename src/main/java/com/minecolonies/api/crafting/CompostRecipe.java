@@ -31,7 +31,7 @@ public class CompostRecipe implements Recipe<Container>
 {
     public static final Codec<CompostRecipe> CODEC = RecordCodecBuilder.create(builder -> builder
         .group(Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(CompostRecipe::getInput),
-            ExtraCodecs.strictOptionalField(ExtraCodecs.POSITIVE_INT, "strength", 1).forGetter(CompostRecipe::getStrength))
+          ExtraCodecs.POSITIVE_INT.optionalFieldOf("strength", 1).forGetter(CompostRecipe::getStrength))
         .apply(builder, CompostRecipe::new));
 
     private static final int FERMENT_TIME = 24000;

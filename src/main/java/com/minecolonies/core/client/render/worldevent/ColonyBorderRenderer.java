@@ -9,10 +9,7 @@ import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -52,7 +49,7 @@ public class ColonyBorderRenderer
 
             final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
             final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
-            final BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+            final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
             final int nearestColonyId = ctx.nearestColony.getID();
             final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
             final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
@@ -92,7 +89,6 @@ public class ColonyBorderRenderer
             }
             colonies = draw(bufferbuilder, coloniesMap, nearestColonyId, playerChunkPos, playerRenderDist);
             chunktickets = draw(bufferbuilder, chunkticketsMap, nearestColonyId, playerChunkPos, playerRenderDist);
-            bufferbuilder.unsetDefaultColor();
         }
 
         final VertexBuffer p = Screen.hasControlDown() ? chunktickets : colonies;
@@ -111,18 +107,16 @@ public class ColonyBorderRenderer
     }
 
 
-    private static void pushShaderMVstack(final PoseStack pushWith)
+    private static void pushShaderMVstack(final PoseStack ps)
     {
-        final PoseStack ps = RenderSystem.getModelViewStack();
-        ps.pushPose();
-        ps.last().pose().mul(pushWith.last().pose());
-        ps.last().normal().mul(pushWith.last().normal());
+        RenderSystem.getModelViewStack().pushMatrix();
+        RenderSystem.getModelViewStack().mul(ps.last().pose());
         RenderSystem.applyModelViewMatrix();
     }
 
     private static void popShaderMVstack()
     {
-        RenderSystem.getModelViewStack().popPose();
+        RenderSystem.getModelViewStack().popMatrix();
         RenderSystem.applyModelViewMatrix();
     }
 
@@ -136,7 +130,6 @@ public class ColonyBorderRenderer
         final Map<Integer, Color> colonyColours = new HashMap<>();
         final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();
 
-        bufferbuilder.begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
         mapToDraw.forEach((chunkPos, colonyId) -> {
             if (colonyId == 0 || chunkPos.x <= playerChunkPos.x - playerRenderDist || chunkPos.x >= playerChunkPos.x + playerRenderDist
                 || chunkPos.z <= playerChunkPos.z - playerRenderDist || chunkPos.z >= playerChunkPos.z + playerRenderDist)
@@ -162,15 +155,15 @@ public class ColonyBorderRenderer
                     return new Color(team.getColor());
                 });
 
-                bufferbuilder.defaultColor(colour.getRed(), colour.getGreen(), colour.getBlue(), colour.getAlpha());
+                bufferbuilder.setColor(colour.getRed(), colour.getGreen(), colour.getBlue(), colour.getAlpha());
             }
             else if (colonyId == playerColonyId)
             {
-                bufferbuilder.defaultColor(255, 255, 255, 255);
+                bufferbuilder.setColor(255, 255, 255, 255);
             }
             else
             {
-                bufferbuilder.defaultColor(255, 70, 70, 255);
+                bufferbuilder.setColor(255, 70, 70, 255);
             }
 
             mutableChunkPos.setX(chunkPos.x);
@@ -190,23 +183,23 @@ public class ColonyBorderRenderer
             // vert lines
             if (north || west)
             {
-                bufferbuilder.vertex(minX, 0, minZ).endVertex();
-                bufferbuilder.vertex(minX, CHUNK_HEIGHT, minZ).endVertex();
+                bufferbuilder.addVertex(minX, 0, minZ);
+                bufferbuilder.addVertex(minX, CHUNK_HEIGHT, minZ);
             }
             if (north || east)
             {
-                bufferbuilder.vertex(maxX, 0, minZ).endVertex();
-                bufferbuilder.vertex(maxX, CHUNK_HEIGHT, minZ).endVertex();
+                bufferbuilder.addVertex(maxX, 0, minZ);
+                bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, minZ);
             }
             if (south || west)
             {
-                bufferbuilder.vertex(minX, 0, maxZ).endVertex();
-                bufferbuilder.vertex(minX, CHUNK_HEIGHT, maxZ).endVertex();
+                bufferbuilder.addVertex(minX, 0, maxZ);
+                bufferbuilder.addVertex(minX, CHUNK_HEIGHT, maxZ);
             }
             if (south || east)
             {
-                bufferbuilder.vertex(maxX, 0, maxZ).endVertex();
-                bufferbuilder.vertex(maxX, CHUNK_HEIGHT, maxZ).endVertex();
+                bufferbuilder.addVertex(maxX, 0, maxZ);
+                bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, maxZ);
             }
 
             // horizontal lines
@@ -216,21 +209,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX + shift, 0, minZ).endVertex();
-                        bufferbuilder.vertex(minX + shift, CHUNK_HEIGHT, minZ).endVertex();
+                        bufferbuilder.addVertex(minX + shift, 0, minZ);
+                        bufferbuilder.addVertex(minX + shift, CHUNK_HEIGHT, minZ);
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX, y, minZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, minZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, minZ);
+                        bufferbuilder.addVertex(maxX, y, minZ);
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.vertex(minX, y, minZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, minZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, minZ);
+                        bufferbuilder.addVertex(maxX, y, minZ);
                     }
                 }
             }
@@ -240,21 +233,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX + shift, 0, maxZ).endVertex();
-                        bufferbuilder.vertex(minX + shift, CHUNK_HEIGHT, maxZ).endVertex();
+                        bufferbuilder.addVertex(minX + shift, 0, maxZ);
+                        bufferbuilder.addVertex(minX + shift, CHUNK_HEIGHT, maxZ);
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX, y, maxZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, maxZ);
+                        bufferbuilder.addVertex(maxX, y, maxZ);
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.vertex(minX, y, maxZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, maxZ);
+                        bufferbuilder.addVertex(maxX, y, maxZ);
                     }
                 }
             }
@@ -264,21 +257,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX, 0, minZ + shift).endVertex();
-                        bufferbuilder.vertex(minX, CHUNK_HEIGHT, minZ + shift).endVertex();
+                        bufferbuilder.addVertex(minX, 0, minZ + shift);
+                        bufferbuilder.addVertex(minX, CHUNK_HEIGHT, minZ + shift);
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(minX, y, minZ).endVertex();
-                        bufferbuilder.vertex(minX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, minZ);
+                        bufferbuilder.addVertex(minX, y, maxZ);
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.vertex(minX, y, minZ).endVertex();
-                        bufferbuilder.vertex(minX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(minX, y, minZ);
+                        bufferbuilder.addVertex(minX, y, maxZ);
                     }
                 }
             }
@@ -288,27 +281,27 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(maxX, 0, minZ + shift).endVertex();
-                        bufferbuilder.vertex(maxX, CHUNK_HEIGHT, minZ + shift).endVertex();
+                        bufferbuilder.addVertex(maxX, 0, minZ + shift);
+                        bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, minZ + shift);
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.vertex(maxX, y, minZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(maxX, y, minZ);
+                        bufferbuilder.addVertex(maxX, y, maxZ);
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.vertex(maxX, y, minZ).endVertex();
-                        bufferbuilder.vertex(maxX, y, maxZ).endVertex();
+                        bufferbuilder.addVertex(maxX, y, minZ);
+                        bufferbuilder.addVertex(maxX, y, maxZ);
                     }
                 }
             }
         });
 
-        final BufferBuilder.RenderedBuffer renderedBuffer = bufferbuilder.endOrDiscardIfEmpty();
+        final MeshData renderedBuffer = bufferbuilder.build();
         if (renderedBuffer == null)
         {
             return null;

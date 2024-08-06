@@ -33,5 +33,5 @@ public interface ICitizenDataManager
      * @param colonyView    the colony the citizen belongs to.
      * @return The citizen data view.
      */
-    ICitizenDataView createFromNetworkData(final int id, @NotNull final FriendlyByteBuf networkBuffer, final IColonyView colonyView);
+    ICitizenDataView createFromNetworkData(final int id, @NotNull final RegistryFriendlyByteBuf networkBuffer, final IColonyView colonyView);
 }

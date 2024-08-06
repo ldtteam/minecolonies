@@ -175,12 +175,11 @@ public interface IColonyView extends IColony
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link FriendlyByteBuf} to read from.
+     * @param buf               {@link RegistryFriendlyByteBuf} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
-     * @param world             the world it is in.
      * @return null == no response.
      */
-    void handleColonyViewMessage(@NotNull FriendlyByteBuf buf, boolean isNewSubscription);
+    void handleColonyViewMessage(@NotNull RegistryFriendlyByteBuf buf, boolean isNewSubscription);
 
     /**
      * Update permissions.
@@ -188,7 +187,7 @@ public interface IColonyView extends IColony
      * @param buf buffer containing permissions.
      * @return null == no response
      */
-    void handlePermissionsViewMessage(@NotNull FriendlyByteBuf buf);
+    void handlePermissionsViewMessage(@NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
@@ -196,7 +195,7 @@ public interface IColonyView extends IColony
      * @param buf Network data.
      * @return null == no response.
      */
-    void handleColonyViewWorkOrderMessage(FriendlyByteBuf buf);
+    void handleColonyViewWorkOrderMessage(RegistryFriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
@@ -205,14 +204,14 @@ public interface IColonyView extends IColony
      * @param buf Network data.
      * @return null == no response.
      */
-    void handleColonyViewCitizensMessage(int id, FriendlyByteBuf buf);
+    void handleColonyViewCitizensMessage(int id, RegistryFriendlyByteBuf buf);
 
     /**
      * Handles visitor view messages
      * @param refresh if all need to be refreshed.
      * @param visitorViewData the new data to set
      */
-    void handleColonyViewVisitorMessage(final FriendlyByteBuf visitorViewData, final boolean refresh);
+    void handleColonyViewVisitorMessage(final RegistryFriendlyByteBuf visitorViewData, final boolean refresh);
 
     /**
      * Remove a citizen from the ColonyView.
@@ -245,7 +244,7 @@ public interface IColonyView extends IColony
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response.
      */
-    void handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+    void handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * Handle the colony view research manager updating.

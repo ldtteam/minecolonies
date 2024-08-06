@@ -62,14 +62,14 @@ public interface IResearchCost
     void write(@NotNull final CompoundTag compound);
 
     /**
-     * Serialize the cost instance to the given {@link FriendlyByteBuf}.
+     * Serialize the cost instance to the given {@link RegistryFriendlyByteBuf}.
      *
      * @param buf the network buffer.
      */
     void serialize(@NotNull final RegistryFriendlyByteBuf buf);
 
     /**
-     * Deserialize the {@link FriendlyByteBuf} to this cost instance.
+     * Deserialize the {@link RegistryFriendlyByteBuf} to this cost instance.
      *
      * @param buf the network buffer.
      */

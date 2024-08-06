@@ -36,7 +36,7 @@ public class UndertakerTotemTrigger extends SimpleCriterionTrigger<UndertakerTot
     public static record UndertakerTotemTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<UndertakerTotemTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(UndertakerTotemTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(UndertakerTotemTriggerInstance::player))
             .apply(builder, UndertakerTotemTriggerInstance::new));
 
         public static Criterion<UndertakerTotemTriggerInstance> undertakerTotem()

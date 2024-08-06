@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -51,17 +53,17 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final CompoundTag settingsCompound = compound.contains("settings") ? compound.getCompound("settings") : compound;
         final ListTag list = settingsCompound.getList("settingslist", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundTag entryCompound = list.getCompound(i);
-            final ResourceLocation key = new ResourceLocation(entryCompound.getString("key"));
+            final ResourceLocation key = ResourceLocation.parse(entryCompound.getString("key"));
             try
             {
-                final ISetting setting = StandardFactoryController.getInstance().deserializeTag(entryCompound.getCompound("value"));
+                final ISetting setting = StandardFactoryController.getInstance().deserializeTag(provider, entryCompound.getCompound("value"));
                 final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
                 if (settings.containsKey(settingsKey))
                 {
@@ -77,14 +79,14 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         final ListTag list = new ListTag();
         for (final Map.Entry<ISettingKey<?>, ISetting<?>> setting : settings.entrySet())
         {
             final CompoundTag entryCompound = new CompoundTag();
             entryCompound.putString("key", setting.getKey().getUniqueId().toString());
-            entryCompound.put("value", StandardFactoryController.getInstance().serialize(setting.getValue()));
+            entryCompound.put("value", StandardFactoryController.getInstance().serializeTag(provider, setting.getValue()));
             list.add(entryCompound);
         }
         compound.put("settingslist", list);

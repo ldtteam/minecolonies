@@ -19,7 +19,6 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
@@ -185,14 +184,14 @@ public class ColonyBlueprintRenderer
         {
             final BoxRenderData buildingData = entry.getValue();
 
-            if (buildingData.box().getPos1() != INVALID_POS)
+            if (buildingData.box().pos1() != INVALID_POS)
             {
                 ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
-                        AABB.encapsulatingFullBlocks(buildingData.box().getPos1(), buildingData.box().getPos2().offset(1, 1, 1)),
+                        AABB.encapsulatingFullBlocks(buildingData.box().pos1(), buildingData.box().pos2().offset(1, 1, 1)),
                         0.08f, 0xFF0000FF, false);
             }
 
-            buildingData.box().getAnchor().ifPresent(pos ->
+            buildingData.box().anchor().ifPresent(pos ->
             {
                 if (ctx.clientPlayer.isShiftKeyDown())
                 {

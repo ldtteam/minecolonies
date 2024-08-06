@@ -90,14 +90,14 @@ public class TagItemCost implements IResearchCost
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(this.count);
         buf.writeResourceLocation(this.tag.location());
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         this.count = buf.readInt();
         this.tag = TagKey.create(Registries.ITEM, buf.readResourceLocation());

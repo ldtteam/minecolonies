@@ -321,7 +321,7 @@ public class CraftingTagAuditor
     private static void doToolsAudit(@NotNull final BufferedWriter writer,
                                      @NotNull final MinecraftServer server) throws IOException
     {
-        final List<ToolUsage> toolUsages = ToolsAnalyzer.findTools();
+        final List<ToolUsage> toolUsages = ToolsAnalyzer.findTools(server.overworld());
 
         writeItemHeaders(writer);
         for (final ToolUsage tool : toolUsages)

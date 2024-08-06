@@ -14,6 +14,7 @@ import com.minecolonies.core.colony.jobs.JobQuarrier;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.core.util.BuildingUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -73,9 +74,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         if (compound.contains(getModuleSerializationIdentifier()))
         {
@@ -95,9 +96,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
-        super.serializeNBT(compound);
+        super.serializeNBT(provider, compound);
 
         if (!assignedCitizen.isEmpty())
         {

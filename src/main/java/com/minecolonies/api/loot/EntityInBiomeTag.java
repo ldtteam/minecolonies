@@ -19,7 +19,7 @@ public class EntityInBiomeTag implements LootItemCondition
 {
     public static final EntityInBiomeTag ANY = new EntityInBiomeTag(null);
     public static final Codec<EntityInBiomeTag> CODEC = RecordCodecBuilder.create(builder -> builder
-        .group(ExtraCodecs.strictOptionalField(TagKey.hashedCodec(Registries.BIOME), "tag", null).forGetter(t -> t.tag))
+        .group(TagKey.hashedCodec(Registries.BIOME).optionalFieldOf("tag", null).forGetter(t -> t.tag))
         .apply(builder, EntityInBiomeTag::ofNullable));
 
     @Nullable

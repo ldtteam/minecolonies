@@ -25,7 +25,7 @@ public class WarehouseRequestTaskModuleView extends RequestTaskModuleView
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         tasks.clear();
         super.deserialize(buf);

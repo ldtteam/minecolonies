@@ -36,7 +36,7 @@ public class CitizenBuryTrigger extends SimpleCriterionTrigger<CitizenBuryTrigge
     public static record CitizenBuryTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<CitizenBuryTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(CitizenBuryTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(CitizenBuryTriggerInstance::player))
             .apply(builder, CitizenBuryTriggerInstance::new));
 
         public static Criterion<CitizenBuryTriggerInstance> citizenBury()

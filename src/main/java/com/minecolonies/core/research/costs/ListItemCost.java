@@ -90,7 +90,7 @@ public class ListItemCost implements IResearchCost
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(this.count);
         buf.writeInt(this.items.size());
@@ -101,7 +101,7 @@ public class ListItemCost implements IResearchCost
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         this.count = buf.readInt();
         this.items = new ArrayList<>();

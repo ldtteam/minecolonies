@@ -19,7 +19,7 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     /**
      * The buffer with the data.
      */
-    private final FriendlyByteBuf managerBuffer;
+    private final RegistryFriendlyByteBuf managerBuffer;
 
     /**
      * Add or Update a CustomRecipeManager on the client.
@@ -29,13 +29,13 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     public CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.managerBuffer = new FriendlyByteBuf(buf.copy());
+        this.managerBuffer = new RegistryFriendlyByteBuf(buf.copy());
     }
 
     protected CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        managerBuffer = new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        managerBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
     }
 
     @Override

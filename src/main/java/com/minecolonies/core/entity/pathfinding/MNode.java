@@ -99,7 +99,7 @@ public class MNode implements Comparable<MNode>
      * Create an MNode from a bytebuf.
      * @param byteBuf the buffer to load it from.
      */
-    public MNode(final FriendlyByteBuf byteBuf)
+    public MNode(final RegistryFriendlyByteBuf byteBuf)
     {
         if (byteBuf.readBoolean())
         {
@@ -117,7 +117,7 @@ public class MNode implements Comparable<MNode>
      * Serialize the Node to buf.
      * @param byteBuf
      */
-    public void serializeToBuf(final FriendlyByteBuf byteBuf)
+    public void serializeToBuf(final RegistryFriendlyByteBuf byteBuf)
     {
         byteBuf.writeBoolean(this.parent != null);
         if (this.parent != null)

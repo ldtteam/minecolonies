@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -49,14 +50,14 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
     @Override
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
     {
-        return output.serialize(controller);
+        return output.serialize(provider, controller);
     }
 
     @NotNull
     @Override
     public BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        return BuildingBasedRequester.deserialize(controller, nbt);
+        return BuildingBasedRequester.deserialize(provider, controller, nbt);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -118,13 +119,14 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         @NotNull
         @Override
         public CompoundTag serialize(
+          @NotNull final HolderLookup.Provider provider,
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemCrafterJobDataStore standardRequestSystemCrafterJobDataStore)
         {
             final CompoundTag compound = new CompoundTag();
 
-            compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemCrafterJobDataStore.id));
-            compound.put(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
-            compound.put(TAG_ASSIGNED_LIST, standardRequestSystemCrafterJobDataStore.tasks.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_TOKEN, controller.serializeTag(provider, standardRequestSystemCrafterJobDataStore.id));
+            compound.put(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(s -> controller.serializeTag(provider, s)).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_ASSIGNED_LIST, standardRequestSystemCrafterJobDataStore.tasks.stream().map(s -> controller.serializeTag(provider, s)).collect(NBTUtils.toListNBT()));
 
             return compound;
         }
@@ -135,10 +137,10 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         {
             final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
+                                                  .map(tag -> (IToken<?>) controller.deserializeTag(provider, tag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getList(TAG_ASSIGNED_LIST, Tag.TAG_COMPOUND))
-                                               .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
+                                               .map(tag -> (IToken<?>) controller.deserializeTag(provider, tag))
                                                .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);
@@ -160,19 +162,19 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
           throws Throwable
         {
-            final IToken<?> id = controller.deserializeTag(buffer);
+            final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();
             final int queueSize = buffer.readInt();
             for (int i = 0; i < queueSize; ++i)
             {
-                queue.add(controller.deserializeTag(buffer));
+                queue.add(controller.deserialize(buffer));
             }
 
             final List<IToken<?>> tasks = new ArrayList<>();
             final int tasksSize = buffer.readInt();
             for (int i = 0; i < tasksSize; ++i)
             {
-                tasks.add(controller.deserializeTag(buffer));
+                tasks.add(controller.deserialize(buffer));
             }
 
             return new StandardRequestSystemCrafterJobDataStore(id, queue, tasks);

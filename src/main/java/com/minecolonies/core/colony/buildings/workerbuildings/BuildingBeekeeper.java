@@ -210,7 +210,7 @@ public class BuildingBeekeeper extends AbstractBuilding
         }
 
         @Override
-        public void deserialize(@NotNull FriendlyByteBuf buf)
+        public void deserialize(@NotNull RegistryFriendlyByteBuf buf)
         {
             super.deserialize(buf);
 

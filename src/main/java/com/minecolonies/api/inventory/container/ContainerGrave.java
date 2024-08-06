@@ -56,7 +56,7 @@ public class ContainerGrave extends AbstractContainerMenu
      * @param inv      the inventory.
      * @param extra    some extra data.
      */
-    public ContainerGrave(final int windowId, final Inventory inv, final FriendlyByteBuf extra)
+    public ContainerGrave(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf extra)
     {
         super(ModContainers.graveInv.get(), windowId);
         final BlockPos grave = extra.readBlockPos();

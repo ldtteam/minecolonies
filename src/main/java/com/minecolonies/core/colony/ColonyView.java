@@ -23,6 +23,7 @@ import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -43,10 +44,10 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -55,7 +56,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
@@ -63,7 +63,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,9 +111,8 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListTag        colonyFlag      = new BannerPattern.Builder()
-                                               .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-                                               .toListTag();
+    private BannerPatternLayers colonyFlag;
+
 
     private BlockPos center = BlockPos.ZERO;
 
@@ -439,7 +439,7 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
-        buf.writeNbt(colony.getQuestManager().serializeNBT());
+        buf.writeNbt(colony.getQuestManager().serializeNBT(buf.registryAccess()));
         buf.writeInt(colony.getDay());
     }
 
@@ -538,13 +538,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public CompoundTag write(final CompoundTag colonyCompound)
+    public CompoundTag write(final CompoundTag colonyCompound, final HolderLookup.Provider provider)
     {
         return new CompoundTag();
     }
 
     @Override
-    public void read(final CompoundTag compound)
+    public void read(final CompoundTag compound, final HolderLookup.Provider provider)
     {
         //Noop
     }
@@ -771,7 +771,7 @@ public final class ColonyView implements IColonyView
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link FriendlyByteBuf} to read from.
+     * @param buf               {@link RegistryFriendlyByteBuf} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
      * @return null == no response.
      */
@@ -779,9 +779,11 @@ public final class ColonyView implements IColonyView
     @Override
     public void handleColonyViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final boolean isNewSubscription)
     {
+        this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, this.getWorld()), DyeColor.WHITE).build();
+
         //  General Attributes
         name = buf.readUtf(32767);
-        dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         center = buf.readBlockPos();
         //  Citizenry
         citizenCount = buf.readInt();
@@ -803,7 +805,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(BuiltInRegistries.BLOCK.get(new ResourceLocation((buf.readUtf(32767)))));
+            freeBlocks.add(BuiltInRegistries.BLOCK.get(ResourceLocation.parse((buf.readUtf(32767)))));
         }
 
         final int posListSize = buf.readInt();
@@ -871,7 +873,7 @@ public final class ColonyView implements IColonyView
               buf.readBlockPos(),
               buf.readInt(),
               buf.readBoolean(),
-              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
+              ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
@@ -881,7 +883,7 @@ public final class ColonyView implements IColonyView
               buf.readBlockPos(),
               buf.readInt(),
               false,
-              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
+              ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)))));
         }
 
         final int ticketChunkCount = buf.readInt();
@@ -911,7 +913,7 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
-        this.questManager.deserializeNBT(buf.readNbt());
+        this.questManager.deserializeNBT(buf.registryAccess(), buf.readNbt());
         this.day = buf.readInt();
     }
 
@@ -977,7 +979,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyViewVisitorMessage(final FriendlyByteBuf visitorBuf, final boolean refresh)
+    public void handleColonyViewVisitorMessage(final RegistryFriendlyByteBuf visitorBuf, final boolean refresh)
     {
         final Map<Integer, IVisitorViewData> visitorCache = new HashMap<>(visitors);
 
@@ -1348,7 +1350,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    public void onServerTick(@NotNull final ServerTickEvent event)
     {
 
     }
@@ -1361,7 +1363,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
+    public void onWorldTick(@NotNull final LevelTickEvent event)
     {
 
     }

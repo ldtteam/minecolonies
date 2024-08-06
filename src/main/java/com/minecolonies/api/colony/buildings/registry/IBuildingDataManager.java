@@ -60,7 +60,7 @@ public interface IBuildingDataManager
      * @param networkBuffer The data from which to load the new {@link IBuildingView} stored in the networks {@link ByteBuf}.
      * @return The {@link IBuildingView} with the data loaded from the {@link ByteBuf}.
      */
-    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer);
+    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final RegistryFriendlyByteBuf networkBuffer);
 
     /**
      * Opens the building browser window for the specific building type.  Client side only.

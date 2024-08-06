@@ -16,13 +16,13 @@ public final class ModLootTables
     public static final ResourceLocation FISHING = FISHERMAN_ID;
 
     /** Fisherman secondary fish table */
-    public static final ResourceLocation FISHING_FISH = new ResourceLocation(FISHING + "/fish");
+    public static final ResourceLocation FISHING_FISH = ResourceLocation.parse(FISHING + "/fish");
 
     /** Fisherman secondary junk table */
-    public static final ResourceLocation FISHING_JUNK = new ResourceLocation(FISHING + "/junk");
+    public static final ResourceLocation FISHING_JUNK = ResourceLocation.parse(FISHING + "/junk");
 
     /** Fisherman secondary treasure table */
-    public static final ResourceLocation FISHING_TREASURE = new ResourceLocation(FISHING + "/treasure");
+    public static final ResourceLocation FISHING_TREASURE = ResourceLocation.parse(FISHING + "/treasure");
 
     /** Ids for the fisherman bonus loot tables */
     public static final Map<Integer, ResourceLocation> FISHERMAN_BONUS = createFishermanBonusMap();
@@ -32,7 +32,7 @@ public final class ModLootTables
         final Map<Integer, ResourceLocation> map = new HashMap<>();
         for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level)
         {
-            map.put(level, new ResourceLocation(FISHING + "/bonus" + level));
+            map.put(level, ResourceLocation.parse(FISHING + "/bonus" + level));
         }
         return Collections.unmodifiableMap(map);
     }

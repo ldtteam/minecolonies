@@ -22,8 +22,9 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -535,8 +536,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
               (float) (0.4D / (this.world.random.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
             this.entityFishHook.setAngler((EntityCitizen) worker,
-              EnchantmentHelper.getFishingLuckBonus(worker.getMainHandItem()),
-              (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingSpeedBonus(worker.getMainHandItem())));
+              EnchantmentHelper.getFishingLuckBonus((ServerLevel) worker.level(), worker.getMainHandItem(), worker),
+              (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingTimeReduction((ServerLevel) worker.level(), worker.getMainHandItem(), worker)));
             world.addFreshEntity(this.entityFishHook);
         }
 
@@ -673,11 +674,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
                                      .withParameter(LootContextParams.ORIGIN, entityFishHook.position())
                                      .withParameter(LootContextParams.THIS_ENTITY, entityFishHook)
                                      .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
-                                     .withParameter(LootContextParams.KILLER_ENTITY, worker)
+                                     .withParameter(LootContextParams.ATTACKING_ENTITY, worker)
                                      .withLuck((float) getPrimarySkillLevel())
                                      .create(LootContextParamSets.FISHING);
         final LootTable bonusLoot =
-          this.world.getServer().getLootData().getLootTable(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
+          this.world.getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE, ModLootTables.FISHERMAN_BONUS.get(this.building.getBuildingLevel())));
         final List<ItemStack> loot = bonusLoot.getRandomItems(context);
 
         for (final ItemStack itemstack : loot)

@@ -36,8 +36,10 @@ public class PlaceSupplyTrigger extends SimpleCriterionTrigger<PlaceSupplyTrigge
     public static record PlaceSupplyTriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleInstance
     {
         public static final Codec<PlaceSupplyTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
-            .group(ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(PlaceSupplyTriggerInstance::player))
+            .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(PlaceSupplyTriggerInstance::player))
             .apply(builder, PlaceSupplyTriggerInstance::new));
+
+
 
         public static Criterion<PlaceSupplyTriggerInstance> placeSupply()
         {
