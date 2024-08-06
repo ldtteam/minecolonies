@@ -175,7 +175,7 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private <T extends Event> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos, final Consumer<Event> eventCancellation)
+    private <T extends Event> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos, final Consumer<T> eventCancellation)
     {
         if (event instanceof ICancellableEvent cancellableEvent)
         {
@@ -507,7 +507,7 @@ public class ColonyPermissionEventHandler
      */
     private <T extends Event> boolean checkEventCancellation(
       final Action action, @NotNull final Player playerIn, @NotNull final Level world, @NotNull final T event,
-      @Nullable final BlockPos pos, Consumer<Event> eventCancellationConsumer)
+      @Nullable final BlockPos pos, Consumer<T> eventCancellationConsumer)
     {
         @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 

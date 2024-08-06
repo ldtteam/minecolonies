@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.eventhooks.citizenEvents;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static VisitorSpawnedEvent loadFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public static VisitorSpawnedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserializeNBT(provider, compound);

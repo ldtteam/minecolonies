@@ -20,15 +20,18 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -269,9 +272,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     {
         if (stack.getItem().equals(Items.ENCHANTED_BOOK))
         {
-            return EnchantedBookItem.getEnchantments(stack).stream()
-                     .mapToInt(nbt -> ((CompoundTag) nbt).getShort("lvl"))
-                     .max().orElse(0);
+            int level = 0;
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet())
+            {
+                level = Math.max(level, entry.getIntValue());
+            }
+            return level;
         }
         return 0;
     }
@@ -387,7 +393,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
                 if (!stack.isEmpty() && stack.isEnchantable())
                 {
-                    EnchantmentHelper.enchantItem(worker.getRandom(), stack, getSecondarySkillLevel() > 50 ? 2 : 1, false);
+                    EnchantmentHelper.enchantItem(worker.getRandom(), stack, getSecondarySkillLevel() > 50 ? 2 : 1, world.registryAccess(), Optional.empty());
                     break;
                 }
             }

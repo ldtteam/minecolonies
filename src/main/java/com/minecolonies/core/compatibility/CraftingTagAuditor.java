@@ -374,7 +374,7 @@ public class CraftingTagAuditor
             writeItemData(writer, item);
 
             writer.write(',');
-            writer.write(Integer.toString(properties.getNutrition()));
+            writer.write(Integer.toString(properties.nutrition()));
             writer.write(',');
             writer.write(Integer.toString(FoodUtils.getBuildingLevelForFood(item)));
             writer.write(',');

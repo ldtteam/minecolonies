@@ -177,8 +177,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
         if(buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel())
         {
-            final ItemStack resourceStackOfOne = new ItemStack(resource.getItem(), 1);
-            resourceStackOfOne.setTag(resource.getItemStack().getTag());
+            final ItemStack resourceStackOfOne = resource.getItemStack().copy();
+            resourceStackOfOne.setCount(1);
             findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resourceStackOfOne);
         }
     }

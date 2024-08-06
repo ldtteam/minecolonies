@@ -8,8 +8,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,37 +47,36 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public CompoundTag serialize(
-      @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver buildingRequestResolver)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_TOKEN, controller.serialize(buildingRequestResolver.getId()));
-        compound.put(NBT_LOCATION, controller.serialize(buildingRequestResolver.getLocation()));
+        compound.put(NBT_TOKEN, controller.serializeTag(provider, buildingRequestResolver.getId()));
+        compound.put(NBT_LOCATION, controller.serializeTag(provider, buildingRequestResolver.getLocation()));
         return compound;
     }
 
     @NotNull
     @Override
-    public BuildingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public BuildingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
         return new BuildingRequestResolver(location, token);
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingRequestResolver input, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, BuildingRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public BuildingRequestResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public BuildingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
-        final IToken<?> token = controller.deserializeTag(buffer);
-        final ILocation location = controller.deserializeTag(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
+        final ILocation location = controller.deserialize(buffer);
 
         return new BuildingRequestResolver(location, token);
     }

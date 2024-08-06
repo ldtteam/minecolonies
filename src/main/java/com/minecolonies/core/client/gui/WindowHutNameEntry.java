@@ -44,7 +44,7 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowHutNameEntry(final IBuildingView b)
     {
-        super(new ResourceLocation(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX));
+        super(ResourceLocation.parse(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX));
         this.building = b;
     }
 

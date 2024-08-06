@@ -9,7 +9,7 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public ILocalResearch deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public ILocalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final int state = nbt.getInt(TAG_STATE);
         final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
@@ -72,7 +72,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, ILocalResearch input, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, ILocalResearch input, RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeInt(input.getState().ordinal());
         packetBuffer.writeUtf(input.getId().toString());
@@ -82,7 +82,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     }
 
     @Override
-    public ILocalResearch deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public ILocalResearch deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final int state = buffer.readInt();
         final ResourceLocation id = buffer.readResourceLocation();

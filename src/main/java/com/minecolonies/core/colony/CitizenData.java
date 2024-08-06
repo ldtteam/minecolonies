@@ -36,18 +36,23 @@ import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -577,7 +582,17 @@ public class CitizenData implements ICitizenData
 
             if (!ItemStackUtils.isEmpty(stack))
             {
-                citizen.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(slot));
+                stack.forEachModifier(slot, (attributeHolder, modifier) -> {
+                    AttributeInstance attributeinstance = citizen.getAttributes().getInstance(attributeHolder);
+                    if (attributeinstance != null) {
+                        attributeinstance.removeModifier(modifier.id());
+                        attributeinstance.addTransientModifier(modifier);
+                    }
+
+                    if (citizen.level() instanceof ServerLevel serverlevel) {
+                        EnchantmentHelper.runLocationChangedEffects(serverlevel, stack, citizen, slot);
+                    }
+                });
             }
         }
     }
@@ -987,7 +1002,7 @@ public class CitizenData implements ICitizenData
             buf.writeInt(subInteractions.size());
             for (final IInteractionResponseHandler interactionHandler : subInteractions)
             {
-                buf.writeNbt(interactionHandler.serializeNBT());
+                buf.writeNbt(interactionHandler.serializeNBT(colony.getWorld().registryAccess()));
             }
         }
         else
@@ -1204,7 +1219,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag nbtTagCompound = new CompoundTag();
 
@@ -1229,7 +1244,7 @@ public class CitizenData implements ICitizenData
 
         if (job != null)
         {
-            @NotNull final Tag jobCompound = job.serializeNBT();
+            @NotNull final Tag jobCompound = job.serializeNBT(provider);
             nbtTagCompound.put("job", jobCompound);
         }
 
@@ -1248,7 +1263,7 @@ public class CitizenData implements ICitizenData
         for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
             @NotNull final CompoundTag chatOptionCompound = new CompoundTag();
-            chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
+            chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT(provider));
             chatTagList.add(chatOptionCompound);
         }
 
@@ -1312,7 +1327,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag nbtTagCompound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
         name = nbtTagCompound.getString(TAG_NAME);
         female = nbtTagCompound.getBoolean(TAG_FEMALE);
@@ -1351,7 +1366,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains("job"))
         {
-            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")));
+            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job"), provider));
         }
 
         if (nbtTagCompound.contains(TAG_INVENTORY))
@@ -1448,25 +1463,25 @@ public class CitizenData implements ICitizenData
         @NotNull final ListTag availQuestNbt = nbtTagCompound.getList(TAG_AV_QUESTS, TAG_STRING);
         for (int i = 0; i < availQuestNbt.size(); i++)
         {
-            availableQuests.add(new ResourceLocation(availQuestNbt.getString(i)));
+            availableQuests.add(ResourceLocation.parse(availQuestNbt.getString(i)));
         }
 
         @NotNull final ListTag partQuestsNbt = nbtTagCompound.getList(TAG_PART_QUESTS, TAG_STRING);
         for (int i = 0; i < partQuestsNbt.size(); i++)
         {
-            participatingQuests.add(new ResourceLocation(partQuestsNbt.getString(i)));
+            participatingQuests.add(ResourceLocation.parse(partQuestsNbt.getString(i)));
         }
 
         @NotNull final ListTag finQuestNbt = nbtTagCompound.getList(TAG_FINISHED_AV_QUESTS, TAG_STRING);
         for (int i = 0; i < finQuestNbt.size(); i++)
         {
-            finishedQuests.add(new ResourceLocation(finQuestNbt.getString(i)));
+            finishedQuests.add(ResourceLocation.parse(finQuestNbt.getString(i)));
         }
 
         @NotNull final ListTag finPartQuestsNbt = nbtTagCompound.getList(TAG_FINISHED_PART_QUESTS, TAG_STRING);
         for (int i = 0; i < finPartQuestsNbt.size(); i++)
         {
-            finishedQuestParticipation.add(new ResourceLocation(finPartQuestsNbt.getString(i)));
+            finishedQuestParticipation.add(ResourceLocation.parse(finPartQuestsNbt.getString(i)));
         }
 
         if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
@@ -1687,10 +1702,10 @@ public class CitizenData implements ICitizenData
      * @param nbt    nbt compound to read from
      * @return new CitizenData
      */
-    public static CitizenData loadFromNBT(final IColony colony, final CompoundTag nbt)
+    public static CitizenData loadFromNBT(final IColony colony, final CompoundTag nbt, @NotNull final HolderLookup.Provider provider)
     {
         final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
-        data.deserializeNBT(nbt);
+        data.deserializeNBT(provider, nbt);
         return data;
     }
 
@@ -1713,13 +1728,13 @@ public class CitizenData implements ICitizenData
 
             final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
               colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),
-              AttributeModifier.Operation.MULTIPLY_TOTAL);
+              AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
 
             final AttributeModifier healthModLevel =
-              new AttributeModifier(HEALTH_BOOST.toString(),
+              new AttributeModifier(HEALTH_BOOST,
                 colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST),
-                AttributeModifier.Operation.ADDITION);
+                AttributeModifier.Operation.ADD_VALUE);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
 
             if (getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)

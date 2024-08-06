@@ -24,6 +24,7 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
@@ -309,9 +310,9 @@ public class ColonyBlueprintRenderer
         }
     }
 
-    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key)
+    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key, @NotNull final HolderLookup.Provider provider)
     {
-        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path());
+        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path(), provider);
 
         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
         blueprintPreviewData.setBlueprintFuture(blueprintFuture);

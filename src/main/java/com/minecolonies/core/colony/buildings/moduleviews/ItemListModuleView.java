@@ -8,7 +8,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;

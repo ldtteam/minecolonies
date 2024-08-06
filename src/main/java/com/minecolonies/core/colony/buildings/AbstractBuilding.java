@@ -62,6 +62,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -338,7 +339,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        loadRequestSystemFromNBT(compound);
+        loadRequestSystemFromNBT(provider, compound);
         if (compound.contains(TAG_IS_BUILT))
         {
             isBuilt = compound.getBoolean(TAG_IS_BUILT);
@@ -379,11 +380,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final ListTag list = new ListTag();
         for (final IRequestResolver<?> requestResolver : getResolvers())
         {
-            list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
+            list.add(StandardFactoryController.getInstance().serializeTag(provider, requestResolver.getId()));
         }
         compound.put(TAG_RESOLVER, list);
         compound.putString(TAG_BUILDING_TYPE, this.getBuildingType().getRegistryName().toString());
-        writeRequestSystemToNBT(compound);
+        writeRequestSystemToNBT(provider, compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
 
@@ -705,15 +706,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final CompoundTag requestSystemCompound = new CompoundTag();
-        writeRequestSystemToNBT(requestSystemCompound);
+        writeRequestSystemToNBT(buf.registryAccess(), requestSystemCompound);
 
         final ImmutableCollection<IRequestResolver<?>> resolvers = getResolvers();
         buf.writeInt(resolvers.size());
         for (final IRequestResolver<?> resolver : resolvers)
         {
-            buf.writeNbt(StandardFactoryController.getInstance().serialize(resolver.getId()));
+            buf.writeNbt(StandardFactoryController.getInstance().serializeTag(buf.registryAccess(), resolver.getId()));
         }
-        buf.writeNbt(StandardFactoryController.getInstance().serialize(getId()));
+        buf.writeNbt(StandardFactoryController.getInstance().serializeTag(buf.registryAccess(), getId()));
         buf.writeInt(containerList.size());
         for (BlockPos blockPos : containerList)
         {
@@ -1300,10 +1301,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return false;
     }
 
-    protected void writeRequestSystemToNBT(final CompoundTag compound)
+    protected void writeRequestSystemToNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        compound.put(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(requester));
-        compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.put(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serializeTag(provider, requester));
+        compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serializeTag(provider, rsDataStoreToken));
     }
 
     protected void setupRsDataStore()
@@ -1317,11 +1318,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           .getId();
     }
 
-    private void loadRequestSystemFromNBT(final CompoundTag compound)
+    private void loadRequestSystemFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         if (compound.contains(TAG_REQUESTOR_ID))
         {
-            this.requester = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(TAG_REQUESTOR_ID));
+            this.requester = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_REQUESTOR_ID));
         }
         else
         {
@@ -1330,7 +1331,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (compound.contains(TAG_RS_BUILDING_DATASTORE))
         {
-            this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_RS_BUILDING_DATASTORE));
         }
         else
         {

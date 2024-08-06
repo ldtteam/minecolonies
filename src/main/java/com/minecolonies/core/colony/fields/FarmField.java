@@ -6,8 +6,9 @@ import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -85,10 +86,10 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public @NotNull CompoundTag serializeNBT()
+    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        CompoundTag compound = super.serializeNBT();
-        compound.put(TAG_SEED, seed.save(new CompoundTag()));
+        CompoundTag compound = super.serializeNBT(provider);
+        compound.put(TAG_SEED, seed.save(provider));
         compound.putIntArray(TAG_RADIUS, radii);
         compound.putInt(TAG_MAX_RANGE, maxRadius);
         compound.putString(TAG_STAGE, fieldStage.name());
@@ -96,10 +97,10 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public void deserializeNBT(final @NotNull CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
     {
-        super.deserializeNBT(compound);
-        setSeed(ItemStack.of(compound.getCompound(TAG_SEED)));
+        super.deserializeNBT(provider, compound);
+        setSeed(ItemStack.parseOptional(provider, compound.getCompound(TAG_SEED)));
         radii = compound.getIntArray(TAG_RADIUS);
         maxRadius = compound.getInt(TAG_MAX_RANGE);
         fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));

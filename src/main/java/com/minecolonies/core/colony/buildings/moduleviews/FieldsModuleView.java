@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignmentModeMessage;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;

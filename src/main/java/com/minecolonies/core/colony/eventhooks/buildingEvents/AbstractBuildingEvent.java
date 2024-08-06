@@ -2,9 +2,11 @@ package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_NAME;
@@ -54,7 +56,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
@@ -64,7 +66,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         buildingName = compound.getString(TAG_BUILDING_NAME);
@@ -72,7 +74,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void serialize(FriendlyByteBuf buf)
+    public void serialize(RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(eventPos);
         buf.writeUtf(buildingName);
@@ -80,7 +82,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void deserialize(FriendlyByteBuf buf)
+    public void deserialize(RegistryFriendlyByteBuf buf)
     {
         eventPos = buf.readBlockPos();
         buildingName = buf.readUtf();

@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
@@ -167,7 +167,7 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StaticLocation deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final BlockPos pos = BlockPos.of(nbt.getLong(NBT_POS));
             final String dim = nbt.getString(NBT_DIM);
@@ -205,14 +205,14 @@ public class StaticLocation implements ILocation
         }
 
         @Override
-        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, RegistryFriendlyByteBuf packetBuffer)
         {
             StaticLocation.serialize(packetBuffer, input);
         }
 
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull FriendlyByteBuf buffer) throws Throwable
+        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return StaticLocation.deserialize(buffer);
         }

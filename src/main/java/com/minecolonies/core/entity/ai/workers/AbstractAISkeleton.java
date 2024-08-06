@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
     protected final J                     job;
     @NotNull
     protected final AbstractEntityCitizen worker;
-    protected final Level                 world;
+    protected final ServerLevel           world;
 
     /**
      * The statemachine this AI uses
@@ -53,7 +54,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
 
         this.job = job;
         this.worker = this.job.getCitizen().getEntity().get();
-        this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
+        this.world = (ServerLevel) CompatibilityUtils.getWorldFromCitizen(this.worker);
         stateMachine = new TickRateStateMachine<>(AIWorkerState.INIT, this::onException, ENTITY_AI_TICKRATE);
     }
 

@@ -107,9 +107,9 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     {
         super.onButtonClicked(button);
 
-        if (button.getParent() != null && ResourceLocation.isValidResourceLocation(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
+        if (button.getParent() != null && ResourceLocation.isValidPath(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(ResourceLocation.parse(button.getParent().getID())))
         {
-            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), buildingView, this).open();
+            new WindowResearchTree(ResourceLocation.parse(button.getParent().getID()), buildingView, this).open();
         }
     }
 

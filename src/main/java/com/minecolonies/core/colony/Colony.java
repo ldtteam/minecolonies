@@ -739,16 +739,16 @@ public class Colony implements IColony
         // Permissions
         permissions.loadPermissions(compound);
 
-        citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
-        visitorManager.read(compound);
-        buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
+        citizenManager.read(provider, compound.getCompound(TAG_CITIZEN_MANAGER));
+        visitorManager.read(provider, compound);
+        buildingManager.read(provider, compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
         citizenManager.afterBuildingLoad();
 
         graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
 
-        eventManager.readFromNBT(compound);
+        eventManager.readFromNBT(provider, compound);
         statisticManager.readFromNBT(compound);
 
         questManager.deserializeNBT(provider, compound.getCompound(TAG_QUEST_MANAGER));
@@ -756,7 +756,7 @@ public class Colony implements IColony
 
         if (compound.contains(TAG_RESEARCH))
         {
-            researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
+            researchManager.readFromNBT(provider, compound.getCompound(TAG_RESEARCH));
             // now that buildings, colonists, and research are loaded, check for new autoStartResearch.
             // this is mostly for backwards compatibility with older saves, so players do not have to manually start newly added autostart researches that they've unlocked before the update.
             researchManager.checkAutoStartResearch();
@@ -899,14 +899,14 @@ public class Colony implements IColony
         permissions.savePermissions(compound);
 
         final CompoundTag buildingCompound = new CompoundTag();
-        buildingManager.write(buildingCompound);
+        buildingManager.write(provider, buildingCompound);
         compound.put(TAG_BUILDING_MANAGER, buildingCompound);
 
         final CompoundTag citizenCompound = new CompoundTag();
-        citizenManager.write(citizenCompound);
+        citizenManager.write(provider, citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        visitorManager.write(compound);
+        visitorManager.write(provider, compound);
 
         final CompoundTag graveCompound = new CompoundTag();
         graveManager.write(graveCompound);
@@ -917,7 +917,7 @@ public class Colony implements IColony
         workManager.write(workManagerCompound);
         compound.put(TAG_WORK, workManagerCompound);
 
-        eventManager.writeToNBT(compound);
+        eventManager.writeToNBT(provider, compound);
         statisticManager.writeToNBT(compound);
 
         compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT(provider));
@@ -925,7 +925,7 @@ public class Colony implements IColony
         raidManager.write(compound);
 
         @NotNull final CompoundTag researchManagerCompound = new CompoundTag();
-        researchManager.writeToNBT(researchManagerCompound);
+        researchManager.writeToNBT(provider, researchManagerCompound);
         compound.put(TAG_RESEARCH, researchManagerCompound);
 
         // Waypoints

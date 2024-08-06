@@ -89,7 +89,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
 
         if (citizen.isFemale())
         {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(new ResourceLocation(FEMALE_SOURCE), false);
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(FEMALE_SOURCE), false);
         }
     }
 

@@ -39,7 +39,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
      */
     public WindowTownHallMercenary(final IColonyView c)
     {
-        super(new ResourceLocation(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
+        super(ResourceLocation.parse(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
         this.colony = c;
 
         int amountOfMercenaries = colony.getCitizenCount();

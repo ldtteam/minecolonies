@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
@@ -49,7 +49,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
 
     @NotNull
     @Override
-    public TypeToken<?> deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+    public TypeToken<?> deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
     {
         try
         {
@@ -78,13 +78,13 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     }
 
     @Override
-    public void serialize(IFactoryController controller, TypeToken<?> input, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, TypeToken<?> input, RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeUtf(input.getRawType().getName());
     }
 
     @Override
-    public TypeToken<?> deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public TypeToken<?> deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         try
         {

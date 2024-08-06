@@ -5,7 +5,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -80,7 +79,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
         Block block = blockState.getBlock();
         if (block instanceof CocoaBlock cocoa)
         {
-            return !cocoa.isRandomlyTicking(blockState);
+            return blockState.getValue(CocoaBlock.AGE) >= 2;
         }
         return false;
     }

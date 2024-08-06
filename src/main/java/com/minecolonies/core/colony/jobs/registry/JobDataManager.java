@@ -11,8 +11,9 @@ import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,18 +22,17 @@ public final class JobDataManager implements IJobDataManager
 {
     @Nullable
     @Override
-    public IJob<?> createFrom(
-      final ICitizenData citizen, @NotNull final CompoundTag compound)
+    public IJob<?> createFrom(final ICitizenData citizen, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final ResourceLocation jobType =
-          compound.contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
+          compound.contains(NbtTagConstants.TAG_JOB_TYPE) ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
         final IJob<?> job = IJobRegistry.getInstance().get(jobType).produceJob(citizen);
 
         if (job != null)
         {
             try
             {
-                job.deserializeNBT(compound);
+                job.deserializeNBT(provider, compound);
             }
             catch (final RuntimeException ex)
             {
@@ -51,9 +51,9 @@ public final class JobDataManager implements IJobDataManager
 
     @Override
     public IJobView createViewFrom(
-      final IColonyView colony, final ICitizenDataView citizenDataView, final FriendlyByteBuf networkBuffer)
+      final IColonyView colony, final ICitizenDataView citizenDataView, final RegistryFriendlyByteBuf networkBuffer)
     {
-        final ResourceLocation jobName = new ResourceLocation(networkBuffer.readUtf(32767));
+        final ResourceLocation jobName = ResourceLocation.parse(networkBuffer.readUtf(32767));
         final JobEntry entry = IJobRegistry.getInstance().get(jobName);
 
         if (entry == null)

@@ -142,7 +142,7 @@ public class DecorationBuildRequestMessage extends AbstractServerPlayMessage
             return;
         }
 
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path),
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path, colony.getWorld().registryAccess()),
           player.level(),
           (blueprint -> {
               if (blueprint == null)

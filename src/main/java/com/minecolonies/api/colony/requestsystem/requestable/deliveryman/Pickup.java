@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -36,14 +37,14 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, final Pickup pickup)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_PRIORITY, controller.serialize(pickup.getPriority()));
+        compound.put(NBT_PRIORITY, controller.serializeTag(provider, pickup.getPriority()));
         return compound;
     }
 
     @NotNull
     public static Pickup deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
-        final int priority = controller.deserializeTag(compound.getCompound(NBT_PRIORITY));
+        final int priority = controller.deserializeTag(provider, compound.getCompound(NBT_PRIORITY));
         return new Pickup(priority);
     }
 

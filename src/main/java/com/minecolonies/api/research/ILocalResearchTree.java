@@ -2,9 +2,11 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -82,7 +84,7 @@ public interface ILocalResearchTree
      *
      * @param compound the compound.
      */
-    void writeToNBT(final CompoundTag compound);
+    void writeToNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound);
 
     /**
      * Read the research tree from NBT.
@@ -90,7 +92,7 @@ public interface ILocalResearchTree
      * @param compound the compound to read it from.
      * @param effects  the effects.
      */
-    void readFromNBT(final CompoundTag compound, final IResearchEffectManager effects);
+    void readFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final IResearchEffectManager effects);
 
     /**
      * Check if a given research is complete.

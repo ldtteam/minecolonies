@@ -134,7 +134,7 @@ public final class ShipBasedRaiderUtils
         final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
-        final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
+        final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint", colony.getWorld().registryAccess());
         blueprint.setRotationMirror(rotMir, world);
 
         return canPlaceShipAt(spawnPoint, blueprint, world, neededDepth) || canPlaceShipAt(spawnPoint.below(), blueprint, world, neededDepth);

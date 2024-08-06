@@ -3,8 +3,10 @@ package com.minecolonies.core.colony.jobs;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkNether;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
@@ -55,20 +57,20 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
 
         @NotNull final ListTag craftedList = new ListTag();
         craftedResults.forEach(item -> {
-            @NotNull final CompoundTag itemCompound = item.save(new CompoundTag());
+            @NotNull final Tag itemCompound = item.save(provider);
             craftedList.add(itemCompound);
         });
         compound.put(TAG_CRAFTED, craftedList);
 
         @NotNull final ListTag processedList = new ListTag();
         processedResults.forEach(item -> {
-            @NotNull final CompoundTag itemCompound = item.save(new CompoundTag());
+            @NotNull final Tag itemCompound = item.save(provider);
             processedList.add(itemCompound);
         });
         compound.put(TAG_PROCESSED, processedList);
@@ -78,22 +80,22 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         final ListTag craftedList = compound.getList(TAG_CRAFTED, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < craftedList.size(); ++i)
         {
             final CompoundTag itemCompound = craftedList.getCompound(i);
-            craftedResults.add(ItemStack.of(itemCompound));
+            craftedResults.add(ItemStack.parseOptional(provider, itemCompound));
         }
 
         final ListTag processedList = compound.getList(TAG_PROCESSED, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < processedList.size(); ++i)
         {
             final CompoundTag itemCompound = processedList.getCompound(i);
-            processedResults.add(ItemStack.of(itemCompound));
+            processedResults.add(ItemStack.parseOptional(provider, itemCompound));
         }
 
 

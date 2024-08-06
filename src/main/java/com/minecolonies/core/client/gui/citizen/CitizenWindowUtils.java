@@ -82,13 +82,13 @@ public class CitizenWindowUtils
      */
     private enum HeartsEnum
     {
-        EMPTY(new ResourceLocation("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
+        EMPTY(ResourceLocation.withDefaultNamespace("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
 
-        HALF_RED(new ResourceLocation("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
-        RED(new ResourceLocation("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
+        HALF_RED(ResourceLocation.withDefaultNamespace("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(ResourceLocation.withDefaultNamespace("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
 
-        HALF_GOLDEN(new ResourceLocation("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
-        GOLDEN(new ResourceLocation("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+        HALF_GOLDEN(ResourceLocation.withDefaultNamespace("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(ResourceLocation.withDefaultNamespace("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
 
         HALF_GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green_half"), GREEN_HEART_VALUE - 1, null, GOLDEN),
         GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green"), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
@@ -252,7 +252,7 @@ public class CitizenWindowUtils
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(new ResourceLocation("hud/food_empty"), false);
+            saturation.setImage(ResourceLocation.withDefaultNamespace("hud/food_empty"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
@@ -264,7 +264,7 @@ public class CitizenWindowUtils
         for (saturationPos = 0; saturationPos < ((int) curSaturation); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(new ResourceLocation("hud/food_full"), false);
+            saturation.setImage(ResourceLocation.withDefaultNamespace("hud/food_full"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -274,7 +274,7 @@ public class CitizenWindowUtils
         if (curSaturation / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(new ResourceLocation("hud/food_half"), false);
+            saturation.setImage(ResourceLocation.withDefaultNamespace("hud/food_half"), false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -416,7 +416,7 @@ public class CitizenWindowUtils
 
             if (value > 1.0)
             {
-                image.setImage(new ResourceLocation(HAPPY_ICON), false);
+                image.setImage(ResourceLocation.parse(HAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
@@ -424,7 +424,7 @@ public class CitizenWindowUtils
             }
             else if (value == 1)
             {
-                image.setImage(new ResourceLocation(SATISFIED_ICON), false);
+                image.setImage(ResourceLocation.parse(SATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
@@ -432,7 +432,7 @@ public class CitizenWindowUtils
             }
             else if (value > 0.75)
             {
-                image.setImage(new ResourceLocation(UNSATISFIED_ICON), false);
+                image.setImage(ResourceLocation.parse(UNSATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
@@ -440,7 +440,7 @@ public class CitizenWindowUtils
             }
             else
             {
-                image.setImage(new ResourceLocation(UNHAPPY_ICON), false);
+                image.setImage(ResourceLocation.parse(UNHAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)
@@ -477,7 +477,7 @@ public class CitizenWindowUtils
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
               .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(new ResourceLocation(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
+              .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
@@ -485,20 +485,20 @@ public class CitizenWindowUtils
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
               .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
+              .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
@@ -506,13 +506,13 @@ public class CitizenWindowUtils
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
         }
         else

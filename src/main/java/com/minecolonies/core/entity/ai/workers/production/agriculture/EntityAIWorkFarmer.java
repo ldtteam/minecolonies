@@ -799,7 +799,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
                 new CompostParticleMessage(position.above())
-                    .sendToTargetPoint(new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                    .sendToTargetPoint((ServerLevel) world, null, position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE);
                 crop.growCrops(world, position.above(), state);
                 state = world.getBlockState(position.above());
                 block = state.getBlock();
@@ -829,7 +829,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
                 new CompostParticleMessage(position.above())
-                  .sendToTargetPoint(new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                  .sendToTargetPoint((ServerLevel) world, null, position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE);
                 minecoloniesCrop.attemptGrow(state, (ServerLevel) world, position.above());
                 state = world.getBlockState(position.above());
                 block = state.getBlock();
@@ -885,7 +885,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         final ItemStack tool = worker.getMainHandItem();
 
-        final int fortune = ItemStackUtils.getFortuneOf(tool);
+        final int fortune = ItemStackUtils.getFortuneOf(tool, world);
         final BlockState state = world.getBlockState(pos);
 
         final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);

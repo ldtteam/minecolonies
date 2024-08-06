@@ -12,6 +12,7 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -20,6 +21,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
@@ -341,14 +344,14 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void writeToNBT(final CompoundTag compound)
+    public void writeToNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final ListTag researchList = new ListTag();
         for (final Map<ResourceLocation, ILocalResearch> researchMap : researchTree.values())
         {
             for (final ILocalResearch research : researchMap.values())
             {
-                researchList.add(StandardFactoryController.getInstance().serialize(research));
+                researchList.add(StandardFactoryController.getInstance().serializeTag(provider, research));
             }
         }
 
@@ -356,14 +359,14 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void readFromNBT(final CompoundTag compound, final IResearchEffectManager effects)
+    public void readFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final IResearchEffectManager effects)
     {
         researchTree.clear();
         inProgress.clear();
         isComplete.clear();
         maxLevelResearchCompleted.clear();
         NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Tag.TAG_COMPOUND))
-          .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserializeTag(researchCompound))
+          .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserializeTag(provider, researchCompound))
           .forEach(research -> {
               /// region Updated ID helper.
               if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))

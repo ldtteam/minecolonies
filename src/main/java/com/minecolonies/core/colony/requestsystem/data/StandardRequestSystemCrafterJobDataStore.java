@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -131,9 +131,9 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
         @NotNull
         @Override
-        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
                                                   .map(CompoundTag -> (IToken<?>) controller.deserializeTag(CompoundTag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
@@ -147,7 +147,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestSystemCrafterJobDataStore input,
-          FriendlyByteBuf packetBuffer)
+          RegistryFriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
@@ -157,7 +157,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         }
 
         @Override
-        public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
+        public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
           throws Throwable
         {
             final IToken<?> id = controller.deserializeTag(buffer);

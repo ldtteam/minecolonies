@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -72,7 +73,8 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -90,16 +92,16 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             if (entity instanceof TileEntityScarecrow scarecrow)
             {
                 new WindowField(scarecrow).open();
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
             else
             {
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
         }
 
         // This must succeed in Remote to stop more right click interactions like placing blocks
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @NotNull

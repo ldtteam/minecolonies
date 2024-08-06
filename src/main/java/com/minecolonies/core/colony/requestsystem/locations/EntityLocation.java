@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -190,7 +190,7 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public EntityLocation deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 
@@ -212,13 +212,13 @@ public class EntityLocation implements ILocation
         }
 
         @Override
-        public void serialize(IFactoryController controller, EntityLocation input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, EntityLocation input, RegistryFriendlyByteBuf packetBuffer)
         {
             EntityLocation.serialize(packetBuffer, input);
         }
 
         @Override
-        public EntityLocation deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+        public EntityLocation deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return EntityLocation.deserialize(buffer);
         }

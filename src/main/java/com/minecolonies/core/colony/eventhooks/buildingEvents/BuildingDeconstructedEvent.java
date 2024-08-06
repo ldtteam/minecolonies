@@ -1,8 +1,9 @@
 package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -56,10 +57,10 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingDeconstructedEvent loadFromNBT(@NotNull final CompoundTag compound)
+    public static BuildingDeconstructedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final BuildingDeconstructedEvent deconstructionEvent = new BuildingDeconstructedEvent();
-        deconstructionEvent.deserializeNBT(compound);
+        deconstructionEvent.deserializeNBT(provider, compound);
         return deconstructionEvent;
     }
 

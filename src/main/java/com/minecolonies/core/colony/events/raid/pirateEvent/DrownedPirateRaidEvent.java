@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.AbstractShipRaidEvent;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -72,7 +73,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
         status = EventStatus.PREPARING;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
             blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
@@ -122,10 +123,10 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound)
+    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final DrownedPirateRaidEvent raidEvent = new DrownedPirateRaidEvent(colony);
-        raidEvent.deserializeNBT(compound);
+        raidEvent.deserializeNBT(provider, compound);
         return raidEvent;
     }
 

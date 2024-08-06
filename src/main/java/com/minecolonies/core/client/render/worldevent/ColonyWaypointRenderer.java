@@ -42,7 +42,7 @@ public class ColonyWaypointRenderer
         {
             if (wayPointTemplate == null && pendingTemplate == null)
             {
-                pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/waypoint.blueprint");
+                pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/waypoint.blueprint", ctx.clientLevel.registryAccess());
             }
 
             if (pendingTemplate != null)

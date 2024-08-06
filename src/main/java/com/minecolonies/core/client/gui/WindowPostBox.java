@@ -166,10 +166,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack)
-                                                                                                                      .getCompound(0)
-                                                                                                                      .getString("id")
-                                                                                                                      .contains(filter.toLowerCase(Locale.US)));
+                                                                || (stack.getItem() instanceof EnchantedBookItem && stack.getTagEnchantments().entrySet().stream().anyMatch(f -> f.getKey().getRegisteredName().contains(filter.toLowerCase(Locale.US))));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));

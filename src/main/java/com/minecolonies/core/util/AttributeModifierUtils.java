@@ -1,11 +1,11 @@
 package com.minecolonies.core.util;
 
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-
-import java.util.UUID;
 
 /**
  * Utility class for handling add/removal of attribute modifiers.
@@ -38,7 +38,7 @@ public abstract class AttributeModifierUtils
      * @param entity       the entity to remove the modifier from
      * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
      */
-    public static void removeHealthModifier(final LivingEntity entity, final UUID modifierName)
+    public static void removeHealthModifier(final LivingEntity entity, final ResourceLocation modifierName)
     {
         if (entity == null)
         {
@@ -67,7 +67,7 @@ public abstract class AttributeModifierUtils
 
         final float prevHealthPct = entity.getHealth() / entity.getMaxHealth();
 
-        removeHealthModifier(entity, modifier.getId());
+        removeHealthModifier(entity, modifier.id());
         entity.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(modifier);
 
         entity.setHealth(entity.getMaxHealth() * prevHealthPct);
@@ -79,7 +79,7 @@ public abstract class AttributeModifierUtils
      * @param modifierName the name of the modifier.
      * @param attribute the type of attribute.
      */
-    public static void removeModifier(final LivingEntity entity, final UUID modifierName, final Attribute attribute)
+    public static void removeModifier(final LivingEntity entity, final ResourceLocation modifierName, final Holder<Attribute> attribute)
     {
         if (entity == null)
         {
@@ -95,14 +95,14 @@ public abstract class AttributeModifierUtils
      * @param modifier the modifier to add.
      * @param attribute the type of the attribute.
      */
-    public static void addModifier(final LivingEntity entity, final AttributeModifier modifier, final Attribute attribute)
+    public static void addModifier(final LivingEntity entity, final AttributeModifier modifier, final Holder<Attribute> attribute)
     {
         if (entity == null)
         {
             return;
         }
 
-        removeModifier(entity, modifier.getId(), attribute);
+        removeModifier(entity, modifier.id(), attribute);
         entity.getAttribute(attribute).addTransientModifier(modifier);
     }
 }

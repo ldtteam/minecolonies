@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.eventhooks.citizenEvents;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -72,14 +72,14 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public void serialize(FriendlyByteBuf buf)
+    public void serialize(RegistryFriendlyByteBuf buf)
     {
         super.serialize(buf);
         buf.writeUtf(deathCause);
     }
 
     @Override
-    public void deserialize(FriendlyByteBuf buf)
+    public void deserialize(RegistryFriendlyByteBuf buf)
     {
         super.deserialize(buf);
         deathCause = buf.readUtf();
@@ -111,10 +111,10 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenDiedEvent loadFromNBT(@NotNull final CompoundTag compound)
+    public static CitizenDiedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
-        deathEvent.deserializeNBT(compound);
+        deathEvent.deserializeNBT(provider, compound);
         return deathEvent;
     }
 

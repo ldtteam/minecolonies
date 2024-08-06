@@ -31,7 +31,7 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowTownHallNameEntry(final IColonyView c)
     {
-        super(new ResourceLocation(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
+        super(ResourceLocation.parse(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
         this.colony = c;
     }
 

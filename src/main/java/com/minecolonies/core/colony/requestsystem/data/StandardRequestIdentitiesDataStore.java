@@ -16,7 +16,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -112,9 +112,9 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
 
         @NotNull
         @Override
-        public StandardRequestIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequestIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(tag -> {
@@ -130,7 +130,7 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardRequestIdentitiesDataStore input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, StandardRequestIdentitiesDataStore input, RegistryFriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
@@ -141,7 +141,7 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         }
 
         @Override
-        public StandardRequestIdentitiesDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
+        public StandardRequestIdentitiesDataStore deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
           throws Throwable
         {
             final IToken<?> token = controller.deserializeTag(buffer);

@@ -6,6 +6,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -188,7 +189,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK)
-                    .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.level().dimension()));
+                    .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE);
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -208,7 +209,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal())
-                    .sendToTargetPoint(new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level().dimension()));
+                    .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE);
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -250,7 +251,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         //check if tool breaks
         if (citizen.getCitizenData()
               .getInventory()
-              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
+              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> {}))
         {
             if (hand == InteractionHand.MAIN_HAND)
             {
@@ -331,15 +332,16 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
 
         final int armorDmg = Math.max(1, (int) (damage / 4));
-        for (int i = 0; i < 4; i++)
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
-            final EquipmentSlot equipmentSlot = EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, i);
-            final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
-            equipment.hurtAndBreak(armorDmg, citizen, (s) -> {
-                s.broadcastBreakEvent(equipmentSlot);
-                citizen.onArmorRemove(equipment, equipmentSlot);
-                citizen.getInventoryCitizen().markDirty();
-            });
+            if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
+            {
+                final ItemStack equipment = citizen.getInventoryCitizen().getArmorInSlot(equipmentSlot);
+                equipment.hurtAndBreak(armorDmg, (ServerLevel) citizen.level(), citizen, (s) -> {
+                    citizen.onArmorRemove(equipment, equipmentSlot);
+                    citizen.getInventoryCitizen().markDirty();
+                });
+            }
         }
     }
 
@@ -365,7 +367,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 tool = citizen.getInventoryCitizen().getHeldItem(equipmentSlot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
             }
 
-            if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged() && tool.isEnchanted() && EnchantmentHelper.getEnchantments(tool).containsKey(Enchantments.MENDING))
+            if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged() && tool.isEnchanted() && EnchantmentHelper.getTagEnchantmentLevel(Utils.getRegistryValue(Enchantments.MENDING, citizen.level()), tool) > 0)
             {
                 //2 xp to heal 1 dmg
                 final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());

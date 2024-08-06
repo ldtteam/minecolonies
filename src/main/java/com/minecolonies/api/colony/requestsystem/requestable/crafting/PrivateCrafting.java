@@ -50,7 +50,7 @@ public class PrivateCrafting extends AbstractCrafting
         compound.put(NBT_STACK, input.getStack().save(provider));
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
-        final CompoundTag tokenCompound = StandardFactoryController.getInstance().serialize(input.getRecipeID());
+        final CompoundTag tokenCompound = StandardFactoryController.getInstance().serializeTag(provider, input.getRecipeID());
         compound.put(NBT_TOKEN, tokenCompound);
 
         return compound;
@@ -71,7 +71,7 @@ public class PrivateCrafting extends AbstractCrafting
         IToken<?> token = null;
         if (compound.contains(NBT_TOKEN))
         {
-            token = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(NBT_TOKEN));
+            token = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(NBT_TOKEN));
         }
         else
         {
@@ -92,7 +92,7 @@ public class PrivateCrafting extends AbstractCrafting
         Utils.serializeCodecMess(buffer, input.getStack());
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinCount());
-        StandardFactoryController.getInstance().serializeTag(buffer, input.getRecipeID());
+        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
     }
 
     /**
@@ -107,7 +107,7 @@ public class PrivateCrafting extends AbstractCrafting
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
-        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(buffer);
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
 
         return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount, token);
     }

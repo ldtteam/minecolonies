@@ -309,7 +309,6 @@ public class MinecoloniesMinecart extends Minecart
         }
 
         this.checkBelowWorld();
-        this.handleNetherPortal();
         if (this.level().isClientSide)
         {
             if (this.lerpSteps > 0)

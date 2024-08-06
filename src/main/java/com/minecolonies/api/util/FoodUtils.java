@@ -28,7 +28,7 @@ public class FoodUtils
             return stack.getItem().getFoodProperties(stack, null) != null;
         }
         final FoodProperties foodProperties = stack.getItem().getFoodProperties(stack, null);
-        return foodProperties != null && foodProperties.getNutrition() >= buildingLevel + 1;
+        return foodProperties != null && foodProperties.nutrition() >= buildingLevel + 1;
     }
 
     /**
@@ -38,7 +38,7 @@ public class FoodUtils
      */
     public static int getBuildingLevelForFood(final ItemStack resource)
     {
-        return Math.max(2, Math.min(resource.getFoodProperties(null).getNutrition() - 1, MAX_BUILDING_LEVEL));
+        return Math.max(2, Math.min(resource.getFoodProperties(null).nutrition() - 1, MAX_BUILDING_LEVEL));
     }
 
     /**
@@ -57,7 +57,7 @@ public class FoodUtils
         }
 
         final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : (1.0 / (housingLevel + 1));
-        return itemFood.getNutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
+        return itemFood.nutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
     }
 
     /**

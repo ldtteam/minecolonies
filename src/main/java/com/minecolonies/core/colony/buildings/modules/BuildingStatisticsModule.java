@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.managers.StatisticsManager;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 /**
  * Building statistic module.

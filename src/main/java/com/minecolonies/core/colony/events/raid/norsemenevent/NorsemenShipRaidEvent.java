@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.AbstractShipRaidEvent;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
@@ -67,10 +68,10 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound)
+    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final NorsemenShipRaidEvent raidEvent = new NorsemenShipRaidEvent(colony);
-        raidEvent.deserializeNBT(compound);
+        raidEvent.deserializeNBT(provider, compound);
         return raidEvent;
     }
 

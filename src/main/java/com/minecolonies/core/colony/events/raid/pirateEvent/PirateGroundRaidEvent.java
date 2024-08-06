@@ -8,6 +8,7 @@ import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
 import com.minecolonies.core.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.core.entity.mobs.pirates.EntityPirate;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
@@ -139,10 +141,10 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound)
+    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         PirateGroundRaidEvent event = new PirateGroundRaidEvent(colony);
-        event.deserializeNBT(compound);
+        event.deserializeNBT(provider, compound);
         return event;
     }
 

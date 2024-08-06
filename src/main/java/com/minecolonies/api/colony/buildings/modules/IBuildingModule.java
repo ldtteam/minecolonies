@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.IHasDirty;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 /**
  * Default interface for all building modules.
@@ -43,7 +43,7 @@ public interface IBuildingModule extends IHasDirty
      * @param buf      the buffer to write it to.
      * @param fullSync whether we need to sync the full data
      */
-    default void serializeToView(FriendlyByteBuf buf, final boolean fullSync)
+    default void serializeToView(RegistryFriendlyByteBuf buf, final boolean fullSync)
     {
         serializeToView(buf);
     }
@@ -53,5 +53,5 @@ public interface IBuildingModule extends IHasDirty
      *
      * @param buf the buffer to write it to.
      */
-    default void serializeToView(FriendlyByteBuf buf) {}
+    default void serializeToView(RegistryFriendlyByteBuf buf) {}
 }

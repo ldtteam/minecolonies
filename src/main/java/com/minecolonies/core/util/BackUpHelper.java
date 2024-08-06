@@ -343,7 +343,7 @@ public final class BackUpHelper
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundTag colonyCompound = new CompoundTag();
-            colony.write(colonyCompound);
+            colony.write(colonyCompound, colony.getWorld().registryAccess());
             saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
     }
@@ -431,7 +431,7 @@ public final class BackUpHelper
         IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
-            colony.read(compound);
+            colony.read(compound, colony.getWorld().registryAccess());
         }
         else
         {

@@ -170,7 +170,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public RecipeStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final List<ItemStorage> input = new ArrayList<>();
         final ListTag inputTagList = nbt.getList(INPUT_TAG, Tag.TAG_COMPOUND);
@@ -193,7 +193,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final Block intermediate = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound(BLOCK_TAG)).getBlock();
 
         final int gridSize = nbt.getInt(TAG_GRID);
-        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(nbt.getCompound(TAG_TOKEN));
+        final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
 
         final ResourceLocation source = nbt.contains(SOURCE_TAG) ? new ResourceLocation(nbt.getString(SOURCE_TAG)) : null; 
 
@@ -266,7 +266,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final RegistryFriendlyByteBuf buffer) throws Throwable
+    public RecipeStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, final RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final List<ItemStorage> input = new ArrayList<>();
         final int inputSize = buffer.readVarInt();

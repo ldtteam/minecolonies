@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -60,9 +61,9 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_BUILDING_TO_DRAIN))
         {
             this.posToDrainFrom = BlockPosUtil.read(compound, TAG_BUILDING_TO_DRAIN);
@@ -71,9 +72,9 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
         if (posToDrainFrom != null)
         {
             BlockPosUtil.write(compound, TAG_BUILDING_TO_DRAIN, posToDrainFrom);

@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -94,14 +95,14 @@ public interface IEventManager
      *
      * @param compound the compound to read from.
      */
-    void readFromNBT(@NotNull CompoundTag compound);
+    void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * Write the eventmanager and all events to NBT
      *
      * @param compound the compound to write to.
      */
-    void writeToNBT(@NotNull CompoundTag compound);
+    void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * Returns the associated structure manager, which manages structure spawn/despawn for events.

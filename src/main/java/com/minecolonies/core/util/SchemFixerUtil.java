@@ -6,6 +6,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -24,7 +25,7 @@ import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataPro
  */
 public class SchemFixerUtil
 {
-    public static void fixSchematics()
+    public static void fixSchematics(final HolderLookup.Provider provider)
     {
         String baseFolder = Paths.get("").toAbsolutePath().getParent().toString() + "/src/main/resources/assets/minecolonies/schematics";
         File baseFolderFile = new File(baseFolder);
@@ -80,7 +81,7 @@ public class SchemFixerUtil
                 try
                 {
                     CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())), NbtAccounter.unlimitedHeap());
-                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT);
+                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT, provider);
                     if (fixSchematicNameAndCorners(blueprint))
                     {
                         BlueprintUtil.writeToStream(new FileOutputStream(blueprintFile), blueprint);

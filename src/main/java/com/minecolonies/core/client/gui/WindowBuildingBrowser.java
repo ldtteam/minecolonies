@@ -285,7 +285,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                     if (futureBuildings.isCancelled()) { return; }
                     if (!Files.isDirectory(file) && file.toString().endsWith(".blueprint"))
                     {
-                        final Blueprint blueprint = StructurePacks.getBlueprint(pack.getName(), file, true);
+                        final Blueprint blueprint = StructurePacks.getBlueprint(pack.getName(), file, true, mc.level.registryAccess());
                         if (blueprint != null)
                         {
                             final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());

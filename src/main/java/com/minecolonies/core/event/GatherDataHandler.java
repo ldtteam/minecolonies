@@ -32,8 +32,6 @@ public class GatherDataHandler
      */
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
-        SchemFixerUtil.fixSchematics();
-
         final DataGenerator generator = event.getGenerator();
         final DatagenLootTableManager lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
@@ -77,6 +75,8 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput()));
 
         generator.addProvider(event.includeClient() && event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), event.getLookupProvider()));
+
+        SchemFixerUtil.fixSchematics(event.getLookupProvider().join());
     }
 
     private static final class LootTableProviders extends LootTableProvider

@@ -5,6 +5,7 @@ import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.operations.PlaceStructureOperation;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
@@ -81,7 +82,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             final CompoundTag teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData(), world.registryAccess());
                 if (entity instanceof IBlueprintDataProviderBE)
                 {
                     this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
@@ -125,7 +126,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             final CompoundTag teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData(), world.registryAccess());
                 if (entity instanceof IBlueprintDataProviderBE)
                 {
                     this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
@@ -184,7 +185,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, RotationMirror.NONE, fancyPlacement, event, colonyId);
             Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)
@@ -212,7 +213,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, RotationMirror.NONE, fancyPlacement, event, colonyId);
             Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)

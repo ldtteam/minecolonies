@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -94,11 +95,11 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compound)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         if (dirty || nbtCache == null)
         {
-            nbtCache = recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+            nbtCache = recipes.entrySet().stream().filter(recipeEntry -> usedRecipes.contains(recipeEntry.getKey())).map(entry -> StandardFactoryController.getInstance().serializeTag(provider, entry.getValue())).collect(NBTUtils.toListNBT());
         }
 
         compound.put(TAG_RECIPES, nbtCache);
@@ -106,12 +107,12 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final ListTag list = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            IRecipeStorage recipe = StandardFactoryController.getInstance().deserializeTag(list.getCompound(i));
+            IRecipeStorage recipe = StandardFactoryController.getInstance().deserializeTag(provider, list.getCompound(i));
             if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty())
             {
                 try

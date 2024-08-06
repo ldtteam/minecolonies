@@ -56,7 +56,7 @@ public class MinecraftMap extends Pane implements AutoCloseable
         }
 
         texture.upload();
-        textureResLoc = mc.textureManager.register("minecolonies_map/" + id, texture);
+        textureResLoc = mc.getTextureManager().register("minecolonies_map/" + id, texture);
     }
 
     /**
@@ -79,7 +79,7 @@ public class MinecraftMap extends Pane implements AutoCloseable
         if (textureResLoc != null)
         {
             texture.close();
-            mc.textureManager.release(textureResLoc);
+            mc.getTextureManager().release(textureResLoc);
 
             texture = null;
             textureResLoc = null;

@@ -6,8 +6,9 @@ import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,22 +88,22 @@ public class PlantationField extends AbstractField
     }
 
     @Override
-    public @NotNull CompoundTag serializeNBT()
+    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        CompoundTag compound = super.serializeNBT();
+        CompoundTag compound = super.serializeNBT(provider);
         BlockPosUtil.writePosListToNBT(compound, TAG_WORKING_POS, workingPositions);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(@NotNull CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         workingPositions = BlockPosUtil.readPosListFromNBT(compound, TAG_WORKING_POS);
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         super.serialize(buf);
         buf.writeInt(workingPositions.size());
@@ -113,7 +114,7 @@ public class PlantationField extends AbstractField
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         super.deserialize(buf);
         workingPositions = new ArrayList<>();

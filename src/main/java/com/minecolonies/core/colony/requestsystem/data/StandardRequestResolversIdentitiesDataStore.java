@@ -16,7 +16,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -114,9 +114,9 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @NotNull
         @Override
-        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
@@ -134,7 +134,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
-          FriendlyByteBuf packetBuffer)
+          RegistryFriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
@@ -147,7 +147,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public StandardRequestResolversIdentitiesDataStore deserialize(
           IFactoryController controller,
-          FriendlyByteBuf buffer) throws Throwable
+          RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final IToken<?> token = controller.deserializeTag(buffer);
             final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();

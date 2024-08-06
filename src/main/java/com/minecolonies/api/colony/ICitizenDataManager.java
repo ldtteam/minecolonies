@@ -2,7 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**

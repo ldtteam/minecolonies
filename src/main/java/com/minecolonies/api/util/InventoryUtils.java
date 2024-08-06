@@ -3037,13 +3037,13 @@ public class InventoryUtils
                         continue;
                     }
 
-                    int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getNutrition()));
+                    int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.nutrition()));
 
                     final ItemStack extractedFood;
                     if (amount > stack.getCount())
                     {
                         // Not enough yet
-                        foundSaturation += stack.getCount() * itemFood.getNutrition();
+                        foundSaturation += stack.getCount() * itemFood.nutrition();
                         extractedFood = handler.extractItem(i, stack.getCount(), false);
                     }
                     else

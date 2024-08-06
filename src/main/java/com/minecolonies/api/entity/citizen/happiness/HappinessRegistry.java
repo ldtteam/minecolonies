@@ -71,7 +71,7 @@ public class HappinessRegistry
     public static IHappinessModifier loadFrom(@NotNull final CompoundTag compound)
     {
         final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
-                                                ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
+                                                ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
                                                 : new ResourceLocation(Constants.MOD_ID, "null");
         final IHappinessModifier modifier = getHappinessTypeRegistry().get(modifierType).create();
 

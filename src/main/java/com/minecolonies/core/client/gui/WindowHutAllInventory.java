@@ -275,7 +275,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     private static String getString(final ItemStack stack)
     {
         final StringBuilder output = new StringBuilder();
-        for (final Component comp : stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL))
+        for (final Component comp : stack.getTooltipLines(Item.TooltipContext.of(Minecraft.getInstance().level), Minecraft.getInstance().player, TooltipFlag.Default.NORMAL))
         {
             output.append(comp.getString()).append(" ");
         }
@@ -323,10 +323,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 {
                     qtys.setText(Component.literal(Integer.toString(resource.getAmount())));
                 }
-                final Item imagesrc = resource.getItemStack().getItem();
-                final ItemStack image = new ItemStack(imagesrc, 1);
-                image.setTag(resource.getItemStack().getTag());
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
+                final ItemStack imageStk = resource.getItemStack().copy();
+                imageStk.setCount(1);
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(imageStk);
             }
         });
     }

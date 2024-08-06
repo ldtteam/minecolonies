@@ -228,7 +228,7 @@ public class EntityInitializer
     private static <T extends Entity> EntityType<T> build(Registry<EntityType<?>> registry, final String key, final EntityType.Builder<T> builder)
     {
         EntityType<T> entity = builder.build(Constants.MOD_ID + ":" + key);
-        Registry.register(registry, new ResourceLocation(Constants.MOD_ID + ":" + key), entity);
+        Registry.register(registry, ResourceLocation.parse(Constants.MOD_ID + ":" + key), entity);
         return entity;
     }
 

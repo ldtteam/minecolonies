@@ -90,7 +90,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     final String cleanedPackName = this.controller.getPackName().replace(Minecraft.getInstance().player.getUUID().toString(), "");
                     ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
-                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getBlueprintPath())), (blueprint -> {
+                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getBlueprintPath()), mc.level.registryAccess()), (blueprint -> {
                         if (blueprint != null)
                         {
                             final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
@@ -105,7 +105,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                     {
                         final String path = this.controller.getBlueprintPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
                         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
-                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path)),
+                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path), mc.level.registryAccess()),
                           (blueprint -> {
                               if (blueprint != null)
                               {

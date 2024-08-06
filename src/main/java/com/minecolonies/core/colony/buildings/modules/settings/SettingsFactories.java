@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
         }
@@ -68,7 +68,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final T input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final T input, @NotNull final RegistryFriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeBoolean(input.getValue());
             packetBuffer.writeBoolean(input.getDefault());
@@ -76,7 +76,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
         }
@@ -150,7 +150,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final int current = nbt.getInt(TAG_VALUE);
             final List<String> settings = new ArrayList<>();
@@ -164,7 +164,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting input, @NotNull final RegistryFriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getCurrentIndex());
             packetBuffer.writeInt(input.getSettings().size());
@@ -176,7 +176,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final int currentIndex = buffer.readInt();
             final int size = buffer.readInt();
@@ -263,7 +263,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public BlockSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_VALUE)));
             final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.get(new ResourceLocation(nbt.getString(TAG_DEF)));
@@ -279,7 +279,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public BlockSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final BlockItem value = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
             final BlockItem def = (BlockItem) Utils.deserializeCodecMess(buffer).getItem();
@@ -327,13 +327,13 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return this.getNewInstance(nbt.getInt(TAG_VALUE), nbt.getInt(TAG_DEFAULT));
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting input, @NotNull final RegistryFriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getValue());
             packetBuffer.writeInt(input.getDefault());
@@ -341,7 +341,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readInt(), buffer.readInt());
         }
@@ -628,19 +628,19 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public RecipeSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             IToken<?> token = null;
             if (nbt.contains(TAG_TOKEN))
             {
-                token = StandardFactoryController.getInstance().deserializeTag(nbt.getCompound(TAG_TOKEN));
+                token = StandardFactoryController.getInstance().deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             }
             final String moduleId = nbt.getString(TAG_MODULE);
             return this.getNewInstance(token, moduleId);
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final RegistryFriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeBoolean(input.selectedRecipe != null);
             if (input.selectedRecipe != null)
@@ -652,7 +652,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public RecipeSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
         {
             IToken<?> token = null;
             if (buffer.readBoolean())

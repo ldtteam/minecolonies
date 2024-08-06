@@ -61,7 +61,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 
     public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos)
     {
-        super(new ResourceLocation(Constants.MOD_ID + SPIES_GUI_XML));
+        super(ResourceLocation.parse(Constants.MOD_ID + SPIES_GUI_XML));
         this.buildingView = buildingView;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());

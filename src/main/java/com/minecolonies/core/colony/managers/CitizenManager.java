@@ -31,6 +31,7 @@ import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveCiti
 import com.minecolonies.core.quests.QuestInstance;
 import com.minecolonies.core.quests.triggers.CitizenTriggerReturnData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -115,7 +116,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (entity.getCivilianID() == 0 || citizens.get(entity.getCivilianID()) == null)
         {
-            if (!entity.isAddedToWorld())
+            if (!entity.isAddedToLevel())
             {
                 Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
             }
@@ -127,7 +128,7 @@ public class CitizenManager implements ICitizenManager
 
         if (data == null || !entity.getUUID().equals(data.getUUID()))
         {
-            if (!entity.isAddedToWorld())
+            if (!entity.isAddedToLevel())
             {
                 Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
             }
@@ -144,7 +145,7 @@ public class CitizenManager implements ICitizenManager
             return;
         }
 
-        if (!entity.isAddedToWorld())
+        if (!entity.isAddedToLevel())
         {
             Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
         }
@@ -174,7 +175,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         citizens.forEach((id, citizen) -> citizen.getEntity().ifPresent(e -> e.remove(Entity.RemovalReason.DISCARDED)));
         citizens.clear();
@@ -201,9 +202,9 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
-        @NotNull final ListTag citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
+        @NotNull final ListTag citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT(provider)).collect(NBTUtils.toListNBT());
         compoundNBT.put(TAG_CITIZENS, citizenTagList);
     }
 
@@ -303,7 +304,7 @@ public class CitizenManager implements ICitizenManager
 
         entity.setCitizenId(citizenData.getId());
         entity.getCitizenColonyHandler().setColonyId(colony.getID());
-        if (entity.isAddedToWorld())
+        if (entity.isAddedToLevel())
         {
             entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
         }

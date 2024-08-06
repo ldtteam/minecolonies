@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -89,17 +90,17 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compoundNBT = super.serializeNBT();
+        final CompoundTag compoundNBT = super.serializeNBT(provider);
         compoundNBT.putInt(TAG_CURR_MANA, this.currentMana);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         this.currentMana = compound.getInt(TAG_CURR_MANA);
     }
 

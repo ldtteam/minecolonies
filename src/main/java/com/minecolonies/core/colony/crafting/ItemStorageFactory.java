@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -79,7 +79,7 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public ItemStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);

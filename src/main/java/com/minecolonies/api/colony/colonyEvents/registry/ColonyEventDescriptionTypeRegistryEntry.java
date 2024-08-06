@@ -2,12 +2,14 @@ package com.minecolonies.api.colony.colonyEvents.registry;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -18,12 +20,12 @@ public class ColonyEventDescriptionTypeRegistryEntry
     /**
      * Function for creating the event description from nbt.
      */
-    private final Function<CompoundTag, IColonyEventDescription> nbtEventDescriptionCreator;
+    private final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventDescriptionCreator;
 
     /**
-     * Function for creating the event description from a {@link FriendlyByteBuf}.
+     * Function for creating the event description from a {@link RegistryFriendlyByteBuf}.
      */
-    private final Function<FriendlyByteBuf, IColonyEventDescription> packetBufferEventDescriptionCreator;
+    private final Function<RegistryFriendlyByteBuf, IColonyEventDescription>        packetBufferEventDescriptionCreator;
 
     /**
      * The name of this registry.
@@ -34,10 +36,10 @@ public class ColonyEventDescriptionTypeRegistryEntry
      * Creates a new registry entry for the given function and registry name.
      *
      * @param nbtEventCreator          the event creator using nbt.
-     * @param packetBufferEventCreator the event creator using a {@link FriendlyByteBuf}.
+     * @param packetBufferEventCreator the event creator using a {@link RegistryFriendlyByteBuf}.
      * @param registryID               the registry id.
      */
-    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final Function<CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<FriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
+    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
     {
         if (registryID.getPath().isEmpty())
         {
@@ -55,15 +57,15 @@ public class ColonyEventDescriptionTypeRegistryEntry
      * @param compound the nbt to deserialize the event description from.
      * @return the deserialized event description.
      */
-    public IColonyEventDescription deserializeEventDescriptionFromNBT(@Nonnull final CompoundTag compound)
+    public IColonyEventDescription deserializeEventDescriptionFromNBT(@NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound)
     {
-        return nbtEventDescriptionCreator.apply(compound);
+        return nbtEventDescriptionCreator.apply(provider, compound);
     }
 
     /**
-     * Deserializes the event description from the given {@link FriendlyByteBuf}.
+     * Deserializes the event description from the given {@link RegistryFriendlyByteBuf}.
      * 
-     * @param buffer the {@link FriendlyByteBuf} to deserialize the event description from.
+     * @param buffer the {@link RegistryFriendlyByteBuf} to deserialize the event description from.
      * @return the deserialized event description.
      */
     public IColonyEventDescription deserializeEventDescriptionFromFriendlyByteBuf(@Nonnull final RegistryFriendlyByteBuf buffer)

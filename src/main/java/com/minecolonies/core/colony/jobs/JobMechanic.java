@@ -46,7 +46,7 @@ public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMec
     @Override
     public void playSound(final BlockPos blockPos, final EntityCitizen worker)
     {
-        worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON, blockPos, 1, 0);
+        worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON.value(), blockPos, 1, 0);
         worker.queueSound(SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, blockPos, 1, 0);
         worker.queueSound(SoundEvents.IRON_DOOR_OPEN, blockPos, 1, 0);
     }

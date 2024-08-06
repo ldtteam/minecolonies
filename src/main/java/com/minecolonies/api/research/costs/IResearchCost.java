@@ -3,7 +3,7 @@ package com.minecolonies.api.research.costs;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.item.Item;

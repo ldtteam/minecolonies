@@ -21,7 +21,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.core.colony.fields.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;

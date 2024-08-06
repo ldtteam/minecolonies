@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistry
 import com.minecolonies.api.colony.managers.interfaces.IEventManager;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -218,7 +219,7 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundTag compound)
+    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_EVENT_MANAGER))
         {
@@ -246,13 +247,13 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundTag compound)
+    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final CompoundTag eventManagerNBT = new CompoundTag();
         final ListTag eventListNBT = new ListTag();
         for (final IColonyEvent event : events.values())
         {
-            final CompoundTag eventNBT = event.serializeNBT();
+            final CompoundTag eventNBT = event.serializeNBT(provider);
             eventNBT.putString(TAG_NAME, event.getEventTypeID().getPath());
             eventListNBT.add(eventNBT);
         }

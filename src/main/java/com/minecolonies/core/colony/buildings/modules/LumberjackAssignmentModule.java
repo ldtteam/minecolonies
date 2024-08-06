@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD_NAME;
 
 /**
  * Assignment module for foresters.
@@ -36,6 +37,6 @@ public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule imp
     {
         super.onRemoval(citizen);
         final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-        optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
+        optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD_NAME, Attributes.MOVEMENT_SPEED));
     }
 }

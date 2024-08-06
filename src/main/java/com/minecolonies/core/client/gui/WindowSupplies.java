@@ -106,7 +106,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         structurePack = StructurePacks.selectedPack;
 
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(
-                StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint"),
+                StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint", mc.level.registryAccess()),
                 blueprint -> {
                     if (blueprint == null)
                     {

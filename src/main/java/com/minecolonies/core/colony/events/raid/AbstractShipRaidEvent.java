@@ -16,6 +16,7 @@ import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipSize;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -178,7 +179,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PREPARING;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
             blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
@@ -499,7 +500,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_EVENT_ID, id);
@@ -526,7 +527,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];

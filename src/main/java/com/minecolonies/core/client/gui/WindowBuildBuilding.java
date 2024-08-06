@@ -303,7 +303,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
-        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name), (blueprint -> {
+        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name, world.registryAccess()), (blueprint -> {
             resources.clear();
             if (blueprint == null)
             {
@@ -350,7 +350,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
+        final int hashCode = res.getComponentsPatch().hashCode();
         final String key = res.getDescriptionId() + "-" + hashCode;
         ItemStorage resource = resources.get(key);
         if (resource == null)
@@ -503,8 +503,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 quantityLabel.setText(Component.literal(Integer.toString(resource.getAmount())));
                 resourceLabel.setColors(WHITE);
                 quantityLabel.setColors(WHITE);
-                final ItemStack itemIcon = new ItemStack(resource.getItem(), 1);
-                itemIcon.setTag(resource.getItemStack().getTag());
+                final ItemStack itemIcon = resource.getItemStack().copy();
+                itemIcon.setCount(1);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(itemIcon);
             }
         });

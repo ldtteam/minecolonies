@@ -48,7 +48,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         super(TYPE, building);
         this.assign = assign;
-        this.fieldData = FieldDataManager.fieldToBuffer(field);
+        this.fieldData = FieldDataManager.fieldToBuffer(field, building.getColony().getWorld().registryAccess());
         this.moduleID = moduleID;
     }
 
@@ -67,7 +67,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
         super(buf, type);
         assign = buf.readBoolean();
         moduleID = buf.readInt();
-        fieldData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        fieldData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess());
     }
 
     @Override

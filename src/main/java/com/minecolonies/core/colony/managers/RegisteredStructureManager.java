@@ -33,6 +33,7 @@ import com.minecolonies.core.network.messages.client.colony.ColonyViewFieldsUpda
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -122,7 +123,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         buildings = ImmutableMap.of();
         maxChunkX = colony.getCenter().getX() >> 4;
@@ -137,7 +138,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             for (int i = 0; i < fieldsTagList.size(); ++i)
             {
                 final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                final IField field = FieldDataManager.compoundToField(fieldCompound);
+                final IField field = FieldDataManager.compoundToField(provider, fieldCompound);
                 if (field != null)
                 {
                     addField(field);
@@ -226,7 +227,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compound)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         //  Buildings
         @NotNull final ListTag buildingTagList = new ListTag();
@@ -239,7 +240,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         // Fields
         compound.put(TAG_FIELDS, fields.stream()
-                                   .map(FieldDataManager::fieldToCompound)
+                                   .map(f -> FieldDataManager.fieldToCompound(provider, f))
                                    .collect(NBTUtils.toListNBT()));
 
         // Leisure sites

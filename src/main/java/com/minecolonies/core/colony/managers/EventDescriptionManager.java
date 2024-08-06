@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescrip
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IEventDescriptionManager;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
@@ -70,7 +71,7 @@ public class EventDescriptionManager implements IEventDescriptionManager
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundTag eventManagerNBT)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag eventManagerNBT)
     {
         final ListTag eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Tag.TAG_COMPOUND);
         for (final Tag event : eventDescListNBT)
@@ -85,19 +86,19 @@ public class EventDescriptionManager implements IEventDescriptionManager
                 continue;
             }
 
-            final IColonyEventDescription eventDescription = registryEntry.deserializeEventDescriptionFromNBT(eventCompound);
+            final IColonyEventDescription eventDescription = registryEntry.deserializeEventDescriptionFromNBT(provider, eventCompound);
             eventDescs.add(eventDescription);
         }
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag eventManagerNBT = new CompoundTag();
         final ListTag eventDescsListNBT = new ListTag();
         for (final IColonyEventDescription event : eventDescs)
         {
-            final CompoundTag eventNBT = event.serializeNBT();
+            final CompoundTag eventNBT = event.serializeNBT(provider);
             eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
             eventDescsListNBT.add(eventNBT);
         }

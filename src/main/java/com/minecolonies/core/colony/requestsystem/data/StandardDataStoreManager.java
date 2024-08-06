@@ -14,7 +14,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +113,7 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+        public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundTag -> {
                 final IToken<?> token = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
@@ -126,7 +126,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         }
 
         @Override
-        public void serialize(IFactoryController controller, StandardDataStoreManager input, FriendlyByteBuf packetBuffer)
+        public void serialize(IFactoryController controller, StandardDataStoreManager input, RegistryFriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.storeMap.size());
             input.storeMap.forEach((key, value) -> {
@@ -136,7 +136,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         }
 
         @Override
-        public StandardDataStoreManager deserialize(IFactoryController controller, FriendlyByteBuf buffer)
+        public StandardDataStoreManager deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
           throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();

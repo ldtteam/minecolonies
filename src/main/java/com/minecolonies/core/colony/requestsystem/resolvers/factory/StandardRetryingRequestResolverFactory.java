@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.core.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +61,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public CompoundTag serialize(
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, 
       @NotNull final IFactoryController controller, @NotNull final StandardRetryingRequestResolver standardRetryingRequestResolver)
     {
         final CompoundTag compound = new CompoundTag();
@@ -91,7 +91,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
 
     @NotNull
     @Override
-    public StandardRetryingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public StandardRetryingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
             IToken<?> token = controller.deserializeTag(assignmentCompound.getCompound(NBT_TOKEN));
@@ -107,8 +107,8 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
 
         final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver(token, location);
         retryingRequestResolver.updateData(assignments, delays);
@@ -116,7 +116,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, StandardRetryingRequestResolver input, RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeInt(input.getAssignedRequests().size());
         input.getAssignedRequests().forEach((key, value) -> {
@@ -135,7 +135,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     }
 
     @Override
-    public StandardRetryingRequestResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public StandardRetryingRequestResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final Map<IToken<?>, Integer> requests = new HashMap<>();
         final int requestsSize = buffer.readInt();

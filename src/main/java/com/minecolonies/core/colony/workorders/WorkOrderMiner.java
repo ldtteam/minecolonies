@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.colony.jobs.JobMiner;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -64,15 +65,15 @@ public class WorkOrderMiner extends AbstractWorkOrder
     }
 
     @Override
-    public Future<Blueprint> getBlueprintFuture()
+    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider)
     {
         return IOPool.submit(() ->
         {
-            Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getStructurePath(), true);
+            Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getStructurePath(), true, provider);
             if (blueprint == null)
             {
                 // automatic fallback to default style
-                blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, getStructurePath());
+                blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, getStructurePath(), provider);
                 if (blueprint != null)
                 {
                     packName = STORAGE_STYLE;

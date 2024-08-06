@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -170,9 +170,9 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
         @NotNull
         @Override
-        public StandardRequestSystemBuildingDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+        public StandardRequestSystemBuildingDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserializeTag(nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = NBTUtils
                                                                                              .streamCompound(nbt.getList(TAG_OPEN_REQUESTS_BY_TYPE, Tag.TAG_COMPOUND))
                                                                                              .map(CompoundTag -> {
@@ -227,7 +227,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestSystemBuildingDataStore input,
-          FriendlyByteBuf packetBuffer)
+          RegistryFriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.openRequestsByRequestableType.size());
@@ -259,7 +259,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         }
 
         @Override
-        public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
+        public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
           throws Throwable
         {
             final IToken<?> id = controller.deserializeTag(buffer);

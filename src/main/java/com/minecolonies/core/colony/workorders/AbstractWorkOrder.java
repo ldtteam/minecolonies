@@ -18,8 +18,9 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -397,9 +398,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     @Override
-    public Future<Blueprint> getBlueprintFuture()
+    public Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider)
     {
-        return StructurePacks.getBlueprintFuture(getStructurePack(), getStructurePath());
+        return StructurePacks.getBlueprintFuture(getStructurePack(), getStructurePath(), provider);
     }
 
     @Override

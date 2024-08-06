@@ -131,7 +131,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
 
         final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
-        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
+        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path, mc.level.registryAccess());
         this.rotationMirror = rotationMirror;
         this.buildRequestMessage = buildRequestMessage;
     }
@@ -273,7 +273,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             return;
         }
-        final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
+        final int hashCode = res.getComponentsPatch().hashCode();
         final String key = res.getDescriptionId() + "-" + hashCode;
         ItemStorage resource = resources.get(key);
         if (resource == null)
@@ -323,8 +323,8 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                 quantityLabel.setText(Component.literal(Integer.toString(resource.getAmount())));
                 resourceLabel.setColors(WHITE);
                 quantityLabel.setColors(WHITE);
-                final ItemStack itemIcon = new ItemStack(resource.getItem(), 1);
-                itemIcon.setTag(resource.getItemStack().getTag());
+                final ItemStack itemIcon = resource.getItemStack().copy();
+                itemIcon.setCount(1);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(itemIcon);
             }
         });

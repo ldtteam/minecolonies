@@ -6,8 +6,9 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +65,7 @@ public interface IWorkOrder
      * Get a blueprint future.
      * @return the blueprint future (might contain null).
      */
-    Future<Blueprint> getBlueprintFuture();
+    Future<Blueprint> getBlueprintFuture(@NotNull final HolderLookup.Provider provider);
 
     /**
      * Get the current level of the structure of the work order.
@@ -255,7 +256,7 @@ public interface IWorkOrder
      *
      * @param buf Buffer to write to
      */
-    void serializeViewNetworkData(@NotNull FriendlyByteBuf buf);
+    void serializeViewNetworkData(@NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * Executed when a work order is added.

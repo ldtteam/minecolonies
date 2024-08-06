@@ -185,7 +185,7 @@ public final class CitizenConstants
     /**
      * The Research health modifier name.
      */
-    public static final String RESEARCH_BONUS_MULTIPLIER = "ResearchSpeedBonus";
+    public static final ResourceLocation RESEARCH_BONUS_MULTIPLIER = new ResourceLocation(Constants.MOD_ID, "researchspeedbonus");
 
     /**
      * The addition skill bonus speed modifier

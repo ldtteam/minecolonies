@@ -20,7 +20,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -159,7 +159,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @param buf      FriendlyByteBuf to write to.
      * @param fullSync Whether it's a full sync
      */
-    void serializeToView(@NotNull FriendlyByteBuf buf, final boolean fullSync);
+    void serializeToView(@NotNull RegistryFriendlyByteBuf buf, final boolean fullSync);
 
     /**
      * Set the custom building name of the building.

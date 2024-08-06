@@ -47,7 +47,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -280,10 +280,10 @@ public final class ColonyView implements IColonyView
      * Populate an NBT compound for a network packet representing a ColonyView.
      *
      * @param colony            Colony to write data about.
-     * @param buf               {@link FriendlyByteBuf} to write data in.
+     * @param buf               {@link RegistryFriendlyByteBuf} to write data in.
      * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull Colony colony, @NotNull FriendlyByteBuf buf, boolean hasNewSubscribers)
+    public static void serializeNetworkData(@NotNull Colony colony, @NotNull RegistryFriendlyByteBuf buf, boolean hasNewSubscribers)
     {
         //  General Attributes
         buf.writeUtf(colony.getName());

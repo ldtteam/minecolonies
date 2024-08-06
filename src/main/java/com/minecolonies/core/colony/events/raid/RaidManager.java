@@ -1117,7 +1117,7 @@ public class RaidManager implements IRaiderManager
 
         public static RaidSpawnInfo fromNBT(final CompoundTag tag)
         {
-            return new RaidSpawnInfo(new ResourceLocation(tag.getString(TAG_RAIDTYPE)), new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
+            return new RaidSpawnInfo(ResourceLocation.parse(tag.getString(TAG_RAIDTYPE)), new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
         }
 
         public String toString()

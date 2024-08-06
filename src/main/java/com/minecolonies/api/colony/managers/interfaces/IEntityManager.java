@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -36,14 +37,14 @@ public interface IEntityManager
      *
      * @param compound the compound to read it from.
      */
-    void read(@NotNull CompoundTag compound);
+    void read(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * Write the civilian to nbt.
      *
      * @param compoundNBT the compound to write it to.
      */
-    void write(@NotNull CompoundTag compoundNBT);
+    void write(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compoundNBT);
 
     /**
      * Sends packages to update the civilian.

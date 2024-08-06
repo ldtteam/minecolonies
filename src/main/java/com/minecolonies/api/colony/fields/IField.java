@@ -6,8 +6,9 @@ import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.modules.IModuleContainer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,28 +68,28 @@ public interface IField extends IModuleContainer<IFieldModule>
     /**
      * Stores the NBT data of the field.
      */
-    @NotNull CompoundTag serializeNBT();
+    @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider);
 
     /**
      * Reconstruct the field from the given NBT data.
      *
      * @param compound the compound to read from.
      */
-    void deserializeNBT(@NotNull CompoundTag compound);
+    void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull CompoundTag compound);
 
     /**
      * Serialize a field to a buffer.
      *
      * @param buf the buffer to write the field data to.
      */
-    void serialize(@NotNull FriendlyByteBuf buf);
+    void serialize(@NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * Deserialize a field from a buffer.
      *
      * @param buf the buffer to read the field data from.
      */
-    void deserialize(@NotNull FriendlyByteBuf buf);
+    void deserialize(@NotNull RegistryFriendlyByteBuf buf);
 
     /**
      * Condition to check whether this field instance is currently properly placed down.

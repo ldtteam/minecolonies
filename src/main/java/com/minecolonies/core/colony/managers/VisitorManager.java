@@ -13,6 +13,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -70,7 +71,7 @@ public class VisitorManager implements IVisitorManager
     {
         if (visitor.getCivilianID() == 0 || visitorMap.get(visitor.getCivilianID()) == null)
         {
-            if (!visitor.isAddedToWorld())
+            if (!visitor.isAddedToLevel())
             {
                 Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
             }
@@ -82,7 +83,7 @@ public class VisitorManager implements IVisitorManager
 
         if (data == null || !visitor.getUUID().equals(data.getUUID()))
         {
-            if (!visitor.isAddedToWorld())
+            if (!visitor.isAddedToLevel())
             {
                 Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
             }
@@ -112,7 +113,7 @@ public class VisitorManager implements IVisitorManager
             return;
         }
 
-        if (!visitor.isAddedToWorld())
+        if (!visitor.isAddedToLevel())
         {
             Log.getLogger().warn("Discarding entity not added to world, should be only called after:", new Exception());
         }
@@ -130,7 +131,7 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void read(@NotNull final CompoundTag compound)
+    public void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_VISIT_MANAGER))
         {
@@ -148,14 +149,14 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void write(@NotNull final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
         final CompoundTag visitorManagerNBT = new CompoundTag();
 
         final ListTag citizenList = new ListTag();
         for (Map.Entry<Integer, IVisitorData> entry : visitorMap.entrySet())
         {
-            citizenList.add(entry.getValue().serializeNBT());
+            citizenList.add(entry.getValue().serializeNBT(provider));
         }
 
         visitorManagerNBT.put(TAG_VISITORS, citizenList);
@@ -245,7 +246,7 @@ public class VisitorManager implements IVisitorManager
 
         citizenEntity.setCitizenId(data.getId());
         citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
-        if (citizenEntity.isAddedToWorld())
+        if (citizenEntity.isAddedToLevel())
         {
             citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
         }

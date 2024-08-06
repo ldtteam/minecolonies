@@ -14,7 +14,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.client.gui.WindowBuildingBrowser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuilding createFrom(final IColony colony, final CompoundTag compound)
     {
-        final ResourceLocation type = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        final ResourceLocation type = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
         final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
 
         IBuilding building = this.createFrom(colony, pos, type);
@@ -71,7 +71,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer)
     {
-        final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readUtf(32767));
+        final ResourceLocation buildingName = ResourceLocation.parse(networkBuffer.readUtf(32767));
         final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
 
         if (entry == null)

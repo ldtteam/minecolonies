@@ -163,16 +163,6 @@ public interface IFactoryController
     <Output> Output deserializeTag(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound) throws IllegalArgumentException;
 
     /**
-     * Method used to quickly write an object into the given {@link ByteBuf}.
-     *
-     * @param buffer   The buffer to write into.
-     * @param object   The object to write.
-     * @param <Output> The type of the object to write.
-     * @throws IllegalArgumentException is thrown when the given output type is unknown to this controller.
-     */
-    <Output extends Object> void serializeTag(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Output object) throws IllegalArgumentException;
-
-    /**
      * Method used to quickly read an object from a given {@link ByteBuf}
      *
      * @param buffer   The buffer to read from.
@@ -192,15 +182,6 @@ public interface IFactoryController
      */
     <Output extends Object> void serialize(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Output object) throws IllegalArgumentException;
 
-    /**
-     * Method used to quickly read an object from a given {@link ByteBuf}
-     *
-     * @param buffer   The buffer to read from.
-     * @param <Output> The type to read.
-     * @return An instance of the given output type, with its stored data from the buffer.
-     * @throws IllegalArgumentException is thrown when the requested type is unknown to this controller.
-     */
-    <Output> Output deserializeTag(@NotNull final RegistryFriendlyByteBuf buffer) throws IllegalArgumentException;
     /**
      * Method used to create a new instance of the given input.
      *

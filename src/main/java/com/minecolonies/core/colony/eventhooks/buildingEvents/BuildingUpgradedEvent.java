@@ -1,8 +1,9 @@
 package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -56,10 +57,10 @@ public class BuildingUpgradedEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingUpgradedEvent loadFromNBT(@NotNull final CompoundTag compound)
+    public static BuildingUpgradedEvent loadFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final BuildingUpgradedEvent upgradeEvent = new BuildingUpgradedEvent();
-        upgradeEvent.deserializeNBT(compound);
+        upgradeEvent.deserializeNBT(provider, compound);
         return upgradeEvent;
     }
 

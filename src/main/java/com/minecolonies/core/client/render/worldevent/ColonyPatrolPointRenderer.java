@@ -57,7 +57,7 @@ public class ColonyPatrolPointRenderer
 
         if (pendingTemplate == null && partolPointTemplate == null)
         {
-            pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/patrolpoint.blueprint");
+            pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/patrolpoint.blueprint", ctx.clientLevel.registryAccess());
             return;
         }
         else if (pendingTemplate != null && pendingTemplate.isDone())

@@ -988,15 +988,15 @@ public final class StandardRequestFactories
     {
         final CompoundTag compound = new CompoundTag();
 
-        final CompoundTag requesterCompound = controller.serialize(request.getRequester());
-        final CompoundTag tokenCompound = controller.serialize(request.getId());
+        final CompoundTag requesterCompound = controller.serializeTag(provider, request.getRequester());
+        final CompoundTag tokenCompound = controller.serializeTag(provider, request.getId());
         final IntTag stateCompound = request.getState().serialize();
         final CompoundTag requestedCompound = typeSerialization.apply(provider, controller, request.getRequest());
 
         final ListTag childrenCompound = new ListTag();
         for (final IToken<?> token : request.getChildren())
         {
-            childrenCompound.add(controller.serialize(token));
+            childrenCompound.add(controller.serializeTag(provider, token));
         }
 
         compound.put(NBT_REQUESTER, requesterCompound);
@@ -1011,7 +1011,7 @@ public final class StandardRequestFactories
 
         if (request.hasParent())
         {
-            compound.put(NBT_PARENT, controller.serialize(request.getParent()));
+            compound.put(NBT_PARENT, controller.serializeTag(provider, request.getParent()));
         }
 
         compound.put(NBT_CHILDREN, childrenCompound);
@@ -1031,15 +1031,15 @@ public final class StandardRequestFactories
       final IObjectToPackBufferWriter<T> typeSerialization)
     {
 
-        controller.serializeTag(packetBuffer, request.getRequester());
-        controller.serializeTag(packetBuffer, request.getId());
+        controller.serialize(packetBuffer, request.getRequester());
+        controller.serialize(packetBuffer, request.getId());
         request.getState().serialize(packetBuffer);
         typeSerialization.apply(controller, packetBuffer, request.getRequest());
 
         packetBuffer.writeInt(request.getChildren().size());
         for (final IToken<?> token : request.getChildren())
         {
-            controller.serializeTag(packetBuffer, token);
+            controller.serialize(packetBuffer, token);
         }
 
         packetBuffer.writeBoolean(request.hasResult());
@@ -1051,7 +1051,7 @@ public final class StandardRequestFactories
         packetBuffer.writeBoolean(request.hasParent());
         if (request.hasParent())
         {
-            controller.serializeTag(packetBuffer, request.getParent());
+            controller.serialize(packetBuffer, request.getParent());
         }
 
         packetBuffer.writeInt(request.getDeliveries().size());
@@ -1065,8 +1065,8 @@ public final class StandardRequestFactories
       final INBTToObjectConverter<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
-        final IRequester requester = controller.deserializeTag(compound.getCompound(NBT_REQUESTER));
-        final IToken<?> token = controller.deserializeTag(compound.getCompound(NBT_TOKEN));
+        final IRequester requester = controller.deserializeTag(provider, compound.getCompound(NBT_REQUESTER));
+        final IToken<?> token = controller.deserializeTag(provider, compound.getCompound(NBT_TOKEN));
         final RequestState state = RequestState.deserialize((IntTag) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(provider, controller, compound.getCompound(NBT_REQUESTED));
 
@@ -1074,7 +1074,7 @@ public final class StandardRequestFactories
         final ListTag childCompound = compound.getList(NBT_CHILDREN, Tag.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
-            childTokens.add(controller.deserializeTag(childCompound.getCompound(i)));
+            childTokens.add(controller.deserializeTag(provider, childCompound.getCompound(i)));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
@@ -1083,7 +1083,7 @@ public final class StandardRequestFactories
 
         if (compound.contains(NBT_PARENT))
         {
-            request.setParent(controller.deserializeTag(compound.getCompound(NBT_PARENT)));
+            request.setParent(controller.deserializeTag(provider, compound.getCompound(NBT_PARENT)));
         }
 
         if (compound.contains(NBT_RESULT))
@@ -1109,8 +1109,8 @@ public final class StandardRequestFactories
       final IRegistryFriendlyByteBufToObjectReader<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
-        final IRequester requester = controller.deserializeTag(buffer);
-        final IToken<?> token = controller.deserializeTag(buffer);
+        final IRequester requester = controller.deserialize(buffer);
+        final IToken<?> token = controller.deserialize(buffer);
         final RequestState state = RequestState.deserialize(buffer);
         final T requested = typeDeserialization.apply(controller, buffer);
 
@@ -1118,7 +1118,7 @@ public final class StandardRequestFactories
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            childTokens.add(controller.deserializeTag(buffer));
+            childTokens.add(controller.deserialize(buffer));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
@@ -1131,7 +1131,7 @@ public final class StandardRequestFactories
 
         if (buffer.readBoolean())
         {
-            request.setParent(controller.deserializeTag(buffer));
+            request.setParent(controller.deserialize(buffer));
         }
 
         final List<ItemStack> deliveries = new ArrayList<>();

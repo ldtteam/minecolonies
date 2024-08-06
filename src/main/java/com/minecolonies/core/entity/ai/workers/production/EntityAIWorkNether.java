@@ -28,6 +28,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -760,7 +761,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void useFlintAndSteel()
     {
         final ItemStack tool = findTool(ToolType.FLINT_N_STEEL);
-        tool.hurtAndBreak(1, worker, entity -> {});
+
+        tool.hurtAndBreak(1, (ServerLevel) world, worker, item -> {});
     }
 
     private ItemStack findItem(@NotNull final Predicate<ItemStack> predicate)

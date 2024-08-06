@@ -69,7 +69,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         buf.writeInt(fields.size());
         for (final IField field : fields.keySet())
         {
-            final RegistryFriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field);
+            final RegistryFriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field, buf.registryAccess());
             fieldBuffer.resetReaderIndex();
             buf.writeByteArray(fieldBuffer.array());
         }
@@ -79,12 +79,12 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
     {
         super(buf, type);
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         fields = new HashMap<>();
         final int fieldCount = buf.readInt();
         for (int i = 0; i < fieldCount; i++)
         {
-            final IField parsedField = FieldDataManager.bufferToField(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())));
+            final IField parsedField = FieldDataManager.bufferToField(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
             fields.put(parsedField, parsedField);
         }
     }
@@ -99,7 +99,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
             view.getFields(field -> true).forEach(existingField -> {
                 if (this.fields.containsKey(existingField))
                 {
-                    final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
+                    final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.level().registryAccess());
                     this.fields.get(existingField).serialize(copyBuffer);
                     existingField.deserialize(copyBuffer);
                     updatedFields.add(existingField);

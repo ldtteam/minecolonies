@@ -11,7 +11,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -50,29 +51,29 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
 
     @NotNull
     @Override
-    public CompoundTag serialize(
+    public CompoundTag serialize(@NotNull final HolderLookup.Provider provider,
       @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingProductionResolver privateWorkerCraftingProductionResolverFactory)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_TOKEN, controller.serialize(privateWorkerCraftingProductionResolverFactory.getId()));
-        compound.put(NBT_LOCATION, controller.serialize(privateWorkerCraftingProductionResolverFactory.getLocation()));
+        compound.put(NBT_TOKEN, controller.serializeTag(provider, privateWorkerCraftingProductionResolverFactory.getId()));
+        compound.put(NBT_LOCATION, controller.serializeTag(provider, privateWorkerCraftingProductionResolverFactory.getLocation()));
         compound.putString(NBT_JOB, IJobRegistry.getInstance().getKey(privateWorkerCraftingProductionResolverFactory.getJobEntry()).toString());
         return compound;
     }
 
     @NotNull
     @Override
-    public PrivateWorkerCraftingProductionResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public PrivateWorkerCraftingProductionResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserializeTag(nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
         final JobEntry entry = IJobRegistry.getInstance().get(ResourceLocation.parse(nbt.getString(NBT_JOB)));
 
         return new PrivateWorkerCraftingProductionResolver(location, token, entry);
     }
 
     @Override
-    public void serialize(IFactoryController controller, PrivateWorkerCraftingProductionResolver input, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, PrivateWorkerCraftingProductionResolver input, RegistryFriendlyByteBuf packetBuffer)
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
@@ -80,7 +81,7 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     }
 
     @Override
-    public PrivateWorkerCraftingProductionResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public PrivateWorkerCraftingProductionResolver deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final IToken<?> token = controller.deserializeTag(buffer);
         final ILocation location = controller.deserializeTag(buffer);

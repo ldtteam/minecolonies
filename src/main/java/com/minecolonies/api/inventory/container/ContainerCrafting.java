@@ -2,7 +2,7 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -90,7 +90,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCrafting fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerCrafting fromFriendlyByteBuf(final int windowId, final Inventory inv, final RegistryFriendlyByteBuf packetBuffer)
     {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();

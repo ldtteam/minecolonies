@@ -24,9 +24,10 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.core.colony.requestsystem.management.handlers.*;
 import com.minecolonies.core.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -427,20 +428,20 @@ public class StandardRequestManager implements IStandardRequestManager
      * @return The NBTData that describes the current request system
      */
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag systemCompound = new CompoundTag();
         systemCompound.putInt(NBT_VERSION, version);
 
-        systemCompound.put(NBT_DATASTORE, getFactoryController().serialize(dataStoreManager));
-        systemCompound.put(NBT_ID_REQUEST_IDENTITIES, getFactoryController().serialize(requestIdentitiesDataStoreId));
-        systemCompound.put(NBT_ID_REQUEST_RESOLVER_IDENTITIES, getFactoryController().serialize(requestResolverIdentitiesDataStoreId));
-        systemCompound.put(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serialize(providerRequestResolverAssignmentDataStoreId));
-        systemCompound.put(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
-        systemCompound.put(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
+        systemCompound.put(NBT_DATASTORE, getFactoryController().serializeTag(provider, dataStoreManager));
+        systemCompound.put(NBT_ID_REQUEST_IDENTITIES, getFactoryController().serializeTag(provider, requestIdentitiesDataStoreId));
+        systemCompound.put(NBT_ID_REQUEST_RESOLVER_IDENTITIES, getFactoryController().serializeTag(provider, requestResolverIdentitiesDataStoreId));
+        systemCompound.put(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serializeTag(provider, providerRequestResolverAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serializeTag(provider, requestResolverRequestAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serializeTag(provider, requestableTypeRequestResolverAssignmentDataStoreId));
 
-        systemCompound.put(NBT_ID_PLAYER, getFactoryController().serialize(playerRequestResolverId));
-        systemCompound.put(NBT_ID_RETRYING, getFactoryController().serialize(retryingRequestResolverId));
+        systemCompound.put(NBT_ID_PLAYER, getFactoryController().serializeTag(provider, playerRequestResolverId));
+        systemCompound.put(NBT_ID_RETRYING, getFactoryController().serializeTag(provider, retryingRequestResolverId));
 
         return systemCompound;
     }
@@ -451,7 +452,7 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param nbt The data to deserialize.
      */
     @Override
-    public void deserializeNBT(final CompoundTag nbt)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_VERSION,
@@ -461,38 +462,38 @@ public class StandardRequestManager implements IStandardRequestManager
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_DATASTORE,
           CompoundTag::getCompound,
-          c -> dataStoreManager = getFactoryController().deserializeTag(c));
+          c -> dataStoreManager = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_IDENTITIES,
           CompoundTag::getCompound,
-          c -> requestIdentitiesDataStoreId = getFactoryController().deserializeTag(c));
+          c -> requestIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_IDENTITIES,
           CompoundTag::getCompound,
-          c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserializeTag(c));
+          c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PROVIDER_ASSIGNMENTS,
           CompoundTag::getCompound,
-          c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(c));
+          c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
           CompoundTag::getCompound,
-          c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserializeTag(c));
+          c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
           CompoundTag::getCompound,
-          c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(c));
+          c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PLAYER,
           CompoundTag::getCompound,
-          c -> playerRequestResolverId = getFactoryController().deserializeTag(c));
+          c -> playerRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_RETRYING,
           CompoundTag::getCompound,
-          c -> retryingRequestResolverId = getFactoryController().deserializeTag(c));
+          c -> retryingRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
         if (dataStoreManager == null)
         {
@@ -503,7 +504,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void serialize(IFactoryController controller, FriendlyByteBuf buffer)
+    public void serialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
     {
         buffer.writeInt(version);
         controller.serialize(buffer, dataStoreManager);
@@ -517,17 +518,17 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void deserialize(IFactoryController controller, FriendlyByteBuf buffer)
+    public void deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
     {
         version = buffer.readInt();
-        dataStoreManager = controller.deserializeTag(buffer);
-        requestIdentitiesDataStoreId = controller.deserializeTag(buffer);
-        requestResolverIdentitiesDataStoreId = controller.deserializeTag(buffer);
-        providerRequestResolverAssignmentDataStoreId = controller.deserializeTag(buffer);
-        requestResolverRequestAssignmentDataStoreId = controller.deserializeTag(buffer);
-        requestableTypeRequestResolverAssignmentDataStoreId = controller.deserializeTag(buffer);
-        playerRequestResolverId = controller.deserializeTag(buffer);
-        retryingRequestResolverId = controller.deserializeTag(buffer);
+        dataStoreManager = controller.deserialize(buffer);
+        requestIdentitiesDataStoreId = controller.deserialize(buffer);
+        requestResolverIdentitiesDataStoreId = controller.deserialize(buffer);
+        providerRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+        requestResolverRequestAssignmentDataStoreId = controller.deserialize(buffer);
+        requestableTypeRequestResolverAssignmentDataStoreId = controller.deserialize(buffer);
+        playerRequestResolverId = controller.deserialize(buffer);
+        retryingRequestResolverId = controller.deserialize(buffer);
     }
 
     private <T> void executeDeserializationStepOrMarkForUpdate(

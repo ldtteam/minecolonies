@@ -1,6 +1,8 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.placement.AbstractBlueprintIteratorWrapper;
 import com.ldtteam.structurize.placement.StructureIterators;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
@@ -9,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -201,9 +204,9 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         {
             final Blueprint blueprint = delegate.getBluePrint();
 
-            final short sizeX = blueprint.getSizeX();
+            final int sizeX = blueprint.getSizeX();
             final short sizeY = 1;
-            final short sizeZ = blueprint.getSizeZ();
+            final int sizeZ = blueprint.getSizeZ();
             final CompoundTag[][][] tags = blueprint.getTileEntities();
             final short[][][] structure = blueprint.getStructure();
             final int layer = getLayer();
@@ -224,7 +227,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
                 }
             }
 
-            layerBlueprint = new Blueprint(sizeX, sizeY, sizeZ, blueprint.getPalleteSize(), Arrays.asList(blueprint.getPalette()), structureAtLayer, tagsAtLayer.toArray(new CompoundTag[0]), blueprint.getRequiredMods());
+            layerBlueprint = new Blueprint((short) sizeX, sizeY, (short) sizeZ, blueprint.getPalleteSize(), Arrays.asList(blueprint.getPalette()), structureAtLayer, tagsAtLayer.toArray(new CompoundTag[0]), blueprint.getRequiredMods(), getWorld().registryAccess());
         }
 
         @Override
@@ -253,9 +256,9 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public PlacementSettings getSettings()
+        public RotationMirror getRotationMirror()
         {
-            return delegate.getSettings();
+            return delegate.getRotationMirror();
         }
 
         @Override
@@ -346,12 +349,6 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         public void prePlacementLogic(final BlockPos blockPos, final BlockState blockState, final List<ItemStack> list)
         {
             delegate.prePlacementLogic(blockPos, blockState, list);
-        }
-
-        @Override
-        public BlockState getSolidBlockForPos(final BlockPos blockPos)
-        {
-            return delegate.getSolidBlockForPos(blockPos);
         }
 
         @Override

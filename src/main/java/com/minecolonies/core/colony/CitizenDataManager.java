@@ -3,7 +3,7 @@ package com.minecolonies.core.colony;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;

@@ -32,7 +32,7 @@ public enum ColonySize
 
         final ColonySize size = getSizeByCount(colony.getCitizencount());
 
-        Loader.createFromXMLFile(new ResourceLocation(size.imagePath), colonyPane);
+        Loader.createFromXMLFile(ResourceLocation.parse(size.imagePath), colonyPane);
 
         final Pane background = colonyPane.findPaneByID("background");
         colonyPane.setSize(background.getWidth(), background.getHeight());

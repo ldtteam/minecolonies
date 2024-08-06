@@ -10,8 +10,9 @@ import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,7 +163,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public @NotNull CompoundTag serializeNBT()
+    public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         if (buildingId != null)
@@ -173,7 +174,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void deserializeNBT(final @NotNull CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
     {
         if (compound.contains(TAG_OWNER))
         {
@@ -182,7 +183,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void serialize(final @NotNull FriendlyByteBuf buf)
+    public void serialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         buf.writeBoolean(buildingId != null);
         if (buildingId != null)
@@ -192,7 +193,7 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public void deserialize(final @NotNull FriendlyByteBuf buf)
+    public void deserialize(final @NotNull RegistryFriendlyByteBuf buf)
     {
         if (buf.readBoolean())
         {

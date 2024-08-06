@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -56,13 +56,13 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, ImmutableItemStorage output, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, ImmutableItemStorage output, RegistryFriendlyByteBuf packetBuffer)
     {
         StandardFactoryController.getInstance().serialize(packetBuffer, output.copy());
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public ImmutableItemStorage deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserializeTag(buffer);
         return newItem.toImmutable();

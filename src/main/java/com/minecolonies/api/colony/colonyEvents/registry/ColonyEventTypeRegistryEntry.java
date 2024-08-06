@@ -3,12 +3,13 @@ package com.minecolonies.api.colony.colonyEvents.registry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.function.BiFunction;
 
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
@@ -18,7 +19,7 @@ public class ColonyEventTypeRegistryEntry
     /**
      * Function for creating the event objects.
      */
-    private final BiFunction<IColony, CompoundTag, IColonyEvent> eventCreator;
+    private final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator;
 
     /**
      * The registry id.
@@ -31,7 +32,7 @@ public class ColonyEventTypeRegistryEntry
      * @param eventCreator the event creator.
      * @param registryID   the registry id.
      */
-    public ColonyEventTypeRegistryEntry(@NotNull final BiFunction<IColony, CompoundTag, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
+    public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
     {
         if (registryID.getPath().isEmpty())
         {
@@ -51,7 +52,7 @@ public class ColonyEventTypeRegistryEntry
      */
     public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @Nonnull final CompoundTag compound)
     {
-        return eventCreator.apply(colony, compound);
+        return eventCreator.apply(colony, compound, colony.getWorld().registryAccess());
     }
 
     /**

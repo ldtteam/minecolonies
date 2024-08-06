@@ -17,6 +17,7 @@ import com.minecolonies.core.research.LocalResearch;
 import com.minecolonies.core.research.LocalResearchTree;
 import com.minecolonies.core.research.ResearchEffectManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
@@ -63,15 +64,15 @@ public class ResearchManager implements IResearchManager
     private boolean dirty;
 
     @Override
-    public void readFromNBT(@NotNull final CompoundTag compound)
+    public void readFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        tree.readFromNBT(compound, effects);
+        tree.readFromNBT(provider, compound, effects);
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundTag compound)
+    public void writeToNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        tree.writeToNBT(compound);
+        tree.writeToNBT(provider, compound);
     }
 
     @Override

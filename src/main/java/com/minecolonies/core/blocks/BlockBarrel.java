@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityBarrel;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -86,7 +87,8 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
 
     @NotNull
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -102,7 +104,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @NotNull

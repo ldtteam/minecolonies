@@ -96,7 +96,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      */
     public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
     {
-        super(new ResourceLocation(Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
+        super(ResourceLocation.parse(Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
         this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;

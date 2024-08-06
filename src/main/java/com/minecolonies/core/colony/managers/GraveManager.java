@@ -317,7 +317,7 @@ public class GraveManager implements IGraveManager
                 final Component jobName = Component.translatableEscape(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
-            graveData.setCitizenDataNBT(citizenData.serializeNBT());
+            graveData.setCitizenDataNBT(citizenData.serializeNBT(world.registryAccess()));
             graveEntity.setGraveData(graveData);
 
             colony.getGraveManager().addNewGrave(firstValidPosition);

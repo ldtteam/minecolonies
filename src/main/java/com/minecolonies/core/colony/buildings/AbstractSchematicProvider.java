@@ -394,7 +394,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             packName = te.getStructurePack().getName();
         }
 
-        blueprintFuture = StructurePacks.getBlueprintFuture(packName, structureName);
+        blueprintFuture = StructurePacks.getBlueprintFuture(packName, structureName, te.getLevel().registryAccess());
         blueprintFuturePack = packName;
         blueprintFutureName = structureName;
     }

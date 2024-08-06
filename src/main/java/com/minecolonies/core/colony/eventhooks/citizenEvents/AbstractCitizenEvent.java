@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescri
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,14 +79,14 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     }
 
     @Override
-    public void serialize(FriendlyByteBuf buf)
+    public void serialize(RegistryFriendlyByteBuf buf)
     {
         buf.writeBlockPos(eventPos);
         buf.writeUtf(citizenName);
     }
 
     @Override
-    public void deserialize(FriendlyByteBuf buf)
+    public void deserialize(RegistryFriendlyByteBuf buf)
     {
         eventPos = buf.readBlockPos();
         citizenName = buf.readUtf();

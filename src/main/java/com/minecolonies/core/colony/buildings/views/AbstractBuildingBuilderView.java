@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

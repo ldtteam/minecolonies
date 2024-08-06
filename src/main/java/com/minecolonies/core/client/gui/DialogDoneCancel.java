@@ -68,7 +68,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     public DialogDoneCancel(final BOWindow window)
     {
         super();
-        Loader.createFromXMLFile(new ResourceLocation(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX), this);
+        Loader.createFromXMLFile(ResourceLocation.parse(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX), this);
         titleLabel = findPaneOfTypeByID("title", Text.class);
         contentText = findPaneOfTypeByID("textcontent", Text.class);
         doneButton = findPaneOfTypeByID("done", Button.class);

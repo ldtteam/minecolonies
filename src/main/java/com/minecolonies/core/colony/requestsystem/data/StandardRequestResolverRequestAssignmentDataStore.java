@@ -13,7 +13,7 @@ import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -109,9 +109,9 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
 
         @NotNull
         @Override
-        public StandardRequestResolverRequestAssignmentDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
+        public StandardRequestResolverRequestAssignmentDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserializeTag(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             final Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND))
                                                                 .map(CompoundTag -> {
                                                                     final IToken<?> elementToken = controller.deserializeTag(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
@@ -128,7 +128,7 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestResolverRequestAssignmentDataStore input,
-          FriendlyByteBuf packetBuffer)
+          RegistryFriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.assignments.size());
@@ -142,7 +142,7 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         @Override
         public StandardRequestResolverRequestAssignmentDataStore deserialize(
           IFactoryController controller,
-          FriendlyByteBuf buffer) throws Throwable
+          RegistryFriendlyByteBuf buffer) throws Throwable
         {
             final IToken<?> token = controller.deserializeTag(buffer);
             final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -35,14 +36,14 @@ public interface IRegisteredStructureManager
      *
      * @param compound the compound.
      */
-    void read(@NotNull final CompoundTag compound);
+    void read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound);
 
     /**
      * Write the buildings to NBT.
      *
      * @param compound the compound.
      */
-    void write(@NotNull final CompoundTag compound);
+    void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound);
 
     /**
      * Clear the isDirty of the buildings.

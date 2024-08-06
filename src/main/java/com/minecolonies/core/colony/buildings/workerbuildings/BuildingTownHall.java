@@ -24,7 +24,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -193,7 +193,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         buf.writeInt(mapDataList.size());
         for (final MapItemSavedData mapData : mapDataList)
         {
-            buf.writeNbt(mapData.save(new CompoundTag()));
+            buf.writeNbt(mapData.save(new CompoundTag(), buf.registryAccess()));
         }
     }
 
@@ -302,7 +302,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             mapDataList.clear();
             for (int i = 0; i < size; i++)
             {
-                final MapItemSavedData mapData = MapItemSavedData.load(buf.readNbt());
+                final MapItemSavedData mapData = MapItemSavedData.load(buf.readNbt(), buf.registryAccess());
                 mapDataList.add(mapData);
             }
         }

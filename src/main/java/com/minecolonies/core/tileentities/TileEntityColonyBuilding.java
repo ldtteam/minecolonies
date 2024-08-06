@@ -636,7 +636,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         tags.remove(DEACTIVATED);
         if (tags.isEmpty())
         {
-            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path, level.registryAccess());
             return;
         }
 
@@ -659,12 +659,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (!StructurePacks.hasPack(packName))
         {
-            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path);
+            this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(this.packMeta, this.path, level.registryAccess());
             return;
         }
 
         this.setStructurePack(StructurePacks.getStructurePack(packName));
-        this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
+        this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath, level.registryAccess());
     }
 
     /**

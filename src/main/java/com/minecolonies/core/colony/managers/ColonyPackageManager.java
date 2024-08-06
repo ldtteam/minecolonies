@@ -13,7 +13,7 @@ import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewWorkOrderMessage;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -201,7 +201,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || !newSubscribers.isEmpty())
         {
-            final FriendlyByteBuf colonyFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+            final RegistryFriendlyByteBuf colonyFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer(), colony.getWorld().registryAccess());
             ColonyView.serializeNetworkData(colony, colonyFriendlyByteBuf, !newSubscribers.isEmpty());
             final Set<ServerPlayer> players = new HashSet<>();
             if (isDirty)

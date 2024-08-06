@@ -1,9 +1,11 @@
 package com.minecolonies.core.colony.managers;
 
+import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.operations.PlaceStructureOperation;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
@@ -20,6 +22,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -103,7 +107,7 @@ public class EventStructureManager implements IEventStructureManager
         final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true,
                 (short) structure.getSizeX(), structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(), Optional.of(anchor)));
 
-        StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
+        StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath, world.registryAccess());
 
         backupSchematics.put(anchor, eventID);
 
@@ -134,7 +138,7 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(entry.getKey().toString() + ".blueprint");
 
 
-                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), colony.getWorld(), (blueprint -> {
+                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath, colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
 
                     if (blueprint == null)
                     {
@@ -142,7 +146,7 @@ public class EventStructureManager implements IEventStructureManager
                         return;
                     }
 
-                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
+                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, RotationMirror.NONE, true);
                     Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), null));
 
                     try

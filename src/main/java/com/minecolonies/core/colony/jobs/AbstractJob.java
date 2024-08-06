@@ -27,7 +27,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -193,7 +194,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
         compound.put(TAG_ASYNC_REQUESTS,
           getAsyncRequests().stream()
             .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
-            .map(StandardFactoryController.getInstance()::serialize)
+            .map(s -> StandardFactoryController.getInstance().serializeTag(provider, s))
             .collect(NBTUtils.toListNBT()));
         compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
@@ -212,7 +213,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
         if (compound.contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Tag.TAG_COMPOUND))
-                                        .map(StandardFactoryController.getInstance()::deserialize)
+                                        .map(s -> StandardFactoryController.getInstance().deserializeTag(provider, s))
                                         .map(o -> (IToken<?>) o)
                                         .collect(Collectors.toSet()));
         }

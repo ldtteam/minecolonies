@@ -9,7 +9,7 @@ import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 
 import org.jetbrains.annotations.NotNull;

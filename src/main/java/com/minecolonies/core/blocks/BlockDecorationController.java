@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -166,7 +167,8 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     }
 
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack Stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -182,7 +184,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
                 new WindowDecorationController(pos).open();
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

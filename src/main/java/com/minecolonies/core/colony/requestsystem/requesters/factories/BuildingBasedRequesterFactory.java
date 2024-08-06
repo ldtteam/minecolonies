@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
@@ -54,19 +54,19 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public BuildingBasedRequester deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+    public BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         return BuildingBasedRequester.deserialize(controller, nbt);
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingBasedRequester output, FriendlyByteBuf packetBuffer)
+    public void serialize(IFactoryController controller, BuildingBasedRequester output, RegistryFriendlyByteBuf packetBuffer)
     {
         output.serialize(controller, packetBuffer);
     }
 
     @Override
-    public BuildingBasedRequester deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
+    public BuildingBasedRequester deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         return BuildingBasedRequester.deserialize(controller, buffer);
     }

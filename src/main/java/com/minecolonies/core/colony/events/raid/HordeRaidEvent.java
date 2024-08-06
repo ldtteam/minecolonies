@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -516,7 +517,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_EVENT_ID, id);
@@ -538,7 +539,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(Horde.loadFromNbt(compound));

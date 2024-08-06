@@ -86,8 +86,8 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
                   sortAnalyzationResults();
                   switchSelectionTo(getBoxForSide(b), result);
               },
-              (a) -> true
-            ).open();
+              (a) -> true,
+            mc.level.registryAccess()).open();
         });
 
         registerButton(BUTTON_SELECTION_LEFT, b -> {

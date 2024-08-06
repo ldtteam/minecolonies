@@ -76,7 +76,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             new SwitchBuildingWithToolMessage(stack).sendToServer();
-            new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
+            new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE, mc.level.registryAccess()).open();
             return;
         }
         MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(Minecraft.getInstance().player);
