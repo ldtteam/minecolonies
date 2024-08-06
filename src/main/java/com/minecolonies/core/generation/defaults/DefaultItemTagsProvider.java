@@ -258,7 +258,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FARMER));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
-          .addTag(Tags.Items.STRING)
+          .addTag(Tags.Items.STRINGS)
           .addTag(ItemTags.WOOL)
           .add(Items.RABBIT_HIDE)
           .add(Items.LEATHER)
@@ -266,21 +266,21 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FLETCHER))
           .addTag(Tags.Items.DYES);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FLETCHER))
-          .addTag(Tags.Items.STRING)
+          .addTag(Tags.Items.STRINGS)
           .add(Items.MOSS_CARPET);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FLETCHER))
           .add(Items.BOOK)
           .add(Items.ITEM_FRAME);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_GLASSBLOWER))
-          .addTag(Tags.Items.GLASS)
+          .addTag(Tags.Items.GLASS_BLOCKS)
           .addTag(Tags.Items.GLASS_PANES);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_GLASSBLOWER))
           .addTag(Tags.Items.DYES);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_GLASSBLOWER));
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_GLASSBLOWER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_GLASSBLOWER_SMELTING))
-          .addTag(Tags.Items.GLASS);
+          .addTag(Tags.Items.GLASS_BLOCKS);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_MECHANIC))
           .addTag(Tags.Items.DUSTS_REDSTONE)
@@ -354,9 +354,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.CACTUS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(Tags.Items.INGOTS)
-          .addTag(Tags.Items.STONE)
+          .addTag(Tags.Items.STONES)
           .addTag(Tags.Items.DUSTS_REDSTONE)
-          .addTag(Tags.Items.STRING);
+          .addTag(Tags.Items.STRINGS);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
           .addTag(ItemTags.PLANKS)
           .addTags(ItemTags.WOODEN_SLABS, ItemTags.WOODEN_STAIRS)
@@ -387,8 +387,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
           .add(Items.BASALT, Items.POLISHED_BASALT, Items.SMOOTH_BASALT, Items.TUFF)
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
-          .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.END_STONES)
-          .addTags(Tags.Items.SANDSTONE, ModTags.concreteItems)
+          .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES, Tags.Items.END_STONES)
+          .addTags(Tags.Items.SANDSTONE_BLOCKS, ModTags.concreteItems)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
           .addTags(ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS);
@@ -415,7 +415,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.SNOW)
           .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
           .addTag(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
-          .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.SANDSTONE)
+          .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES, Tags.Items.SANDSTONE_BLOCKS)
           .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS);
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON))
@@ -450,7 +450,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.COAL)
           .add(Items.CHARCOAL)
           .add(Items.NETHER_BRICK)
-          .addTag(Tags.Items.STONE)
+          .addTag(Tags.Items.STONES)
           .add(Items.SMOOTH_STONE)
           .add(Items.DEEPSLATE)
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
@@ -475,12 +475,12 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.POPPED_CHORUS_FRUIT)
           .add(Items.PRISMARINE_SHARD)
           .add(Items.PRISMARINE_CRYSTALS)
-          .addTags(Tags.Items.GLASS, Tags.Items.GLASS_PANES)
+          .addTags(Tags.Items.GLASS_BLOCKS, Tags.Items.GLASS_PANES)
           .addTag(Tags.Items.CROPS_WHEAT)
-          .addTag(Tags.Items.STRING)
+          .addTag(Tags.Items.STRINGS)
           .addTags(Tags.Items.NUGGETS, Tags.Items.INGOTS)
-          .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
-          .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
+          .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES)
+          .addTags(Tags.Items.GRAVELS, Tags.Items.SANDS)
           .addTags(Tags.Items.DUSTS, Tags.Items.GEMS)
           .addTag(ItemTags.WOOL)
           .addTags(ItemTags.LOGS, ItemTags.PLANKS, ItemTags.STONE_BRICKS);
@@ -492,8 +492,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.cookieDough)
           .add(ModItems.rawPumpkinPie)
           .add(ModItems.cakeBatter)
-          .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
-          .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
+          .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES)
+          .addTags(Tags.Items.GRAVELS, Tags.Items.SANDS)
           .addTags(Tags.Items.INGOTS, storageBlocks);
 
         tag(ModTags.ignoreNBT)

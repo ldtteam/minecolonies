@@ -38,6 +38,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
@@ -386,7 +387,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      */
     @Nullable
     @Override
-    public Entity changeDimension(@NotNull final ServerLevel serverWorld, @NotNull final ITeleporter teleporter)
+    public Entity changeDimension(final DimensionTransition dimensionTransition)
     {
         return null;
     }
@@ -516,17 +517,16 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         }
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(
       final ServerLevelAccessor worldIn,
       final DifficultyInstance difficultyIn,
       final MobSpawnType reason,
-      @org.jetbrains.annotations.Nullable final SpawnGroupData spawnDataIn,
-      @org.jetbrains.annotations.Nullable final CompoundTag dataTag)
+      @Nullable final SpawnGroupData p_21437_)
     {
         RaiderMobUtils.setEquipment(this);
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, p_21437_);
     }
 
     @Override
@@ -642,12 +642,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
-                 .add(MOB_ATTACK_DAMAGE.get())
+                 .add(MOB_ATTACK_DAMAGE)
                  .add(Attributes.MAX_HEALTH)
                  .add(Attributes.ARMOR)
                  .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
                  .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
-                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
+                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.value().getDefaultValue());
     }
 
     /**
@@ -713,7 +713,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
      */
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
-        this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage);
+        this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
 
         this.difficulty = difficulty;
         final double armor = difficulty * ARMOR;

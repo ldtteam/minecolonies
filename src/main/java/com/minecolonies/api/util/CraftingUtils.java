@@ -12,7 +12,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.common.util.MutableHashedLinkedMap;
+import net.neoforged.neoforge.common.util.InsertableLinkedOpenCustomHashSet;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -218,24 +218,38 @@ public final class CraftingUtils
      */
     private static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
     {
-        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
-                (key, left, right) -> {
-                    //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
-                    // Vanilla adds enchanting books twice in both visibilities.
-                    // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
-                    return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
-                }
-        );
+        final var parentEntries = new InsertableLinkedOpenCustomHashSet<ItemStack>(ItemStackLinkedSet.TYPE_AND_TAG);
+        final var searchEntries = new InsertableLinkedOpenCustomHashSet<ItemStack>(ItemStackLinkedSet.TYPE_AND_TAG);
 
         originalGenerator.accept(params, (stack, vis) -> {
             if (stack.getCount() != 1)
                 throw new IllegalArgumentException("The stack count must be 1");
-            entries.put(stack, vis);
+
+            if (isParentTab(vis)) {
+                parentEntries.add(stack);
+            }
+
+            if (isSearchTab(vis)) {
+                searchEntries.add(stack);
+            }
         });
 
-        ModLoader.get().postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
+        ModLoader.postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, parentEntries, searchEntries));
 
-        for (var entry : entries)
-            output.accept(entry.getKey(), entry.getValue());
+        for (var entry : parentEntries) {
+            output.accept(entry, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
+        }
+
+        for (var entry : searchEntries) {
+            output.accept(entry, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
+        }
+    }
+
+    static boolean isParentTab(CreativeModeTab.TabVisibility visibility) {
+        return visibility == CreativeModeTab.TabVisibility.PARENT_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+    }
+
+    static boolean isSearchTab(CreativeModeTab.TabVisibility visibility) {
+        return visibility == CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
     }
 }

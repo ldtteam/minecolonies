@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -84,9 +85,10 @@ public class ItemNbtCalculator implements DataProvider
         for (final ItemStack stack : allStacks)
         {
             final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
-            final CompoundTag tag = (stack.hasTag() && !stack.is(ModTags.ignoreNBT)) ? stack.getTag() : new CompoundTag();
+            final CompoundTag tag = (!stack.getComponents().isEmpty() && !stack.is(ModTags.ignoreNBT)) ? stack.getComponents(). : new CompoundTag();
             final Set<String> keys = tag.isEmpty() ? new HashSet<>() : new HashSet<>(tag.getAllKeys());
 
+            //todo: Here add handling which Components we care about. Those components we then match as well
             if (stack.getItem() instanceof DyeableLeatherItem)
             {
                 keys.add("display");

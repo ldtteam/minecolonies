@@ -2,6 +2,7 @@ package com.minecolonies.core.structures;
 
 import com.minecolonies.api.util.Log;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,10 +16,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pools.DimensionPadding;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasBinding;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +34,7 @@ public class EmptyColonyStructure extends Structure
 
     // A custom codec that changes the size limit for our code_structure_sky_fan.json's config to not be capped at 7.
     // With this, we can have a structure with a size limit up to 30 if we want to have extremely long branches of pieces in the structure.
-    public static final Codec<EmptyColonyStructure> COLONY_CODEC = RecordCodecBuilder.<EmptyColonyStructure>mapCodec(instance ->
+    public static final MapCodec<EmptyColonyStructure> COLONY_CODEC = RecordCodecBuilder.<EmptyColonyStructure>mapCodec(instance ->
                                                                                                   instance.group(EmptyColonyStructure.settingsCodec(instance),
                                                                                                     StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
                                                                                                     ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(structure -> structure.startJigsawName),
@@ -41,7 +44,7 @@ public class EmptyColonyStructure extends Structure
                                                                                                     Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter),
                                                                                                     Codec.BOOL.optionalFieldOf("allow_cave", false).forGetter(structure -> structure.allowCave),
                                                                                                     Codec.list(PoolAliasBinding.CODEC).optionalFieldOf("pool_aliases", List.of()).forGetter(p_307187_ -> p_307187_.poolAliases)
-                                                                                                  ).apply(instance, EmptyColonyStructure::new)).codec();
+                                                                                                  ).apply(instance, EmptyColonyStructure::new));
 
     private final Holder<StructureTemplatePool> startPool;
     private final Optional<ResourceLocation>    startJigsawName;
@@ -114,7 +117,9 @@ public class EmptyColonyStructure extends Structure
                     false,
                     this.projectStartToHeightmap,
                     this.maxDistanceFromCenter,
-                    PoolAliasLookup.create(this.poolAliases, result, context.seed())
+                    PoolAliasLookup.create(this.poolAliases, result, context.seed()),
+                    DimensionPadding.ZERO,
+                    LiquidSettings.IGNORE_WATERLOGGING
                   );
 
                 if (structurePiecesGenerator.isPresent())
@@ -147,7 +152,9 @@ public class EmptyColonyStructure extends Structure
             false,
             this.projectStartToHeightmap,
             this.maxDistanceFromCenter,
-            PoolAliasLookup.create(this.poolAliases, blockpos, context.seed())
+            PoolAliasLookup.create(this.poolAliases, blockpos, context.seed()),
+            DimensionPadding.ZERO,
+            LiquidSettings.IGNORE_WATERLOGGING
           );
 
         if (structurePiecesGenerator.isPresent())

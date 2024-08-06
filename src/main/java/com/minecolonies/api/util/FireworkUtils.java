@@ -1,19 +1,23 @@
 package com.minecolonies.api.util;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -72,32 +76,29 @@ public final class FireworkUtils
     {
         final Random rand = new Random();
         final ItemStack fireworkItem = new ItemStack(Items.FIREWORK_ROCKET);
-        final CompoundTag itemStackCompound = fireworkItem.getTag() != null ? fireworkItem.getTag() : new CompoundTag();
-        final CompoundTag fireworksCompound = new CompoundTag();
-        final ListTag explosionsTagList = new ListTag();
-        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getFireworkColor).collect(Collectors.toList());
+        List<FireworkExplosion> list = new ArrayList<>();
+
+        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getFireworkColor).toList();
 
         for (int i = 0; i < explosionAmount; i++)
         {
             final CompoundTag explosionTag = new CompoundTag();
 
-            explosionTag.putBoolean(TAG_FLICKER, rand.nextInt(2) == 0);
-            explosionTag.putBoolean(TAG_TRAIL, rand.nextInt(2) == 0);
             explosionTag.putInt(TAG_TYPE, rand.nextInt(5));
 
             final int numberOfColours = rand.nextInt(3) + 1;
-            final int[] colors = new int[numberOfColours];
+            final IntList colors = new IntArrayList();
 
             for (int ia = 0; ia < numberOfColours; ia++)
             {
-                colors[ia] = dyeColors.get(rand.nextInt(15));
+                colors.add(dyeColors.get(rand.nextInt(15)));
             }
             explosionTag.putIntArray(TAG_COLORS, colors);
-            explosionsTagList.add(explosionTag);
+            list.add(new FireworkExplosion(FireworkExplosion.Shape.values()[rand.nextInt(FireworkExplosion.Shape.values().length)], colors, colors, rand.nextInt(2) == 0, rand.nextInt(2) == 0));
         }
-        fireworksCompound.put(TAG_EXPLOSIONS, explosionsTagList);
-        itemStackCompound.put(TAG_FIREWORKS, fireworksCompound);
-        fireworkItem.setTag(itemStackCompound);
+
+        fireworkItem.set(DataComponents.FIREWORKS, new Fireworks(explosionAmount, list));
+
         return fireworkItem;
     }
 }
