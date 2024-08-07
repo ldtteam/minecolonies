@@ -1,16 +1,20 @@
 package com.minecolonies.core.recipes;
 
 import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.StemBlock;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -21,38 +25,57 @@ import java.util.stream.Stream;
  *     "type": "minecolonies:plant"
  * }
  */
-public class PlantIngredient extends Ingredient
+public class PlantIngredient implements ICustomIngredient
 {
-    private static final Lazy<PlantIngredient> INSTANCE
-            = Lazy.of(() -> new PlantIngredient(BuiltInRegistries.ITEM.stream()
-                    .filter(item -> item instanceof BlockItem &&
-                        (((BlockItem) item).getBlock() instanceof CropBlock ||
-                         ((BlockItem) item).getBlock() instanceof StemBlock))
-                    .map(item -> new ItemValue(new ItemStack(item)))));
+    private static final Lazy<PlantIngredient> INSTANCE = Lazy.of(PlantIngredient::new);
 
-    public static final Codec<PlantIngredient> CODEC = Codec.unit(INSTANCE::get);
+    public static final MapCodec<PlantIngredient> CODEC = MapCodec.unit(INSTANCE);
 
-    private PlantIngredient(final Stream<? extends Value> itemLists)
+    private final List<ItemStack> items;
+
+    private PlantIngredient()
     {
-        super(itemLists, ModIngredientTypeInitializer.PLANT_INGREDIENT_TYPE);
+        items = BuiltInRegistries.ITEM.stream()
+                .filter(item -> item instanceof final BlockItem block &&
+                        (block.getBlock() instanceof CropBlock || block.getBlock() instanceof StemBlock))
+                .map(ItemStack::new)
+                .toList();
     }
 
     @NotNull
-    public static PlantIngredient getInstance()
+    public static Ingredient of()
     {
-        return INSTANCE.get();
+        return INSTANCE.get().toVanilla();
     }
 
     @Override
-    public boolean equals(final Object obj)
+    public boolean test(@Nullable final ItemStack stack)
     {
-        return obj == getInstance();
+        if (stack == null)
+        {
+            return false;
+        }
+
+        return getItems().anyMatch(s -> stack.is(s.getItem()));
+    }
+
+    @NotNull
+    @Override
+    public Stream<ItemStack> getItems()
+    {
+        return items.stream();
     }
 
     @Override
-    public boolean synchronizeWithContents()
+    public boolean isSimple()
     {
-        // must be false so network sync forcefully uses codec
-        return false;
+        return true;
+    }
+
+    @NotNull
+    @Override
+    public IngredientType<?> getType()
+    {
+        return ModIngredientTypeInitializer.PLANT_INGREDIENT_TYPE.get();
     }
 }

@@ -19,9 +19,9 @@ public class ModIngredientTypeInitializer
     }
 
     public static final DeferredHolder<IngredientType<?>, IngredientType<CountedIngredient>> COUNTED_INGREDIENT_TYPE =
-        DEFERRED_REGISTER.register("counted", () -> new IngredientType<>(CountedIngredient.CODEC, CountedIngredient.CODEC_NONEMPTY));
+        DEFERRED_REGISTER.register("counted", () -> new IngredientType<>(CountedIngredient.CODEC));
     public static final DeferredHolder<IngredientType<?>, IngredientType<PlantIngredient>> PLANT_INGREDIENT_TYPE =
-        DEFERRED_REGISTER.register("plant", () -> new IngredientType<>(PlantIngredient.CODEC, PlantIngredient.CODEC));
+        DEFERRED_REGISTER.register("plant", () -> new IngredientType<>(PlantIngredient.CODEC));
     public static final DeferredHolder<IngredientType<?>, IngredientType<FoodIngredient>> FOOD_INGREDIENT_TYPE =
-        DEFERRED_REGISTER.register("food", () -> new IngredientType<>(FoodIngredient.CODEC, FoodIngredient.CODEC));
+        DEFERRED_REGISTER.register("food", () -> new IngredientType<>(FoodIngredient.CODEC));
 }
