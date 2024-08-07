@@ -1,15 +1,19 @@
 package com.minecolonies.api.crafting;
 
 import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.stream.Stream;
+
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
  *
@@ -20,77 +24,58 @@ import java.util.Objects;
  *     },
  *     "count": 16
  * }
+ *
+ * @param child the underlying ingredient.
+ * @param count the number of items required.
  */
-public class CountedIngredient extends Ingredient
+public record CountedIngredient(@NotNull Ingredient child, int count) implements ICustomIngredient
 {
-    public static final Codec<CountedIngredient> CODEC = RecordCodecBuilder.create(builder -> builder
-        .group(Ingredient.CODEC.fieldOf("item").forGetter(CountedIngredient::getChild),
-          ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::getCount))
+    public static final MapCodec<CountedIngredient> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
+        .group(Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(CountedIngredient::child),
+          ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::count))
         .apply(builder, CountedIngredient::new));
 
-    public static final Codec<CountedIngredient> CODEC_NONEMPTY = RecordCodecBuilder.create(builder -> builder
-        .group(Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(CountedIngredient::getChild),
-          ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::getCount))
-        .apply(builder, CountedIngredient::new));
-
-    @NotNull
-    private final Ingredient child;
-    private final int count;
-    private ItemStack[] array = null;
-
-    public CountedIngredient(@NotNull final Ingredient child, final int count)
+    public CountedIngredient
     {
-        super(Arrays.stream(child.values), ModIngredientTypeInitializer.COUNTED_INGREDIENT_TYPE);
-
-        this.child = child;
-        this.count = count;
+        if (child == Ingredient.EMPTY || count <= 0) throw new IllegalArgumentException("Counted ingredient must have a child");
     }
 
-    /** The underlying ingredient. */
-    @NotNull
-    public Ingredient getChild() { return this.child; }
+    /**
+     * Creates a counted ingredient.
+     * @param child the underlying ingredient.
+     * @param count the number of items required.
+     * @return the counted ingredient.
+     */
+    public static Ingredient of(@NotNull final Ingredient child, final int count)
+    {
+        return new CountedIngredient(child, count).toVanilla();
+    }
 
-    /** The number of items required. */
-    public int getCount() { return this.count; }
+    @Override
+    public boolean test(@Nullable final ItemStack stack)
+    {
+        return child.test(stack);
+    }
+
+    @Override
+    public boolean isSimple()
+    {
+        return child.isSimple();
+    }
 
     @NotNull
     @Override
-    public ItemStack[] getItems()
+    public IngredientType<?> getType()
     {
-        if (this.array == null)
-        {
-            this.array = Arrays.stream(this.child.getItems())
+        return ModIngredientTypeInitializer.COUNTED_INGREDIENT_TYPE.get();
+    }
+
+    @NotNull
+    @Override
+    public Stream<ItemStack> getItems()
+    {
+        return Arrays.stream(child.getItems())
                 .map(ItemStack::copy)
-                .peek(s -> s.setCount(this.count))
-                .toArray(ItemStack[]::new);
-        }
-        return this.array;
-    }
-
-    @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (!(obj instanceof final CountedIngredient other))
-        {
-            return false;
-        }
-        return Objects.equals(other.child, this.child) && other.count == this.count;
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return child.isEmpty() || count <= 0;
-    }
-
-    @Override
-    public boolean synchronizeWithContents()
-    {
-        // must be false so network sync forcefully uses codec
-        return false;
+                .peek(s -> s.setCount(this.count));
     }
 }

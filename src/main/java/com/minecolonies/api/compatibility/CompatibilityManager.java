@@ -25,7 +25,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -40,9 +41,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
@@ -324,25 +322,23 @@ public class CompatibilityManager implements ICompatibilityManager
         return buf.readList(b -> b.readResourceLocation());
     }
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, List<RecipeHolder<?>>> RECIPE_LIST_STREAM_CODEC =
+            RecipeHolder.STREAM_CODEC.apply(ByteBufCodecs.list());
+
     private static void serializeCompostRecipes(
       @NotNull final RegistryFriendlyByteBuf buf,
       @NotNull final Map<Item, RecipeHolder<CompostRecipe>> compostRecipes)
     {
-        final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
         final List<RecipeHolder<CompostRecipe>> recipes = compostRecipes.values().stream().distinct().toList();
-        buf.writeCollection(recipes, (b, holder) -> {
-            b.writeResourceLocation(holder.id());
-            serializer.toNetwork(buf, holder.value());
-        });
+        //RECIPE_LIST_STREAM_CODEC.encode(buf, recipes);
+        buf.writeCollection(recipes, (b, holder) -> RecipeHolder.STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, holder));
     }
 
     @NotNull
     private static List<RecipeHolder<CompostRecipe>> deserializeCompostRecipes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        final CompostRecipe.Serializer serializer = ModRecipeSerializer.CompostRecipeSerializer.get();
-        return buf.readList(b -> {
-            return new RecipeHolder<>(b.readResourceLocation(), serializer.fromNetwork((RegistryFriendlyByteBuf) b));
-        });
+        //return RECIPE_LIST_STREAM_CODEC.decode(buf).stream().map(r -> (RecipeHolder<CompostRecipe>) r).toList();
+        return buf.readList(b -> (RecipeHolder<CompostRecipe>) RecipeHolder.STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
     }
 
     /**
