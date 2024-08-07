@@ -19,12 +19,9 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
 import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -534,10 +531,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
               SoundSource.NEUTRAL,
               0.5F,
               (float) (0.4D / (this.world.random.nextFloat() * 0.4D + 0.8D)));
-            this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
-            this.entityFishHook.setAngler((EntityCitizen) worker,
+
+            this.entityFishHook = new NewBobberEntity(ModEntities.FISHHOOK, worker, worker.level(),
               EnchantmentHelper.getFishingLuckBonus((ServerLevel) worker.level(), worker.getMainHandItem(), worker),
               (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingTimeReduction((ServerLevel) worker.level(), worker.getMainHandItem(), worker)));
+
             world.addFreshEntity(this.entityFishHook);
         }
 
@@ -551,8 +549,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive()
-                 || entityFishHook.caughtEntity != null;
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround() || entityFishHook.shouldStopFishing(worker))) || !entityFishHook.isAlive()
+                 || entityFishHook.getHookedEntity() != null;
     }
 
     /**
@@ -657,9 +655,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (entityFishHook != null)
         {
             worker.swing(worker.getUsedItemHand());
-            final int i = entityFishHook.getDamage();
+            final int i = entityFishHook.retrieve(worker.getMainHandItem());
             generateBonusLoot();
-            entityFishHook.remove(Entity.RemovalReason.DISCARDED);
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
         }
@@ -678,7 +675,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
                                      .withLuck((float) getPrimarySkillLevel())
                                      .create(LootContextParamSets.FISHING);
         final LootTable bonusLoot =
-          this.world.getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE, ModLootTables.FISHERMAN_BONUS.get(this.building.getBuildingLevel())));
+          this.world.getServer().reloadableRegistries().getLootTable(ModLootTables.FISHERMAN_BONUS.get(this.building.getBuildingLevel()));
         final List<ItemStack> loot = bonusLoot.getRandomItems(context);
 
         for (final ItemStack itemstack : loot)
