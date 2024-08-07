@@ -19,6 +19,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -253,7 +254,7 @@ public class CustomRecipe
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
+    public static CustomRecipe parse(@NotNull final HolderLookup.Provider provider, @NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
     {
         final CustomRecipe recipe = new CustomRecipe();
         recipe.recipeId = recipeId;
@@ -269,7 +270,7 @@ public class CustomRecipe
                 if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    ItemStorage parsed = new ItemStorage(ingredient);
+                    ItemStorage parsed = new ItemStorage(provider, ingredient);
                     if(!parsed.isEmpty()) {
                         recipe.inputs.add(parsed);
                     }
@@ -279,7 +280,7 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            recipe.result = ItemStackUtils.idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
+            recipe.result = ItemStackUtils.idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString(), provider);
         }
         else
         {
@@ -288,7 +289,7 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
         {
-            recipe.lootTable = new ResourceLocation(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString());
+            recipe.lootTable = ResourceLocation.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString());
         }
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
@@ -305,7 +306,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString(), provider);
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -327,7 +328,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString(), provider);
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -345,7 +346,7 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
         {
-            recipe.intermediate = BuiltInRegistries.BLOCK.get(new ResourceLocation(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
+            recipe.intermediate = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
         }
         else
         {
@@ -355,21 +356,21 @@ public class CustomRecipe
         if (researchIds != null && researchIds.isJsonArray())
         {
             recipe.researchIds.addAll(researchIds.getAsJsonArray().asList().stream()
-                    .map(json -> new ResourceLocation(json.getAsString())).toList());
+                    .map(json -> ResourceLocation.parse(json.getAsString())).toList());
         }
         else if (researchIds != null)
         {
-            recipe.researchIds.add(new ResourceLocation(researchIds.getAsString()));
+            recipe.researchIds.add(ResourceLocation.parse(researchIds.getAsString()));
         }
         final JsonElement excludedResearchIds = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP);
         if (excludedResearchIds != null && excludedResearchIds.isJsonArray())
         {
             recipe.excludedResearchIds.addAll(excludedResearchIds.getAsJsonArray().asList().stream()
-                    .map(json -> new ResourceLocation(json.getAsString())).toList());
+                    .map(json -> ResourceLocation.parse(json.getAsString())).toList());
         }
         else if (excludedResearchIds != null)
         {
-            recipe.excludedResearchIds.add(new ResourceLocation(excludedResearchIds.getAsString()));
+            recipe.excludedResearchIds.add(ResourceLocation.parse(excludedResearchIds.getAsString()));
         }
         if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
         {
@@ -400,12 +401,14 @@ public class CustomRecipe
      * @return a list of recipes for items discovered from the template
      */
     @NotNull
-    public static List<CustomRecipe> parseTemplate(@NotNull final ResourceLocation baseId,
-                                                   @NotNull final JsonObject templateJson)
+    public static List<CustomRecipe> parseTemplate(
+      @NotNull final HolderLookup.Provider provider,
+      @NotNull final ResourceLocation baseId,
+      @NotNull final JsonObject templateJson)
     {
         final List<CustomRecipe> recipes = new ArrayList<>();
 
-        final ResourceLocation tagId = new ResourceLocation(GsonHelper.getAsString(templateJson, RECIPE_TAG));
+        final ResourceLocation tagId = ResourceLocation.parse(GsonHelper.getAsString(templateJson, RECIPE_TAG));
         final JsonObject baseRecipeJson = GsonHelper.getAsJsonObject(templateJson, RECIPE_TYPE_RECIPE);
 
         final Predicate<ResourceLocation> filter;
@@ -432,7 +435,7 @@ public class CustomRecipe
             final JsonObject recipeJson = populateTemplate(baseId, baseRecipeJson, itemId, logStatus);
             if (recipeJson != null)
             {
-                recipes.add(parse(recipeId, recipeJson));
+                recipes.add(parse(provider, recipeId, recipeJson));
             }
         }
 
@@ -926,7 +929,7 @@ public class CustomRecipe
         packetBuffer.writeVarInt(getInputs().size());
         for(final ItemStorage input : getInputs())
         {
-            StandardFactoryController.getInstance().serializeTag(packetBuffer, input);
+            StandardFactoryController.getInstance().serialize(packetBuffer, input);
         }
         Utils.serializeCodecMess(packetBuffer, getPrimaryOutput());
         packetBuffer.writeVarInt(getSecondaryOutput().size());
@@ -970,7 +973,7 @@ public class CustomRecipe
         final List<ItemStorage> inputs = new ArrayList<>();
         for(int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--)
         {
-            inputs.add(StandardFactoryController.getInstance().deserializeTag(buffer));
+            inputs.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
         final ItemStack primaryOutput = Utils.deserializeCodecMess(buffer);
         final List<ItemStack> secondaryOutput = new ArrayList<>();

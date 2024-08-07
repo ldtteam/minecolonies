@@ -2,6 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -125,11 +126,11 @@ public class ItemStorage
      * 
      * @param jObject the JSON Object to parse
      */
-    public ItemStorage(@NotNull final JsonObject jObject)
+    public ItemStorage(@NotNull final HolderLookup.Provider provider, @NotNull final JsonObject jObject)
     {
         if (jObject.has(ITEM_PROP))
         {
-            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
+            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString(), provider);
             if(jObject.has(COUNT_PROP))
             {
                 parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());

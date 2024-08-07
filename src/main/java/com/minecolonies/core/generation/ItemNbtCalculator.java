@@ -6,14 +6,15 @@ import com.google.gson.JsonObject;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.minecolonies.api.items.CheckedNbtKey;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
@@ -23,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -69,7 +69,7 @@ public class ItemNbtCalculator implements DataProvider
                         texturedComponents.put(key.getId(), key.getDefault());
                     }
                     final ItemStack copy = item.copy();
-                    new MaterialTextureData(texturedComponents).writeToItemStack(copy);
+                    copy.set(ModDataComponents.TEXTURE_DATA, new MaterialTextureData(texturedComponents));
                     listBuilder.add(copy);
                 }
                 else
@@ -81,50 +81,47 @@ public class ItemNbtCalculator implements DataProvider
 
         allStacks = listBuilder.build();
 
-        final TreeMap<String, Set<CheckedNbtKey>> keyMapping = new TreeMap<>();
+        final TreeMap<String, Set<String>> keyMapping = new TreeMap<>();
         for (final ItemStack stack : allStacks)
         {
             final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
-            final CompoundTag tag = (!stack.getComponents().isEmpty() && !stack.is(ModTags.ignoreNBT)) ? stack.getComponents(). : new CompoundTag();
-            final Set<String> keys = tag.isEmpty() ? new HashSet<>() : new HashSet<>(tag.getAllKeys());
-
-            //todo: Here add handling which Components we care about. Those components we then match as well
-            if (stack.getItem() instanceof DyeableLeatherItem)
+            final Set<String> keys = new HashSet<>();
+            for (final TypedDataComponent<?> key : stack.getComponents())
             {
-                keys.add("display");
+                keys.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(key.type()).toString());
+            }
+
+            if (stack.getItem() instanceof ArmorItem)
+            {
+                keys.add("minecraft:dyed_color");
             }
             if (stack.isEnchantable())
             {
-                keys.add("Enchantments");
+                keys.add("minecraft:enchantments");
             }
             if (stack.isRepairable())
             {
-                keys.add("RepairCost");
+                keys.add("minecraft:repair_cost");
             }
             // We ignore damage in nbt.
-            keys.remove("Damage");
+            keys.remove("minecraft:damage");
 
-            final Set<CheckedNbtKey> keyObjectList = new HashSet<>();
-            for (String key : keys)
-            {
-                keyObjectList.add(createKeyFromNbt(key, tag));
-            }
 
             if (keyMapping.containsKey(resourceLocation.toString()))
             {
-                final Set<CheckedNbtKey> list = keyMapping.get(resourceLocation.toString());
-                list.addAll(keyObjectList);
+                final Set<String> list = keyMapping.get(resourceLocation.toString());
+                list.addAll(keys);
                 keyMapping.put(resourceLocation.toString(), list);
             }
             else
             {
-                keyMapping.put(resourceLocation.toString(), keyObjectList);
+                keyMapping.put(resourceLocation.toString(), keys);
             }
         }
 
         final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(new ResourceLocation(MOD_ID, "itemnbtmatching"), "json");
         final JsonArray jsonArray = new JsonArray();
-        for (final Map.Entry<String, Set<CheckedNbtKey>> entry : keyMapping.entrySet())
+        for (final Map.Entry<String, Set<String>> entry : keyMapping.entrySet())
         {
             final JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("item", entry.getKey());
@@ -132,7 +129,7 @@ public class ItemNbtCalculator implements DataProvider
             if (!entry.getValue().isEmpty())
             {
                 final JsonArray subArray = new JsonArray();
-                entry.getValue().forEach(key -> subArray.add(serializeKeyToJson(key)));
+                entry.getValue().forEach(subArray::add);
                 jsonObject.add("checkednbtkeys", subArray);
             }
 
@@ -140,63 +137,5 @@ public class ItemNbtCalculator implements DataProvider
         }
 
         return DataProvider.saveStable(cache, jsonArray, path);
-    }
-
-    /**
-     * Serialize a checked nbt key to json.
-     * @param keyObject the key object to serialize.
-     * @return the output json.
-     */
-    public static JsonObject serializeKeyToJson(final CheckedNbtKey keyObject)
-    {
-        final JsonObject obj = new JsonObject();
-        obj.addProperty("key", keyObject.key);
-
-        if (!keyObject.children.isEmpty())
-        {
-            final JsonArray jsonArray = new JsonArray();
-            keyObject.children.forEach(child -> jsonArray.add(serializeKeyToJson(child)));
-            obj.add("children", jsonArray);
-        }
-        return obj;
-    }
-
-    /**
-     * Create a checked nbt key from nbt.
-     * @param key the key to retrieve.
-     * @param tag the tag to deserialize it from.
-     * @return a new checked nbt key.
-     */
-    public static CheckedNbtKey createKeyFromNbt(final String key, final CompoundTag tag)
-    {
-        if (tag.get(key) instanceof CompoundTag)
-        {
-            final CompoundTag subTag = tag.getCompound(key);
-            return new CheckedNbtKey(key, subTag.getAllKeys().stream().map(subKey -> createKeyFromNbt(subKey, subTag)).collect(Collectors.toSet()));
-        }
-        else
-        {
-            return new CheckedNbtKey(key, Collections.emptySet());
-        }
-    }
-
-    /**
-     * Create a checked nbt key from json.
-     * @param jsonObject the object to serialize it from.
-     * @return the output key.
-     */
-    public static CheckedNbtKey deserializeKeyFromJson(final JsonObject jsonObject)
-    {
-        final String key = jsonObject.get("key").getAsString();
-        if (jsonObject.has("children"))
-        {
-            final Set<CheckedNbtKey> children = new HashSet<>();
-            jsonObject.getAsJsonArray("children").forEach(child -> children.add(deserializeKeyFromJson(child.getAsJsonObject())));
-            return new CheckedNbtKey(key, children);
-        }
-        else
-        {
-            return new CheckedNbtKey(key, Collections.emptySet());
-        }
     }
 }

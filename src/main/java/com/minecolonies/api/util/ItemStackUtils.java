@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
@@ -19,8 +18,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
@@ -87,7 +85,7 @@ public final class ItemStackUtils
     /**
      * List of the checked nbt sets for itemstack comparisons.
      */
-    public static HashMap<Item, Set<CheckedNbtKey>> CHECKED_NBT_KEYS = new HashMap<>();
+    public static HashMap<Item, Set<DataComponentType<?>>> CHECKED_NBT_KEYS = new HashMap<>();
 
     /**
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
@@ -758,13 +756,16 @@ public final class ItemStackUtils
                 return false;
             }
 
-            for (TypedDataComponent<?> component : itemStack1.getComponents())
+            final Set<DataComponentType<?>> checkedKeys = CHECKED_NBT_KEYS.get(itemStack1.getItem());
+            if (checkedKeys.isEmpty())
             {
-                if (!matchDamage && component.type() == DataComponents.DAMAGE)
-                {
-                    continue;
-                }
-                if (!component.equals(itemStack2.getComponents().get(component.type())))
+                return true;
+            }
+
+            for (final DataComponentType<?> key : checkedKeys)
+            {
+                //todo double check this works, otherwise we might have to serialize it before comparison.
+                if (!Objects.equals(itemStack1.getComponents().get(key), itemStack2.getComponents().get(key)))
                 {
                     return false;
                 }

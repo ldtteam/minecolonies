@@ -51,7 +51,7 @@ public class DataPackSyncEventHandler
         {
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
-            CustomRecipeManager.getInstance().resolveTemplates();
+            CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
             CustomRecipeManager.getInstance().buildLootData(server.getLootData(), server.overworld());
         }
 

@@ -1,10 +1,10 @@
 package com.minecolonies.core.datalistener;
 
 import com.google.gson.*;
-import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.generation.ItemNbtCalculator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -38,7 +38,7 @@ public class ItemNbtListener extends SimpleJsonResourceReloadListener
         ItemStackUtils.CHECKED_NBT_KEYS.clear();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
         {
-            tryParse(entry);
+            tryParse(this.getRegistryLookup(), entry);
         }
     }
 
@@ -47,21 +47,21 @@ public class ItemNbtListener extends SimpleJsonResourceReloadListener
      *
      * @param entry
      */
-    private void tryParse(final Map.Entry<ResourceLocation, JsonElement> entry)
+    private void tryParse(@NotNull final HolderLookup.Provider provider, final Map.Entry<ResourceLocation, JsonElement> entry)
     {
         for (final JsonElement element : entry.getValue().getAsJsonArray())
         {
             try
             {
                 final JsonObject jsonObj = element.getAsJsonObject();
-                final ResourceLocation itemLoc = new ResourceLocation(jsonObj.get("item").getAsString());
+                final ResourceLocation itemLoc = ResourceLocation.parse(jsonObj.get("item").getAsString());
                 if (jsonObj.has("checkednbtkeys"))
                 {
-                    final HashSet<CheckedNbtKey> set = new HashSet<>();
+                    final HashSet<DataComponentType<?>> set = new HashSet<>();
                     final JsonArray jsonArray = jsonObj.getAsJsonArray("checkednbtkeys");
                     for (final JsonElement subElement : jsonArray)
                     {
-                        set.add(ItemNbtCalculator.deserializeKeyFromJson(subElement.getAsJsonObject()));
+                        set.add(BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(subElement.getAsString())));
                     }
 
                     ItemStackUtils.CHECKED_NBT_KEYS.put(BuiltInRegistries.ITEM.get(itemLoc), set);

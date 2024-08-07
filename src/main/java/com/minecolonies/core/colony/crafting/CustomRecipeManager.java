@@ -8,6 +8,7 @@ import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -275,13 +276,13 @@ public class CustomRecipeManager
      *
      * Must be called server-side-only after tags have been loaded and before we sync to client.
      */
-    public void resolveTemplates()
+    public void resolveTemplates(@NotNull final HolderLookup.Provider provider)
     {
         for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
         {
             try
             {
-                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(templateEntry.getKey(), templateEntry.getValue()))
+                for (final CustomRecipe recipe : CustomRecipe.parseTemplate(provider, templateEntry.getKey(), templateEntry.getValue()))
                 {
                     addRecipe(recipe);
                 }
