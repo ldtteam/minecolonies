@@ -101,7 +101,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
         if (tileEntityData != null && blockState.getValue(net.minecraft.world.level.block.DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
             BlockPos blockpos = new BlockPos(tileEntityData.getInt("x"), tileEntityData.getInt("y"), tileEntityData.getInt("z"));
-            final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData);
+            final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData, world.registryAccess());
             if (tileEntity == null)
             {
                 return Collections.emptyList();
@@ -120,7 +120,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
             {
                 property = null;
             }
-            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity) : BlockUtils.getMaterializedItemStack(tileEntity, property));
+            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess()) : BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess(), property));
         }
         return itemList;
     }

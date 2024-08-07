@@ -40,7 +40,7 @@ public class LecternPlacementHandler implements IPlacementHandler
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-        final LecternBlockEntity lectern = getLectern(pos, blockState, tileEntityData);
+        final LecternBlockEntity lectern = getLectern(pos, blockState, tileEntityData, world);
         if (lectern != null && lectern.hasBook())
         {
             itemList.add(new ItemStack(Items.BOOK));
@@ -74,11 +74,11 @@ public class LecternPlacementHandler implements IPlacementHandler
     @Nullable
     private static LecternBlockEntity getLectern(@NotNull final BlockPos pos,
                                                  @NotNull final BlockState blockState,
-                                                 @Nullable final CompoundTag tileEntityData)
+                                                 @Nullable final CompoundTag tileEntityData, final @NotNull Level world)
     {
         if (tileEntityData != null)
         {
-            final BlockEntity tileEntity = BlockEntity.loadStatic(pos, blockState, tileEntityData);
+            final BlockEntity tileEntity = BlockEntity.loadStatic(pos, blockState, tileEntityData, world.registryAccess());
             if (tileEntity instanceof LecternBlockEntity)
             {
                 return (LecternBlockEntity) tileEntity;

@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -44,9 +45,9 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
         @NotNull final CompoundTag treeTag = new CompoundTag();
 
         if (tree != null)
@@ -66,9 +67,9 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_TREE))
         {
             tree = Tree.read(compound.getCompound(TAG_TREE));
@@ -87,7 +88,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
             final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD_NAME, (getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModule(
               BuildingModules.FORESTER_WORK).getSecondarySkill()) / 2.0) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADD_VALUE);
-            AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED.value());
+            AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
 

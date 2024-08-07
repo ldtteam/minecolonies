@@ -139,12 +139,9 @@ public class FemaleAristocratModel extends CitizenModel<AbstractEntityCitizen>
       final @NotNull VertexConsumer buffer,
       final int packedLight,
       final int packedOverlay,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha)
+      final int color)
     {
-        super.renderToBuffer(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-        umbrellaArm.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        super.renderToBuffer(matrixStack, buffer, packedLight, packedOverlay, color);
+        umbrellaArm.render(matrixStack, buffer, packedLight, packedOverlay, color);
     }
 }

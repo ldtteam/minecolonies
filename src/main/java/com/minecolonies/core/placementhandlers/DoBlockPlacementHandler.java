@@ -132,7 +132,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         if (tileEntityData != null)
         {
             BlockPos blockpos = new BlockPos(tileEntityData.getInt("x"), tileEntityData.getInt("y"), tileEntityData.getInt("z"));
-            final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData);
+            final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData, world.registryAccess());
             if (tileEntity == null)
             {
                 return Collections.emptyList();
@@ -167,7 +167,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             {
                 property = null;
             }
-            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity) : BlockUtils.getMaterializedItemStack(tileEntity, property));
+            itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess()) : BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess(), property));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;

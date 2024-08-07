@@ -397,7 +397,7 @@ public class ExpeditionLog
         this.loot.clear();
         for (int size = buf.readVarInt(); size > 0; --size)
         {
-            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(buf);
+            final ItemStorage storage = StandardFactoryController.getInstance().deserialize(buf);
             this.loot.put(storage, storage);
         }
     }

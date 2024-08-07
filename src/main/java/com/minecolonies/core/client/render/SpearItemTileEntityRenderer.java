@@ -46,7 +46,7 @@ public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer
       final int combinedOverlay)
     {
         matrixStack.pushPose();
-        model.renderToBuffer(matrixStack, ItemRenderer.getFoilBuffer(buffer, model.renderType(TEXTURE), false, stack.hasFoil()), combinedLight, combinedOverlay, 1, 1, 1, 1);
+        model.renderToBuffer(matrixStack, ItemRenderer.getFoilBuffer(buffer, model.renderType(TEXTURE), false, stack.hasFoil()), combinedLight, combinedOverlay, -1);
         matrixStack.popPose();
     }
 }

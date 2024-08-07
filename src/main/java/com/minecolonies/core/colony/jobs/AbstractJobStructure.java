@@ -11,10 +11,12 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
@@ -103,9 +105,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
         if (workOrderId != 0)
         {
             compound.putInt(TAG_WORK_ORDER, workOrderId);
@@ -115,9 +117,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInt(TAG_WORK_ORDER);

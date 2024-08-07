@@ -61,10 +61,10 @@ public class Delivery extends AbstractDeliverymanRequestable
     {
         final CompoundTag compound = new CompoundTag();
 
-        compound.put(NBT_START, controller.serialize(delivery.getStart()));
-        compound.put(NBT_TARGET, controller.serialize(delivery.getTarget()));
+        compound.put(NBT_START, controller.serializeTag(provider, delivery.getStart()));
+        compound.put(NBT_TARGET, controller.serializeTag(provider, delivery.getTarget()));
         compound.put(NBT_STACK, delivery.getStack().save(provider));
-        compound.put(NBT_PRIORITY, controller.serialize(delivery.getPriority()));
+        compound.put(NBT_PRIORITY, controller.serializeTag(provider, delivery.getPriority()));
 
         return compound;
     }
@@ -72,10 +72,10 @@ public class Delivery extends AbstractDeliverymanRequestable
     @NotNull
     public static Delivery deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
-        final ILocation start = controller.deserializeTag(compound.getCompound(NBT_START));
-        final ILocation target = controller.deserializeTag(compound.getCompound(NBT_TARGET));
+        final ILocation start = controller.deserializeTag(provider, compound.getCompound(NBT_START));
+        final ILocation target = controller.deserializeTag(provider, compound.getCompound(NBT_TARGET));
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
-        final int priority = controller.deserializeTag(compound.getCompound(NBT_PRIORITY));
+        final int priority = controller.deserializeTag(provider, compound.getCompound(NBT_PRIORITY));
 
         return new Delivery(start, target, stack, priority);
     }

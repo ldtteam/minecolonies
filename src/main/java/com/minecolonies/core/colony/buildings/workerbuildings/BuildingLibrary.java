@@ -90,7 +90,7 @@ public class BuildingLibrary extends AbstractBuilding
                     Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
                     continue;
                 }
-                final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(entries[0]));
+                final Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(entries[0]));
                 final int skillChance = Integer.parseInt(entries[1]);
                 final int breakChance = Integer.parseInt(entries[2]);
 

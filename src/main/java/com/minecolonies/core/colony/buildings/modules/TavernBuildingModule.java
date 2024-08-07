@@ -15,6 +15,7 @@ import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -239,7 +240,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public void serializeNBT(final CompoundTag nbt)
+    public void serializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
         final ListTag visitorlist = new ListTag();
         for (final Integer id : externalCitizens)
@@ -254,7 +255,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag nbt)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
         final ListTag visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
         for (final Tag data : visitorlist)

@@ -56,10 +56,7 @@ public class SpearModel extends Model
       final @NotNull VertexConsumer buffer,
       final int packedLight,
       final int packedOverlay,
-      final float red,
-      final float green,
-      final float blue,
-      final float alpha)
+      final int color)
     {
         handle.render(matrixStack, buffer, packedLight, packedOverlay);
     }

@@ -58,7 +58,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     private GraveData lastGraveData;
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         restingCitizen.clear();
         if (compound.contains(TAG_RIP_CITIZEN_LIST))

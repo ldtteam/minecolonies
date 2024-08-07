@@ -683,11 +683,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
-            worker.addEffect(new MobEffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
+            worker.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         }
         else
         {
-            worker.removeEffect(GLOW_EFFECT);
+            worker.removeEffect(MobEffects.GLOWING);
         }
 
         if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))

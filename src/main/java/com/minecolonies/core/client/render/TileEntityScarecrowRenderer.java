@@ -128,7 +128,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
         }
 
         final VertexConsumer vertexConsumer = getMaterial(te).buffer(iRenderTypeBuffer, RenderType::entitySolid);
-        this.model.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, -1);
         matrixStack.popPose();
     }
 

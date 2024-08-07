@@ -72,7 +72,7 @@ public class GravePlacementHandler implements IPlacementHandler
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState))
+        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState, world.registryAccess()))
         {
             if (!ItemStackUtils.isEmpty(stack))
             {

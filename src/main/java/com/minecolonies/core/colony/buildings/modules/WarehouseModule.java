@@ -31,7 +31,7 @@ public class WarehouseModule extends AbstractBuildingModule implements IPersiste
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         storageUpgrade = compound.getInt(TAG_STORAGE);
     }

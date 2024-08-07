@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Deliver
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -486,7 +487,7 @@ public final class StandardRequests
         @Override
         public final ResourceLocation getDisplayIcon()
         {
-            return new ResourceLocation(getDisplayIconFile());
+            return ResourceLocation.parse(getDisplayIconFile());
         }
 
         protected abstract String getDisplayIconFile();
@@ -659,10 +660,9 @@ public final class StandardRequests
             if (foodExamples == null)
             {
                 foodExamples = ImmutableList.copyOf(IColonyManager.getInstance()
-                                                      .getCompatibilityManager()
-                                                      .getListOfAllItems()
+                                                      .getCompatibilityManager().getFood()
                                                       .stream()
-                                                      .filter(item -> item.isEdible())
+                                                      .map(ItemStorage::getItemStack)
                                                       .collect(Collectors.toList()));
             }
 
