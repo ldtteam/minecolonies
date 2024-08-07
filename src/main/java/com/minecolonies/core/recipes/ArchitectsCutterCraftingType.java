@@ -3,8 +3,10 @@ package com.minecolonies.core.recipes;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
+import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
@@ -13,7 +15,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, ArchitectsCutterRecipe>
+public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsCutterRecipeInput, ArchitectsCutterRecipe>
 {
     public ArchitectsCutterCraftingType()
     {
@@ -64,12 +65,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
 
             final ItemStack output = recipe.getResultItem(world.registryAccess()).copy();
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
-
-            // resultItem usually doesn't have textureData, but we need it to properly match the creative tab
-            if (MaterialTextureData.extractNbtFromItemStack(output) == null)
-            {
-                new MaterialTextureData().writeToItemStack(output);
-            }
+            output.set(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
 
             recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
                     inputs, 3, Blocks.AIR, null, ToolType.NONE, new ArrayList<>(), -1));

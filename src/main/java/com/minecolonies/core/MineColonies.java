@@ -112,6 +112,7 @@ public class MineColonies
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
         SupplyLoot.GLM.register(modBus);
         ModBannerPatterns.BANNER_PATTERNS.register(modBus);
+        ModItemsInitializer.DEFERRED_REGISTER.register(modBus);
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(modBus);
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(modBus);

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -209,7 +210,7 @@ public class ContainerCrafting extends AbstractContainerMenu
         if (!world.isClientSide)
         {
             final ServerPlayer player = (ServerPlayer) inv.player;
-            final List<RecipeHolder<CraftingRecipe>> recipes = player.server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix, world)
+            final List<RecipeHolder<CraftingRecipe>> recipes = player.server.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), world)
                     .stream().filter(recipe -> recipe.value().isSpecial()
                             || !world.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING)
                             || player.getRecipeBook().contains(recipe)
@@ -225,7 +226,7 @@ public class ContainerCrafting extends AbstractContainerMenu
                 this.switchableSlot.set(recipes.size());
                 this.recipeIndexSlot.set(this.recipeIndexSlot.get() % recipes.size());
                 final ItemStack stack = recipes.get(this.recipeIndexSlot.get()).value()
-                        .assemble(this.craftMatrix, this.world.registryAccess());
+                        .assemble(this.craftMatrix.asCraftInput(), this.world.registryAccess());
                 this.craftResultSlot.set(stack);
             }
         }
@@ -422,10 +423,10 @@ public class ContainerCrafting extends AbstractContainerMenu
      */
     public List<ItemStack> getRemainingItems()
     {
-        final Optional<RecipeHolder<CraftingRecipe>> iRecipe = this.world.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, world);
+        final Optional<RecipeHolder<CraftingRecipe>> iRecipe = this.world.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), world);
         if (iRecipe.isPresent())
         {
-            List<ItemStack> ri = iRecipe.get().value().getRemainingItems(this.craftMatrix);
+            List<ItemStack> ri = iRecipe.get().value().getRemainingItems(this.craftMatrix.asCraftInput());
             remainingItems.clear();
             for(int i = 0; i< ri.size(); i++)
             {

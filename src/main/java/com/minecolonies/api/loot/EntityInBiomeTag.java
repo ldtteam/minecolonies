@@ -1,10 +1,9 @@
 package com.minecolonies.api.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -17,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 /** A loot condition that checks if the entity producing loot is in a biome with a particular tag. */
 public class EntityInBiomeTag implements LootItemCondition
 {
-    public static final EntityInBiomeTag ANY = new EntityInBiomeTag(null);
-    public static final Codec<EntityInBiomeTag> CODEC = RecordCodecBuilder.create(builder -> builder
+    public static final EntityInBiomeTag           ANY   = new EntityInBiomeTag(null);
+    public static final MapCodec<EntityInBiomeTag> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
         .group(TagKey.hashedCodec(Registries.BIOME).optionalFieldOf("tag", null).forGetter(t -> t.tag))
         .apply(builder, EntityInBiomeTag::ofNullable));
 

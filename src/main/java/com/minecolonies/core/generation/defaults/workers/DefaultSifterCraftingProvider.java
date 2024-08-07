@@ -10,6 +10,7 @@ import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.DatagenLootTableManager;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -285,7 +286,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
             {
                 final String name = mesh.getName() + "/" + BuiltInRegistries.ITEM.getKey(inputEntry.getKey()).getPath();
 
-                final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
+                final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(Holder.direct(mesh.getLootTable().build()));
                 final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream()
                         .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
                         .map(ItemStack::getItem));

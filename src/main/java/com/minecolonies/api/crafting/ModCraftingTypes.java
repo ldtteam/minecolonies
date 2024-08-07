@@ -4,9 +4,9 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.core.recipes.ArchitectsCutterCraftingType;
 import com.minecolonies.core.recipes.BrewingCraftingType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -20,10 +20,10 @@ public class ModCraftingTypes
     public static final ResourceLocation BREWING_ID = new ResourceLocation(MOD_ID, "brewing");
     public static final ResourceLocation ARCHITECTS_CUTTER_ID = new ResourceLocation("domum_ornamentum", "architects_cutter");
 
-    public static DeferredHolder<CraftingType, RecipeCraftingType<CraftingContainer, CraftingRecipe>> SMALL_CRAFTING;
-    public static DeferredHolder<CraftingType, RecipeCraftingType<CraftingContainer, CraftingRecipe>> LARGE_CRAFTING;
-    public static DeferredHolder<CraftingType, RecipeCraftingType<Container, SmeltingRecipe>> SMELTING;
-    public static DeferredHolder<CraftingType, BrewingCraftingType> BREWING;
+    public static DeferredHolder<CraftingType, RecipeCraftingType<CraftingInput, CraftingRecipe>>     SMALL_CRAFTING;
+    public static DeferredHolder<CraftingType, RecipeCraftingType<CraftingInput, CraftingRecipe>>     LARGE_CRAFTING;
+    public static DeferredHolder<CraftingType, RecipeCraftingType<SingleRecipeInput, SmeltingRecipe>> SMELTING;
+    public static DeferredHolder<CraftingType, BrewingCraftingType>                                   BREWING;
     public static DeferredHolder<CraftingType, ArchitectsCutterCraftingType> ARCHITECTS_CUTTER;
 
     private ModCraftingTypes()

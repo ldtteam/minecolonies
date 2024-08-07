@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,7 @@ import java.util.Optional;
  */
 public class ResearchUnlocked implements LootItemCondition
 {
-    public static final Codec<ResearchUnlocked> CODEC = RecordCodecBuilder.create(builder -> builder
+    public static final MapCodec<ResearchUnlocked> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
         .group(ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.effectId),
             Codec.DOUBLE.optionalFieldOf("minStrength", Double.MIN_VALUE).forGetter(r -> r.minStrength),
           Codec.DOUBLE.optionalFieldOf("maxStrength", Double.MAX_VALUE).forGetter(r -> r.maxStrength))

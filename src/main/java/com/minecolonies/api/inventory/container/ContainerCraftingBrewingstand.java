@@ -11,7 +11,6 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -72,7 +71,6 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     {
         super(ModContainers.craftingBrewingstand.get(), windowId);
         this.moduleId = moduleId;
-
         this.brewingStandInventory = new IItemHandlerModifiable()
         {
             ItemStack ingredient = ItemStack.EMPTY;
@@ -158,11 +156,11 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
             {
                 if (slot == 3)
                 {
-                    return net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+                    return getWorldObj().potionBrewing().isIngredient(stack);
                 }
                 else if (slot >= 0 && slot < 3)
                 {
-                    return net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+                    return getWorldObj().potionBrewing().isInput(stack);
                 }
                 else
                 {
@@ -338,12 +336,12 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
                 return ItemStack.EMPTY;
             }
 
-            if (BrewingRecipeRegistry.isValidIngredient(stack))
+            if (getWorldObj().potionBrewing().isIngredient(stack))
             {
                 setInput(stack);
                 return ItemStack.EMPTY;
             }
-            else if (BrewingRecipeRegistry.isValidInput(stack) && stack.getCount() == 1)
+            else if (getWorldObj().potionBrewing().isInput(stack) && stack.getCount() == 1)
             {
                 setContainer(stack);
                 return ItemStack.EMPTY;

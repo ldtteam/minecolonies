@@ -4,10 +4,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +18,7 @@ import java.util.function.Predicate;
  * @param <C> the crafting inventory type
  * @param <T> the recipe type
  */
-public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extends CraftingType
+public class RecipeCraftingType<C extends RecipeInput, T extends Recipe<C>> extends CraftingType
 {
     private final RecipeType<T> recipeType;
     private final Predicate<RecipeHolder<T>> predicate;
