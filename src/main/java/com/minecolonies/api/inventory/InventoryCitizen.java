@@ -4,14 +4,17 @@ import com.google.common.collect.Iterables;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
@@ -358,14 +361,14 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
      * @param onBroken action upon item break
      * @return true if the item broke
      */
-    public <T extends LivingEntity> boolean damageInventoryItem(final int slot, int amount, @Nullable T entityIn, @Nullable Consumer<T> onBroken)
+    public <T extends LivingEntity> boolean damageInventoryItem(final int slot, int amount, @Nullable T entityIn, @Nullable Consumer<Item> onBroken)
     {
         final ItemStack stack = mainInventory.get(slot);
         if (!ItemStackUtils.isEmpty(stack))
         {
             // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
             // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-            stack.hurtAndBreak(stack.getItem().damageItem(stack, amount, entityIn, onBroken), entityIn, onBroken);
+            stack.hurtAndBreak(stack.getItem().damageItem(stack, amount, entityIn, onBroken), (ServerLevel) entityIn.level(), entityIn, onBroken);
 
             if (ItemStackUtils.isEmpty(stack))
             {
@@ -526,7 +529,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
      *
      * @param nbtTagCompound the compound to store it in.
      */
-    public void write(final CompoundTag nbtTagCompound)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
         if (citizen != null && citizen.getColony() != null)
         {
@@ -547,7 +550,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).save(compoundNBT);
+                (this.mainInventory.get(i)).save(provider, compoundNBT);
                 invTagList.add(compoundNBT);
                 freeSlots--;
             }
@@ -561,7 +564,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
-                (this.armorInventory.get(i)).save(compoundNBT);
+                (this.armorInventory.get(i)).save(provider, compoundNBT);
                 armorTagList.add(compoundNBT);
             }
         }
@@ -573,7 +576,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
      *
      * @param nbtTagCompound the compound.
      */
-    public void read(final CompoundTag nbtTagCompound)
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
         if (nbtTagCompound.contains(TAG_ARMOR_INVENTORY))
         {
@@ -591,7 +594,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = nbtTagList.getCompound(i);
                 final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.of(compoundNBT);
+                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
 
                 if (!itemstack.isEmpty())
                 {
@@ -608,7 +611,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = armorTagList.getCompound(i);
                 final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.of(compoundNBT);
+                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
 
                 if (!itemstack.isEmpty())
                 {
@@ -636,7 +639,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
                 final CompoundTag compoundNBT = nbtTagList.getCompound(i);
 
                 final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.of(compoundNBT);
+                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
 
                 if (!itemstack.isEmpty())
                 {

@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
-import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -59,13 +59,8 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     }
 
     @Override
-    public boolean canSustainPlant(
-      @NotNull final BlockState state,
-      @NotNull final BlockGetter world,
-      final BlockPos pos,
-      @NotNull final Direction facing,
-      final IPlantable plantable)
+    public TriState canSustainPlant(final BlockState state, final BlockGetter level, final BlockPos soilPosition, final Direction facing, final BlockState plant)
     {
-        return true;
+        return TriState.TRUE;
     }
 }

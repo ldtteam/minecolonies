@@ -25,6 +25,7 @@ import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -396,7 +397,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             final CompoundTag compound = buf.readNbt();
             if (compound != null)
             {
-                list.add(StandardFactoryController.getInstance().deserializeTag(compound));
+                list.add(StandardFactoryController.getInstance().deserializeTag(buf.registryAccess(), compound));
             }
         }
 
@@ -404,7 +405,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final CompoundTag compound = buf.readNbt();
         if (compound != null)
         {
-            requesterId = StandardFactoryController.getInstance().deserializeTag(compound);
+            requesterId = StandardFactoryController.getInstance().deserializeTag(buf.registryAccess(), compound);
         }
         containerlist.clear();
         final int racks = buf.readInt();
@@ -412,7 +413,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             containerlist.add(buf.readBlockPos());
         }
-        loadRequestSystemFromNBT(buf.readNbt());
+        loadRequestSystemFromNBT(buf.registryAccess(), buf.readNbt());
         isDeconstructed = buf.readBoolean();
         isAssignmentAllowed = buf.readBoolean();
 
@@ -431,9 +432,9 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    private void loadRequestSystemFromNBT(final CompoundTag compound)
+    private void loadRequestSystemFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_RS_BUILDING_DATASTORE));
     }
 
     private IRequestSystemBuildingDataStore getDataStore()

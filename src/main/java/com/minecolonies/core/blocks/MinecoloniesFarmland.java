@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.FarmlandWaterManager;
-import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.SpecialPlantable;
 import org.jetbrains.annotations.NotNull;
 
 public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
@@ -161,7 +161,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     {
         BlockState plant = p_279219_.getBlockState(p_279209_.above());
         BlockState state = p_279219_.getBlockState(p_279209_);
-        return plant.getBlock() instanceof IPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, (IPlantable) plant.getBlock());
+        return plant.getBlock() instanceof SpecialPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, plant.getBlock().defaultBlockState()).isTrue();
     }
 
     private static boolean isNearWater(LevelReader level, BlockPos thisPos)

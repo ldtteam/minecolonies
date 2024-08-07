@@ -12,6 +12,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -201,9 +202,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, provider);
 
         compound.putInt("items", this.items);
         compound.putInt("timer", this.timer);
@@ -211,9 +212,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public void load(final CompoundTag compound)
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.load(compound);
+        super.loadAdditional(compound, provider);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
@@ -227,16 +228,16 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return saveWithId();
+        return saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(compound);
+        this.loadAdditional(compound, provider);
         setChanged();
     }
 
@@ -250,7 +251,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public final void handleUpdateTag(final CompoundTag tag)
+    public final void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
     {
         this.items = tag.getInt("items");
         this.timer = tag.getInt("timer");

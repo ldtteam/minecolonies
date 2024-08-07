@@ -2,6 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.LootingEnchantFunction;
+import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
@@ -26,9 +27,9 @@ import java.util.stream.Stream;
  */
 public class DefaultEntityLootProvider extends EntityLootSubProvider
 {
-    public DefaultEntityLootProvider()
+    public DefaultEntityLootProvider(@NotNull final HolderLookup.Provider provider)
     {
-        super(FeatureFlags.REGISTRY.allFlags());
+        super(FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Override
@@ -125,10 +126,10 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
                 .add(LootItem.lootTableItem(ModItems.pharaoscepter).setWeight(3).setQuality(1))
                 .add(LootItem.lootTableItem(Items.ARROW).setWeight(20)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 16)))
-                        .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(1, 32))))
+                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(1, 32))))
                 .add(LootItem.lootTableItem(ModItems.firearrow).setWeight(10)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 16)))
-                        .apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(1, 32))))
+                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(1, 32))))
                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));
 
         registerLoot(ModEntities.DROWNED_PIRATE, builder -> builder
@@ -159,13 +160,12 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
                               @NotNull final Consumer<LootPool.Builder> builder)
     {
         final ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity);
-        final ResourceLocation lootName = new ResourceLocation(entityId.getNamespace(), "entities/" + entityId.getPath());
 
         final LootPool.Builder pool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1));
         builder.accept(pool);
 
-        add(entity, lootName, LootTable.lootTable().withPool(pool));
+        add(entity, entity.getDefaultLootTable(), LootTable.lootTable().withPool(pool));
     }
 
     @Override

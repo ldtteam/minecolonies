@@ -4,15 +4,16 @@ import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.loot.ResearchUnlocked;
 import com.minecolonies.api.research.util.ResearchConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.LootTableSubProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,43 +25,48 @@ import java.util.function.BiConsumer;
  */
 public class DefaultFishermanLootProvider implements LootTableSubProvider
 {
+    public DefaultFishermanLootProvider(@NotNull final HolderLookup.Provider provider)
+    {
+
+    }
+
     @Override
-    public void generate(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
+    public void generate(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
     {
         registerStandardLoot(generator);
         registerBonusLoot(generator);
     }
 
-    private void registerStandardLoot(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
+    private void registerStandardLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
     {
         generator.accept(ModLootTables.FISHING, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
-                        .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
+                        .add(NestedLootTable.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
+                        .add(NestedLootTable.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
                                 .when(new AnyOfCondition.Builder(
                                         EntityInBiomeTag.of(BiomeTags.IS_OCEAN),
                                         ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
                                 )))
-                        .add(LootTableReference.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))
+                        .add(NestedLootTable.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))
                 ));
 
         generator.accept(ModLootTables.FISHING_JUNK, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_JUNK).setWeight(1))
+                        .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_JUNK).setWeight(1))
                 ));
 
         generator.accept(ModLootTables.FISHING_TREASURE, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_TREASURE).setWeight(1))
+                        .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_TREASURE).setWeight(1))
                 ));
 
         generator.accept(ModLootTables.FISHING_FISH, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                        .add(LootTableReference.lootTableReference(BuiltInLootTables.FISHING_FISH).setWeight(1))
+                        .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_FISH).setWeight(1))
                 ));
     }
 
-    private void registerBonusLoot(final BiConsumer<ResourceLocation, LootTable.Builder> generator)
+    private void registerBonusLoot(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
     {
         final int skillBonus = 1;       // 0.1% bonus chance per skill point (sort of)
         final int spongeWeight = 1;     // 0.1% chance (before skill bonus)

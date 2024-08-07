@@ -3,12 +3,12 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,11 +21,9 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
-import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
+import net.minecraft.world.level.storage.loot.functions.SetBannerPatternFunction;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -36,14 +34,16 @@ import java.util.stream.Stream;
 
 public class DefaultBlockLootTableProvider extends BlockLootSubProvider
 {
-    public DefaultBlockLootTableProvider()
+    public DefaultBlockLootTableProvider(@NotNull final HolderLookup.Provider provider)
     {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Override
     public void generate()
     {
+        HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+
         saveBlocks(Arrays.asList(ModBlocks.getHuts()));
 
         saveBlock(ModBlocks.blockHutWareHouse);
@@ -61,8 +61,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         saveBlock(ModBlocks.blockCompostedDirt,
           lootPool -> lootPool.add(AlternativesEntry.alternatives()
                                      .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
-                                                  .when(MatchTool.toolMatches(ItemPredicate.Builder.item()
-                                                                                .hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, Ints.exactly(1))))))
+                                                  .when(this.hasSilkTouch()))
                                      .otherwise(LootItem.lootTableItem(Blocks.DIRT)
                                                   .when(ExplosionCondition.survivesExplosion()))));
 
@@ -72,7 +71,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         for (Block block : ModBlocks.getCrops())
         {
             final LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 6));
-            saveBlock(block, lootPool -> lootPool.add(LootItem.lootTableItem(block.asItem()).when(cropCondition).apply(ApplyBonusCount.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3)).otherwise(LootItem.lootTableItem(block.asItem()))));
+            saveBlock(block, lootPool -> lootPool.add(LootItem.lootTableItem(block.asItem()).when(cropCondition).apply(ApplyBonusCount.addBonusBinomialDistributionCount(registrylookup.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3)).otherwise(LootItem.lootTableItem(block.asItem()))));
         }
 
         // intentionally no drops -- creative only
@@ -128,7 +127,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
               LootTable.lootTable().withPool(LootPool.lootPool()
                                                .add(LootItem.lootTableItem(block))
                                                .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
-                                               .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy("Patterns", "BlockEntityTag.Patterns").copy("id", "BlockEntityTag.id"))
+                                               .apply(SetBannerPatternFunction.setBannerPattern(false))
                                                .when(ExplosionCondition.survivesExplosion())
               ));
     }

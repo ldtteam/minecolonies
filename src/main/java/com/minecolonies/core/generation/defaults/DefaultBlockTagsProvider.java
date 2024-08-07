@@ -186,13 +186,13 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.MUSHROOM_STEM);
 
         tag(ModTags.colonyProtectionException)
-                .addOptional(new ResourceLocation("waystones:waystone"))
-                .addOptional(new ResourceLocation("waystones:sandy_waystone"))
-                .addOptional(new ResourceLocation("waystones:mossy_waystone"));
+                .addOptional(ResourceLocation.parse("waystones:waystone"))
+                .addOptional(ResourceLocation.parse("waystones:sandy_waystone"))
+                .addOptional(ResourceLocation.parse("waystones:mossy_waystone"));
 
         tag(ModTags.indestructible).add(Blocks.BEDROCK);
         tag(ModTags.oreChanceBlocks)
-                .addTags(Tags.Blocks.STONE)
+                .addTags(Tags.Blocks.STONES)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)

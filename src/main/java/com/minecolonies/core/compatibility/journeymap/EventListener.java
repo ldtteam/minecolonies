@@ -28,7 +28,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,7 +113,7 @@ public class EventListener
             else
             {
                 final String jobId = entity.getEntityData().get(DATA_JOB);
-                final JobEntry jobEntry = IJobRegistry.getInstance().get(new ResourceLocation(jobId));
+                final JobEntry jobEntry = IJobRegistry.getInstance().get(ResourceLocation.parse(jobId));
                 final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
 
                 if (job instanceof AbstractJobGuard

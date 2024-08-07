@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.TierSortingRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -269,10 +268,11 @@ public final class WorkerUtil
      * Find the first level in a structure and return it.
      *
      * @param structure the structure to scan.
+     * @param level
      * @return the position of the sign.
      */
     @Nullable
-    public static BlockPos findFirstLevelSign(final Blueprint structure, final BlockPos pos)
+    public static BlockPos findFirstLevelSign(final Blueprint structure, final BlockPos pos, final Level level)
     {
         for (int j = 0; j < structure.getSizeY(); j++)
         {
@@ -289,7 +289,7 @@ public final class WorkerUtil
                         final BlockEntityType<?> teType = teId == null ? null : BuiltInRegistries.BLOCK_ENTITY_TYPE.get(teId);
                         if (teType == BlockEntityType.SIGN || teType == BlockEntityType.HANGING_SIGN)
                         {
-                            if (BlockEntity.loadStatic(te.getPos(), te.getState(), te.getTileEntityData()) instanceof SignBlockEntity sign)
+                            if (BlockEntity.loadStatic(te.getPos(), te.getState(), te.getTileEntityData(), level.registryAccess()) instanceof SignBlockEntity sign)
                             {
                                 if (sign.getFrontText().getMessage(0, false).getString().equals(LEVEL_SIGN_TEXT))
                                 {

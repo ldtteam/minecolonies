@@ -76,7 +76,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
 
         final int target = details.get(TARGET_KEY).getAsInt();
-        final ResourceLocation researchId = new ResourceLocation(details.get(BUILDING_KEY).getAsString());
+        final ResourceLocation researchId = ResourceLocation.parse(details.get(BUILDING_KEY).getAsString());
 
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 

@@ -991,7 +991,7 @@ public class CitizenData implements ICitizenData
         buf.writeInt(colony.getID());
 
         final CompoundTag compound = new CompoundTag();
-        inventory.write(compound);
+        inventory.write(buf.registryAccess(), compound);
         buf.writeNbt(compound);
         buf.writeBlockPos(lastPosition);
 
@@ -1251,7 +1251,7 @@ public class CitizenData implements ICitizenData
         citizenHappinessHandler.write(provider, nbtTagCompound);
         citizenMournHandler.write(nbtTagCompound);
 
-        inventory.write(nbtTagCompound);
+        inventory.write(provider, nbtTagCompound);
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.MAIN_HAND));
         nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.OFF_HAND));
 
@@ -1371,7 +1371,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_INVENTORY))
         {
-            this.inventory.read(nbtTagCompound);
+            this.inventory.read(provider, nbtTagCompound);
             this.inventory.setHeldItem(InteractionHand.MAIN_HAND, nbtTagCompound.getInt(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(InteractionHand.OFF_HAND, nbtTagCompound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
         }

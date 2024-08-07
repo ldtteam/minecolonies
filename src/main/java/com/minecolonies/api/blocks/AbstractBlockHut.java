@@ -37,6 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -195,7 +196,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
     @NotNull
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -210,7 +212,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         {
             if (hand == InteractionHand.OFF_HAND)
             {
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
 
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
@@ -221,37 +223,37 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 if (building == null && ColonyUtils.getOwningColony(chunk) == 0)
                 {
                     MessageUtils.format(MISSING_COLONY).sendTo(player);
-                    return InteractionResult.FAIL;
+                    return ItemInteractionResult.FAIL;
                 }
 
                 if (building == null && ColonyUtils.getAllClaimingBuildings(chunk).values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(pos)))
                 {
                     IColonyManager.getInstance().openReactivationWindow(pos);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
 
             if (building == null)
             {
                 MessageUtils.format(HUT_BLOCK_MISSING_BUILDING).sendTo(player);
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
 
             if (building.getColony() == null)
             {
                 MessageUtils.format(HUT_BLOCK_MISSING_COLONY).sendTo(player);
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
 
             if (!building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 MessageUtils.format(PERMISSION_DENIED).sendTo(player);
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
             }
 
             building.openGui(player.isShiftKeyDown());
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Nullable

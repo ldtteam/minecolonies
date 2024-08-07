@@ -7,7 +7,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.component.ModDataComponents;
-import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.util.CraftingUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.TypedDataComponent;

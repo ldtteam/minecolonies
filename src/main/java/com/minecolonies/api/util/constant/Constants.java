@@ -159,8 +159,6 @@ public final class Constants
 
     public static final String SCIMITAR_NAME     = "iron_scimitar";
     public static final String CHIEFSWORD_NAME   = "chiefsword";
-    public static final MobEffect LEVITATION_EFFECT = MobEffects.LEVITATION;
-    public static final MobEffect GLOW_EFFECT       = MobEffects.GLOWING;
 
     public static final int GLOW_EFFECT_DURATION   = 20 * 30;
     public static final int GLOW_EFFECT_MULTIPLIER = 20;

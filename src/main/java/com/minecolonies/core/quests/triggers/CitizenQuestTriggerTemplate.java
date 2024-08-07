@@ -75,12 +75,12 @@ public class CitizenQuestTriggerTemplate implements IQuestTriggerTemplate
             {
                 continue;
             }
-            if (matchTag != null && !IQuestTriggerTemplate.matchNbt(data.serializeNBT(), matchTag))
+            if (matchTag != null && !IQuestTriggerTemplate.matchNbt(data.serializeNBT(colony.getWorld().registryAccess()), matchTag))
             {
                 continue;
             }
 
-            if (notMatchTag != null && IQuestTriggerTemplate.matchNbt(data.serializeNBT(), notMatchTag))
+            if (notMatchTag != null && IQuestTriggerTemplate.matchNbt(data.serializeNBT(colony.getWorld().registryAccess()), notMatchTag))
             {
                 continue;
             }

@@ -19,7 +19,7 @@ public final class ModCreativeTabs
 {
     public static final DeferredRegister<CreativeModeTab> TAB_REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.huts")).displayItems((config, output) -> {
           for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
@@ -28,7 +28,7 @@ public final class ModCreativeTabs
           }
       }).build());
 
-    public static final RegistryObject<CreativeModeTab> GENERAL = TAB_REG.register("mcgeneral", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> GENERAL = TAB_REG.register("mcgeneral", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockRack))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.general")).displayItems((config, output) -> {
           output.accept(ModBlocks.blockScarecrow);
@@ -101,7 +101,7 @@ public final class ModCreativeTabs
           output.accept(ModItems.sifterMeshDiamond);
       }).build());
 
-    public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockTomato))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.food")).displayItems((config, output) -> {
           output.accept(ModBlocks.farmland);

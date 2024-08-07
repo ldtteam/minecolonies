@@ -9,7 +9,7 @@ import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        final ItemStack waterBottle = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+        final ItemStack waterBottle = PotionContents.createItemStack(new ItemStack(Items.POTION).getItem(), Potions.WATER);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "water_bottle")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.GLASS_BOTTLE))))

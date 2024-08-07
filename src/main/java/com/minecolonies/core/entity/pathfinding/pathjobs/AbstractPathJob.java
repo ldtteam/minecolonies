@@ -31,9 +31,9 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -876,7 +876,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param onRails    checks if the node is a rail block.
      * @param railsExit  the exit of the rails.
      * @param swimStart  if its the swim start.
-     * @param blockState
      * @return cost to move from the parent to the new position.
      */
     protected double computeCost(
@@ -969,7 +968,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param parent
      * @param swimstart
      * @param swimming
-     * @param blockState
      * @param state
      * @return
      */
@@ -1282,8 +1280,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                                                                                                                                            || block.getValue(SnowLayerBlock.LAYERS)
                                                                                                                                                 == 1))
                 {
-                    final BlockPathTypes pathType = block.getBlockPathType(world, tempWorldPos.set(x, y, z), entity);
-                    if (pathType == null || pathType.getDanger() == null)
+                    final PathType pathType = block.getBlockPathType(world, tempWorldPos.set(x, y, z), entity);
+                    if (pathType == null || pathType.getMalus() < 0)
                     {
                         return true;
                     }

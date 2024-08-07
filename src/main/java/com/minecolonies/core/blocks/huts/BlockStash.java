@@ -10,6 +10,8 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -82,7 +84,8 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
 
     @NotNull
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -101,6 +104,6 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
                 new OpenInventoryMessage(building).sendToServer();
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 }

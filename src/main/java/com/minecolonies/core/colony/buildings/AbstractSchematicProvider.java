@@ -18,6 +18,7 @@ import com.minecolonies.api.util.FireworkUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -148,7 +149,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_LOCATION, location);
@@ -172,7 +173,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
 

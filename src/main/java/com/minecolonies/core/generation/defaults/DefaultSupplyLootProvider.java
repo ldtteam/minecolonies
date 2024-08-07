@@ -1,9 +1,11 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.items.ModItems;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
@@ -24,8 +27,13 @@ import static com.minecolonies.api.util.constant.Constants.*;
  */
 public class DefaultSupplyLootProvider implements LootTableSubProvider
 {
+    public DefaultSupplyLootProvider(@NotNull final HolderLookup.Provider provider)
+    {
+
+    }
+
     @Override
-    public void generate(final BiConsumer<ResourceLocation, Builder> generator)
+    public void generate(final BiConsumer<ResourceKey<LootTable>, Builder> generator)
     {
         final CompoundTag instantTag = new CompoundTag();
         instantTag.putString(PLACEMENT_NBT, INSTANT_PLACEMENT);

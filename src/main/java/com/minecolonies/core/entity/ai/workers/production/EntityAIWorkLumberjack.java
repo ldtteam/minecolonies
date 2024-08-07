@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.SpecialPlantable;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -926,7 +926,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
             }
 
-            if (!(block instanceof IPlantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, (IPlantable) block))
+            if (!(block instanceof SpecialPlantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, block.defaultBlockState()).isTrue())
                   || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
                 job.getTree().removeStump(pos);

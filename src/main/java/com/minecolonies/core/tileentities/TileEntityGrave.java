@@ -13,8 +13,10 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -138,9 +140,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void load(final CompoundTag compound)
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.load(compound);
+        super.loadAdditional(compound, provider);
 
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
@@ -154,9 +156,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, provider);
 
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
         compound.putBoolean(TAG_DECAYED, decayed);
@@ -175,21 +177,21 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return this.saveWithId();
+        return this.saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
     {
-        this.load(packet.getTag());
+        this.loadAdditional(packet.getTag(), provider);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
     {
-        this.load(tag);
+        this.loadAdditional(tag, provider);
     }
 
     @Override
@@ -205,7 +207,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
-        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
         buffer.writeBlockPos(this.getBlockPos());
 
         return new ContainerGrave(id, inv, buffer);

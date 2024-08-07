@@ -7,6 +7,7 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -77,7 +78,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
-        final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(details.get(ENTITY_TYPE_KEY).getAsString()));
+        final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(details.get(ENTITY_TYPE_KEY).getAsString()));
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 
         return new KillEntityObjectiveTemplateTemplate(target, quantity, entityType, nextObj, parseRewards(jsonObject));
@@ -184,7 +185,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         }
 
         @Override
-        public CompoundTag serializeNBT()
+        public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
         {
             final CompoundTag compoundTag = new CompoundTag();
             compoundTag.putInt(TAG_QUANTITY, currentProgress);
@@ -198,7 +199,7 @@ public class KillEntityObjectiveTemplateTemplate extends DialogueObjectiveTempla
         }
 
         @Override
-        public void deserializeNBT(final CompoundTag nbt)
+        public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
         {
             this.currentProgress = nbt.getInt(TAG_QUANTITY);
         }

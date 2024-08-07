@@ -3,7 +3,10 @@ package com.minecolonies.core.quests.sideeffects;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.UnknownNullability;
 
 /**
  * Quest effect which sets the worker idle
@@ -66,5 +69,17 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
          */
         int idleDays = 1;
         data.setIdleDays(idleDays);
+    }
+
+    @Override
+    public CompoundTag serializeNBT(final HolderLookup.Provider provider)
+    {
+        return null;
+    }
+
+    @Override
+    public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag nbt)
+    {
+
     }
 }

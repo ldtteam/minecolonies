@@ -5,7 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
@@ -42,12 +41,14 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     private final String ENCHANTER = ModJobs.ENCHANTER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
-    private final List<LootTable.Builder> levels;
+    private final List<LootTable.Builder>                  levels;
+    private final HolderLookup.Provider lookUpProvider;
 
     public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
         super(packOutput);
         levels = new ArrayList<>();
+        this.lookUpProvider = lookupProvider.join();
 
         // building level 1
         levels.add(LootTable.lootTable().withPool(LootPool.lootPool()
@@ -365,7 +366,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     @NotNull
     private LootPoolSingletonContainer.Builder<?> enchantedBook(final ResourceKey<Enchantment> key, final int level)
     {
-        final Holder<Enchantment> enchantment = Utils.getRegistryValue(key, registryAccess);
+        final Holder<Enchantment> enchantment = lookUpProvider.holderOrThrow(key);
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
         stack.enchant(enchantment, level);
         return SimpleLootTableProvider.itemStack(stack);

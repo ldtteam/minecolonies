@@ -1,5 +1,6 @@
 package com.minecolonies.api.inventory.api;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -74,7 +75,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = new CompoundTag();
 
@@ -86,7 +87,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
             if (handlerModifiable instanceof INBTSerializable)
             {
                 final INBTSerializable<?> serializable = (INBTSerializable<?>) handlerModifiable;
-                handlerList.add(serializable.serializeNBT());
+                handlerList.add(serializable.serializeNBT(provider));
                 indexList.add(IntTag.valueOf(index));
             }
 
@@ -106,7 +107,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
 
     @SuppressWarnings(UNCHECKED)
     @Override
-    public void deserializeNBT(final CompoundTag nbt)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
         final ListTag handlerList = nbt.getList(NBT_KEY_HANDLERS, Tag.TAG_COMPOUND);
         final ListTag indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Tag.TAG_INT);
@@ -120,7 +121,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
                 if (modifiable instanceof INBTSerializable)
                 {
                     final INBTSerializable<CompoundTag> serializable = (INBTSerializable<CompoundTag>) modifiable;
-                    serializable.deserializeNBT(handlerCompound);
+                    serializable.deserializeNBT(provider, handlerCompound);
                 }
             }
         }

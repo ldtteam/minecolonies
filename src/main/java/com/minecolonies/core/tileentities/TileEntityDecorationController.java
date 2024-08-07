@@ -8,6 +8,7 @@ import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -211,9 +212,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     }
 
     @Override
-    public void load(final CompoundTag compound)
+    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.load(compound);
+        super.loadAdditional(compound, provider);
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         if (compound.contains(TAG_ROTATION_MIRROR, Tag.TAG_BYTE))
         {
@@ -248,9 +249,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, provider);
         writeSchematicDataToNBT(compound);
         compound.putByte(TAG_ROTATION_MIRROR, (byte) this.rotationMirror.ordinal());
         compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
@@ -285,16 +286,16 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return this.saveWithId();
+        return this.saveWithId(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(compound);
+        this.loadAdditional(compound, provider);
     }
 
     @Override

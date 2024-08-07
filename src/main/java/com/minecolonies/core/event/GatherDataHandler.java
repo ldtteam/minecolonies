@@ -6,12 +6,14 @@ import com.minecolonies.core.generation.ItemNbtCalculator;
 import com.minecolonies.core.generation.defaults.*;
 import com.minecolonies.core.generation.defaults.workers.*;
 import com.minecolonies.core.util.SchemFixerUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -22,8 +24,8 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class GatherDataHandler
 {
@@ -67,7 +69,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput()));
@@ -87,7 +89,7 @@ public class GatherDataHandler
 
     private static final class LootTableProviders extends LootTableProvider
     {
-        public LootTableProviders(final PackOutput packOutput)
+        public LootTableProviders(final PackOutput packOutput, CompletableFuture<HolderLookup.Provider> provider)
         {
             super(packOutput, Set.of(), List.of(
                 new SubProviderEntry(DefaultFishermanLootProvider::new, LootContextParamSets.FISHING),
@@ -95,28 +97,30 @@ public class GatherDataHandler
                 new SubProviderEntry(DefaultSupplyLootProvider::new, LootContextParamSets.CHEST),
                 new SubProviderEntry(DefaultEntityLootProvider::new, LootContextParamSets.ENTITY),
                 new SubProviderEntry(DefaultBlockLootTableProvider::new, LootContextParamSets.BLOCK)
-            ));
+            ), provider);
         }
 
         @Override
-        protected void validate(final Map<ResourceLocation, LootTable> map, final ValidationContext validationcontext)
+        protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector collector)
         {
-            final ValidationContext newTracker =
-                new ValidationContext(validationcontext.reporter, validationcontext.params, new LootDataResolver()
-                {
-                    public <T> T getElement(final LootDataId<T> id)
-                    {
-                        if (id.location().equals(BuiltInLootTables.FISHING_FISH) ||
-                            id.location().equals(BuiltInLootTables.FISHING_JUNK) ||
-                            id.location().equals(BuiltInLootTables.FISHING_TREASURE))
-                        {
-                            return id.type() == LootDataType.TABLE ? (T) map.getOrDefault(id.location(), LootTable.EMPTY) : null;
-                        }
-                        return validationcontext.resolver.getElement(id);
-                    }
-                }, validationcontext.visitedElements);
+            {
+                final ValidationContext newTracker =
+                  new ValidationContext(validationcontext.reporter, validationcontext.params, new LootDataResolver()
+                  {
+                      public <T> T getElement(final LootDataId<T> id)
+                      {
+                          if (id.location().equals(BuiltInLootTables.FISHING_FISH) ||
+                                id.location().equals(BuiltInLootTables.FISHING_JUNK) ||
+                                id.location().equals(BuiltInLootTables.FISHING_TREASURE))
+                          {
+                              return id.type() == LootDataType.TABLE ? (T) map.getOrDefault(id.location(), LootTable.EMPTY) : null;
+                          }
+                          return validationcontext.resolver.getElement(id);
+                      }
+                  }, validationcontext.visitedElements);
 
-            super.validate(map, newTracker);
+                super.validate(map, newTracker);
+            }
         }
     }
 }

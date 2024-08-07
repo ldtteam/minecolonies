@@ -3,6 +3,7 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.items.IChiefSwordItem;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +40,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
         if (entityIn instanceof Player && isSelected)
         {
             RaiderMobUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE)
-              .forEach(entity -> entity.addEffect(new MobEffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
+              .forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
 
@@ -48,7 +49,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
     {
         if (attacker instanceof Player && target instanceof AbstractEntityBarbarian)
         {
-            target.addEffect(new MobEffectInstance(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
+            target.addEffect(new MobEffectInstance(MobEffects.LEVITATION, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }
 
         return super.hurtEnemy(stack, target, attacker);

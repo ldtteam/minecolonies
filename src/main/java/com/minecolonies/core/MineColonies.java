@@ -10,7 +10,6 @@ import com.minecolonies.api.configuration.ClientConfiguration;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
@@ -93,7 +92,6 @@ public class MineColonies
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);
         ModIngredientTypeInitializer.DEFERRED_REGISTER.register(modBus);
-        ModEnchants.ENCHANTMENTS.register(modBus);
         ModContainerInitializers.CONTAINERS.register(modBus);
         ModBuildingsInitializer.DEFERRED_REGISTER.register(modBus);
         ModFieldsInitializer.DEFERRED_REGISTER.register(modBus);
@@ -124,8 +122,6 @@ public class MineColonies
         ModDataComponents.REGISTRY.register(modBus);
 
         ModCreativeTabs.TAB_REG.register(modBus);
-
-        ModEnchantInitializer.init();
 
         Consumer<TagsUpdatedEvent> onTagsLoaded = (event) -> ModTags.tagsLoaded = true;
         NeoForge.EVENT_BUS.addListener(onTagsLoaded);

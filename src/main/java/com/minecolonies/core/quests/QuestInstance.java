@@ -3,6 +3,7 @@ package com.minecolonies.core.quests;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -259,7 +261,7 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putString(TAG_ID, questTemplateID.toString());
@@ -275,7 +277,7 @@ public class QuestInstance implements IQuestInstance
 
         if (currentObjectiveInstance != null)
         {
-            compoundNBT.put(TAG_OBJECTIVE, this.currentObjectiveInstance.serializeNBT());
+            compoundNBT.put(TAG_OBJECTIVE, this.currentObjectiveInstance.serializeNBT(provider));
         }
 
         if (assignedPlayer != null)
@@ -287,9 +289,9 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag nbt)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
-        questTemplateID = new ResourceLocation(nbt.getString(TAG_ID));
+        questTemplateID = ResourceLocation.parse(nbt.getString(TAG_ID));
         assignmentStart = nbt.getInt(TAG_ASSIGN_START);
         objectiveProgress = nbt.getInt(TAG_PROGRESS);
         questGiver = nbt.getInt(TAG_QUEST_GIVER);
@@ -303,7 +305,7 @@ public class QuestInstance implements IQuestInstance
         if (nbt.contains(TAG_OBJECTIVE))
         {
             final IObjectiveInstance data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(objectiveProgress).createObjectiveInstance();
-            data.deserializeNBT(nbt.getCompound(TAG_OBJECTIVE));
+            data.deserializeNBT(provider, nbt.getCompound(TAG_OBJECTIVE));
             this.currentObjectiveInstance = data;
         }
 

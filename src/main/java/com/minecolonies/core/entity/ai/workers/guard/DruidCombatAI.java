@@ -20,6 +20,8 @@ import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -29,7 +31,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,12 +50,12 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * List of potential positive effects.
      */
-    private static final ImmutableList<MobEffect> SUPPORT_EFFECTS = ImmutableList.of(MobEffects.DAMAGE_BOOST, MobEffects.SATURATION, MobEffects.HEAL, MobEffects.DAMAGE_RESISTANCE);
+    private static final ImmutableList<Holder<MobEffect>> SUPPORT_EFFECTS = ImmutableList.of(MobEffects.DAMAGE_BOOST, MobEffects.SATURATION, MobEffects.HEAL, MobEffects.DAMAGE_RESISTANCE);
 
     /**
      * List of potential positive effects.
      */
-    private static final ImmutableList<MobEffect> ADVERSE_EFFECTS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.WEAKNESS);
+    private static final ImmutableList<Holder<MobEffect>> ADVERSE_EFFECTS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.WEAKNESS);
 
     /**
      * The xp per thrown potion
@@ -128,7 +131,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.get().getPrimarySkill()) * 20;
 
         final float inaccuracy = 99f / level;
-        final MobEffect effect;
+        final Holder<MobEffect> effect;
         final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
@@ -148,7 +151,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             predicate = (entity, eff) -> !AbstractEntityAIGuard.isAttackableTarget(user, entity);
         }
 
-        PotionUtils.setCustomEffects(stack, Collections.singleton(new MobEffectInstance(effect, time, gotMaterial ? 2 : 0)));
+        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Holder.direct(new Potion(new MobEffectInstance(effect, time, gotMaterial ? 2 : 0)))));
         DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, predicate);
 
         if (gotMaterial)
@@ -156,7 +159,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicpotion, 1), 1);
         }
 
-        this.instantEffect = effect.isInstantenous();
+        this.instantEffect = effect.value().isInstantenous();
 
         user.setItemInHand(InteractionHand.MAIN_HAND, stack);
 

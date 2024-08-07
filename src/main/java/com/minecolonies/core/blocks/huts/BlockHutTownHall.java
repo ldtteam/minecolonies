@@ -17,6 +17,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -175,7 +177,8 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      */
     @NotNull
     @Override
-    public InteractionResult use(
+    public ItemInteractionResult useItemOn(
+      final ItemStack stack,
       final BlockState state,
       final Level worldIn,
       final BlockPos pos,
@@ -202,6 +205,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 timeout = System.currentTimeMillis() + 1000;
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 }

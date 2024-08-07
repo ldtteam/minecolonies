@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,8 +71,8 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
 
     @NotNull
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return saveWithId();
+        return saveWithId(provider);
     }
 }
