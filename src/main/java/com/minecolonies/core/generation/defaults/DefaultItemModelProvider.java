@@ -28,7 +28,7 @@ public class DefaultItemModelProvider extends ItemModelProvider
         basicItem(disabledGoggles);
         basicItem(ModItems.buildGoggles)
                 .override()
-                    .predicate(new ResourceLocation("disabled"), 1.0F)
+                    .predicate(ResourceLocation.withDefaultNamespace("disabled"), 1.0F)
                     .model(getExistingFile(disabledGoggles))
                 .end();
     }

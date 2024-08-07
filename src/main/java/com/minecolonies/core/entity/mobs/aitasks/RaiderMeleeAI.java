@@ -56,7 +56,7 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     @Override
     protected void doAttack(final LivingEntity target)
     {
-        double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue();
+        double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE).getValue();
         if (user.getName().getContents() instanceof TranslatableContents translatableContents)
         {
             target.hurt(target.level().damageSources().source(ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, translatableContents.getKey().replace("entity.minecolonies.", ""))), user), (float) damageToBeDealt);

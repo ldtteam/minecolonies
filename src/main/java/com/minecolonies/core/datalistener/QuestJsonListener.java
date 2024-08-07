@@ -130,7 +130,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().get(new ResourceLocation(type)).produce(triggerObj));
+                questTriggers.add(IMinecoloniesAPI.getInstance().getQuestTriggerRegistry().get(ResourceLocation.parse(type)).produce(triggerObj));
             }
             catch (final Exception ex)
             {
@@ -145,7 +145,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(new ResourceLocation(type)).produce(objectiveObj));
+                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(ResourceLocation.parse(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {
@@ -188,7 +188,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(new ResourceLocation(type)).produce(objectiveObj));
+                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(ResourceLocation.parse(type)).produce(objectiveObj));
             }
             catch (final Exception ex)
             {
@@ -201,7 +201,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         {
             try
             {
-                parents.add(new ResourceLocation(objectivesJson.getAsString()));
+                parents.add(ResourceLocation.parse(objectivesJson.getAsString()));
             }
             catch (final Exception ex)
             {

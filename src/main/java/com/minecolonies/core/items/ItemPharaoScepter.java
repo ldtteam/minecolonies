@@ -1,6 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.items.ModItems;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -12,13 +13,13 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.List;
 import java.util.function.Predicate;
+
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 /**
  * Class handling the Pharao Scepter item.
@@ -57,67 +58,35 @@ public class ItemPharaoScepter extends BowItem
         if (entityLiving instanceof Player)
         {
             Player playerentity = (Player) entityLiving;
-
-            int useDuration = this.getUseDuration(stack) - timeLeft;
+            int useDuration = this.getUseDuration(stack, entityLiving) - timeLeft;
             useDuration = net.neoforged.neoforge.event.EventHooks.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
             if (useDuration < 0)
             {
                 return;
             }
 
-            float speed = getPowerForTime(useDuration);
-            if (!((double) speed < 0.1D))
+            ItemStack itemstack = playerentity.getProjectile(stack);
+            if (!itemstack.isEmpty())
             {
-                if (!worldIn.isClientSide)
+                float speed = getPowerForTime(useDuration);
+                if (!((double) speed < 0.1))
                 {
-                    ArrowItem arrowitem = (ArrowItem) Items.ARROW;
-                    AbstractArrow abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
-                    abstractarrowentity = customArrow(abstractarrowentity, arrowitem.getDefaultInstance());
-                    abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F, speed * 3.0F, 1.0F);
-                    if (speed == 1.0F)
+                    List<ItemStack> list = draw(stack, itemstack, entityLiving);
+                    if (worldIn instanceof ServerLevel serverlevel && !list.isEmpty())
                     {
-                        abstractarrowentity.setCritArrow(true);
+                        this.shoot(serverlevel, entityLiving, entityLiving.getUsedItemHand(), stack, list, speed * 3.0F, 1.0F, speed == 1.0F, null);
                     }
 
-                    int j = stack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
-                    if (j > 0)
-                    {
-                        abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double) j * 0.5D + 0.5D);
-                    }
-
-                    int k = stack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
-                    if (k > 0)
-                    {
-                        abstractarrowentity.setKnockback(k);
-                    }
-
-                    if (stack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
-                    {
-                        abstractarrowentity.setSecondsOnFire(100);
-                    }
-
-                    stack.hurtAndBreak(1, playerentity, new Consumer<Player>() {
-                        @Override
-                        public void accept(final Player player)
-                        {
-                            player.broadcastBreakEvent(playerentity.getUsedItemHand());
-                        }
-                    });
-
-                    abstractarrowentity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-
-                    worldIn.addFreshEntity(abstractarrowentity);
+                    worldIn.playSound(null,
+                      playerentity.getX(),
+                      playerentity.getY(),
+                      playerentity.getZ(),
+                      SoundEvents.ARROW_SHOOT,
+                      SoundSource.PLAYERS,
+                      1.0F,
+                      1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
+                    playerentity.awardStat(Stats.ITEM_USED.get(this));
                 }
-
-                worldIn.playSound(null,
-                  playerentity.getX(),
-                  playerentity.getY(),
-                  playerentity.getZ(),
-                  SoundEvents.ARROW_SHOOT,
-                  SoundSource.PLAYERS,
-                  1.0F,
-                  1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
-                playerentity.awardStat(Stats.ITEM_USED.get(this));
             }
         }
     }
@@ -129,18 +98,17 @@ public class ItemPharaoScepter extends BowItem
         return itemStack -> true;
     }
 
-    @NotNull
     @Override
-    public AbstractArrow customArrow(@NotNull AbstractArrow arrow, final ItemStack projectileStack)
+    public AbstractArrow customArrow(final AbstractArrow arrow, final ItemStack projectileStack, final ItemStack weaponStack)
     {
         if (arrow.getOwner() == null)
         {
             return arrow;
         }
 
-        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level(), new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
+        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level(), new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner(), weaponStack);
         entity.pickup = AbstractArrow.Pickup.DISALLOWED;
-        entity.setSecondsOnFire(3);
+        entity.setRemainingFireTicks(3 * TICKS_PER_SECOND);
 
         return entity;
     }

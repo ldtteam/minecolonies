@@ -67,7 +67,7 @@ public class DruidPotionEntity extends ThrownPotion
     }
 
     @Override
-    public void applySplash(List<MobEffectInstance> effects, @Nullable Entity entity)
+    public void applySplash(Iterable<MobEffectInstance> effects, @Nullable Entity entity)
     {
         final AbstractEntityCitizen citizen = this.getOwner();
         if (citizen != null && citizen.getCitizenData() != null && citizen.getCitizenData().getJob() instanceof JobDruid)
@@ -90,7 +90,7 @@ public class DruidPotionEntity extends ThrownPotion
                             }
                             for (final MobEffectInstance effectinstance : effects)
                             {
-                                final MobEffect effect = effectinstance.getEffect();
+                                final MobEffect effect = effectinstance.getEffect().value();
                                 if (entitySelectionPredicate == null || entitySelectionPredicate.test(livingentity, effect))
                                 {
                                     if (effect.isInstantenous())
@@ -100,7 +100,7 @@ public class DruidPotionEntity extends ThrownPotion
                                     else
                                     {
                                         final int duration = (int) (d1 * (double) effectinstance.getDuration());
-                                        livingentity.addEffect(new MobEffectInstance(effect,
+                                        livingentity.addEffect(new MobEffectInstance(effectinstance.getEffect(),
                                           duration,
                                           effectinstance.getAmplifier(),
                                           effectinstance.isAmbient(),

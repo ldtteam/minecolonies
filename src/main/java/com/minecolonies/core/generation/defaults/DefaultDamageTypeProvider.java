@@ -23,7 +23,7 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
                                      @NotNull final ExistingFileHelper existingFileHelper,
                                      final CompletableFuture<Provider> lookupProvider)
     {
-        super(packOutput, Target.DATA_PACK, "damage_type", PackType.SERVER_DATA, DamageType.CODEC, lookupProvider, MOD_ID, existingFileHelper);
+        super(packOutput, Target.DATA_PACK, "damage_type", PackType.SERVER_DATA, DamageType.DIRECT_CODEC, lookupProvider, MOD_ID, existingFileHelper);
     }
 
     @Override

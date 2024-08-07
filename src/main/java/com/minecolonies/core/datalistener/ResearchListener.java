@@ -201,7 +201,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             }
 
             // Now that we've confirmed a branch exists at all, cancel the add if it's from a removed branch.
-            else if (removeBranches.contains(new ResourceLocation(researchJson.get(RESEARCH_BRANCH_PROP).getAsString())))
+            else if (removeBranches.contains(ResourceLocation.parse(researchJson.get(RESEARCH_BRANCH_PROP).getAsString())))
             {
                 if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
                 {
@@ -266,7 +266,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
                         {
                             if(remove.isJsonPrimitive() && remove.getAsJsonPrimitive().isString())
                             {
-                                removeBranches.add(new ResourceLocation(remove.getAsString()));
+                                removeBranches.add(ResourceLocation.parse(remove.getAsString()));
                             }
                         }
                     }
@@ -277,7 +277,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
                     // The json for such a removal can have an arbitrary filename, and the remove property points to the specific json to remove.
                     else if(researchJson.get(RESEARCH_REMOVE_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isString())
                     {
-                        removeBranches.add(new ResourceLocation(researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsString()));
+                        removeBranches.add(ResourceLocation.parse(researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().getAsString()));
                     }
                     // Lastly, accept just boolean true, for the simple case of removing this particular branch and all component researches.
                     else if(researchJson.get(RESEARCH_REMOVE_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean()
@@ -296,14 +296,14 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
                     {
                         if (remove.isJsonPrimitive() && remove.getAsJsonPrimitive().isString())
                         {
-                            removeResearches.add(new ResourceLocation(remove.getAsString()));
+                            removeResearches.add(ResourceLocation.parse(remove.getAsString()));
                         }
                     }
                 }
                 // Removing individual researches by name.
                 else if (researchJson.get(RESEARCH_REMOVE_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isString())
                 {
-                    removeResearches.add(new ResourceLocation(researchJson.get(RESEARCH_REMOVE_PROP).getAsString()));
+                    removeResearches.add(ResourceLocation.parse(researchJson.get(RESEARCH_REMOVE_PROP).getAsString()));
                 }
                 // Removes with a boolean true, but are not branch removes.
                 else if (researchJson.get(RESEARCH_REMOVE_PROP).isJsonPrimitive() && researchJson.get(RESEARCH_REMOVE_PROP).getAsJsonPrimitive().isBoolean()

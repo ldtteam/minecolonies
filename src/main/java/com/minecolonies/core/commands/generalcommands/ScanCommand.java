@@ -44,6 +44,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -118,32 +121,30 @@ public class ScanCommand extends AbstractCommand
       final ScanToolData.Slot slot,
       final boolean saveEntities)
     {
-        if (slot.getBox().getAnchor().isPresent())
+        if (slot.box().anchor().isPresent())
         {
-            if (!BlockPosUtil.isInbetween(slot.getBox().getAnchor().get(), slot.getBox().getPos1(), slot.getBox().getPos2()))
+            if (!BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
             {
-                player.displayClientMessage(Component.translatableEscape(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
+                player.displayClientMessage(Component.translatable(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
                 return;
             }
         }
 
-        final BoundingBox box = BoundingBox.fromCorners(slot.getBox().getPos1(), slot.getBox().getPos2());
+        final BoundingBox box = BoundingBox.fromCorners(slot.box().pos1(), slot.box().pos2());
         if (box.getXSpan() * box.getYSpan() * box.getZSpan() > Structurize.getConfig().getServer().schematicBlockLimit.get())
         {
-            player.displayClientMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
+            player.displayClientMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
             return;
         }
 
-        final long currentMillis = System.currentTimeMillis();
-        final String currentMillisString = Long.toString(currentMillis);
         String fileName;
-        if (slot.getName().isEmpty())
+        if (slot.name().isEmpty())
         {
-            fileName = Component.translatableEscape("item.sceptersteel.scanformat", "", currentMillisString).getString();
+            fileName = Component.translatable("item.sceptersteel.scanformat", new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date.from(Instant.now()))).getString();
         }
         else
         {
-            fileName = slot.getName();
+            fileName = slot.name();
         }
 
         if (!fileName.contains(".blueprint"))
@@ -156,9 +157,9 @@ public class ScanCommand extends AbstractCommand
 
         final BlockPos zero = new BlockPos(box.minX(), box.minY(), box.minZ());
         final Blueprint
-          bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.getBox().getAnchor());
+          bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.box().anchor());
 
-        if (slot.getBox().getAnchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2)))
+        if (slot.box().anchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2)))
         {
             final List<BlockInfo> list = bp.getBlockInfoAsList().stream()
                                            .filter(blockInfo -> blockInfo.hasTileEntityData() && blockInfo.getTileEntityData().contains(TAG_BLUEPRINTDATA))
@@ -372,18 +373,18 @@ public class ScanCommand extends AbstractCommand
     @NotNull
     public static String format(@NotNull final ScanToolData.Slot slot)
     {
-        final String name = slot.getName().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char)c))
-                ? StringTag.quoteAndEscape(slot.getName()) : slot.getName();
+        final String name = slot.name().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char)c))
+                ? StringTag.quoteAndEscape(slot.name()) : slot.name();
 
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format("/%s %s %s %s @p %s", MOD_ID, NAME,
-                BlockPosUtil.format(slot.getBox().getPos1()),
-                BlockPosUtil.format(slot.getBox().getPos2()),
+                BlockPosUtil.format(slot.box().pos1()),
+                BlockPosUtil.format(slot.box().pos2()),
                 name));
-        if (slot.getBox().getAnchor().isPresent() && BlockPosUtil.isInbetween(slot.getBox().getAnchor().get(), slot.getBox().getPos1(), slot.getBox().getPos2()))
+        if (slot.box().anchor().isPresent() && BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
         {
             builder.append(' ');
-            builder.append(BlockPosUtil.format(slot.getBox().getAnchor().get()));
+            builder.append(BlockPosUtil.format(slot.box().anchor().get()));
         }
         return builder.toString();
     }

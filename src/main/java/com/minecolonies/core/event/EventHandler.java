@@ -846,7 +846,7 @@ public class EventHandler
                         for (EquipmentSlot slotType : EquipmentSlot.values())
                         {
                             ItemStack itemstack = entity.getItemBySlot(slotType);
-                            if (slotType.getType() == EquipmentSlot.Type.ARMOR && !itemstack.isEmpty())
+                            if (slotType.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && !itemstack.isEmpty())
                             {
                                 visitorEntity.setItemSlot(slotType, itemstack);
                             }

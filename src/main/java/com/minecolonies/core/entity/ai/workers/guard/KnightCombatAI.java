@@ -8,11 +8,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.MineColonies;
@@ -20,8 +17,8 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -49,6 +46,7 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.MOB_KILLED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 /**
  * Knight combat AI
@@ -114,8 +112,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
             // Apply the colony Flag to the shield
             ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
-            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-            nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColony().getColonyFlag());
+            shieldStack.set(DataComponents.BANNER_PATTERNS, user.getCitizenData().getColony().getColonyFlag());
 
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
             user.decreaseSaturationForContinuousAction();
@@ -157,10 +154,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             source = target.level().damageSources().source(DamageSourceKeys.GUARD_PVP, user);
         }
 
-        final int fireLevel = user.getItemInHand(InteractionHand.MAIN_HAND).getEnchantmentLevel(Enchantments.FIRE_ASPECT);
+        final int fireLevel = user.getItemInHand(InteractionHand.MAIN_HAND).getEnchantmentLevel(Utils.getRegistryValue(Enchantments.FIRE_ASPECT, user.level()));
         if (fireLevel > 0)
         {
-            target.setSecondsOnFire(fireLevel * 80);
+            target.setRemainingFireTicks(fireLevel * 80 * TICKS_PER_SECOND);
         }
 
         if (user.level().getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)
@@ -245,7 +242,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private int getAttackDamage()
     {
-        int addDmg = 0;
+        double addDmg = 0;
 
         final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
 
@@ -253,13 +250,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         {
             if (heldItem.getItem() instanceof SwordItem)
             {
-                addDmg += ((SwordItem) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
+                addDmg += ((SwordItem) heldItem.getItem()).getDamage(heldItem) + BASE_PHYSICAL_DAMAGE;
             }
             else
             {
                 addDmg += TinkersToolHelper.getDamage(heldItem);
             }
-            addDmg += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
+            addDmg += EnchantmentHelper.modifyDamage((ServerLevel) user.level(), heldItem, target, user.level().damageSources().mobAttack(user), 1) / 2.5;
         }
 
         addDmg += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);

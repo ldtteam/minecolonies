@@ -38,11 +38,11 @@ public class ItemBuildGoggles extends ArmorItem
 
     @Override
     public void appendHoverText(@NotNull final ItemStack stack,
-                                @Nullable final Level world,
+                                @Nullable final TooltipContext ctx,
                                 @NotNull final List<Component> components,
                                 @NotNull final TooltipFlag flags)
     {
-        super.appendHoverText(stack, world, components, flags);
+        super.appendHoverText(stack, ctx, components, flags);
 
         components.add(Component.translatableEscape("\"%s\"",
                         Component.translatableEscape("item.minecolonies.build_goggles.lore")

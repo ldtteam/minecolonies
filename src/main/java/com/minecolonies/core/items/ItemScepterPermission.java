@@ -223,8 +223,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     }
 
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level level,
-                                @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
     {
         final String itemMode = stack.getOrCreateTag().getString(TAG_ITEM_MODE);
         final MutableComponent mode;
@@ -240,7 +239,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
         }
         tooltip.add(Component.translatable(TOOL_PERMISSION_SCEPTER_MODE, mode.withStyle(ChatFormatting.YELLOW)));
 
-        super.appendHoverText(stack, level, tooltip, flags);
+        super.appendHoverText(stack, ctx, tooltip, flags);
     }
 
     @NotNull

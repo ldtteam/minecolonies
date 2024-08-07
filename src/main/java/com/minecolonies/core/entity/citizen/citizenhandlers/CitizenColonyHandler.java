@@ -141,7 +141,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
             citizen.setFemale(citizen.getEntityData().get(DATA_IS_FEMALE) != 0);
             citizen.setIsChild(citizen.getEntityData().get(DATA_IS_CHILD));
-            citizen.setModelId(new ResourceLocation(citizen.getEntityData().get(DATA_MODEL)));
+            citizen.setModelId(ResourceLocation.parse(citizen.getEntityData().get(DATA_MODEL)));
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();

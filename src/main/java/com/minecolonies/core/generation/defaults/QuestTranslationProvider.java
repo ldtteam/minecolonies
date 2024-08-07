@@ -7,10 +7,13 @@ import net.minecraft.Util;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
@@ -57,7 +61,7 @@ public class QuestTranslationProvider implements DataProvider
         final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, COLONY_QUESTS_DIR);
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
-        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", Path.of("..", "..", "src", "main", "resources"), false))
+        try (final PackResources pack = new PathPackResources(new PackLocationInfo("mod/" + MOD_ID + "/src", Component.empty(), PackSource.BUILT_IN, Optional.empty()), Path.of("..", "..", "src", "main", "resources")))
         {
             pack.listResources(PackType.SERVER_DATA, MOD_ID, COLONY_QUESTS_DIR, (questId, stream) ->
             {
@@ -141,7 +145,7 @@ public class QuestTranslationProvider implements DataProvider
 
     private void processObjective(final JsonObject langJson, final String baseKey, final JsonObject json)
     {
-        final ResourceLocation type = new ResourceLocation(json.get(TYPE).getAsString());
+        final ResourceLocation type = ResourceLocation.parse(json.get(TYPE).getAsString());
         if (type.equals(DIALOGUE_OBJECTIVE_ID))
         {
             langJson.addProperty(baseKey, json.get(TEXT_ID).getAsString());

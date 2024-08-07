@@ -52,7 +52,7 @@ public class CombatUtils
         if (rangedWeaponItem instanceof final BowItem bow)
         {
             // TODO: empty stack should be projectile stack but vanilla 
-            arrowEntity = bow.customArrow(arrowEntity, ItemStack.EMPTY);
+            arrowEntity = bow.customArrow(arrowEntity, ItemStack.EMPTY, rangedWeapon);
         }
         else if (rangedWeaponItem instanceof ItemSpear)
         {

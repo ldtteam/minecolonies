@@ -9,16 +9,14 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.MercenarySounds;
-import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.proxy.GeneralEntityWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -150,15 +148,15 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         this.setPersistenceRequired();
 
         final ItemStack mainhand = new ItemStack(Items.GOLDEN_SWORD, 1);
-        mainhand.enchant(Enchantments.FIRE_ASPECT, 1);
+        mainhand.enchant(Utils.getRegistryValue(Enchantments.FIRE_ASPECT, world), 1);
         this.setItemSlot(EquipmentSlot.MAINHAND, mainhand);
 
         final ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET, 1);
-        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        helmet.enchant(Utils.getRegistryValue(Enchantments.PROTECTION, world), 4);
         this.setItemSlot(EquipmentSlot.HEAD, helmet);
 
         final ItemStack chest = new ItemStack(Items.GOLDEN_CHESTPLATE, 1);
-        chest.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        chest.enchant(Utils.getRegistryValue(Enchantments.PROTECTION, world), 4);
         this.setItemSlot(EquipmentSlot.CHEST, chest);
 
         final ItemStack legs = new ItemStack(Items.CHAINMAIL_LEGGINGS, 1);
@@ -363,7 +361,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
-                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
+                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.value().getDefaultValue())
                  .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 

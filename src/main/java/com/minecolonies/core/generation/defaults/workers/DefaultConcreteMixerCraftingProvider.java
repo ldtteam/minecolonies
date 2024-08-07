@@ -45,9 +45,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
         for (final DyeColor color : DyeColor.values())
         {
             final String prefix = color.name().toLowerCase(Locale.US);
-            final Item powder = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_concrete_powder"));
-            final Item concrete = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_concrete"));
-            final Item dye = BuiltInRegistries.ITEM.get(new ResourceLocation(prefix + "_dye"));
+            final Item powder = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_concrete_powder"));
+            final Item concrete = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_concrete"));
+            final Item dye = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_dye"));
 
             if (powder == null || concrete == null || dye == null)
             {

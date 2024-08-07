@@ -72,7 +72,7 @@ public class CitizenEatFoodTrigger extends SimpleCriterionTrigger<CitizenEatFood
             {
                 for (ItemPredicate itemPredicate : itemPredicates)
                 {
-                    if (itemPredicate.matches(foodItemStack))
+                    if (itemPredicate.test(foodItemStack))
                     {
                         return true;
                     }

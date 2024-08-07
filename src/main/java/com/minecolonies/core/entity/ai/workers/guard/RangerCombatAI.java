@@ -3,13 +3,10 @@ package com.minecolonies.core.entity.ai.workers.guard;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.MineColonies;
@@ -22,8 +19,10 @@ import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +32,7 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -41,6 +41,7 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.MOB_KILLED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 /**
  * Knight combat AI
@@ -158,19 +159,12 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             // Add bow enchant effects: Knocback and fire
             final ItemStack bow = user.getItemInHand(InteractionHand.MAIN_HAND);
 
-            if (bow.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
+            if (bow.getEnchantmentLevel(Utils.getRegistryValue(Enchantments.FLAME, user.level())) > 0)
             {
-                arrow.setSecondsOnFire(100);
-            }
-            final int k = bow.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
-            if (k > 0)
-            {
-                arrow.setKnockback(k);
+                arrow.setRemainingFireTicks(100 * TICKS_PER_SECOND);
             }
 
             double damage = calculateDamage(arrow);
-
-
             arrow.setBaseDamage(damage);
 
             final float chance = HIT_CHANCE_DIVIDER / (user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) + 1);
@@ -229,11 +223,11 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private double calculateDamage(final AbstractArrow arrow)
     {
-        int damage = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 5;
+        double damage = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 5.0;
 
         final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
-        damage += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
-        damage += heldItem.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+        damage += EnchantmentHelper.modifyDamage((ServerLevel) user.level(), heldItem, target, user.level().damageSources().mobAttack(user), 1) / 2.5;
+        damage += heldItem.getEnchantmentLevel(Utils.getRegistryValue(Enchantments.POWER, user.level()));
         damage += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);
 
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)

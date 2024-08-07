@@ -41,7 +41,7 @@ public class ItemCrop extends BlockItem
      */
     public ItemCrop(@NotNull final MinecoloniesCropBlock cropBlock, @NotNull final Properties builder, @Nullable final TagKey<Biome> preferredBiome)
     {
-        super(cropBlock, builder.food(new FoodProperties.Builder().nutrition(1).saturationMod(0.3F).build()));
+        super(cropBlock, builder.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.3F).build()));
         this.preferredBiome = preferredBiome;
     }
 
@@ -62,7 +62,7 @@ public class ItemCrop extends BlockItem
     }
 
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
         if (preferredBiome != null)

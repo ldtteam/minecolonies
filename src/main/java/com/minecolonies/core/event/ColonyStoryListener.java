@@ -127,7 +127,7 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
 
     private void parseStory(final JsonObject json)
     {
-        final ResourceLocation type = new ResourceLocation(Objects.requireNonNullElse(json.get("type"), new JsonPrimitive("")).getAsString());
+        final ResourceLocation type = ResourceLocation.parse(Objects.requireNonNullElse(json.get("type"), new JsonPrimitive("")).getAsString());
         if (type.equals(ABANDONED_COLONY_NAME))
         {
             abandonedColonyNames.addAll(parseStoryText(json));
@@ -221,13 +221,13 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
         {
             if (value.startsWith("#"))
             {
-                final TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, new ResourceLocation(value.substring(1)));
+                final TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, ResourceLocation.parse(value.substring(1)));
                 return new BiomeFilter(b -> b.is(tagKey));
             }
             else
             {
                 final RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
-                final ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, new ResourceLocation(value));
+                final ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(value));
                 final Holder<Biome> biome = registryAccess.registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
                 return new BiomeFilter(b -> b.equals(biome));
             }

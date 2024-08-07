@@ -32,7 +32,7 @@ public class EntityDrownedCaptainPirate extends AbstractDrownedEntityPirate impl
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(-1);
-        this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage);
+        this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
         this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 2.0);
         this.setHealth(this.getMaxHealth());

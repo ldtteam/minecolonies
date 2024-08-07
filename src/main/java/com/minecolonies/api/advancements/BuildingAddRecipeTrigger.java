@@ -93,7 +93,7 @@ public class BuildingAddRecipeTrigger extends SimpleCriterionTrigger<BuildingAdd
                 boolean outputMatches = false;
                 for (ItemPredicate itemPredicate : outputItemPredicates)
                 {
-                    if (itemPredicate.matches(recipeStorage.getPrimaryOutput()))
+                    if (itemPredicate.test(recipeStorage.getPrimaryOutput()))
                     {
                         outputMatches = true;
                         break;

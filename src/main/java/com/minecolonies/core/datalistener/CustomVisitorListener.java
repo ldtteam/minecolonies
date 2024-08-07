@@ -119,7 +119,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (data.has(VISITOR_RECRUITCOST))
             {
-                dataEntry.recruitCost = ItemStackUtils.idToItemStack(data.get(VISITOR_RECRUITCOST).getAsString());
+                dataEntry.recruitCost = ItemStackUtils.idToItemStack(data.get(VISITOR_RECRUITCOST).getAsString(), getRegistryLookup());
             }
 
             if (data.has(VISITOR_RECRUITCOSTCOUNT))
