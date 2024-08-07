@@ -5,6 +5,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -30,13 +31,13 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     public GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.treeBuffer = new RegistryFriendlyByteBuf(buf.copy());
+        this.treeBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf.copy()), buf.registryAccess());
     }
 
     protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        treeBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        treeBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override

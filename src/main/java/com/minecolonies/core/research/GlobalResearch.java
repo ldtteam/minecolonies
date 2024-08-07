@@ -260,19 +260,19 @@ public class GlobalResearch implements IGlobalResearch
      */
     public GlobalResearch(final String id, final String branch, final String name, final int universityLevel, final IResearchEffect<?> effect)
     {
-        this.id = new ResourceLocation(id);
+        this.id = ResourceLocation.parse(id);
         this.effects.add(effect);
         this.name = new TranslatableContents(name, null, TranslatableContents.NO_ARGS);
         this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         this.depth = universityLevel;
         this.sortOrder = 1;
-        this.branch = new ResourceLocation(branch);
+        this.branch = ResourceLocation.parse(branch);
         this.hidden = false;
         this.instant = false;
         this.autostart = false;
         this.immutable = false;
         this.itemIcon = ItemStack.EMPTY;
-        this.textureIcon = new ResourceLocation("");
+        this.textureIcon = ResourceLocation.parse("");
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
             Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
@@ -295,7 +295,7 @@ public class GlobalResearch implements IGlobalResearch
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
         this.name = new TranslatableContents(autogenKey + ".name", null, TranslatableContents.NO_ARGS);
-        this.parent = new ResourceLocation("");
+        this.parent = ResourceLocation.parse("");
         this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         this.effects.addAll(effects);
         this.depth = universityLevel;
@@ -588,10 +588,10 @@ public class GlobalResearch implements IGlobalResearch
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
         this.name = new TranslatableContents(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"), null, TranslatableContents.NO_ARGS);
         this.subtitle = new TranslatableContents(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""), null, TranslatableContents.NO_ARGS);
-        this.branch = new ResourceLocation(getBranch(researchJson, resourceLocation));
+        this.branch = ResourceLocation.parse(getBranch(researchJson, resourceLocation));
         this.depth = getUniversityLevel(researchJson);
         this.sortOrder = getSortOrder(researchJson);
-        this.parent = new ResourceLocation(getStringSafe(researchJson, RESEARCH_PARENT_PROP, ""));
+        this.parent = ResourceLocation.parse(getStringSafe(researchJson, RESEARCH_PARENT_PROP, ""));
         this.onlyChild = getBooleanSafe(researchJson, RESEARCH_EXCLUSIVE_CHILD_PROP);
         this.instant = getBooleanSafe(researchJson, RESEARCH_INSTANT_PROP);
         this.autostart = getBooleanSafe(researchJson, RESEARCH_AUTOSTART_PROP);
@@ -601,7 +601,7 @@ public class GlobalResearch implements IGlobalResearch
         // Assume icon values with a '.' are texture files.
         if(iconString.contains("."))
         {
-            final ResourceLocation unsafeIconTexture = new ResourceLocation(iconString);
+            final ResourceLocation unsafeIconTexture = ResourceLocation.parse(iconString);
             if (checkIcons && FMLEnvironment.dist.isClient())
             {
                 this.textureIcon = validateIconTextures(unsafeIconTexture);
@@ -614,7 +614,7 @@ public class GlobalResearch implements IGlobalResearch
         }
         else
         {
-            this.textureIcon = new ResourceLocation("");
+            this.textureIcon = ResourceLocation.parse("");
             this.itemIcon = parseIconItemStacks(iconString);
         }
 
@@ -697,7 +697,7 @@ public class GlobalResearch implements IGlobalResearch
             Log.getLogger()
               .info("Resource file for Minecraft:" + icon.toString() + " not found for " + this.branch + "/" + this.id + " : " + notFoundError.getLocalizedMessage());
         }
-        return new ResourceLocation("");
+        return ResourceLocation.parse("");
     }
 
     /**
@@ -853,14 +853,14 @@ public class GlobalResearch implements IGlobalResearch
                                                                                                                         .getAsJsonPrimitive()
                                                                                                                         .isString())
                     {
-                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(rootObject
+                        this.requirements.add(new ResearchResearchRequirement(ResourceLocation.parse(rootObject
                                                                                                      .get(RESEARCH_REQUIRED_RESEARCH_PROP)
                                                                                                      .getAsString()),
                           Component.translatableEscape(rootObject.get(RESEARCH_NAME_PROP).getAsString())));
                     }
                     else
                     {
-                        this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(rootObject.get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString())));
+                        this.requirements.add(new ResearchResearchRequirement(ResourceLocation.parse(rootObject.get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString())));
                     }
                 }
                 // Alternate Building Requirements.  Requires at least one building type at a specific level out of all Alternate Buildings.
@@ -937,7 +937,7 @@ public class GlobalResearch implements IGlobalResearch
                 {
                     for(final Map.Entry<String, JsonElement> entry : itemArrayElement.getAsJsonObject().entrySet() )
                     {
-                        final ResourceLocation effect = new ResourceLocation(entry.getKey());
+                        final ResourceLocation effect = ResourceLocation.parse(entry.getKey());
                         if(effectCategories.containsKey(effect))
                         {
                             final int strength;

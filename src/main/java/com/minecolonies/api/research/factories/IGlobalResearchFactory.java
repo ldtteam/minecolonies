@@ -71,7 +71,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         }
         else
         {
-            iconTexture = new ResourceLocation("");
+            iconTexture = ResourceLocation.parse(" : ");
         }
         final ItemStack iconStack;
         if(context.length > 7)

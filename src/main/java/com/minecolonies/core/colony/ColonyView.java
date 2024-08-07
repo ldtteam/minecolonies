@@ -24,7 +24,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -70,8 +69,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 
 /**
  * Client side representation of the Colony.
@@ -352,11 +349,7 @@ public final class ColonyView implements IColonyView
         }
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
-
-        CompoundTag flagNBT = new CompoundTag();
-        flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
-        buf.writeNbt(flagNBT);
-
+        Utils.serializeCodecMess(BannerPatternLayers.STREAM_CODEC, buf, colony.getColonyFlag());
         buf.writeLong(colony.getMercenaryUseTime());
 
         buf.writeUtf(colony.getStructurePack());
@@ -845,8 +838,7 @@ public final class ColonyView implements IColonyView
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = ChatFormatting.values()[buf.readInt()];
-        this.colonyFlag = buf.readNbt().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
-
+        this.colonyFlag =  Utils.deserializeCodecMess(BannerPatternLayers.STREAM_CODEC, buf);
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readUtf(32767);
@@ -1078,9 +1070,9 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyViewResearchManagerUpdate(final CompoundTag compoundTag)
+    public void handleColonyViewResearchManagerUpdate(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundTag)
     {
-        this.researchManager.readFromNBT(compoundTag);
+        this.researchManager.readFromNBT(provider, compoundTag);
     }
 
     @Override

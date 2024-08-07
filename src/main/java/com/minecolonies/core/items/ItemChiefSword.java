@@ -31,7 +31,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
      */
     public ItemChiefSword(final Properties properties)
     {
-        super(Tiers.DIAMOND, 3, -2.4f, properties);
+        super(Tiers.DIAMOND, properties.attributes(SwordItem.createAttributes(Tiers.WOOD, 3, -2.4F)));
     }
 
     @Override

@@ -847,7 +847,7 @@ public class Colony implements IColony
 
         if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key))
         {
-            settingsModule.deserializeNBT(compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
+            settingsModule.deserializeNBT(provider, compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
 
         @NotNull final ListTag claimTagList = compound.getList(TAG_CLAIM_DATA, Tag.TAG_COMPOUND);
@@ -969,7 +969,7 @@ public class Colony implements IColony
         compound.putInt(COLONY_DAY, day);
 
         final CompoundTag settings = new CompoundTag();
-        settingsModule.serializeNBT(settings);
+        settingsModule.serializeNBT(provider, settings);
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
 
         @NotNull final ListTag claimTagList = new ListTag();

@@ -12,6 +12,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -223,7 +224,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void sendGlobalResearchTreePackets(final ServerPlayer player)
     {
-        final RegistryFriendlyByteBuf researchTreeFriendlyByteBuf = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        final RegistryFriendlyByteBuf researchTreeFriendlyByteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.registryAccess());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 
         new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf).sendToPlayer(player);
@@ -258,7 +259,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)
             {
-                final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserializeTag(buf);
+                final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserialize(buf);
                 addResearch(newResearch.getBranch(), newResearch, true);
             }
         }

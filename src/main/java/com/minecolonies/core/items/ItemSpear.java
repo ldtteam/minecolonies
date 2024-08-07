@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -46,12 +47,12 @@ public class ItemSpear extends TridentItem
         if (entityLiving instanceof Player)
         {
             Player playerEntity = (Player) entityLiving;
-            int usedForDuration = this.getUseDuration(stack) - timeLeft;
+            int usedForDuration = this.getUseDuration(stack, entityLiving) - timeLeft;
             if (usedForDuration >= 10)
             {
                 if (!worldIn.isClientSide)
                 {
-                    stack.hurtAndBreak(1, playerEntity, playerEntity1 -> playerEntity1.broadcastBreakEvent(entityLiving.getUsedItemHand()));
+                    stack.hurtAndBreak(1, playerEntity, EquipmentSlot.MAINHAND);
                     SpearEntity spearEntity = new SpearEntity(worldIn, playerEntity, stack);
 
                     if (playerEntity.getAbilities().instabuild)
@@ -64,10 +65,10 @@ public class ItemSpear extends TridentItem
                     }
 
                     worldIn.addFreshEntity(spearEntity);
-                    worldIn.playSound(null, spearEntity, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    worldIn.playSound(null, spearEntity, SoundEvents.TRIDENT_THROW.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
 
-                SoundEvent soundEvent = SoundEvents.TRIDENT_THROW;
+                SoundEvent soundEvent = SoundEvents.TRIDENT_THROW.value();
                 playerEntity.awardStat(Stats.ITEM_USED.get(this));
                 worldIn.playSound(null, playerEntity, soundEvent, SoundSource.PLAYERS, 1.0F, 1.0F);
             }

@@ -20,6 +20,7 @@ import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -169,9 +171,9 @@ public class BuildingSmeltery extends AbstractBuilding
 
         @NotNull
         @Override
-        public List<ResourceLocation> getAdditionalLootTables()
+        public List<ResourceKey<LootTable>> getAdditionalLootTables()
         {
-            final List<ResourceLocation> lootTables = new ArrayList<>(super.getAdditionalLootTables());
+            final List<ResourceKey<LootTable>> lootTables = new ArrayList<>(super.getAdditionalLootTables());
 
             //noinspection ConstantConditions
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))

@@ -16,6 +16,6 @@ public class ItemIronScimitar extends SwordItem
      */
     public ItemIronScimitar(final Item.Properties properties)
     {
-        super(Tiers.IRON, 3, -2.4f, properties);
+        super(Tiers.IRON, properties.attributes(SwordItem.createAttributes(Tiers.WOOD, 3, -2.4F)));
     }
 }

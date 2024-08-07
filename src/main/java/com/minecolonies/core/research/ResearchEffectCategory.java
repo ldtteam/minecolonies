@@ -54,7 +54,7 @@ public class ResearchEffectCategory
      */
     public ResearchEffectCategory(final String effectId, final String effectName, final String subtitle)
     {
-        this.effectId = new ResourceLocation(effectId);
+        this.effectId = ResourceLocation.parse(effectId);
         if(effectName != null)
         {
             this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
@@ -74,7 +74,7 @@ public class ResearchEffectCategory
      */
     public ResearchEffectCategory(final String effectId, final String effectName)
     {
-        this.effectId = new ResourceLocation(effectId);
+        this.effectId = ResourceLocation.parse(effectId);
         this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
         this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         levelsAbsolute.add(0d);
@@ -87,7 +87,7 @@ public class ResearchEffectCategory
      */
     public ResearchEffectCategory(final String effectId)
     {
-        this.effectId = new ResourceLocation(effectId);
+        this.effectId = ResourceLocation.parse(effectId);
         this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description", null, TranslatableContents.NO_ARGS);
         this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
         levelsAbsolute.add(0d);

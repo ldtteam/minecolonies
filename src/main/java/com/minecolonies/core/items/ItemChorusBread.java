@@ -32,8 +32,8 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     private static FoodProperties chorusBread = (new FoodProperties.Builder())
                                         .nutrition(5)
                                         .saturationModifier(2.0F)
-                                        .alwaysEat()
-                                        .build(); 
+                                        .alwaysEdible()
+                                        .build();
 
     /**
      * Sets the name, creative tab, and registers the Chorus Bread item.

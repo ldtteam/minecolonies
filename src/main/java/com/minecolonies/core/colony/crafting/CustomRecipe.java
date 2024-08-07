@@ -21,7 +21,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.GsonHelper;
@@ -29,6 +31,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -228,7 +231,7 @@ public class CustomRecipe
     /**
      * The loottable to use for possible additional outputs
      */
-    private ResourceLocation lootTable;
+    private ResourceKey<LootTable> lootTable;
 
     /**
      * The tool required to craft this recipe
@@ -289,7 +292,7 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
         {
-            recipe.lootTable = ResourceLocation.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString());
+            recipe.lootTable = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString()));
         }
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
@@ -593,7 +596,7 @@ public class CustomRecipe
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, final IToolType requiredTool,
+      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceKey<LootTable> lootTable, final IToolType requiredTool,
       final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
@@ -672,7 +675,7 @@ public class CustomRecipe
      * Get the Loot Table, if one is present.
      * @return Loot Table resource location
      */
-    public ResourceLocation getLootTable()
+    public ResourceKey<LootTable> getLootTable()
     {
         return lootTable;
     }
@@ -919,7 +922,7 @@ public class CustomRecipe
         packetBuffer.writeBoolean(getLootTable() != null);
         if(getLootTable() != null)
         {
-            packetBuffer.writeResourceLocation(getLootTable());
+            packetBuffer.writeResourceLocation(getLootTable().location());
         }
         packetBuffer.writeUtf(getRequiredTool().getName());
         packetBuffer.writeVarInt(getMinBuildingLevel());
@@ -956,10 +959,10 @@ public class CustomRecipe
         final ResourceLocation recipeId = buffer.readResourceLocation();
         final Set<ResourceLocation> researchReq = deserializeIds(buffer);
         final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
-        final ResourceLocation lootTable;
+        final ResourceKey<LootTable> lootTable;
         if(buffer.readBoolean())
         {
-            lootTable = buffer.readResourceLocation();
+            lootTable = ResourceKey.create(Registries.LOOT_TABLE, buffer.readResourceLocation());
         }
         else
         {

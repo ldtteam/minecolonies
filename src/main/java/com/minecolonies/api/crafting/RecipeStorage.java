@@ -14,8 +14,9 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -100,7 +101,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * The Resource location of the Loot Table to use for possible outputs
      */
-    private final ResourceLocation lootTable;
+    private final ResourceKey<LootTable> lootTable;
 
     /**
      * The tool required to craft this recipe (in addition to any in the recipe itself)
@@ -125,8 +126,8 @@ public class RecipeStorage implements IRecipeStorage
                 .required(LootContextParams.THIS_ENTITY)
                 .required(LootContextParams.TOOL)
                 .optional(LootContextParams.DAMAGE_SOURCE)
-                .optional(LootContextParams.KILLER_ENTITY)
-                .optional(LootContextParams.DIRECT_KILLER_ENTITY)
+                .optional(LootContextParams.ATTACKING_ENTITY)
+                .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
                 .build();
 
     /**
@@ -144,7 +145,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param lootTable     Loot table to use for possible alternate outputs
      * @param requiredTool  the tool needed to craft (in addition to anything in the recipe itself)
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceLocation lootTable, final IToolType requiredTool)
+    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceKey<LootTable> lootTable, final IToolType requiredTool)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -539,7 +540,7 @@ public class RecipeStorage implements IRecipeStorage
                         {
                             // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
                             // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.broadcastBreakEvent(InteractionHand.MAIN_HAND)), citizen, item -> item.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> {}), citizen, EquipmentSlot.MAINHAND);
                         }
                         if (!ItemStackUtils.isEmpty(toDamage))
                         {
@@ -619,7 +620,7 @@ public class RecipeStorage implements IRecipeStorage
 
         if (loot == null && lootTable != null)
         {
-            loot = context.getLevel().getServer().getLootData().getLootTable(lootTable);
+            loot = context.getLevel().getServer().reloadableRegistries().getLootTable(lootTable);
         }
 
         if(loot != null && context != null)
@@ -713,7 +714,7 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    public ResourceLocation getLootTable()
+    public ResourceKey<LootTable> getLootTable()
     {
         return lootTable;
     }

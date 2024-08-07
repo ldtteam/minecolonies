@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
@@ -236,7 +237,7 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_ID, owningColony);
@@ -268,7 +269,7 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         // Set owning
         owningColony = compound.getInt(TAG_ID);

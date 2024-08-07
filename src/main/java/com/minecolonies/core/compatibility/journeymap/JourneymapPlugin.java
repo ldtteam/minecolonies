@@ -27,7 +27,7 @@ public class JourneymapPlugin implements IClientPlugin
         this.listener = new EventListener(this.jmap);
 
         ClientEventRegistry.MAPPING_EVENT.subscribe(MOD_ID, this::onMappingEvent);
-        ClientEventRegistry.REGISTRY_EVENT.subscribe(MOD_ID, this::onRegistryEvent);
+        ClientEventRegistry.INFO_SLOT_REGISTRY_EVENT_EVENT.subscribe(MOD_ID, this::onRegistryEvent);
         
     }
 

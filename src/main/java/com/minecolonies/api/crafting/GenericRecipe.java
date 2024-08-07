@@ -7,6 +7,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -93,7 +95,7 @@ public class GenericRecipe implements IGenericRecipe
     private final List<List<ItemStack>> inputs;
     private final int gridSize;
     private final Block intermediate;
-    private final ResourceLocation lootTable;
+    private final @Nullable ResourceKey<LootTable> lootTable;
     private final IToolType requiredTool;
     private final LivingEntity requiredEntity;
     private final List<Component> restrictions;
@@ -104,7 +106,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<ItemStack> additionalOutputs,
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
-                         @Nullable final ResourceLocation lootTable,
+                         final @Nullable ResourceKey<LootTable> lootTable,
                          @NotNull final IToolType requiredTool,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
@@ -129,7 +131,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<ItemStack> additionalOutputs,
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
-                         @Nullable final ResourceLocation lootTable,
+                         @Nullable final ResourceKey<LootTable> lootTable,
                          @NotNull final IToolType requiredTool,
                          @Nullable final LivingEntity requiredEntity,
                          @NotNull final List<Component> restrictions,
@@ -239,7 +241,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @Nullable
     @Override
-    public ResourceLocation getLootTable() { return this.lootTable; }
+    public ResourceKey<LootTable> getLootTable() { return this.lootTable; }
 
     @NotNull
     @Override

@@ -15,15 +15,18 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -109,7 +112,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       final ResourceLocation type,
       final List<ItemStack> altOutputs,
       final List<ItemStack> secOutputs,
-      final ResourceLocation lootTable,
+      final ResourceKey<LootTable> lootTable,
       @NotNull final IToolType requiredTool)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
@@ -161,7 +164,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         if(recipeStorage.getLootTable() != null)
         {
-            compound.putString(LOOT_TAG, recipeStorage.getLootTable().toString());
+            compound.putString(LOOT_TAG, recipeStorage.getLootTable().location().toString());
         }
 
         compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getName());
@@ -218,7 +221,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(ItemStack.parseOptional(provider, secOutputTag));
         }
 
-        final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? ResourceLocation.parse(nbt.getString(LOOT_TAG)) : null;
+        final ResourceKey<LootTable> lootTable = nbt.contains(LOOT_TAG) ? ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(nbt.getString(LOOT_TAG))) : null;
 
         final IToolType requiredTool = nbt.contains(TOOL_TAG) ? ToolType.getToolType(nbt.getString(TOOL_TAG)) : ToolType.NONE;
 
@@ -253,7 +256,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)
         {
-            packetBuffer.writeResourceLocation(input.getLootTable());
+            packetBuffer.writeResourceKey(input.getLootTable());
         }
 
         packetBuffer.writeBoolean(input.getRecipeSource() != null);
@@ -297,10 +300,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
 
-        ResourceLocation lootTable = null;
+        ResourceKey<LootTable> lootTable = null;
         if(buffer.readBoolean())
         {
-            lootTable = buffer.readResourceLocation();
+            lootTable = buffer.readResourceKey(Registries.LOOT_TABLE);
         }
 
         ResourceLocation source = null;

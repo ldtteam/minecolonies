@@ -7,10 +7,11 @@ import com.minecolonies.api.util.Utils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,30 +50,26 @@ public final class LootTableAnalyzer
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param lootTableManager the {@link LootDataManager}
      * @param lootTableId the loot table id
      * @return the list of possible drops
      */
-    public static List<LootDrop> toDrops(@NotNull final LootDataManager lootTableManager,
-                                         @NotNull final ResourceLocation lootTableId)
+    public static List<LootDrop> toDrops(final Level world, @NotNull final ResourceKey<LootTable> lootTableId)
     {
-        return toDrops(lootTableManager, lootTableManager.getLootTable(lootTableId));
+        return toDrops(Utils.getRegistryValue(lootTableId, world));
     }
 
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param lootTableManager the {@link LootDataManager}
      * @param lootTable the loot table
      * @return the list of possible drops
      */
-    public static List<LootDrop> toDrops(@Nullable final LootDataManager lootTableManager,
-                                         @NotNull final LootTable lootTable)
+    public static List<LootDrop> toDrops(@NotNull final Holder<LootTable> lootTable)
     {
         try
         {
             final JsonObject lootTableJson = (JsonObject) Util.getOrThrow(LootTable.CODEC.encodeStart(JsonOps.INSTANCE, lootTable), IllegalStateException::new);
-            return toDrops(lootTableManager, lootTableJson);
+            return toDrops(lootTableJson);
         }
         catch (final JsonParseException ex)
         {
@@ -90,8 +87,7 @@ public final class LootTableAnalyzer
      * @param lootTableJson the loot table json
      * @return the list of possible drops
      */
-    public static List<LootDrop> toDrops(@Nullable final LootDataManager lootTableManager,
-                                         @NotNull final JsonObject lootTableJson)
+    public static List<LootDrop> toDrops(@NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
 
@@ -137,13 +133,11 @@ public final class LootTableAnalyzer
     /**
      * Parse a specific entry and try to determine the possible drops.
      *
-     * @param lootTableManager the {@link LootDataManager}
      * @param entryJson the entry json
      * @return the list of possible drops
      */
     @NotNull
-    private static List<LootDrop> entryToDrops(@Nullable final LootDataManager lootTableManager,
-                                               @NotNull final JsonObject entryJson)
+    private static List<LootDrop> entryToDrops(@NotNull final JsonObject entryJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
         final String type = GsonHelper.getAsString(entryJson, "type");
@@ -253,13 +247,11 @@ public final class LootTableAnalyzer
     /**
      * Replaces an {@link ModItems#adventureToken} with the drops from defeating the corresponding monster.
      *
-     * @param lootTableManager the {@link LootDataManager}
      * @param token the adventure token
      * @return the list of possible drops
      */
     @NotNull
-    private static List<LootDrop> expandAdventureToken(@NotNull final LootDataManager lootTableManager,
-                                                       @NotNull final ItemStack token)
+    private static List<LootDrop> expandAdventureToken(@NotNull final ItemStack token)
     {
         if (token.hasTag())
         {

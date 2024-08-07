@@ -65,7 +65,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
      */
     public ResearchResearchRequirement(final CompoundTag nbt)
     {
-        this.researchId = new ResourceLocation(nbt.getString(TAG_ID));
+        this.researchId = ResourceLocation.parse(nbt.getString(TAG_ID));
         this.researchName = Component.translatableEscape(nbt.getString(TAG_NAME));
     }
 

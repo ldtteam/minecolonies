@@ -3,6 +3,7 @@ package com.minecolonies.api.loot;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,23 +16,23 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 public final class ModLootTables
 {
     /** Fisherman primary loot table */
-    public static final ResourceKey<?> FISHING = ResourceKey.create(Registries.LOOT_TABLE, FISHERMAN_ID);
+    public static final ResourceKey<LootTable> FISHING = ResourceKey.create(Registries.LOOT_TABLE, FISHERMAN_ID);
 
     /** Fisherman secondary fish table */
-    public static final ResourceKey<?> FISHING_FISH = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/fish"));
+    public static final ResourceKey<LootTable> FISHING_FISH = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/fish"));
 
     /** Fisherman secondary junk table */
-    public static final ResourceKey<?> FISHING_JUNK = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/junk"));
+    public static final ResourceKey<LootTable> FISHING_JUNK = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/junk"));
 
     /** Fisherman secondary treasure table */
-    public static final ResourceKey<?> FISHING_TREASURE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/treasure"));
+    public static final ResourceKey<LootTable> FISHING_TREASURE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/treasure"));
 
     /** Ids for the fisherman bonus loot tables */
-    public static final Map<Integer, ResourceKey<?>> FISHERMAN_BONUS = createFishermanBonusMap();
+    public static final Map<Integer, ResourceKey<LootTable>> FISHERMAN_BONUS = createFishermanBonusMap();
 
-    private static Map<Integer, ResourceKey<?>> createFishermanBonusMap()
+    private static Map<Integer, ResourceKey<LootTable>> createFishermanBonusMap()
     {
-        final Map<Integer, ResourceKey<?>> map = new HashMap<>();
+        final Map<Integer, ResourceKey<LootTable>> map = new HashMap<>();
         for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level)
         {
             map.put(level, ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/bonus" + level)));

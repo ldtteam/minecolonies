@@ -3,12 +3,14 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.IToolType;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -198,7 +200,7 @@ public interface IRecipeStorage
      * Get the location/id of the Loot table used for optional outputs
      * @return the resource location for the table
      */
-    ResourceLocation getLootTable();
+    ResourceKey<LootTable> getLootTable();
 
     /**
      * Get the unique token of the recipe.

@@ -3,10 +3,12 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +120,7 @@ public interface IGenericRecipe
      * @return The loot table identifier, or null.
      */
     @Nullable
-    ResourceLocation getLootTable();
+    ResourceKey<LootTable> getLootTable();
 
     /**
      * Gets the tool required for this craft, if any.

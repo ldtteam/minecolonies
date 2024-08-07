@@ -70,7 +70,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (colonyView != null)
         {
-            colonyView.handleColonyViewResearchManagerUpdate(researchManagerData);
+            colonyView.handleColonyViewResearchManagerUpdate(player.level().registryAccess(), researchManagerData);
         }
     }
 }

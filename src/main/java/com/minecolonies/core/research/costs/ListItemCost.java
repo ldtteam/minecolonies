@@ -72,7 +72,7 @@ public class ListItemCost implements IResearchCost
     public void read(@NotNull final CompoundTag compound)
     {
         this.items = NBTUtils.streamCompound(compound.getList(TAG_COST_ITEMS, Tag.TAG_COMPOUND))
-                       .map(itemCompound -> BuiltInRegistries.ITEM.get(new ResourceLocation(itemCompound.getString(TAG_COST_ITEM))))
+                       .map(itemCompound -> BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemCompound.getString(TAG_COST_ITEM))))
                        .toList();
         this.count = compound.getInt(TAG_COST_COUNT);
     }
@@ -126,7 +126,7 @@ public class ListItemCost implements IResearchCost
         this.items = new ArrayList<>();
         for (JsonElement arrayItem : jsonObject.getAsJsonObject(RESEARCH_ITEM_NAME_PROP).getAsJsonArray(RESEARCH_ITEM_LIST_PROP))
         {
-            this.items.add(BuiltInRegistries.ITEM.get(new ResourceLocation(arrayItem.getAsJsonPrimitive().getAsString())));
+            this.items.add(BuiltInRegistries.ITEM.get(ResourceLocation.parse(arrayItem.getAsJsonPrimitive().getAsString())));
         }
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }

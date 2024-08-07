@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -250,7 +251,7 @@ public interface IColonyView extends IColony
      * Handle the colony view research manager updating.
      * @param compoundTag the tag to update the research manager with.
      */
-    void handleColonyViewResearchManagerUpdate(CompoundTag compoundTag);
+    void handleColonyViewResearchManagerUpdate(@NotNull final HolderLookup.Provider provider, CompoundTag compoundTag);
 
     /**
      * Update all field instances in the colony view.

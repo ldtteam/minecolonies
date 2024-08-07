@@ -68,7 +68,7 @@ public class SimpleItemCost implements IResearchCost
     {
         if (compound.contains(TAG_COST_COUNT))
         {
-            this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(compound.getString(TAG_COST_ITEM)));
+            this.item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(compound.getString(TAG_COST_ITEM)));
             this.count = compound.getInt(TAG_COST_COUNT);
         }
         else
@@ -121,7 +121,7 @@ public class SimpleItemCost implements IResearchCost
     @Override
     public void parseFromJson(final JsonObject jsonObject)
     {
-        this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(jsonObject.getAsJsonPrimitive(RESEARCH_ITEM_NAME_PROP).getAsString()));
+        this.item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(jsonObject.getAsJsonPrimitive(RESEARCH_ITEM_NAME_PROP).getAsString()));
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 

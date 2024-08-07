@@ -9,14 +9,17 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +58,7 @@ public class CustomRecipeManager
     /**
      * The collection of related loot table drops (for informational purposes, not loot gen).
      */
-    private final Map<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootTables = new HashMap<>();
+    private final Map<ResourceKey<LootTable>, List<LootTableAnalyzer.LootDrop>> lootTables = new HashMap<>();
 
     /**
      * The collection of recipe templates, pending tag loading.
@@ -235,7 +238,7 @@ public class CustomRecipeManager
      * @return The loot drops.
      */
     @NotNull
-    public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceLocation lootTableId)
+    public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceKey<LootTable> lootTableId)
     {
         if (lootTableId == null) return Collections.emptyList();
 
@@ -297,19 +300,18 @@ public class CustomRecipeManager
 
     /**
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
-     * @param lootTableManager the loot table manager
+     * @param level the world.
      */
-    public void buildLootData(@NotNull final LootDataManager lootTableManager,
-                              @NotNull final Level level)
+    public void buildLootData(@NotNull final Level level)
     {
         final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
-        final List<ResourceLocation> lootIds = new ArrayList<>();
+        final List<ResourceKey<LootTable>> lootIds = new ArrayList<>();
         for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
         {
             for (final CustomRecipe recipe : recipes.values())
             {
-                final ResourceLocation lootTable = recipe.getLootTable();
+                final ResourceKey<LootTable> lootTable = recipe.getLootTable();
                 if (lootTable != null)
                 {
                     lootIds.add(lootTable);
@@ -350,7 +352,7 @@ public class CustomRecipeManager
                 .filter(Objects::nonNull)   // just in case
                 .distinct()
                 .collect(Collectors.toConcurrentMap(Function.identity(),
-                        id -> LootTableAnalyzer.toDrops(lootTableManager, id))));
+                        id -> LootTableAnalyzer.toDrops(level, id))));
     }
 
     /**
@@ -382,9 +384,9 @@ public class CustomRecipeManager
         }
 
         recipeMgrFriendlyByteBuf.writeVarInt(lootTables.size());
-        for (final Map.Entry<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
+        for (final Map.Entry<ResourceKey<LootTable>, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
         {
-            recipeMgrFriendlyByteBuf.writeResourceLocation(lootEntry.getKey());
+            recipeMgrFriendlyByteBuf.writeResourceLocation(lootEntry.getKey().location());
             recipeMgrFriendlyByteBuf.writeVarInt(lootEntry.getValue().size());
             for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue())
             {
@@ -411,7 +413,7 @@ public class CustomRecipeManager
 
         for (int lootNum = buff.readVarInt(); lootNum > 0; --lootNum)
         {
-            final ResourceLocation id = buff.readResourceLocation();
+            final ResourceKey<LootTable> id = ResourceKey.create(Registries.LOOT_TABLE, buff.readResourceLocation());
             int count = buff.readVarInt();
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(count);
             for (; count > 0; --count)

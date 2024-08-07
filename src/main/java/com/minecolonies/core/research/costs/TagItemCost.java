@@ -115,7 +115,7 @@ public class TagItemCost implements IResearchCost
     public void parseFromJson(final JsonObject jsonObject)
     {
         final String tagKey = jsonObject.getAsJsonObject(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive(RESEARCH_ITEM_TAG_PROP).getAsString();
-        this.tag = TagKey.create(Registries.ITEM, new ResourceLocation(tagKey));
+        this.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(tagKey));
         this.count = GlobalResearch.parseItemCount(jsonObject);
     }
 

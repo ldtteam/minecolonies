@@ -312,7 +312,7 @@ public class WorkManager implements IWorkManager
     private boolean isWorkOrderWithinColony(final IWorkOrder order)
     {
         final Level world = colony.getWorld();
-        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath());
+        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath(), world.registryAccess());
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getLocation(),
           world,

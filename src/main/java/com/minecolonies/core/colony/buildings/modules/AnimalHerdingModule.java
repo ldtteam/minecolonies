@@ -7,10 +7,11 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -76,8 +77,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @param animal An example animal. (Don't use specific properties of this; it's only for checking type.)
      * @return The list of loot table ids
      */
-    @NotNull
-    public List<ResourceLocation> getLootTables(@NotNull final Animal animal)
+    public List<ResourceKey<LootTable>> getLootTables(@NotNull final Animal animal)
     {
         return Collections.singletonList(animal.getLootTable());
     }
