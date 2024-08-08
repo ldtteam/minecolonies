@@ -116,7 +116,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     {
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            if (happinessModifier instanceof TimeBasedHappinessModifier)
+            if (happinessModifier instanceof ITimeBasedHappinessModifier)
             {
                 ((TimeBasedHappinessModifier) happinessModifier).dayEnd(citizenData);
             }
