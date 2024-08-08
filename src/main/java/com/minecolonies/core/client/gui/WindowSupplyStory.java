@@ -3,8 +3,10 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.event.ColonyStoryListener;
+import com.minecolonies.core.items.ItemSupplyChestDeployer;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -23,7 +25,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.items.ISupplyItem.SUPPLY_OFFSET_DISTANCE;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -70,9 +71,10 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
 
         List<MutableComponent> story = new ArrayList<>();
 
-        if (stack.getOrCreateTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT)) // if free dungeon loot nbt tag on item.
+        final ItemSupplyChestDeployer.SupplyData currentComponent = stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        if (currentComponent.instantPlacement()) // if free dungeon loot nbt tag on item.
         {
-            final Random random = new Random(stack.getTag().getLong(TAG_RANDOM_KEY));
+            final Random random = new Random(currentComponent.randomKey());
             final List<Holder.Reference<Biome>> biomes = mc.level.registryAccess().registryOrThrow(Registries.BIOME).holders().toList();
             final Holder<Biome> biome = biomes.get(random.nextInt(biomes.size()));
             if (stack.getItem() == ModItems.supplyCamp)

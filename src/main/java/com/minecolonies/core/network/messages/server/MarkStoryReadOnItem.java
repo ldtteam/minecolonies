@@ -3,15 +3,15 @@ package com.minecolonies.core.network.messages.server;
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.items.ISupplyItem;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.items.ItemSupplyChestDeployer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 
 /**
  * Mark that for a given item the story was already read.
@@ -55,9 +55,7 @@ public class MarkStoryReadOnItem extends AbstractServerPlayMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         final ItemStack stackInHand = sender.getItemInHand(this.hand);
-        if (stackInHand.getItem() instanceof ISupplyItem)
-        {
-            stackInHand.getOrCreateTag().putBoolean(TAG_SAW_STORY, true);
-        }
+        final ItemSupplyChestDeployer.SupplyData currentComponent = stackInHand.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        stackInHand.set(ModDataComponents.SUPPLY_COMPONENT, new ItemSupplyChestDeployer.SupplyData(true, currentComponent.instantPlacement(), currentComponent.randomKey()));
     }
 }

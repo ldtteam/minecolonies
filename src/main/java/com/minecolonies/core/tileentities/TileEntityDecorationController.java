@@ -56,7 +56,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     /**
      * The used rotation and mirror.
      */
-    private RotationMirror rotationMirror;
+    private RotationMirror rotationMirror = RotationMirror.NONE;
 
     /**
      * Map of block positions relative to TE pos and string tags

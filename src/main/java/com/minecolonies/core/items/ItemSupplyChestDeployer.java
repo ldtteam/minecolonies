@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
@@ -84,9 +85,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        if (!ctx.getItemInHand().getOrCreateTag().contains(TAG_RANDOM_KEY))
+        final SupplyData currentComponent = ctx.getItemInHand().getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        if (currentComponent.randomKey == -1)
         {
-            ctx.getItemInHand().getTag().putLong(TAG_RANDOM_KEY, ctx.getClickedPos().asLong());
+            ctx.getItemInHand().set(ModDataComponents.SUPPLY_COMPONENT, new SupplyData(currentComponent.sawStory, currentComponent.instantPlacement, ctx.getClickedPos().asLong()));
         }
 
         if (ctx.getLevel().isClientSide)
@@ -106,9 +108,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
-        if (!stack.getOrCreateTag().contains(TAG_RANDOM_KEY))
+        final SupplyData currentComponent = stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        if (currentComponent.randomKey == -1)
         {
-            stack.getTag().putLong(TAG_RANDOM_KEY, playerIn.blockPosition().asLong());
+            stack.set(ModDataComponents.SUPPLY_COMPONENT, new SupplyData(currentComponent.sawStory, currentComponent.instantPlacement, playerIn.blockPosition().asLong()));
         }
 
         if (worldIn.isClientSide)
@@ -137,8 +140,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
                               ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                               : SUPPLY_SHIP_STRUCTURE_NAME;
 
-
-        if (!itemInHand.getOrCreateTag().contains(TAG_SAW_STORY))
+        final SupplyData currentComponent = itemInHand.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        if (!currentComponent.sawStory)
         {
             new WindowSupplyStory(pos, name, itemInHand, hand).open();
             return;
@@ -258,23 +261,23 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
         return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);
     }
 
-    public record Timestamp(long time)
+    public record SupplyData(boolean sawStory, boolean instantPlacement, long randomKey)
     {
-        import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
-        instantTag.putString(PLACEMENT_NBT, INSTANT_PLACEMENT);
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<SupplyData>> TYPE  = null;
+        public static final SupplyData EMPTY = new SupplyData(false, false, -1);
 
-        public static       DeferredHolder<DataComponentType<?>, DataComponentType<ItemScanAnalyzer.Timestamp>> TYPE  = null;
-        public static final ItemScanAnalyzer.Timestamp                                                          EMPTY = new ItemScanAnalyzer.Timestamp(0);
+        public static final Codec<SupplyData> CODEC = RecordCodecBuilder.create(
+          builder -> builder.group(
+              Codec.BOOL.fieldOf(TAG_SAW_STORY).forGetter(SupplyData::sawStory),
+              Codec.BOOL.fieldOf(PLACEMENT_NBT).forGetter(SupplyData::instantPlacement),
+              Codec.LONG.fieldOf(TAG_RANDOM_KEY).forGetter(SupplyData::randomKey))
+                       .apply(builder, SupplyData::new));
 
-        public static final Codec<ItemScanAnalyzer.Timestamp> CODEC = RecordCodecBuilder.create(
-          builder -> builder
-                       .group(Codec.LONG.fieldOf("timestamp").forGetter(ItemScanAnalyzer.Timestamp::time))
-                       .apply(builder, ItemScanAnalyzer.Timestamp::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, ItemScanAnalyzer.Timestamp> STREAM_CODEC =
-          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.LONG),
-            ItemScanAnalyzer.Timestamp::time,
-            ItemScanAnalyzer.Timestamp::new);
+        public static final StreamCodec<RegistryFriendlyByteBuf, SupplyData> STREAM_CODEC =
+          StreamCodec.composite(
+            ByteBufCodecs.fromCodec(Codec.BOOL), SupplyData::sawStory,
+            ByteBufCodecs.fromCodec(Codec.BOOL), SupplyData::instantPlacement,
+            ByteBufCodecs.fromCodec(Codec.LONG), SupplyData::randomKey,
+            SupplyData::new);
     }
 }

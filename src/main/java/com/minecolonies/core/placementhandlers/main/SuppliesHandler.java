@@ -6,12 +6,14 @@ import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.items.ItemSupplyChestDeployer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -97,7 +99,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
         {
             searchPredicate =
                     searchPredicate.and(
-                            stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
+                            stack -> stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY).instantPlacement());
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.getInventory()), searchPredicate);
@@ -130,6 +132,6 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
     private boolean isFreeInstantPlacementMH(ServerPlayer playerEntity)
     {
         final ItemStack mhItem = playerEntity.getMainHandItem();
-        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
+        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY).instantPlacement();
     }
 }

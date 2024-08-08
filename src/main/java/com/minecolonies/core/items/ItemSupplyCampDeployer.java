@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ISupplyItem;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
@@ -31,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
 /**
@@ -54,9 +53,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        if (!ctx.getItemInHand().getOrCreateTag().contains(TAG_RANDOM_KEY))
+        final ItemSupplyChestDeployer.SupplyData currentComponent = ctx.getItemInHand().getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        if (currentComponent.randomKey() == -1)
         {
-            ctx.getItemInHand().getTag().putLong(TAG_RANDOM_KEY, ctx.getClickedPos().asLong());
+            ctx.getItemInHand().set(ModDataComponents.SUPPLY_COMPONENT, new ItemSupplyChestDeployer.SupplyData(currentComponent.sawStory(), currentComponent.instantPlacement(), ctx.getClickedPos().asLong()));
         }
         if (ctx.getLevel().isClientSide)
         {
@@ -76,9 +76,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
-        if (!stack.getOrCreateTag().contains(TAG_RANDOM_KEY))
+        final ItemSupplyChestDeployer.SupplyData currentComponent = stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        if (currentComponent.randomKey() == -1)
         {
-            stack.getTag().putLong(TAG_RANDOM_KEY, playerIn.blockPosition().asLong());
+            stack.set(ModDataComponents.SUPPLY_COMPONENT, new ItemSupplyChestDeployer.SupplyData(currentComponent.sawStory(), currentComponent.instantPlacement(), playerIn.blockPosition().asLong()));
         }
 
         if (worldIn.isClientSide)
@@ -102,7 +103,8 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
      */
     private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand, final InteractionHand hand)
     {
-        if (!itemInHand.getOrCreateTag().contains(TAG_SAW_STORY))
+        final ItemSupplyChestDeployer.SupplyData currentComponent = itemInHand.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        if (!currentComponent.sawStory())
         {
             new WindowSupplyStory(pos, "supplycamp", itemInHand, hand).open();
             return;
