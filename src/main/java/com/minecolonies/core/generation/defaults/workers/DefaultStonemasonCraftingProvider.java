@@ -45,7 +45,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
         convert(consumer, Items.COBBLESTONE, Items.PRISMARINE_SHARD, Items.PRISMARINE);
         convert(consumer, Items.STONE_BRICKS, Items.PRISMARINE_SHARD, Items.PRISMARINE_BRICKS);
 
-        new CustomRecipeBuilder(STONEMASON, MODULE_CRAFTING, "end_stone")
+        recipe(STONEMASON, MODULE_CRAFTING, "end_stone")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.SANDSTONE, 8)),
                         new ItemStorage(new ItemStack(Items.ENDER_PEARL))))
                 .result(new ItemStack(Items.END_STONE, 8))
@@ -58,7 +58,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
                          @NotNull final ItemLike input2,
                          @NotNull final ItemLike output)
     {
-        new CustomRecipeBuilder(STONEMASON, MODULE_CRAFTING,
+        recipe(STONEMASON, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input1)), new ItemStorage(new ItemStack(input2))))
                 .result(new ItemStack(output))

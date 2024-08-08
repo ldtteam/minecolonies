@@ -39,13 +39,13 @@ public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        new CustomRecipeBuilder(FARMER, MODULE_CRAFTING, "carved_pumpkin")
+        recipe(FARMER, MODULE_CRAFTING, "carved_pumpkin")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PUMPKIN))))
                 .result(new ItemStack(Items.CARVED_PUMPKIN))
                 .requiredTool(ToolType.SHEARS)
                 .build(consumer);
 
-        new CustomRecipeBuilder(FARMER, MODULE_CRAFTING, "mud")
+        recipe(FARMER, MODULE_CRAFTING, "mud")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.DIRT)),
                         new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(Items.MUD))

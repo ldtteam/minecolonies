@@ -11,8 +11,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +92,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
         final List<LootTableAnalyzer.LootDrop> commonDrops = CustomRecipeManager.getInstance().getLootDrops(ModLootTables.FISHING);
 
         final List<FishingRecipe> recipes = new ArrayList<>();
-        for (final Map.Entry<Integer, ResourceLocation> level : ModLootTables.FISHERMAN_BONUS.entrySet())
+        for (final Map.Entry<Integer, ResourceKey<LootTable>> level : ModLootTables.FISHERMAN_BONUS.entrySet())
         {
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(commonDrops);
             drops.addAll(CustomRecipeManager.getInstance().getLootDrops(level.getValue()));
@@ -102,12 +103,12 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 
     public static class FishingRecipe
     {
-        private final ResourceLocation id;
+        private final ResourceKey<LootTable> id;
         private final int level;
         @NotNull
         private final List<LootTableAnalyzer.LootDrop> drops;
 
-        public FishingRecipe(@NotNull final ResourceLocation id, final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops)
+        public FishingRecipe(@NotNull final ResourceKey<LootTable> id, final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops)
         {
             this.id = id;
             this.level = level;
@@ -115,7 +116,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
         }
 
         @NotNull
-        public ResourceLocation getId()
+        public ResourceKey<LootTable> getId()
         {
             return id;
         }

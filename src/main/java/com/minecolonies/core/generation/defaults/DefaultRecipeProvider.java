@@ -51,16 +51,16 @@ public class DefaultRecipeProvider extends RecipeProvider
         buildFood(consumer);
 
         CompostRecipeBuilder.strength(2)
-                .input(new FoodIngredient.Builder().maxSaturation(0.5f).build())
+                .input(FoodIngredient.builder().maxSaturation(0.5f).build())
                 .input(Ingredient.of(ModTags.compostables_poor))
                 .save(consumer, TagConstants.COMPOSTABLES_POOR);
         CompostRecipeBuilder.strength(4)
-                .input(new FoodIngredient.Builder().minSaturation(0.5f).maxSaturation(1.0f).build())
-                .input(PlantIngredient.getInstance())
+                .input(FoodIngredient.builder().minSaturation(0.5f).maxSaturation(1.0f).build())
+                .input(PlantIngredient.of())
                 .input(Ingredient.of(ModTags.compostables))
                 .save(consumer, TagConstants.COMPOSTABLES);
         CompostRecipeBuilder.strength(8)
-                .input(new FoodIngredient.Builder().minSaturation(1.0f).build())
+                .input(FoodIngredient.builder().minSaturation(1.0f).build())
                 .input(Ingredient.of(ModTags.compostables_rich))
                 .save(consumer, TagConstants.COMPOSTABLES_RICH);
     }

@@ -41,26 +41,26 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "gate_wood")
+        recipe(MECHANIC, MODULE_CRAFTING, "gate_wood")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.OAK_LOG, 5))))
                 .result(new ItemStack(ModItems.woodgate))
                 .showTooltip(true)
                 .build(consumer);
 
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "gate_iron")
+        recipe(MECHANIC, MODULE_CRAFTING, "gate_iron")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_NUGGET, 5))))
                 .result(new ItemStack(ModItems.irongate))
                 .showTooltip(true)
                 .build(consumer);
 
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "rails")
+        recipe(MECHANIC, MODULE_CRAFTING, "rails")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.STICK, 5)),
                         new ItemStorage(new ItemStack(Items.IRON_INGOT, 2))))
                 .result(new ItemStack(Items.RAIL, 16))
                 .minBuildingLevel(3)
                 .build(consumer);
 
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "lantern")
+        recipe(MECHANIC, MODULE_CRAFTING, "lantern")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_NUGGET, 3)),
                         new ItemStorage(new ItemStack(Items.GLASS_BOTTLE)),
                         new ItemStorage(new ItemStack(Items.TORCH))))
@@ -68,7 +68,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
                 .minBuildingLevel(3)
                 .build(consumer);
 
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "soul_lantern")
+        recipe(MECHANIC, MODULE_CRAFTING, "soul_lantern")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_NUGGET, 3)),
                         new ItemStorage(new ItemStack(Items.GLASS_BOTTLE)),
                         new ItemStorage(new ItemStack(Items.SOUL_TORCH))))
@@ -88,7 +88,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
                            @NotNull final Item input,
                            @NotNull final Item output)
     {
-        new CustomRecipeBuilder(MECHANIC, MODULE_CRAFTING, "deoxidize_" + BuiltInRegistries.ITEM.getKey(input).getPath())
+        recipe(MECHANIC, MODULE_CRAFTING, "deoxidize_" + BuiltInRegistries.ITEM.getKey(input).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))
                 .requiredTool(ToolType.AXE)

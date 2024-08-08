@@ -44,10 +44,12 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -380,9 +382,9 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     protected static class LootTableTooltipCallback implements IRecipeSlotTooltipCallback
     {
         private final LootTableAnalyzer.LootDrop drop;
-        private final ResourceLocation id;
+        private final ResourceKey<LootTable> id;
 
-        public LootTableTooltipCallback(final LootTableAnalyzer.LootDrop drop, final ResourceLocation id)
+        public LootTableTooltipCallback(final LootTableAnalyzer.LootDrop drop, final ResourceKey<LootTable> id)
         {
             this.drop = drop;
             this.id = id;
@@ -398,13 +400,13 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
             if (probability >= 1)
             {
-                    tooltip.add(Component.translatableEscape(key,
-                        Math.round(probability)));
+                tooltip.add(Component.translatableEscape(key,
+                    Math.round(probability)));
             }
             else
             {
-                    tooltip.add(Component.translatableEscape(key,
-                        Math.round(probability * 100) / 100f));
+                tooltip.add(Component.translatableEscape(key,
+                    Math.round(probability * 100) / 100f));
             }
 
             if (this.drop.getConditional())
@@ -415,7 +417,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
             if (showAdvanced)
             {
-                final MutableComponent recipeId = Component.translatableEscape("com.minecolonies.coremod.jei.loottableid", id.toString());
+                final MutableComponent recipeId = Component.translatableEscape("com.minecolonies.coremod.jei.loottableid", id.location().toString());
                 tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }

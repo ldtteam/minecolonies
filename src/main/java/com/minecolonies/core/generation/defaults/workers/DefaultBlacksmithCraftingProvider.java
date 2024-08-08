@@ -62,7 +62,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                        final int ironCount, final int coalCount,
                        @NotNull final ItemLike output)
     {
-        new CustomRecipeBuilder(BLACKSMITH, MODULE_CRAFTING,
+        recipe(BLACKSMITH, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_INGOT, ironCount)),
                         new ItemStorage(new ItemStack(Items.LEATHER)),
@@ -78,7 +78,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                            @NotNull final ItemLike input,
                            @NotNull final ItemLike output)
     {
-        new CustomRecipeBuilder(BLACKSMITH, MODULE_CRAFTING,
+        recipe(BLACKSMITH, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)),

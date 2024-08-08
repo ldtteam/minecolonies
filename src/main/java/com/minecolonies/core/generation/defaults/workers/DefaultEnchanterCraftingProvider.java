@@ -6,12 +6,12 @@ import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
-import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -41,14 +41,18 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     private final String ENCHANTER = ModJobs.ENCHANTER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
-    private final List<LootTable.Builder>                  levels;
-    private final HolderLookup.Provider lookUpProvider;
+    private final List<LootTable.Builder> levels = new ArrayList<>();
+    private HolderLookup.Provider provider;
 
     public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
         super(packOutput, lookupProvider);
-        levels = new ArrayList<>();
-        this.lookUpProvider = lookupProvider.join();
+    }
+
+    @Override
+    protected CompletableFuture<HolderLookup.Provider> generate(@NotNull final HolderLookup.Provider provider)
+    {
+        this.provider = provider;
 
         // building level 1
         levels.add(LootTable.lootTable().withPool(LootPool.lootPool()
@@ -360,13 +364,14 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .add(enchantedBook(Enchantments.FORTUNE, 3).setWeight(1))
                 .add(enchantedBook(ModEnchants.raiderDamage, 2).setWeight(1))
         ));
+
+        return CompletableFuture.completedFuture(provider);
     }
 
-    //todo we need a way to schedule this to get access to registry.
     @NotNull
     private LootPoolSingletonContainer.Builder<?> enchantedBook(final ResourceKey<Enchantment> key, final int level)
     {
-        final Holder<Enchantment> enchantment = lookUpProvider.holderOrThrow(key);
+        final Holder<Enchantment> enchantment = provider.holderOrThrow(key);
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
         stack.enchant(enchantment, level);
         return SimpleLootTableProvider.itemStack(stack);
@@ -387,7 +392,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
 
         for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
         {
-            new CustomRecipeBuilder(ENCHANTER, MODULE_CUSTOM, "tome" + buildingLevel)
+            recipe(ENCHANTER, MODULE_CUSTOM, "tome" + buildingLevel)
                     .minBuildingLevel(buildingLevel)
                     .maxBuildingLevel(buildingLevel)
                     .inputs(tome)
@@ -396,7 +401,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                     .build(consumer);
         }
 
-        new CustomRecipeBuilder(ENCHANTER, MODULE_CUSTOM, "scroll_tp")
+        recipe(ENCHANTER, MODULE_CUSTOM, "scroll_tp")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
                         new ItemStorage(new ItemStack(Items.COMPASS)),
                         new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
@@ -404,14 +409,14 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .showTooltip(true)
                 .build(consumer);
 
-        new CustomRecipeBuilder(ENCHANTER, MODULE_CUSTOM, "scroll_area_tp")
+        recipe(ENCHANTER, MODULE_CUSTOM, "scroll_area_tp")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3))))
                 .result(new ItemStack(ModItems.scrollColonyAreaTP))
                 .minBuildingLevel(2)
                 .showTooltip(true)
                 .build(consumer);
 
-        new CustomRecipeBuilder(ENCHANTER, MODULE_CUSTOM, "scroll_guard_help")
+        recipe(ENCHANTER, MODULE_CUSTOM, "scroll_guard_help")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP)),
                         new ItemStorage(new ItemStack(Items.LAPIS_LAZULI, 5)),
                         new ItemStorage(new ItemStack(Items.ENDER_PEARL)),
@@ -422,7 +427,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .showTooltip(true)
                 .build(consumer);
 
-        new CustomRecipeBuilder(ENCHANTER, MODULE_CUSTOM, "scroll_highlight")
+        recipe(ENCHANTER, MODULE_CUSTOM, "scroll_highlight")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3)),
                         new ItemStorage(new ItemStack(Items.GLOWSTONE_DUST, 6)),
                         new ItemStorage(new ItemStack(Items.PAPER, 2))))
@@ -433,16 +438,17 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                 .build(consumer);
     }
 
+    @NotNull
     @Override
-    protected void registerTables(@NotNull final SimpleLootTableProvider.LootTableRegistrar registrar)
+    protected List<LootTableProvider.SubProviderEntry> registerTables()
     {
-        for (int i = 0; i < levels.size(); i++)
+        return List.of(new LootTableProvider.SubProviderEntry(provider -> builder ->
         {
-            final int buildingLevel = i + 1;
-            final LootTable.Builder lootTable = levels.get(i);
-
-            registrar.register(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel),
-                    LootContextParamSets.ALL_PARAMS, lootTable);
-        }
+            for (int i = 0; i < levels.size(); i++)
+            {
+                final int buildingLevel = i + 1;
+                builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel)), levels.get(i));
+            }
+        }, LootContextParamSets.ALL_PARAMS));
     }
 }

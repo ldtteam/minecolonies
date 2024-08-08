@@ -168,7 +168,7 @@ public class ColonyBlueprintRenderer
             for (final Map.Entry<BlueprintCacheKey, List<BlockPos>> entry : blueprintRenderCache.entrySet())
             {
                 final BlueprintPreviewData data = blueprintDataCache.getUnchecked(entry.getKey());
-            BlueprintHandler.getInstance().drawAtListOfPositions(data, entry.getValue(), ctx.stageEvent);
+                BlueprintHandler.getInstance().drawAtListOfPositions(data, entry.getValue(), ctx.stageEvent);
             }
         }
     }
@@ -309,8 +309,9 @@ public class ColonyBlueprintRenderer
         }
     }
 
-    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key, @NotNull final HolderLookup.Provider provider)
+    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key)
     {
+        final HolderLookup.Provider provider = Minecraft.getInstance().level.registryAccess();
         final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path(), provider);
 
         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);

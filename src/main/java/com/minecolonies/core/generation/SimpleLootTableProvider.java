@@ -1,23 +1,28 @@
 package com.minecolonies.core.generation;
 
-import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * Wrapper around the vanilla loot table provider which makes it easier to use.
@@ -25,36 +30,20 @@ import java.util.stream.Collectors;
  */
 public abstract class SimpleLootTableProvider extends LootTableProvider
 {
-    protected SimpleLootTableProvider(PackOutput output)
+    protected SimpleLootTableProvider(@NotNull final PackOutput output,
+                                      @NotNull final CompletableFuture<HolderLookup.Provider> provider)
     {
-        super(output, new HashSet<>(), new ArrayList<>());
+        super(output, new HashSet<>(), new ArrayList<>(), provider);
     }
 
-    protected abstract void registerTables(@NotNull final LootTableRegistrar registrar);
-
-    @NotNull
-    @Override
-    public final List<SubProviderEntry> getTables()
+    /**
+     * Create a loot table resource key.
+     * @param id the location.
+     * @return the resource key.
+     */
+    public static ResourceKey<LootTable> table(@NotNull final ResourceLocation id)
     {
-        final Map<ResourceLocation, Pair<LootContextParamSet, LootTable.Builder>> tables = new HashMap<>();
-
-        registerTables((id, type, table) -> tables.put(id, Pair.of(type, table)));
-
-        return tables.entrySet().stream()
-                .map(w -> new SubProviderEntry(() -> new LootTableSubProvider() {
-                    @Override
-                    public void generate(final @NotNull BiConsumer<ResourceLocation, LootTable.Builder> builder)
-                    {
-                        builder.accept(w.getKey(), w.getValue().getSecond());
-                    }
-                }, w.getValue().getFirst()))
-                .collect(Collectors.toList());
-    }
-
-    @FunctionalInterface
-    public interface LootTableRegistrar
-    {
-        void register(@NotNull ResourceLocation id, @NotNull LootContextParamSet type, @NotNull LootTable.Builder table);
+        return ResourceKey.create(Registries.LOOT_TABLE, id);
     }
 
     /**
@@ -67,10 +56,12 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
         if (!stack.isEmpty())
         {
             final LootPoolSingletonContainer.Builder<?> builder = LootItem.lootTableItem(stack.getItem());
-            if (stack.hasTag())
+            if (!stack.isComponentsPatchEmpty())
             {
-                assert stack.getTag() != null;
-                builder.apply(SetNbtFunction.setTag(stack.getTag()));
+                for (final Map.Entry<DataComponentType<?>, Optional<?>> entry : stack.getComponentsPatch().entrySet())
+                {
+                    entry.getValue().ifPresent(setComponent(entry, builder));
+                }
             }
             if (stack.getCount() > 1)
             {
@@ -79,5 +70,13 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
             return builder;
         }
         return EmptyLootItem.emptyItem();
+    }
+
+    @NotNull
+    private static <T> Consumer<T> setComponent(Map.Entry<DataComponentType<?>, Optional<?>> entry, LootPoolSingletonContainer.Builder<?> builder)
+    {
+        // idk if there's a better way to do this generic ... but SetComponentsFunction is Mojank anyway because there's
+        // no method to set multiple components at once, short of hacking the constructor directly.
+        return value -> builder.apply(SetComponentsFunction.setComponent((DataComponentType<T>) entry.getKey(), value));
     }
 }

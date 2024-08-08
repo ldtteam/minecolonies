@@ -69,7 +69,7 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
                        @NotNull final ItemStack output,
                        @NotNull final Rule... rules)
     {
-        final CustomRecipeBuilder builder = new CustomRecipeBuilder(CRUSHER, MODULE_CUSTOM, name)
+        final CustomRecipeBuilder builder = recipe(CRUSHER, MODULE_CUSTOM, name)
                 .inputs(List.of(new ItemStorage(input)))
                 .result(output);
         for (final Rule rule : rules)

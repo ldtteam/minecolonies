@@ -35,58 +35,74 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public abstract class CustomRecipeProvider implements DataProvider
 {
     private final PackOutput                               packOutput;
-    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+    private final CompletableFuture<HolderLookup.Provider> providerFuture;
+    protected HolderLookup.Provider                        provider;
 
-    public CustomRecipeProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
+    public CustomRecipeProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> providerFuture)
     {
         this.packOutput = packOutput;
-        this.lookupProvider = lookupProvider;
+        this.providerFuture = providerFuture;
     }
 
     @Override
     @NotNull
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
-        final List<CompletableFuture<?>> futures = new ArrayList<>();
-        final Set<ResourceLocation> dupeKeyCheck = new HashSet<>();
-
-        registerRecipes((recipe) ->
+        return providerFuture.thenCompose(provider ->
         {
-            if (!dupeKeyCheck.add(recipe.id))
-            {
-                throw new IllegalStateException("Duplicate recipe " + recipe.id);
-            }
-            futures.add(DataProvider.saveStable(cache,
-                    recipe.json,
-                    pathProvider.json(recipe.id)));
-        });
+            this.provider = provider;
 
-        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+            final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
+            final List<CompletableFuture<?>> futures = new ArrayList<>();
+            final Set<ResourceLocation> dupeKeyCheck = new HashSet<>();
+
+            registerRecipes((recipe) ->
+            {
+                if (!dupeKeyCheck.add(recipe.id))
+                {
+                    throw new IllegalStateException("Duplicate recipe " + recipe.id);
+                }
+                futures.add(DataProvider.saveStable(cache,
+                        recipe.json,
+                        pathProvider.json(recipe.id)));
+            });
+
+            return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+        });
     }
 
-    protected abstract void registerRecipes(final Consumer<CustomRecipeBuilder> consumer);
+    @NotNull
+    protected CustomRecipeBuilder recipe(final String crafter, final String module, final String id)
+    {
+        return new CustomRecipeBuilder(crafter, module, id, provider);
+    }
+
+    protected abstract void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer);
 
     /**
      * Helper to construct custom crafterrecipes for datagen
      */
-    public class CustomRecipeBuilder
+    public static class CustomRecipeBuilder
     {
+        private final HolderLookup.Provider provider;
         private final JsonObject json = new JsonObject();
         private final ResourceLocation id;
         private Block intermediate = Blocks.AIR;
 
-        public CustomRecipeBuilder(final String crafter, final String module, final String id)
+        public CustomRecipeBuilder(final String crafter, final String module, final String id,
+                                   @NotNull final HolderLookup.Provider provider)
         {
+            this.provider = provider;
             this.json.addProperty(CustomRecipe.RECIPE_TYPE_PROP, CustomRecipe.RECIPE_TYPE_RECIPE);
             this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter + "_" + module);
             this.id = new ResourceLocation(Constants.MOD_ID, crafter + "/" + id);
         }
 
         @NotNull
-        public CustomRecipeBuilder create(final String crafter, final String module, final String id)
+        public static CustomRecipeBuilder create(final String crafter, final String module, final String id,
+                                                 @NotNull final HolderLookup.Provider provider)
         {
-            return new CustomRecipeBuilder(crafter, module, id);
+            return new CustomRecipeBuilder(crafter, module, id, provider);
         }
 
         @NotNull
@@ -243,7 +259,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         private JsonObject stackAsJson(final ItemStack stack)
         {
             final JsonObject jsonItemStack = new JsonObject();
-            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(ItemStack.CODEC, lookupProvider.join(), stack));
+            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(ItemStack.CODEC, provider, stack));
             jsonItemStack.addProperty(ITEM_PROP, BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
             if (stack.getCount() != 1)
             {

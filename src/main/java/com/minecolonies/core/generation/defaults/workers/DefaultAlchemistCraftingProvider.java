@@ -38,7 +38,7 @@ public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        new CustomRecipeBuilder(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
+        recipe(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.mistletoe)),
                         new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(ModItems.magicpotion))

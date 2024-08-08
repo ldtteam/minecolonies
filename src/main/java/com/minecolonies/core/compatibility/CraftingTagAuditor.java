@@ -18,6 +18,7 @@ import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.core.colony.crafting.*;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -170,7 +171,7 @@ public class CraftingTagAuditor
         writer.write("block,name,path,climbable,dangerous");
         writer.newLine();
 
-        for (final Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries())
+        for (final Map.Entry<ResourceKey<Block>, Block> entry : server.registryAccess().registryOrThrow(Registries.BLOCK).entrySet())
         {
             writer.write(entry.getKey().location().toString());
             writer.write(',');
@@ -411,9 +412,9 @@ public class CraftingTagAuditor
     {
         writer.write('"');
         writer.write(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-        if (stack.hasTag() && !stack.isDamageableItem())
+        if (!stack.isComponentsPatchEmpty() && !stack.isDamageableItem())
         {
-            writer.write(stack.getTag().toString().replace("\"", "\"\""));
+            writer.write(stack.getComponentsPatch().toString().replace("\"", "\"\""));
         }
         writer.write('"');
     }

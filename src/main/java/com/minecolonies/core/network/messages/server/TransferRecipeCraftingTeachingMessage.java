@@ -7,6 +7,7 @@ import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -47,14 +48,14 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
     protected TransferRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStacks = buf.readMap(RegistryFriendlyByteBuf::readInt, RegistryFriendlyByteBuf::readItem);
+        itemStacks = buf.readMap(FriendlyByteBuf::readInt, b -> ItemStack.STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
         complete = buf.readBoolean();
     }
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeMap(itemStacks, RegistryFriendlyByteBuf::writeInt, RegistryFriendlyByteBuf::writeItem);
+        buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, (b, v) -> ItemStack.STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, v));
         buf.writeBoolean(complete);
     }
 

@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,11 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
                Codec.FLOAT.optionalFieldOf("max-saturation").forGetter(FoodIngredient::maxSaturation))
         .apply(builder, FoodIngredient::new));
 
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
     private boolean matchesFood(@NotNull final ItemStack stack)
     {
         @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties(stack, null));
@@ -100,5 +106,27 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
     public IngredientType<?> getType()
     {
         return ModIngredientTypeInitializer.FOOD_INGREDIENT_TYPE.get();
+    }
+
+    public static class Builder
+    {
+        private Optional<Integer> minHealing = Optional.empty();
+        private Optional<Integer> maxHealing = Optional.empty();
+        private Optional<Float> minSaturation = Optional.empty();
+        private Optional<Float> maxSaturation = Optional.empty();
+
+        private Builder()
+        {
+        }
+
+        public Builder minHealing(final int healing) { minHealing = Optional.of(healing); return this; }
+        public Builder maxHealing(final int healing) { maxHealing = Optional.of(healing); return this; }
+        public Builder minSaturation(final float saturation) { minSaturation = Optional.of(saturation); return this; }
+        public Builder maxSaturation(final float saturation) { maxSaturation = Optional.of(saturation); return this; }
+
+        public Ingredient build()
+        {
+            return new FoodIngredient(minHealing, maxHealing, minSaturation, maxSaturation).toVanilla();
+        }
     }
 }
