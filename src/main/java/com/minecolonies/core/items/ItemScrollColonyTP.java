@@ -1,6 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -123,22 +124,21 @@ public class ItemScrollColonyTP extends AbstractItemScroll
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        Component colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
-
-        if (stack.getOrCreateTag().contains(TAG_DESC))
-        {
-            colonyDesc = Component.literal(stack.getOrCreateTag().getString(TAG_DESC));
-        }
-        else
+        MutableComponent colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
+        final ModDataComponents.Desc component = stack.get(ModDataComponents.DESC_COMPONENT);
+        if (component == null)
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
                 colonyDesc = Component.literal(colony.getName());
-                stack.getOrCreateTag().putString(TAG_DESC, colony.getName());
+                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(colony.getName()));
             }
         }
-
+        else
+        {
+            colonyDesc = Component.literal(TAG_DESC);
+        }
         final MutableComponent guiHint2 = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);

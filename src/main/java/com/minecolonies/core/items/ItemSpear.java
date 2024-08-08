@@ -1,8 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.core.entity.other.SpearEntity;
-import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,29 +14,14 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
 
 public class ItemSpear extends TridentItem
 {
     public ItemSpear(final Properties properties)
     {
         super(properties.durability(250));
-    }
-
-    @Override
-    public void initializeClient(final Consumer<IClientItemExtensions> consumer)
-    {
-        super.initializeClient(consumer);
-        consumer.accept(new IClientItemExtensions() {
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer()
-            {
-                return new SpearItemTileEntityRenderer();
-            }
-        });
     }
 
     @Override

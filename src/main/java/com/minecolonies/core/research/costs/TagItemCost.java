@@ -79,7 +79,7 @@ public class TagItemCost implements IResearchCost
     public void read(final @NotNull CompoundTag compound)
     {
         this.count = compound.getInt(TAG_COST_COUNT);
-        this.tag = TagKey.create(Registries.ITEM, new ResourceLocation(compound.getString(TAG_COST_TAG)));
+        this.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(compound.getString(TAG_COST_TAG)));
     }
 
     @Override

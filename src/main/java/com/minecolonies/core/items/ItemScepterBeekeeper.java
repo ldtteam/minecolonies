@@ -5,13 +5,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
@@ -28,8 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
@@ -62,16 +59,22 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
         final Player player = useContext.getPlayer();
 
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
-        final CompoundTag compound = scepter.getOrCreateTag();
+        final ModDataComponents.ColonyId colonyIdComponent = scepter.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final ModDataComponents.Pos posComponent = scepter.get(ModDataComponents.POS_COMPONENT);
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), useContext.getLevel());
-        final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
+        if (colonyIdComponent == null || posComponent == null)
+        {
+            return InteractionResult.FAIL;
+        }
+
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyIdComponent.id(), colonyIdComponent.dimension());
+        final BlockPos hutPos = posComponent.pos();
+
         final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
         final BuildingBeekeeper building = (BuildingBeekeeper) hut;
 
         if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
         {
-
             final Collection<BlockPos> positions = building.getHives();
 
             final BlockPos pos = useContext.getClickedPos();
@@ -110,9 +113,17 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
-        final CompoundTag compound = stack.getOrCreateTag();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), world.dimension());
-        final BlockPos pos = BlockPosUtil.read(compound, TAG_POS);
+        final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final ModDataComponents.Pos posComponent = stack.get(ModDataComponents.POS_COMPONENT);
+
+        if (colonyIdComponent == null || posComponent == null)
+        {
+            return Collections.emptyList();
+        }
+
+
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
+        final BlockPos pos = posComponent.pos();
 
         if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
         {

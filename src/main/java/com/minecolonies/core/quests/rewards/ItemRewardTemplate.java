@@ -5,13 +5,17 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
 
@@ -39,22 +43,14 @@ public class ItemRewardTemplate implements IQuestRewardTemplate
      * @param jsonObject the json to read from.
      * @return the reward object.
      */
-    public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
+    public static IQuestRewardTemplate createReward(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
         final ItemStack item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
         if (details.has(NBT_KEY))
         {
-            try
-            {
-                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
-            }
-            catch (CommandSyntaxException e)
-            {
-                Log.getLogger().error("Unable to load itemstack nbt from json!");
-                throw new RuntimeException(e);
-            }
+            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, details.getAsJsonObject(NBT_KEY)));
         }
         item.setCount(quantity);
         return new ItemRewardTemplate(item);

@@ -189,7 +189,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(ResourceLocation.parse(type)).produce(objectiveObj));
+                questRewards.add(IMinecoloniesAPI.getInstance().getQuestRewardRegistry().get(ResourceLocation.parse(type)).produce(provider, objectiveObj));
             }
             catch (final Exception ex)
             {

@@ -7,7 +7,6 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -32,9 +31,8 @@ public class ItemFireArrow extends ArrowItem
         return true;
     }
 
-    @NotNull
     @Override
-    public AbstractArrow createArrow(@NotNull final Level worldIn, @NotNull final ItemStack stack, final LivingEntity shooter)
+    public AbstractArrow createArrow(final Level worldIn, final ItemStack stack, final LivingEntity shooter, @Nullable final ItemStack bow)
     {
         AbstractArrow entity = ModEntities.FIREARROW.create(worldIn);
         entity.setOwner(shooter);

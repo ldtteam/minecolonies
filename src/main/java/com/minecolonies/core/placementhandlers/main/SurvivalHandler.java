@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
@@ -152,10 +153,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 }
 
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
-                final CompoundTag compound = inventoryStack.getTag();
-                if (compound != null && compound.contains(TAG_COLONY_ID) && tempColony != null && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
+
+                final ModDataComponents.ColonyId colonyComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+                if (colonyComponent != null && tempColony != null && tempColony.getID() != colonyComponent.id())
                 {
-                    MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
+                    MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }

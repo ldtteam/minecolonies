@@ -2,12 +2,11 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.core.client.gui.WindowClipBoard;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.MineColonies;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -19,7 +18,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
@@ -50,12 +48,12 @@ public class ItemClipboard extends AbstractItemMinecolonies
     {
         final ItemStack clipboard = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundTag compound = checkForCompound(clipboard);
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
+            clipboard.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()));
+
             if (!ctx.getLevel().isClientSide)
             {
                 MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
@@ -63,7 +61,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
         }
         else if (ctx.getLevel().isClientSide)
         {
-            openWindow(compound, ctx.getLevel(), ctx.getPlayer());
+            openWindow(clipboard, ctx.getLevel(), ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
@@ -90,33 +88,22 @@ public class ItemClipboard extends AbstractItemMinecolonies
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
-        openWindow(checkForCompound(clipboard), worldIn, playerIn);
+        openWindow(clipboard, worldIn, playerIn);
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
 
     /**
-     * Check for the compound and return it. If not available create and return it.
-     *
-     * @param clipboard the clipboard to check for.
-     * @return the compound of the clipboard.
-     */
-    private static CompoundTag checkForCompound(final ItemStack clipboard)
-    {
-        if (!clipboard.hasTag()) clipboard.setTag(new CompoundTag());
-        return clipboard.getTag();
-    }
-
-    /**
      * Opens the clipboard window if there is a valid colony linked
-     * @param compound the item compound
+     * @param stack the item
      * @param player the player entity opening the window
      */
-    private static void openWindow(CompoundTag compound, Level world, Player player)
+    private static void openWindow(ItemStack stack, Level world, Player player)
     {
-        if (compound.contains(TAG_COLONY))
+        final ModDataComponents.ColonyId component = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        if (component != null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(component.id(), component.dimension());
             if (colonyView != null)
             {
                 new WindowClipBoard(colonyView).open();

@@ -4,13 +4,13 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.core.client.gui.WindowResourceList;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -65,15 +65,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param compound the item compound
      * @param player   the player entity opening the window
      */
-    private static void openWindow(final CompoundTag compound, final Player player)
+    private static void openWindow(final ItemStack stack, final Player player)
     {
-        final int colonyId = compound.getInt(TAG_COLONY_ID);
-        final BlockPos builderPos = compound.contains(TAG_BUILDER) ? BlockPosUtil.read(compound, TAG_BUILDER) : null;
+        final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        if (colonyIdComponent == null)
+        {
+            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+        }
 
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
+        final ModDataComponents.Pos posComponent = stack.get(ModDataComponents.POS_COMPONENT);
+        if (posComponent == null)
+        {
+            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+        }
+
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
         if (colonyView != null)
         {
-            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
+            final IBuildingView buildingView = colonyView.getBuilding(posComponent.pos());
             if (buildingView instanceof BuildingBuilder.View builderBuildingView)
             {
                 final String currentHash = getWorkOrderHash(buildingView);
@@ -84,7 +93,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 if (snapshotNeedsUpdate)
                 {
                     // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
-                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
+                    new ResourceScrollSaveWarehouseSnapshotMessage(posComponent.pos()).sendToServer();
                 }
                 else
                 {
@@ -137,21 +146,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * Updates the warehouse snapshot.
      *
      * @param warehousePos the position of the warehouse.
-     * @param compound     the compound data.
+     * @param stack        the stack.
      * @param player       the player entity who clicked the warehouse.
      */
-    private static void updateWarehouseSnapshot(final BlockPos warehousePos, final CompoundTag compound, final Player player)
+    private static void updateWarehouseSnapshot(final BlockPos warehousePos, final ItemStack stack, final Player player)
     {
-        if (!compound.contains(TAG_COLONY_ID) || !compound.contains(TAG_BUILDER))
+        final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final ModDataComponents.Pos posComponent = stack.get(ModDataComponents.POS_COMPONENT);
+
+        if (colonyIdComponent == null || posComponent == null)
         {
             MessageUtils.format(COM_MINECOLONIES_SCROLL_NO_COLONY).sendTo(player);
             return;
         }
 
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), Minecraft.getInstance().level.dimension());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
         if (colonyView != null)
         {
-            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
+            final BlockPos builderPos = posComponent.pos();
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);
             if (buildingView instanceof BuildingBuilder.View)
             {
@@ -208,7 +220,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             if (blockEntity instanceof TileEntityRack rack)
             {
                 rack.getAllContent().forEach((item, amount) -> {
-                    final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
+                    final int hashCode = item.getItemStack().getComponentsPatch().hashCode();
                     final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
                     if (!resourcesModule.getResources().containsKey(key))
                     {
@@ -236,7 +248,6 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundTag compound = scroll.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (ctx.getLevel().isClientSide)
@@ -245,20 +256,20 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 if (buildingEntity instanceof TileEntityWareHouse)
                 {
-                    updateWarehouseSnapshot(buildingEntity.getTilePos(), compound, ctx.getPlayer());
+                    updateWarehouseSnapshot(buildingEntity.getTilePos(), scroll, ctx.getPlayer());
                 }
             }
             else
             {
-                openWindow(compound, ctx.getPlayer());
+                openWindow(scroll, ctx.getPlayer());
             }
         }
         else if (entity instanceof AbstractTileEntityColonyBuilding buildingEntity)
         {
             if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
-                compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
-                BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
+                scroll.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()));
+                scroll.set(ModDataComponents.POS_COMPONENT, new ModDataComponents.Pos(buildingEntity.getPosition()));
 
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
@@ -298,7 +309,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
-        openWindow(clipboard.getOrCreateTag(), playerIn);
+        openWindow(clipboard, playerIn);
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
@@ -309,19 +320,19 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         super.appendHoverText(stack, ctx, tooltip, flagIn);
 
-        if (worldIn == null)
+        final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final ModDataComponents.Pos posComponent = stack.get(ModDataComponents.POS_COMPONENT);
+
+        if (colonyIdComponent == null || posComponent == null)
         {
+            super.appendHoverText(stack, ctx, tooltip, flagIn);
             return;
         }
 
-        final CompoundTag compound = stack.getOrCreateTag();
-        final int colonyId = compound.getInt(TAG_COLONY_ID);
-        final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.dimension());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
         if (colonyView != null)
         {
-            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
+            final IBuildingView buildingView = colonyView.getBuilding(posComponent.pos());
             if (buildingView instanceof BuildingBuilder.View builderBuildingView)
             {
                 String name = builderBuildingView.getWorkerName();

@@ -3,21 +3,17 @@ package com.minecolonies.core.network.messages.server.colony.building;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Message to set the beekeeper scepter in the player inventory.
@@ -59,9 +55,8 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
-        final CompoundTag compound = scepter.getOrCreateTag();
-        BlockPosUtil.write(compound, TAG_POS, building.getID());
-        compound.putInt(TAG_ID, colony.getID());
+        scepter.set(ModDataComponents.POS_COMPONENT, new ModDataComponents.Pos(building.getID()));
+        scepter.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(colony.getID(), colony.getDimension()));
 
         player.getInventory().setChanged();
     }

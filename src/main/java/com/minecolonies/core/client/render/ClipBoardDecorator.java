@@ -7,18 +7,16 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.items.ModDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.IItemDecorator;
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.minecolonies.core.items.ItemClipboard.TAG_COLONY;
 
 public class ClipBoardDecorator implements IItemDecorator
 {
@@ -39,11 +37,11 @@ public class ClipBoardDecorator implements IItemDecorator
 
         if (render)
         {
-            final CompoundTag compoundTag = stack.getTag();
-            if (compoundTag != null)
+            final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+
+            if (colonyIdComponent != null)
             {
-                final int colonyId = compoundTag.getInt(TAG_COLONY);
-                colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
+                colonyView = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
 
                 if (colonyView != null)
                 {

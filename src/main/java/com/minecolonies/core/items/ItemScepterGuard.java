@@ -4,22 +4,28 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
@@ -53,23 +59,17 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final ItemStack scepter = ctx.getPlayer().getItemInHand(ctx.getHand());
-        if (!scepter.hasTag())
+        final @Nullable LastPos lastPosComp = scepter.get(ModDataComponents.LAST_POS_COMPONENT);
+        if (lastPosComp != null)
         {
-            scepter.setTag(new CompoundTag());
-        }
-        final CompoundTag compound = scepter.getTag();
-
-        if (compound.contains(TAG_LAST_POS))
-        {
-            final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
-            if (lastPos.equals(ctx.getClickedPos()))
+            if (lastPosComp.pos.equals(ctx.getClickedPos()))
             {
                 ctx.getPlayer().getInventory().removeItemNoUpdate(ctx.getPlayer().getInventory().selected);
                 MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGETS_FINISHED).sendTo(ctx.getPlayer());
                 return InteractionResult.FAIL;
             }
         }
-        return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), compound, ctx.getPlayer());
+        return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), scepter, ctx.getPlayer());
     }
 
     /**
@@ -77,32 +77,34 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      *
      * @param worldIn  the world it is used in.
      * @param pos      the position.
-     * @param compound the compound.
+     * @param stack    the stack.
      * @param playerIn the player using it.
      * @return if it has been successful.
      */
     @NotNull
-    private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final CompoundTag compound, final Player playerIn)
+    private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final ItemStack stack, final Player playerIn)
     {
-        if (!compound.contains(TAG_ID))
+        final @Nullable ModDataComponents.ColonyId colonyIdcomp = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final @Nullable ModDataComponents.Pos posComp = stack.get(ModDataComponents.POS_COMPONENT);
+        final @Nullable LastPos lastPosComp = stack.get(ModDataComponents.LAST_POS_COMPONENT);
+        if (colonyIdcomp == null || posComp == null)
         {
             return InteractionResult.FAIL;
         }
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyIdcomp.id(), colonyIdcomp.dimension());
         if (colony == null)
         {
             return InteractionResult.FAIL;
         }
 
-        final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
+        final IBuilding hut = colony.getBuildingManager().getBuilding(posComp.pos());
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return InteractionResult.FAIL;
         }
         final IGuardBuilding tower = (IGuardBuilding) hut;
 
-        if (BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
+        if (BlockPosUtil.getDistance2D(pos, posComp.pos()) > tower.getPatrolDistance())
         {
             MessageUtils.format(TOOL_GUARD_SCEPTER_TOWER_TOO_FAR).sendTo(playerIn);
             return InteractionResult.FAIL;
@@ -116,15 +118,31 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         else
         {
-            if (!compound.contains(TAG_LAST_POS))
+            if (lastPosComp == null)
             {
                 tower.resetPatrolTargets();
             }
             tower.addPatrolTargets(pos);
             MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGET, pos.toShortString()).sendTo(playerIn);
         }
-        BlockPosUtil.write(compound, TAG_LAST_POS, pos);
-
+        stack.set(ModDataComponents.LAST_POS_COMPONENT, new LastPos(pos));
         return InteractionResult.SUCCESS;
     }
+
+    public record LastPos(BlockPos pos)
+    {
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<LastPos>> TYPE  = null;
+        public static final LastPos                                                          EMPTY = new LastPos(BlockPos.ZERO);
+
+        public static final Codec<LastPos> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(BlockPos.CODEC.fieldOf("pos").forGetter(LastPos::pos))
+                       .apply(builder, LastPos::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, LastPos> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(BlockPos.CODEC),
+            LastPos::pos,
+            LastPos::new);
+    }
+
 }

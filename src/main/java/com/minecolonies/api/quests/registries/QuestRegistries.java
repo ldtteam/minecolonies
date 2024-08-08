@@ -64,11 +64,17 @@ public class QuestRegistries
     {
         //todo create instance getters
 
-        private final Function<JsonObject, IQuestRewardTemplate> producer;
+        private Function<JsonObject, IQuestRewardTemplate>                          producer = null;
+        private BiFunction<HolderLookup.Provider, JsonObject, IQuestRewardTemplate> providerProducer = null;
 
         public RewardEntry(final Function<JsonObject, IQuestRewardTemplate> productionFunction)
         {
             this.producer = productionFunction;
+        }
+
+        public RewardEntry(final BiFunction<HolderLookup.Provider, JsonObject, IQuestRewardTemplate> productionFunction)
+        {
+            this.providerProducer = productionFunction;
         }
 
         /**
@@ -76,9 +82,13 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the reward.
          */
-        public IQuestRewardTemplate produce(final JsonObject jsonObject)
+        public IQuestRewardTemplate produce(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
         {
-            return producer.apply(jsonObject);
+            if (producer != null)
+            {
+                return producer.apply(jsonObject);
+            }
+            return providerProducer.apply(provider, jsonObject);
         }
     }
 

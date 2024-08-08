@@ -7,18 +7,15 @@ import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 public class ColonyPatrolPointRenderer
 {
@@ -36,20 +33,27 @@ public class ColonyPatrolPointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard || !ctx.mainHandItem.hasTag())
+        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard)
         {
             return;
         }
 
-        final CompoundTag itemStackNbt = ctx.mainHandItem.getTag();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(itemStackNbt.getInt(TAG_ID), ctx.clientLevel.dimension());
+        final ModDataComponents.ColonyId colonyComponent = ctx.mainHandItem.get(ModDataComponents.COLONY_ID_COMPONENT);
+        final ModDataComponents.Pos posComponent = ctx.mainHandItem.get(ModDataComponents.POS_COMPONENT);
+
+        if (colonyComponent == null || posComponent == null)
+        {
+            return;
+        }
+
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyComponent.id(), colonyComponent.dimension());
 
         if (colony == null)
         {
             return;
         }
 
-        final IBuildingView guardTowerView = colony.getBuilding(BlockPosUtil.read(itemStackNbt, TAG_POS));
+        final IBuildingView guardTowerView = colony.getBuilding(posComponent.pos());
         if (guardTowerView == null)
         {
             return;

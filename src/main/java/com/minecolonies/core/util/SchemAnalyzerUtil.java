@@ -1,6 +1,7 @@
 package com.minecolonies.core.util;
 
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.util.Constants;
 import com.ldtteam.structurize.api.ItemStorage;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
@@ -9,6 +10,8 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -142,7 +145,7 @@ public class SchemAnalyzerUtil
 
             if (DomumOrnamentumUtils.isDoBlock(block) && blockInfo.hasTileEntityData())
             {
-                final MaterialTextureData textureData = MaterialTextureData.deserializeFromNBT(blockInfo.getTileEntityData().getCompound(Constants.BLOCK_ENTITY_TEXTURE_DATA));
+                final MaterialTextureData textureData = Utils.deserializeCodecMess(MaterialTextureData.CODEC, Minecraft.getInstance().level.registryAccess(), blockInfo.getTileEntityData().getCompound(Constants.BLOCK_ENTITY_TEXTURE_DATA));
                 final ItemStack result = new ItemStack(block);
                 if (!textureData.isEmpty())
                 {
@@ -155,7 +158,7 @@ public class SchemAnalyzerUtil
                     // Estimate for do recipes giving higher output per block usually, increased minimum of 2 due to added complexity for crafting
                     blockComplexity = Math.max(2, doComplexity / 3);
 
-                    textureData.writeToItemStack(result);
+                    result.set(ModDataComponents.TEXTURE_DATA, textureData);
                 }
 
                 storage = new ItemStorage(result);
