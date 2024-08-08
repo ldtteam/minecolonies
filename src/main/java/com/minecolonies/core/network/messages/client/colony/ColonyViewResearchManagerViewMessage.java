@@ -44,7 +44,7 @@ public class ColonyViewResearchManagerViewMessage extends AbstractClientPlayMess
         this.dimension = colony.getDimension();
 
         final CompoundTag researchCompound = new CompoundTag();
-        researchManager.writeToNBT(researchCompound);
+        researchManager.writeToNBT(colony.getWorld().registryAccess(), researchCompound);
         this.researchManagerData = researchCompound;
     }
 

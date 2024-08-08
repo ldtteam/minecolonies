@@ -345,7 +345,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void registerBlockAsNeeded(final ItemStack stack)
     {
-        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+        final int hashCode = stack.getComponentsPatch().hashCode();
         if (building.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode) == null)
         {
             building.addNeededResource(stack, 1);
@@ -359,7 +359,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             return 0;
         }
-        final int hashCode = deliveredItemStack.hasTag() ? deliveredItemStack.getTag().hashCode() : 0;
+        final int hashCode = deliveredItemStack.getComponentsPatch().hashCode();
         final BuildingBuilderResource resource = building.getNeededResources().get(deliveredItemStack.getDescriptionId() + "-" + hashCode);
         if (resource != null)
         {
@@ -521,7 +521,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             return null;
         }
-        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+        final int hashCode = stack.getComponentsPatch().hashCode();
         final AbstractBuildingStructureBuilder buildingWorker = building;
         BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode);
 
@@ -536,8 +536,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return stack;
         }
 
-        final ItemStack resStack = new ItemStack(resource.getItem(), Math.min(STACKSIZE, resource.getAmount()));
-        resStack.setTag(resource.getItemStack().getTag());
+
+        final ItemStack resStack = resource.getItemStack().copy();
+        resStack.setCount(Math.min(STACKSIZE, resource.getAmount()));
         return resStack;
     }
 

@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +12,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -59,25 +57,6 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
                 ((TileEntityColonyFlag) te).colonyId = colony.getID();
         }
 
-    }
-
-    @NotNull
-    @Override
-    public ItemStack getCloneItemStack(final LevelReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
-    {
-        BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityColonyFlag)
-        {
-            if (worldIn instanceof ClientLevel)
-            {
-                ((TileEntityColonyFlag)tileentity).getItemClient();
-            }
-            else
-            {
-                ((TileEntityColonyFlag)tileentity).getItemServer();
-            }
-        }
-        return super.getCloneItemStack(worldIn, pos, state);
     }
 
     @Override

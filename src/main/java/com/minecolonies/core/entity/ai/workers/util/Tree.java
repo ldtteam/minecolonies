@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -526,7 +527,7 @@ public class Tree
      * @return a new tree object.
      */
     @NotNull
-    public static Tree read(@NotNull final CompoundTag compound)
+    public static Tree read(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         @NotNull final Tree tree = new Tree();
         tree.location = BlockPosUtil.read(compound, TAG_LOCATION);
@@ -552,7 +553,7 @@ public class Tree
 
         if (compound.contains(TAG_SAPLING))
         {
-            tree.sapling = ItemStack.of(compound.getCompound(TAG_SAPLING));
+            tree.sapling = ItemStack.parseOptional(provider, compound.getCompound(TAG_SAPLING));
         }
         else
         {
@@ -967,7 +968,7 @@ public class Tree
      *
      * @param compound the compound of the tree.
      */
-    public void write(@NotNull final CompoundTag compound)
+    public void write(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         if (!isTree)
         {
@@ -996,7 +997,7 @@ public class Tree
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
 
         CompoundTag saplingNBT = new CompoundTag();
-        sapling.save(saplingNBT);
+        sapling.save(provider, saplingNBT);
 
         compound.put(TAG_SAPLING, saplingNBT);
         compound.putBoolean(TAG_NETHER_TREE, netherTree);

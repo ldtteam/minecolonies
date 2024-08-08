@@ -9,12 +9,19 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ISupplyItem;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -23,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -248,5 +256,25 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);
+    }
+
+    public record Timestamp(long time)
+    {
+        import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
+        instantTag.putString(PLACEMENT_NBT, INSTANT_PLACEMENT);
+
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<ItemScanAnalyzer.Timestamp>> TYPE  = null;
+        public static final ItemScanAnalyzer.Timestamp                                                          EMPTY = new ItemScanAnalyzer.Timestamp(0);
+
+        public static final Codec<ItemScanAnalyzer.Timestamp> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(Codec.LONG.fieldOf("timestamp").forGetter(ItemScanAnalyzer.Timestamp::time))
+                       .apply(builder, ItemScanAnalyzer.Timestamp::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ItemScanAnalyzer.Timestamp> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.LONG),
+            ItemScanAnalyzer.Timestamp::time,
+            ItemScanAnalyzer.Timestamp::new);
     }
 }

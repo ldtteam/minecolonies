@@ -3,10 +3,12 @@ package com.minecolonies.core.network.messages.server.colony;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -58,7 +60,7 @@ public class InteractionClose extends AbstractColonyServerMessage
     {
         super(buf, type);
         this.citizenId = buf.readInt();
-        this.key = buf.readComponent();
+        this.key = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, buf);
     }
 
     /**
@@ -71,7 +73,7 @@ public class InteractionClose extends AbstractColonyServerMessage
     {
         super.toBytes(buf);
         buf.writeInt(this.citizenId);
-        buf.writeComponent(key);
+        Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, buf, key);
     }
 
     @Override

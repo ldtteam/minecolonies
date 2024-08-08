@@ -52,7 +52,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
 
         if (tree != null)
         {
-            tree.write(treeTag);
+            tree.write(provider, treeTag);
         }
 
         compound.put(TAG_TREE, treeTag);
@@ -72,7 +72,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_TREE))
         {
-            tree = Tree.read(compound.getCompound(TAG_TREE));
+            tree = Tree.read(provider, compound.getCompound(TAG_TREE));
             if (!tree.isTree())
             {
                 tree = null;

@@ -53,14 +53,14 @@ public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage
     {
         super(buf, type);
         banner = Utils.deserializeCodecMess(buf);
-        location = StandardFactoryController.getInstance().deserializeTag(buf.readNbt());
+        location = StandardFactoryController.getInstance().deserialize(buf);
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         Utils.serializeCodecMess(buf, banner);
-        buf.writeNbt(StandardFactoryController.getInstance().serialize(location));
+        StandardFactoryController.getInstance().serialize(buf, location);
     }
 
     @Override

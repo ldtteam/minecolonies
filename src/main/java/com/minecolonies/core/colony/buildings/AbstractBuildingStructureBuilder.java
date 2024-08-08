@@ -92,7 +92,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     {
         if (inventory)
         {
-            final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+            final int hashCode = stack.getComponentsPatch().hashCode();
             final String key = stack.getDescriptionId() + "-" + hashCode;
             if (getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key))
             {
@@ -290,7 +290,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public boolean hasResourceInBucket(final ItemStack stack)
     {
-        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+        final int hashCode = stack.getComponentsPatch().hashCode();
         final String key = stack.getDescriptionId() + "-" + hashCode;
         return getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key);
     }

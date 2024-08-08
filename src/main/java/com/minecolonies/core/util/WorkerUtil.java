@@ -27,10 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -216,18 +213,16 @@ public final class WorkerUtil
     public static int getCorrectHarvestLevelForBlock(final BlockState target)
     {
         int required = 0;
-        final List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-        for (final Tier tier : tiers) {
-            TagKey<Block> tag = tier.getTag();
-            if (tag != null && target.is(tag))
+        for (final Tiers tier : Tiers.values()) {
+            TagKey<Block> tag = tier.getIncorrectBlocksForDrops();
+            if (target.is(tag))
             {
-                required = tier.getLevel();
+                required = tier.ordinal();
                 break;
             }
         }
 
-        if (required < 0
-              || target.getBlock() instanceof GlazedTerracottaBlock)
+        if (target.getBlock() instanceof GlazedTerracottaBlock)
         {
             return 0;
         }

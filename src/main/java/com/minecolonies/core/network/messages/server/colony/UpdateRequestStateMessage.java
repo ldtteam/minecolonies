@@ -55,7 +55,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     protected UpdateRequestStateMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        token = StandardFactoryController.getInstance().deserializeTag(buf.readNbt());
+        token = StandardFactoryController.getInstance().deserialize(buf);
         state = RequestState.values()[buf.readInt()];
         itemStack = state == RequestState.OVERRULED ? Utils.deserializeCodecMess(buf) : ItemStack.EMPTY;
     }
@@ -64,7 +64,7 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeNbt(StandardFactoryController.getInstance().serialize(token));
+        StandardFactoryController.getInstance().serialize(buf, token);
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
         {

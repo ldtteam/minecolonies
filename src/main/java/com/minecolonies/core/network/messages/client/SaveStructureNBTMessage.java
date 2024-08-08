@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +53,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
     protected SaveStructureNBTMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(buf);
+        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf), buf.registryAccess());
         CompoundTag compoundNBT = null;
         String fileName = null;
         try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
@@ -80,7 +81,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
         wrapperCompound.putString(TAG_MILLIS, fileName);
         wrapperCompound.put(TAG_SCHEMATIC, compoundNBT);
 
-        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(buf);
+        final RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf), buf.registryAccess());
         try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer))
         {
             NbtIo.writeCompressed(wrapperCompound, stream);
@@ -101,7 +102,7 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
               StructurePacks.storeBlueprint(packName, compoundNBT, Minecraft.getInstance().gameDirectory.toPath()
                                                                   .resolve(BLUEPRINT_FOLDER)
                                                                   .resolve(Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US))
-                                                                  .resolve(SCANS_FOLDER).resolve(fileName)));
+                                                                  .resolve(SCANS_FOLDER).resolve(fileName), player.registryAccess()));
             player.displayClientMessage(Component.translatableEscape("Scan successfully saved as %s", fileName), false);
         }
     }

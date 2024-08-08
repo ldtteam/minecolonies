@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +44,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
-        this.citizenBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        this.citizenBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
         this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
@@ -54,7 +55,7 @@ public class ColonyViewCitizenViewMessage extends AbstractClientPlayMessage
         colonyId = buf.readInt();
         citizenId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
-        this.citizenBuffer = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        this.citizenBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override

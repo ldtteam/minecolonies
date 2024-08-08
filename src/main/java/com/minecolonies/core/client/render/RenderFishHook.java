@@ -1,5 +1,6 @@
 package com.minecolonies.core.client.render;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -54,7 +55,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
         {
             return;
         }
-        EntityCitizen citizen = ((NewBobberEntity) entity).getAngler();
+        AbstractEntityCitizen citizen = ((NewBobberEntity) entity).getAngler();
         if (citizen != null)
         {
             poseStack.pushPose();

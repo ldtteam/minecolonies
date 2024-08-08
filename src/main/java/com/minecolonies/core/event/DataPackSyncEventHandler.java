@@ -90,7 +90,7 @@ public class DataPackSyncEventHandler
                 discoverCompatLists(server);
 
                 // and then finally update every player with the results
-                final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
+                final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(server.registryAccess());
                 for (final ServerPlayer player : event.getPlayerList().getPlayers())
                 {
                     if (player.getGameProfile() != owner)   // don't need to send them in SP, or LAN owner
@@ -101,7 +101,7 @@ public class DataPackSyncEventHandler
             }
             else if (event.getPlayer().getGameProfile() != owner)
             {
-                sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
+                sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
 
             if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&

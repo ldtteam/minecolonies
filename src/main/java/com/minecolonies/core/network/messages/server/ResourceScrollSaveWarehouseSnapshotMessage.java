@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemResourceScroll;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -64,7 +65,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     {
         super(buf, type);
         builderPos = buf.readBoolean() ? buf.readBlockPos() : null;
-        snapshot = buf.readMap(RegistryFriendlyByteBuf::readUtf, RegistryFriendlyByteBuf::readInt);
+        snapshot = buf.readMap(FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
         workOrderHash = buf.readUtf(32767);
     }
 
@@ -76,7 +77,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
         {
             buf.writeBlockPos(builderPos);
         }
-        buf.writeMap(snapshot, RegistryFriendlyByteBuf::writeUtf, RegistryFriendlyByteBuf::writeInt);
+        buf.writeMap(snapshot, FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
         buf.writeUtf(workOrderHash);
     }
 

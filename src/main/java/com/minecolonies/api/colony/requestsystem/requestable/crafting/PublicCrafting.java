@@ -47,7 +47,7 @@ public class PublicCrafting extends AbstractCrafting
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.getStack().save(provider));
         compound.putInt(NBT_COUNT, input.getCount());
-        final CompoundTag tokenCompound = StandardFactoryController.getInstance().serialize(provider, input.getRecipeID());
+        final CompoundTag tokenCompound = StandardFactoryController.getInstance().serializeTag(provider, input.getRecipeID());
         compound.put(NBT_TOKEN, tokenCompound);
         return compound;
     }

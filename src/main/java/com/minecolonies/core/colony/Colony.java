@@ -855,7 +855,7 @@ public class Colony implements IColony
         {
             @NotNull final CompoundTag chunkCompound = claimTagList.getCompound(i);
             final ChunkClaimData chunkClaimData = new ChunkClaimData();
-            chunkClaimData.deserializeNBT(chunkCompound.getCompound(TAG_CHUNK_CLAIM));
+            chunkClaimData.deserializeNBT(provider, chunkCompound.getCompound(TAG_CHUNK_CLAIM));
             claimData.put(chunkCompound.getLong(TAG_CHUNK_POS), chunkClaimData);
         }
         IColonyManager.getInstance().addClaimData(this, claimData);
@@ -976,7 +976,7 @@ public class Colony implements IColony
         for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
         {
             @NotNull final CompoundTag chunkCompound = new CompoundTag();
-            chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT());
+            chunkCompound.put(TAG_CHUNK_CLAIM, chunkClaimData.getValue().serializeNBT(provider));
             chunkCompound.putLong(TAG_CHUNK_POS, chunkClaimData.getLongKey());
             claimTagList.add(chunkCompound);
         }

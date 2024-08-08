@@ -2,11 +2,13 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.townhall.WindowTownHallCantCreateColony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -39,7 +41,7 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     public OpenCantFoundColonyWarningMessage(RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
-        this.warningMessageTranslationKey = buf.readComponent();
+        this.warningMessageTranslationKey = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, buf);
         this.townHallPos = buf.readBlockPos();
         this.displayConfigTooltip = buf.readBoolean();
     }
@@ -61,7 +63,7 @@ public class OpenCantFoundColonyWarningMessage  extends AbstractClientPlayMessag
     @Override
     public void toBytes(RegistryFriendlyByteBuf buf)
     {
-        buf.writeComponent(warningMessageTranslationKey);
+        Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, buf, warningMessageTranslationKey);
         buf.writeBlockPos(townHallPos);
         buf.writeBoolean(displayConfigTooltip);
     }

@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -53,7 +54,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.buildingData = new RegistryFriendlyByteBuf(Unpooled.buffer());
+        this.buildingData = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), building.getColony().getWorld().registryAccess());
         building.serializeToView(this.buildingData, fullSync);
         this.dimension = building.getColony().getDimension();
     }
@@ -64,7 +65,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
-        buildingData = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()));
+        buildingData = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
     @Override

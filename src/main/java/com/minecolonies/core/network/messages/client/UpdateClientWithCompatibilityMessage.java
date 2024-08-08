@@ -9,6 +9,7 @@ import com.minecolonies.core.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -26,13 +27,10 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
 
     /**
      * Message creation.
-     *
-     * @param dummy just pass true to initialize the message for sending.
      */
-    public UpdateClientWithCompatibilityMessage(final boolean dummy)
+    public UpdateClientWithCompatibilityMessage(@NotNull RegistryAccess provider)
     {
         super(TYPE);
-
         this.buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), provider);
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().serialize(this.buffer);
     }
