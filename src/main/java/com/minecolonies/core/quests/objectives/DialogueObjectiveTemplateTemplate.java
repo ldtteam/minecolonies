@@ -8,8 +8,10 @@ import com.minecolonies.api.quests.IDialogueObjectiveTemplate;
 import com.minecolonies.api.quests.IObjectiveInstance;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +78,7 @@ public class DialogueObjectiveTemplateTemplate implements IDialogueObjectiveTemp
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(final JsonObject jsonObject)
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
     {
         return new DialogueObjectiveTemplateTemplate(jsonObject.get(TARGET_KEY).getAsInt(),
           DialogueElement.parse(jsonObject),

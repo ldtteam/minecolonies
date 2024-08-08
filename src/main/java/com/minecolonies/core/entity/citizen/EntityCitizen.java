@@ -101,7 +101,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -1437,7 +1439,31 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        final boolean result = super.hurt(damageSource, damageInc);
+        boolean result = super.hurt(damageSource, damageInc);
+        if (!result)
+        {
+            LivingShieldBlockEvent ev;
+            if (damageInc > 0.0F && (ev = CommonHooks.onDamageBlock(this, this.damageContainers.peek(), this.isDamageSourceBlocked(damageSource))).getBlocked())
+            {
+                final float blockedDamage = this.damageContainers.peek().getBlockedDamage();
+                if (blockedDamage > 0)
+                {
+                    if (getItemInHand(getUsedItemHand()).getItem() instanceof ShieldItem)
+                    {
+                        if (getHealth() > blockedDamage * GUARD_BLOCK_DAMAGE)
+                        {
+                            final float blockDamage = CombatRules.getDamageAfterAbsorb(this,blockedDamage * GUARD_BLOCK_DAMAGE,
+                              damageSource,
+                              (float) this.getArmorValue(),
+                              (float) this.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue());
+                            setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
+                            result = true;
+                        }
+                        citizenItemHandler.damageItemInHand(this.getUsedItemHand(), (int) (blockedDamage * GUARD_BLOCK_DAMAGE));
+                    }
+                }
+            }
+        }
 
         if (result && damageSource.getEntity() instanceof LivingEntity)
         {
@@ -1712,23 +1738,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_ARMOR)));
         }
         return super.getArmorValue();
-    }
-
-    @Override
-    protected void hurtCurrentlyUsedShield(final float damage)
-    {
-        if (getItemInHand(getUsedItemHand()).getItem() instanceof ShieldItem)
-        {
-            if (getHealth() > damage * GUARD_BLOCK_DAMAGE)
-            {
-                final float blockDamage = CombatRules.getDamageAfterAbsorb(this,damage * GUARD_BLOCK_DAMAGE,
-                  (float) this.getArmorValue(),
-                  (float) this.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue());
-                setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
-            }
-            citizenItemHandler.damageItemInHand(this.getUsedItemHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
-        }
-        super.hurtCurrentlyUsedShield(damage);
     }
 
     @Override

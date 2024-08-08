@@ -13,6 +13,7 @@ import com.minecolonies.core.quests.*;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -78,7 +79,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         {
             globalJsonElementMap.put(byteBuf.readResourceLocation(), GSON.fromJson(new String(byteBuf.readByteArray()), JsonObject.class));
         }
-        apply(globalJsonElementMap);
+        apply(byteBuf.registryAccess(), globalJsonElementMap);
     }
 
     @Override
@@ -86,14 +87,14 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
     {
         globalJsonElementMap.clear();
         globalJsonElementMap.putAll(jsonElementMap);
-        apply(jsonElementMap);
+        apply(getRegistryLookup(), jsonElementMap);
     }
 
     /**
      * Our universal apply.
      * @param jsonElementMap the map.
      */
-    private static void apply(final Map<ResourceLocation, JsonElement> jsonElementMap)
+    private static void apply(@NotNull final HolderLookup.Provider provider, final Map<ResourceLocation, JsonElement> jsonElementMap)
     {
         Log.getLogger().info("Loading quests from data");
 
@@ -107,7 +108,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
 
             try
             {
-                final IQuestTemplate data = loadDataFromJson(fileResLoc, questDataJson);
+                final IQuestTemplate data = loadDataFromJson(provider, fileResLoc, questDataJson);
                 IQuestManager.GLOBAL_SERVER_QUESTS.put(fileResLoc, data);
             }
             catch (Exception e)
@@ -119,7 +120,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
         Log.getLogger().info("Finished loading quests from data");
     }
 
-    public static IQuestTemplate loadDataFromJson(final ResourceLocation questId, final JsonObject jsonObject) throws Exception
+    public static IQuestTemplate loadDataFromJson(@NotNull final HolderLookup.Provider provider, final ResourceLocation questId, final JsonObject jsonObject) throws Exception
     {
         final List<IQuestTriggerTemplate> questTriggers = new ArrayList<>();
         // Read quest triggers
@@ -145,7 +146,7 @@ public class QuestJsonListener extends SimpleJsonResourceReloadListener
             final String type = objectiveObj.get(TYPE).getAsString();
             try
             {
-                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(ResourceLocation.parse(type)).produce(objectiveObj));
+                questObjectives.add(IMinecoloniesAPI.getInstance().getQuestObjectiveRegistry().get(ResourceLocation.parse(type)).produce(provider, objectiveObj));
             }
             catch (final Exception ex)
             {

@@ -338,7 +338,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         loadRequestSystemFromNBT(provider, compound);
         if (compound.contains(TAG_IS_BUILT))
         {
@@ -376,7 +376,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public CompoundTag serializeNBT(final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
         final ListTag list = new ListTag();
         for (final IRequestResolver<?> requestResolver : getResolvers())
         {

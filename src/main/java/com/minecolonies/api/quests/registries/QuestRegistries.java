@@ -7,9 +7,13 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -83,9 +87,9 @@ public class QuestRegistries
      */
     public static class ObjectiveEntry
     {
-        private final Function<JsonObject, IQuestObjectiveTemplate> producer;
+        private final BiFunction<HolderLookup.Provider, JsonObject, IQuestObjectiveTemplate> producer;
 
-        public ObjectiveEntry(final Function<JsonObject, IQuestObjectiveTemplate> productionFunction)
+        public ObjectiveEntry(final BiFunction<HolderLookup.Provider, JsonObject, IQuestObjectiveTemplate> productionFunction)
         {
             this.producer = productionFunction;
         }
@@ -95,9 +99,9 @@ public class QuestRegistries
          * @param jsonObject the input.
          * @return the objective.
          */
-        public IQuestObjectiveTemplate produce(final JsonObject jsonObject)
+        public IQuestObjectiveTemplate produce(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
         {
-            return producer.apply(jsonObject);
+            return producer.apply(provider, jsonObject);
         }
     }
 

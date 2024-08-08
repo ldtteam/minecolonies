@@ -8,7 +8,10 @@ import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
@@ -18,6 +21,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
@@ -93,7 +98,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
      * @param jsonObject the json to parse it from.
      * @return a new objective object.
      */
-    public static IQuestObjectiveTemplate createObjective(final JsonObject jsonObject)
+    public static IQuestObjectiveTemplate createObjective(@NotNull final HolderLookup.Provider provider, final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int target = details.get(TARGET_KEY).getAsInt();
@@ -101,15 +106,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
         final ItemStack item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
         if (details.has(NBT_KEY))
         {
-            try
-            {
-                item.getComponentsPatch().setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
-            }
-            catch (CommandSyntaxException e)
-            {
-                Log.getLogger().error("Unable to load itemstack nbt from json!");
-                throw new RuntimeException(e);
-            }
+            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, details.getAsJsonObject(NBT_KEY)));
         }
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
         final String nbtMode = details.has(NBT_MODE_KEY) ? details.get(NBT_MODE_KEY).getAsString() : "";

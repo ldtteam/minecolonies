@@ -1,6 +1,7 @@
 package com.minecolonies.core.generation;
 
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -12,14 +13,15 @@ import java.util.function.Consumer;
 /**
  * Abstract datagen for crafterrecipes that include loot tables.
  */
-public abstract class CustomRecipeAndLootTableProvider implements DataProvider
+public abstract class CustomRecipeAndLootTableProvider extends CustomRecipeProvider
 {
     private final ChildRecipeProvider recipeProvider;
     private final ChildLootTableProvider lootTableProvider;
 
-    protected CustomRecipeAndLootTableProvider(@NotNull final PackOutput packOutput)
+    protected CustomRecipeAndLootTableProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        recipeProvider = new ChildRecipeProvider(packOutput);
+        super(packOutput, lookupProvider);
+        recipeProvider = new ChildRecipeProvider(packOutput, lookupProvider);
         lootTableProvider = new ChildLootTableProvider(packOutput);
     }
 
@@ -35,7 +37,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
 
     private class ChildRecipeProvider extends CustomRecipeProvider
     {
-        public ChildRecipeProvider(@NotNull final PackOutput packOutput)
+        public ChildRecipeProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
         {
             super(packOutput, lookupProvider);
         }

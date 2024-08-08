@@ -6,11 +6,10 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
-import com.minecolonies.core.generation.CustomRecipeProvider;
-import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.DatagenLootTableManager;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,9 +49,9 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
     private final DatagenLootTableManager            lootTableManager;
 
     public DefaultSifterCraftingProvider(@NotNull final PackOutput packOutput,
-                                         @NotNull final DatagenLootTableManager lootTableManager)
+                                         @NotNull final DatagenLootTableManager lootTableManager, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(packOutput);
+        super(packOutput, lookupProvider);
         this.lootTableManager = lootTableManager;
 
         inputs.put(Items.DIRT, Arrays.asList(
@@ -291,7 +291,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                         .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
                         .map(ItemStack::getItem));
 
-                CustomRecipeProvider.new CustomRecipeBuilder(SIFTER, MODULE_CUSTOM, name)
+                new CustomRecipeBuilder(SIFTER, MODULE_CUSTOM, name)
                         .inputs(Stream.of(
                                         new ItemStorage(new ItemStack(inputEntry.getKey())),
                                         new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
@@ -318,7 +318,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                       @NotNull final ItemLike output,
                       @NotNull final ResourceLocation research)
     {
-        CustomRecipeProvider.new CustomRecipeBuilder(job.getPath(), MODULE_CRAFTING,
+        new CustomRecipeBuilder(job.getPath(), MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))
