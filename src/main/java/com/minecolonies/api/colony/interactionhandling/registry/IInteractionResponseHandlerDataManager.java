@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.interactionhandling.registry;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,5 +27,5 @@ public interface IInteractionResponseHandlerDataManager
      * @return New InteractionResponseHandler created from the data, or null.
      */
     @Nullable
-    IInteractionResponseHandler createFrom(@NotNull ICitizen citizen, @NotNull CompoundTag compound);
+    IInteractionResponseHandler createFrom(@NotNull final HolderLookup.Provider provider, @NotNull ICitizen citizen, @NotNull CompoundTag compound);
 }

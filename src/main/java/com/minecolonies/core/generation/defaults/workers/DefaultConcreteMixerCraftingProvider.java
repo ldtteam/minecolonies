@@ -3,6 +3,7 @@ package com.minecolonies.core.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
@@ -23,9 +25,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM
 /** Datagen for concrete mixer crafterrecipes */
 public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
 {
-    public DefaultConcreteMixerCraftingProvider(@NotNull final PackOutput packOutput)
+    public DefaultConcreteMixerCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(packOutput);
+        super(packOutput, lookupProvider);
     }
 
     @NotNull
@@ -57,12 +59,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(),  MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(powder).getPath())
+            new CustomRecipeBuilder(ModJobs.CONCRETE_ID.getPath(),  MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(powder).getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
                     .build(consumer);
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(concrete).getPath())
+            new CustomRecipeBuilder(ModJobs.CONCRETE_ID.getPath(), MODULE_CUSTOM, BuiltInRegistries.ITEM.getKey(concrete).getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)

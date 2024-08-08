@@ -37,7 +37,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
     {
         public ChildRecipeProvider(@NotNull final PackOutput packOutput)
         {
-            super(packOutput);
+            super(packOutput, lookupProvider);
         }
 
         @NotNull

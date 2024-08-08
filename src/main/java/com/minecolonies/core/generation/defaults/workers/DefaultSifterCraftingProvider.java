@@ -291,7 +291,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                         .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
                         .map(ItemStack::getItem));
 
-                CustomRecipeProvider.CustomRecipeBuilder.create(SIFTER, MODULE_CUSTOM, name)
+                CustomRecipeProvider.new CustomRecipeBuilder(SIFTER, MODULE_CUSTOM, name)
                         .inputs(Stream.of(
                                         new ItemStorage(new ItemStack(inputEntry.getKey())),
                                         new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
@@ -318,7 +318,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                       @NotNull final ItemLike output,
                       @NotNull final ResourceLocation research)
     {
-        CustomRecipeProvider.CustomRecipeBuilder.create(job.getPath(), MODULE_CRAFTING,
+        CustomRecipeProvider.new CustomRecipeBuilder(job.getPath(), MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))

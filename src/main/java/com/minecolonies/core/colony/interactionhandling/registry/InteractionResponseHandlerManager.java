@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResp
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
 {
     @Nullable
     @Override
-    public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundTag compound)
+    public IInteractionResponseHandler createFrom(@NotNull final HolderLookup.Provider provider, @NotNull final ICitizen citizen, @NotNull final CompoundTag compound)
     {
         final ResourceLocation handlerType =
           compound.contains(NbtTagConstants.TAG_HANDLER_TYPE)
@@ -30,7 +31,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
         {
             try
             {
-                handler.deserializeNBT(compound);
+                handler.deserializeNBT(provider, compound);
             }
             catch (final RuntimeException ex)
             {

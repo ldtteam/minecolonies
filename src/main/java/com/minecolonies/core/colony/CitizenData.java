@@ -1403,7 +1403,7 @@ public class CitizenData implements ICitizenData
                     final ServerCitizenInteraction handler =
                       (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
                         .getInteractionResponseHandlerDataManager()
-                        .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                        .createFrom(provider, this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                     citizenChatOptions.put(handler.getId(), handler);
                 }
                 catch (final Exception ex)

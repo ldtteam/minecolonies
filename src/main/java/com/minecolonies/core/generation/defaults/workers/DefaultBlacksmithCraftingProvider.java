@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
@@ -25,9 +27,9 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
 {
     private static final String BLACKSMITH = ModJobs.BLACKSMITH_ID.getPath();
 
-    public DefaultBlacksmithCraftingProvider(@NotNull final PackOutput packOutput)
+    public DefaultBlacksmithCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(packOutput);
+        super(packOutput, lookupProvider);
     }
 
     @NotNull
@@ -60,7 +62,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                        final int ironCount, final int coalCount,
                        @NotNull final ItemLike output)
     {
-        CustomRecipeBuilder.create(BLACKSMITH, MODULE_CRAFTING,
+        new CustomRecipeBuilder(BLACKSMITH, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_INGOT, ironCount)),
                         new ItemStorage(new ItemStack(Items.LEATHER)),
@@ -76,7 +78,7 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
                            @NotNull final ItemLike input,
                            @NotNull final ItemLike output)
     {
-        CustomRecipeBuilder.create(BLACKSMITH, MODULE_CRAFTING,
+        new CustomRecipeBuilder(BLACKSMITH, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input)),
                         new ItemStorage(new ItemStack(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)),

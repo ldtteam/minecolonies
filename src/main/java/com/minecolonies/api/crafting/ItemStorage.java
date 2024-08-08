@@ -2,7 +2,9 @@ package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Utils;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -139,6 +141,10 @@ public class ItemStorage
             else
             {
                 this.amount = parsedStack.getCount();
+            }
+            if (jObject.has(TAG_PROP))
+            {
+                parsedStack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, jObject.get(TAG_PROP)));
             }
             this.stack = parsedStack;
             if(jObject.has(MATCHTYPE_PROP))

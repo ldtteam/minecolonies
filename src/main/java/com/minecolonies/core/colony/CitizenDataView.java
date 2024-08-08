@@ -355,7 +355,7 @@ public class CitizenDataView implements ICitizenDataView
         {
             final CompoundTag compoundNBT = buf.readNbt();
             final ServerCitizenInteraction handler =
-              (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
+              (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(buf.registryAccess(), this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
         }
 

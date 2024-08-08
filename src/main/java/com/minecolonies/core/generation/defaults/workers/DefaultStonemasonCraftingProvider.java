@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
@@ -23,9 +25,9 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
 {
     private static final String STONEMASON = ModJobs.STONEMASON_ID.getPath();
 
-    public DefaultStonemasonCraftingProvider(@NotNull final PackOutput packOutput)
+    public DefaultStonemasonCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(packOutput);
+        super(packOutput, lookupProvider);
     }
 
     @NotNull
@@ -43,7 +45,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
         convert(consumer, Items.COBBLESTONE, Items.PRISMARINE_SHARD, Items.PRISMARINE);
         convert(consumer, Items.STONE_BRICKS, Items.PRISMARINE_SHARD, Items.PRISMARINE_BRICKS);
 
-        CustomRecipeBuilder.create(STONEMASON, MODULE_CRAFTING, "end_stone")
+        new CustomRecipeBuilder(STONEMASON, MODULE_CRAFTING, "end_stone")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.SANDSTONE, 8)),
                         new ItemStorage(new ItemStack(Items.ENDER_PEARL))))
                 .result(new ItemStack(Items.END_STONE, 8))
@@ -56,7 +58,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
                          @NotNull final ItemLike input2,
                          @NotNull final ItemLike output)
     {
-        CustomRecipeBuilder.create(STONEMASON, MODULE_CRAFTING,
+        new CustomRecipeBuilder(STONEMASON, MODULE_CRAFTING,
                         BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input1)), new ItemStorage(new ItemStack(input2))))
                 .result(new ItemStack(output))

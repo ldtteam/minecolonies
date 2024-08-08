@@ -4,10 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -32,11 +34,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public abstract class CustomRecipeProvider implements DataProvider
 {
-    private final PackOutput packOutput;
+    private final PackOutput                               packOutput;
+    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
-    public CustomRecipeProvider(@NotNull final PackOutput packOutput)
+    public CustomRecipeProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
         this.packOutput = packOutput;
+        this.lookupProvider = lookupProvider;
     }
 
     @Override
@@ -66,13 +70,13 @@ public abstract class CustomRecipeProvider implements DataProvider
     /**
      * Helper to construct custom crafterrecipes for datagen
      */
-    public static class CustomRecipeBuilder
+    public class CustomRecipeBuilder
     {
         private final JsonObject json = new JsonObject();
         private final ResourceLocation id;
         private Block intermediate = Blocks.AIR;
 
-        private CustomRecipeBuilder(final String crafter, final String module, final String id)
+        public CustomRecipeBuilder(final String crafter, final String module, final String id)
         {
             this.json.addProperty(CustomRecipe.RECIPE_TYPE_PROP, CustomRecipe.RECIPE_TYPE_RECIPE);
             this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter + "_" + module);
@@ -80,7 +84,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         }
 
         @NotNull
-        public static CustomRecipeBuilder create(final String crafter, final String module, final String id)
+        public CustomRecipeBuilder create(final String crafter, final String module, final String id)
         {
             return new CustomRecipeBuilder(crafter, module, id);
         }
@@ -239,14 +243,8 @@ public abstract class CustomRecipeProvider implements DataProvider
         private JsonObject stackAsJson(final ItemStack stack)
         {
             final JsonObject jsonItemStack = new JsonObject();
-            String name = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-            // this could be incorrect for items with both damage and other NBT,
-            // but that should be rare, and this avoids some annoyance.
-            if (stack.hasTag() && !stack.isDamageableItem())
-            {
-                name += stack.getTag().toString();
-            }
-            jsonItemStack.addProperty(ITEM_PROP, name);
+            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(ItemStack.CODEC, lookupProvider.join(), stack));
+            jsonItemStack.addProperty(ITEM_PROP, BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
             if (stack.getCount() != 1)
             {
                 jsonItemStack.addProperty(COUNT_PROP, stack.getCount());

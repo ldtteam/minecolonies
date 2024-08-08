@@ -20,8 +20,10 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -39,8 +41,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.COUNT_PROP;
-import static com.minecolonies.api.util.constant.NbtTagConstants.ITEM_PROP;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
@@ -314,13 +315,16 @@ public class CustomRecipe
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
                         }
+                        if (ingredient.has(TAG_PROP))
+                        {
+                            stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, ingredient.get(TAG_PROP)));
+                        }
                         recipe.secondary.add(stack);
                     }
 
                 }
             }
         }
-
 
         if (recipeJson.has(RECIPE_ALTERNATE_PROP))
         {
@@ -335,6 +339,10 @@ public class CustomRecipe
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
+                        }
+                        if (ingredient.has(TAG_PROP))
+                        {
+                            stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, ingredient.get(TAG_PROP)));
                         }
                         recipe.altOutputs.add(stack);
                     }

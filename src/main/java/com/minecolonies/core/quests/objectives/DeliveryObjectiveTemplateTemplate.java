@@ -103,7 +103,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
         {
             try
             {
-                item.setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
+                item.getComponentsPatch().setTag(TagParser.parseTag(GsonHelper.getAsString(details, NBT_KEY)));
             }
             catch (CommandSyntaxException e)
             {

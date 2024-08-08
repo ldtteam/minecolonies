@@ -478,7 +478,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
-                if (!this.getMainHandItem().isEmpty() && SPEED_EFFECT != null && this.getMainHandItem().getItem() instanceof IChiefSwordItem
+                if (!this.getMainHandItem().isEmpty() && this.getMainHandItem().getItem() instanceof IChiefSwordItem
                       && MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)

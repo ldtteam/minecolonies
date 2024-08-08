@@ -1,6 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -9,11 +11,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -242,6 +242,18 @@ public final class Utils
     public static <T extends Object> T deserializeCodecMess(final Codec<T> codec, HolderLookup.Provider provider, final Tag tag)
     {
         return codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).resultOrPartial((res) -> {
+            Log.getLogger().error("Failed to parse thing: '{}'", res);
+        }).get();
+    }
+
+    public static <T extends Object> JsonElement serializeCodecMessToJson(final Codec<T> codec, HolderLookup.Provider provider, final T obj)
+    {
+        return codec.encodeStart(provider.createSerializationContext(JsonOps.INSTANCE), obj).getOrThrow();
+    }
+
+    public static <T extends Object> T deserializeCodecMessFromJson(final Codec<T> codec, HolderLookup.Provider provider, final JsonElement tag)
+    {
+        return codec.parse(provider.createSerializationContext(JsonOps.INSTANCE), tag).resultOrPartial((res) -> {
             Log.getLogger().error("Failed to parse thing: '{}'", res);
         }).get();
     }

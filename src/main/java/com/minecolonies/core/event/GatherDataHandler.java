@@ -60,26 +60,26 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultBiomeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
 
         // workers
-        generator.addProvider(event.includeServer(), new DefaultAlchemistCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultBakerCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultBlacksmithCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultConcreteMixerCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultAlchemistCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultBakerCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultBlacksmithCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultConcreteMixerCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
-        generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), event.getLookupProvider()));
-        generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultMechanicCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultMechanicCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), lootTableManager));
-        generator.addProvider(event.includeServer(), new DefaultPlanterCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultSawmillCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultPlanterCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultSawmillCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), lootTableManager));
-        generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput(), event.getLookupProvider()));
         generator.addProvider(true, enchRegProvider);
 
         generator.addProvider(event.includeClient() && event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), event.getLookupProvider()));

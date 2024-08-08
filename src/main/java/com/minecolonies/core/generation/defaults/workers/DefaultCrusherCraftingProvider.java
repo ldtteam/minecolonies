@@ -4,12 +4,14 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
@@ -21,9 +23,9 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
 {
     private static final String CRUSHER = ModJobs.CRUSHER_ID.getPath();
 
-    public DefaultCrusherCraftingProvider(@NotNull final PackOutput packOutput)
+    public DefaultCrusherCraftingProvider(@NotNull final PackOutput packOutput, final CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(packOutput);
+        super(packOutput, lookupProvider);
     }
 
     @NotNull
@@ -67,7 +69,7 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
                        @NotNull final ItemStack output,
                        @NotNull final Rule... rules)
     {
-        final CustomRecipeBuilder builder = CustomRecipeBuilder.create(CRUSHER, MODULE_CUSTOM, name)
+        final CustomRecipeBuilder builder = new CustomRecipeBuilder(CRUSHER, MODULE_CUSTOM, name)
                 .inputs(List.of(new ItemStorage(input)))
                 .result(output);
         for (final Rule rule : rules)

@@ -235,7 +235,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     public void deserializeNBT(final @NotNull CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
-        this.questId = new ResourceLocation(compoundNBT.getString(TAG_QUEST_ID));
+        this.questId = ResourceLocation.parse(compoundNBT.getString(TAG_QUEST_ID));
         this.index = compoundNBT.getInt(TAG_QUEST_INDEX);
         this.currentElement = ((DialogueObjectiveTemplateTemplate) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();
         this.startElement = currentElement;

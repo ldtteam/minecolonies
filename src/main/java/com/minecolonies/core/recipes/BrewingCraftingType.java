@@ -8,10 +8,10 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
 import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public class BrewingCraftingType extends CraftingType
         final List<IGenericRecipe> recipes = new ArrayList<>();
         final ICompatibilityManager compatibilityManager = MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager();
 
-        for (final IBrewingRecipe recipe : BrewingRecipeRegistry.getRecipes())
+        for (final IBrewingRecipe recipe : PotionBrewing.EMPTY.getRecipes())
         {
             final List<ItemStack> inputs = compatibilityManager.getListOfAllItems().stream()
                     .filter(recipe::isInput)

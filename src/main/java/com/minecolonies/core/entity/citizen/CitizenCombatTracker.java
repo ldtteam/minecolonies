@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.citizen;
 
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.*;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.*;
@@ -71,7 +72,7 @@ public class CitizenCombatTracker extends CombatTracker
                     {
                         //CombatTracker#getMessageForAssistedFall
                         ItemStack stack = fallEntity instanceof LivingEntity living ? living.getMainHandItem() : ItemStack.EMPTY;
-                        return !stack.isEmpty() && stack.hasCustomHoverName()
+                        return !stack.isEmpty() && stack.has(DataComponents.CUSTOM_NAME)
                                  ? Component.translatableEscape("death.fell.assist.item", nameComponent, fallMessage, stack.getDisplayName())
                                  : Component.translatableEscape("death.fell.assist", nameComponent, fallMessage);
                     }
@@ -81,7 +82,7 @@ public class CitizenCombatTracker extends CombatTracker
                         {
                             //CombatTracker#getMessageForAssistedFall
                             ItemStack stack = lastEntity instanceof LivingEntity livingentity ? livingentity.getMainHandItem() : ItemStack.EMPTY;
-                            return !stack.isEmpty() && stack.hasCustomHoverName() ? Component.translatableEscape("death.fell.finish.item",
+                            return !stack.isEmpty() && stack.has(DataComponents.CUSTOM_NAME) ? Component.translatableEscape("death.fell.finish.item",
                               nameComponent,
                               lastMessage,
                               stack.getDisplayName()) : Component.translatableEscape("death.fell.finish", nameComponent, lastMessage);
@@ -114,7 +115,7 @@ public class CitizenCombatTracker extends CombatTracker
                 {
                     Component component = entity == null ? directEntity.getDisplayName() : entity.getDisplayName();
                     ItemStack stack = entity instanceof LivingEntity living ? living.getMainHandItem() : ItemStack.EMPTY;
-                    return !stack.isEmpty() && stack.hasCustomHoverName()
+                    return !stack.isEmpty() && stack.has(DataComponents.CUSTOM_NAME)
                              ? Component.translatableEscape(s + ".item", nameComponent, component, stack.getDisplayName())
                              : Component.translatableEscape(s, nameComponent, component);
                 }

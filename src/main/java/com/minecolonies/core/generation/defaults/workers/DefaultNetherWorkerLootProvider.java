@@ -240,7 +240,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
                     .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
                     .map(ItemStack::getItem));
 
-            CustomRecipeProvider.CustomRecipeBuilder.create(NETHERWORKER, MODULE_CUSTOM, "trip" + buildingLevel)
+            CustomRecipeProvider.new CustomRecipeBuilder(NETHERWORKER, MODULE_CUSTOM, "trip" + buildingLevel)
                     .minBuildingLevel(buildingLevel)
                     .maxBuildingLevel(buildingLevel)
                     .inputs(inputs)
@@ -250,7 +250,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
         }
 
         // and also a lava bucket recipe for good measure
-        CustomRecipeProvider.CustomRecipeBuilder.create(NETHERWORKER, MODULE_CUSTOM, "lava")
+        CustomRecipeProvider.new CustomRecipeBuilder(NETHERWORKER, MODULE_CUSTOM, "lava")
                 .inputs(Collections.singletonList(new ItemStorage(new ItemStack(Items.BUCKET))))
                 .result(new ItemStack(Items.LAVA_BUCKET))
                 .build(consumer);
