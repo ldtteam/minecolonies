@@ -159,8 +159,8 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.GILDED_BLACKSTONE).setWeight(15))
             .add(LootItem.lootTableItem(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE).setWeight(5))
             .add(createEncounterLootItem(PIGLIN).setWeight(150))
-            .add(createEncounterLootItem(PIGLIN_BRUTE).setWeight(150).setQuality(-10))
-            .add(createEncounterLootItem(HOGLIN).setWeight(100).setQuality(-10))
+            .add(createEncounterLootItem(PIGLIN_BRUTE).setWeight(150))
+            .add(createEncounterLootItem(HOGLIN).setWeight(100))
         ));
 
         createStructureLootTable(BURIED_TREASURE_ID, registrar, builder -> builder.withPool(
@@ -173,7 +173,7 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
             .add(createPotionItem(Potions.WATER_BREATHING).setWeight(15))
             .add(LootItem.lootTableItem(Items.HEART_OF_THE_SEA).setWeight(5))
-            .add(createEncounterLootItem(DROWNED).setWeight(100).setQuality(-10))
+            .add(createEncounterLootItem(DROWNED).setWeight(100))
         ));
 
         createStructureLootTable(END_CITY_ID, registrar, builder -> builder.withPool(
@@ -243,8 +243,8 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
                    .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
                    .apply(SetItemDamageFunction.setDamage(AVERAGE_TOOL_DAMAGE)))
             .add(LootItem.lootTableItem(Items.ELYTRA).setWeight(1))
-            .add(createEncounterLootItem(ENDERMAN).setWeight(200).setQuality(-1))
-            .add(createEncounterLootItem(SHULKER).setWeight(300).setQuality(-1))
+            .add(createEncounterLootItem(ENDERMAN).setWeight(200))
+            .add(createEncounterLootItem(SHULKER).setWeight(300))
         ));
 
         createStructureLootTable(FORTRESS_ID, registrar, builder -> builder.withPool(
@@ -259,11 +259,11 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.SADDLE).setWeight(50))
             .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(20))
             .add(createEncounterLootItem(SKELETON).setWeight(20))
-            .add(createEncounterLootItem(WITHER_SKELETON).setWeight(10).setQuality(-2))
-            .add(createEncounterLootItem(BLAZE).setWeight(10).setQuality(-2))
-            .add(createEncounterLootItem(MAGMA_CUBE_LARGE).setWeight(5).setQuality(-1))
-            .add(createEncounterLootItem(MAGMA_CUBE_MEDIUM).setWeight(10).setQuality(-1))
-            .add(createEncounterLootItem(MAGMA_CUBE_SMALL).setWeight(20).setQuality(-1))
+            .add(createEncounterLootItem(WITHER_SKELETON).setWeight(10))
+            .add(createEncounterLootItem(BLAZE).setWeight(10))
+            .add(createEncounterLootItem(MAGMA_CUBE_LARGE).setWeight(5))
+            .add(createEncounterLootItem(MAGMA_CUBE_MEDIUM).setWeight(10))
+            .add(createEncounterLootItem(MAGMA_CUBE_SMALL).setWeight(20))
         ));
 
         createStructureLootTable(MANSION_ID, registrar, builder -> builder.withPool(
@@ -281,9 +281,9 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
                    .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
                    .apply(SetItemDamageFunction.setDamage(AVERAGE_TOOL_DAMAGE)))
             .add(LootItem.lootTableItem(Items.ENCHANTED_GOLDEN_APPLE).setWeight(5))
-            .add(createEncounterLootItem(VINDICATOR).setWeight(100).setQuality(-10))
-            .add(createEncounterLootItem(EVOKER).setWeight(50).setQuality(-5))
-            .add(createEncounterLootItem(VEX).setWeight(50).setQuality(-10))
+            .add(createEncounterLootItem(VINDICATOR).setWeight(100))
+            .add(createEncounterLootItem(EVOKER).setWeight(50))
+            .add(createEncounterLootItem(VEX).setWeight(50))
         ));
 
         createStructureLootTable(MINESHAFT_ID, registrar, builder -> builder.withPool(
@@ -300,12 +300,12 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(25))
             .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK).setWeight(20).apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
             .add(LootItem.lootTableItem(Items.ENCHANTED_GOLDEN_APPLE).setWeight(5))
-            .add(createEncounterLootItem(ZOMBIE).setWeight(100).setQuality(-10))
-            .add(createEncounterLootItem(SKELETON).setWeight(50).setQuality(-10))
-            .add(createEncounterLootItem(CREEPER).setWeight(30).setQuality(-5))
-            .add(createEncounterLootItem(SPIDER).setWeight(30).setQuality(-5))
-            .add(createEncounterLootItem(CAVE_SPIDER).setWeight(30).setQuality(-5))
-            .add(createEncounterLootItem(ENDERMAN).setWeight(15).setQuality(-3))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(100))
+            .add(createEncounterLootItem(SKELETON).setWeight(50))
+            .add(createEncounterLootItem(CREEPER).setWeight(30))
+            .add(createEncounterLootItem(SPIDER).setWeight(30))
+            .add(createEncounterLootItem(CAVE_SPIDER).setWeight(30))
+            .add(createEncounterLootItem(ENDERMAN).setWeight(15))
         ));
 
         createStructureLootTable(MONUMENT_ID, registrar, builder -> builder.withPool(
@@ -315,8 +315,8 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.DARK_PRISMARINE).setWeight(25))
             .add(LootItem.lootTableItem(Items.SEA_LANTERN).setWeight(15))
             .add(LootItem.lootTableItem(Items.WET_SPONGE).setWeight(15))
-            .add(createEncounterLootItem(GUARDIAN).setWeight(50).setQuality(-5))
-            .add(createEncounterLootItem(ELDER_GUARDIAN).setWeight(5).setQuality(-1))
+            .add(createEncounterLootItem(GUARDIAN).setWeight(50))
+            .add(createEncounterLootItem(ELDER_GUARDIAN).setWeight(5))
         ));
 
         createStructureLootTable(NETHER_FOSSIL_ID, registrar, builder -> builder.withPool(
@@ -325,7 +325,7 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.AIR).setWeight(25))
             .add(LootItem.lootTableItem(Items.BONE_BLOCK).setWeight(50))
             .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(10))
-            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25).setQuality(-5))
+            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25))
         ));
 
         createStructureLootTable(OCEAN_RUIN_ID, registrar, builder -> builder.withPool(
@@ -341,7 +341,7 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
                    .setWeight(25)
                    .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
-            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25).setQuality(-5))
+            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25))
         ));
 
         createStructureLootTable(PILLAGER_OUTPOST_ID, registrar, builder -> builder.withPool(
@@ -353,27 +353,47 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
                    .setWeight(10)
                    .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
-            .add(createEncounterLootItem(PILLAGER).setWeight(25).setQuality(-5))
-            .add(createEncounterLootItem(PILLAGER_CAPTAIN).setWeight(5).setQuality(-5))
+            .add(createEncounterLootItem(PILLAGER).setWeight(25))
+            .add(createEncounterLootItem(PILLAGER_CAPTAIN).setWeight(5))
         ));
 
-        createStructureLootTable(STRONGHOLD_ID, registrar, builder -> builder.withPool(
+        createStructureLootTable(RUINED_PORTAL_ID, registrar, builder -> builder.withPool(
           new LootPool.Builder()
-            .setRolls(SPECIAL_STRUCTURE_ROLLS)
-            .add(LootItem.lootTableItem(Items.STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
-            .add(LootItem.lootTableItem(Items.CRACKED_STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
-            .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(75))
-            .add(LootItem.lootTableItem(Items.BOOK).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
-            .add(LootItem.lootTableItem(Items.BOOKSHELF).setWeight(25))
-            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(25))
-            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
-            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
-                   .setWeight(20)
-                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
-            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
-            .add(createEncounterLootItem(SKELETON).setWeight(30))
-            .add(createEncounterLootItem(CREEPER).setWeight(10))
-            .add(createEncounterLootItem(ENDERMAN).setWeight(10))
+            .setRolls(COMMON_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.NETHERRACK).setWeight(100).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.OBSIDIAN).setWeight(100).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.FIRE_CHARGE).setWeight(50))
+            .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(25))
+            .add(LootItem.lootTableItem(Items.GOLDEN_HELMET)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_CHESTPLATE)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_LEGGINGS)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_BOOTS)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_SWORD)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_PICKAXE)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_SHOVEL)
+                   .setWeight(25)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment())
+                   .apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
+            .add(LootItem.lootTableItem(Items.GOLD_BLOCK).setWeight(10))
+            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25))
         ));
 
         createStructureLootTable(SHIPWRECK_ID, registrar, builder -> {
@@ -397,6 +417,25 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             }
             builder.withPool(pool);
         });
+
+        createStructureLootTable(STRONGHOLD_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(SPECIAL_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.CRACKED_STONE_BRICKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(75))
+            .add(LootItem.lootTableItem(Items.BOOK).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.BOOKSHELF).setWeight(25))
+            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(25))
+            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
+            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                   .setWeight(20)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
+            .add(createEncounterLootItem(SKELETON).setWeight(30))
+            .add(createEncounterLootItem(CREEPER).setWeight(10))
+            .add(createEncounterLootItem(ENDERMAN).setWeight(10))
+        ));
 
         createStructureLootTable(VILLAGE_DESERT_ID, registrar, builder -> {
             List<MinecoloniesCropBlock> crops =

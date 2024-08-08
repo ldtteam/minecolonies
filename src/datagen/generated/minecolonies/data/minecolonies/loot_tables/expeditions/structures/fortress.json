@@ -129,7 +129,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -2,
           "weight": 10
         },
         {
@@ -141,7 +140,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -2,
           "weight": 10
         },
         {
@@ -153,7 +151,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -1,
           "weight": 5
         },
         {
@@ -165,7 +162,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -1,
           "weight": 10
         },
         {
@@ -177,7 +173,6 @@
             }
           ],
           "name": "minecolonies:adventure_token",
-          "quality": -1,
           "weight": 20
         }
       ],
