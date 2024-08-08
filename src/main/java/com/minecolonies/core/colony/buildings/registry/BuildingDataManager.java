@@ -34,7 +34,7 @@ public class BuildingDataManager implements IBuildingDataManager
 
         try
         {
-            building.deserializeNBT(compound);
+            building.deserializeNBT(colony.getWorld().registryAccess(), compound);
         }
         catch (final Exception ex)
         {

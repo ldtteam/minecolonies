@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
@@ -76,7 +77,7 @@ public final class BackUpHelper
      *
      * @return true if succesful.
      */
-    public static boolean backupColonyData()
+    public static boolean backupColonyData(@NotNull final HolderLookup.Provider provider)
     {
         if (System.currentTimeMillis() - lastBackupTime < MAX_TIME_TO_NEXT_BACKUP)
         {
@@ -84,7 +85,7 @@ public final class BackUpHelper
         }
         lastBackupTime = System.currentTimeMillis();
 
-        BackUpHelper.saveColonies();
+        BackUpHelper.saveColonies(provider);
         try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir =
@@ -172,7 +173,7 @@ public final class BackUpHelper
     /**
      * Loads the colony managers backup file
      */
-    public static void loadManagerBackup()
+    public static void loadManagerBackup(final HolderLookup.@NotNull Provider provider)
     {
         try
         {
@@ -181,7 +182,7 @@ public final class BackUpHelper
             if (data != null)
             {
                 Log.getLogger().info("Loading Minecolonies colony manager Backup Data");
-                IColonyManager.getInstance().read(data);
+                IColonyManager.getInstance().read(provider, data);
                 Log.getLogger().info("Backup Load Complete");
             }
         }
@@ -331,10 +332,10 @@ public final class BackUpHelper
     /**
      * Save all the Colonies.
      */
-    public static void saveColonies()
+    public static void saveColonies(final HolderLookup.@NotNull Provider provider)
     {
         @NotNull final CompoundTag compound = new CompoundTag();
-        IColonyManager.getInstance().write(compound);
+        IColonyManager.getInstance().write(provider, compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);

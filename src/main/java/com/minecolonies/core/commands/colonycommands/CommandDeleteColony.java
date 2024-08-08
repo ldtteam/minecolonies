@@ -176,7 +176,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
             return 1;
         }
 
-        BackUpHelper.backupColonyData();
+        BackUpHelper.backupColonyData(colony.getWorld().registryAccess());
         IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getLevel().dimension());
         context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_COLONY_DELETE_SUCCESS, colony.getName()), true);
         return 1;

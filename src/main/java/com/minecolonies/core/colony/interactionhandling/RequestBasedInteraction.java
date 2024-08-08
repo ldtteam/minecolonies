@@ -119,7 +119,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag tag = super.serializeNBT();
+        final CompoundTag tag = super.serializeNBT(provider);
         tag.put(TOKEN_TAG, StandardFactoryController.getInstance().serializeTag(provider, token));
         return tag;
     }
@@ -127,7 +127,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
-        super.deserializeNBT(compoundNBT);
+        super.deserializeNBT(provider, compoundNBT);
         this.token = StandardFactoryController.getInstance().deserializeTag(provider, compoundNBT.getCompound(TOKEN_TAG));
     }
 

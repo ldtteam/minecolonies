@@ -179,7 +179,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compoundNBT = super.serializeNBT();
+        final CompoundTag compoundNBT = super.serializeNBT(provider);
         compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
         final ListTag list = new ListTag();
         for (final Component element : parents)
@@ -196,7 +196,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
-        super.deserializeNBT(compoundNBT);
+        super.deserializeNBT(provider, compoundNBT);
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
         this.parents.clear();
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);

@@ -5,11 +5,14 @@ import com.minecolonies.api.crafting.ExactMatchItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,9 +37,9 @@ public final class SortingUtils
      *
      * @param inv the item handler to sort.
      */
-    public static void sort(final CombinedItemHandler inv)
+    public static void sort(@NotNull final HolderLookup.Provider provider, final CombinedItemHandler inv)
     {
-        final CompoundTag backup = inv.serializeNBT();
+        final CompoundTag backup = inv.serializeNBT(provider);
         final AtomicInteger runCount = new AtomicInteger(0);
 
         try
@@ -69,7 +72,7 @@ public final class SortingUtils
         }
         catch (Exception e)
         {
-            inv.deserializeNBT(backup);
+            inv.deserializeNBT(provider, backup);
             Log.getLogger().warn("Minecolonies warehouse sorting had an error, report it to the mod author.", e);
         }
     }

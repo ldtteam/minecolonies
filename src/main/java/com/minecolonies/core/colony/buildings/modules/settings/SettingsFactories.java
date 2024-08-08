@@ -620,7 +620,7 @@ public class SettingsFactories
             final CompoundTag compound = new CompoundTag();
             if (storage.selectedRecipe != null)
             {
-                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.selectedRecipe));
+                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serializeTag(provider, storage.selectedRecipe));
             }
             compound.putString(TAG_MODULE, storage.craftingModuleId);
             return compound;

@@ -32,7 +32,7 @@ public class DmanJobView extends DefaultJobView
     public void deserialize(final RegistryFriendlyByteBuf buffer)
     {
         super.deserialize(buffer);
-        this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(buffer);
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(buffer);
     }
 
     /**

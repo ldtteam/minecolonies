@@ -24,7 +24,7 @@ public class CommandExportColony implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        BackUpHelper.backupColonyData();
+        BackUpHelper.backupColonyData(context.getSource().getLevel().registryAccess());
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
         if (colony == null)
         {

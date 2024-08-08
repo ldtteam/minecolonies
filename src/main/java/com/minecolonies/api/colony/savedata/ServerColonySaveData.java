@@ -141,7 +141,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
         if (!compound.contains(TAG_COLONIES))
         {
-            BackUpHelper.loadManagerBackup();
+            BackUpHelper.loadManagerBackup(provider);
             return;
         }
 

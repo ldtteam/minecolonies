@@ -114,7 +114,7 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag tag = super.serializeNBT();
+        final CompoundTag tag = super.serializeNBT(provider);
         BlockPosUtil.writeToNBT(tag, POS_TAG, pos);
         return tag;
     }
@@ -122,7 +122,7 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
-        super.deserializeNBT(compoundNBT);
+        super.deserializeNBT(provider, compoundNBT);
         this.pos = BlockPosUtil.readFromNBT(compoundNBT, POS_TAG);
     }
 

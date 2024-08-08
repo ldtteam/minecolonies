@@ -49,7 +49,7 @@ public class DefaultJobView implements IJobView
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
-            asyncRequests.add(StandardFactoryController.getInstance().deserializeTag(buffer));
+            asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
         entry = buffer.readById(IJobRegistry.getInstance()::byIdOrThrow);
     }

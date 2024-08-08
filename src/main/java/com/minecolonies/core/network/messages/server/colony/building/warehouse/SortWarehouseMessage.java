@@ -41,7 +41,7 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
         {
             if (building.getItemHandlerCap() instanceof final CombinedItemHandler combinedInv)
             {
-                SortingUtils.sort(combinedInv);
+                SortingUtils.sort(player.level().registryAccess(), combinedInv);
             }
         }
     }

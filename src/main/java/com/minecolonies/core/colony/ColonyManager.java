@@ -666,7 +666,7 @@ public final class ColonyManager implements IColonyManager
 
             if (hasColonies)
             {
-                BackUpHelper.backupColonyData();
+                BackUpHelper.backupColonyData(world.registryAccess());
             }
 
             NeoForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
