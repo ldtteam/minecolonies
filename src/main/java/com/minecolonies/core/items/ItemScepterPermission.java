@@ -4,12 +4,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
@@ -123,18 +123,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             return InteractionResult.SUCCESS;
         }
         final ItemStack scepter = ctx.getPlayer().getItemInHand(ctx.getHand());
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundTag());
-        }
-
         final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(ctx.getLevel(), ctx.getClickedPos());
         if (iColonyView == null)
         {
             return InteractionResult.FAIL;
         }
-        final CompoundTag compound = scepter.getTag();
-        return handleItemAction(compound, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), iColonyView);
+        return handleItemAction(scepter, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), iColonyView);
     }
 
     /**
@@ -157,30 +151,25 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
         {
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
         }
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundTag());
-        }
-        final CompoundTag compound = scepter.getTag();
 
-        toggleItemMode(playerIn, compound);
+        toggleItemMode(playerIn, scepter);
 
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
     }
 
-    private static void toggleItemMode(final Player playerIn, final CompoundTag compound)
+    private static void toggleItemMode(final Player playerIn, final ItemStack stack)
     {
-        final String itemMode = compound.getString(TAG_ITEM_MODE);
+        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
 
         switch (itemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
-                compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
+                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(TAG_VALUE_MODE_LOCATION));
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_LOCATION).create()).sendTo(playerIn);
                 break;
             case TAG_VALUE_MODE_LOCATION:
             default:
-                compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
+                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(TAG_VALUE_MODE_BLOCK));
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_BLOCK).create()).sendTo(playerIn);
                 break;
         }
@@ -197,7 +186,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             return boxes;
         }
 
-        final String itemMode = stack.getOrCreateTag().getString(TAG_ITEM_MODE);
+        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
         switch (itemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
@@ -225,7 +214,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
     {
-        final String itemMode = stack.getOrCreateTag().getString(TAG_ITEM_MODE);
+        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
         final MutableComponent mode;
         switch (itemMode)
         {
@@ -244,13 +233,13 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
 
     @NotNull
     private static InteractionResult handleItemAction(
-      final CompoundTag compound,
+      final ItemStack stack,
       final Player playerIn,
       final Level worldIn,
       final BlockPos pos,
       final IColonyView iColonyView)
     {
-        final String tagItemMode = compound.getString(TAG_ITEM_MODE);
+        final String tagItemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
 
         switch (tagItemMode)
         {
@@ -259,8 +248,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             case TAG_VALUE_MODE_LOCATION:
                 return handleAddLocation(playerIn, worldIn, pos, iColonyView);
             default:
-                toggleItemMode(playerIn, compound);
-                return handleItemAction(compound, playerIn, worldIn, pos, iColonyView);
+                toggleItemMode(playerIn, stack);
+                return handleItemAction(stack, playerIn, worldIn, pos, iColonyView);
         }
     }
 }

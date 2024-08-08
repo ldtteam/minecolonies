@@ -44,7 +44,7 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         if (building.createPickupRequest(getPlayerActionPriority(true)))
         {
-            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.player().get());
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendTo(ctxIn.player());
             building.markDirty();
         }
         else

@@ -36,6 +36,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.*;
@@ -869,10 +870,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
-        final CompoundTag compoundNBT = new CompoundTag();
-        compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
-        compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
-        stack.setTag(compoundNBT);
+        stack.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(this.getColony().getID(), this.colony.getDimension()));
+        stack.set(ModDataComponents.HUT_COMPONENT, new ModDataComponents.HutBlockData(this.getBuildingLevel(), false));
         if (InventoryUtils.addItemStackToProvider(IItemHandlerCapProvider.wrap(player, false), stack))
         {
             this.destroy();

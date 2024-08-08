@@ -144,5 +144,4 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             LastPos::pos,
             LastPos::new);
     }
-
 }

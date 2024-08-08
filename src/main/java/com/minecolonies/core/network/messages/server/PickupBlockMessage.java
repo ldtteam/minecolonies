@@ -63,8 +63,6 @@ public class PickupBlockMessage extends AbstractServerPlayMessage
         }
 
         final ItemStack stack = new ItemStack(world.getBlockState(pos).getBlock(), 1);
-        final CompoundTag compoundNBT = new CompoundTag();
-        stack.setTag(compoundNBT);
         if (InventoryUtils.addItemStackToItemHandler(new InvWrapper(sender.getInventory()), stack))
         {
             world.destroyBlock(pos, false);

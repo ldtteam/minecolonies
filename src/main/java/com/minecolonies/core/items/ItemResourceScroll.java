@@ -16,12 +16,19 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -34,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +70,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     /**
      * Opens the scroll window if there is a valid builder linked
      *
-     * @param compound the item compound
+     * @param stack the item compound
      * @param player   the player entity opening the window
      */
     private static void openWindow(final ItemStack stack, final Player player)
@@ -86,8 +94,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             if (buildingView instanceof BuildingBuilder.View builderBuildingView)
             {
                 final String currentHash = getWorkOrderHash(buildingView);
-                final String storedHash = compound.contains(TAG_WAREHOUSE_SNAPSHOT_WO_HASH) ? compound.getString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH) : null;
-                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, storedHash);
+                final WarehouseSnapshot warehouseSnapshotComponent = stack.getOrDefault(ModDataComponents.WAREHOUSE_SNAPSHOT_COMPONENT, WarehouseSnapshot.EMPTY);
+                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash);
 
                 Map<String, Integer> warehouseSnapshot = new HashMap<>();
                 if (snapshotNeedsUpdate)
@@ -98,11 +106,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 else
                 {
                     // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
-                    if (compound.contains(TAG_WAREHOUSE_SNAPSHOT))
+                    if (!warehouseSnapshotComponent.hash.isEmpty())
                     {
-                        final CompoundTag warehouseSnapshotCompound = compound.getCompound(TAG_WAREHOUSE_SNAPSHOT);
-                        warehouseSnapshot = warehouseSnapshotCompound.getAllKeys().stream()
-                                              .collect(Collectors.toMap(k -> k, warehouseSnapshotCompound::getInt));
+                        warehouseSnapshot = warehouseSnapshotComponent.snapshot;
                     }
                 }
 
@@ -349,7 +355,20 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param snapshot the snapshot data.
      * @param hash     the work order hash for comparison between work orders.
      */
-    private record WarehouseSnapshot(Map<String, Integer> snapshot, String hash)
+    public record WarehouseSnapshot(Map<String, Integer> snapshot, String hash)
     {
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<WarehouseSnapshot>> TYPE  = null;
+        public static final WarehouseSnapshot                                                          EMPTY = new WarehouseSnapshot(new HashMap<>(), "");
+
+        public static final Codec<WarehouseSnapshot> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("snapshot").forGetter(WarehouseSnapshot::snapshot),
+                         Codec.STRING.fieldOf("hash").forGetter(WarehouseSnapshot::hash))
+                       .apply(builder, WarehouseSnapshot::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, WarehouseSnapshot> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.unboundedMap(Codec.STRING, Codec.INT)),
+            WarehouseSnapshot::snapshot, ByteBufCodecs.fromCodec(Codec.STRING), WarehouseSnapshot::hash,
+            WarehouseSnapshot::new);
     }
 }

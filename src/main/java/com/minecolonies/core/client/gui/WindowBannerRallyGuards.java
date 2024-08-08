@@ -7,12 +7,12 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.network.messages.server.RemoveFromRallyingListMessage;
 import com.minecolonies.core.network.messages.server.ToggleBannerRallyGuardsMessage;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -103,14 +103,13 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
         guardTowerList.setDataProvider(() -> getGuardTowerViews(banner, mc.level).size(), (index, rowPane) ->
         {
-            final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
-
+            final List<Pair<BlockPos, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
             if (index < 0 || index >= guardTowers.size())
             {
                 return;
             }
 
-            final Pair<ILocation, AbstractBuildingGuards.View> guardTower = guardTowers.get(index);
+            final Pair<BlockPos, AbstractBuildingGuards.View> guardTower = guardTowers.get(index);
 
             //todo we probably want to display the exact mix.
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
@@ -147,10 +146,10 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
     {
         final int row = guardTowerList.getListElementIndexByPane(button);
 
-        final List<Pair<ILocation, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
+        final List<Pair<BlockPos, AbstractBuildingGuards.View>> guardTowers = getGuardTowerViews(banner, mc.level);
         if (guardTowers.size() > row && row >= 0)
         {
-            final ILocation locationToRemove = guardTowers.get(row).getFirst();
+            final BlockPos locationToRemove = guardTowers.get(row).getFirst();
             // Server side removal
             new RemoveFromRallyingListMessage(banner, locationToRemove).sendToServer();
 

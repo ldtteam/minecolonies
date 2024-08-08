@@ -1,9 +1,7 @@
 package com.minecolonies.api.items;
 
 import com.ldtteam.structurize.api.constants.Constants;
-import com.minecolonies.core.items.ItemScanAnalyzer;
-import com.minecolonies.core.items.ItemScepterGuard;
-import com.minecolonies.core.items.ItemSupplyChestDeployer;
+import com.minecolonies.core.items.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -29,6 +27,15 @@ public class ModDataComponents
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemScepterGuard.LastPos>> LAST_POS_COMPONENT =
       savedSynced("last_pos", ItemScepterGuard.LastPos.CODEC, ItemScepterGuard.LastPos.STREAM_CODEC);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemResourceScroll.WarehouseSnapshot>> WAREHOUSE_SNAPSHOT_COMPONENT =
+      savedSynced("warehouse_snapshot", ItemResourceScroll.WarehouseSnapshot.CODEC, ItemResourceScroll.WarehouseSnapshot.STREAM_CODEC);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemBannerRallyGuards.RallyData>> RALLY_COMPONENT =
+      savedSynced("rally", ItemBannerRallyGuards.RallyData.CODEC, ItemBannerRallyGuards.RallyData.STREAM_CODEC);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemAdventureToken.AdventureData>> ADVENTURE_COMPONENT =
+      savedSynced("adventure", ItemAdventureToken.AdventureData.CODEC, ItemAdventureToken.AdventureData.STREAM_CODEC);
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ColonyId>> COLONY_ID_COMPONENT =
       savedSynced("colonyid", ColonyId.CODEC, ColonyId.STREAM_CODEC);
 
@@ -38,15 +45,26 @@ public class ModDataComponents
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Desc>> DESC_COMPONENT =
       savedSynced("desc", Desc.CODEC, Desc.STREAM_CODEC);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<HutBlockData>> HUT_COMPONENT =
+      savedSynced("hut", HutBlockData.CODEC, HutBlockData.STREAM_CODEC);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Bool>> BOOL_COMPONENT =
+      savedSynced("bool", Bool.CODEC, Bool.STREAM_CODEC);
+
     static
     {
         ItemScanAnalyzer.Timestamp.TYPE = TIME_COMPONENT;
         ItemSupplyChestDeployer.SupplyData.TYPE = SUPPLY_COMPONENT;
         ItemScepterGuard.LastPos.TYPE = LAST_POS_COMPONENT;
+        ItemResourceScroll.WarehouseSnapshot.TYPE = WAREHOUSE_SNAPSHOT_COMPONENT;
+        ItemAdventureToken.AdventureData.TYPE = ADVENTURE_COMPONENT;
+        ItemBannerRallyGuards.RallyData.TYPE = RALLY_COMPONENT;
 
         ColonyId.TYPE = COLONY_ID_COMPONENT;
         Pos.TYPE = POS_COMPONENT;
         Desc.TYPE = DESC_COMPONENT;
+        HutBlockData.TYPE = HUT_COMPONENT;
+        Bool.TYPE = BOOL_COMPONENT;
     }
 
     private static <D> DeferredHolder<DataComponentType<?>, DataComponentType<D>> savedSynced(final String name,
@@ -104,5 +122,37 @@ public class ModDataComponents
           StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.STRING),
             Desc::desc,
             Desc::new);
+    }
+
+    public record Bool(boolean does)
+    {
+        public static DeferredHolder<DataComponentType<?>, DataComponentType<Bool>> TYPE  = null;
+        public static final Bool EMPTY = new Bool(false);
+
+        public static final Codec<Bool> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(Codec.BOOL.fieldOf("bool").forGetter(Bool::does))
+                       .apply(builder, Bool::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, Bool> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.BOOL),
+            Bool::does,
+            Bool::new);
+    }
+
+    public record HutBlockData(int level, boolean pastable)
+    {
+        public static       DeferredHolder<DataComponentType<?>, DataComponentType<HutBlockData>> TYPE  = null;
+
+        public static final Codec<HutBlockData> CODEC = RecordCodecBuilder.create(
+          builder -> builder
+                       .group(Codec.INT.fieldOf("level").forGetter(HutBlockData::level),
+                         Codec.BOOL.fieldOf("pastable").forGetter(HutBlockData::pastable))
+                       .apply(builder, HutBlockData::new));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, HutBlockData> STREAM_CODEC =
+          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.INT),
+            HutBlockData::level, ByteBufCodecs.fromCodec(Codec.BOOL), HutBlockData::pastable,
+            HutBlockData::new);
     }
 }

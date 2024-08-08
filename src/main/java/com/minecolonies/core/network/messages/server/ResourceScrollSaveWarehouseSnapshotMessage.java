@@ -2,11 +2,10 @@ package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemResourceScroll;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Message sent to the server when the client saves a new snapshot by clicking on a warehouse.
@@ -86,14 +83,9 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     {
         player.getInventory().items.stream()
           .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
-          .filter(stack -> stack.getTag() != null)
-          .filter(stack -> Objects.equals(builderPos, BlockPosUtil.read(stack.getTag(), TAG_BUILDER)))
+          .filter(stack -> Objects.equals(builderPos, stack.getOrDefault(ModDataComponents.POS_COMPONENT, ModDataComponents.Pos.EMPTY).pos()))
           .forEach(stack -> {
-              final CompoundTag data = stack.getTag();
-              final CompoundTag newData = new CompoundTag();
-              snapshot.keySet().forEach(f -> newData.putInt(f, snapshot.getOrDefault(f, 0)));
-              data.put(TAG_WAREHOUSE_SNAPSHOT, newData);
-              data.putString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH, workOrderHash);
+              stack.set(ModDataComponents.WAREHOUSE_SNAPSHOT_COMPONENT, new ItemResourceScroll.WarehouseSnapshot(snapshot, workOrderHash));
           });
     }
 }

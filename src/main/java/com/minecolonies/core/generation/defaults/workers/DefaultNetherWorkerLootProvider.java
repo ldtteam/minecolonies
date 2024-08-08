@@ -2,19 +2,17 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
-import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
-import com.minecolonies.core.generation.DatagenLootTableManager;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
+import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -37,7 +35,6 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Datagen for Nether Worker
@@ -206,13 +203,8 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
 
     private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
     {
-        final CompoundTag nbt = new CompoundTag();
-        nbt.putString(TAG_ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.getKey(mob).toString());
-        nbt.putInt(TAG_DAMAGE, damage_done);
-        nbt.putInt(TAG_XP_DROPPED, xp_gained);
-
         final ItemStack stack = new ItemStack(ModItems.adventureToken);
-        stack.setTag(nbt);
+        stack.set(ModDataComponents.ADVENTURE_COMPONENT, new ItemAdventureToken.AdventureData(mob, damage_done, xp_gained));
 
         return SimpleLootTableProvider.itemStack(stack);
     }

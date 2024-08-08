@@ -2,10 +2,9 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.items.ModDataComponents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -32,22 +31,15 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         if (!worldIn.isClientSide)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.blockPosition());
-            final CompoundTag tag = new CompoundTag();
-
             if (colony != null)
             {
-                tag.putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+                stack.set(ModDataComponents.BOOL_COMPONENT, new ModDataComponents.Bool(colony.getRaiderManager().willRaidTonight()));
             }
-            else
-            {
-                tag.putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, false);
-            }
-            stack.setTag(tag);
         }
     }
 
     public boolean isFoil(final ItemStack stack)
     {
-        return stack.getTag() != null && stack.getTag().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
+        return stack.getOrDefault(ModDataComponents.BOOL_COMPONENT, ModDataComponents.Bool.EMPTY).does();
     }
 }

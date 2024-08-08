@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.core.items.ItemAdventureToken;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.minecolonies.api.items.ModDataComponents.ADVENTURE_COMPONENT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE;
 
 /**
@@ -264,21 +266,14 @@ public final class LootTableAnalyzer
      * @return the list of possible drops
      */
     @NotNull
-    private static List<LootDrop> expandAdventureToken(@NotNull final HolderLookup.Provider provider,
-                                                       @NotNull final ItemStack token)
+    private static List<LootDrop> expandAdventureToken(
+      @NotNull final HolderLookup.Provider provider,
+      @NotNull final ItemStack token)
     {
-        if (token.hasTag())
+        final ItemAdventureToken.AdventureData component = token.get(ADVENTURE_COMPONENT);
+        if (component != null)
         {
-            assert token.getTag() != null;
-            final String entityType = token.getTag().getString(TAG_ENTITY_TYPE);
-            if (!entityType.isEmpty())
-            {
-                final EntityType<?> mob = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(entityType)).orElse(null);
-                if (mob != null)
-                {
-                    return toDrops(provider, mob.getDefaultLootTable());
-                }
-            }
+            return toDrops(provider, component.entityType().getDefaultLootTable());
         }
         return Collections.emptyList();
     }

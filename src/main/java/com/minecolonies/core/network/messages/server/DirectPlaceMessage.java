@@ -9,13 +9,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -26,8 +26,6 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OTHER_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.WRONG_COLONY;
 
 /**
@@ -102,10 +100,10 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
 
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
-            final CompoundTag compound = stack.getTag();
-            if (colony != null && compound != null && compound.contains(TAG_COLONY_ID) && colony.getID() != compound.getInt(TAG_COLONY_ID))
+            final ModDataComponents.ColonyId colonyId = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+            if (colony != null && colonyId != null && colony.getID() != colonyId.id())
             {
-                MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
+                MessageUtils.format(WRONG_COLONY, colonyId.id()).sendTo(player);
                 return;
             }
 
@@ -114,7 +112,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
             {
                 hut.setStructurePack(StructurePacks.selectedPack);
 
-                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock()), world, (blueprint -> {
+                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock(), player.level().registryAccess()), world, (blueprint -> {
                     if (blueprint == null)
                     {
                         return;
@@ -124,12 +122,13 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
                     hut.setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
                     state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
-                    if (compound != null && compound.contains(TAG_OTHER_LEVEL))
+                    final ModDataComponents.HutBlockData hutComponent = stack.get(ModDataComponents.HUT_COMPONENT);
+                    if (hutComponent != null)
                     {
                         final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                         if (building != null)
                         {
-                            building.setBuildingLevel(compound.getInt(TAG_OTHER_LEVEL));
+                            building.setBuildingLevel(hutComponent.level());
                             building.setDeconstructed();
                         }
                     }

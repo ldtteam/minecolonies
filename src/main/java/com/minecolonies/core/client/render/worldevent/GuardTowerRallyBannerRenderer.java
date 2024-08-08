@@ -1,9 +1,10 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
+import net.minecraft.core.BlockPos;
 
 public class GuardTowerRallyBannerRenderer
 {
@@ -19,16 +20,15 @@ public class GuardTowerRallyBannerRenderer
             return;
         }
 
-        for (final ILocation guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.mainHandItem))
+        final ModDataComponents.ColonyId component = ctx.mainHandItem.getOrDefault(ModDataComponents.COLONY_ID_COMPONENT, ModDataComponents.ColonyId.EMPTY);
+        if (component.id() == -1 || component.dimension() != ctx.clientLevel.dimension())
         {
-            if (ctx.clientLevel.dimension() != guardTower.getDimension())
-            {
-                WorldRenderMacros.renderBlackLineBox(ctx.bufferSource,
-                    ctx.poseStack,
-                    guardTower.getInDimensionLocation(),
-                    guardTower.getInDimensionLocation(),
-                    0.02f);
-            }
+            return;
+        }
+
+        for (final BlockPos guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.mainHandItem))
+        {
+            WorldRenderMacros.renderBlackLineBox(ctx.bufferSource, ctx.poseStack, guardTower, guardTower, 0.02f);
         }
     }
 }

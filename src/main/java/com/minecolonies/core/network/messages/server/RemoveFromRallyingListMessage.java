@@ -9,6 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -34,33 +35,33 @@ public class RemoveFromRallyingListMessage extends AbstractServerPlayMessage
     /**
      * The position of the guard tower that should be removed.
      */
-    private final ILocation location;
+    private final BlockPos location;
 
     /**
      * Remove the guard tower from the rallying list
      *
      * @param banner   The banner to be modified.
-     * @param location The position of the guard tower
+     * @param pos The position of the guard tower
      */
-    public RemoveFromRallyingListMessage(final ItemStack banner, final ILocation location)
+    public RemoveFromRallyingListMessage(final ItemStack banner, final BlockPos pos)
     {
         super(TYPE);
         this.banner = banner;
-        this.location = location;
+        this.location = pos;
     }
 
     protected RemoveFromRallyingListMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         banner = Utils.deserializeCodecMess(buf);
-        location = StandardFactoryController.getInstance().deserialize(buf);
+        location = buf.readBlockPos();
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         Utils.serializeCodecMess(buf, banner);
-        StandardFactoryController.getInstance().serialize(buf, location);
+        buf.writeBlockPos(location);
     }
 
     @Override

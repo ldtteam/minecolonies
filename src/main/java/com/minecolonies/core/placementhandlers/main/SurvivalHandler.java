@@ -42,7 +42,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -187,13 +186,14 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 int level = 0;
                 boolean finishedUpgrade = false;
-                if (compound != null)
+                final ModDataComponents.HutBlockData hutComponent = stack.get(ModDataComponents.HUT_COMPONENT);
+                if (hutComponent != null)
                 {
-                    if (compound.contains(TAG_OTHER_LEVEL))
+                    if (hutComponent.level() != -1)
                     {
-                        level = compound.getInt(TAG_OTHER_LEVEL);
+                        level = hutComponent.level();
                     }
-                    if (compound.contains(TAG_PASTEABLE))
+                    if (hutComponent.pastable())
                     {
                         String newBlueprintPath = blueprintPath;
                         newBlueprintPath = newBlueprintPath.substring(0, newBlueprintPath.length() - 1);
