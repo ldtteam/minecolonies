@@ -11,6 +11,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
@@ -176,7 +177,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag compoundNBT = super.serializeNBT();
         compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
@@ -184,16 +185,16 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         for (final Component element : parents)
         {
             final CompoundTag elementTag = new CompoundTag();
-            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element));
+            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element, provider));
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
-        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId));
+        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId, provider));
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
@@ -201,9 +202,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT), provider));
         }
-        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID), provider);
         loadValidator();
     }
 

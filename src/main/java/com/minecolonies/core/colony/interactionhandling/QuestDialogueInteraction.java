@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.core.quests.objectives.DialogueObjectiveTemplateTemplate;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -222,9 +223,9 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag tag = super.serializeNBT();
+        final CompoundTag tag = super.serializeNBT(provider);
         tag.putString(TAG_QUEST_ID, questId.toString());
         tag.putInt(TAG_QUEST_INDEX, index);
         tag.putBoolean(TAG_FINISHED, finished);
@@ -232,9 +233,9 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public void deserializeNBT(final @NotNull CompoundTag compoundNBT)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compoundNBT)
     {
-        super.deserializeNBT(compoundNBT);
+        super.deserializeNBT(provider, compoundNBT);
         this.questId = ResourceLocation.parse(compoundNBT.getString(TAG_QUEST_ID));
         this.index = compoundNBT.getInt(TAG_QUEST_INDEX);
         this.currentElement = ((DialogueObjectiveTemplateTemplate) IQuestManager.GLOBAL_SERVER_QUESTS.get(questId).getObjective(index)).getDialogueTree();

@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -48,11 +49,11 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        CompoundTag compoundNBT = super.serializeNBT();
+        CompoundTag compoundNBT = super.serializeNBT(provider);
         CompoundTag item = new CompoundTag();
-        recruitCost.save(item);
+        recruitCost.save(provider, item);
         compoundNBT.put(TAG_RECRUIT_COST, item);
         compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
@@ -60,11 +61,11 @@ public class VisitorData extends CitizenData implements IVisitorData
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag nbtTagCompound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
-        super.deserializeNBT(nbtTagCompound);
+        super.deserializeNBT(provider, nbtTagCompound);
         sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
-        recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
+        recruitCost = ItemStack.parseOptional(provider, nbtTagCompound.getCompound(TAG_RECRUIT_COST));
         recruitCost.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
     }
 
@@ -90,7 +91,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt)
     {
         final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony);
-        data.deserializeNBT(nbt);
+        data.deserializeNBT(colony.getWorld().registryAccess(), nbt);
         return data;
     }
 

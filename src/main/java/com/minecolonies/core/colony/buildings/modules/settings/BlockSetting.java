@@ -133,7 +133,7 @@ public class BlockSetting implements ISetting<BlockItem>
                   return false;
               }
 
-              return block.getShape(state, new SingleStateBlockGetter(state), BlockPos.ZERO, CollisionContext.empty()).equals(Shapes.block()) && state.blocksMotion();
+              return state.getShape(new SingleStateBlockGetter(state), BlockPos.ZERO).equals(Shapes.block()) && state.blocksMotion();
           }, (stack, qty) -> {
               if (stack.isEmpty())
               {

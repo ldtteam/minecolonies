@@ -28,7 +28,7 @@ public class NBTUtils
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
     }
 
-    public static Collector<CompoundTag, ?, ListTag> toListNBT()
+    public static Collector<Tag, ?, ListTag> toListNBT()
     {
         return Collectors.collectingAndThen(
           Collectors.toList(),

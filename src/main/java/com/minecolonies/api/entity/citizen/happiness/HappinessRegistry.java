@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -68,7 +69,7 @@ public class HappinessRegistry
      * @param compound the compound to load it from.
      * @return the modifier instance.
      */
-    public static IHappinessModifier loadFrom(@NotNull final CompoundTag compound)
+    public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
         final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
                                                 ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
@@ -79,7 +80,7 @@ public class HappinessRegistry
         {
             try
             {
-                modifier.read(compound);
+                modifier.read(provider, compound);
             }
             catch (final RuntimeException ex)
             {

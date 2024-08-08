@@ -58,7 +58,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
         super(buf, type);
         this.moduleID = buf.readInt();
         this.key = buf.readResourceLocation();
-        this.value = StandardFactoryController.getInstance().deserializeTag(buf);
+        this.value = StandardFactoryController.getInstance().deserialize(buf);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
         super.toBytes(buf);
         buf.writeInt(moduleID);
         buf.writeResourceLocation(this.key);
-        StandardFactoryController.getInstance().serializeTag(buf, this.value);
+        StandardFactoryController.getInstance().serialize(buf, this.value);
     }
 
     @Override

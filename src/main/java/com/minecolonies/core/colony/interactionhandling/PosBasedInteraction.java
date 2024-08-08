@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -111,7 +112,7 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag tag = super.serializeNBT();
         BlockPosUtil.writeToNBT(tag, POS_TAG, pos);
@@ -119,7 +120,7 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
         this.pos = BlockPosUtil.readFromNBT(compoundNBT, POS_TAG);

@@ -170,7 +170,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     // Create and read new citizen
                     ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
-                    newCitizen.deserializeNBT(data.serializeNBT());
+                    newCitizen.deserializeNBT(player.level().registryAccess(), data.serializeNBT(player.level().registryAccess()));
                     newCitizen.setParents("", "");
                     newCitizen.setLastPosition(data.getLastPosition());
 

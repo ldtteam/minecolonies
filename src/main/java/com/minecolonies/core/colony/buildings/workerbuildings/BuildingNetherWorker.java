@@ -17,6 +17,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -158,9 +159,9 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
         if(compound.contains(TAG_CURRENT_TRIPS))
         {
             this.currentTrips = compound.getInt(TAG_CURRENT_TRIPS);
@@ -173,9 +174,9 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
 
         compound.putInt(TAG_CURRENT_TRIPS, this.currentTrips);
         compound.putInt(TAG_CURRENT_DAY, this.currentPeriodDay);

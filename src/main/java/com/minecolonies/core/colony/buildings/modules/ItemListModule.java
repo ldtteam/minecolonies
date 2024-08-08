@@ -77,7 +77,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
             final ListTag filterableList = compound.getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
-                allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
+                allowedItems.add(new ItemStorage(ItemStack.parseOptional(provider, filterableList.getCompound(i))));
             }
 
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);

@@ -29,6 +29,7 @@ import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -216,9 +217,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     //// ---- Overrides ---- \\\\
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Tag.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
@@ -242,9 +243,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
 
         @NotNull final ListTag wayPointTagList = new ListTag();
         for (@NotNull final BlockPos pos : patrolTargets)

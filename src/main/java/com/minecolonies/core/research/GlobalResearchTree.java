@@ -10,14 +10,12 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -296,22 +294,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         List<ItemStorage> outputList = new ArrayList<>();
         for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
         {
-            final int tagIndex = itemId.indexOf("{");
-            final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
-            itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
             String[] split = itemId.split(":");
-            if(split.length != 2)
-            {
-                if(split.length == 1)
-                {
-                    final String[] tempArray ={"minecraft", split[0]};
-                    split = tempArray;
-                }
-                else if(split.length > 3)
-                {
-                    Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
-                }
-            }
             final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
             final ItemStack stack = new ItemStack(item);
             if (stack.isEmpty())
@@ -319,23 +302,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                 Log.getLogger().warn("Unable to parse Research Reset Cost definition: " + itemId);
                 continue;
             }
-            if (tag != null)
-            {
-                try
-                {
-                    stack.setTag(TagParser.parseTag(tag));
-                    outputList.add(new ItemStorage(stack, false, false));
-                }
-                catch (CommandSyntaxException parseException)
-                {
-                    //Unable to parse tags, drop them.
-                    Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
-                }
-            }
-            else
-            {
-                outputList.add(new ItemStorage(stack, false, true));
-            }
+            outputList.add(new ItemStorage(stack, false, true));
         }
         return outputList;
     }

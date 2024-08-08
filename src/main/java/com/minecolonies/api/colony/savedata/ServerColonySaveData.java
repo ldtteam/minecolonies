@@ -16,6 +16,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.levelgen.structure.StructureFeatureIndexSavedData;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,9 +40,9 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     /**
      * Worldsavedata factory.
      */
-    public static final Factory<ServerColonySaveData> FACTORY = new Factory<>(ServerColonySaveData::new, d -> {
+    public static final SavedData.Factory<ServerColonySaveData> FACTORY = new SavedData.Factory<>(ServerColonySaveData::new, (d,a) -> {
         final ServerColonySaveData colonyManagerData = new ServerColonySaveData();
-        colonyManagerData.readNBT(d);
+        colonyManagerData.readNBT(a, d);
         return colonyManagerData;
     });
 

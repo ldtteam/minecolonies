@@ -3,7 +3,10 @@ package com.minecolonies.core.research.costs;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.costs.IResearchCost;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.research.GlobalResearch;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -66,27 +69,8 @@ public class SimpleItemCost implements IResearchCost
     @Override
     public void read(final @NotNull CompoundTag compound)
     {
-        if (compound.contains(TAG_COST_COUNT))
-        {
-            this.item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(compound.getString(TAG_COST_ITEM)));
-            this.count = compound.getInt(TAG_COST_COUNT);
-        }
-        else
-        {
-            // Migration code
-            String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
-            if (costParts.length == 3)
-            {
-                final ItemStack is = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(costParts[0], costParts[1])));
-                if (compound.contains(TAG_COST_NBT))
-                {
-                    is.setTag(compound.getCompound(TAG_COST_NBT));
-                }
-
-                this.item = is.getItem();
-                this.count = Integer.parseInt(costParts[2]);
-            }
-        }
+        this.item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(compound.getString(TAG_COST_ITEM)));
+        this.count = compound.getInt(TAG_COST_COUNT);
     }
 
     @Override

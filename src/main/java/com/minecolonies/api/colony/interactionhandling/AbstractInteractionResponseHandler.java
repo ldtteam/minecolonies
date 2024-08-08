@@ -2,9 +2,9 @@ package com.minecolonies.api.colony.interactionhandling;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -100,16 +100,16 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      *
      * @return the serialized data.
      */
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag tag = new CompoundTag();
-        tag.putString(TAG_INQUIRY, Component.Serializer.toJson(this.inquiry));
+        tag.putString(TAG_INQUIRY, Component.Serializer.toJson(this.inquiry, provider));
         final ListTag list = new ListTag();
         for (final Map.Entry<Component, Component> element : responses.entrySet())
         {
             final CompoundTag elementTag = new CompoundTag();
-            elementTag.putString(TAG_RESPONSE, Component.Serializer.toJson(element.getKey()));
-            elementTag.putString(TAG_NEXT_INQUIRY, Component.Serializer.toJson(element.getValue()));
+            elementTag.putString(TAG_RESPONSE, Component.Serializer.toJson(element.getKey(), provider));
+            elementTag.putString(TAG_NEXT_INQUIRY, Component.Serializer.toJson(element.getValue(), provider));
 
             list.add(elementTag);
         }
@@ -123,14 +123,14 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * Deserialize the response handler from NBT.
      */
-    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
-        this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
+        this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY), provider);
         final ListTag list = compoundNBT.getList(TAG_RESPONSES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundTag nbt = list.getCompound(i);
-            this.responses.put(Component.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), Component.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
+            this.responses.put(Component.Serializer.fromJson(nbt.getString(TAG_RESPONSE), provider), Component.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY), provider));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];

@@ -184,7 +184,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         if (getDrops)
         {
             //calculate fortune enchantment
-            final int fortune = ItemStackUtils.getFortuneOf(tool);
+            final int fortune = ItemStackUtils.getFortuneOf(tool, worker.level());
 
             //create list for all item drops to be stored in
             List<ItemStack> localItems = new ArrayList<>();

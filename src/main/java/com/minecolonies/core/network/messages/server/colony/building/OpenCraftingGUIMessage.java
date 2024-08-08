@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -79,7 +80,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                     {
                         return new ContainerCraftingFurnace(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
-                }, buffer -> new RegistryFriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
+                }, buffer -> new RegistryFriendlyByteBuf(new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())), buffer.registryAccess()));
             }
             else if (module.canLearn(ModCraftingTypes.BREWING.get()))
             {
@@ -98,7 +99,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                     {
                         return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getProducer().getRuntimeID());
                     }
-                }, buffer -> new RegistryFriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())));
+                }, buffer -> new RegistryFriendlyByteBuf(new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID())), buffer.registryAccess()));
             }
             else
             {
@@ -118,8 +119,8 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                           return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()), building.getID(), module.getProducer().getRuntimeID());
                       }
                   },
-                  buffer -> new RegistryFriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))).writeBlockPos(building.getID())
-                    .writeInt(module.getProducer().getRuntimeID()));
+                  buffer -> new RegistryFriendlyByteBuf(
+                    new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))), buffer.registryAccess()).writeBlockPos(building.getID()).writeInt(module.getProducer().getRuntimeID()));
             }
         }
     }

@@ -174,7 +174,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 }
                 else if (VALID_HAPPINESS_MODIFIERS.contains(id))
                 {
-                    final IHappinessModifier modifier = HappinessRegistry.loadFrom(compoundTag);
+                    final IHappinessModifier modifier = HappinessRegistry.loadFrom(provider, compoundTag);
                     if (modifier != null)
                     {
                         happinessFactors.put(modifier.getId(), modifier);

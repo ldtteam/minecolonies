@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.jobs.JobMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -136,18 +137,18 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        super.deserializeNBT(compound);
+        super.deserializeNBT(provider, compound);
 
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
         cobbleLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
-        final CompoundTag compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT(provider);
 
         BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
         BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
