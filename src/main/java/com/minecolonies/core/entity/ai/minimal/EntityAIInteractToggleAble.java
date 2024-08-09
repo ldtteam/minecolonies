@@ -126,7 +126,7 @@ public class EntityAIInteractToggleAble extends Goal
         if (executeTimerSlow-- <= 0)
         {
             executeTimerSlow = 50;
-            return false;
+            return checkPathBlocksBelow();
         }
 
         return false;
