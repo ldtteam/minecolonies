@@ -1,7 +1,5 @@
 package com.minecolonies.core.blocks;
 
-import javax.annotation.Nullable;
-
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
@@ -10,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -36,6 +35,8 @@ import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
 {
@@ -136,6 +137,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         {
             // todo balance randomness after evaluating crop yield.
             cropBlock.attemptGrow(aboveState, level, pos.above());
+            BoneMealItem.addGrowthParticles(level, pos, 1);
         }
     }
 
