@@ -598,7 +598,7 @@
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
 
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
-  "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
+  "com.minecolonies.coremod.gui.workerhuts.workerassigned": "§lAssigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
 
   "com.minecolonies.coremod.gui.workerhuts.fields": "Fields",
