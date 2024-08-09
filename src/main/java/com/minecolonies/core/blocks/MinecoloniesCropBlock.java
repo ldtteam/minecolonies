@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
-public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<MinecoloniesCropBlock>
+public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<MinecoloniesCropBlock> implements BonemealableBlock
 {
     public static String BELL_PEPPER = "bell_pepper";
     public static String CABBAGE = "cabbage";
@@ -178,6 +180,21 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull PathComputationType pathComputationType)
     {
         return pathComputationType == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, level, pos, pathComputationType);
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(@NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockState state, boolean isClientSide) {
+        return !this.isMaxAge(state);
+    }
+
+    @Override
+    public boolean isBonemealSuccess(@NotNull Level level, @NotNull RandomSource p_220879_, @NotNull BlockPos pos, @NotNull BlockState state) {
+        return true;
+    }
+
+    @Override
+    public void performBonemeal(@NotNull ServerLevel level, @NotNull RandomSource p_220875_, @NotNull BlockPos pos, @NotNull BlockState state) {
+        this.attemptGrow(state, level, pos);
     }
 
     @Override
