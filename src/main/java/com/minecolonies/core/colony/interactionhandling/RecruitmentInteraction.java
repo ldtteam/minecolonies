@@ -112,7 +112,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     recruitCost.getCount() + " " + recruitCost.getHoverName().getString()))
                                                                            .appendNL(Component.literal(""))
                 .getText());
-            
+
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
             int iconPosY = recruitButton.getY() + recruitButton.getHeight() - 18;
             ItemIcon icon = new ItemIcon();
