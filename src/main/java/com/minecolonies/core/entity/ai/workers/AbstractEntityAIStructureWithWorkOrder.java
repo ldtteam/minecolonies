@@ -486,7 +486,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected boolean checkIfCanceled()
     {
-        if ((job.hasWorkOrder() && job.getWorkOrder() == null) || (job.getWorkOrder() == null && job.getBlueprint() != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()))
+        if ((job.getWorkOrder() == null && job.getBlueprint() != null) || (job.getWorkOrder() == null && job.getBlueprint() != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()))
         {
             job.setBlueprint(null);
             if (job.hasWorkOrder())
