@@ -99,7 +99,12 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      */
     public boolean hasWorkOrder()
     {
-        return workOrderId != 0;
+        if (workOrderId == 0 || getWorkOrder() == null)
+        {
+            workOrderId = 0;
+            return false;
+        }
+        return true;
     }
 
     @Override
