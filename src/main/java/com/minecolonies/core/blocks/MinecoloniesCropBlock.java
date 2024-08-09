@@ -140,7 +140,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
       final @NotNull InteractionHand hand,
       final @NotNull BlockHitResult hitResult)
     {
-        if (player.getItemInHand(hand).getItem() == ModItems.compost)
+        if (player.getItemInHand(hand).getItem() == ModItems.compost && !this.isMaxAge(state))
         {
             if (!level.isClientSide)
             {
