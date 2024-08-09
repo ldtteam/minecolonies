@@ -1,9 +1,9 @@
 <window size="190 244" pause="false" lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
+    <label size="164 11" pos="13 22" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.workerassigned)"/>
 
-    <list id="workers" size="164 30" pos="13 43">
+    <list id="workers" size="164 110" pos="13 43">
         <view size="100% 11">
             <box size="100% 11" linewidth="0">
                 <label id="workerName" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
@@ -11,10 +11,10 @@
         </view>
     </list>
 
-    <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
+    <buttonimage id="hire" size="129 17" pos="30 154" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
-    <buttonimage id="recall" size="129 17" pos="30 92" textcolor="black"
+    <buttonimage id="recall" size="129 17" pos="30 172" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 </window>
