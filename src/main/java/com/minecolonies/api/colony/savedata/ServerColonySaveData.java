@@ -13,6 +13,7 @@ import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -114,7 +115,21 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     private CompoundTag writeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(TAG_COLONIES, colonies.stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
+        final ListTag colonyTag = new ListTag();
+        for (final IColony colony : colonies)
+        {
+            try
+            {
+                colonyTag.add(colony.getColonyTag());
+            }
+            catch (Exception e)
+            {
+                Log.getLogger()
+                  .error("Colony: " + colony.getName() + " id:" + colony.getID() + " owner:" + colony.getPermissions().getOwnerName() + " could not be saved! Error:", e);
+            }
+        }
+
+        compound.put(TAG_COLONIES, colonyTag);
 
         if (overworld)
         {
