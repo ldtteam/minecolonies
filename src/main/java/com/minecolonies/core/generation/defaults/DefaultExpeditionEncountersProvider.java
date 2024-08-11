@@ -49,6 +49,7 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
     public static final ResourceLocation ELDER_GUARDIAN    = new ResourceLocation(Constants.MOD_ID, "elder_guardian");
     public static final ResourceLocation PILLAGER          = new ResourceLocation(Constants.MOD_ID, "pillager");
     public static final ResourceLocation PILLAGER_CAPTAIN  = new ResourceLocation(Constants.MOD_ID, "pillager_captain");
+    public static final ResourceLocation WITCH             = new ResourceLocation(Constants.MOD_ID, "witch");
 
     /**
      * Boss encounter constants.
@@ -103,6 +104,7 @@ public class DefaultExpeditionEncountersProvider implements DataProvider
         types.add(new ExpeditionEncounter(ELDER_GUARDIAN, EntityType.ELDER_GUARDIAN, 8f, 0, 80, 0, EntityType.ELDER_GUARDIAN.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(PILLAGER, EntityType.PILLAGER, 8f, 0, 80, 0, EntityType.PILLAGER.getDefaultLootTable(), 10));
         types.add(new ExpeditionEncounter(PILLAGER_CAPTAIN, EntityType.PILLAGER, 8f, 0, 80, 0, EntityType.PILLAGER.getDefaultLootTable(), 10));
+        types.add(new ExpeditionEncounter(WITCH, EntityType.WITCH, 4f, 0, 26, 0, EntityType.WITCH.getDefaultLootTable(), 10));
 
         // Boss mobs
         types.add(new ExpeditionEncounter(WARDEN, EntityType.WARDEN, 30f, 0, 500, 0, EntityType.WARDEN.getDefaultLootTable(), 5));

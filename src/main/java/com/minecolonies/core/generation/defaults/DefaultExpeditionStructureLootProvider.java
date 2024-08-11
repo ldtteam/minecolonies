@@ -59,7 +59,6 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
     public static final ResourceLocation IGLOO_ID            = new ResourceLocation("igloo");
     public static final ResourceLocation JUNGLE_TEMPLE_ID    = new ResourceLocation("jungle_temple");
     public static final ResourceLocation SWAMP_HUT_ID        = new ResourceLocation("swamp_hut");
-    public static final ResourceLocation TRAIL_RUINS_ID      = new ResourceLocation("trail_ruins");
     public static final ResourceLocation VILLAGE_DESERT_ID   = new ResourceLocation("village_desert");
     public static final ResourceLocation VILLAGE_PLAINS_ID   = new ResourceLocation("village_plains");
     public static final ResourceLocation VILLAGE_SAVANNA_ID  = new ResourceLocation("village_savanna");
@@ -435,6 +434,65 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(createEncounterLootItem(SKELETON).setWeight(30))
             .add(createEncounterLootItem(CREEPER).setWeight(10))
             .add(createEncounterLootItem(ENDERMAN).setWeight(10))
+        ));
+
+        createStructureLootTable(DESERT_PYRAMID_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.SANDSTONE).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.CUT_SANDSTONE).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.IRON_INGOT).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.GOLD_INGOT).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(25))
+            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(25))
+            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
+            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                   .setWeight(20)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
+            .add(createEncounterLootItem(SKELETON).setWeight(30))
+            .add(createEncounterLootItem(CREEPER).setWeight(10))
+        ));
+
+        createStructureLootTable(IGLOO_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.SNOW).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.ICE).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.SNOWBALL).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(ModItems.lamb_stew).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(25))
+        ));
+
+        createStructureLootTable(JUNGLE_TEMPLE_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.COBBLESTONE).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.MOSSY_COBBLESTONE).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.COBWEB).setWeight(75).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(ModItems.pita_hummus).setWeight(50).apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(ModItems.pepper_hummus).setWeight(50).apply(SetItemCountFunction.setCount(UNCOMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(35))
+            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(35))
+            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
+                   .setWeight(20)
+                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
+            .add(createEncounterLootItem(SKELETON).setWeight(30))
+            .add(createEncounterLootItem(CREEPER).setWeight(10))
+        ));
+
+        createStructureLootTable(SWAMP_HUT_ID, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
+            .add(LootItem.lootTableItem(Items.SPRUCE_PLANKS).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.SPRUCE_LOG).setWeight(100).apply(SetItemCountFunction.setCount(SUPER_COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.RED_MUSHROOM).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.BROWN_MUSHROOM).setWeight(50).apply(SetItemCountFunction.setCount(COMMON_ITEM_COUNT)))
+            .add(LootItem.lootTableItem(Items.CAULDRON).setWeight(50))
+            .add(LootItem.lootTableItem(Items.BREWING_STAND).setWeight(50))
+            .add(createEncounterLootItem(WITCH).setWeight(100))
+            .add(createEncounterLootItem(ZOMBIE).setWeight(50))
         ));
 
         createStructureLootTable(VILLAGE_DESERT_ID, registrar, builder -> {
