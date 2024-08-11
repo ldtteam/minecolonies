@@ -34,6 +34,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -1083,6 +1084,57 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return MODULE_BREWING;
+        }
+    }
+
+    /** this module is for Domum Ornamentum cutter recipes */
+    public abstract static class Domum extends AbstractCraftingBuildingModule
+    {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Domum(@NotNull final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return Set.of(ModCraftingTypes.ARCHITECTS_CUTTER.get());
+        }
+
+        @Override
+        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        {
+            final OptionalPredicate<ItemStack> validator = getIngredientValidator();
+            final ItemStack stack = recipe.getPrimaryOutput();
+            if (BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("domum_ornamentum"))
+            {
+                for (final List<ItemStack> slot : recipe.getInputs())
+                {
+                    // when teaching there should only be one stack in each slot; for JEI there may be more.
+                    // any one compatible ingredient in any slot makes the whole recipe acceptable.
+                    for (final ItemStack ingredientStack : slot)
+                    {
+                        if (!ItemStackUtils.isEmpty(stack) && validator.test(ingredientStack).orElse(false))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // override getIngredientValidator() to limit compatible ingredients
+
+        @NotNull
+        public String getId()
+        {
+            return MODULE_DOMUM;
         }
     }
 

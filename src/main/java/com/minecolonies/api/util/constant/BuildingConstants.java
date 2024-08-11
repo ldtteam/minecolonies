@@ -103,6 +103,11 @@ public final class BuildingConstants
     public static final String MODULE_BREWING = "brewing";
 
     /**
+     * Domum Ornamentum module type.
+     */
+    public static final String MODULE_DOMUM = "domum";
+
+    /**
      * Custom crafting module type.
      */
     public static final String MODULE_CUSTOM = "custom";
