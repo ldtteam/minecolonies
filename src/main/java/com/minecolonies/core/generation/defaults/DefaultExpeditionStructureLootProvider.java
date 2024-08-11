@@ -50,7 +50,6 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
     public static final ResourceLocation MINESHAFT_ID        = new ResourceLocation("mineshaft");
     public static final ResourceLocation MONUMENT_ID         = new ResourceLocation("monument");
     public static final ResourceLocation NETHER_FOSSIL_ID    = new ResourceLocation("nether_fossil");
-    public static final ResourceLocation OCEAN_RUIN_ID       = new ResourceLocation("ocean_ruin");
     public static final ResourceLocation PILLAGER_OUTPOST_ID = new ResourceLocation("pillager_outpost");
     public static final ResourceLocation RUINED_PORTAL_ID    = new ResourceLocation("ruined_portal");
     public static final ResourceLocation SHIPWRECK_ID        = new ResourceLocation("shipwreck");
@@ -324,22 +323,6 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
             .add(LootItem.lootTableItem(Items.AIR).setWeight(25))
             .add(LootItem.lootTableItem(Items.BONE_BLOCK).setWeight(50))
             .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(10))
-            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25))
-        ));
-
-        createStructureLootTable(OCEAN_RUIN_ID, registrar, builder -> builder.withPool(
-          new LootPool.Builder()
-            .setRolls(UNCOMMON_STRUCTURE_ROLLS)
-            .add(LootItem.lootTableItem(Items.STONE_AXE).setWeight(35).apply(SetItemDamageFunction.setDamage(LOW_TOOL_DAMAGE)))
-            .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(10))
-            .add(LootItem.lootTableItem(Items.EMERALD).setWeight(35))
-            .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(25))
-            .add(LootItem.lootTableItem(Items.FISHING_ROD)
-                   .setWeight(25)
-                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
-            .add(LootItem.lootTableItem(Items.ENCHANTED_BOOK)
-                   .setWeight(25)
-                   .apply(EnchantRandomlyFunction.randomApplicableEnchantment()))
             .add(createEncounterLootItem(ZOMBIFIED_PIGLIN).setWeight(25))
         ));
 
