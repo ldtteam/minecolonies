@@ -5,10 +5,10 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANAGER;
@@ -129,7 +128,22 @@ public interface IColonyManagerCapability
         public static Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, final boolean overworld)
         {
             final CompoundTag compound = new CompoundTag();
-            compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
+
+            final ListTag colonies = new ListTag();
+            for (final IColony colony : instance.getColonies())
+            {
+                try
+                {
+                    colonies.add(colony.getColonyTag());
+                }
+                catch (Exception e)
+                {
+                    Log.getLogger()
+                      .error("Colony: " + colony.getName() + " id:" + colony.getID() + " owner:" + colony.getPermissions().getOwnerName() + " could not be saved! Error:", e);
+                }
+            }
+
+            compound.put(TAG_COLONIES, colonies);
 
             if (overworld)
             {
