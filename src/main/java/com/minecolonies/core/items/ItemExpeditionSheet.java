@@ -188,11 +188,22 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             super.setChanged();
         }
 
+        /**
+         * Get the set of members that are assigned.
+         *
+         * @return the set of member ids.
+         */
         public Set<Integer> getMembers()
         {
             return members;
         }
 
+        /**
+         * Toggle if a given member is assigned or not.
+         *
+         * @param memberId the member id.
+         * @param assign   whether this member should be assigned or not.
+         */
         public void toggleMember(final int memberId, final boolean assign)
         {
             if (assign)
