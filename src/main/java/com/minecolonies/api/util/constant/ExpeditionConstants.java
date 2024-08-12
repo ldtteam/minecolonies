@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NonNls;
 public class ExpeditionConstants
 {
     @NonNls
+    public static final String EXPEDITION_SHEET_INVENTORY = "com.minecolonies.core.expedition_sheet.inventory";
+
+    @NonNls
     public static final String EXPEDITION_INTERACTION_INQUIRY_ACCEPT          = "com.minecolonies.core.expedition.interaction.inquiry.accept";
     @NonNls
     public static final String EXPEDITION_INTERACTION_INQUIRY_PREPARE         = "com.minecolonies.core.expedition.interaction.inquiry.prepare";
