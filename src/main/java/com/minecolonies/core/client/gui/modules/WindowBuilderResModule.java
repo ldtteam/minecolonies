@@ -2,11 +2,13 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -140,12 +142,14 @@ public class WindowBuilderResModule extends AbstractModuleWindow
 
         if (moduleView.getWorkOrderId() > -1)
         {
-            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(moduleView.getBuildingView()
-                                                                                                .getColony()
-                                                                                                .getWorkOrder(moduleView.getWorkOrderId())
-                                                                                                .getDisplayName()
-                                                                                                .getString()
-                                                                                                .replace("\n", " ")));
+            final IWorkOrderView workOrder = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
+            if (workOrder != null)
+            {
+                final Text pane = findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class);
+                final Component text = Component.literal(workOrder.getDisplayName().getString().replace("\n", " "));
+                pane.setText(text);
+                PaneBuilders.tooltipBuilder().hoverPane(pane).build().setText(text);
+            }
         }
         findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
     }

@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -119,16 +120,23 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
             final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(tag -> {
-                final IToken<?> id = controller.deserializeTag(provider, tag.getCompound(TAG_TOKEN));
-                final IRequest<?> request = controller.deserializeTag(provider, tag.getCompound(TAG_REQUEST));
+            final BiMap<IToken<?>, IRequest<?>> map = HashBiMap.create();
+            for (int i = 0; i < list.size(); i++)
+            {
+                final CompoundTag tag = list.getCompound(i);
+                try
+                {
+                    final IToken<?> id = controller.deserializeTag(provider, tag.getCompound(TAG_TOKEN));
+                    final IRequest<?> request = controller.deserializeTag(provider, tag.getCompound(TAG_REQUEST));
+                    map.put(id, request);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error(ex);
+                }
+            }
 
-                return new Tuple<IToken<?>, IRequest<?>>(id, request);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getB()));
-
-            final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(map);
-
-            return new StandardRequestIdentitiesDataStore(token, biMap);
+            return new StandardRequestIdentitiesDataStore(token, map);
         }
 
         @Override

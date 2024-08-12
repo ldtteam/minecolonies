@@ -13,9 +13,9 @@
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="160 22"/>
     <text id="workerName" size="90 11" pos="50 24" textalign="MIDDLE" color="blue"/>
 
-    <text size="100% 11" pos="0 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
+    <text size="175 11" pos="6 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
 
-    <text size="100% 11" pos="0 49" id="progress" label="" color="black" textalign="MIDDLE"/>
+    <text size="175 11" pos="6 49" id="progress" label="" color="black" textalign="MIDDLE"/>
 
     <list id="resources" size="164 71%" pos="13 60">
         <box size="100% 30" linewidth="1">

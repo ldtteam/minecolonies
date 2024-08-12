@@ -3,7 +3,7 @@
      <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
-            <list id="resourcesstock" size="170 100" pos="13 50">
+            <list id="resourcesstock" size="170 180" pos="13 50">
                 <box size="100% 17" linewidth="1">
                     <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
                     <text id="resourceName" size="90 12" pos="20 1" color="black"/>
@@ -13,7 +13,7 @@
                                  source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="red"/>
                 </box>
             </list>
-            <button id="addStock" size="86 17" pos="50 160" color="black"
+            <button id="addStock" size="86 17" pos="50 30" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
 </window>

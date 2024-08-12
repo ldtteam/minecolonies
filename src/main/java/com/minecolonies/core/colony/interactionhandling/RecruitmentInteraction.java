@@ -95,20 +95,21 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
 
 
-        if (recruitButton != null && dataView instanceof IVisitorViewData)
+        if (recruitButton != null && dataView instanceof IVisitorViewData visitorViewData)
         {
-            final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
+            final ItemStack recruitCost = visitorViewData.getRecruitCost();
             final IColonyView colony = (IColonyView) dataView.getColony();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))
                 .append(this.getInquiry())
                 .emptyLines(1)
-                .append(Component.translatableEscape(
+                .appendNL(Component.translatable(
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
                     recruitCost.getCount() + " " + recruitCost.getHoverName().getString()))
+                .appendNL(Component.literal(""))
                 .getText());
 
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
@@ -117,7 +118,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             icon.setID(RECRUITMENT_ICON);
             icon.setSize(15, 15);
             group.addChild(icon);
-            icon.setItem(((IVisitorViewData) dataView).getRecruitCost());
+            icon.setItem(recruitCost);
             icon.setPosition(iconPosX, iconPosY);
             icon.setVisible(true);
         }
