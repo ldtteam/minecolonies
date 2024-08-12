@@ -62,7 +62,8 @@ public class RegularVisitorType implements IVisitorType
     }
 
     @Override
-    public @NotNull InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
+    @NotNull
+    public InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
     {
         IVisitorType.super.onPlayerInteraction(visitor, player, level, hand);
 
@@ -97,6 +98,9 @@ public class RegularVisitorType implements IVisitorType
         return InteractionResult.PASS;
     }
 
+    /**
+     * Extra data containing the sitting position of the visitor.
+     */
     public static class SittingPositionData extends AbstractVisitorExtraData<BlockPos>
     {
         private static final String TAG_VALUE = "value";
@@ -121,6 +125,9 @@ public class RegularVisitorType implements IVisitorType
         }
     }
 
+    /**
+     * Extra data containing the recruitment cost of the visitor.
+     */
     public static class RecruitCostData extends AbstractVisitorExtraData<ItemStack>
     {
         private static final String TAG_VALUE = "value";
