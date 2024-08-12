@@ -19,6 +19,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.constant.Constants;
@@ -157,6 +158,8 @@ public class MineColonies
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+
+        logIncompatibilities();
     }
 
     @SubscribeEvent
@@ -410,5 +413,22 @@ public class MineColonies
                 return new SpearItemTileEntityRenderer();
             }
         }, ModItems.spear);
+    }
+
+    /**
+     * Report known incompatibilities to the log.
+     */
+    private void logIncompatibilities()
+    {
+        if (ModList.get().getModContainerById("minecolonies_tweaks").isPresent())
+        {
+            Log.getLogger().warn("|======================================================================================================================================|");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("| Minecolonies has detected an addon mod that alters Minecolonies core code recklessly: 'Tweaks/Compatibility addon for Minecolonies'. |");
+            Log.getLogger().warn("|          Please report any bugs or issues you find directly to the authors of this addon, as the Official Minecolonies Team          |");
+            Log.getLogger().warn("|               will not be able to provide you any support with potential issues that will arise when using this addon.               |");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("|======================================================================================================================================|");
+        }
     }
 }
