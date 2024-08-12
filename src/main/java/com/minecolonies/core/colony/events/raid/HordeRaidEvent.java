@@ -2,18 +2,21 @@ package com.minecolonies.core.colony.events.raid;
 
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.colonyEvents.*;
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
+import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +36,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.Path;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -184,6 +188,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     public int getID()
     {
         return id;
+    }
+
+    @Override
+    public void setColony(@NotNull final IColony colony)
+    {
+        this.colony = colony;
     }
 
     /**

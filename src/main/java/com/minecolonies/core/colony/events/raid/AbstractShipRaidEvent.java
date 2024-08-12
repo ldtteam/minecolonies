@@ -451,6 +451,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
+    public void setColony(@NotNull final IColony colony)
+    {
+        this.colony = colony;
+    }
+
+    @Override
     public void setSpawnPoint(final BlockPos spawnPoint)
     {
         this.spawnPoint = spawnPoint;
