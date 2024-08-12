@@ -159,7 +159,15 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                try
+                {
+                    identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                }
+                catch (final Exception ex)
+                {
+                    // If the stack fails, all values have been retrieved from the buffer but the stack validation failed and we filter it out here.
+                    Log.getLogger().error(ex);
+                }
             }
 
             final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(identities);

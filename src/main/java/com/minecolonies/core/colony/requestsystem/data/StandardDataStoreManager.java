@@ -8,12 +8,14 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
@@ -23,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class StandardDataStoreManager implements IDataStoreManager
 {
@@ -88,8 +89,7 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public StandardDataStoreManager getNewInstance(
-          @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
+        public StandardDataStoreManager getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
         {
             return new StandardDataStoreManager();
         }
@@ -116,12 +116,22 @@ public class StandardDataStoreManager implements IDataStoreManager
         @Override
         public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundTag -> {
-                final IToken<?> token = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
-                final IDataStore store = controller.deserializeTag(provider, CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
-
-                return new Tuple<>(token, store);
-            }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
+            final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
+            final ListTag list = nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++)
+            {
+                final CompoundTag tag = list.getCompound(i);
+                try
+                {
+                    final IToken<?> token = controller.deserialize(tag.getCompound(NbtTagConstants.TAG_TOKEN));
+                    final IDataStore store = controller.deserialize(tag.getCompound(NbtTagConstants.TAG_VALUE));
+                    storeMap.put(token, store);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error(ex);
+                }
+            }
 
             return new StandardDataStoreManager(storeMap);
         }
@@ -138,13 +148,19 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @Override
         public StandardDataStoreManager deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer)
-          throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
             final int storeSize = buffer.readInt();
             for (int i = 0; i < storeSize; ++i)
             {
-                storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                try
+                {
+                    storeMap.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error(ex);
+                }
             }
 
             return new StandardDataStoreManager(storeMap);
