@@ -3,7 +3,11 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:bread_dough"
+      "item": "minecolonies:bread_dough",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:bread_dough"
+      }
     }
   ],
   "intermediate": "minecraft:furnace",

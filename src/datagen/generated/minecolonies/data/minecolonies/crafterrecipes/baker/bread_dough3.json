@@ -4,10 +4,18 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:wheat"
+      }
     },
     {
-      "item": "minecolonies:large_water_bottle"
+      "item": "minecolonies:large_water_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:large_water_bottle"
+      }
     }
   ],
   "intermediate": "minecraft:air",

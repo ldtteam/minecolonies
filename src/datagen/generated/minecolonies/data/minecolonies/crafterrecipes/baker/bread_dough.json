@@ -4,7 +4,11 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat",
+      "tag": {
+        "count": 3,
+        "id": "minecraft:wheat"
+      }
     }
   ],
   "intermediate": "minecraft:air",

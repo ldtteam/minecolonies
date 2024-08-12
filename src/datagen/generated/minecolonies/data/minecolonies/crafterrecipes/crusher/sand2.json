@@ -3,7 +3,11 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:gravel"
+      "item": "minecraft:gravel",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:gravel"
+      }
     }
   ],
   "intermediate": "minecraft:air",

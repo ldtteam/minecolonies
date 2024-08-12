@@ -1,0 +1,17 @@
+{
+  "values": [
+    "#c:dusts/redstone",
+    "#c:ores/redstone",
+    "#c:storage_blocks/redstone",
+    "#minecolonies:storage_blocks",
+    "minecraft:blaze_rod",
+    "minecraft:slime_ball",
+    "minecraft:gunpowder",
+    "minecraft:ender_pearl",
+    "minecraft:ender_eye",
+    "minecraft:redstone_torch",
+    "minecraft:glowstone_dust",
+    "minecraft:dried_kelp_block",
+    "minecraft:amethyst_shard"
+  ]
+}

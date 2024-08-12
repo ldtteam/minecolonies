@@ -3,16 +3,32 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:onion"
+      "item": "minecolonies:onion",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:onion"
+      }
     },
     {
-      "item": "minecolonies:cabbage"
+      "item": "minecolonies:cabbage",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:cabbage"
+      }
     },
     {
-      "item": "minecraft:bowl"
+      "item": "minecraft:bowl",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:bowl"
+      }
     },
     {
-      "item": "minecolonies:manchet_bread"
+      "item": "minecolonies:manchet_bread",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:manchet_bread"
+      }
     }
   ],
   "intermediate": "minecraft:air",

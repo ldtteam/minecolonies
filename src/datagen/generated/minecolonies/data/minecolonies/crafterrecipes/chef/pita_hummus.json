@@ -3,22 +3,46 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:flatbread"
+      "item": "minecolonies:flatbread",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:flatbread"
+      }
     },
     {
-      "item": "minecolonies:chickpea"
+      "item": "minecolonies:chickpea",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:chickpea"
+      }
     },
     {
-      "item": "minecolonies:chickpea"
+      "item": "minecolonies:chickpea",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:chickpea"
+      }
     },
     {
-      "item": "minecolonies:eggplant"
+      "item": "minecolonies:eggplant",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:eggplant"
+      }
     },
     {
-      "item": "minecolonies:onion"
+      "item": "minecolonies:onion",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:onion"
+      }
     },
     {
-      "item": "minecolonies:garlic"
+      "item": "minecolonies:garlic",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:garlic"
+      }
     }
   ],
   "intermediate": "minecraft:air",

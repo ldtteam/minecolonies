@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:brick",
+    "minecraft:smooth_basalt",
+    "minecraft:smooth_quartz",
+    "minecraft:popped_chorus_fruit",
+    "minecraft:sponge",
+    "minecraft:smooth_sandstone",
+    "minecraft:smooth_red_sandstone",
+    "minecraft:coal",
+    "minecraft:charcoal",
+    "minecraft:nether_brick",
+    "#c:stones",
+    "minecraft:smooth_stone",
+    "minecraft:deepslate",
+    "#minecraft:terracotta",
+    "#minecolonies:glazed_terracotta",
+    "#minecraft:stone_bricks"
+  ]
+}

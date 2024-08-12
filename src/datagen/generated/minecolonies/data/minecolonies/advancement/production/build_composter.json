@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_farmer",
+  "criteria": {
+    "composter": {
+      "conditions": {
+        "hut_name": "composter",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.composter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutcomposter"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.composter.title"
+    }
+  },
+  "requirements": [
+    [
+      "composter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

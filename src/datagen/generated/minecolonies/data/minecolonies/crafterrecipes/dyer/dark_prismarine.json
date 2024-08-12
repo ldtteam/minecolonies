@@ -5,10 +5,18 @@
   "inputs": [
     {
       "count": 4,
-      "item": "minecraft:prismarine"
+      "item": "minecraft:prismarine",
+      "tag": {
+        "count": 4,
+        "id": "minecraft:prismarine"
+      }
     },
     {
-      "item": "minecraft:black_dye"
+      "item": "minecraft:black_dye",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:black_dye"
+      }
     }
   ],
   "intermediate": "minecraft:air",

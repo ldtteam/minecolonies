@@ -3,16 +3,32 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:cooked_rice"
+      "item": "minecolonies:cooked_rice",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:cooked_rice"
+      }
     },
     {
-      "item": "minecolonies:garlic"
+      "item": "minecolonies:garlic",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:garlic"
+      }
     },
     {
-      "item": "minecraft:bowl"
+      "item": "minecraft:bowl",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:bowl"
+      }
     },
     {
-      "item": "minecolonies:cabbage"
+      "item": "minecolonies:cabbage",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:cabbage"
+      }
     }
   ],
   "intermediate": "minecraft:air",

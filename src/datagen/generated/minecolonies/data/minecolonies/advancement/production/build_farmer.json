@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "farmer": {
+      "conditions": {
+        "hut_name": "farmer",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.farmer.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutfarmer"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.farmer.title"
+    }
+  },
+  "requirements": [
+    [
+      "farmer"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -5,11 +5,19 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat",
+      "tag": {
+        "count": 2,
+        "id": "minecraft:wheat"
+      }
     },
     {
       "count": 2,
-      "item": "minecraft:cocoa_beans"
+      "item": "minecraft:cocoa_beans",
+      "tag": {
+        "count": 2,
+        "id": "minecraft:cocoa_beans"
+      }
     }
   ],
   "intermediate": "minecraft:air",

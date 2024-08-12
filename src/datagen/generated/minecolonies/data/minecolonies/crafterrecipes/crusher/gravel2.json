@@ -3,7 +3,11 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:cobblestone"
+      "item": "minecraft:cobblestone",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:cobblestone"
+      }
     }
   ],
   "intermediate": "minecraft:air",

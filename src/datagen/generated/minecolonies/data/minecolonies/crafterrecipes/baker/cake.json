@@ -3,7 +3,11 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:cake_batter"
+      "item": "minecolonies:cake_batter",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:cake_batter"
+      }
     }
   ],
   "intermediate": "minecraft:furnace",

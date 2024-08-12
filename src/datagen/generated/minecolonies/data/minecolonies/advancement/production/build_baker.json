@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_cook",
+  "criteria": {
+    "bakery": {
+      "conditions": {
+        "hut_name": "baker",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.baker.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutbaker"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.baker.title"
+    }
+  },
+  "requirements": [
+    [
+      "bakery"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

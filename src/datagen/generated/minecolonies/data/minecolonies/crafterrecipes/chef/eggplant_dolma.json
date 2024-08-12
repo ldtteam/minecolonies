@@ -3,22 +3,46 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:eggplant"
+      "item": "minecolonies:eggplant",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:eggplant"
+      }
     },
     {
-      "item": "minecolonies:feta_cheese"
+      "item": "minecolonies:feta_cheese",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:feta_cheese"
+      }
     },
     {
-      "item": "minecolonies:garlic"
+      "item": "minecolonies:garlic",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:garlic"
+      }
     },
     {
-      "item": "minecolonies:tomato"
+      "item": "minecolonies:tomato",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:tomato"
+      }
     },
     {
-      "item": "minecolonies:durum"
+      "item": "minecolonies:durum",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:durum"
+      }
     },
     {
-      "item": "minecolonies:onion"
+      "item": "minecolonies:onion",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:onion"
+      }
     }
   ],
   "intermediate": "minecraft:air",

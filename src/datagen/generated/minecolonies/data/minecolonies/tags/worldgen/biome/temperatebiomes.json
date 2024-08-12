@@ -1,8 +1,13 @@
 {
+  "remove": [
+    "#c:is_cold",
+    "#c:is_dry",
+    "#c:is_desert"
+  ],
   "values": [
     "#minecraft:has_structure/village_plains",
-    "#forge:is_plains",
-    "#forge:is_swamp",
+    "#c:is_plains",
+    "#c:is_swamp",
     "minecraft:birch_forest",
     "minecraft:cherry_grove",
     "minecraft:dark_forest",

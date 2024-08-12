@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:military/root",
+  "criteria": {
+    "archery": {
+      "conditions": {
+        "hut_name": "archery",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.archery.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutarchery"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.archery.title"
+    }
+  },
+  "requirements": [
+    [
+      "archery"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecolonies:composting",
+  "input": [
+    {
+      "type": "minecolonies:food",
+      "max-saturation": 1.0,
+      "min-saturation": 0.5
+    },
+    {
+      "type": "minecolonies:plant"
+    },
+    {
+      "tag": "minecolonies:compostables"
+    }
+  ],
+  "strength": 4
+}

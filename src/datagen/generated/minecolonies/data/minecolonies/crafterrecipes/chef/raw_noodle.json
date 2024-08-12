@@ -3,7 +3,11 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "item": "minecolonies:durum",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:durum"
+      }
     }
   ],
   "intermediate": "minecraft:air",

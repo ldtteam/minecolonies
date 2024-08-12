@@ -2,13 +2,21 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:large_empty_bottle"
+      "item": "minecolonies:large_empty_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:large_empty_bottle"
+      }
     }
   ],
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:large_milk_bottle"
+      "item": "minecolonies:large_milk_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:large_milk_bottle"
+      }
     }
   ],
   "intermediate": "minecraft:air",

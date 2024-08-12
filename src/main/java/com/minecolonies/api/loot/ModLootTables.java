@@ -19,13 +19,13 @@ public final class ModLootTables
     public static final ResourceKey<LootTable> FISHING = ResourceKey.create(Registries.LOOT_TABLE, FISHERMAN_ID);
 
     /** Fisherman secondary fish table */
-    public static final ResourceKey<LootTable> FISHING_FISH = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/fish"));
+    public static final ResourceKey<LootTable> FISHING_FISH = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "_fish"));
 
     /** Fisherman secondary junk table */
-    public static final ResourceKey<LootTable> FISHING_JUNK = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/junk"));
+    public static final ResourceKey<LootTable> FISHING_JUNK = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "_junk"));
 
     /** Fisherman secondary treasure table */
-    public static final ResourceKey<LootTable> FISHING_TREASURE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/treasure"));
+    public static final ResourceKey<LootTable> FISHING_TREASURE = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "_treasure"));
 
     /** Ids for the fisherman bonus loot tables */
     public static final Map<Integer, ResourceKey<LootTable>> FISHERMAN_BONUS = createFishermanBonusMap();
@@ -35,7 +35,7 @@ public final class ModLootTables
         final Map<Integer, ResourceKey<LootTable>> map = new HashMap<>();
         for (int level = 1; level <= MAX_BUILDING_LEVEL; ++level)
         {
-            map.put(level, ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHING + "/bonus" + level)));
+            map.put(level, ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(FISHERMAN_ID + "_bonus" + level)));
         }
         return Collections.unmodifiableMap(map);
     }

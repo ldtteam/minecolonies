@@ -3,10 +3,18 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:rice"
+      "item": "minecolonies:rice",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:rice"
+      }
     },
     {
-      "item": "minecraft:bowl"
+      "item": "minecraft:bowl",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:bowl"
+      }
     }
   ],
   "intermediate": "minecraft:air",

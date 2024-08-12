@@ -3,10 +3,14 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecraft:glass_bottle"
+      "item": "minecraft:glass_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:glass_bottle"
+      }
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
-  "result": "minecraft:potion{Potion:\"minecraft:water\"}"
+  "result": "minecraft:potion"
 }

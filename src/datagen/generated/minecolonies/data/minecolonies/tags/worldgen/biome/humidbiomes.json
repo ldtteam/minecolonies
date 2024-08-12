@@ -1,7 +1,7 @@
 {
   "values": [
     "#minecraft:is_jungle",
-    "#forge:is_wet/overworld",
+    "#c:is_wet/overworld",
     "minecraft:bamboo_jungle",
     "minecraft:beach",
     "minecraft:warm_ocean",

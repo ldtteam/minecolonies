@@ -3,7 +3,11 @@
   "crafter": "concretemixer_custom",
   "inputs": [
     {
-      "item": "minecraft:brown_concrete_powder"
+      "item": "minecraft:brown_concrete_powder",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:brown_concrete_powder"
+      }
     }
   ],
   "intermediate": "minecraft:air",

@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_composter",
+  "criteria": {
+    "florist": {
+      "conditions": {
+        "hut_name": "florist",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.florist.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutflorist"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.florist.title"
+    }
+  },
+  "requirements": [
+    [
+      "florist"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

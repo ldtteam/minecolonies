@@ -3,10 +3,18 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:soybean"
+      "item": "minecolonies:soybean",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:soybean"
+      }
     },
     {
-      "item": "minecolonies:soybean"
+      "item": "minecolonies:soybean",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:soybean"
+      }
     }
   ],
   "intermediate": "minecraft:air",

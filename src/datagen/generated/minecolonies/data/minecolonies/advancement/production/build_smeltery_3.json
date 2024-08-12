@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_smeltery",
+  "criteria": {
+    "smeltery": {
+      "conditions": {
+        "hut_name": "smeltery",
+        "level": 3
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.smeltery_3.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutsmeltery"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.smeltery_3.title"
+    }
+  },
+  "requirements": [
+    [
+      "smeltery"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

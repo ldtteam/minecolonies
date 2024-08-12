@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "warehouse": {
+      "conditions": {
+        "hut_name": "warehouse",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.warehouse.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutwarehouse"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.warehouse.title"
+    }
+  },
+  "requirements": [
+    [
+      "warehouse"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

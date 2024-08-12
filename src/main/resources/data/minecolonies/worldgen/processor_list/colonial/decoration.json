@@ -37,7 +37,7 @@
       "rules": [
         {
           "output_state": {
-            "Name": "minecraft:grass"
+            "Name": "minecraft:grass_block"
           },
           "input_predicate": {
             "block": "structurize:blocksolidsubstitution",

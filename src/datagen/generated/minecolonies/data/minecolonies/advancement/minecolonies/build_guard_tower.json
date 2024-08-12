@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:minecolonies/build_builder",
+  "criteria": {
+    "guard_tower": {
+      "conditions": {
+        "hut_name": "guardtower",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.guard_tower.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutguardtower"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.guard_tower.title"
+    }
+  },
+  "requirements": [
+    [
+      "guard_tower"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

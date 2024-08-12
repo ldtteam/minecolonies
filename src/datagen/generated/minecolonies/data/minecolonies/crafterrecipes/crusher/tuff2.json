@@ -3,7 +3,11 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:cobbled_deepslate"
+      "item": "minecraft:cobbled_deepslate",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:cobbled_deepslate"
+      }
     }
   ],
   "intermediate": "minecraft:air",

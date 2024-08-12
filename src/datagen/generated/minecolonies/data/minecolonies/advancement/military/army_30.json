@@ -1,0 +1,29 @@
+{
+  "parent": "minecolonies:military/army_8",
+  "criteria": {
+    "population_5": {
+      "conditions": {
+        "population_count": 30
+      },
+      "trigger": "minecolonies:army_population"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.army_30.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:iron_sword"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.army_30.title"
+    }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

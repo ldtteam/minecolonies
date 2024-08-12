@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:minecolonies/build_citizen",
+  "criteria": {
+    "population_5": {
+      "conditions": {
+        "population_count": 5
+      },
+      "trigger": "minecolonies:colony_population"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.colony_population_5.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:red_bed"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.colony_population_5.title"
+    }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

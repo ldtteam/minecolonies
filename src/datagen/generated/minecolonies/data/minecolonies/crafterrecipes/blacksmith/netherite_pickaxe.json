@@ -2,26 +2,50 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:netherite_upgrade_smithing_template"
+      "item": "minecraft:netherite_upgrade_smithing_template",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:netherite_upgrade_smithing_template"
+      }
     }
   ],
   "crafter": "blacksmith_crafting",
   "inputs": [
     {
-      "item": "minecraft:diamond_pickaxe"
+      "item": "minecraft:diamond_pickaxe",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:diamond_pickaxe"
+      }
     },
     {
-      "item": "minecraft:netherite_upgrade_smithing_template"
+      "item": "minecraft:netherite_upgrade_smithing_template",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:netherite_upgrade_smithing_template"
+      }
     },
     {
-      "item": "minecraft:netherite_ingot"
+      "item": "minecraft:netherite_ingot",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:netherite_ingot"
+      }
     },
     {
       "count": 7,
-      "item": "minecraft:diamond"
+      "item": "minecraft:diamond",
+      "tag": {
+        "count": 7,
+        "id": "minecraft:diamond"
+      }
     },
     {
-      "item": "minecraft:netherrack"
+      "item": "minecraft:netherrack",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:netherrack"
+      }
     }
   ],
   "intermediate": "minecraft:air",

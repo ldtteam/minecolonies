@@ -43,7 +43,6 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     public void generate()
     {
         HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-
         saveBlocks(Arrays.asList(ModBlocks.getHuts()));
 
         saveBlock(ModBlocks.blockHutWareHouse);
@@ -135,7 +134,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     @Override
     protected Iterable<Block> getKnownBlocks()
     {
-        return Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
+        return Stream.concat(Arrays.stream(ModBlocks.getCrops()), Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
             ModBlocks.blockHutWareHouse,
             ModBlocks.blockStash,
             //ModBlocks.blockConstructionTape, // no loot table
@@ -150,6 +149,8 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             ModBlocks.blockWoodenGate,
             ModBlocks.blockCompostedDirt,
             //ModBlocks.blockDecorationPlaceholder, // creative only
+            ModBlocks.floodedFarmland,
+            ModBlocks.farmland,
 
             Blocks.BLACK_BANNER,
             Blocks.BLUE_BANNER,
@@ -167,6 +168,6 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             Blocks.PURPLE_BANNER,
             Blocks.RED_BANNER,
             Blocks.YELLOW_BANNER
-        )).map(Block.class::cast).toList();
+        )).map(Block.class::cast)).toList();
     }
 }

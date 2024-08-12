@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "library": {
+      "conditions": {
+        "hut_name": "library",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.library.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutlibrary"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.library.title"
+    }
+  },
+  "requirements": [
+    [
+      "library"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

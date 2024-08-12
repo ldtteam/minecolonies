@@ -4,19 +4,39 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:cooked_rice"
+      "item": "minecolonies:cooked_rice",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:cooked_rice"
+      }
     },
     {
-      "item": "minecraft:salmon"
+      "item": "minecraft:salmon",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:salmon"
+      }
     },
     {
-      "item": "minecolonies:garlic"
+      "item": "minecolonies:garlic",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:garlic"
+      }
     },
     {
-      "item": "minecraft:dried_kelp"
+      "item": "minecraft:dried_kelp",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:dried_kelp"
+      }
     },
     {
-      "item": "minecolonies:onion"
+      "item": "minecolonies:onion",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:onion"
+      }
     }
   ],
   "intermediate": "minecraft:air",

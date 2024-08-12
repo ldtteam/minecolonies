@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_library",
+  "criteria": {
+    "enchanter": {
+      "conditions": {
+        "hut_name": "enchanter",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.enchanter.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutenchanter"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.enchanter.title"
+    }
+  },
+  "requirements": [
+    [
+      "enchanter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

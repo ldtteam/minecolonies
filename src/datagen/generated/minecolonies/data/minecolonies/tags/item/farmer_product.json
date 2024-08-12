@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:hay_block",
+    "#c:seeds",
+    "minecolonies:composted_dirt",
+    "minecraft:melon",
+    "minecraft:coarse_dirt",
+    "minecraft:fermented_spider_eye",
+    "minecraft:glistering_melon_slice",
+    "minecraft:mud_bricks",
+    "minecraft:packed_mud",
+    "minecraft:muddy_mangrove_roots"
+  ]
+}

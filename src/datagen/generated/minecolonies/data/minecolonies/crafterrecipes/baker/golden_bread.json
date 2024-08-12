@@ -5,10 +5,18 @@
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat",
+      "tag": {
+        "count": 8,
+        "id": "minecraft:wheat"
+      }
     },
     {
-      "item": "minecraft:gold_ingot"
+      "item": "minecraft:gold_ingot",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:gold_ingot"
+      }
     }
   ],
   "intermediate": "minecraft:air",

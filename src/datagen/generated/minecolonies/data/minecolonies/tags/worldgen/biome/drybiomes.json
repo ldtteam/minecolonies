@@ -1,8 +1,8 @@
 {
   "values": [
     "#minecraft:has_structure/desert_pyramid",
-    "#forge:is_desert",
-    "#forge:is_dry",
+    "#c:is_desert",
+    "#c:is_dry",
     "#minecraft:is_savanna",
     "#minecraft:is_nether",
     "minecraft:badlands",

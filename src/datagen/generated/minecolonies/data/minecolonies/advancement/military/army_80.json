@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:military/army_30",
+  "criteria": {
+    "population_5": {
+      "conditions": {
+        "population_count": 80
+      },
+      "trigger": "minecolonies:army_population"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.army_80.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:diamond_sword"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.army_80.title"
+    }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

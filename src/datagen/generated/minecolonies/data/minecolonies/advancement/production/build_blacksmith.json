@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/build_sawmill",
+  "criteria": {
+    "blacksmith": {
+      "conditions": {
+        "hut_name": "blacksmith",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.blacksmith.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutblacksmith"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.blacksmith.title"
+    }
+  },
+  "requirements": [
+    [
+      "blacksmith"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

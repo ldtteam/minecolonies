@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:leather"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    },
+    "X": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "XTX",
+    "XPX",
+    "XXX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecolonies:clipboard"
+  }
+}

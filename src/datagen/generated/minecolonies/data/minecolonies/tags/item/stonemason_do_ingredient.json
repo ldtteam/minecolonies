@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:stone",
+    "minecraft:calcite",
+    "minecraft:mud_bricks",
+    "minecraft:quartz_block",
+    "minecraft:smooth_quartz",
+    "minecraft:quartz_bricks",
+    "minecraft:quartz_pillar",
+    "minecraft:chiseled_quartz_block",
+    "minecraft:netherrack",
+    "minecraft:blackstone",
+    "minecraft:chiseled_polished_blackstone",
+    "minecraft:cracked_polished_blackstone_bricks",
+    "minecraft:prismarine",
+    "minecraft:prismarine_bricks",
+    "minecraft:dark_prismarine",
+    "minecraft:end_stone_bricks"
+  ]
+}

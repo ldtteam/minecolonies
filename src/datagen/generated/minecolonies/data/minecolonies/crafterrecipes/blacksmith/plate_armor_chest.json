@@ -4,14 +4,26 @@
   "inputs": [
     {
       "count": 7,
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:iron_ingot",
+      "tag": {
+        "count": 7,
+        "id": "minecraft:iron_ingot"
+      }
     },
     {
-      "item": "minecraft:leather"
+      "item": "minecraft:leather",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:leather"
+      }
     },
     {
       "count": 3,
-      "item": "minecraft:coal"
+      "item": "minecraft:coal",
+      "tag": {
+        "count": 3,
+        "id": "minecraft:coal"
+      }
     }
   ],
   "intermediate": "minecraft:air",

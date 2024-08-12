@@ -3,7 +3,11 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:manchet_dough"
+      "item": "minecolonies:manchet_dough",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:manchet_dough"
+      }
     }
   ],
   "intermediate": "minecraft:furnace",

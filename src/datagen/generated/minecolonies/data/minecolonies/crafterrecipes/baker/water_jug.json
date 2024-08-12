@@ -3,7 +3,11 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecolonies:large_empty_bottle"
+      "item": "minecolonies:large_empty_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:large_empty_bottle"
+      }
     }
   ],
   "intermediate": "minecraft:air",

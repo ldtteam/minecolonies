@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "fisherman": {
+      "conditions": {
+        "hut_name": "fisherman",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.fisherman.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutfisherman"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.fisherman.title"
+    }
+  },
+  "requirements": [
+    [
+      "fisherman"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

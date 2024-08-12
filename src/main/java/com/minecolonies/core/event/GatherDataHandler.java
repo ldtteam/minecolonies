@@ -37,6 +37,7 @@ public class GatherDataHandler
         // todo: is this needed?  the provider already contains enchantments without needing to do anything special
         RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
         DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
+        generator.addProvider(true, enchRegProvider);
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator.getPackOutput(), event.getExistingFileHelper()));
@@ -75,7 +76,6 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(true, enchRegProvider);
 
         generator.addProvider(event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), provider));
 

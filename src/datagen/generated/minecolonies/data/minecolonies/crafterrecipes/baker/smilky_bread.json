@@ -5,10 +5,18 @@
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat",
+      "tag": {
+        "count": 8,
+        "id": "minecraft:wheat"
+      }
     },
     {
-      "item": "minecolonies:large_soy_milk_bottle"
+      "item": "minecolonies:large_soy_milk_bottle",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:large_soy_milk_bottle"
+      }
     }
   ],
   "intermediate": "minecraft:air",

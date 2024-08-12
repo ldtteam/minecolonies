@@ -1,0 +1,15 @@
+{
+  "values": [
+    "minecraft:glowstone",
+    "minecolonies:bread_dough",
+    "minecolonies:cookie_dough",
+    "minecolonies:raw_pumpkin_pie",
+    "minecolonies:cake_batter",
+    "#c:stones",
+    "#c:cobblestones",
+    "#c:gravels",
+    "#c:sands",
+    "#c:ingots",
+    "#minecolonies:storage_blocks"
+  ]
+}

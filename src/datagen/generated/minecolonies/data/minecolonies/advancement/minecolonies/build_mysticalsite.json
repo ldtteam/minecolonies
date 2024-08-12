@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:minecolonies/build_builder",
+  "criteria": {
+    "mysticalsite": {
+      "conditions": {
+        "hut_name": "mysticalsite",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.mysticalsite.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutmysticalsite"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.mysticalsite.title"
+    }
+  },
+  "requirements": [
+    [
+      "mysticalsite"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

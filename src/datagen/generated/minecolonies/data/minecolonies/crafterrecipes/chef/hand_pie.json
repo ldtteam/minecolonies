@@ -3,19 +3,39 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "item": "minecolonies:durum",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:durum"
+      }
     },
     {
-      "item": "minecolonies:garlic"
+      "item": "minecolonies:garlic",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:garlic"
+      }
     },
     {
-      "item": "minecraft:brown_mushroom"
+      "item": "minecraft:brown_mushroom",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:brown_mushroom"
+      }
     },
     {
-      "item": "minecolonies:onion"
+      "item": "minecolonies:onion",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:onion"
+      }
     },
     {
-      "item": "minecraft:mutton"
+      "item": "minecraft:mutton",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:mutton"
+      }
     }
   ],
   "intermediate": "minecraft:air",

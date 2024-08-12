@@ -757,7 +757,7 @@ public final class ItemStackUtils
             }
 
             final Set<DataComponentType<?>> checkedKeys = CHECKED_NBT_KEYS.get(itemStack1.getItem());
-            if (checkedKeys.isEmpty())
+            if (checkedKeys == null || checkedKeys.isEmpty())
             {
                 return true;
             }

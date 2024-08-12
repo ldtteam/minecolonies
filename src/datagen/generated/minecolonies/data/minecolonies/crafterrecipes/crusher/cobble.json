@@ -4,7 +4,11 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:tuff"
+      "item": "minecraft:tuff",
+      "tag": {
+        "count": 2,
+        "id": "minecraft:tuff"
+      }
     }
   ],
   "intermediate": "minecraft:air",

@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "cook": {
+      "conditions": {
+        "hut_name": "cook",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.cook.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutcook"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.cook.title"
+    }
+  },
+  "requirements": [
+    [
+      "cook"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

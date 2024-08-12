@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:air",
+    "minecraft:cave_air",
+    "minecraft:snow",
+    "minecraft:tall_grass",
+    "minecraft:grass_block",
+    "minecraft:fern",
+    "minecraft:torch",
+    "#minecraft:buttons",
+    "#minecraft:rails",
+    "#minecraft:wool_carpets"
+  ]
+}

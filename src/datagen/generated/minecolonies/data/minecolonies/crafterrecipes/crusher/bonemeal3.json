@@ -4,7 +4,11 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:bone_block"
+      "item": "minecraft:bone_block",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:bone_block"
+      }
     }
   ],
   "intermediate": "minecraft:air",

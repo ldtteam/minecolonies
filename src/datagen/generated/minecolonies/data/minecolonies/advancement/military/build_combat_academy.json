@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:military/root",
+  "criteria": {
+    "combat_academy": {
+      "conditions": {
+        "hut_name": "combatacademy",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.combat_academy.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutcombatacademy"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.combat_academy.title"
+    }
+  },
+  "requirements": [
+    [
+      "combat_academy"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

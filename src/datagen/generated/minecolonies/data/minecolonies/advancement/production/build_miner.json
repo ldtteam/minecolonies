@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:production/root",
+  "criteria": {
+    "miner": {
+      "conditions": {
+        "hut_name": "miner",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.build.miner.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecolonies:blockhutminer"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.miner.title"
+    }
+  },
+  "requirements": [
+    [
+      "miner"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

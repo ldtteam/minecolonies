@@ -1,0 +1,30 @@
+{
+  "parent": "minecolonies:minecolonies/colony_population_50",
+  "criteria": {
+    "population_75": {
+      "conditions": {
+        "population_count": 75
+      },
+      "trigger": "minecolonies:colony_population"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.minecolonies.colony_population_75.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:emerald"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.colony_population_75.title"
+    }
+  },
+  "requirements": [
+    [
+      "population_75"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

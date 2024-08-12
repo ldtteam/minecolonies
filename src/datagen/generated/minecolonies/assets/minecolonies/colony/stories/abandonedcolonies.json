@@ -2,8 +2,8 @@
   {
     "type": "minecolonies:abandoned_name",
     "biomes": [
-      "#forge:is_wet",
-      "#forge:is_plains"
+      "#c:is_wet",
+      "#c:is_plains"
     ],
     "content": [
       "Clearwater",
@@ -16,7 +16,7 @@
   },
   {
     "type": "minecolonies:abandoned_name",
-    "biomes": "#forge:is_cold",
+    "biomes": "#c:is_cold",
     "content": [
       "Silvervale",
       "Frostfield",
@@ -26,7 +26,7 @@
   },
   {
     "type": "minecolonies:abandoned_name",
-    "biomes": "#forge:is_desert",
+    "biomes": "#c:is_desert",
     "content": [
       "Goldenridge",
       "Ashford"

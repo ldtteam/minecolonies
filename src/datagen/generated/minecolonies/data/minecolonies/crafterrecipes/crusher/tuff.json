@@ -4,7 +4,11 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:cobbled_deepslate"
+      "item": "minecraft:cobbled_deepslate",
+      "tag": {
+        "count": 2,
+        "id": "minecraft:cobbled_deepslate"
+      }
     }
   ],
   "intermediate": "minecraft:air",

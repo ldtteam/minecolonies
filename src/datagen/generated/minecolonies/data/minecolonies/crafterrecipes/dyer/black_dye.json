@@ -3,7 +3,11 @@
   "crafter": "dyer_crafting",
   "inputs": [
     {
-      "item": "minecraft:charcoal"
+      "item": "minecraft:charcoal",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:charcoal"
+      }
     }
   ],
   "intermediate": "minecraft:air",
