@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * A colony event which spawns and uses entities
  */
-public interface IColonyEntitySpawnEvent
+public interface IColonyEntitySpawnEvent extends IColonySpawnEvent
 {
     /**
      * The list of entities related to this event
