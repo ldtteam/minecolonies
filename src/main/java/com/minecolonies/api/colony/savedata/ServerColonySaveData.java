@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.ColonyList;
@@ -17,13 +16,10 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
-import net.minecraft.world.level.levelgen.structure.StructureFeatureIndexSavedData;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_MANAGER;
