@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 /**
  * An colony event which spawns at a certain position
  */
-public interface IColonySpawnEvent
+public interface IColonySpawnEvent extends IColonyEvent
 {
     /**
      * Sets the spawn point

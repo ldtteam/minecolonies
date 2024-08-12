@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Used by events which do spawn a structure in the world
  */
-public interface IColonyStructureSpawnEvent
+public interface IColonyStructureSpawnEvent extends IColonyEvent
 {
     /**
      * Returns the list of used schematics and their positions. The string should be the full path to the schematic file.

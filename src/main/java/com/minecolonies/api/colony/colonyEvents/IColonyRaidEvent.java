@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Interface type for raid events
  */
-public interface IColonyRaidEvent extends IColonyEvent, IColonySpawnEvent, IColonyEntitySpawnEvent
+public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
 {
     /**
      * Get the normal raider type.
