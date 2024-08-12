@@ -77,6 +77,9 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
         return false;
     }
 
+    /**
+     * Serializer for {@link ExpeditionDifficultyCondition}.
+     */
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<ExpeditionDifficultyCondition>
     {
         @Override
