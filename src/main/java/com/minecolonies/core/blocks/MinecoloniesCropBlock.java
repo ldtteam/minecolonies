@@ -1,9 +1,8 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.core.items.ItemCrop;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +118,6 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
                 if (i < this.getMaxAge())
                 {
                     level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
-                    BoneMealItem.addGrowthParticles(level, pos, 1);
                 }
             }
         }
@@ -130,23 +127,6 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, @NotNull BlockPos pos)
     {
         return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (preferredBiome == null || level.getBiome(pos).is(preferredBiome));
-    }
-
-    protected ItemInteractionResult useItemOn(final ItemStack stack, final BlockState state, final Level level, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult hit)
-    {
-        if (player.getItemInHand(hand).getItem() == ModItems.compost)
-        {
-            if (!level.isClientSide)
-            {
-                attemptGrow(state, (ServerLevel) level, pos);
-            }
-            if (!player.isCreative())
-            {
-                player.getItemInHand(hand).shrink(1);
-            }
-            return ItemInteractionResult.CONSUME;
-        }
-        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override
