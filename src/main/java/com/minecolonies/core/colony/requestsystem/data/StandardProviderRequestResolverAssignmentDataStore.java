@@ -140,9 +140,7 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
         }
 
         @Override
-        public StandardProviderRequestResolverAssignmentDataStore deserialize(
-          IFactoryController controller,
-          FriendlyByteBuf buffer) throws Throwable
+        public StandardProviderRequestResolverAssignmentDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, Collection<IToken<?>>> assignments = new HashMap<>();

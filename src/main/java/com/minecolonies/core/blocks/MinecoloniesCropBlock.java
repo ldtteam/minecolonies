@@ -1,20 +1,17 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.core.items.ItemCrop;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -119,7 +115,6 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
                 if (i < this.getMaxAge())
                 {
                     level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
-                    BoneMealItem.addGrowthParticles(level, pos, 1);
                 }
             }
         }
@@ -129,30 +124,6 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, @NotNull BlockPos pos)
     {
         return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (preferredBiome == null || level.getBiome(pos).is(preferredBiome));
-    }
-
-    @Override
-    public InteractionResult use(
-      final @NotNull BlockState state,
-      final @NotNull Level level,
-      final @NotNull BlockPos pos,
-      final Player player,
-      final @NotNull InteractionHand hand,
-      final @NotNull BlockHitResult hitResult)
-    {
-        if (player.getItemInHand(hand).getItem() == ModItems.compost)
-        {
-            if (!level.isClientSide)
-            {
-                attemptGrow(state, (ServerLevel) level, pos);
-            }
-            if (!player.isCreative())
-            {
-                player.getItemInHand(hand).shrink(1);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return super.use(state, level, pos, player, hand, hitResult);
     }
 
     @Override

@@ -15,10 +15,10 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModBannerPatterns;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
@@ -35,9 +35,6 @@ import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,12 +42,12 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -139,6 +136,8 @@ public class MineColonies
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+
+        logIncompatibilities();
     }
 
     @SubscribeEvent
@@ -231,5 +230,22 @@ public class MineColonies
     public static Configuration getConfig()
     {
         return config;
+    }
+
+    /**
+     * Report known incompatibilities to the log.
+     */
+    private void logIncompatibilities()
+    {
+        if (ModList.get().getModContainerById("minecolonies_tweaks").isPresent())
+        {
+            Log.getLogger().warn("|======================================================================================================================================|");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("| Minecolonies has detected an addon mod that alters Minecolonies core code recklessly: 'Tweaks/Compatibility addon for Minecolonies'. |");
+            Log.getLogger().warn("|          Please report any bugs or issues you find directly to the authors of this addon, as the Official Minecolonies Team          |");
+            Log.getLogger().warn("|               will not be able to provide you any support with potential issues that will arise when using this addon.               |");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("|======================================================================================================================================|");
+        }
     }
 }

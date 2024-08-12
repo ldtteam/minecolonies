@@ -105,11 +105,12 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                 .append(Component.literal(dataView.getName() + ": "))
                 .append(this.getInquiry())
                 .emptyLines(1)
-                .append(Component.translatable(
+                .appendNL(Component.translatable(
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
                     recruitCost.getCount() + " " + recruitCost.getHoverName().getString()))
+                .appendNL(Component.literal(""))
                 .getText());
 
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
