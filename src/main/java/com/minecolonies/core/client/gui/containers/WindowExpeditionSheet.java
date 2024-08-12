@@ -7,13 +7,13 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
-@OnlyIn(Dist.CLIENT)
+/**
+ * The window shown when opening the expedition sheet.
+ */
 public class WindowExpeditionSheet extends AbstractContainerScreen<ContainerExpeditionSheet>
 {
     /**
@@ -46,6 +46,13 @@ public class WindowExpeditionSheet extends AbstractContainerScreen<ContainerExpe
      */
     private final int inventoryRows;
 
+    /**
+     * Factory constructor.
+     *
+     * @param container       the container instance.
+     * @param playerInventory the player inventory instance.
+     * @param component       the header component.
+     */
     public WindowExpeditionSheet(final ContainerExpeditionSheet container, final Inventory playerInventory, final Component component)
     {
         super(container, playerInventory, component);
@@ -63,9 +70,6 @@ public class WindowExpeditionSheet extends AbstractContainerScreen<ContainerExpe
         this.renderTooltip(stack, x, y);
     }
 
-    /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items)
-     */
     @Override
     protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
     {
@@ -73,9 +77,6 @@ public class WindowExpeditionSheet extends AbstractContainerScreen<ContainerExpe
         stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - 94), 4210752, false);
     }
 
-    /**
-     * Draws the background layer of this container (behind the items).
-     */
     @Override
     protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
     {
