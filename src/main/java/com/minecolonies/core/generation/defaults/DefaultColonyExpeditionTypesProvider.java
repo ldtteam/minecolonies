@@ -23,7 +23,7 @@ import static com.minecolonies.core.generation.defaults.DefaultExpeditionLootPro
 /**
  * Generator for expedition types.
  */
-public class DefaultExpeditionTypesProvider implements DataProvider
+public class DefaultColonyExpeditionTypesProvider implements DataProvider
 {
     /**
      * Expedition type constants.
@@ -40,7 +40,7 @@ public class DefaultExpeditionTypesProvider implements DataProvider
     /**
      * Default constructor.
      */
-    public DefaultExpeditionTypesProvider(final PackOutput output)
+    public DefaultColonyExpeditionTypesProvider(final PackOutput output)
     {
         this.output = output;
     }
