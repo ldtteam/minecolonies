@@ -123,8 +123,8 @@ public class StandardDataStoreManager implements IDataStoreManager
                 final CompoundTag tag = list.getCompound(i);
                 try
                 {
-                    final IToken<?> token = controller.deserialize(tag.getCompound(NbtTagConstants.TAG_TOKEN));
-                    final IDataStore store = controller.deserialize(tag.getCompound(NbtTagConstants.TAG_VALUE));
+                    final IToken<?> token = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_TOKEN));
+                    final IDataStore store = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_VALUE));
                     storeMap.put(token, store);
                 }
                 catch (final Exception ex)

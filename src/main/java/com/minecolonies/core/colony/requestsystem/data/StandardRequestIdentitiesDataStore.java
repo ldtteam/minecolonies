@@ -103,15 +103,15 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         {
             final CompoundTag systemCompound = new CompoundTag();
 
-            systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
+            systemCompound.put(TAG_TOKEN, controller.serializeTag(provider, standardRequestIdentitiesDataStore.getId()));
             final ListTag listTag = new ListTag();
             for (final Map.Entry<IToken<?>, IRequest<?>> entry : new HashSet<>(standardRequestIdentitiesDataStore.getIdentities().entrySet()))
             {
                 try
                 {
                     CompoundTag mapCompound = new CompoundTag();
-                    mapCompound.put(TAG_TOKEN, controller.serialize(entry.getKey()));
-                    mapCompound.put(TAG_REQUEST, controller.serialize(entry.getValue()));
+                    mapCompound.put(TAG_TOKEN, controller.serializeTag(provider, entry.getKey()));
+                    mapCompound.put(TAG_REQUEST, controller.serializeTag(provider, entry.getValue()));
                     listTag.add(mapCompound);
                 }
                 catch (final Exception e)
