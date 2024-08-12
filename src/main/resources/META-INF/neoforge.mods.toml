@@ -1,0 +1,97 @@
+# This is an example neoforge.neoforge.mods.toml file. It contains the data relating to the loading mods.
+# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
+# The overall format is standard TOML format, v0.5.0.
+# Note that there are a couple of TOML lists in this file.
+# Find more information on toml format here:  https://github.com/toml-lang/toml
+# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml" #mandatory
+
+# A version range to match for said mod loader - for regular FML @Mod it will be the FML version. This is currently 2.
+loaderVersion="${fml_range}" #mandatory (27 is current forge version)
+
+# The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+# Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+license="GPL3"
+
+# A URL to refer people to when problems occur with this mod
+#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]] #mandatory
+
+# The modid of the mod
+modId="minecolonies" #mandatory
+
+# The version number of the mod
+version="${version}" #mandatory
+
+# A display name for the mod
+displayName="MineColonies" #mandatory
+
+issueTrackerURL="https://github.com/ldtteam/minecolonies/issues/new/choose" #optional
+displayURL="https://minecolonies.com" #optional
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="minecolonies_logo.png" #optional
+# A text field displayed in the mod UI
+authors="LDT Team" #optional
+
+# Display Test controls the display for your mod in the server connection screen
+# MATCH_VERSION means that your mod will cause a red X if the versions on client and server differ. This is the default behaviour and should be what you choose if you have server and client elements to your mod.
+# IGNORE_SERVER_VERSION means that your mod will not cause a red X if it's present on the server but not on the client. This is what you should use if you're a server only mod.
+# IGNORE_ALL_VERSION means that your mod will not cause a red X if it's present on the client or the server. This is a special case and should only be used if your mod has no server component.
+# NONE means that no display test is set on your mod. You need to do this yourself, see IExtensionPoint.DisplayTest for more information. You can define any scheme you wish with this value.
+# IMPORTANT NOTE: this is NOT an instruction as to which environments (CLIENT or DEDICATED SERVER) your mod loads on. Your mod should load (and maybe do nothing!) whereever it finds itself.
+#displayTest="MATCH_VERSION" # MATCH_VERSION is the default if nothing is specified (#optional)
+
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+MineColonies is a colony simulator within Minecraft! There are numerous types of workers, and each worker has its own type of hut, letting you build a busy and vibrant village/town/city/colony. There is no coded limit to the number of NPC's at your disposal, so you can create a small, efficient village dedicated to a particular type of worker or a sprawling metropolis with hundreds of workers. It's entirely up to you!
+'''
+
+# The [[accessTransformers]] block allows you to declare where your AT file is.
+# If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
+#[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
+
+[[dependencies.minecolonies]] #optional
+    modId="neoforge" #mandatory
+    type="required" #mandatory
+    versionRange="${forge_range}" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="minecraft"
+    type="required"
+    versionRange="[${minecraftVersion}, 1.21)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="structurize"
+    type="required"
+    versionRange="[${structurize_version}, )"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="blockui"
+    type="required"
+    versionRange="[${blockUI_version}, )"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="jei"
+    type="optional"
+    versionRange="[${jei_version},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="domum_ornamentum"
+    type="required"
+    versionRange="[${domumOrnamentumVersion}, )"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="journeymap"
+    type="optional"
+    versionRange="[${project.jmapVersion},)"
+    ordering="NONE"
+    side="BOTH"
