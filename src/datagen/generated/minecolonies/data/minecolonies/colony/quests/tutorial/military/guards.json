@@ -1,0 +1,184 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.tutorial.military.guards",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply.answer1.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.guards.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer2",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj0.answer2.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.guards.obj0.answer2.reply"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.guards.obj0"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.guards.obj1.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.guards.obj1.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer2",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer2.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.military.guards.obj1.answer2.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj1.answer3",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.guards.obj1"
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:guardtower",
+        "count-existing": true,
+        "lvl": 1,
+        "next-objective": 3,
+        "qty": 2,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.military.guards.obj3.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.military.guards.obj3",
+      "unlocks-rewards": [
+        0
+      ]
+    }
+  ],
+  "parents": [
+    "minecolonies:tutorial/military/zombies"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:iron_block",
+        "qty": 1
+      }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/military/zombies"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {}
+    }
+  ]
+}

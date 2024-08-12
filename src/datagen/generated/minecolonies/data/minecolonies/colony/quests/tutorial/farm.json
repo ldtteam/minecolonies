@@ -1,0 +1,258 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.tutorial.farm",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:dialogue",
+                  "options": [
+                    {
+                      "answer": "minecolonies.quests.tutorial.farm.obj0.answer0.reply.answer1.reply.answer0",
+                      "result": {
+                        "type": "minecolonies:advanceobjective",
+                        "go-to": 2
+                      }
+                    }
+                  ],
+                  "text": "minecolonies.quests.tutorial.farm.obj0.answer0.reply.answer1.reply"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj0.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj0.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj0.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj0.answer2",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.farm.obj0"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj1.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj1.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj1.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj1.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj1.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 2
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj1.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj1.answer2",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.farm.obj1"
+    },
+    {
+      "type": "minecolonies:buildbuilding",
+      "details": {
+        "type": "minecolonies:farmer",
+        "count-existing": true,
+        "lvl": 1,
+        "next-objective": 3,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj3.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj3.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj3.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 10
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj3.answer1.reply"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.farm.obj3"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj4.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj4.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:return"
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj4.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj4.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj4.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              },
+              {
+                "answer": "minecolonies.quests.tutorial.farm.obj4.answer1.reply.answer1",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 7
+                }
+              }
+            ],
+            "text": "minecolonies.quests.tutorial.farm.obj4.answer1.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj4.answer2",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.farm.obj4"
+    },
+    {
+      "type": "minecolonies:placeblock",
+      "details": {
+        "block": "minecolonies:blockhutfield",
+        "next-objective": 6,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.tutorial.farm.obj6.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 10
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.tutorial.farm.obj6",
+      "unlocks-rewards": [
+        0
+      ]
+    }
+  ],
+  "parents": [
+    "minecolonies:tutorial/forester"
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:wheat_seeds",
+        "qty": 32
+      }
+    }
+  ],
+  "triggerOrder": "1 || 2",
+  "triggers": [
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "notmatch": {
+          "finavquests": [
+            "minecolonies:tutorial/forester"
+          ]
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {}
+    }
+  ]
+}

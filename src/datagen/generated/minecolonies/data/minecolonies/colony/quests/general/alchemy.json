@@ -1,0 +1,272 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.general.alchemy",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.general.alchemy.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.general.alchemy.obj0.answer0.reply.answer1",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.general.alchemy.obj0.answer0.reply.answer2",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              },
+              {
+                "answer": "minecolonies.quests.general.alchemy.obj0.answer0.reply.answer3",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": -1
+                }
+              }
+            ],
+            "text": "minecolonies.quests.general.alchemy.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj0.answer1",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj0.answer2",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj0"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:rotten_flesh",
+        "next-objective": 2,
+        "qty": 3,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj2.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj2.answer1",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj2.answer2",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj2"
+    },
+    {
+      "type": "minecolonies:killentity",
+      "details": {
+        "entity-type": "minecraft:zombie",
+        "next-objective": 4,
+        "qty": 3,
+        "target": 0
+      },
+      "unlocks-rewards": [
+        0,
+        1
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:rotten_flesh",
+        "next-objective": 5,
+        "qty": 3,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj5.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj5.answer1",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj5.answer2",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj5"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:spider_eye",
+        "next-objective": 7,
+        "qty": 2,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj7.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 8
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj7.answer1",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 8
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj7.answer2",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": -1
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj7"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:gunpowder",
+        "next-objective": 9,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj9.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 10
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj9"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.alchemy.obj10.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 11
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.alchemy.obj10",
+      "unlocks-rewards": [
+        0
+      ]
+    }
+  ],
+  "parents": [],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "nbt": "{id: \"minecraft:splash_potion\", Count: 1b, tag: {RepairCost: 0, Potion: \"minecraft:poison\", display: {Name: '{\"text\":\"Suspicious Potion\"}'}}}",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "days": 7,
+        "qty": 1,
+        "target": 0
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 2500000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "match": {
+          "type": "minecolonies:alchemist",
+          "level": 2
+        },
+        "path": "buildingManager/buildings"
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:alchemist"
+          }
+        }
+      }
+    }
+  ]
+}
