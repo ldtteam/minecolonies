@@ -98,9 +98,9 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     public void resetModifier(final String name)
     {
         final IHappinessModifier modifier = happinessFactors.get(name);
-        if (modifier instanceof ITimeBasedHappinessModifier)
+        if (modifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier)
         {
-            ((ITimeBasedHappinessModifier) modifier).reset();
+            timeBasedHappinessModifier.reset();
             cachedHappiness = -1;
         }
     }
@@ -116,9 +116,9 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     {
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            if (happinessModifier instanceof TimeBasedHappinessModifier)
+            if (happinessModifier instanceof ITimeBasedHappinessModifier timeBasedHappinessModifier)
             {
-                ((TimeBasedHappinessModifier) happinessModifier).dayEnd(citizenData);
+                timeBasedHappinessModifier.dayEnd(citizenData);
             }
             if (InteractionValidatorRegistry.hasValidator(Component.translatable(NO + happinessModifier.getId())))
             {
