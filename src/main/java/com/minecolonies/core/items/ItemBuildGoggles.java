@@ -2,38 +2,17 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
 import java.util.List;
 
-import static com.minecolonies.apiimp.initializer.ModItemsInitializer.DEFERRED_REGISTER;
+import static com.minecolonies.apiimp.initializer.ModItemsInitializer.GOGGLES;
 
 public class ItemBuildGoggles extends ArmorItem
 {
-    public static final Holder<ArmorMaterial> GOGGLES = DEFERRED_REGISTER.register("build_goggles", () -> new ArmorMaterial(
-      // Determines the defense value of this armor material, depending on what armor piece it is.
-      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-          map.put(ArmorItem.Type.BOOTS, 0);
-          map.put(ArmorItem.Type.LEGGINGS, 0);
-          map.put(ArmorItem.Type.CHESTPLATE, 0);
-          map.put(ArmorItem.Type.HELMET, 0);
-      }),
-      20,
-      SoundEvents.ARMOR_EQUIP_LEATHER,
-      () -> Ingredient.EMPTY,
-      List.of(),
-      0,
-      0
-    ));
-
     /**
      * Constructor
      *

@@ -6,19 +6,26 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.*;
+import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegisterEvent;
+
+import java.util.EnumMap;
+import java.util.List;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
@@ -110,25 +117,25 @@ public final class ModItemsInitializer
         ModItems.scrollHighLight = new ItemScrollHighlight(new Item.Properties().stacksTo(16));
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "scroll_highlight"), ModItems.scrollHighLight);
 
-        ModItems.santaHat = new ItemSantaHead("santa_hat", ItemSantaHead.SANTA_HAT, ArmorItem.Type.HELMET, new Item.Properties());
+        ModItems.santaHat = new ItemSantaHead("santa_hat", SANTA_HAT, ArmorItem.Type.HELMET, new Item.Properties());
         ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, new Item.Properties());
         ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, new Item.Properties());
 
         ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", new Item.Properties());
-        ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ItemPirateGear.PIRATE_ARMOR_1, ArmorItem.Type.HELMET, new Item.Properties());
-        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ItemPirateGear.PIRATE_ARMOR_1, ArmorItem.Type.CHESTPLATE, new Item.Properties());
-        ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ItemPirateGear.PIRATE_ARMOR_1, ArmorItem.Type.LEGGINGS, new Item.Properties());
-        ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", ItemPirateGear.PIRATE_ARMOR_1, ArmorItem.Type.BOOTS, new Item.Properties());
+        ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", PIRATE_ARMOR_1, ArmorItem.Type.HELMET, new Item.Properties());
+        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", PIRATE_ARMOR_1, ArmorItem.Type.CHESTPLATE, new Item.Properties());
+        ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", PIRATE_ARMOR_1, ArmorItem.Type.LEGGINGS, new Item.Properties());
+        ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", PIRATE_ARMOR_1, ArmorItem.Type.BOOTS, new Item.Properties());
 
-        ModItems.pirateHelmet_2 = new ItemPirateGear("pirate_cap", ItemPirateGear.PIRATE_ARMOR_2, ArmorItem.Type.HELMET, new Item.Properties());
-        ModItems.pirateChest_2 = new ItemPirateGear("pirate_chest", ItemPirateGear.PIRATE_ARMOR_2, ArmorItem.Type.CHESTPLATE, new Item.Properties());
-        ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", ItemPirateGear.PIRATE_ARMOR_2, ArmorItem.Type.LEGGINGS, new Item.Properties());
-        ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", ItemPirateGear.PIRATE_ARMOR_2, ArmorItem.Type.BOOTS, new Item.Properties());
+        ModItems.pirateHelmet_2 = new ItemPirateGear("pirate_cap", PIRATE_ARMOR_2, ArmorItem.Type.HELMET, new Item.Properties());
+        ModItems.pirateChest_2 = new ItemPirateGear("pirate_chest", PIRATE_ARMOR_2, ArmorItem.Type.CHESTPLATE, new Item.Properties());
+        ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", PIRATE_ARMOR_2, ArmorItem.Type.LEGGINGS, new Item.Properties());
+        ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", PIRATE_ARMOR_2, ArmorItem.Type.BOOTS, new Item.Properties());
 
-        ModItems.plateArmorHelmet = new ItemPlateArmor("plate_armor_helmet", ItemPlateArmor.PLATE_ARMOR, ArmorItem.Type.HELMET, new Item.Properties());
-        ModItems.plateArmorChest = new ItemPlateArmor("plate_armor_chest", ItemPlateArmor.PLATE_ARMOR, ArmorItem.Type.CHESTPLATE, new Item.Properties());
-        ModItems.plateArmorLegs = new ItemPlateArmor("plate_armor_legs", ItemPlateArmor.PLATE_ARMOR, ArmorItem.Type.LEGGINGS, new Item.Properties());
-        ModItems.plateArmorBoots = new ItemPlateArmor("plate_armor_boots", ItemPlateArmor.PLATE_ARMOR, ArmorItem.Type.BOOTS, new Item.Properties());
+        ModItems.plateArmorHelmet = new ItemPlateArmor("plate_armor_helmet", PLATE_ARMOR, ArmorItem.Type.HELMET, new Item.Properties());
+        ModItems.plateArmorChest = new ItemPlateArmor("plate_armor_chest", PLATE_ARMOR, ArmorItem.Type.CHESTPLATE, new Item.Properties());
+        ModItems.plateArmorLegs = new ItemPlateArmor("plate_armor_legs", PLATE_ARMOR, ArmorItem.Type.LEGGINGS, new Item.Properties());
+        ModItems.plateArmorBoots = new ItemPlateArmor("plate_armor_boots", PLATE_ARMOR, ArmorItem.Type.BOOTS, new Item.Properties());
 
         ModItems.sifterMeshString = new ItemSifterMesh("sifter_mesh_string", new Item.Properties().durability(500).setNoRepair());
         ModItems.sifterMeshFlint = new ItemSifterMesh("sifter_mesh_flint", new Item.Properties().durability(1000).setNoRepair());
@@ -355,4 +362,85 @@ public final class ModItemsInitializer
           SECONDARY_COLOR_MERC,
           (new Item.Properties())));
     }
+
+    public static final Holder<ArmorMaterial> SANTA_HAT = DEFERRED_REGISTER.register("santa_hat", () -> new ArmorMaterial(
+      // Determines the defense value of this armor material, depending on what armor piece it is.
+      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+          map.put(ArmorItem.Type.BOOTS, 0);
+          map.put(ArmorItem.Type.LEGGINGS, 0);
+          map.put(ArmorItem.Type.CHESTPLATE, 0);
+          map.put(ArmorItem.Type.HELMET, 0);
+      }),
+      500,
+      SoundEvents.ARMOR_EQUIP_LEATHER,
+      () -> Ingredient.EMPTY,
+      List.of(),
+      0,
+      0
+    ));
+
+    public static final Holder<ArmorMaterial> PLATE_ARMOR = DEFERRED_REGISTER.register("plate_armor", () -> new ArmorMaterial(
+      // Determines the defense value of this armor material, depending on what armor piece it is.
+      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+          map.put(ArmorItem.Type.BOOTS, 3);
+          map.put(ArmorItem.Type.LEGGINGS, 6);
+          map.put(ArmorItem.Type.CHESTPLATE, 8);
+          map.put(ArmorItem.Type.HELMET, 3);
+      }),
+      37,
+      SoundEvents.ARMOR_EQUIP_IRON,
+      () -> Ingredient.of(Items.IRON_INGOT),
+      List.of(),
+      0,
+      0
+    ));
+
+    public static final Holder<ArmorMaterial> GOGGLES = DEFERRED_REGISTER.register("build_goggles", () -> new ArmorMaterial(
+      // Determines the defense value of this armor material, depending on what armor piece it is.
+      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+          map.put(ArmorItem.Type.BOOTS, 0);
+          map.put(ArmorItem.Type.LEGGINGS, 0);
+          map.put(ArmorItem.Type.CHESTPLATE, 0);
+          map.put(ArmorItem.Type.HELMET, 0);
+      }),
+      20,
+      SoundEvents.ARMOR_EQUIP_LEATHER,
+      () -> Ingredient.EMPTY,
+      List.of(),
+      0,
+      0
+    ));
+
+    public static final Holder<ArmorMaterial> PIRATE_ARMOR_1 = DEFERRED_REGISTER.register("pirate_armor_1", () -> new ArmorMaterial(
+      // Determines the defense value of this armor material, depending on what armor piece it is.
+      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+          map.put(ArmorItem.Type.BOOTS, 2);
+          map.put(ArmorItem.Type.LEGGINGS, 5);
+          map.put(ArmorItem.Type.CHESTPLATE, 6);
+          map.put(ArmorItem.Type.HELMET, 2);
+      }),
+      5,
+      SoundEvents.ARMOR_EQUIP_LEATHER,
+      () -> Ingredient.of(Items.DIAMOND),
+      List.of(),
+      0,
+      0
+    ));
+
+    public static final Holder<ArmorMaterial> PIRATE_ARMOR_2 = DEFERRED_REGISTER.register("pirate_armor_2", () -> new ArmorMaterial(
+      // Determines the defense value of this armor material, depending on what armor piece it is.
+      Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+          map.put(ArmorItem.Type.BOOTS, 3);
+          map.put(ArmorItem.Type.LEGGINGS, 6);
+          map.put(ArmorItem.Type.CHESTPLATE, 8);
+          map.put(ArmorItem.Type.HELMET, 3);
+      }),
+      5,
+      SoundEvents.ARMOR_EQUIP_LEATHER,
+      () -> Ingredient.of(Items.DIAMOND),
+      List.of(),
+      2,
+      0
+    ));
+
 }

@@ -62,7 +62,7 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies.minecolonies]]
     modId="minecraft"
     type="required"
-    versionRange="[${minecraftVersion}, 1.21)"
+    versionRange="[${minecraftVersion}, 1.22)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
@@ -92,6 +92,6 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies.minecolonies]]
     modId="journeymap"
     type="optional"
-    versionRange="[${project.jmapVersion},)"
+    versionRange="[${jmapVersion},)"
     ordering="NONE"
     side="BOTH"
