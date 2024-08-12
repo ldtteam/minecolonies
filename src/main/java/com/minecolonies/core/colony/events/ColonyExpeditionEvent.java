@@ -432,6 +432,12 @@ public class ColonyExpeditionEvent implements IColonyEvent
     }
 
     @Override
+    public void setColony(final @NotNull IColony colony)
+    {
+        // No-op
+    }
+
+    @Override
     public void onUpdate()
     {
         // If the deque is empty, we can set the flag for loot table empty to be done.
