@@ -226,6 +226,13 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
      */
     private void tryStartExpedition(final IVisitorData data, final Player player)
     {
+        // Get the expedition instance.
+        final CreatedExpedition createdExpedition = data.getColony().getExpeditionManager().getCreatedExpedition(data.getId());
+        if (createdExpedition == null)
+        {
+            return;
+        }
+
         // Try to find the first expedition sheet in the player their inventory that meets the requirements.
         final Optional<ItemStack> expeditionSheet = InventoryUtils.filterItemHandler(new InvWrapper(player.getInventory()), stack -> {
             if (!stack.is(ModItems.expeditionSheet))
@@ -233,15 +240,8 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
                 return false;
             }
 
-            final CreatedExpedition createdExpedition = data.getColony().getExpeditionManager().getCreatedExpedition(data.getId());
-            if (createdExpedition == null)
-            {
-                return false;
-            }
-
             return data.getColony().getExpeditionManager().meetsRequirements(createdExpedition.expeditionTypeId(), new ExpeditionSheetContainerManager(stack));
         }).stream().findFirst();
-
         if (expeditionSheet.isEmpty())
         {
             return;
@@ -255,7 +255,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         {
             members.add(new ExpeditionCitizenMember(data.getColony().getCitizenManager().getCivilian(id)));
         }
-        final List<ItemStack> equipment = InventoryUtils.getItemHandlerAsList(new InvWrapper(expeditionSheetContainerManager));
+        final List<ItemStack> equipment = data.getColony().getExpeditionManager().extractItemsFromSheet(createdExpedition.expeditionTypeId(), expeditionSheetContainerManager);
 
         // Attempt to start the expedition
         if (!data.getColony().getExpeditionManager().startExpedition(data.getId(), members, equipment))

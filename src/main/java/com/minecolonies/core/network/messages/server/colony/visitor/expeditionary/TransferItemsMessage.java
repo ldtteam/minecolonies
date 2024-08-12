@@ -87,7 +87,7 @@ public class TransferItemsMessage extends AbstractColonyServerMessage
         {
             final IItemHandler inventoryHandler = new InvWrapper(expeditionSheetContainerManager);
 
-            final RequirementHandler handler = requirement.get().createHandler(() -> inventoryHandler);
+            final RequirementHandler handler = requirement.get().createHandler(inventoryHandler);
             final int needed = handler.getAmount() - handler.getAmountAvailable();
 
             if (needed > 0)

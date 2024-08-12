@@ -10,13 +10,22 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Interface for defining different types of colony expedition requirements.
  */
 public abstract class ColonyExpeditionRequirement
 {
+    /**
+     * Container class for the different options passed to requirement handlers.
+     *
+     * @param inventory      the inventory.
+     * @param consumeOnStart whether the input items for this requirement should be immediately consumed on start.
+     */
+    public record RequirementHandlerOptions(IItemHandler inventory, boolean consumeOnStart)
+    {
+    }
+
     /**
      * Get a unique ID for this requirement.
      *
@@ -38,16 +47,7 @@ public abstract class ColonyExpeditionRequirement
      * @param inventory the item handler instance.
      * @return the handler instance.
      */
-    public abstract RequirementHandler createHandler(final InventorySupplier inventory);
-
-    /**
-     * Supplier for providing the reference to the inventory to check this requirement for.
-     */
-    @FunctionalInterface
-    public interface InventorySupplier extends Supplier<IItemHandler>
-    {
-
-    }
+    public abstract RequirementHandler createHandler(final IItemHandler inventory);
 
     /**
      * Handler instance used for verifying if the given item handler satisfies the requirements.
@@ -55,18 +55,18 @@ public abstract class ColonyExpeditionRequirement
     public abstract static class RequirementHandler implements Resource
     {
         /**
-         * Supplier for obtaining the inventory.
+         * The options for this requirement handler.
          */
-        private final InventorySupplier inventory;
+        private final RequirementHandlerOptions options;
 
         /**
          * Default constructor.
          *
-         * @param inventory supplier for obtaining the inventory.
+         * @param options the options for this requirement handler.
          */
-        protected RequirementHandler(final InventorySupplier inventory)
+        protected RequirementHandler(final RequirementHandlerOptions options)
         {
-            this.inventory = inventory;
+            this.options = options;
         }
 
         /**
@@ -91,7 +91,7 @@ public abstract class ColonyExpeditionRequirement
         @Override
         public final int getAmountAvailable()
         {
-            return InventoryUtils.getItemCountInItemHandler(inventory.get(), getItemPredicate());
+            return InventoryUtils.getItemCountInItemHandler(options.inventory, getItemPredicate());
         }
 
         @Override
@@ -114,6 +114,16 @@ public abstract class ColonyExpeditionRequirement
         private IItemHandler getPlayerInventory()
         {
             return new InvWrapper(Minecraft.getInstance().player.getInventory());
+        }
+
+        /**
+         * Get whether the input items for this requirement should be immediately consumed on start.
+         *
+         * @return true if so.
+         */
+        public boolean shouldConsumeOnStart()
+        {
+            return options.consumeOnStart;
         }
     }
 }

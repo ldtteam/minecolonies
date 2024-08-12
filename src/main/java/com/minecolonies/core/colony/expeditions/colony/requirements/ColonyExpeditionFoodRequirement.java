@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -51,9 +52,9 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
-    public RequirementHandler createHandler(final InventorySupplier inventory)
+    public RequirementHandler createHandler(final IItemHandler inventory)
     {
-        return new FoodRequirementHandler(inventory);
+        return new FoodRequirementHandler(new RequirementHandlerOptions(inventory, false));
     }
 
     /**
@@ -64,11 +65,11 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
         /**
          * Default constructor.
          *
-         * @param inventory supplier for obtaining the inventory.
+         * @param options the options for this requirement handler.
          */
-        private FoodRequirementHandler(final InventorySupplier inventory)
+        private FoodRequirementHandler(final RequirementHandlerOptions options)
         {
-            super(inventory);
+            super(options);
         }
 
         @Override

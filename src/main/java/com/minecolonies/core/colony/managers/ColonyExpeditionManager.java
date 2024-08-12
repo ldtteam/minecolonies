@@ -11,9 +11,12 @@ import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedi
 import com.minecolonies.api.colony.managers.interfaces.expeditions.FinishedExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
@@ -28,14 +31,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -274,23 +276,40 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     @Override
     public boolean meetsRequirements(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager inventory)
     {
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
-        if (expeditionType == null)
-        {
-            Log.getLogger().warn(String.format("Expedition type with id %s does not exist", expeditionTypeId));
-            return false;
-        }
-
-        return meetsRequirements(expeditionType, inventory);
+        return parseExpeditionAndRunActual(expeditionTypeId, inventory, this::meetsRequirements, false);
     }
 
     @Override
     public boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager inventory)
     {
         return expeditionType.requirements().stream()
-                 .map(m -> m.createHandler(() -> new InvWrapper(inventory)))
+                 .map(m -> m.createHandler(new InvWrapper(inventory)))
                  .anyMatch(f -> f.getAvailabilityStatus().equals(ResourceAvailability.NOT_NEEDED))
                  && inventory.getMembers().size() >= expeditionType.guards();
+    }
+
+    @Override
+    public List<ItemStack> extractItemsFromSheet(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager containerManager)
+    {
+        return parseExpeditionAndRunActual(expeditionTypeId, containerManager, this::extractItemsFromSheet, List.of());
+    }
+
+    @Override
+    public List<ItemStack> extractItemsFromSheet(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager containerManager)
+    {
+        final List<ItemStack> items = new ArrayList<>();
+
+        final IItemHandler handler = new InvWrapper(containerManager);
+        for (final ColonyExpeditionRequirement requirement : expeditionType.requirements())
+        {
+            final RequirementHandler requirementHandler = requirement.createHandler(handler);
+            if (!requirementHandler.shouldConsumeOnStart())
+            {
+                items.addAll(InventoryUtils.filterItemHandler(handler, requirementHandler.getItemPredicate()));
+            }
+        }
+
+        return InventoryUtils.processItemStackListAndMerge(items);
     }
 
     @Override
@@ -315,6 +334,29 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     public void setDirty(final boolean dirty)
     {
         this.dirty = dirty;
+    }
+
+    /**
+     * Helper method to parse the underlying expedition type and execute the full method.
+     *
+     * @param expeditionTypeId the expedition type id.
+     * @param arg              the extra argument.
+     * @param func             the function runnable.
+     * @param def              the default return value if the expedition can't be found.
+     * @param <T>              the return type.
+     * @param <A>              the extra argument.
+     * @return the original result from the actual method.
+     */
+    private <T, A> T parseExpeditionAndRunActual(final ResourceLocation expeditionTypeId, final A arg, final BiFunction<ColonyExpeditionType, A, T> func, final T def)
+    {
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        if (expeditionType == null)
+        {
+            Log.getLogger().warn("Expedition type with id {} does not exist", expeditionTypeId);
+            return def;
+        }
+
+        return func.apply(expeditionType, arg);
     }
 
     @Override

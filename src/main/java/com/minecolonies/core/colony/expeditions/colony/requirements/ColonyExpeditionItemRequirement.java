@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,6 +28,11 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
     private final int amount;
 
     /**
+     * Whether the stack should be consumed on the start of the expedition.
+     */
+    private final boolean shouldConsumeOnStart;
+
+    /**
      * Default constructor.
      *
      * @param item   the item to request.
@@ -34,8 +40,21 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
      */
     public ColonyExpeditionItemRequirement(final Item item, final int amount)
     {
+        this(item, amount, false);
+    }
+
+    /**
+     * Default constructor.
+     *
+     * @param item                 the item to request.
+     * @param amount               the minimum amount.
+     * @param shouldConsumeOnStart whether the stack should be consumed on the start of the expedition.
+     */
+    public ColonyExpeditionItemRequirement(final Item item, final int amount, final boolean shouldConsumeOnStart)
+    {
         this.item = item;
         this.amount = amount;
+        this.shouldConsumeOnStart = shouldConsumeOnStart;
     }
 
     @Override
@@ -52,9 +71,9 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
-    public RequirementHandler createHandler(final InventorySupplier inventory)
+    public RequirementHandler createHandler(final IItemHandler inventory)
     {
-        return new ItemRequirementHandler(inventory);
+        return new ItemRequirementHandler(new RequirementHandlerOptions(inventory, shouldConsumeOnStart));
     }
 
     /**
@@ -75,11 +94,11 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
         /**
          * Default constructor.
          *
-         * @param inventory supplier for obtaining the inventory.
+         * @param options the options for this requirement handler.
          */
-        private ItemRequirementHandler(final InventorySupplier inventory)
+        private ItemRequirementHandler(final RequirementHandlerOptions options)
         {
-            super(inventory);
+            super(options);
         }
 
         @Override

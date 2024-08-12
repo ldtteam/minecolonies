@@ -133,7 +133,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
         this.container = container;
 
         resourceComparator = new ResourceComparator();
-        requirements = expeditionType.requirements().stream().map(m -> m.createHandler(() -> new InvWrapper(container))).collect(Collectors.toList());
+        requirements = expeditionType.requirements().stream().map(m -> m.createHandler(new InvWrapper(container))).collect(Collectors.toList());
         requirements.sort(resourceComparator);
 
         guardsComparator = new GuardsComparator(container.getMembers());

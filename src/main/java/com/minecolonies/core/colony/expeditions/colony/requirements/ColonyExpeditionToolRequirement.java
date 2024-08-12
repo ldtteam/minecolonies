@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,9 +59,9 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
     }
 
     @Override
-    public ToolRequirementHandler createHandler(final InventorySupplier inventory)
+    public ToolRequirementHandler createHandler(final IItemHandler inventorySupplier)
     {
-        return new ToolRequirementHandler(inventory);
+        return new ToolRequirementHandler(new RequirementHandlerOptions(inventorySupplier, false));
     }
 
     /**
@@ -81,11 +82,11 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
         /**
          * Default constructor.
          *
-         * @param inventory supplier for obtaining the inventory.
+         * @param options the options for this requirement handler.
          */
-        private ToolRequirementHandler(final InventorySupplier inventory)
+        private ToolRequirementHandler(final RequirementHandlerOptions options)
         {
-            super(inventory);
+            super(options);
         }
 
         @Override
