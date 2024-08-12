@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for extra visitor data.
+ *
+ * @param <S> the data type of the stored data.
  */
 public interface IVisitorExtraData<S> extends INBTSerializable<CompoundTag>
 {

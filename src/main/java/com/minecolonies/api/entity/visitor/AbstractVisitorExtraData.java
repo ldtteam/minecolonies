@@ -2,14 +2,31 @@ package com.minecolonies.api.entity.visitor;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Base class for extra visitor data.
+ *
+ * @param <S> the data type of the stored data.
+ */
 public abstract class AbstractVisitorExtraData<S> implements IVisitorExtraData<S>
 {
+    /**
+     * The NBT key under which the data is stored.
+     */
     @NotNull
     private final String key;
 
+    /**
+     * The current value of the extra data.
+     */
     @NotNull
     private S value;
 
+    /**
+     * Internal constructor.
+     *
+     * @param key          the NBT key.
+     * @param defaultValue the default value that the extra data initially has.
+     */
     protected AbstractVisitorExtraData(@NotNull final String key, @NotNull final S defaultValue)
     {
         this.key = key;
