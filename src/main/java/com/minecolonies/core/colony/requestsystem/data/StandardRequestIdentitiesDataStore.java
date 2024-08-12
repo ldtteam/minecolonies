@@ -24,6 +24,7 @@ import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -102,14 +103,24 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         {
             final CompoundTag systemCompound = new CompoundTag();
 
-            systemCompound.put(TAG_TOKEN, controller.serializeTag(provider, standardRequestIdentitiesDataStore.getId()));
-            systemCompound.put(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                CompoundTag mapCompound = new CompoundTag();
-                mapCompound.put(TAG_TOKEN, controller.serializeTag(provider, token));
-                mapCompound.put(TAG_REQUEST, controller.serializeTag(provider, standardRequestIdentitiesDataStore.getIdentities().get(token)));
-                return mapCompound;
-            }).collect(NBTUtils.toListNBT()));
-
+            systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
+            final ListTag listTag = new ListTag();
+            for (final Map.Entry<IToken<?>, IRequest<?>> entry : new HashSet<>(standardRequestIdentitiesDataStore.getIdentities().entrySet()))
+            {
+                try
+                {
+                    CompoundTag mapCompound = new CompoundTag();
+                    mapCompound.put(TAG_TOKEN, controller.serialize(entry.getKey()));
+                    mapCompound.put(TAG_REQUEST, controller.serialize(entry.getValue()));
+                    listTag.add(mapCompound);
+                }
+                catch (final Exception e)
+                {
+                    standardRequestIdentitiesDataStore.getIdentities().remove(entry.getKey());
+                    Log.getLogger().error(e);
+                }
+            }
+            systemCompound.put(TAG_LIST, listTag);
             return systemCompound;
         }
 
