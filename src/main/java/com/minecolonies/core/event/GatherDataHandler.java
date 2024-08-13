@@ -35,16 +35,12 @@ public class GatherDataHandler
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
         final DataGenerator generator = event.getGenerator();
-        final CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider().thenApply(p -> new DatagenLootTableManager(p, event.getExistingFileHelper()));
+        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
+        DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), event.getLookupProvider(), enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
+        generator.addProvider(true, enchRegProvider);
+        final CompletableFuture<HolderLookup.Provider> provider = enchRegProvider.getRegistryProvider().thenApply(p -> new DatagenLootTableManager(p, event.getExistingFileHelper()));
 
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper());
-
-        // todo: is this needed?  the provider already contains enchantments without needing to do anything special
-        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
-        DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
-        generator.addProvider(true, enchRegProvider);
-
-        DatapackBuiltinEntriesProvider datapackEntries = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID));
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator.getPackOutput(), event.getExistingFileHelper()));
@@ -70,9 +66,9 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
+        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
+        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput(), provider));

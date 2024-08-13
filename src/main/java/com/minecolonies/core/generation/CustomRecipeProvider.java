@@ -260,8 +260,11 @@ public abstract class CustomRecipeProvider implements DataProvider
         private JsonObject stackAsJson(final ItemStack stack)
         {
             final JsonObject jsonItemStack = new JsonObject();
-            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(DataComponentPatch.CODEC, provider, stack.getComponentsPatch()));
             jsonItemStack.addProperty(ITEM_PROP, BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
+            if (!stack.isComponentsPatchEmpty())
+            {
+                jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(DataComponentPatch.CODEC, provider, stack.getComponentsPatch()));
+            }
             if (stack.getCount() != 1)
             {
                 jsonItemStack.addProperty(COUNT_PROP, stack.getCount());
