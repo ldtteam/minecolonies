@@ -5,11 +5,19 @@
   "inputs": [
     {
       "count": 5,
-      "item": "minecraft:stick"
+      "item": "minecraft:stick",
+      "tag": {
+        "count": 5,
+        "id": "minecraft:stick"
+      }
     },
     {
       "count": 2,
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:iron_ingot",
+      "tag": {
+        "count": 2,
+        "id": "minecraft:iron_ingot"
+      }
     }
   ],
   "intermediate": "minecraft:air",

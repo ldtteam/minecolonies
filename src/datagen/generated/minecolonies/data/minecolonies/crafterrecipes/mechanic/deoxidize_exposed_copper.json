@@ -3,7 +3,11 @@
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-      "item": "minecraft:exposed_copper"
+      "item": "minecraft:exposed_copper",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:exposed_copper"
+      }
     }
   ],
   "intermediate": "minecraft:air",

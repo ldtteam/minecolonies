@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:leather",
+          "quality": 5,
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_axe",
+          "quality": 1,
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecolonies:ancienttome",
+          "weight": 50
+        }
+      ],
+      "rolls": 2.0
+    }
+  ],
+  "random_sequence": "minecolonies:entities/norsemenchief"
+}

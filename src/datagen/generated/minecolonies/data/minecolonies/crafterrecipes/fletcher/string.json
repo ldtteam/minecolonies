@@ -4,7 +4,11 @@
   "crafter": "fletcher_crafting",
   "inputs": [
     {
-      "item": "minecraft:white_wool"
+      "item": "minecraft:white_wool",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:white_wool"
+      }
     }
   ],
   "intermediate": "minecraft:air",

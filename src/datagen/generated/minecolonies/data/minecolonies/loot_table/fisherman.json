@@ -1,0 +1,45 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "quality": -2,
+          "value": "minecolonies:fisherman/junk",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecraft:any_of",
+              "terms": [
+                {
+                  "condition": "minecolonies:entity_in_biome_tag",
+                  "tag": "#minecraft:is_ocean"
+                },
+                {
+                  "condition": "minecolonies:research_unlocked",
+                  "id": "minecolonies:effects/fishingtreasure"
+                }
+              ]
+            }
+          ],
+          "quality": 2,
+          "value": "minecolonies:fisherman/treasure",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:loot_table",
+          "quality": -1,
+          "value": "minecolonies:fisherman/fish",
+          "weight": 85
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:fisherman"
+}

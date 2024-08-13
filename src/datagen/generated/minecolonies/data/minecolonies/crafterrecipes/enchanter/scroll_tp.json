@@ -5,13 +5,25 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:paper"
+      "item": "minecraft:paper",
+      "tag": {
+        "count": 3,
+        "id": "minecraft:paper"
+      }
     },
     {
-      "item": "minecraft:compass"
+      "item": "minecraft:compass",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:compass"
+      }
     },
     {
-      "item": "structurize:sceptergold"
+      "item": "structurize:sceptergold",
+      "tag": {
+        "count": 1,
+        "id": "structurize:sceptergold"
+      }
     }
   ],
   "intermediate": "minecraft:air",

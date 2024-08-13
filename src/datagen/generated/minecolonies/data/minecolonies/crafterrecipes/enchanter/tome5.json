@@ -2,14 +2,22 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:enchanted_book"
+      "item": "minecraft:enchanted_book",
+      "tag": {
+        "count": 1,
+        "id": "minecraft:enchanted_book"
+      }
     }
   ],
   "crafter": "enchanter_custom",
   "inputs": [
     {
       "item": "minecolonies:ancienttome",
-      "matchType": "ignore"
+      "matchType": "ignore",
+      "tag": {
+        "count": 1,
+        "id": "minecolonies:ancienttome"
+      }
     }
   ],
   "intermediate": "minecraft:air",
