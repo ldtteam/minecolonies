@@ -77,7 +77,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultMechanicCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
+        generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultPlanterCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultSawmillCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), provider));
