@@ -1,8 +1,8 @@
 {
-  "difficulty": "hard",
+  "difficulty": "medium",
   "dimension": "minecraft:the_end",
-  "guards": 2,
-  "loot-table": "minecolonies:expeditions/expedition_overworld",
+  "guards": 4,
+  "loot-table": "minecolonies:expeditions/expedition_end",
   "name": "com.minecolonies.core.expedition_types.end.name",
   "requirements": [
     {
@@ -42,7 +42,7 @@
     },
     {
       "type": "food",
-      "amount": 32
+      "amount": 64
     }
   ],
   "to-text": "com.minecolonies.core.expedition_types.end.to_text"

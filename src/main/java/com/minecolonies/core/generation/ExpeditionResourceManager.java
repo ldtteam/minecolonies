@@ -1,6 +1,7 @@
 package com.minecolonies.core.generation;
 
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +10,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.SetNbtFunction;
 
 import static com.minecolonies.core.colony.events.ColonyExpeditionEvent.*;
@@ -18,6 +20,17 @@ import static com.minecolonies.core.colony.events.ColonyExpeditionEvent.*;
  */
 public class ExpeditionResourceManager
 {
+    /**
+     * Get the correct structure ID for the input base structure name.
+     *
+     * @param structureId the base structure name.
+     * @return the structure ID.
+     */
+    public static ResourceLocation getStructureId(final ResourceLocation structureId)
+    {
+        return new ResourceLocation(Constants.MOD_ID, structureId.withPrefix("expeditions/structures/").getPath());
+    }
+
     /**
      * Create an adventure token loot item structure starts.
      *
@@ -64,18 +77,6 @@ public class ExpeditionResourceManager
      *
      * @param encounterId the encounter id.
      * @param amount      the amount of encounters that will spawn.
-     * @return the item builder.
-     */
-    public static LootPoolSingletonContainer.Builder<?> createEncounterLootItem(final ResourceLocation encounterId, int amount)
-    {
-        return createEncounterLootItem(encounterId, amount, true);
-    }
-
-    /**
-     * Create an adventure token loot item for encounters.
-     *
-     * @param encounterId the encounter id.
-     * @param amount      the amount of encounters that will spawn.
      * @param scale       whether to scale the encounters with difficulty.
      * @return the item builder.
      */
@@ -88,6 +89,17 @@ public class ExpeditionResourceManager
         encounter.putBoolean(TOKEN_TAG_EXPEDITION_ENCOUNTER_SCALE, scale);
 
         return LootItem.lootTableItem(ModItems.adventureToken).apply(SetNbtFunction.setTag(encounter));
+    }
+
+    /**
+     * Create a loot table structure reference for the given structure name.
+     *
+     * @param structureId the base structure name.
+     * @return the loot entry builder.
+     */
+    public static LootPoolSingletonContainer.Builder<?> createStructureLootReference(final ResourceLocation structureId)
+    {
+        return LootTableReference.lootTableReference(getStructureId(structureId));
     }
 
     /**

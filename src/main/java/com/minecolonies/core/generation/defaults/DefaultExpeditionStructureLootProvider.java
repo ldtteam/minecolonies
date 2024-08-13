@@ -3,7 +3,6 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemDamageFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -30,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.loot.ModLootConditions.EXPEDITION_DIFFICULTY_PARAM;
 import static com.minecolonies.core.generation.ExpeditionResourceManager.*;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionEncountersProvider.*;
 
@@ -98,7 +97,7 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
      * @param registrar the loot table registrar.
      * @param configure the further configuration handler.
      */
-    public void createStructureLootTable(final ResourceLocation id, final @NotNull LootTableRegistrar registrar, final Consumer<Builder> configure)
+    private void createStructureLootTable(final ResourceLocation id, final @NotNull LootTableRegistrar registrar, final Consumer<Builder> configure)
     {
         final NumberProvider singleRoll = ConstantValue.exactly(1);
 
@@ -108,10 +107,10 @@ public class DefaultExpeditionStructureLootProvider extends SimpleLootTableProvi
         builder.withPool(new LootPool.Builder().setRolls(singleRoll).add(createStructureEndItem(id)));
 
         final LootContextParamSet paramSet = LootContextParamSet.builder()
-                                               .required(new LootContextParam<>(new ResourceLocation(Constants.MOD_ID, "difficulty")))
+                                               .required(EXPEDITION_DIFFICULTY_PARAM)
                                                .build();
 
-        registrar.register(new ResourceLocation(Constants.MOD_ID, id.withPrefix("expeditions/structures/").getPath()), paramSet, builder);
+        registrar.register(getStructureId(id), paramSet, builder);
     }
 
     @Override

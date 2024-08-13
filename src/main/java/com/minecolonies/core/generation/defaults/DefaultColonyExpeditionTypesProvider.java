@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.minecolonies.core.generation.defaults.DefaultExpeditionLootProvider.EXPEDITION_OVERWORLD_LOOT;
+import static com.minecolonies.core.generation.defaults.DefaultColonyExpeditionLootProvider.*;
 
 /**
  * Generator for expedition types.
@@ -28,9 +28,13 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
     /**
      * Expedition type constants.
      */
-    public static final ResourceLocation OVERWORLD_REGULAR = new ResourceLocation(Constants.MOD_ID, "overworld_regular");
-    public static final ResourceLocation NETHER_REGULAR    = new ResourceLocation(Constants.MOD_ID, "nether_regular");
-    public static final ResourceLocation END_REGULAR       = new ResourceLocation(Constants.MOD_ID, "end_regular");
+    public static final ResourceLocation OVERWORLD_EASY   = new ResourceLocation(Constants.MOD_ID, "overworld_easy");
+    public static final ResourceLocation OVERWORLD_MEDIUM = new ResourceLocation(Constants.MOD_ID, "overworld_medium");
+    public static final ResourceLocation OVERWORLD_HARD   = new ResourceLocation(Constants.MOD_ID, "overworld_hard");
+    public static final ResourceLocation NETHER_MEDIUM    = new ResourceLocation(Constants.MOD_ID, "nether_medium");
+    public static final ResourceLocation NETHER_HARD      = new ResourceLocation(Constants.MOD_ID, "nether_hard");
+    public static final ResourceLocation END_MEDIUM       = new ResourceLocation(Constants.MOD_ID, "end_medium");
+    public static final ResourceLocation END_HARD         = new ResourceLocation(Constants.MOD_ID, "end_hard");
 
     /**
      * The pack output path generator.
@@ -54,9 +58,10 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
     {
         final List<ColonyExpeditionTypeBuilder> types = new ArrayList<>();
 
-        types.add(new ColonyExpeditionTypeBuilder(OVERWORLD_REGULAR, Level.OVERWORLD, EXPEDITION_OVERWORLD_LOOT)
+        types.add(new ColonyExpeditionTypeBuilder(OVERWORLD_EASY, Level.OVERWORLD, EXPEDITION_OVERWORLD_LOOT)
                     .setName("com.minecolonies.core.expedition_types.overworld.name")
                     .setToText("com.minecolonies.core.expedition_types.overworld.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.EASY)
                     .addToolRequirement(ToolType.SWORD)
                     .addToolRequirement(ToolType.PICKAXE)
                     .addToolRequirement(ToolType.SHOVEL)
@@ -64,9 +69,38 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
                     .addToolRequirement(ToolType.CHESTPLATE)
                     .addToolRequirement(ToolType.LEGGINGS)
                     .addToolRequirement(ToolType.BOOTS)
-                    .addFoodRequirement(32));
+                    .addFoodRequirement(32)
+                    .setGuards(1));
 
-        types.add(new ColonyExpeditionTypeBuilder(NETHER_REGULAR, Level.NETHER, EXPEDITION_OVERWORLD_LOOT)
+        types.add(new ColonyExpeditionTypeBuilder(OVERWORLD_MEDIUM, Level.OVERWORLD, EXPEDITION_OVERWORLD_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.overworld.name")
+                    .setToText("com.minecolonies.core.expedition_types.overworld.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.MEDIUM)
+                    .addToolRequirement(ToolType.SWORD)
+                    .addToolRequirement(ToolType.PICKAXE)
+                    .addToolRequirement(ToolType.SHOVEL)
+                    .addToolRequirement(ToolType.HELMET)
+                    .addToolRequirement(ToolType.CHESTPLATE)
+                    .addToolRequirement(ToolType.LEGGINGS)
+                    .addToolRequirement(ToolType.BOOTS)
+                    .addFoodRequirement(64)
+                    .setGuards(2));
+
+        types.add(new ColonyExpeditionTypeBuilder(OVERWORLD_HARD, Level.OVERWORLD, EXPEDITION_OVERWORLD_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.overworld.name")
+                    .setToText("com.minecolonies.core.expedition_types.overworld.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.HARD)
+                    .addToolRequirement(ToolType.SWORD)
+                    .addToolRequirement(ToolType.PICKAXE)
+                    .addToolRequirement(ToolType.SHOVEL)
+                    .addToolRequirement(ToolType.HELMET)
+                    .addToolRequirement(ToolType.CHESTPLATE)
+                    .addToolRequirement(ToolType.LEGGINGS)
+                    .addToolRequirement(ToolType.BOOTS)
+                    .addFoodRequirement(128)
+                    .setGuards(4));
+
+        types.add(new ColonyExpeditionTypeBuilder(NETHER_MEDIUM, Level.NETHER, EXPEDITION_NETHER_LOOT)
                     .setName("com.minecolonies.core.expedition_types.nether.name")
                     .setToText("com.minecolonies.core.expedition_types.nether.to_text")
                     .setDifficulty(ColonyExpeditionTypeDifficulty.MEDIUM)
@@ -77,10 +111,38 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
                     .addToolRequirement(ToolType.CHESTPLATE)
                     .addToolRequirement(ToolType.LEGGINGS)
                     .addToolRequirement(ToolType.BOOTS)
-                    .addFoodRequirement(32)
-                    .setGuards(2));
+                    .addFoodRequirement(64)
+                    .setGuards(4));
 
-        types.add(new ColonyExpeditionTypeBuilder(END_REGULAR, Level.END, EXPEDITION_OVERWORLD_LOOT)
+        types.add(new ColonyExpeditionTypeBuilder(NETHER_HARD, Level.NETHER, EXPEDITION_NETHER_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.nether.name")
+                    .setToText("com.minecolonies.core.expedition_types.nether.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.HARD)
+                    .addToolRequirement(ToolType.SWORD)
+                    .addToolRequirement(ToolType.PICKAXE)
+                    .addToolRequirement(ToolType.SHOVEL)
+                    .addToolRequirement(ToolType.HELMET)
+                    .addToolRequirement(ToolType.CHESTPLATE)
+                    .addToolRequirement(ToolType.LEGGINGS)
+                    .addToolRequirement(ToolType.BOOTS)
+                    .addFoodRequirement(128)
+                    .setGuards(6));
+
+        types.add(new ColonyExpeditionTypeBuilder(END_MEDIUM, Level.END, EXPEDITION_END_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.end.name")
+                    .setToText("com.minecolonies.core.expedition_types.end.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.MEDIUM)
+                    .addToolRequirement(ToolType.SWORD)
+                    .addToolRequirement(ToolType.PICKAXE)
+                    .addToolRequirement(ToolType.SHOVEL)
+                    .addToolRequirement(ToolType.HELMET)
+                    .addToolRequirement(ToolType.CHESTPLATE)
+                    .addToolRequirement(ToolType.LEGGINGS)
+                    .addToolRequirement(ToolType.BOOTS)
+                    .addFoodRequirement(64)
+                    .setGuards(4));
+
+        types.add(new ColonyExpeditionTypeBuilder(END_HARD, Level.END, EXPEDITION_END_LOOT)
                     .setName("com.minecolonies.core.expedition_types.end.name")
                     .setToText("com.minecolonies.core.expedition_types.end.to_text")
                     .setDifficulty(ColonyExpeditionTypeDifficulty.HARD)
@@ -91,8 +153,8 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
                     .addToolRequirement(ToolType.CHESTPLATE)
                     .addToolRequirement(ToolType.LEGGINGS)
                     .addToolRequirement(ToolType.BOOTS)
-                    .addFoodRequirement(32)
-                    .setGuards(2));
+                    .addFoodRequirement(128)
+                    .setGuards(6));
 
         return types;
     }

@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatusType;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
@@ -43,7 +44,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -56,9 +56,9 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
+import static com.minecolonies.core.generation.ExpeditionResourceManager.getStructureId;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.RUINED_PORTAL_ID;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.STRONGHOLD_ID;
-import static com.minecolonies.core.loot.ExpeditionDifficultyCondition.PARAM_EXPEDITION_DIFFICULTY;
 
 /**
  * Event class for simulating colony expeditions.
@@ -376,11 +376,11 @@ public class ColonyExpeditionEvent implements IColonyEvent
 
                 getExpedition().advanceStage(Component.translatable(EXPEDITION_STAGE_STRUCTURE + structureId));
 
-                if (structureId.equals(RUINED_PORTAL_ID))
+                if (structureId.equals(getStructureId(RUINED_PORTAL_ID)))
                 {
                     colony.getExpeditionManager().unlockNether();
                 }
-                else if (structureId.equals(STRONGHOLD_ID))
+                else if (structureId.equals(getStructureId(STRONGHOLD_ID)))
                 {
                     colony.getExpeditionManager().unlockEnd();
                 }
@@ -717,8 +717,8 @@ public class ColonyExpeditionEvent implements IColonyEvent
     private List<ItemStack> processLootTable(final ResourceLocation lootTableId, final ColonyExpeditionType expeditionType)
     {
         final LootParams lootParams = new Builder((ServerLevel) colony.getWorld())
-                                        .withParameter(PARAM_EXPEDITION_DIFFICULTY, expeditionType.difficulty())
-                                        .create(LootContextParamSet.builder().build());
+                                        .withParameter(ModLootConditions.EXPEDITION_DIFFICULTY_PARAM, expeditionType.difficulty())
+                                        .create(ModLootConditions.EXPEDITION_PARAMS);
 
         return colony.getWorld().getServer().getLootData().getLootTable(lootTableId).getRandomItems(lootParams);
     }

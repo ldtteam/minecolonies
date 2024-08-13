@@ -1,9 +1,9 @@
 {
-  "difficulty": "medium",
-  "dimension": "minecraft:the_nether",
-  "guards": 2,
+  "difficulty": "hard",
+  "dimension": "minecraft:overworld",
+  "guards": 4,
   "loot-table": "minecolonies:expeditions/expedition_overworld",
-  "name": "com.minecolonies.core.expedition_types.nether.name",
+  "name": "com.minecolonies.core.expedition_types.overworld.name",
   "requirements": [
     {
       "type": "tool",
@@ -42,8 +42,8 @@
     },
     {
       "type": "food",
-      "amount": 32
+      "amount": 128
     }
   ],
-  "to-text": "com.minecolonies.core.expedition_types.nether.to_text"
+  "to-text": "com.minecolonies.core.expedition_types.overworld.to_text"
 }

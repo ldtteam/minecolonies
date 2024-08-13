@@ -1,9 +1,12 @@
 package com.minecolonies.api.loot;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.loot.ExpeditionDifficultyCondition;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -20,6 +23,11 @@ public final class ModLootConditions
     public static final ResourceLocation ENTITY_IN_BIOME_TAG_ID   = new ResourceLocation(MOD_ID, "entity_in_biome_tag");
     public static final ResourceLocation RESEARCH_UNLOCKED_ID     = new ResourceLocation(MOD_ID, "research_unlocked");
     public static final ResourceLocation EXPEDITION_DIFFICULTY_ID = new ResourceLocation(MOD_ID, "expedition_difficulty");
+
+    public static final LootContextParam<ColonyExpeditionTypeDifficulty> EXPEDITION_DIFFICULTY_PARAM = new LootContextParam<>(EXPEDITION_DIFFICULTY_ID);
+    public static final LootContextParamSet                              EXPEDITION_PARAMS           = LootContextParamSet.builder()
+                                                                                                         .required(EXPEDITION_DIFFICULTY_PARAM)
+                                                                                                         .build();
 
     public static final RegistryObject<LootItemConditionType> entityInBiomeTag;
     public static final RegistryObject<LootItemConditionType> researchUnlocked;

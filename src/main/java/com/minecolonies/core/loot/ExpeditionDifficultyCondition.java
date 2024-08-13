@@ -4,28 +4,21 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.minecolonies.api.loot.ModLootConditions;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.loot.ModLootConditions.EXPEDITION_DIFFICULTY_PARAM;
 
 /**
  * A loot condition that depends on the expedition difficulty.
  */
 public class ExpeditionDifficultyCondition implements LootItemCondition
 {
-    /**
-     * The parameter for this condition.
-     */
-    public static final ResourceLocation                                 PARAM_EXPEDITION_DIFFICULTY_ID = new ResourceLocation(Constants.MOD_ID, "expedition_difficulty");
-    public static final LootContextParam<ColonyExpeditionTypeDifficulty> PARAM_EXPEDITION_DIFFICULTY    = new LootContextParam<>(PARAM_EXPEDITION_DIFFICULTY_ID);
-
     /**
      * The required difficulty.
      */
@@ -68,7 +61,7 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
             return true;
         }
 
-        final ColonyExpeditionTypeDifficulty actualDifficulty = lootContext.getParamOrNull(PARAM_EXPEDITION_DIFFICULTY);
+        final ColonyExpeditionTypeDifficulty actualDifficulty = lootContext.getParamOrNull(EXPEDITION_DIFFICULTY_PARAM);
         if (actualDifficulty != null)
         {
             return actualDifficulty.getKey().equals(difficulty.getKey());

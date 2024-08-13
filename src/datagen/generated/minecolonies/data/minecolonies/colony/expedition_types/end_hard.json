@@ -1,0 +1,49 @@
+{
+  "difficulty": "hard",
+  "dimension": "minecraft:the_end",
+  "guards": 6,
+  "loot-table": "minecolonies:expeditions/expedition_end",
+  "name": "com.minecolonies.core.expedition_types.end.name",
+  "requirements": [
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "weapon"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "pickaxe"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "shovel"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "helmet"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "chestplate"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "leggings"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "tool": "boots"
+    },
+    {
+      "type": "food",
+      "amount": 128
+    }
+  ],
+  "to-text": "com.minecolonies.core.expedition_types.end.to_text"
+}
