@@ -10,10 +10,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
-import net.neoforged.fml.ModLoader;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.common.util.InsertableLinkedOpenCustomHashSet;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -195,8 +191,7 @@ public final class CraftingUtils
                     stacks = new HashSet<>();
                     try
                     {
-                        onCreativeModeTabBuildContents(tab, Objects.requireNonNull(tabKeys.get(tab), "unregistered tab"),
-                                tab.displayItemsGenerator, displayParams, (stack, vis) -> stacks.add(stack));
+                        tab.buildContents(displayParams);
                     }
                     catch (final Throwable ex)
                     {
@@ -211,43 +206,5 @@ public final class CraftingUtils
                 consumer.accept(tab, stacks);
             }
         }
-    }
-
-    /**
-     * Extracted from Forge {@link ClientHooks} to avoid classloading problems (since we call on server).
-     */
-    private static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
-    {
-        final var parentEntries = new InsertableLinkedOpenCustomHashSet<ItemStack>(ItemStackLinkedSet.TYPE_AND_TAG);
-        final var searchEntries = new InsertableLinkedOpenCustomHashSet<ItemStack>(ItemStackLinkedSet.TYPE_AND_TAG);
-
-        originalGenerator.accept(params, (stack, vis) -> {
-            if (stack.getCount() != 1)
-                throw new IllegalArgumentException("The stack count must be 1");
-
-            if (isParentTab(vis)) {
-                parentEntries.add(stack);
-            }
-
-            if (isSearchTab(vis)) {
-                searchEntries.add(stack);
-            }
-        });
-
-        for (var entry : parentEntries) {
-            output.accept(entry, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
-        }
-
-        for (var entry : searchEntries) {
-            output.accept(entry, CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY);
-        }
-    }
-
-    static boolean isParentTab(CreativeModeTab.TabVisibility visibility) {
-        return visibility == CreativeModeTab.TabVisibility.PARENT_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
-    }
-
-    static boolean isSearchTab(CreativeModeTab.TabVisibility visibility) {
-        return visibility == CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY || visibility == CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
     }
 }

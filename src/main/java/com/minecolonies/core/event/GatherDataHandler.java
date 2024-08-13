@@ -80,7 +80,7 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput(), provider));
 
-        generator.addProvider(event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), provider));
+        generator.addProvider(event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), event.getLookupProvider()));
 
         SchemFixerUtil.fixSchematics(provider);
     }
