@@ -1,8 +1,0 @@
-{
-  "values": [
-    "minecraft:diamond_block",
-    "minecraft:emerald_block",
-    "#forge:nuggets",
-    "#forge:ingots"
-  ]
-}
