@@ -4,34 +4,18 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:wheat",
-      "tag": {
-        "count": 3,
-        "id": "minecraft:wheat"
-      }
+      "item": "minecraft:wheat"
     },
     {
       "count": 3,
-      "item": "minecolonies:large_milk_bottle",
-      "tag": {
-        "count": 3,
-        "id": "minecolonies:large_milk_bottle"
-      }
+      "item": "minecolonies:large_milk_bottle"
     },
     {
       "count": 2,
-      "item": "minecraft:sugar",
-      "tag": {
-        "count": 2,
-        "id": "minecraft:sugar"
-      }
+      "item": "minecraft:sugar"
     },
     {
-      "item": "minecraft:egg",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:egg"
-      }
+      "item": "minecraft:egg"
     }
   ],
   "intermediate": "minecraft:air",

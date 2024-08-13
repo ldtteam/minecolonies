@@ -5,26 +5,14 @@
   "inputs": [
     {
       "count": 4,
-      "item": "minecraft:sand",
-      "tag": {
-        "count": 4,
-        "id": "minecraft:sand"
-      }
+      "item": "minecraft:sand"
     },
     {
       "count": 4,
-      "item": "minecraft:gravel",
-      "tag": {
-        "count": 4,
-        "id": "minecraft:gravel"
-      }
+      "item": "minecraft:gravel"
     },
     {
-      "item": "minecraft:purple_dye",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:purple_dye"
-      }
+      "item": "minecraft:purple_dye"
     }
   ],
   "intermediate": "minecraft:air",

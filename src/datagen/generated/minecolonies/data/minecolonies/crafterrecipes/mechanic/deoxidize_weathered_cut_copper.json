@@ -3,11 +3,7 @@
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-      "item": "minecraft:weathered_cut_copper",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:weathered_cut_copper"
-      }
+      "item": "minecraft:weathered_cut_copper"
     }
   ],
   "intermediate": "minecraft:air",

@@ -3,32 +3,16 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:raw_noodle",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:raw_noodle"
-      }
+      "item": "minecolonies:raw_noodle"
     },
     {
-      "item": "minecolonies:butter",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:butter"
-      }
+      "item": "minecolonies:butter"
     },
     {
-      "item": "minecraft:bowl",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:bowl"
-      }
+      "item": "minecraft:bowl"
     },
     {
-      "item": "minecolonies:garlic",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:garlic"
-      }
+      "item": "minecolonies:garlic"
     }
   ],
   "intermediate": "minecraft:air",

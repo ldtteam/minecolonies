@@ -3,11 +3,7 @@
   "crafter": "farmer_crafting",
   "inputs": [
     {
-      "item": "minecraft:pumpkin",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:pumpkin"
-      }
+      "item": "minecraft:pumpkin"
     }
   ],
   "intermediate": "minecraft:air",

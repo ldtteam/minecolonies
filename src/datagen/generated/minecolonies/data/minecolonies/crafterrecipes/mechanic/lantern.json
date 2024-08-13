@@ -4,25 +4,13 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:iron_nugget",
-      "tag": {
-        "count": 3,
-        "id": "minecraft:iron_nugget"
-      }
+      "item": "minecraft:iron_nugget"
     },
     {
-      "item": "minecraft:glass_bottle",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:glass_bottle"
-      }
+      "item": "minecraft:glass_bottle"
     },
     {
-      "item": "minecraft:torch",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:torch"
-      }
+      "item": "minecraft:torch"
     }
   ],
   "intermediate": "minecraft:air",

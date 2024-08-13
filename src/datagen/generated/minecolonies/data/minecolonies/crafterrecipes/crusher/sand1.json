@@ -4,11 +4,7 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:gravel",
-      "tag": {
-        "count": 2,
-        "id": "minecraft:gravel"
-      }
+      "item": "minecraft:gravel"
     }
   ],
   "intermediate": "minecraft:air",

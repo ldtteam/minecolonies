@@ -3,11 +3,7 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:sand",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:sand"
-      }
+      "item": "minecraft:sand"
     }
   ],
   "intermediate": "minecraft:air",

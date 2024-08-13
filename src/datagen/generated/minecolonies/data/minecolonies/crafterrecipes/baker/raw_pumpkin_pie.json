@@ -3,25 +3,13 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecraft:pumpkin",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:pumpkin"
-      }
+      "item": "minecraft:pumpkin"
     },
     {
-      "item": "minecraft:sugar",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:sugar"
-      }
+      "item": "minecraft:sugar"
     },
     {
-      "item": "minecraft:egg",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:egg"
-      }
+      "item": "minecraft:egg"
     }
   ],
   "intermediate": "minecraft:air",

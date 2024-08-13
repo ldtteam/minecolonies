@@ -3,67 +3,31 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:onion",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:onion"
-      }
+      "item": "minecolonies:onion"
     },
     {
-      "item": "minecolonies:garlic",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:garlic"
-      }
+      "item": "minecolonies:garlic"
     },
     {
-      "item": "minecraft:carrot",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:carrot"
-      }
+      "item": "minecraft:carrot"
     },
     {
-      "item": "minecraft:potato",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:potato"
-      }
+      "item": "minecraft:potato"
     },
     {
-      "item": "minecraft:carrot",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:carrot"
-      }
+      "item": "minecraft:carrot"
     },
     {
-      "item": "minecraft:potato",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:potato"
-      }
+      "item": "minecraft:potato"
     },
     {
-      "item": "minecraft:brown_mushroom",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:brown_mushroom"
-      }
+      "item": "minecraft:brown_mushroom"
     },
     {
-      "item": "minecolonies:cabbage",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:cabbage"
-      }
+      "item": "minecolonies:cabbage"
     },
     {
-      "item": "minecraft:mutton",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:mutton"
-      }
+      "item": "minecraft:mutton"
     }
   ],
   "intermediate": "minecraft:air",

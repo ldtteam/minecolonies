@@ -4,11 +4,7 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:sand",
-      "tag": {
-        "count": 2,
-        "id": "minecraft:sand"
-      }
+      "item": "minecraft:sand"
     }
   ],
   "intermediate": "minecraft:air",

@@ -4,11 +4,7 @@
   "inputs": [
     {
       "count": 5,
-      "item": "minecraft:oak_log",
-      "tag": {
-        "count": 5,
-        "id": "minecraft:oak_log"
-      }
+      "item": "minecraft:oak_log"
     }
   ],
   "intermediate": "minecraft:air",

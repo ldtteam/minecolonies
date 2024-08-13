@@ -4,11 +4,7 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:cobblestone",
-      "tag": {
-        "count": 2,
-        "id": "minecraft:cobblestone"
-      }
+      "item": "minecraft:cobblestone"
     }
   ],
   "intermediate": "minecraft:air",

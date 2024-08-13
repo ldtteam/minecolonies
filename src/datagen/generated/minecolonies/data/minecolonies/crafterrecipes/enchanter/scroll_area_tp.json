@@ -4,11 +4,7 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecolonies:scroll_tp",
-      "tag": {
-        "count": 3,
-        "id": "minecolonies:scroll_tp"
-      }
+      "item": "minecolonies:scroll_tp"
     }
   ],
   "intermediate": "minecraft:air",

@@ -3,11 +3,7 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecraft:glass_bottle",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:glass_bottle"
-      }
+      "item": "minecraft:glass_bottle"
     }
   ],
   "intermediate": "minecraft:air",

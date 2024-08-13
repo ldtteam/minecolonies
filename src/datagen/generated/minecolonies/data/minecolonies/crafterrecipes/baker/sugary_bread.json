@@ -5,18 +5,10 @@
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat",
-      "tag": {
-        "count": 8,
-        "id": "minecraft:wheat"
-      }
+      "item": "minecraft:wheat"
     },
     {
-      "item": "minecraft:honey_bottle",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:honey_bottle"
-      }
+      "item": "minecraft:honey_bottle"
     }
   ],
   "intermediate": "minecraft:air",

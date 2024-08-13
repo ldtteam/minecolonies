@@ -3,11 +3,7 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:tuff",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:tuff"
-      }
+      "item": "minecraft:tuff"
     }
   ],
   "intermediate": "minecraft:air",

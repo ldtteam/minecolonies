@@ -4,33 +4,17 @@
   "crafter": "enchanter_custom",
   "inputs": [
     {
-      "item": "minecolonies:scroll_tp",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:scroll_tp"
-      }
+      "item": "minecolonies:scroll_tp"
     },
     {
       "count": 5,
-      "item": "minecraft:lapis_lazuli",
-      "tag": {
-        "count": 5,
-        "id": "minecraft:lapis_lazuli"
-      }
+      "item": "minecraft:lapis_lazuli"
     },
     {
-      "item": "minecraft:ender_pearl",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:ender_pearl"
-      }
+      "item": "minecraft:ender_pearl"
     },
     {
-      "item": "minecraft:paper",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:paper"
-      }
+      "item": "minecraft:paper"
     }
   ],
   "intermediate": "minecraft:air",

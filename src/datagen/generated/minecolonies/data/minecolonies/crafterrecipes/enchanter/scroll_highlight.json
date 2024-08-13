@@ -5,27 +5,15 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecolonies:scroll_tp",
-      "tag": {
-        "count": 3,
-        "id": "minecolonies:scroll_tp"
-      }
+      "item": "minecolonies:scroll_tp"
     },
     {
       "count": 6,
-      "item": "minecraft:glowstone_dust",
-      "tag": {
-        "count": 6,
-        "id": "minecraft:glowstone_dust"
-      }
+      "item": "minecraft:glowstone_dust"
     },
     {
       "count": 2,
-      "item": "minecraft:paper",
-      "tag": {
-        "count": 2,
-        "id": "minecraft:paper"
-      }
+      "item": "minecraft:paper"
     }
   ],
   "intermediate": "minecraft:air",

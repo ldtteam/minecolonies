@@ -4,39 +4,19 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:bell_pepper",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:bell_pepper"
-      }
+      "item": "minecolonies:bell_pepper"
     },
     {
-      "item": "minecolonies:bell_pepper",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:bell_pepper"
-      }
+      "item": "minecolonies:bell_pepper"
     },
     {
-      "item": "minecolonies:garlic",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:garlic"
-      }
+      "item": "minecolonies:garlic"
     },
     {
-      "item": "minecolonies:chickpea",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:chickpea"
-      }
+      "item": "minecolonies:chickpea"
     },
     {
-      "item": "minecolonies:chickpea",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:chickpea"
-      }
+      "item": "minecolonies:chickpea"
     }
   ],
   "intermediate": "minecraft:air",

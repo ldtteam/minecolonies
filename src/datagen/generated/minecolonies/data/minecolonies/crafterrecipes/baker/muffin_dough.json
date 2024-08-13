@@ -4,39 +4,19 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:durum"
-      }
+      "item": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:durum",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:durum"
-      }
+      "item": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:butter",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:butter"
-      }
+      "item": "minecolonies:butter"
     },
     {
-      "item": "minecraft:sugar",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:sugar"
-      }
+      "item": "minecraft:sugar"
     },
     {
-      "item": "minecraft:sweet_berries",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:sweet_berries"
-      }
+      "item": "minecraft:sweet_berries"
     }
   ],
   "intermediate": "minecraft:air",

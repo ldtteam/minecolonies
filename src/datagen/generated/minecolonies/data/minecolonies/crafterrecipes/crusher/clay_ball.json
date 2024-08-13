@@ -4,11 +4,7 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:clay",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:clay"
-      }
+      "item": "minecraft:clay"
     }
   ],
   "intermediate": "minecraft:air",

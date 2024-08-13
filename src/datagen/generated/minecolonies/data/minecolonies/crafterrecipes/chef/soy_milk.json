@@ -3,32 +3,16 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:large_water_bottle",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:large_water_bottle"
-      }
+      "item": "minecolonies:large_water_bottle"
     },
     {
-      "item": "minecolonies:soybean",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:soybean"
-      }
+      "item": "minecolonies:soybean"
     },
     {
-      "item": "minecolonies:soybean",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:soybean"
-      }
+      "item": "minecolonies:soybean"
     },
     {
-      "item": "minecolonies:soybean",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:soybean"
-      }
+      "item": "minecolonies:soybean"
     }
   ],
   "intermediate": "minecraft:air",

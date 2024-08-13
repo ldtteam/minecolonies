@@ -3,11 +3,7 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:raw_pumpkin_pie",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:raw_pumpkin_pie"
-      }
+      "item": "minecolonies:raw_pumpkin_pie"
     }
   ],
   "intermediate": "minecraft:furnace",

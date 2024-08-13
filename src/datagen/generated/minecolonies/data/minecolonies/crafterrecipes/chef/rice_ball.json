@@ -4,25 +4,13 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:tofu",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:tofu"
-      }
+      "item": "minecolonies:tofu"
     },
     {
-      "item": "minecraft:dried_kelp",
-      "tag": {
-        "count": 1,
-        "id": "minecraft:dried_kelp"
-      }
+      "item": "minecraft:dried_kelp"
     },
     {
-      "item": "minecolonies:cooked_rice",
-      "tag": {
-        "count": 1,
-        "id": "minecolonies:cooked_rice"
-      }
+      "item": "minecolonies:cooked_rice"
     }
   ],
   "intermediate": "minecraft:air",
