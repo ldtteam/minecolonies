@@ -8,23 +8,24 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.items.ItemAdventureToken;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.*;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
@@ -42,7 +43,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.items.ModDataComponents.ADVENTURE_COMPONENT;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE;
 
 /**
  * Utility helper that analyzes a loot table to determine a likely list of drops, along with
@@ -81,7 +81,8 @@ public final class LootTableAnalyzer
     {
         try
         {
-            final JsonObject lootTableJson = LootTable.CODEC.encodeStart(JsonOps.INSTANCE, lootTable).getOrThrow().getAsJsonObject();
+            final RegistryOps<JsonElement> ops = provider.createSerializationContext(JsonOps.INSTANCE);
+            final JsonObject lootTableJson = LootTable.CODEC.encodeStart(ops, lootTable).getOrThrow().getAsJsonObject();
             return toDrops(provider, lootTableJson);
         }
         catch (final JsonParseException ex)

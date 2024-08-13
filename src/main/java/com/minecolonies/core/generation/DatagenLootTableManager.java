@@ -2,6 +2,7 @@ package com.minecolonies.core.generation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
@@ -26,7 +27,7 @@ public class DatagenLootTableManager implements HolderLookup.Provider
 {
     private final HolderLookup.Provider baseProvider;
     private final ExistingFileHelper    existingFileHelper;
-    private final Registry<LootTable>   registry = new DynamicLoadingRegistry<>(Registries.LOOT_TABLE, Lifecycle.stable(), false);
+    private final Registry<LootTable>   registry = new DynamicLoadingRegistry<>(Registries.LOOT_TABLE, Lifecycle.stable(), false, LootTable.DIRECT_CODEC);
 
     public DatagenLootTableManager(@NotNull final HolderLookup.Provider baseProvider,
                                    @NotNull final ExistingFileHelper existingFileHelper)
@@ -69,11 +70,15 @@ public class DatagenLootTableManager implements HolderLookup.Provider
      */
     private class DynamicLoadingRegistry<T> extends MappedRegistry<T>
     {
+        private final Codec<T> codec;
+
         public DynamicLoadingRegistry(@NotNull final ResourceKey<? extends Registry<T>> registryId,
                                       @NotNull final Lifecycle lifecycle,
-                                      final boolean intrusive)
+                                      final boolean intrusive,
+                                      @NotNull final Codec<T> codec)
         {
             super(registryId, lifecycle, intrusive);
+            this.codec = codec;
         }
 
         @NotNull
@@ -98,7 +103,7 @@ public class DatagenLootTableManager implements HolderLookup.Provider
                 try (final var reader = resource.openAsReader())
                 {
                     final JsonElement json = JsonParser.parseReader(reader);
-                    return Optional.of((T)LootTable.DIRECT_CODEC.decode(ops, json).getOrThrow().getFirst());
+                    return Optional.of(codec.decode(ops, json).getOrThrow().getFirst());
                 }
             }
             catch (Throwable e)
