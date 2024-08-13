@@ -234,8 +234,6 @@ public final class CraftingUtils
             }
         });
 
-        ModLoader.postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, parentEntries, searchEntries));
-
         for (var entry : parentEntries) {
             output.accept(entry, CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
         }

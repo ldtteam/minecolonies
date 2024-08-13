@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -259,7 +260,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         private JsonObject stackAsJson(final ItemStack stack)
         {
             final JsonObject jsonItemStack = new JsonObject();
-            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(ItemStack.CODEC, provider, stack));
+            jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(DataComponentPatch.CODEC, provider, stack.getComponentsPatch()));
             jsonItemStack.addProperty(ITEM_PROP, BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
             if (stack.getCount() != 1)
             {
