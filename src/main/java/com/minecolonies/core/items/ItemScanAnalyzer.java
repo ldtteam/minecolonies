@@ -104,7 +104,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
 
         final ItemStack itemstack = playerIn.getItemInHand(handIn);
-        final PosSelection component = itemstack.getOrDefault(PosSelection.TYPE, PosSelection.EMPTY);
+        final PosSelection component = itemstack.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
         final BlockPos firstPos = component.startPos().orElse(null);
         final BlockPos secondPos = component.endPos().orElse(null);
 
@@ -127,7 +127,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             {
                 lastPos = start;
                 lastPos2 = end;
-                final PosSelection data = itemStack.getOrDefault(PosSelection.TYPE, PosSelection.EMPTY);
+                final PosSelection data = itemStack.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
 
                 blueprint = saveStructure(worldIn, playerIn, AABB.encapsulatingFullBlocks(data.startPos().orElse(null), data.endPos().orElse(null)));
             }
@@ -150,7 +150,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      */
     private void openAreaBox(final ItemStack tool)
     {
-        final PosSelection component = tool.getOrDefault(PosSelection.TYPE, PosSelection.EMPTY);
+        final PosSelection component = tool.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
         final BlockPos start = component.startPos().orElse(null);
         final BlockPos end = component.endPos().orElse(null);
         RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
