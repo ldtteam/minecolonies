@@ -22,67 +22,19 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:blockpaperwall"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:blockpillar"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:blockypillar"
   },
@@ -115,25 +67,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:center_light"
   },
@@ -148,25 +82,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:crossed_light"
   },
@@ -178,230 +94,57 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:dark_brick"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:double_crossed"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:down_gated"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "id"
-          },
-          {
-            "children": [
-              {
-                "key": "minecraft:block/acacia_planks"
-              },
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:fancy_door"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:fancy_light"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "id"
-          },
-          {
-            "children": [
-              {
-                "key": "minecraft:block/acacia_planks"
-              },
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:fancy_trapdoors"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:four_light"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:framed"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:framed_light"
   },
@@ -425,49 +168,13 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:horizontal_light"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:horizontal_plain"
   },
@@ -479,22 +186,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:light_brick"
   },
@@ -521,49 +213,13 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:one_crossed_lr"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:one_crossed_rl"
   },
@@ -575,30 +231,8 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:panel"
   },
@@ -613,54 +247,14 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:plain"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:post"
   },
@@ -693,377 +287,99 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/clay"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:shingle"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/clay"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:shingle_flat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/clay"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:shingle_flat_lower"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:shingle_slab"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:side_framed"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:side_framed_horizontal"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:squarepillar"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/dark_oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:up_gated"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_doors_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_fence_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_fence_gate_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_slab_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_stairs_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "type"
-          }
-        ],
-        "key": "BlockStateTag"
-      }
+      "minecraft:block_state",
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_trapdoors_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vanilla_wall_compat"
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "children": [
-              {
-                "key": "minecraft:block/oak_planks"
-              },
-              {
-                "key": "minecraft:block/glowstone"
-              }
-            ],
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "domum_ornamentum:vertical_light"
   },
@@ -1089,12 +405,20 @@
     "item": "minecolonies:ancienttome"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
+    ],
     "item": "minecolonies:banner_rally_guards"
   },
   {
     "item": "minecolonies:barrel_block"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:bell_pepper"
   },
   {
@@ -1258,17 +582,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "textureData"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      }
+      "domum_ornamentum:texture_data"
     ],
     "item": "minecolonies:blockminecoloniesrack"
   },
@@ -1286,9 +600,8 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:build_goggles"
   },
@@ -1296,32 +609,46 @@
     "item": "minecolonies:butter"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cabbage"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cabochis"
   },
   {
     "item": "minecolonies:cake_batter"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cheddar_cheese"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:chickpea"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:chiefsword"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:chorus_bread"
   },
   {
@@ -1337,9 +664,15 @@
     "item": "minecolonies:composted_dirt"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:congee"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cooked_rice"
   },
   {
@@ -1349,30 +682,48 @@
     "item": "minecolonies:decorationcontroller"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:durum"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:eggplant"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:eggplant_dolma"
   },
   {
     "item": "minecolonies:farmland"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:feta_cheese"
   },
   {
     "item": "minecolonies:firearrow"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:flatbread"
   },
   {
     "item": "minecolonies:floodedfarmland"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:garlic"
   },
   {
@@ -1382,23 +733,31 @@
     "item": "minecolonies:gate_wood"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:golden_bread"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:hand_pie"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:iron_scimitar"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:lamb_stew"
   },
   {
@@ -1414,12 +773,18 @@
     "item": "minecolonies:large_water_bottle"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:lembas_scone"
   },
   {
     "item": "minecolonies:magicpotion"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:manchet_bread"
   },
   {
@@ -1429,173 +794,143 @@
     "item": "minecolonies:mediumquarry"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:milky_bread"
   },
   {
     "item": "minecolonies:mistletoe"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:muffin"
   },
   {
     "item": "minecolonies:muffin_dough"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:onion"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:pasta_plain"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:pasta_tomato"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:pharaoscepter"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_cap"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_chest"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_hat"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_leggins"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_legs"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_shoes"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:pirate_top"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:pita_hummus"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:plate_armor_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:plate_armor_chest"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:plate_armor_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:plate_armor_legs"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:pottage"
   },
   {
@@ -1611,23 +946,30 @@
     "item": "minecolonies:resourcescroll"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:rice"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:rice_ball"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecolonies:santa_hat"
   },
   {
+    "checkednbtkeys": [
+      "structurize:pos_selection",
+      "minecraft:enchantments",
+      "minecraft:max_damage"
+    ],
     "item": "minecolonies:scan_analyzer"
   },
   {
@@ -1635,12 +977,9 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:scepterguard"
   },
@@ -1649,12 +988,9 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:scepterpermission"
   },
@@ -1675,33 +1011,29 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:enchantments",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:sifter_mesh_diamond"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:enchantments",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:sifter_mesh_flint"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:enchantments",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:sifter_mesh_iron"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:enchantments",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:sifter_mesh_string"
   },
@@ -1709,29 +1041,41 @@
     "item": "minecolonies:simplequarry"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:soybean"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:spear"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:stew_trencher"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:stuffed_pepper"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:stuffed_pita"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:sugary_bread"
   },
   {
@@ -1741,22 +1085,25 @@
     "item": "minecolonies:supplychestdeployer"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:sushi_roll"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:tofu"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:tomato"
   },
   {
-    "item": "minecraft:acacia_boat"
-  },
-  {
     "item": "minecraft:acacia_button"
-  },
-  {
-    "item": "minecraft:acacia_chest_boat"
   },
   {
     "item": "minecraft:acacia_door"
@@ -1819,6 +1166,9 @@
     "item": "minecraft:amethyst_shard"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:fire_resistant"
+    ],
     "item": "minecraft:ancient_debris"
   },
   {
@@ -1840,10 +1190,19 @@
     "item": "minecraft:anvil"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:apple"
   },
   {
     "item": "minecraft:archer_pottery_sherd"
+  },
+  {
+    "item": "minecraft:armadillo_scute"
+  },
+  {
+    "item": "minecraft:armadillo_spawn_egg"
   },
   {
     "item": "minecraft:armor_stand"
@@ -1853,9 +1212,6 @@
   },
   {
     "item": "minecraft:arrow"
-  },
-  {
-    "item": "minecraft:axolotl_bucket"
   },
   {
     "item": "minecraft:axolotl_spawn_egg"
@@ -1870,6 +1226,9 @@
     "item": "minecraft:azure_bluet"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:baked_potato"
   },
   {
@@ -1912,9 +1271,6 @@
     "item": "minecraft:bamboo_pressure_plate"
   },
   {
-    "item": "minecraft:bamboo_raft"
-  },
-  {
     "item": "minecraft:bamboo_sign"
   },
   {
@@ -1927,6 +1283,9 @@
     "item": "minecraft:bamboo_trapdoor"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:barrel"
   },
   {
@@ -1942,24 +1301,39 @@
     "item": "minecraft:bedrock"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:bees"
+    ],
     "item": "minecraft:bee_nest"
   },
   {
     "item": "minecraft:bee_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:beef"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:bees"
+    ],
     "item": "minecraft:beehive"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:beetroot"
   },
   {
     "item": "minecraft:beetroot_seeds"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:beetroot_soup"
   },
   {
@@ -1969,13 +1343,7 @@
     "item": "minecraft:big_dripleaf"
   },
   {
-    "item": "minecraft:birch_boat"
-  },
-  {
     "item": "minecraft:birch_button"
-  },
-  {
-    "item": "minecraft:birch_chest_boat"
   },
   {
     "item": "minecraft:birch_door"
@@ -2020,6 +1388,9 @@
     "item": "minecraft:birch_wood"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:black_banner"
   },
   {
@@ -2044,6 +1415,9 @@
     "item": "minecraft:black_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:black_shulker_box"
   },
   {
@@ -2074,6 +1448,9 @@
     "item": "minecraft:blade_pottery_sherd"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:blast_furnace"
   },
   {
@@ -2086,6 +1463,9 @@
     "item": "minecraft:blaze_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:blue_banner"
   },
   {
@@ -2116,6 +1496,9 @@
     "item": "minecraft:blue_orchid"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:blue_shulker_box"
   },
   {
@@ -2131,6 +1514,12 @@
     "item": "minecraft:blue_wool"
   },
   {
+    "item": "minecraft:bogged_spawn_egg"
+  },
+  {
+    "item": "minecraft:bolt_armor_trim_smithing_template"
+  },
+  {
     "item": "minecraft:bone"
   },
   {
@@ -2141,9 +1530,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      }
+      "minecraft:enchantments"
     ],
     "item": "minecraft:book"
   },
@@ -2152,12 +1539,9 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:bow"
   },
@@ -2174,7 +1558,13 @@
     "item": "minecraft:brain_coral_fan"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:bread"
+  },
+  {
+    "item": "minecraft:breeze_rod"
   },
   {
     "item": "minecraft:breeze_spawn_egg"
@@ -2183,6 +1573,9 @@
     "item": "minecraft:brewer_pottery_sherd"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:brewing_stand"
   },
   {
@@ -2201,6 +1594,9 @@
     "item": "minecraft:bricks"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:brown_banner"
   },
   {
@@ -2231,6 +1627,9 @@
     "item": "minecraft:brown_mushroom_block"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:brown_shulker_box"
   },
   {
@@ -2246,17 +1645,6 @@
     "item": "minecraft:brown_wool"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:brush"
-  },
-  {
     "item": "minecraft:bubble_coral"
   },
   {
@@ -2266,13 +1654,7 @@
     "item": "minecraft:bubble_coral_fan"
   },
   {
-    "item": "minecraft:bucket"
-  },
-  {
     "item": "minecraft:budding_amethyst"
-  },
-  {
-    "item": "minecraft:bundle"
   },
   {
     "item": "minecraft:burn_pottery_sherd"
@@ -2293,24 +1675,19 @@
     "item": "minecraft:camel_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:campfire"
   },
   {
     "item": "minecraft:candle"
   },
   {
-    "item": "minecraft:carrot"
-  },
-  {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:food"
     ],
-    "item": "minecraft:carrot_on_a_stick"
+    "item": "minecraft:carrot"
   },
   {
     "item": "minecraft:cartography_table"
@@ -2332,45 +1709,41 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:chainmail_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:chainmail_chestplate"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:chainmail_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:chainmail_leggings"
   },
@@ -2378,13 +1751,7 @@
     "item": "minecraft:charcoal"
   },
   {
-    "item": "minecraft:cherry_boat"
-  },
-  {
     "item": "minecraft:cherry_button"
-  },
-  {
-    "item": "minecraft:cherry_chest_boat"
   },
   {
     "item": "minecraft:cherry_door"
@@ -2429,12 +1796,18 @@
     "item": "minecraft:cherry_wood"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:chest"
   },
   {
     "item": "minecraft:chest_minecart"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:chicken"
   },
   {
@@ -2444,6 +1817,9 @@
     "item": "minecraft:chipped_anvil"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:chiseled_bookshelf"
   },
   {
@@ -2480,6 +1856,9 @@
     "item": "minecraft:chorus_flower"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:chorus_fruit"
   },
   {
@@ -2490,9 +1869,6 @@
   },
   {
     "item": "minecraft:clay_ball"
-  },
-  {
-    "item": "minecraft:clock"
   },
   {
     "item": "minecraft:coal"
@@ -2540,10 +1916,10 @@
     "item": "minecraft:cocoa_beans"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cod"
-  },
-  {
-    "item": "minecraft:cod_bucket"
   },
   {
     "item": "minecraft:cod_spawn_egg"
@@ -2552,36 +1928,57 @@
     "item": "minecraft:comparator"
   },
   {
-    "item": "minecraft:compass"
-  },
-  {
     "item": "minecraft:composter"
   },
   {
     "item": "minecraft:conduit"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_beef"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_chicken"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_cod"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_mutton"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_porkchop"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_rabbit"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cooked_salmon"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:cookie"
   },
   {
@@ -2627,6 +2024,9 @@
     "item": "minecraft:cracked_stone_bricks"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:crafter"
   },
   {
@@ -2691,12 +2091,10 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage",
+      "minecraft:charged_projectiles"
     ],
     "item": "minecraft:crossbow"
   },
@@ -2725,6 +2123,9 @@
     "item": "minecraft:cut_sandstone_slab"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:cyan_banner"
   },
   {
@@ -2749,6 +2150,9 @@
     "item": "minecraft:cyan_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:cyan_shulker_box"
   },
   {
@@ -2773,13 +2177,7 @@
     "item": "minecraft:danger_pottery_sherd"
   },
   {
-    "item": "minecraft:dark_oak_boat"
-  },
-  {
     "item": "minecraft:dark_oak_button"
-  },
-  {
-    "item": "minecraft:dark_oak_chest_boat"
   },
   {
     "item": "minecraft:dark_oak_door"
@@ -2884,6 +2282,9 @@
     "item": "minecraft:dead_tube_coral_fan"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:pot_decorations"
+    ],
     "item": "minecraft:decorated_pot"
   },
   {
@@ -2945,12 +2346,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_axe"
   },
@@ -2959,59 +2359,48 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_chestplate"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
-    "item": "minecraft:diamond_hoe"
-  },
-  {
     "item": "minecraft:diamond_horse_armor"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_leggings"
   },
@@ -3020,34 +2409,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:diamond_pickaxe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:diamond_shovel"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:diamond_sword"
   },
@@ -3073,6 +2439,9 @@
     "item": "minecraft:disc_fragment_5"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:dispenser"
   },
   {
@@ -3091,6 +2460,9 @@
     "item": "minecraft:dragon_head"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:dried_kelp"
   },
   {
@@ -3100,6 +2472,9 @@
     "item": "minecraft:dripstone_block"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:dropper"
   },
   {
@@ -3118,17 +2493,6 @@
     "item": "minecraft:elder_guardian_spawn_egg"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:elytra"
-  },
-  {
     "item": "minecraft:emerald"
   },
   {
@@ -3139,19 +2503,25 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "StoredEnchantments"
-      }
+      "minecraft:stored_enchantments",
+      "minecraft:enchantment_glint_override"
     ],
     "item": "minecraft:enchanted_book"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food",
+      "minecraft:enchantment_glint_override"
+    ],
     "item": "minecraft:enchanted_golden_apple"
   },
   {
     "item": "minecraft:enchanting_table"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:enchantment_glint_override"
+    ],
     "item": "minecraft:end_crystal"
   },
   {
@@ -3176,6 +2546,9 @@
     "item": "minecraft:end_stone_bricks"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:ender_chest"
   },
   {
@@ -3194,6 +2567,9 @@
     "item": "minecraft:evoker_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:enchantment_glint_override"
+    ],
     "item": "minecraft:experience_bottle"
   },
   {
@@ -3255,30 +2631,12 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "Flight"
-          }
-        ],
-        "key": "Fireworks"
-      }
+      "minecraft:fireworks"
     ],
     "item": "minecraft:firework_rocket"
   },
   {
     "item": "minecraft:firework_star"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:fishing_rod"
   },
   {
     "item": "minecraft:fletching_table"
@@ -3287,15 +2645,13 @@
     "item": "minecraft:flint"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:flint_and_steel"
+    "item": "minecraft:flow_armor_trim_smithing_template"
+  },
+  {
+    "item": "minecraft:flow_banner_pattern"
+  },
+  {
+    "item": "minecraft:flow_pottery_sherd"
   },
   {
     "item": "minecraft:flower_banner_pattern"
@@ -3322,6 +2678,9 @@
     "item": "minecraft:frogspawn"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:furnace"
   },
   {
@@ -3352,6 +2711,9 @@
     "item": "minecraft:globe_banner_pattern"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:glow_berries"
   },
   {
@@ -3388,110 +2750,81 @@
     "item": "minecraft:gold_ore"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:golden_apple"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_axe"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_boots"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:golden_carrot"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_chestplate"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
-    "item": "minecraft:golden_hoe"
-  },
-  {
     "item": "minecraft:golden_horse_armor"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_leggings"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:golden_pickaxe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:golden_shovel"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:golden_sword"
   },
@@ -3514,6 +2847,9 @@
     "item": "minecraft:gravel"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:gray_banner"
   },
   {
@@ -3538,6 +2874,9 @@
     "item": "minecraft:gray_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:gray_shulker_box"
   },
   {
@@ -3553,6 +2892,9 @@
     "item": "minecraft:gray_wool"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:green_banner"
   },
   {
@@ -3577,6 +2919,9 @@
     "item": "minecraft:green_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:green_shulker_box"
   },
   {
@@ -3601,6 +2946,12 @@
     "item": "minecraft:gunpowder"
   },
   {
+    "item": "minecraft:guster_banner_pattern"
+  },
+  {
+    "item": "minecraft:guster_pottery_sherd"
+  },
+  {
     "item": "minecraft:hanging_roots"
   },
   {
@@ -3616,6 +2967,9 @@
     "item": "minecraft:heartbreak_pottery_sherd"
   },
   {
+    "item": "minecraft:heavy_core"
+  },
+  {
     "item": "minecraft:heavy_weighted_pressure_plate"
   },
   {
@@ -3625,6 +2979,9 @@
     "item": "minecraft:honey_block"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:honey_bottle"
   },
   {
@@ -3634,6 +2991,9 @@
     "item": "minecraft:honeycomb_block"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:hopper"
   },
   {
@@ -3689,12 +3049,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_axe"
   },
@@ -3706,23 +3065,21 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_chestplate"
   },
@@ -3734,27 +3091,19 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
-    "item": "minecraft:iron_hoe"
-  },
-  {
     "item": "minecraft:iron_horse_armor"
   },
   {
@@ -3762,12 +3111,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_leggings"
   },
@@ -3779,34 +3127,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:iron_pickaxe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:iron_shovel"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:iron_sword"
   },
@@ -3823,13 +3148,7 @@
     "item": "minecraft:jukebox"
   },
   {
-    "item": "minecraft:jungle_boat"
-  },
-  {
     "item": "minecraft:jungle_button"
-  },
-  {
-    "item": "minecraft:jungle_chest_boat"
   },
   {
     "item": "minecraft:jungle_door"
@@ -3898,75 +3217,52 @@
     "item": "minecraft:large_fern"
   },
   {
-    "item": "minecraft:lava_bucket"
-  },
-  {
-    "item": "minecraft:lead"
-  },
-  {
     "item": "minecraft:leather"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "display"
-      },
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:leather_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "display"
-      },
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:leather_chestplate"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "display"
-      },
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:leather_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "display"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:dyed_color"
     ],
     "item": "minecraft:leather_horse_armor"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "display"
-      },
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:leather_leggings"
   },
@@ -3977,6 +3273,9 @@
     "item": "minecraft:lever"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:light_blue_banner"
   },
   {
@@ -4001,6 +3300,9 @@
     "item": "minecraft:light_blue_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:light_blue_shulker_box"
   },
   {
@@ -4016,6 +3318,9 @@
     "item": "minecraft:light_blue_wool"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:light_gray_banner"
   },
   {
@@ -4040,6 +3345,9 @@
     "item": "minecraft:light_gray_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:light_gray_shulker_box"
   },
   {
@@ -4070,6 +3378,9 @@
     "item": "minecraft:lily_pad"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:lime_banner"
   },
   {
@@ -4094,6 +3405,9 @@
     "item": "minecraft:lime_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:lime_shulker_box"
   },
   {
@@ -4110,9 +3424,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Potion"
-      }
+      "minecraft:potion_contents"
     ],
     "item": "minecraft:lingering_potion"
   },
@@ -4126,6 +3438,19 @@
     "item": "minecraft:loom"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
+    ],
+    "item": "minecraft:mace"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:magenta_banner"
   },
   {
@@ -4150,6 +3475,9 @@
     "item": "minecraft:magenta_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:magenta_shulker_box"
   },
   {
@@ -4174,13 +3502,7 @@
     "item": "minecraft:magma_cube_spawn_egg"
   },
   {
-    "item": "minecraft:mangrove_boat"
-  },
-  {
     "item": "minecraft:mangrove_button"
-  },
-  {
-    "item": "minecraft:mangrove_chest_boat"
   },
   {
     "item": "minecraft:mangrove_door"
@@ -4228,9 +3550,6 @@
     "item": "minecraft:mangrove_wood"
   },
   {
-    "item": "minecraft:map"
-  },
-  {
     "item": "minecraft:medium_amethyst_bud"
   },
   {
@@ -4240,6 +3559,9 @@
     "item": "minecraft:melon_seeds"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:melon_slice"
   },
   {
@@ -4315,64 +3637,19 @@
     "item": "minecraft:mushroom_stem"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:mushroom_stew"
   },
   {
-    "item": "minecraft:music_disc_11"
-  },
-  {
-    "item": "minecraft:music_disc_13"
-  },
-  {
-    "item": "minecraft:music_disc_5"
-  },
-  {
-    "item": "minecraft:music_disc_blocks"
-  },
-  {
-    "item": "minecraft:music_disc_cat"
-  },
-  {
-    "item": "minecraft:music_disc_chirp"
-  },
-  {
-    "item": "minecraft:music_disc_far"
-  },
-  {
-    "item": "minecraft:music_disc_mall"
-  },
-  {
-    "item": "minecraft:music_disc_mellohi"
-  },
-  {
-    "item": "minecraft:music_disc_otherside"
-  },
-  {
-    "item": "minecraft:music_disc_pigstep"
-  },
-  {
-    "item": "minecraft:music_disc_relic"
-  },
-  {
-    "item": "minecraft:music_disc_stal"
-  },
-  {
-    "item": "minecraft:music_disc_strad"
-  },
-  {
-    "item": "minecraft:music_disc_wait"
-  },
-  {
-    "item": "minecraft:music_disc_ward"
-  },
-  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:mutton"
   },
   {
     "item": "minecraft:mycelium"
-  },
-  {
-    "item": "minecraft:name_tag"
   },
   {
     "item": "minecraft:nautilus_shell"
@@ -4405,6 +3682,9 @@
     "item": "minecraft:nether_sprouts"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:enchantment_glint_override"
+    ],
     "item": "minecraft:nether_star"
   },
   {
@@ -4415,109 +3695,85 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_axe"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:fire_resistant"
+    ],
     "item": "minecraft:netherite_block"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_boots"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_chestplate"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_helmet"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant"
     ],
-    "item": "minecraft:netherite_hoe"
-  },
-  {
     "item": "minecraft:netherite_ingot"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_leggings"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant"
     ],
-    "item": "minecraft:netherite_pickaxe"
-  },
-  {
     "item": "minecraft:netherite_scrap"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:netherite_shovel"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:fire_resistant",
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:netherite_sword"
   },
@@ -4529,9 +3785,6 @@
   },
   {
     "item": "minecraft:note_block"
-  },
-  {
-    "item": "minecraft:oak_boat"
   },
   {
     "item": "minecraft:oak_button"
@@ -4594,6 +3847,19 @@
     "item": "minecraft:ochre_froglight"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food",
+      "minecraft:ominous_bottle_amplifier"
+    ],
+    "item": "minecraft:ominous_bottle"
+  },
+  {
+    "item": "minecraft:ominous_trial_key"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:orange_banner"
   },
   {
@@ -4618,6 +3884,9 @@
     "item": "minecraft:orange_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:orange_shulker_box"
   },
   {
@@ -4714,6 +3983,9 @@
     "item": "minecraft:pillager_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:pink_banner"
   },
   {
@@ -4741,6 +4013,9 @@
     "item": "minecraft:pink_petals"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:pink_shulker_box"
   },
   {
@@ -4780,6 +4055,9 @@
     "item": "minecraft:pointed_dripstone"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:poisonous_potato"
   },
   {
@@ -4876,21 +4154,22 @@
     "item": "minecraft:poppy"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:porkchop"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:potato"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Potion"
-      }
+      "minecraft:potion_contents"
     ],
     "item": "minecraft:potion"
-  },
-  {
-    "item": "minecraft:powder_snow_bucket"
   },
   {
     "item": "minecraft:powered_rail"
@@ -4926,10 +4205,10 @@
     "item": "minecraft:prize_pottery_sherd"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:pufferfish"
-  },
-  {
-    "item": "minecraft:pufferfish_bucket"
   },
   {
     "item": "minecraft:pufferfish_spawn_egg"
@@ -4938,12 +4217,18 @@
     "item": "minecraft:pumpkin"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:pumpkin_pie"
   },
   {
     "item": "minecraft:pumpkin_seeds"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:purple_banner"
   },
   {
@@ -4968,6 +4253,9 @@
     "item": "minecraft:purple_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:purple_shulker_box"
   },
   {
@@ -5013,6 +4301,9 @@
     "item": "minecraft:quartz_stairs"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:rabbit"
   },
   {
@@ -5025,6 +4316,9 @@
     "item": "minecraft:rabbit_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:rabbit_stew"
   },
   {
@@ -5055,9 +4349,9 @@
     "item": "minecraft:raw_iron_block"
   },
   {
-    "item": "minecraft:recovery_compass"
-  },
-  {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:red_banner"
   },
   {
@@ -5115,6 +4409,9 @@
     "item": "minecraft:red_sandstone_wall"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:red_shulker_box"
   },
   {
@@ -5166,16 +4463,16 @@
     "item": "minecraft:rose_bush"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:rotten_flesh"
   },
   {
-    "item": "minecraft:saddle"
-  },
-  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:salmon"
-  },
-  {
-    "item": "minecraft:salmon_bucket"
   },
   {
     "item": "minecraft:salmon_spawn_egg"
@@ -5199,6 +4496,9 @@
     "item": "minecraft:scaffolding"
   },
   {
+    "item": "minecraft:scrape_pottery_sherd"
+  },
+  {
     "item": "minecraft:sculk"
   },
   {
@@ -5212,9 +4512,6 @@
   },
   {
     "item": "minecraft:sculk_vein"
-  },
-  {
-    "item": "minecraft:scute"
   },
   {
     "item": "minecraft:sea_lantern"
@@ -5235,17 +4532,6 @@
     "item": "minecraft:sheaf_pottery_sherd"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:shears"
-  },
-  {
     "item": "minecraft:sheep_spawn_egg"
   },
   {
@@ -5253,12 +4539,10 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:enchantments",
+      "minecraft:banner_patterns",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:shield"
   },
@@ -5269,6 +4553,9 @@
     "item": "minecraft:shroomlight"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:shulker_box"
   },
   {
@@ -5317,6 +4604,9 @@
     "item": "minecraft:smithing_table"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:smoker"
   },
   {
@@ -5380,6 +4670,9 @@
     "item": "minecraft:snowball"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:soul_campfire"
   },
   {
@@ -5401,6 +4694,9 @@
     "item": "minecraft:spectral_arrow"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:spider_eye"
   },
   {
@@ -5411,9 +4707,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Potion"
-      }
+      "minecraft:potion_contents"
     ],
     "item": "minecraft:splash_potion"
   },
@@ -5424,13 +4718,7 @@
     "item": "minecraft:spore_blossom"
   },
   {
-    "item": "minecraft:spruce_boat"
-  },
-  {
     "item": "minecraft:spruce_button"
-  },
-  {
-    "item": "minecraft:spruce_chest_boat"
   },
   {
     "item": "minecraft:spruce_door"
@@ -5475,9 +4763,6 @@
     "item": "minecraft:spruce_wood"
   },
   {
-    "item": "minecraft:spyglass"
-  },
-  {
     "item": "minecraft:squid_spawn_egg"
   },
   {
@@ -5491,12 +4776,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:stone_axe"
   },
@@ -5516,40 +4800,7 @@
     "item": "minecraft:stone_button"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:stone_hoe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:stone_pickaxe"
-  },
-  {
     "item": "minecraft:stone_pressure_plate"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:stone_shovel"
   },
   {
     "item": "minecraft:stone_slab"
@@ -5559,12 +4810,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:stone_sword"
   },
@@ -5660,17 +4910,16 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "effects"
-      }
+      "minecraft:food",
+      "minecraft:suspicious_stew_effects"
     ],
     "item": "minecraft:suspicious_stew"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:sweet_berries"
-  },
-  {
-    "item": "minecraft:tadpole_bucket"
   },
   {
     "item": "minecraft:tadpole_spawn_egg"
@@ -5692,9 +4941,7 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Potion"
-      }
+      "minecraft:potion_contents"
     ],
     "item": "minecraft:tipped_arrow"
   },
@@ -5720,6 +4967,9 @@
     "item": "minecraft:trader_llama_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:trapped_chest"
   },
   {
@@ -5730,12 +4980,11 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:trident"
   },
@@ -5743,10 +4992,10 @@
     "item": "minecraft:tripwire_hook"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecraft:tropical_fish"
-  },
-  {
-    "item": "minecraft:tropical_fish_bucket"
   },
   {
     "item": "minecraft:tropical_fish_spawn_egg"
@@ -5789,20 +5038,25 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:turtle_helmet"
+  },
+  {
+    "item": "minecraft:turtle_scute"
   },
   {
     "item": "minecraft:turtle_spawn_egg"
   },
   {
     "item": "minecraft:twisting_vines"
+  },
+  {
+    "item": "minecraft:vault"
   },
   {
     "item": "minecraft:verdant_froglight"
@@ -5847,17 +5101,6 @@
     "item": "minecraft:warped_fungus"
   },
   {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:warped_fungus_on_a_stick"
-  },
-  {
     "item": "minecraft:warped_hanging_sign"
   },
   {
@@ -5892,9 +5135,6 @@
   },
   {
     "item": "minecraft:warped_wart_block"
-  },
-  {
-    "item": "minecraft:water_bucket"
   },
   {
     "item": "minecraft:waxed_chiseled_copper"
@@ -6048,28 +5288,9 @@
   },
   {
     "checkednbtkeys": [
-      {
-        "children": [
-          {
-            "key": "Patterns"
-          },
-          {
-            "key": "id"
-          }
-        ],
-        "key": "BlockEntityTag"
-      },
-      {
-        "children": [
-          {
-            "key": "Name"
-          }
-        ],
-        "key": "display"
-      },
-      {
-        "key": "HideFlags"
-      }
+      "minecraft:item_name",
+      "minecraft:banner_patterns",
+      "minecraft:hide_additional_tooltip"
     ],
     "item": "minecraft:white_banner"
   },
@@ -6095,6 +5316,9 @@
     "item": "minecraft:white_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:white_shulker_box"
   },
   {
@@ -6116,6 +5340,9 @@
     "item": "minecraft:wild_armor_trim_smithing_template"
   },
   {
+    "item": "minecraft:wind_charge"
+  },
+  {
     "item": "minecraft:witch_spawn_egg"
   },
   {
@@ -6128,67 +5355,41 @@
     "item": "minecraft:wither_skeleton_spawn_egg"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:attribute_modifiers",
+      "minecraft:repair_cost",
+      "minecraft:dyed_color",
+      "minecraft:max_damage"
+    ],
+    "item": "minecraft:wolf_armor"
+  },
+  {
     "item": "minecraft:wolf_spawn_egg"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:wooden_axe"
   },
   {
     "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:wooden_hoe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:wooden_pickaxe"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
-    ],
-    "item": "minecraft:wooden_shovel"
-  },
-  {
-    "checkednbtkeys": [
-      {
-        "key": "Enchantments"
-      },
-      {
-        "key": "RepairCost"
-      }
+      "minecraft:attribute_modifiers",
+      "minecraft:tool",
+      "minecraft:enchantments",
+      "minecraft:repair_cost",
+      "minecraft:max_damage"
     ],
     "item": "minecraft:wooden_sword"
   },
   {
-    "item": "minecraft:writable_book"
-  },
-  {
+    "checkednbtkeys": [
+      "minecraft:banner_patterns"
+    ],
     "item": "minecraft:yellow_banner"
   },
   {
@@ -6213,6 +5414,9 @@
     "item": "minecraft:yellow_glazed_terracotta"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:container"
+    ],
     "item": "minecraft:yellow_shulker_box"
   },
   {
@@ -6246,6 +5450,9 @@
     "item": "minecraft:zombified_piglin_spawn_egg"
   },
   {
+    "item": "multipiston:multipistonblock"
+  },
+  {
     "item": "structurize:blockfluidsubstitution"
   },
   {
@@ -6258,15 +5465,30 @@
     "item": "structurize:blocktagsubstitution"
   },
   {
+    "checkednbtkeys": [
+      "structurize:pos_selection"
+    ],
     "item": "structurize:caliper"
   },
   {
     "item": "structurize:sceptergold"
   },
   {
+    "checkednbtkeys": [
+      "structurize:pos_selection",
+      "minecraft:enchantments",
+      "structurize:scan_tool",
+      "minecraft:max_damage"
+    ],
     "item": "structurize:sceptersteel"
   },
   {
+    "checkednbtkeys": [
+      "structurize:pos_selection",
+      "minecraft:enchantments",
+      "structurize:tags",
+      "minecraft:max_damage"
+    ],
     "item": "structurize:sceptertag"
   },
   {

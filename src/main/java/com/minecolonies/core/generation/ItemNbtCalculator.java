@@ -94,17 +94,26 @@ public class ItemNbtCalculator implements DataProvider
             {
                 keys.add("minecraft:dyed_color");
             }
-            if (stack.isEnchantable())
+            if (!stack.isEnchantable())
             {
-                keys.add("minecraft:enchantments");
+                keys.remove("minecraft:enchantments");
             }
-            if (stack.isRepairable())
+            if (!stack.isRepairable())
             {
-                keys.add("minecraft:repair_cost");
+                keys.remove("minecraft:repair_cost");
             }
+            if (stack.getAttributeModifiers().modifiers().isEmpty())
+            {
+                keys.remove("minecraft:attribute_modifiers");
+            }
+
             // We ignore damage in nbt.
             keys.remove("minecraft:damage");
 
+            // The following we don't care about matching.
+            keys.remove("minecraft:lore");
+            keys.remove("minecraft:max_stack_size");
+            keys.remove("minecraft:rarity");
 
             if (keyMapping.containsKey(resourceLocation.toString()))
             {
