@@ -51,99 +51,101 @@ public class ItemNbtCalculator implements DataProvider
     @Override
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final List<ItemStack> allStacks;
-        final HolderLookup.Provider provider = lookupProvider.join();
-        final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
-        final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.REGISTRY.allFlags(), false, provider);
-
-        CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
+        return lookupProvider.thenCompose(provider ->
         {
-            for (final ItemStack item : stacks)
+            final List<ItemStack> allStacks;
+            final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
+            final CreativeModeTab.ItemDisplayParameters tempDisplayParams = new CreativeModeTab.ItemDisplayParameters(FeatureFlags.REGISTRY.allFlags(), false, provider);
+
+            CraftingUtils.forEachCreativeTabItems(tempDisplayParams, (tab, stacks) ->
             {
-                if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
+                for (final ItemStack item : stacks)
                 {
-                    final Map<ResourceLocation, Block> texturedComponents = new HashMap<>();
-                    for (final IMateriallyTexturedBlockComponent key : texturedBlock.getComponents())
+                    if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
                     {
-                        texturedComponents.put(key.getId(), key.getDefault());
+                        final Map<ResourceLocation, Block> texturedComponents = new HashMap<>();
+                        for (final IMateriallyTexturedBlockComponent key : texturedBlock.getComponents())
+                        {
+                            texturedComponents.put(key.getId(), key.getDefault());
+                        }
+                        final ItemStack copy = item.copy();
+                        copy.set(ModDataComponents.TEXTURE_DATA, new MaterialTextureData(texturedComponents));
+                        listBuilder.add(copy);
                     }
-                    final ItemStack copy = item.copy();
-                    copy.set(ModDataComponents.TEXTURE_DATA, new MaterialTextureData(texturedComponents));
-                    listBuilder.add(copy);
+                    else
+                    {
+                        listBuilder.add(item);
+                    }
+                }
+            });
+
+            allStacks = listBuilder.build();
+
+            final TreeMap<String, Set<String>> keyMapping = new TreeMap<>();
+            for (final ItemStack stack : allStacks)
+            {
+                final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
+                final Set<String> keys = new HashSet<>();
+                for (final TypedDataComponent<?> key : stack.getComponents())
+                {
+                    keys.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(key.type()).toString());
+                }
+
+                if (stack.getItem() instanceof ArmorItem)
+                {
+                    keys.add("minecraft:dyed_color");
+                }
+                if (!stack.isEnchantable())
+                {
+                    keys.remove("minecraft:enchantments");
+                }
+                if (!stack.isRepairable())
+                {
+                    keys.remove("minecraft:repair_cost");
+                }
+                if (stack.getAttributeModifiers().modifiers().isEmpty())
+                {
+                    keys.remove("minecraft:attribute_modifiers");
+                }
+
+                // We ignore damage in nbt.
+                keys.remove("minecraft:damage");
+
+                // The following we don't care about matching.
+                keys.remove("minecraft:lore");
+                keys.remove("minecraft:max_stack_size");
+                keys.remove("minecraft:rarity");
+
+                if (keyMapping.containsKey(resourceLocation.toString()))
+                {
+                    final Set<String> list = keyMapping.get(resourceLocation.toString());
+                    list.addAll(keys);
+                    keyMapping.put(resourceLocation.toString(), list);
                 }
                 else
                 {
-                    listBuilder.add(item);
+                    keyMapping.put(resourceLocation.toString(), keys);
                 }
             }
+
+            final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(new ResourceLocation(MOD_ID, "itemnbtmatching"), "json");
+            final JsonArray jsonArray = new JsonArray();
+            for (final Map.Entry<String, Set<String>> entry : keyMapping.entrySet())
+            {
+                final JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("item", entry.getKey());
+
+                if (!entry.getValue().isEmpty())
+                {
+                    final JsonArray subArray = new JsonArray();
+                    entry.getValue().forEach(subArray::add);
+                    jsonObject.add("checkednbtkeys", subArray);
+                }
+
+                jsonArray.add(jsonObject);
+            }
+
+            return DataProvider.saveStable(cache, jsonArray, path);
         });
-
-        allStacks = listBuilder.build();
-
-        final TreeMap<String, Set<String>> keyMapping = new TreeMap<>();
-        for (final ItemStack stack : allStacks)
-        {
-            final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
-            final Set<String> keys = new HashSet<>();
-            for (final TypedDataComponent<?> key : stack.getComponents())
-            {
-                keys.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(key.type()).toString());
-            }
-
-            if (stack.getItem() instanceof ArmorItem)
-            {
-                keys.add("minecraft:dyed_color");
-            }
-            if (!stack.isEnchantable())
-            {
-                keys.remove("minecraft:enchantments");
-            }
-            if (!stack.isRepairable())
-            {
-                keys.remove("minecraft:repair_cost");
-            }
-            if (stack.getAttributeModifiers().modifiers().isEmpty())
-            {
-                keys.remove("minecraft:attribute_modifiers");
-            }
-
-            // We ignore damage in nbt.
-            keys.remove("minecraft:damage");
-
-            // The following we don't care about matching.
-            keys.remove("minecraft:lore");
-            keys.remove("minecraft:max_stack_size");
-            keys.remove("minecraft:rarity");
-
-            if (keyMapping.containsKey(resourceLocation.toString()))
-            {
-                final Set<String> list = keyMapping.get(resourceLocation.toString());
-                list.addAll(keys);
-                keyMapping.put(resourceLocation.toString(), list);
-            }
-            else
-            {
-                keyMapping.put(resourceLocation.toString(), keys);
-            }
-        }
-
-        final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(new ResourceLocation(MOD_ID, "itemnbtmatching"), "json");
-        final JsonArray jsonArray = new JsonArray();
-        for (final Map.Entry<String, Set<String>> entry : keyMapping.entrySet())
-        {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("item", entry.getKey());
-
-            if (!entry.getValue().isEmpty())
-            {
-                final JsonArray subArray = new JsonArray();
-                entry.getValue().forEach(subArray::add);
-                jsonObject.add("checkednbtkeys", subArray);
-            }
-
-            jsonArray.add(jsonObject);
-        }
-
-        return DataProvider.saveStable(cache, jsonArray, path);
     }
 }
