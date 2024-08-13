@@ -8,10 +8,14 @@ import com.minecolonies.core.generation.defaults.workers.*;
 import com.minecolonies.core.util.SchemFixerUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
@@ -32,12 +36,15 @@ public class GatherDataHandler
     {
         final DataGenerator generator = event.getGenerator();
         final CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider().thenApply(p -> new DatagenLootTableManager(p, event.getExistingFileHelper()));
+
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper());
 
         // todo: is this needed?  the provider already contains enchantments without needing to do anything special
-        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
+        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap).add(Registries.LOOT_TABLE, (context) -> {});
         DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
         generator.addProvider(true, enchRegProvider);
+
+        DatapackBuiltinEntriesProvider datapackEntries = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID));
 
         generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator.getPackOutput(), event.getExistingFileHelper()));
@@ -63,14 +70,14 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
         generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), provider));
+        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
         generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultMechanicCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), provider));
+        generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), datapackEntries.getRegistryProvider()));
         generator.addProvider(event.includeServer(), new DefaultPlanterCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultSawmillCraftingProvider(generator.getPackOutput(), provider));
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), provider));
@@ -96,7 +103,16 @@ public class GatherDataHandler
             ), provider);
         }
 
-// NOTE: I'm reasonably sure this code will not be required due to usage of the DatagenLootTableManager, but keeping for now just in case
+        @Override
+        protected void validate(
+          final WritableRegistry<LootTable> writableregistry,
+          final ValidationContext validationcontext,
+          final ProblemReporter.Collector problemreporter$collector)
+        {
+            // todo this might be a bit aggressive, someone should adjust this.
+        }
+
+        // NOTE: I'm reasonably sure this code will not be required due to usage of the DatagenLootTableManager, but keeping for now just in case
 //        @Override
 //        protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector collector)
 //        {

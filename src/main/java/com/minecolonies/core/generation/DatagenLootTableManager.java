@@ -98,7 +98,7 @@ public class DatagenLootTableManager implements HolderLookup.Provider
                 try (final var reader = resource.openAsReader())
                 {
                     final JsonElement json = JsonParser.parseReader(reader);
-                    return Optional.of(byNameCodec().decode(ops, json).getOrThrow().getFirst());
+                    return Optional.of((T)LootTable.DIRECT_CODEC.decode(ops, json).getOrThrow().getFirst());
                 }
             }
             catch (Throwable e)
