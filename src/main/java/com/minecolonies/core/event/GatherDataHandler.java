@@ -40,7 +40,7 @@ public class GatherDataHandler
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper());
 
         // todo: is this needed?  the provider already contains enchantments without needing to do anything special
-        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap).add(Registries.LOOT_TABLE, (context) -> {});
+        RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
         DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), provider, enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
         generator.addProvider(true, enchRegProvider);
 
