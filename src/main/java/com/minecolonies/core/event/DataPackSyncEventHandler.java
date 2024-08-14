@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,6 +51,7 @@ public class DataPackSyncEventHandler
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
+            CustomRecipeManager.getInstance().buildLootData(server.overworld());
         }
 
         /**
@@ -87,7 +87,6 @@ public class DataPackSyncEventHandler
             {
                 // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
                 discoverCompatLists(server);
-                CustomRecipeManager.getInstance().buildLootData(server.overworld());
 
                 // and then finally update every player with the results
                 final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(server.registryAccess());
@@ -101,8 +100,11 @@ public class DataPackSyncEventHandler
             }
             else if (event.getPlayer().getGameProfile() != owner)
             {
-                CustomRecipeManager.getInstance().buildLootData(server.overworld());
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
+            }
+            else
+            {
+                discoverCompatLists(server);
             }
 
             if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
@@ -110,19 +112,6 @@ public class DataPackSyncEventHandler
             {
                 CraftingTagAuditor.doRecipeAudit(server, recipeManager);
             }
-        }
-
-        /**
-         * Fires on a server side only, when the server has started.
-         * This event is the first reliable point for server-only parsing of available smelting recipes, which are
-         * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-         *
-         * @param event {@link ServerStartedEvent}
-         */
-        @SubscribeEvent
-        public static void onServerStarted(@NotNull final ServerStartedEvent event)
-        {
-            discoverCompatLists(event.getServer());
         }
     }
 
