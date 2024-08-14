@@ -252,7 +252,7 @@
       "details": {
         "item": "minecraft:potion",
         "qty": 1,
-        "nbt": "{id: \"minecraft:splash_potion\", Count: 1b, tag: {RepairCost: 0, Potion: \"minecraft:poison\", display: {Name: '{\"text\":\"Suspicious Potion\"}'}}}"
+        "nbt": "{Potion:'minecraft:water',CustomPotionEffects:[{Id:19,Duration:1200}],display:{Name:'Suspicious Potion',Lore:['A present from the Alchemist']}}"
       }
     },
     {

@@ -8,6 +8,6 @@
     "minecraft:frozen_peaks",
     "minecraft:jagged_peaks",
     "minecraft:stony_peaks",
-    "#forge:is_peak"
+   "#c:is_peak"
   ]
 }

@@ -352,7 +352,7 @@ public class CustomRecipeManager
                 .filter(Objects::nonNull)   // just in case
                 .distinct()
                 .collect(Collectors.toConcurrentMap(Function.identity(),
-                        id -> LootTableAnalyzer.toDrops(level.registryAccess(), id))));
+                        id -> LootTableAnalyzer.toDrops(level.getServer().reloadableRegistries().get(), id))));
     }
 
     /**
