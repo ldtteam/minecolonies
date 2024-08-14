@@ -270,11 +270,11 @@ public final class Utils
 
     public static void serializeCodecMess(RegistryFriendlyByteBuf buf, final ItemStack obj)
     {
-        ItemStack.STREAM_CODEC.encode(buf, obj);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, obj);
     }
 
     public static ItemStack deserializeCodecMess(final RegistryFriendlyByteBuf buf)
     {
-        return ItemStack.STREAM_CODEC.decode(buf);
+        return ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
     }
 }
