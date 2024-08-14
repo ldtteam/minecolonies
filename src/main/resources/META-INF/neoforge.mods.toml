@@ -62,7 +62,7 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies.minecolonies]]
     modId="minecraft"
     type="required"
-    versionRange="[${minecraftVersion}, 1.22)"
+    versionRange="[1.21, 1.22)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
