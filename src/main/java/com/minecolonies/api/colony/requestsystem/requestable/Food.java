@@ -93,8 +93,7 @@ public class Food implements IDeliverable
             @NotNull final ListTag items = new ListTag();
             for (@NotNull final ItemStorage item : food.exclusionList)
             {
-                @NotNull final Tag itemCompound = item.getItemStack().save(provider);
-                items.add(itemCompound);
+                items.add(item.getItemStack().save(provider));
             }
             compound.put(NBT_EXCLUSION, items);
         }

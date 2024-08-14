@@ -74,11 +74,11 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         }
 
         final List<ItemStorage> allowedItems = new ArrayList<>();
-            final ListTag filterableList = compound.getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
-            for (int i = 0; i < filterableList.size(); ++i)
-            {
-                allowedItems.add(new ItemStorage(ItemStack.parseOptional(provider, filterableList.getCompound(i))));
-            }
+        final ListTag filterableList = compound.getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
+        for (int i = 0; i < filterableList.size(); ++i)
+        {
+            allowedItems.add(new ItemStorage(ItemStack.parseOptional(provider, filterableList.getCompound(i))));
+        }
 
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);
     }
@@ -89,9 +89,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         @NotNull final ListTag filteredItems = new ListTag();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
-            @NotNull final CompoundTag itemCompound = new CompoundTag();
-            item.getItemStack().save(provider, itemCompound);
-            filteredItems.add(itemCompound);
+            filteredItems.add(item.getItemStack().save(provider));
         }
         compound.put(TAG_ITEMLIST, filteredItems);
     }

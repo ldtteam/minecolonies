@@ -17,6 +17,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -399,7 +400,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))
             {
-                final ItemStack stack = ItemStack.parseOptional(provider, inventoryCompound);
+                final ItemStack stack = ItemStack.parseOptional(provider, inventoryCompound.getCompound(NbtTagConstants.STACK));
                 inventory.setStackInSlot(i, stack);
             }
         }
@@ -437,7 +438,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             }
             else
             {
-                stack.save(provider, inventoryCompound);
+                inventoryCompound.put(NbtTagConstants.STACK, stack.save(provider));
             }
             inventoryTagList.add(inventoryCompound);
         }

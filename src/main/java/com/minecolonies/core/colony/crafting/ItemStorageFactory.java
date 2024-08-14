@@ -69,9 +69,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
         final CompoundTag compound = new CompoundTag();
-        @NotNull CompoundTag stackTag = new CompoundTag();
-        storage.getItemStack().save(provider, stackTag);
-        compound.put(TAG_STACK, stackTag);
+        compound.put(TAG_STACK, storage.getItemStack().save(provider));
         compound.putInt(TAG_SIZE, storage.getAmount());
         compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
         compound.putBoolean(TAG_SHOULDIGNORENBT , storage.ignoreNBT());

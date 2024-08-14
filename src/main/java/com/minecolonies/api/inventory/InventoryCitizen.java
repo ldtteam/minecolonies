@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -563,7 +564,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
-                (this.armorInventory.get(i)).save(provider, compoundNBT);
+                compoundNBT.put(NbtTagConstants.STACK, this.armorInventory.get(i).save(provider, compoundNBT));
                 armorTagList.add(compoundNBT);
             }
         }
@@ -610,7 +611,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = armorTagList.getCompound(i);
                 final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
+                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT.getCompound(NbtTagConstants.STACK));
 
                 if (!itemstack.isEmpty())
                 {

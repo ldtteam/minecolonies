@@ -14,6 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -982,13 +983,13 @@ public class CompatibilityManager implements ICompatibilityManager
     private static CompoundTag writeLeafSaplingEntryToNBT(@NotNull final HolderLookup.Provider provider, final BlockState state, final ItemStorage storage)
     {
         final CompoundTag compound = NbtUtils.writeBlockState(state);
-        storage.getItemStack().save(provider);
+        compound.put(NbtTagConstants.STACK, storage.getItemStack().save(provider, compound));
         return compound;
     }
 
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.parseOptional(provider, compound), false, true));
+        return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.parseOptional(provider, compound.getCompound(NbtTagConstants.STACK)), false, true));
     }
 
     /**

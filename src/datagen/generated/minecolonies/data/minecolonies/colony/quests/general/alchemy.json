@@ -230,7 +230,7 @@
       "type": "minecolonies:item",
       "details": {
         "item": "minecraft:potion",
-        "nbt": "{\"count\": 1, \"components\": {\"minecraft:potion_contents\":{\"potion\":\"minecraft:poison\"},\"minecraft:item_name\":\"{\\\"translate\\\":\\\"com.minecolonies.alchemyquestpotion.name\\\"}\",\"minecraft:lore\":[\"{\\\"translate\\\":\\\"com.minecolonies.alchemyquestpotion.lore\\\"}\"]}}",
+        "nbt": "{\"minecraft:potion_contents\":{\"potion\":\"minecraft:poison\"},\"minecraft:item_name\":\"{\\\"translate\\\":\\\"com.minecolonies.alchemyquestpotion.name\\\"}\",\"minecraft:lore\":[\"{\\\"translate\\\":\\\"com.minecolonies.alchemyquestpotion.lore\\\"}\"]}",
         "qty": 1
       }
     },
