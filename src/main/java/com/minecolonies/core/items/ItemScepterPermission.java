@@ -214,7 +214,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
     {
-        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
+        final String itemMode = stack.getOrDefault(ModDataComponents.DESC_COMPONENT, ModDataComponents.Desc.EMPTY).desc();
         final MutableComponent mode;
         switch (itemMode)
         {

@@ -548,7 +548,7 @@ public class CompatibilityManager implements ICompatibilityManager
         @NotNull final ListTag saplingsLeavesTagList =
           leavesToSaplingMap.entrySet()
             .stream()
-            .filter(entry -> entry.getKey() != null)
+            .filter(entry -> entry.getKey() != null && !entry.getValue().getItemStack().isEmpty())
             .map(entry -> writeLeafSaplingEntryToNBT(provider, entry.getKey().defaultBlockState(), entry.getValue()))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);

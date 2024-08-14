@@ -52,7 +52,6 @@ public class DataPackSyncEventHandler
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
-            CustomRecipeManager.getInstance().buildLootData(server.overworld());
         }
 
         /**
@@ -88,6 +87,7 @@ public class DataPackSyncEventHandler
             {
                 // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
                 discoverCompatLists(server);
+                CustomRecipeManager.getInstance().buildLootData(server.overworld());
 
                 // and then finally update every player with the results
                 final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(server.registryAccess());
