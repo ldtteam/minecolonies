@@ -344,7 +344,7 @@ public final class BackUpHelper
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundTag colonyCompound = new CompoundTag();
-            colony.write(colonyCompound, colony.getWorld().registryAccess());
+            colony.write(colonyCompound, provider);
             saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
     }
@@ -438,7 +438,7 @@ public final class BackUpHelper
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
             final Level colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
-            final Colony loadedColony = Colony.loadColony(compound, (ServerLevel) colonyWorld);
+            final Colony loadedColony = Colony.loadColony(compound, (ServerLevel) colonyWorld, colonyWorld.registryAccess());
             if (loadedColony == null || colonyWorld == null)
             {
                 Log.getLogger().warn("Colony:" + colonyId + " loadBackup failed!");

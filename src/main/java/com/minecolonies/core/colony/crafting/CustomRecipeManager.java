@@ -240,9 +240,9 @@ public class CustomRecipeManager
     @NotNull
     public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceKey<LootTable> lootTableId)
     {
-        if (lootTableId == null) return Collections.emptyList();
+        if (lootTableId == null) return new ArrayList<>();
 
-        return lootTables.getOrDefault(lootTableId, Collections.emptyList());
+        return lootTables.getOrDefault(lootTableId, new ArrayList<>());
     }
 
     private void removeRecipes()

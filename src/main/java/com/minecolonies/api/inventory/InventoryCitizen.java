@@ -550,8 +550,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             {
                 final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).save(provider, compoundNBT);
-                invTagList.add(compoundNBT);
+                invTagList.add(this.mainInventory.get(i).save(provider, compoundNBT));
                 freeSlots--;
             }
         }

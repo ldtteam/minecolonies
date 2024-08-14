@@ -160,7 +160,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
         Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
         for (final Tag tag : compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND))
         {
-            final IColony colony = Colony.loadColony((CompoundTag) tag, null);
+            final IColony colony = Colony.loadColony((CompoundTag) tag, null, provider);
             if (colony != null)
             {
                 tempColonies.put(colony.getCenter(), colony);
