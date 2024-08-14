@@ -101,6 +101,7 @@ public class DataPackSyncEventHandler
             }
             else if (event.getPlayer().getGameProfile() != owner)
             {
+                CustomRecipeManager.getInstance().buildLootData(server.overworld());
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
 
