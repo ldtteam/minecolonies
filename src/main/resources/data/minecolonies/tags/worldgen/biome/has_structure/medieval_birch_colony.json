@@ -18,7 +18,7 @@
     "minecraft:frozen_peaks",
     "minecraft:jagged_peaks",
     "minecraft:stony_peaks",
-   "#c:peak",
+   "#c:is_mountain/peak",
     "minecraft:river",
     "minecraft:frozen_river",
     "minecraft:beach",
