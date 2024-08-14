@@ -6,8 +6,14 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.ItemLore;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +42,7 @@ public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
+    protected void registerRecipes(@NotNull Consumer<CustomRecipeBuilder> consumer)
     {
         recipe(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.mistletoe)),
@@ -45,5 +51,11 @@ public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
                 .minResearchId(ResearchConstants.DRUID_USE_POTIONS)
                 .showTooltip(true)
                 .build(consumer);
+
+        // this isn't a real recipe, it's just here to conveniently generate something for the quest
+        final ItemStack suspiciousPotion = PotionContents.createItemStack(Items.POTION, Potions.POISON);
+        suspiciousPotion.set(DataComponents.ITEM_NAME, Component.translatable("com.minecolonies.alchemyquestpotion.name"));
+        suspiciousPotion.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("com.minecolonies.alchemyquestpotion.lore"))));
+        //recipe(ALCHEMIST, MODULE_CRAFTING, "questpotion").result(suspiciousPotion).minBuildingLevel(10).build(consumer);
     }
 }

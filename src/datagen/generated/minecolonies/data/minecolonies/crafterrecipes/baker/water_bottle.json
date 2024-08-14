@@ -8,5 +8,5 @@
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
-  "result": "minecraft:potion"
+  "result": "minecraft:potion{\"minecraft:potion_contents\":{\"potion\":\"minecraft:water\"}}"
 }
