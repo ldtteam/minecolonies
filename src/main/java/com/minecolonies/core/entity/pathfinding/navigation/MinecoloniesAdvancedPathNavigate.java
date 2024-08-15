@@ -960,7 +960,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         boolean wentAhead = false;
         boolean isTracking = PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID());
 
-        final HashSet<BlockPos> reached = new HashSet<>();
+        HashSet<BlockPos> reached = null;
         // Look at multiple points, incase we're too fast
         for (int i = this.path.getNextNodeIndex(); i < Math.min(this.path.getNodeCount(), this.path.getNextNodeIndex() + 4); i++)
         {
@@ -974,6 +974,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
                 if (isTracking)
                 {
+                    if (reached == null)
+                    {
+                        reached = new HashSet<>();
+                    }
                     final Node point = path.getNode(i);
                     reached.add(new BlockPos(point.x, point.y, point.z));
                 }
