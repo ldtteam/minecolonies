@@ -5,14 +5,19 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
-import com.minecolonies.api.entity.pathfinding.*;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.entity.pathfinding.IStuckHandler;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.entity.pathfinding.*;
+import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
+import com.minecolonies.core.entity.pathfinding.PathPointExtended;
+import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
-import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.LadderBlock;
@@ -40,6 +46,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.core.entity.pathfinding.PathFindingStatus.IN_PROGRESS_FOLLOWING;
 import static com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob.MAX_NODES;
 
@@ -359,7 +366,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
                 BlockPos blockpos = BlockPos.containing(vector3d2);
 
-                if (WorldUtil.isEntityBlockLoaded(level, blockpos))
+                if (ChunkPos.asLong(blockpos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, blockpos))
                 {
                     mob.getMoveControl()
                       .setWantedPosition(vector3d2.x,
@@ -1152,6 +1159,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void setPauseTicks(final int pauseTicks)
     {
-        this.pauseTicks = pauseTicks;
+        if (pauseTicks > TICKS_SECOND * 120)
+        {
+            Log.getLogger().warn("Tried to pause entity pathfinding for " + mob + " too long for " + pauseTicks + " ticks.", new Exception());
+            this.pauseTicks = 50;
+        }
+        else
+        {
+            this.pauseTicks = pauseTicks;
+        }
     }
 }
