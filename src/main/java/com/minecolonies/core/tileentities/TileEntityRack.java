@@ -396,7 +396,11 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); i++)
         {
-            inventory.setStackInSlot(i, ItemStack.parseOptional(provider,  inventoryTagList.getCompound(i)));
+            final CompoundTag compoundTag = inventoryTagList.getCompound(i);
+            if (!compoundTag.contains(TAG_EMPTY))
+            {
+                inventory.setStackInSlot(i, ItemStack.parseOptional(provider, compoundTag));
+            }
         }
 
         updateContent();
