@@ -1,7 +1,6 @@
 package com.minecolonies.core.quests.rewards;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
@@ -45,9 +44,9 @@ public class ItemRewardTemplate implements IQuestRewardTemplate
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
         final ItemStack item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
-        if (details.has(NBT_KEY))
+        if (details.has(COMPONENTS_KEY))
         {
-            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, JsonParser.parseString((details.get(NBT_KEY).getAsString()))));
+            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, details.getAsJsonObject(COMPONENTS_KEY)));
         }
         item.setCount(quantity);
         return new ItemRewardTemplate(item);

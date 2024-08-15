@@ -7,17 +7,13 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -104,9 +100,9 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
         final int target = details.get(TARGET_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
         final ItemStack item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(details.get(ITEM_KEY).getAsString())).getDefaultInstance();
-        if (details.has(NBT_KEY))
+        if (details.has(COMPONENTS_KEY))
         {
-            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, details.getAsJsonObject(NBT_KEY)));
+            item.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, details.getAsJsonObject(COMPONENTS_KEY)));
         }
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
         final String nbtMode = details.has(NBT_MODE_KEY) ? details.get(NBT_MODE_KEY).getAsString() : "";
