@@ -143,8 +143,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:iron_sword",
-        "qty": 2
+        "item": {
+          "id": "minecraft:iron_sword",
+          "count": 2
+        }
       }
     }
   ]

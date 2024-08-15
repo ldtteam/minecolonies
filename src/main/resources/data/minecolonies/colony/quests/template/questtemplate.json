@@ -110,8 +110,9 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": "minecraft:apple",
-        "qty": 1,
+        "item": {
+          "id": "minecraft:apple"
+        },
         "next-objective": 3
       }
     },
@@ -119,8 +120,9 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": "minecraft:baked_potato",
-        "qty": 1,
+        "item": {
+          "id": "minecraft:baked_potato"
+        },
         "next-objective": 3
       }
     },
@@ -167,8 +169,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:gold_ingot",
-        "qty": 1
+        "item": {
+          "id": "minecraft:gold_ingot"
+        }
       }
     },
     {

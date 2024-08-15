@@ -1,12 +1,14 @@
 {
   "type": "recipe",
-  "count": 4,
   "crafter": "fletcher_crafting",
   "inputs": [
     {
-      "item": "minecraft:white_wool"
+      "id": "minecraft:white_wool"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:string"
+  "result": {
+    "count": 4,
+    "id": "minecraft:string"
+  }
 }

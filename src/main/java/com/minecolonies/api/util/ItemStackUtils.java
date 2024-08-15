@@ -980,29 +980,25 @@ public final class ItemStackUtils
     }
 
     /**
-     * Parses an item string (formatted for {@link #idToItemStack}) that may
-     * contain replaceable template components:
+     * Parses an item id that may contain replaceable template components:
      *
      * <pre>
      *     [NS]           => {@code baseItemId.getNamespace()}
      *     [PATH]         => {@code baseItemId.getPath()}
      *     [PATH:foo=bar] => {@code baseItemId.getPath()} but with "foo" replaced with "bar"</pre>
      *
-     * @param value      the value to parse
+     * @param itemId     the id to parse
      * @param baseItemId the base item id to use to fill in the components
      * @return a tuple of (boolean, result), where the boolean is false if result didn't resolve to a valid item
      */
     @NotNull
-    public static Tuple<Boolean, String> parseIdTemplate(@Nullable final String value,
+    public static Tuple<Boolean, String> parseIdTemplate(@Nullable String itemId,
                                                          @NotNull final ResourceLocation baseItemId)
     {
-        if (value == null)
+        if (itemId == null)
         {
             return new Tuple<>(false, null);
         }
-
-        final int nbtIndex = value.indexOf('{');
-        String itemId = nbtIndex < 0 ? value : value.substring(0, nbtIndex);
 
         itemId = itemId.replace("[NS]", baseItemId.getNamespace());
         itemId = TEMPLATE_PATH_PATTERN.matcher(itemId).replaceAll(m ->
@@ -1014,8 +1010,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)),
-                itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)), itemId);
     }
 
     /**

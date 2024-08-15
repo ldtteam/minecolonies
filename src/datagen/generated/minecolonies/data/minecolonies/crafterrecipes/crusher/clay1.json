@@ -4,10 +4,12 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     }
   ],
   "intermediate": "minecraft:air",
   "not-research-id": "minecolonies:effects/crushing11unlock",
-  "result": "minecraft:clay"
+  "result": {
+    "id": "minecraft:clay"
+  }
 }

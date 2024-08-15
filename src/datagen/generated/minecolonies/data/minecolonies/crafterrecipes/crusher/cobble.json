@@ -4,11 +4,13 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:tuff"
+      "id": "minecraft:tuff"
     }
   ],
   "intermediate": "minecraft:air",
   "not-research-id": "minecolonies:effects/crushing11unlock",
   "research-id": "minecolonies:effects/knowledgeofthedepthsunlock",
-  "result": "minecraft:cobblestone"
+  "result": {
+    "id": "minecraft:cobblestone"
+  }
 }

@@ -3,14 +3,16 @@
   "crafter": "alchemist_crafting",
   "inputs": [
     {
-      "item": "minecolonies:mistletoe"
+      "id": "minecolonies:mistletoe"
     },
     {
-      "item": "minecolonies:large_water_bottle"
+      "id": "minecolonies:large_water_bottle"
     }
   ],
   "intermediate": "minecraft:air",
   "research-id": "minecolonies:effects/consumepotions",
-  "result": "minecolonies:magicpotion",
+  "result": {
+    "id": "minecolonies:magicpotion"
+  },
   "show-tooltip": true
 }

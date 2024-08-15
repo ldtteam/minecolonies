@@ -159,8 +159,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:torch",
-        "qty": 32
+        "item": {
+          "count": 32,
+          "id": "minecraft:torch"
+        }
       }
     }
   ],

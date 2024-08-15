@@ -99,8 +99,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:blockminecoloniesrack",
-        "qty": 8
+        "item": {
+          "count": 8,
+          "id": "minecolonies:blockminecoloniesrack"
+        }
       }
     }
   ],

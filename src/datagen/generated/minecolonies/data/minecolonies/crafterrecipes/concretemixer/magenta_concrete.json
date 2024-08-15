@@ -3,9 +3,11 @@
   "crafter": "concretemixer_custom",
   "inputs": [
     {
-      "item": "minecraft:magenta_concrete_powder"
+      "id": "minecraft:magenta_concrete_powder"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:magenta_concrete"
+  "result": {
+    "id": "minecraft:magenta_concrete"
+  }
 }

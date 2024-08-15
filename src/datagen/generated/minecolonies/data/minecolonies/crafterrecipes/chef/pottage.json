@@ -3,25 +3,27 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:onion"
+      "id": "minecolonies:onion"
     },
     {
-      "item": "minecraft:bowl"
+      "id": "minecraft:bowl"
     },
     {
-      "item": "minecraft:potato"
+      "id": "minecraft:potato"
     },
     {
-      "item": "minecraft:carrot"
+      "id": "minecraft:carrot"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:pottage"
+  "result": {
+    "id": "minecolonies:pottage"
+  }
 }

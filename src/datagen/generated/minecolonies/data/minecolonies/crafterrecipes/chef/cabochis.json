@@ -3,19 +3,21 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:onion"
+      "id": "minecolonies:onion"
     },
     {
-      "item": "minecolonies:cabbage"
+      "id": "minecolonies:cabbage"
     },
     {
-      "item": "minecraft:bowl"
+      "id": "minecraft:bowl"
     },
     {
-      "item": "minecolonies:manchet_bread"
+      "id": "minecolonies:manchet_bread"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:cabochis"
+  "result": {
+    "id": "minecolonies:cabochis"
+  }
 }

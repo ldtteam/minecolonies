@@ -3,12 +3,14 @@
   "crafter": "stonemason_crafting",
   "inputs": [
     {
-      "item": "minecraft:stone_bricks"
+      "id": "minecraft:stone_bricks"
     },
     {
-      "item": "minecraft:prismarine_shard"
+      "id": "minecraft:prismarine_shard"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:prismarine_bricks"
+  "result": {
+    "id": "minecraft:prismarine_bricks"
+  }
 }

@@ -3,10 +3,12 @@
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-      "item": "minecraft:oxidized_copper"
+      "id": "minecraft:oxidized_copper"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:weathered_copper",
+  "result": {
+    "id": "minecraft:weathered_copper"
+  },
   "tool": "axe"
 }

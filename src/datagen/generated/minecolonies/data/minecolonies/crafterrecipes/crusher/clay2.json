@@ -3,10 +3,12 @@
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     }
   ],
   "intermediate": "minecraft:air",
   "research-id": "minecolonies:effects/crushing11unlock",
-  "result": "minecraft:clay"
+  "result": {
+    "id": "minecraft:clay"
+  }
 }

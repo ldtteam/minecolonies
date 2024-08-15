@@ -2,40 +2,40 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     },
     {
-      "item": "minecraft:redstone"
+      "id": "minecraft:redstone"
     },
     {
-      "item": "minecraft:iron_nugget"
+      "id": "minecraft:iron_nugget"
     },
     {
-      "item": "minecraft:coal"
+      "id": "minecraft:coal"
     },
     {
-      "item": "minecraft:lapis_lazuli"
+      "id": "minecraft:lapis_lazuli"
     },
     {
-      "item": "minecraft:iron_ingot"
+      "id": "minecraft:iron_ingot"
     },
     {
-      "item": "minecraft:gold_ingot"
+      "id": "minecraft:gold_ingot"
     },
     {
-      "item": "minecraft:emerald"
+      "id": "minecraft:emerald"
     },
     {
-      "item": "minecraft:diamond"
+      "id": "minecraft:diamond"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     },
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     }
   ],
   "intermediate": "minecraft:air",

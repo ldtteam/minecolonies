@@ -3,10 +3,12 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:manchet_dough"
+      "id": "minecolonies:manchet_dough"
     }
   ],
   "intermediate": "minecraft:furnace",
   "min-building-level": 1,
-  "result": "minecolonies:manchet_bread"
+  "result": {
+    "id": "minecolonies:manchet_bread"
+  }
 }

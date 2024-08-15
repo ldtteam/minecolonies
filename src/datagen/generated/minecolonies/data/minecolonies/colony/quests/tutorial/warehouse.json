@@ -158,29 +158,37 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:stone_pickaxe",
-        "qty": 2
+        "item": {
+          "count": 2,
+          "id": "minecraft:stone_pickaxe"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:stone_axe",
-        "qty": 2
+        "item": {
+          "count": 2,
+          "id": "minecraft:stone_axe"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:stone_shovel",
-        "qty": 2
+        "item": {
+          "count": 2,
+          "id": "minecraft:stone_shovel"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:stone_hoe",
-        "qty": 2
+        "item": {
+          "count": 2,
+          "id": "minecraft:stone_hoe"
+        }
       }
     }
   ],

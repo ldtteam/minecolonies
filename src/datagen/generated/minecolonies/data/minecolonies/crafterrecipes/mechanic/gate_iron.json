@@ -4,10 +4,12 @@
   "inputs": [
     {
       "count": 5,
-      "item": "minecraft:iron_nugget"
+      "id": "minecraft:iron_nugget"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecolonies:gate_iron",
+  "result": {
+    "id": "minecolonies:gate_iron"
+  },
   "show-tooltip": true
 }

@@ -1,20 +1,22 @@
 {
   "type": "recipe",
-  "count": 8,
   "crafter": "concretemixer_custom",
   "inputs": [
     {
       "count": 4,
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     {
       "count": 4,
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     },
     {
-      "item": "minecraft:magenta_dye"
+      "id": "minecraft:magenta_dye"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:magenta_concrete_powder"
+  "result": {
+    "count": 8,
+    "id": "minecraft:magenta_concrete_powder"
+  }
 }

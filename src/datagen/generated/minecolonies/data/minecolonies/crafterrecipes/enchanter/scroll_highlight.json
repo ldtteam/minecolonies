@@ -1,24 +1,26 @@
 {
   "type": "recipe",
-  "count": 5,
   "crafter": "enchanter_custom",
   "inputs": [
     {
       "count": 3,
-      "item": "minecolonies:scroll_tp"
+      "id": "minecolonies:scroll_tp"
     },
     {
       "count": 6,
-      "item": "minecraft:glowstone_dust"
+      "id": "minecraft:glowstone_dust"
     },
     {
       "count": 2,
-      "item": "minecraft:paper"
+      "id": "minecraft:paper"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
   "research-id": "minecolonies:effects/morescrollsunlock",
-  "result": "minecolonies:scroll_highlight",
+  "result": {
+    "count": 5,
+    "id": "minecolonies:scroll_highlight"
+  },
   "show-tooltip": true
 }

@@ -3,13 +3,15 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:rice"
+      "id": "minecolonies:rice"
     },
     {
-      "item": "minecraft:bowl"
+      "id": "minecraft:bowl"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:cooked_rice"
+  "result": {
+    "id": "minecolonies:cooked_rice"
+  }
 }

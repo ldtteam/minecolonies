@@ -4,19 +4,21 @@
   "inputs": [
     {
       "count": 7,
-      "item": "minecraft:iron_ingot"
+      "id": "minecraft:iron_ingot"
     },
     {
-      "item": "minecraft:leather"
+      "id": "minecraft:leather"
     },
     {
       "count": 3,
-      "item": "minecraft:coal"
+      "id": "minecraft:coal"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 4,
   "research-id": "minecolonies:effects/platearmorunlock",
-  "result": "minecolonies:plate_armor_chest",
+  "result": {
+    "id": "minecolonies:plate_armor_chest"
+  },
   "show-tooltip": true
 }

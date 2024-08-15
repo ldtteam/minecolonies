@@ -2,34 +2,34 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     },
     {
-      "item": "minecraft:nether_wart"
+      "id": "minecraft:nether_wart"
     },
     {
-      "item": "minecraft:quartz"
+      "id": "minecraft:quartz"
     },
     {
-      "item": "minecraft:glowstone_dust"
+      "id": "minecraft:glowstone_dust"
     },
     {
-      "item": "minecraft:blaze_powder"
+      "id": "minecraft:blaze_powder"
     },
     {
-      "item": "minecraft:magma_cream"
+      "id": "minecraft:magma_cream"
     },
     {
-      "item": "minecraft:player_head"
+      "id": "minecraft:player_head"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:soul_sand"
+      "id": "minecraft:soul_sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     }
   ],
   "intermediate": "minecraft:air",
