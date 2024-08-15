@@ -186,7 +186,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         @NotNull final ListTag neededResTagList = new ListTag();
         for (@NotNull final ItemStack resource : input.theStacks)
         {
-            neededResTagList.add(resource.save(provider));
+            neededResTagList.add(resource.saveOptional(provider));
         }
         compound.put(NBT_STACK_LIST, neededResTagList);
 
@@ -196,7 +196,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.put(NBT_RESULT, input.result.save(provider));
+            compound.put(NBT_RESULT, input.result.saveOptional(provider));
         }
         compound.putString(TAG_DESCRIPTION, input.description);
         compound.putInt(NBT_COUNT, input.getCount());

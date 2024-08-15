@@ -89,7 +89,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         @NotNull final ListTag filteredItems = new ListTag();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
-            filteredItems.add(item.getItemStack().save(provider));
+            filteredItems.add(item.getItemStack().saveOptional(provider));
         }
         compound.put(TAG_ITEMLIST, filteredItems);
     }

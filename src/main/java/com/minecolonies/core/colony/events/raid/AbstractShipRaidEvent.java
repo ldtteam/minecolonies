@@ -533,7 +533,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
 
-        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_COMPOUND);
+        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
             spawners.add(NBTUtils.readBlockPos(spawnerListCompound.getCompound(i), TAG_POS));

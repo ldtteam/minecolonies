@@ -127,7 +127,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             inputTagList.add(neededRes);
         }
         compound.put(INPUT_TAG, inputTagList);
-        compound.put(NbtTagConstants.STACK, recipeStorage.getPrimaryOutput().save(provider));
+        compound.put(NbtTagConstants.STACK, recipeStorage.getPrimaryOutput().saveOptional(provider));
 
         if (recipeStorage.getIntermediate() != null)
         {
@@ -144,14 +144,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         @NotNull final ListTag altOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
         {
-            altOutputTagList.add(stack.save(provider));
+            altOutputTagList.add(stack.saveOptional(provider));
         }
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
 
         @NotNull final ListTag secOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getCraftingToolsAndSecondaryOutputs())
         {
-            secOutputTagList.add(stack.save(provider));
+            secOutputTagList.add(stack.saveOptional(provider));
         }
         compound.put(SECOUTPUT_TAG, secOutputTagList);
 

@@ -197,7 +197,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             final CompoundTag compoundNBT = new CompoundTag();
-            compoundNBT.put(NbtTagConstants.STACK, entry.getKey().getItemStack().save(provider, compoundNBT));
+            compoundNBT.put(NbtTagConstants.STACK, entry.getKey().getItemStack().saveOptional(provider));
             compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
             minimumStockTagList.add(compoundNBT);
         }

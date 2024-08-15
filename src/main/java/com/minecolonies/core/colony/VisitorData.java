@@ -52,7 +52,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compoundNBT = super.serializeNBT(provider);
-        compoundNBT.put(TAG_RECRUIT_COST, recruitCost.save(provider));
+        compoundNBT.put(TAG_RECRUIT_COST, recruitCost.saveOptional(provider));
         compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
         return compoundNBT;

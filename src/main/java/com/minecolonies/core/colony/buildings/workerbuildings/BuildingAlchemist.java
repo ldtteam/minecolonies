@@ -108,19 +108,19 @@ public class BuildingAlchemist extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_COMPOUND);
+        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < sandPos.size(); ++i)
         {
             soulsand.add(NBTUtils.readBlockPos(sandPos.getCompound(i), TAG_POS));
         }
 
-        final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_COMPOUND);
+        final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < leavesPos.size(); ++i)
         {
             leaves.add(NBTUtils.readBlockPos(leavesPos.getCompound(i), TAG_POS));
         }
 
-        final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_COMPOUND);
+        final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < brewingStandPos.size(); ++i)
         {
             brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.getCompound(i), TAG_POS));

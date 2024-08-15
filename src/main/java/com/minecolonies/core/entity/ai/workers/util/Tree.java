@@ -996,7 +996,7 @@ public class Tree
         compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
 
-        compound.put(TAG_SAPLING, sapling.save(provider));
+        compound.put(TAG_SAPLING, sapling.saveOptional(provider));
         compound.putBoolean(TAG_NETHER_TREE, netherTree);
 
         @NotNull final ListTag leavesBin = new ListTag();

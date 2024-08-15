@@ -89,7 +89,7 @@ public class FarmField extends AbstractField
     public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = super.serializeNBT(provider);
-        compound.put(TAG_SEED, seed.save(provider));
+        compound.put(TAG_SEED, seed.saveOptional(provider));
         compound.putIntArray(TAG_RADIUS, radii);
         compound.putInt(TAG_MAX_RANGE, maxRadius);
         compound.putString(TAG_STAGE, fieldStage.name());

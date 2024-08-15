@@ -105,7 +105,7 @@ public class BuildingFlorist extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_COMPOUND);
+        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
             plantGround.add(NBTUtils.readBlockPos(compostBinTagList.getCompound(i), TAG_POS));

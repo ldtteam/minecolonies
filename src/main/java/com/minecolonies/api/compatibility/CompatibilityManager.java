@@ -983,7 +983,7 @@ public class CompatibilityManager implements ICompatibilityManager
     private static CompoundTag writeLeafSaplingEntryToNBT(@NotNull final HolderLookup.Provider provider, final BlockState state, final ItemStorage storage)
     {
         final CompoundTag compound = NbtUtils.writeBlockState(state);
-        compound.put(NbtTagConstants.STACK, storage.getItemStack().save(provider, compound));
+        compound.put(NbtTagConstants.STACK, storage.getItemStack().saveOptional(provider));
         return compound;
     }
 

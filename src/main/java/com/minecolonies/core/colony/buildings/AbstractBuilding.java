@@ -1598,7 +1598,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         final List<IRequest<?>> requests = new ArrayList<>(tokens.size());
 
-        for (final IToken<?> token : tokens)
+        for (final IToken<?> token : new ArrayList<>(tokens))
         {
             final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
             if (request != null)

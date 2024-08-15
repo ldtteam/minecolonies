@@ -76,7 +76,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         super.deserializeNBT(provider, compound);
 
-        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_COMPOUND);
+        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < containerTagList.size(); ++i)
         {
             final Tag containerCompound = containerTagList.getCompound(i);
