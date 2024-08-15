@@ -1,8 +1,6 @@
 package com.minecolonies.core.loot;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.google.gson.*;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import net.minecraft.util.GsonHelper;
@@ -10,7 +8,9 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.loot.ModLootConditions.EXPEDITION_DIFFICULTY_PARAM;
 
@@ -22,28 +22,28 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
     /**
      * The required difficulty.
      */
-    @Nullable
-    private final ColonyExpeditionTypeDifficulty difficulty;
+    @NotNull
+    private final List<ColonyExpeditionTypeDifficulty> difficulties;
 
     /**
      * Internal constructor.
      *
-     * @param difficulty the required difficulty.
+     * @param difficulties the required difficulties.
      */
-    private ExpeditionDifficultyCondition(@Nullable final ColonyExpeditionTypeDifficulty difficulty)
+    private ExpeditionDifficultyCondition(@NotNull final List<ColonyExpeditionTypeDifficulty> difficulties)
     {
-        this.difficulty = difficulty;
+        this.difficulties = difficulties;
     }
 
     /**
      * Generate a condition for a given expedition difficulty.
      *
-     * @param difficulty the required difficulty.
+     * @param difficulties the required difficulties.
      * @return the loot condition builder.
      */
-    public static Builder forDifficulty(@NotNull final ColonyExpeditionTypeDifficulty difficulty)
+    public static Builder forDifficulty(@NotNull final ColonyExpeditionTypeDifficulty... difficulties)
     {
-        return () -> new ExpeditionDifficultyCondition(difficulty);
+        return () -> new ExpeditionDifficultyCondition(List.of(difficulties));
     }
 
     @NotNull
@@ -56,7 +56,7 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
     @Override
     public boolean test(@NotNull final LootContext lootContext)
     {
-        if (difficulty == null)
+        if (difficulties.isEmpty())
         {
             return true;
         }
@@ -64,7 +64,7 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
         final ColonyExpeditionTypeDifficulty actualDifficulty = lootContext.getParamOrNull(EXPEDITION_DIFFICULTY_PARAM);
         if (actualDifficulty != null)
         {
-            return actualDifficulty.getKey().equals(difficulty.getKey());
+            return difficulties.contains(actualDifficulty);
         }
 
         return false;
@@ -78,9 +78,14 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
         @Override
         public void serialize(@NotNull final JsonObject json, @NotNull final ExpeditionDifficultyCondition condition, @NotNull final JsonSerializationContext context)
         {
-            if (condition.difficulty != null)
+            if (!condition.difficulties.isEmpty())
             {
-                json.addProperty("difficulty", condition.difficulty.getKey());
+                final JsonArray array = new JsonArray();
+                for (final ColonyExpeditionTypeDifficulty difficulty : condition.difficulties)
+                {
+                    array.add(difficulty.getKey());
+                }
+                json.add("difficulties", array);
             }
         }
 
@@ -88,9 +93,24 @@ public class ExpeditionDifficultyCondition implements LootItemCondition
         @Override
         public ExpeditionDifficultyCondition deserialize(@NotNull final JsonObject json, @NotNull final JsonDeserializationContext context)
         {
-            final String difficultyKey = GsonHelper.getAsString(json, "difficulty", "");
-            final ColonyExpeditionTypeDifficulty difficulty = difficultyKey.isEmpty() ? null : ColonyExpeditionTypeDifficulty.fromKey(difficultyKey);
-            return new ExpeditionDifficultyCondition(difficulty);
+            if (json.has("difficulties"))
+            {
+                final List<ColonyExpeditionTypeDifficulty> difficulties = new ArrayList<>();
+                final JsonArray array = GsonHelper.getAsJsonArray(json, "difficulties");
+                for (final JsonElement element : array)
+                {
+                    if (GsonHelper.isStringValue(element))
+                    {
+                        final ColonyExpeditionTypeDifficulty difficulty = ColonyExpeditionTypeDifficulty.fromKey(element.getAsString());
+                        if (difficulty != null)
+                        {
+                            difficulties.add(difficulty);
+                        }
+                    }
+                }
+                return new ExpeditionDifficultyCondition(difficulties);
+            }
+            return new ExpeditionDifficultyCondition(List.of());
         }
     }
 }

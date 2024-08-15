@@ -36,6 +36,15 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:wet_sponge",
           "weight": 15
         },
@@ -52,6 +61,14 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",

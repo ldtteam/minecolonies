@@ -79,16 +79,42 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:diamond",
           "weight": 25
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:emerald",
           "weight": 25
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:enchant_randomly"

@@ -127,11 +127,28 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:golden_apple",
           "weight": 25
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:enchant_randomly"
@@ -142,6 +159,14 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:enchanted_golden_apple",
           "weight": 5
         },

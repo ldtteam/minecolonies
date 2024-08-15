@@ -100,11 +100,27 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:gilded_blackstone",
           "weight": 15
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:netherite_upgrade_smithing_template",
           "weight": 5
         },
@@ -132,6 +148,14 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",

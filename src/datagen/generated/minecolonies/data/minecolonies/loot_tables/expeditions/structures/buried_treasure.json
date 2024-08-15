@@ -58,16 +58,43 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:diamond",
           "weight": 25
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:emerald",
           "weight": 25
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",
@@ -79,6 +106,14 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:heart_of_the_sea",
           "weight": 5
         },

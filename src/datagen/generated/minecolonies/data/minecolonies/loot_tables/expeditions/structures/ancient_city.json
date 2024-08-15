@@ -91,6 +91,15 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:enchant_randomly"
@@ -110,11 +119,27 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:enchanted_golden_apple",
           "weight": 5
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "enchantments": [
@@ -131,7 +156,10 @@
           "conditions": [
             {
               "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "hard"
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
             }
           ],
           "functions": [
@@ -142,23 +170,6 @@
           ],
           "name": "minecolonies:adventure_token",
           "weight": 10
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulty": "nightmare"
-            }
-          ],
-          "functions": [
-            {
-              "function": "minecraft:set_nbt",
-              "tag": "{amount:1,encounter:\"minecolonies:warden\",scale:1b,type:\"encounter\"}"
-            }
-          ],
-          "name": "minecolonies:adventure_token",
-          "weight": 20
         }
       ],
       "rolls": {

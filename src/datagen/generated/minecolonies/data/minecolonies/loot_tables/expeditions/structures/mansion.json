@@ -68,21 +68,29 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:golden_apple",
           "weight": 25
         },
         {
           "type": "minecraft:item",
-          "functions": [
+          "conditions": [
             {
-              "function": "minecraft:enchant_randomly"
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
             }
           ],
-          "name": "minecraft:enchanted_book",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:item",
           "functions": [
             {
               "function": "minecraft:enchant_randomly"
@@ -98,10 +106,36 @@
             }
           ],
           "name": "minecraft:diamond_chestplate",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            }
+          ],
+          "name": "minecraft:enchanted_book",
           "weight": 15
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard"
+              ]
+            }
+          ],
           "name": "minecraft:enchanted_golden_apple",
           "weight": 5
         },
@@ -118,6 +152,15 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",
@@ -129,6 +172,15 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "functions": [
             {
               "function": "minecraft:set_nbt",
