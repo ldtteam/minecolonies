@@ -1,18 +1,20 @@
 {
   "type": "recipe",
-  "count": 4,
   "crafter": "baker_crafting",
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "id": "minecraft:wheat"
     },
     {
-      "item": "minecraft:chorus_fruit"
+      "id": "minecraft:chorus_fruit"
     }
   ],
   "intermediate": "minecraft:air",
   "research-id": "minecolonies:effects/knowledgeoftheendunlock",
-  "result": "minecolonies:chorus_bread",
+  "result": {
+    "count": 4,
+    "id": "minecolonies:chorus_bread"
+  },
   "show-tooltip": true
 }

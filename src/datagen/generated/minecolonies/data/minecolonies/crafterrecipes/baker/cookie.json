@@ -3,10 +3,12 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:cookie_dough"
+      "id": "minecolonies:cookie_dough"
     }
   ],
   "intermediate": "minecraft:furnace",
   "min-building-level": 2,
-  "result": "minecraft:cookie"
+  "result": {
+    "id": "minecraft:cookie"
+  }
 }

@@ -1,13 +1,15 @@
 {
   "type": "recipe",
-  "count": 5,
   "crafter": "crusher_custom",
   "inputs": [
     {
-      "item": "minecraft:bone"
+      "id": "minecraft:bone"
     }
   ],
   "intermediate": "minecraft:air",
   "research-id": "minecolonies:effects/crushing11unlock",
-  "result": "minecraft:bone_meal"
+  "result": {
+    "count": 5,
+    "id": "minecraft:bone_meal"
+  }
 }

@@ -714,7 +714,6 @@ public final class NbtTagConstants
     public static final String ITEM_PROP       = "item";
     public static final String MATCHTYPE_PROP  = "matchType";
     public static final String MATCH_NBTIGNORE = "ignore";
-    public static final String TAG_PROP        = "tag";
 
     /**
      * Version tag.

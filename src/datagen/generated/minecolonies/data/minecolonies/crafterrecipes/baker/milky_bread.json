@@ -1,18 +1,20 @@
 {
   "type": "recipe",
-  "count": 4,
   "crafter": "baker_crafting",
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "id": "minecraft:wheat"
     },
     {
-      "item": "minecolonies:large_milk_bottle"
+      "id": "minecolonies:large_milk_bottle"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 4,
-  "result": "minecolonies:milky_bread",
+  "result": {
+    "count": 4,
+    "id": "minecolonies:milky_bread"
+  },
   "show-tooltip": true
 }

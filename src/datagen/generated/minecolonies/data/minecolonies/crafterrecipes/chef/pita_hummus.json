@@ -3,25 +3,27 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:flatbread"
+      "id": "minecolonies:flatbread"
     },
     {
-      "item": "minecolonies:chickpea"
+      "id": "minecolonies:chickpea"
     },
     {
-      "item": "minecolonies:chickpea"
+      "id": "minecolonies:chickpea"
     },
     {
-      "item": "minecolonies:eggplant"
+      "id": "minecolonies:eggplant"
     },
     {
-      "item": "minecolonies:onion"
+      "id": "minecolonies:onion"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:pita_hummus"
+  "result": {
+    "id": "minecolonies:pita_hummus"
+  }
 }

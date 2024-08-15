@@ -4,9 +4,11 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:flint"
+  "result": {
+    "id": "minecraft:flint"
+  }
 }

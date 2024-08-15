@@ -1,25 +1,27 @@
 {
   "type": "recipe",
-  "count": 2,
   "crafter": "enchanter_custom",
   "inputs": [
     {
-      "item": "minecolonies:scroll_tp"
+      "id": "minecolonies:scroll_tp"
     },
     {
       "count": 5,
-      "item": "minecraft:lapis_lazuli"
+      "id": "minecraft:lapis_lazuli"
     },
     {
-      "item": "minecraft:ender_pearl"
+      "id": "minecraft:ender_pearl"
     },
     {
-      "item": "minecraft:paper"
+      "id": "minecraft:paper"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
   "research-id": "minecolonies:effects/morescrollsunlock",
-  "result": "minecolonies:scroll_guard_help",
+  "result": {
+    "count": 2,
+    "id": "minecolonies:scroll_guard_help"
+  },
   "show-tooltip": true
 }

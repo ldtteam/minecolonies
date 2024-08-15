@@ -3,9 +3,11 @@
   "crafter": "netherworker_custom",
   "inputs": [
     {
-      "item": "minecraft:bucket"
+      "id": "minecraft:bucket"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:lava_bucket"
+  "result": {
+    "id": "minecraft:lava_bucket"
+  }
 }

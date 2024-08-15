@@ -3,19 +3,21 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:raw_noodle"
+      "id": "minecolonies:raw_noodle"
     },
     {
-      "item": "minecolonies:butter"
+      "id": "minecolonies:butter"
     },
     {
-      "item": "minecraft:bowl"
+      "id": "minecraft:bowl"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:pasta_plain"
+  "result": {
+    "id": "minecolonies:pasta_plain"
+  }
 }

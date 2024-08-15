@@ -20,10 +20,8 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +39,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.COUNT_PROP;
 
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
@@ -275,7 +273,8 @@ public class CustomRecipe
                 {
                     JsonObject ingredient = e.getAsJsonObject();
                     ItemStorage parsed = new ItemStorage(provider, ingredient);
-                    if(!parsed.isEmpty()) {
+                    if (!parsed.isEmpty())
+                    {
                         recipe.inputs.add(parsed);
                     }
                 }
@@ -284,7 +283,7 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            recipe.result = ItemStackUtils.idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString(), provider);
+            recipe.result = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, recipeJson.get(RECIPE_RESULT_PROP));
         }
         else
         {
@@ -307,21 +306,11 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    JsonObject ingredient = e.getAsJsonObject();
-                    if (ingredient.has(ITEM_PROP))
+                    ItemStack stack = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, e);
+                    if (!stack.isEmpty())
                     {
-                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString(), provider);
-                        if(ingredient.has(COUNT_PROP))
-                        {
-                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
-                        }
-                        if (ingredient.has(TAG_PROP))
-                        {
-                            stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, ingredient.get(TAG_PROP)));
-                        }
                         recipe.secondary.add(stack);
                     }
-
                 }
             }
         }
@@ -332,21 +321,11 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    JsonObject ingredient = e.getAsJsonObject();
-                    if (ingredient.has(ITEM_PROP))
+                    ItemStack stack = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, e);
+                    if (!stack.isEmpty())
                     {
-                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString(), provider);
-                        if(ingredient.has(COUNT_PROP))
-                        {
-                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
-                        }
-                        if (ingredient.has(TAG_PROP))
-                        {
-                            stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, ingredient.get(TAG_PROP)));
-                        }
                         recipe.altOutputs.add(stack);
                     }
-
                 }
             }
         }
@@ -488,7 +467,7 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
                     if (Boolean.FALSE.equals(result.getA()))
                     {
                         if (logStatus)
@@ -502,7 +481,7 @@ public class CustomRecipe
             }
         }
 
-        final Tuple<Boolean, String> output = populateTemplateItem(recipeJson, RECIPE_RESULT_PROP, itemId);
+        final Tuple<Boolean, String> output = populateTemplateItem(recipeJson.getAsJsonObject(RECIPE_RESULT_PROP), itemId);
         if (Boolean.FALSE.equals(output.getA()))
         {
             if (logStatus)
@@ -519,7 +498,7 @@ public class CustomRecipe
             {
                 if (e.isJsonObject())
                 {
-                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
                     if (Boolean.FALSE.equals(result.getA()))
                     {
                         if (logStatus)
@@ -540,7 +519,7 @@ public class CustomRecipe
                 final JsonElement e = iterator.next();
                 if (e.isJsonObject())
                 {
-                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), ITEM_PROP, itemId);
+                    final Tuple<Boolean, String> result = populateTemplateItem(e.getAsJsonObject(), itemId);
                     if (Boolean.FALSE.equals(result.getA()))
                     {
                         if (logStatus)
@@ -572,14 +551,13 @@ public class CustomRecipe
         return recipeJson;
     }
 
-    private static Tuple<Boolean, String> populateTemplateItem(@NotNull final JsonObject obj,
-                                                               @NotNull final String prop,
+    private static Tuple<Boolean, String> populateTemplateItem(@Nullable final JsonObject obj,
                                                                @NotNull final ResourceLocation itemId)
     {
-        if (obj.has(prop))
+        if (obj != null)
         {
-            final Tuple<Boolean, String> result = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, prop), itemId);
-            obj.addProperty(prop, result.getB());
+            final Tuple<Boolean, String> result = ItemStackUtils.parseIdTemplate(GsonHelper.getAsString(obj, "id"), itemId);
+            obj.addProperty("id", result.getB());
             return result;
         }
 

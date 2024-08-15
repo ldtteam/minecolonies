@@ -4,11 +4,13 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecolonies:scroll_tp"
+      "id": "minecolonies:scroll_tp"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 2,
-  "result": "minecolonies:scroll_area_tp",
+  "result": {
+    "id": "minecolonies:scroll_area_tp"
+  },
   "show-tooltip": true
 }

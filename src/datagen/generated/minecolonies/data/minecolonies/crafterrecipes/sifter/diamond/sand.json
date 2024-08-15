@@ -2,28 +2,28 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     },
     {
-      "item": "minecraft:cactus"
+      "id": "minecraft:cactus"
     },
     {
-      "item": "minecraft:sugar_cane"
+      "id": "minecraft:sugar_cane"
     },
     {
-      "item": "minecraft:gold_nugget"
+      "id": "minecraft:gold_nugget"
     },
     {
-      "item": "minecraft:cocoa_beans"
+      "id": "minecraft:cocoa_beans"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_diamond"
+      "id": "minecolonies:sifter_mesh_diamond"
     }
   ],
   "intermediate": "minecraft:air",

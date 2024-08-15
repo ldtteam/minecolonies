@@ -2,31 +2,31 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     },
     {
-      "item": "minecraft:wheat_seeds"
+      "id": "minecraft:wheat_seeds"
     },
     {
-      "item": "minecraft:oak_sapling"
+      "id": "minecraft:oak_sapling"
     },
     {
-      "item": "minecraft:birch_sapling"
+      "id": "minecraft:birch_sapling"
     },
     {
-      "item": "minecraft:spruce_sapling"
+      "id": "minecraft:spruce_sapling"
     },
     {
-      "item": "minecraft:jungle_sapling"
+      "id": "minecraft:jungle_sapling"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:dirt"
+      "id": "minecraft:dirt"
     },
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     }
   ],
   "intermediate": "minecraft:air",

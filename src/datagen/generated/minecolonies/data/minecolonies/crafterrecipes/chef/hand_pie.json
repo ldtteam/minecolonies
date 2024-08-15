@@ -3,22 +3,24 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     },
     {
-      "item": "minecraft:brown_mushroom"
+      "id": "minecraft:brown_mushroom"
     },
     {
-      "item": "minecolonies:onion"
+      "id": "minecolonies:onion"
     },
     {
-      "item": "minecraft:mutton"
+      "id": "minecraft:mutton"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:hand_pie"
+  "result": {
+    "id": "minecolonies:hand_pie"
+  }
 }

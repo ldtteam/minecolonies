@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -128,29 +127,27 @@ public class ItemStorage
      * 
      * @param jObject the JSON Object to parse
      */
-    public ItemStorage(@NotNull final HolderLookup.Provider provider, @NotNull final JsonObject jObject)
+    public ItemStorage(@NotNull final HolderLookup.Provider provider, @NotNull JsonObject jObject)
     {
-        if (jObject.has(ITEM_PROP))
+        // storage amount can be larger than is valid for ItemStack.
+        if (jObject.has(COUNT_PROP))
         {
-            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString(), provider);
-            if(jObject.has(COUNT_PROP))
-            {
-                parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());
-                this.amount = jObject.get(COUNT_PROP).getAsInt();
-            }
-            else
-            {
-                this.amount = parsedStack.getCount();
-            }
-            if (jObject.has(TAG_PROP))
-            {
-                parsedStack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, jObject.get(TAG_PROP)));
-            }
-            this.stack = parsedStack;
-            if(jObject.has(MATCHTYPE_PROP))
+            this.amount = jObject.get(COUNT_PROP).getAsInt();
+            jObject = jObject.deepCopy();
+            jObject.remove(COUNT_PROP);
+        }
+        else
+        {
+            this.amount = 1;
+        }
+
+        if (jObject.has("id"))
+        {
+            this.stack = Utils.deserializeCodecMessFromJson(ItemStack.OPTIONAL_CODEC, provider, jObject);
+            if (jObject.has(MATCHTYPE_PROP))
             {
                 String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
-                if(matchType.equals(MATCH_NBTIGNORE))
+                if (matchType.equals(MATCH_NBTIGNORE))
                 {
                     this.shouldIgnoreNBTValue = true;
                 }
@@ -163,7 +160,7 @@ public class ItemStorage
             {
                 this.shouldIgnoreNBTValue = false;
             }
-            this.shouldIgnoreDamageValue= true;
+            this.shouldIgnoreDamageValue = true;
         }
         else
         {

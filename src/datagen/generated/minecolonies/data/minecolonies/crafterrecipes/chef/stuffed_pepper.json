@@ -3,25 +3,27 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:cooked_rice"
+      "id": "minecolonies:cooked_rice"
     },
     {
-      "item": "minecolonies:bell_pepper"
+      "id": "minecolonies:bell_pepper"
     },
     {
-      "item": "minecolonies:tomato"
+      "id": "minecolonies:tomato"
     },
     {
-      "item": "minecraft:carrot"
+      "id": "minecraft:carrot"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     },
     {
-      "item": "minecolonies:eggplant"
+      "id": "minecolonies:eggplant"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:stuffed_pepper"
+  "result": {
+    "id": "minecolonies:stuffed_pepper"
+  }
 }
