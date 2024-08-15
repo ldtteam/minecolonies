@@ -87,8 +87,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:iron_ingot",
-        "qty": 2
+        "item": {
+          "id": "minecraft:iron_ingot",
+          "count": 2
+        }
       }
     },
     {

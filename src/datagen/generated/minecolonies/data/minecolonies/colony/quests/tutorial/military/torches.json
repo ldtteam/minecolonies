@@ -57,15 +57,17 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:iron_sword",
-        "qty": 1
+        "item": {
+          "id": "minecraft:iron_sword"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:bow",
-        "qty": 1
+        "item": {
+          "id": "minecraft:bow"
+        }
       }
     }
   ],

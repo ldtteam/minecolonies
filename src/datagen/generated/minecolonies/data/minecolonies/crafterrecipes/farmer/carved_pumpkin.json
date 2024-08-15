@@ -3,10 +3,12 @@
   "crafter": "farmer_crafting",
   "inputs": [
     {
-      "item": "minecraft:pumpkin"
+      "id": "minecraft:pumpkin"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:carved_pumpkin",
+  "result": {
+    "id": "minecraft:carved_pumpkin"
+  },
   "tool": "shears"
 }

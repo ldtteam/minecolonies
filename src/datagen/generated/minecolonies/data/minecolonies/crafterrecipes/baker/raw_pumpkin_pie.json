@@ -3,17 +3,19 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecraft:pumpkin"
+      "id": "minecraft:pumpkin"
     },
     {
-      "item": "minecraft:sugar"
+      "id": "minecraft:sugar"
     },
     {
-      "item": "minecraft:egg"
+      "id": "minecraft:egg"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
-  "result": "minecolonies:raw_pumpkin_pie",
+  "result": {
+    "id": "minecolonies:raw_pumpkin_pie"
+  },
   "show-tooltip": true
 }

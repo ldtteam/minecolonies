@@ -3,16 +3,18 @@
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:butter"
+      "id": "minecolonies:butter"
     },
     {
-      "item": "minecraft:honey_bottle"
+      "id": "minecraft:honey_bottle"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:lembas_scone"
+  "result": {
+    "id": "minecolonies:lembas_scone"
+  }
 }

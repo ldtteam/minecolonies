@@ -256,8 +256,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:cobblestone",
-        "qty": 32
+        "item": {
+          "count": 32,
+          "id": "minecraft:cobblestone"
+        }
       }
     }
   ],

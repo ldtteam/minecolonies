@@ -4,10 +4,12 @@
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     }
   ],
   "intermediate": "minecraft:air",
   "not-research-id": "minecolonies:effects/crushing11unlock",
-  "result": "minecraft:sand"
+  "result": {
+    "id": "minecraft:sand"
+  }
 }

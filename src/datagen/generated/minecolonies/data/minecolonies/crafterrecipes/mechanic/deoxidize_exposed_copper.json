@@ -3,10 +3,12 @@
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-      "item": "minecraft:exposed_copper"
+      "id": "minecraft:exposed_copper"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:copper_block",
+  "result": {
+    "id": "minecraft:copper_block"
+  },
   "tool": "axe"
 }

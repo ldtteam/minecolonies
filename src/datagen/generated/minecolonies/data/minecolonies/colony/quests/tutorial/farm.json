@@ -233,8 +233,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:wheat_seeds",
-        "qty": 32
+        "item": {
+          "count": 32,
+          "id": "minecraft:wheat_seeds"
+        }
       }
     }
   ],

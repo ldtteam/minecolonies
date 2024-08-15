@@ -4,11 +4,13 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:wheat"
+      "id": "minecraft:wheat"
     }
   ],
   "intermediate": "minecraft:air",
   "max-building-level": 2,
-  "result": "minecolonies:bread_dough",
+  "result": {
+    "id": "minecolonies:bread_dough"
+  },
   "show-tooltip": true
 }

@@ -3,9 +3,11 @@
   "crafter": "concretemixer_custom",
   "inputs": [
     {
-      "item": "minecraft:yellow_concrete_powder"
+      "id": "minecraft:yellow_concrete_powder"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:yellow_concrete"
+  "result": {
+    "id": "minecraft:yellow_concrete"
+  }
 }

@@ -108,15 +108,19 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:garlic",
-        "qty": 8
+        "item": {
+          "id": "minecolonies:garlic",
+          "count": 8
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:onion",
-        "qty": 8
+        "item": {
+          "id": "minecolonies:onion",
+          "count": 8
+        }
       }
     }
   ]

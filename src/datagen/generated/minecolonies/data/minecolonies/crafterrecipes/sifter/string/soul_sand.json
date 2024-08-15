@@ -2,22 +2,22 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     },
     {
-      "item": "minecraft:nether_wart"
+      "id": "minecraft:nether_wart"
     },
     {
-      "item": "minecraft:quartz"
+      "id": "minecraft:quartz"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:soul_sand"
+      "id": "minecraft:soul_sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     }
   ],
   "intermediate": "minecraft:air",

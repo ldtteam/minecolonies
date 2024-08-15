@@ -2,22 +2,22 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     },
     {
-      "item": "minecraft:cactus"
+      "id": "minecraft:cactus"
     },
     {
-      "item": "minecraft:sugar_cane"
+      "id": "minecraft:sugar_cane"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     }
   ],
   "intermediate": "minecraft:air",

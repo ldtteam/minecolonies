@@ -174,8 +174,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:baked_potato",
-        "qty": 32
+        "item": {
+          "id": "minecraft:baked_potato",
+          "count": 32
+        }
       }
     }
   ]

@@ -2,13 +2,13 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:enchanted_book"
+      "id": "minecraft:enchanted_book"
     }
   ],
   "crafter": "enchanter_custom",
   "inputs": [
     {
-      "item": "minecolonies:ancienttome",
+      "id": "minecolonies:ancienttome",
       "matchType": "ignore"
     }
   ],

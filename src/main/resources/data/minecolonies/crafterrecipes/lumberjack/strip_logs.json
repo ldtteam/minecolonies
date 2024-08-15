@@ -9,18 +9,18 @@
     "crafter": "lumberjack_custom",
     "inputs": [
       {
-        "item": "[NS]:[PATH]"
+        "id": "[NS]:[PATH]"
       }
     ],
     "alternate-output": [
       {
-        "item": "[NS]:stripped_[PATH]"
+        "id": "[NS]:stripped_[PATH]"
       },
       {
-        "item": "[NS]:[PATH:_log=_wood]"
+        "id": "[NS]:[PATH:_log=_wood]"
       },
       {
-        "item": "[NS]:stripped_[PATH:_log=_wood]"
+        "id": "[NS]:stripped_[PATH:_log=_wood]"
       }
     ],
     "intermediate": "minecraft:air",

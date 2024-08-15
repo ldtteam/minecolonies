@@ -3,10 +3,12 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:raw_pumpkin_pie"
+      "id": "minecolonies:raw_pumpkin_pie"
     }
   ],
   "intermediate": "minecraft:furnace",
   "min-building-level": 3,
-  "result": "minecraft:pumpkin_pie"
+  "result": {
+    "id": "minecraft:pumpkin_pie"
+  }
 }

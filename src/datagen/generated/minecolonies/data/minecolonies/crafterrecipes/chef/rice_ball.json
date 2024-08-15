@@ -1,19 +1,21 @@
 {
   "type": "recipe",
-  "count": 2,
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:tofu"
+      "id": "minecolonies:tofu"
     },
     {
-      "item": "minecraft:dried_kelp"
+      "id": "minecraft:dried_kelp"
     },
     {
-      "item": "minecolonies:cooked_rice"
+      "id": "minecolonies:cooked_rice"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:rice_ball"
+  "result": {
+    "count": 2,
+    "id": "minecolonies:rice_ball"
+  }
 }

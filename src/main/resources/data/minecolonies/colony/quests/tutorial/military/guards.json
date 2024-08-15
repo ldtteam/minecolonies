@@ -174,8 +174,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:iron_block",
-        "qty": 1
+        "item": {
+          "id": "minecraft:iron_block"
+        }
       }
     }
   ]

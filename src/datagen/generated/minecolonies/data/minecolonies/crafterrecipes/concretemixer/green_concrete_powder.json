@@ -1,20 +1,22 @@
 {
   "type": "recipe",
-  "count": 8,
   "crafter": "concretemixer_custom",
   "inputs": [
     {
       "count": 4,
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     {
       "count": 4,
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     },
     {
-      "item": "minecraft:green_dye"
+      "id": "minecraft:green_dye"
     }
   ],
   "intermediate": "minecraft:air",
-  "result": "minecraft:green_concrete_powder"
+  "result": {
+    "count": 8,
+    "id": "minecraft:green_concrete_powder"
+  }
 }

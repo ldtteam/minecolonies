@@ -183,8 +183,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:ladder",
-        "qty": 32
+        "item": {
+          "id": "minecraft:ladder",
+          "count": 32
+        }
       }
     }
   ]

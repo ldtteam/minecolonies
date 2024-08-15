@@ -2,79 +2,79 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:rotten_flesh"
+      "id": "minecraft:rotten_flesh"
     },
     {
-      "item": "minecraft:gold_nugget"
+      "id": "minecraft:gold_nugget"
     },
     {
-      "item": "minecraft:netherrack"
+      "id": "minecraft:netherrack"
     },
     {
-      "item": "minecraft:nether_quartz_ore"
+      "id": "minecraft:nether_quartz_ore"
     },
     {
-      "item": "minecraft:soul_sand"
+      "id": "minecraft:soul_sand"
     },
     {
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     },
     {
-      "item": "minecraft:brown_mushroom"
+      "id": "minecraft:brown_mushroom"
     },
     {
-      "item": "minecraft:red_mushroom"
+      "id": "minecraft:red_mushroom"
     },
     {
-      "item": "minecraft:soul_soil"
+      "id": "minecraft:soul_soil"
     },
     {
-      "item": "minecraft:glowstone"
+      "id": "minecraft:glowstone"
     },
     {
-      "item": "minecraft:crimson_nylium"
+      "id": "minecraft:crimson_nylium"
     },
     {
-      "item": "minecraft:crimson_fungus"
+      "id": "minecraft:crimson_fungus"
     },
     {
-      "item": "minecraft:crimson_stem"
+      "id": "minecraft:crimson_stem"
     },
     {
-      "item": "minecraft:porkchop"
+      "id": "minecraft:porkchop"
     },
     {
-      "item": "minecraft:nether_wart"
+      "id": "minecraft:nether_wart"
     },
     {
-      "item": "minecraft:leather"
+      "id": "minecraft:leather"
     },
     {
-      "item": "minecraft:gunpowder"
+      "id": "minecraft:gunpowder"
     },
     {
-      "item": "minecraft:ghast_tear"
+      "id": "minecraft:ghast_tear"
     },
     {
-      "item": "minecraft:ender_pearl"
+      "id": "minecraft:ender_pearl"
     },
     {
-      "item": "minecraft:magma_cream"
+      "id": "minecraft:magma_cream"
     }
   ],
   "crafter": "netherworker_custom",
   "inputs": [
     {
       "count": 64,
-      "item": "minecraft:cobblestone"
+      "id": "minecraft:cobblestone"
     },
     {
       "count": 32,
-      "item": "minecraft:torch"
+      "id": "minecraft:torch"
     },
     {
       "count": 16,
-      "item": "minecraft:ladder"
+      "id": "minecraft:ladder"
     }
   ],
   "intermediate": "minecraft:air",
