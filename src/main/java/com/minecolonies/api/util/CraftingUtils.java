@@ -10,6 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -191,7 +192,7 @@ public final class CraftingUtils
                     stacks = new HashSet<>();
                     try
                     {
-                        tab.buildContents(displayParams);
+                        EventHooks.onCreativeModeTabBuildContents(tab, tabKeys.get(tab), tab.displayItemsGenerator, displayParams, (stack, vis) -> stacks.add(stack));
                     }
                     catch (final Throwable ex)
                     {

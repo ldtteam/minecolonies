@@ -9,10 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
-import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.util.constant.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -130,7 +127,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             inputTagList.add(neededRes);
         }
         compound.put(INPUT_TAG, inputTagList);
-        recipeStorage.getPrimaryOutput().save(provider, compound);
+        compound.put(NbtTagConstants.STACK, recipeStorage.getPrimaryOutput().saveOptional(provider));
 
         if (recipeStorage.getIntermediate() != null)
         {
@@ -147,18 +144,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         @NotNull final ListTag altOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
         {
-            @NotNull final CompoundTag neededRes = new CompoundTag();
-            stack.save(provider, neededRes);
-            altOutputTagList.add(neededRes);
+            altOutputTagList.add(stack.saveOptional(provider));
         }
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
 
         @NotNull final ListTag secOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getCraftingToolsAndSecondaryOutputs())
         {
-            @NotNull final CompoundTag neededRes = new CompoundTag();
-            stack.save(provider, neededRes);
-            secOutputTagList.add(neededRes);
+            secOutputTagList.add(stack.saveOptional(provider));
         }
         compound.put(SECOUTPUT_TAG, secOutputTagList);
 
@@ -187,7 +180,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             }
             else
             {
-                final ItemStorage newItem = new ItemStorage(ItemStack.parseOptional(provider, inputTag));
+                final ItemStorage newItem = new ItemStorage(ItemStack.parseOptional(provider, inputTag.getCompound(NbtTagConstants.STACK)));
                 input.add(newItem);
             }
         }

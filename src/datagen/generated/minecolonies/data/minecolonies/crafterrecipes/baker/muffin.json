@@ -3,10 +3,12 @@
   "crafter": "baker_smelting",
   "inputs": [
     {
-      "item": "minecolonies:muffin_dough"
+      "id": "minecolonies:muffin_dough"
     }
   ],
   "intermediate": "minecraft:furnace",
   "min-building-level": 1,
-  "result": "minecolonies:muffin"
+  "result": {
+    "id": "minecolonies:muffin"
+  }
 }

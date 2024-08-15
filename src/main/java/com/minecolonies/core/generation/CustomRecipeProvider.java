@@ -10,7 +10,6 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -117,12 +116,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         public CustomRecipeBuilder result(@NotNull final ItemStack result)
         {
             final JsonObject jsonItemStack = stackAsJson(result);
-
-            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, jsonItemStack.get(ITEM_PROP).getAsString());
-            if (jsonItemStack.has(COUNT_PROP))
-            {
-                this.json.add(COUNT_PROP, jsonItemStack.get(COUNT_PROP));
-            }
+            this.json.add(CustomRecipe.RECIPE_RESULT_PROP, jsonItemStack);
             return this;
         }
 
@@ -259,17 +253,12 @@ public abstract class CustomRecipeProvider implements DataProvider
         @NotNull
         private JsonObject stackAsJson(final ItemStack stack)
         {
-            final JsonObject jsonItemStack = new JsonObject();
-            jsonItemStack.addProperty(ITEM_PROP, BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-            if (!stack.isComponentsPatchEmpty())
+            final JsonObject json = Utils.serializeCodecMessToJson(ItemStack.OPTIONAL_CODEC, provider, stack).getAsJsonObject();
+            if (stack.getCount() == 1)
             {
-                jsonItemStack.add(TAG_PROP, Utils.serializeCodecMessToJson(DataComponentPatch.CODEC, provider, stack.getComponentsPatch()));
+                json.remove(COUNT_PROP);
             }
-            if (stack.getCount() != 1)
-            {
-                jsonItemStack.addProperty(COUNT_PROP, stack.getCount());
-            }
-            return jsonItemStack;
+            return json;
         }
 
         @NotNull
@@ -290,11 +279,7 @@ public abstract class CustomRecipeProvider implements DataProvider
             for (final ItemStorage itemStorage : itemStorages)
             {
                 final JsonObject jsonItemStorage = stackAsJson(itemStorage.getItemStack());
-                if (itemStorage.getAmount() == 1)
-                {
-                    jsonItemStorage.remove(COUNT_PROP);
-                }
-                else
+                if (itemStorage.getAmount() != 1)
                 {
                     jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
                 }

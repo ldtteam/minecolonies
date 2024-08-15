@@ -62,9 +62,11 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:rotten_flesh",
+        "item": {
+          "count": 3,
+          "id": "minecraft:rotten_flesh"
+        },
         "next-objective": 2,
-        "qty": 3,
         "target": 0
       }
     },
@@ -112,9 +114,11 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:rotten_flesh",
+        "item": {
+          "count": 3,
+          "id": "minecraft:rotten_flesh"
+        },
         "next-objective": 5,
-        "qty": 3,
         "target": 0
       }
     },
@@ -149,9 +153,11 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:spider_eye",
+        "item": {
+          "count": 2,
+          "id": "minecraft:spider_eye"
+        },
         "next-objective": 7,
-        "qty": 2,
         "target": 0
       }
     },
@@ -186,9 +192,10 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:gunpowder",
+        "item": {
+          "id": "minecraft:gunpowder"
+        },
         "next-objective": 9,
-        "qty": 1,
         "target": 0
       }
     },
@@ -229,9 +236,18 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:potion",
-        "nbt": "{id: \"minecraft:splash_potion\", Count: 1b, tag: {RepairCost: 0, Potion: \"minecraft:poison\", display: {Name: '{\"text\":\"Suspicious Potion\"}'}}}",
-        "qty": 1
+        "item": {
+          "components": {
+            "minecraft:item_name": "{\"translate\":\"com.minecolonies.alchemyquestpotion.name\"}",
+            "minecraft:lore": [
+              "{\"translate\":\"com.minecolonies.alchemyquestpotion.lore\"}"
+            ],
+            "minecraft:potion_contents": {
+              "potion": "minecraft:poison"
+            }
+          },
+          "id": "minecraft:potion"
+        }
       }
     },
     {

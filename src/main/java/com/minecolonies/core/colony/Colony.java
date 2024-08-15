@@ -691,10 +691,11 @@ public class Colony implements IColony
      *
      * @param compound The NBT compound containing the colony's data.
      * @param world    the world to load it for.
+     * @param provider
      * @return loaded colony.
      */
     @Nullable
-    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world)
+    public static Colony loadColony(@NotNull final CompoundTag compound, @Nullable final ServerLevel world, final HolderLookup.@NotNull Provider provider)
     {
         try
         {
@@ -705,7 +706,7 @@ public class Colony implements IColony
             c.dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(compound.getString(TAG_DIMENSION)));
 
             c.setRequestManager();
-            c.read(compound, world.registryAccess());
+            c.read(compound, provider);
 
             return c;
         }

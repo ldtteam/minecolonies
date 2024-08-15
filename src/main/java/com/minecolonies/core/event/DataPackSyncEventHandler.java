@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -103,25 +102,16 @@ public class DataPackSyncEventHandler
             {
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
+            else
+            {
+                discoverCompatLists(server);
+            }
 
             if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
                     (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
             {
                 CraftingTagAuditor.doRecipeAudit(server, recipeManager);
             }
-        }
-
-        /**
-         * Fires on a server side only, when the server has started.
-         * This event is the first reliable point for server-only parsing of available smelting recipes, which are
-         * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-         *
-         * @param event {@link ServerStartedEvent}
-         */
-        @SubscribeEvent
-        public static void onServerStarted(@NotNull final ServerStartedEvent event)
-        {
-            discoverCompatLists(event.getServer());
         }
     }
 

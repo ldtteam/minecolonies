@@ -77,8 +77,9 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
-        "item": "minecraft:poppy",
-        "qty": 1,
+        "item": {
+          "id": "minecraft:poppy"
+        },
         "next-objective": 2
       }
     },
@@ -111,8 +112,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:diamond",
-        "qty": 1
+        "item": {
+          "id": "minecraft:diamond"
+        }
       }
     },
     {

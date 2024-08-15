@@ -3,10 +3,12 @@
   "crafter": "dyer_crafting",
   "inputs": [
     {
-      "item": "minecraft:charcoal"
+      "id": "minecraft:charcoal"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 2,
-  "result": "minecraft:black_dye"
+  "result": {
+    "id": "minecraft:black_dye"
+  }
 }

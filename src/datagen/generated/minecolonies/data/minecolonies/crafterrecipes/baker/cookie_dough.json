@@ -1,19 +1,21 @@
 {
   "type": "recipe",
-  "count": 8,
   "crafter": "baker_crafting",
   "inputs": [
     {
       "count": 2,
-      "item": "minecraft:wheat"
+      "id": "minecraft:wheat"
     },
     {
       "count": 2,
-      "item": "minecraft:cocoa_beans"
+      "id": "minecraft:cocoa_beans"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 2,
-  "result": "minecolonies:cookie_dough",
+  "result": {
+    "count": 8,
+    "id": "minecolonies:cookie_dough"
+  },
   "show-tooltip": true
 }

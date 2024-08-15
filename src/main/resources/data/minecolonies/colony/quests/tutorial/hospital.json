@@ -142,15 +142,19 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:carrot",
-        "qty": 8
+        "item": {
+          "id": "minecraft:carrot",
+          "count": 8
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:potato",
-        "qty": 8
+        "item": {
+          "id": "minecraft:potato",
+          "count": 8
+        }
       }
     }
   ]

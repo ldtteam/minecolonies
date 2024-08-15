@@ -151,17 +151,14 @@ public class WindowBannerPicker extends Screen
         }
 
         // Fetch the patterns as a List and not ListNBT
-        this.layers = colony.getColonyFlag().layers();
+        this.layers = new ArrayList<>(colony.getColonyFlag().layers());
         // Remove the extra base layer created by the above function
-        if (this.layers.size() > 1)
-            this.layers.remove(0);
     }
 
     @Override
     protected void init()
     {
         int paletteX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, 0, 0) - 70;
-
         this.colors = new ColorPalette(paletteX, this.height/2, 2, this::addRenderableWidget);
         colors.onchange = color -> setLayer(null, color);
 

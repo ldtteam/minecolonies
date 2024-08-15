@@ -1443,7 +1443,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (!result)
         {
             LivingShieldBlockEvent ev;
-            if (damageInc > 0.0F && (ev = CommonHooks.onDamageBlock(this, this.damageContainers.peek(), this.isDamageSourceBlocked(damageSource))).getBlocked())
+            if (damageInc > 0.0F && !this.damageContainers.empty() && (ev = CommonHooks.onDamageBlock(this, this.damageContainers.peek(), this.isDamageSourceBlocked(damageSource))).getBlocked())
             {
                 final float blockedDamage = this.damageContainers.peek().getBlockedDamage();
                 if (blockedDamage > 0)

@@ -3,7 +3,7 @@
   "values": [
     "minecraft:dark_forest",
     "minecraft:plains",
-    "#forge:is_plains",
+    "#c:is_plains",
     "minecraft:sunflower_plains",
     "minecraft:snowy_plains",
     "minecraft:forest",
@@ -17,7 +17,7 @@
     "minecraft:frozen_peaks",
     "minecraft:jagged_peaks",
     "minecraft:stony_peaks",
-    "#forge:is_peak",
+   "#c:is_mountain/peak",
     "minecraft:river",
     "minecraft:frozen_river",
     "minecraft:beach",

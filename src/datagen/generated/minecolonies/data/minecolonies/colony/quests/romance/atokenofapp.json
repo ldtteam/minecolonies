@@ -72,9 +72,10 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:dandelion",
+        "item": {
+          "id": "minecraft:dandelion"
+        },
         "next-objective": 3,
-        "qty": 1,
         "target": 1
       }
     },
@@ -104,8 +105,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:emerald",
-        "qty": 1
+        "item": {
+          "id": "minecraft:emerald"
+        }
       }
     },
     {

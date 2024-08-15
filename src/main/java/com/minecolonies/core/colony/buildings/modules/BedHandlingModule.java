@@ -34,7 +34,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
+        final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
             final Tag bedCompound = bedTagList.getCompound(i);

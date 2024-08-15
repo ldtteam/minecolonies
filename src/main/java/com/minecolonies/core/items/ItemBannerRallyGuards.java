@@ -310,7 +310,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final @Nullable RallyData component = banner.get(ModDataComponents.RALLY_COMPONENT);
         if (component == null)
         {
-            Log.getLogger().error("Compound corrupt, missing TAG_RALLIED_GUARDTOWERS");
             return ImmutableList.of();
         }
 

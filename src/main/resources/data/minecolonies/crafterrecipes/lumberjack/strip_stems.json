@@ -9,24 +9,24 @@
     "crafter": "lumberjack_custom",
     "inputs": [
       {
-        "item": "[NS]:[PATH]"
+        "id": "[NS]:[PATH]"
       }
     ],
     "alternate-output": [
       {
-        "item": "[NS]:stripped_[PATH]"
+        "id": "[NS]:stripped_[PATH]"
       },
       {
-        "item": "[NS]:[PATH:_stem=_hyphae]"
+        "id": "[NS]:[PATH:_stem=_hyphae]"
       },
       {
-        "item": "[NS]:stripped_[PATH:_stem=_hyphae]"
+        "id": "[NS]:stripped_[PATH:_stem=_hyphae]"
       },
       {
-        "item": "[NS]:[PATH:_stem=_wood]"
+        "id": "[NS]:[PATH:_stem=_wood]"
       },
       {
-        "item": "[NS]:stripped_[PATH:_stem=_wood]"
+        "id": "[NS]:stripped_[PATH:_stem=_wood]"
       }
     ],
     "intermediate": "minecraft:air",

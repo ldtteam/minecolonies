@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -45,9 +44,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        final CompoundTag nbt = new CompoundTag();
         Utils.serializeCodecMess(BannerPatternLayers.STREAM_CODEC, buf, this.patterns);
-        buf.writeNbt(nbt);
     }
 
     protected ColonyFlagChangeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)

@@ -15,7 +15,6 @@ public class QuestParseConstant
     public static final String NEXT_OBJ_KEY   = "next-objective";
     public static final String BLOCK_KEY = "block";
     public static final String ITEM_KEY = "item";
-    public static final String NBT_KEY = "nbt";
     public static final String NBT_MODE_KEY = "nbt-mode";
     public static final String UNLOCKS_REWARDS_KEY = "unlocks-rewards";
     public static final String ENTITY_TYPE_KEY = "entity-type";

@@ -1017,7 +1017,7 @@ public final class StandardRequestFactories
         compound.put(NBT_CHILDREN, childrenCompound);
 
         final ListTag deliveriesList = new ListTag();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(provider)));
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.saveOptional(provider)));
 
         compound.put(NBT_DELIVERIES, deliveriesList);
 

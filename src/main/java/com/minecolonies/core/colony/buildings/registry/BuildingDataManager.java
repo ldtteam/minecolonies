@@ -13,6 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.client.gui.WindowBuildingBrowser;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 public class BuildingDataManager implements IBuildingDataManager
 {
     @Override
-    public IBuilding createFrom(final IColony colony, final CompoundTag compound)
+    public IBuilding createFrom(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
         final ResourceLocation type = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
         final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
@@ -34,7 +35,7 @@ public class BuildingDataManager implements IBuildingDataManager
 
         try
         {
-            building.deserializeNBT(colony.getWorld().registryAccess(), compound);
+            building.deserializeNBT(provider, compound);
         }
         catch (final Exception ex)
         {

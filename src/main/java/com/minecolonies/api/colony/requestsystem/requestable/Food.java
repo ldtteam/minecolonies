@@ -86,15 +86,14 @@ public class Food implements IDeliverable
 
         if (!ItemStackUtils.isEmpty(food.result))
         {
-            compound.put(NBT_RESULT, food.result.save(provider));
+            compound.put(NBT_RESULT, food.result.saveOptional(provider));
         }
         if (!food.exclusionList.isEmpty())
         {
             @NotNull final ListTag items = new ListTag();
             for (@NotNull final ItemStorage item : food.exclusionList)
             {
-                @NotNull final Tag itemCompound = item.getItemStack().save(provider);
-                items.add(itemCompound);
+                items.add(item.getItemStack().saveOptional(provider));
             }
             compound.put(NBT_EXCLUSION, items);
         }

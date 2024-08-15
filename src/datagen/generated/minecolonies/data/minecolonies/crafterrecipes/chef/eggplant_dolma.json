@@ -3,25 +3,27 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "item": "minecolonies:eggplant"
+      "id": "minecolonies:eggplant"
     },
     {
-      "item": "minecolonies:feta_cheese"
+      "id": "minecolonies:feta_cheese"
     },
     {
-      "item": "minecolonies:garlic"
+      "id": "minecolonies:garlic"
     },
     {
-      "item": "minecolonies:tomato"
+      "id": "minecolonies:tomato"
     },
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:onion"
+      "id": "minecolonies:onion"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:eggplant_dolma"
+  "result": {
+    "id": "minecolonies:eggplant_dolma"
+  }
 }

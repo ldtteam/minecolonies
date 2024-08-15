@@ -59,7 +59,7 @@ public class Burnable implements IDeliverable
 
         if (!ItemStackUtils.isEmpty(burnable.result))
         {
-            compound.put(NBT_RESULT, burnable.result.save(provider));
+            compound.put(NBT_RESULT, burnable.result.saveOptional(provider));
         }
 
         return compound;

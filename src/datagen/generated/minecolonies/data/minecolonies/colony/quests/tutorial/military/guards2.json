@@ -71,29 +71,33 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:chainmail_helmet",
-        "qty": 1
+        "item": {
+          "id": "minecraft:chainmail_helmet"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:chainmail_chestplate",
-        "qty": 1
+        "item": {
+          "id": "minecraft:chainmail_chestplate"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:chainmail_leggings",
-        "qty": 1
+        "item": {
+          "id": "minecraft:chainmail_leggings"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:chainmail_boots",
-        "qty": 1
+        "item": {
+          "id": "minecraft:chainmail_boots"
+        }
       }
     }
   ],

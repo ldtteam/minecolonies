@@ -33,6 +33,7 @@ public final class NbtTagConstants
     public static final String TAG_CLAIM_DATA        = "colonyclaimdata";
     public static final String TAG_CHUNK_CLAIM       = "chunkclaimdata";
     public static final String TAG_CHUNK_POS         = "chunkpos";
+    public static final String STACK                 = "stack";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -713,7 +714,6 @@ public final class NbtTagConstants
     public static final String ITEM_PROP       = "item";
     public static final String MATCHTYPE_PROP  = "matchType";
     public static final String MATCH_NBTIGNORE = "ignore";
-    public static final String TAG_PROP        = "tag";
 
     /**
      * Version tag.
@@ -744,7 +744,7 @@ public final class NbtTagConstants
      * Supplycamp related things.
      */
     public static final String TAG_SAW_STORY     = "sawstory";
-    public static final String TAG_RANDOM_KEY     = "randkey";
+    public static final String TAG_RANDOM_KEY = "randkey";
 
     /**
      * Private constructor to hide the implicit one.

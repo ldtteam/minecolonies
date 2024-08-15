@@ -44,7 +44,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        final ItemStack waterBottle = PotionContents.createItemStack(new ItemStack(Items.POTION).getItem(), Potions.WATER);
+        final ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
 
         recipe(BAKER, MODULE_CRAFTING, "water_bottle")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.GLASS_BOTTLE))))

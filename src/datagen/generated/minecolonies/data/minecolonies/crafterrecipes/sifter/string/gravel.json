@@ -2,25 +2,25 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     },
     {
-      "item": "minecraft:iron_nugget"
+      "id": "minecraft:iron_nugget"
     },
     {
-      "item": "minecraft:flint"
+      "id": "minecraft:flint"
     },
     {
-      "item": "minecraft:coal"
+      "id": "minecraft:coal"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:gravel"
+      "id": "minecraft:gravel"
     },
     {
-      "item": "minecolonies:sifter_mesh_string"
+      "id": "minecolonies:sifter_mesh_string"
     }
   ],
   "intermediate": "minecraft:air",

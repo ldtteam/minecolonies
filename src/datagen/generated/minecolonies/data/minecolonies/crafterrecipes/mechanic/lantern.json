@@ -4,16 +4,18 @@
   "inputs": [
     {
       "count": 3,
-      "item": "minecraft:iron_nugget"
+      "id": "minecraft:iron_nugget"
     },
     {
-      "item": "minecraft:glass_bottle"
+      "id": "minecraft:glass_bottle"
     },
     {
-      "item": "minecraft:torch"
+      "id": "minecraft:torch"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 3,
-  "result": "minecraft:lantern"
+  "result": {
+    "id": "minecraft:lantern"
+  }
 }

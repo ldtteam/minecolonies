@@ -2,25 +2,25 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_flint"
+      "id": "minecolonies:sifter_mesh_flint"
     },
     {
-      "item": "minecraft:nether_wart"
+      "id": "minecraft:nether_wart"
     },
     {
-      "item": "minecraft:quartz"
+      "id": "minecraft:quartz"
     },
     {
-      "item": "minecraft:glowstone_dust"
+      "id": "minecraft:glowstone_dust"
     }
   ],
   "crafter": "sifter_custom",
   "inputs": [
     {
-      "item": "minecraft:soul_sand"
+      "id": "minecraft:soul_sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_flint"
+      "id": "minecolonies:sifter_mesh_flint"
     }
   ],
   "intermediate": "minecraft:air",

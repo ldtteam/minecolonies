@@ -1,19 +1,21 @@
 {
   "type": "recipe",
-  "count": 2,
   "crafter": "baker_crafting",
   "inputs": [
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:durum"
+      "id": "minecolonies:durum"
     },
     {
-      "item": "minecolonies:butter"
+      "id": "minecolonies:butter"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 1,
-  "result": "minecolonies:manchet_dough"
+  "result": {
+    "count": 2,
+    "id": "minecolonies:manchet_dough"
+  }
 }

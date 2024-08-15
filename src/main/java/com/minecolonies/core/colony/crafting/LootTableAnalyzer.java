@@ -81,8 +81,7 @@ public final class LootTableAnalyzer
     {
         try
         {
-            final RegistryOps<JsonElement> ops = provider.createSerializationContext(JsonOps.INSTANCE);
-            final JsonObject lootTableJson = LootTable.CODEC.encodeStart(ops, lootTable).getOrThrow().getAsJsonObject();
+            final JsonObject lootTableJson = Utils.serializeCodecMessToJson(LootTable.DIRECT_CODEC, provider, lootTable.value()).getAsJsonObject();
             return toDrops(provider, lootTableJson);
         }
         catch (final JsonParseException ex)
@@ -187,7 +186,7 @@ public final class LootTableAnalyzer
                 }
             }
             case "minecraft:loot_table" -> {
-                final ResourceLocation table = ResourceLocation.parse(GsonHelper.getAsString(entryJson, "name"));
+                final ResourceLocation table = ResourceLocation.parse(GsonHelper.getAsString(entryJson, "value"));
                 final List<LootDrop> tableDrops = toDrops(provider, ResourceKey.create(Registries.LOOT_TABLE, table));
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
@@ -345,14 +344,15 @@ public final class LootTableAnalyzer
                         break;
 
                     case "minecraft:set_components":    // SetComponentsFunction
-                        final DataComponentPatch patch = DataComponentPatch.CODEC.decode(JsonOps.INSTANCE, function.get("components")).getOrThrow().getFirst();
+                        final DataComponentPatch patch = Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, function.get("components"));
                         stack.applyComponentsAndValidate(patch);
                         break;
 
                     case "minecraft:enchant_with_levels":   // EnchantWithLevelsFunction
                         final int levels = processNumber(function.get("levels"), 1);
                         final MapCodec<Optional<HolderSet<Enchantment>>> optionsCodec = RegistryCodecs.homogeneousList(Registries.ENCHANTMENT).optionalFieldOf("options");
-                        final Optional<HolderSet<Enchantment>> options = optionsCodec.decode(JsonOps.INSTANCE, JsonOps.INSTANCE.getMap(function).getOrThrow()).getOrThrow();
+                        final RegistryOps<JsonElement> ops = provider.createSerializationContext(JsonOps.INSTANCE);
+                        final Optional<HolderSet<Enchantment>> options = optionsCodec.decode(ops, ops.getMap(function).getOrThrow()).getOrThrow();
                         final Stream<Holder<Enchantment>> enchantments = options.map(HolderSet::stream)
                                 .orElseGet(() -> provider.lookupOrThrow(Registries.ENCHANTMENT).listElements().map(IHolderExtension::getDelegate));
                         stack = EnchantmentHelper.enchantItem(RandomSource.create(), stack, levels, enchantments);

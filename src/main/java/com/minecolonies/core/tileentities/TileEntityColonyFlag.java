@@ -2,6 +2,7 @@ package com.minecolonies.core.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -26,7 +27,17 @@ public class TileEntityColonyFlag extends BlockEntity
 
     public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG.get(), pos, state); }
 
-    public BannerPatternLayers getPatterns() {
+    public BannerPatternLayers getPatterns()
+    {
+        if (level != null && level.getGameTime() % 20 == 0)
+        {
+            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, level.dimension());
+            if (view != null)
+            {
+                this.patterns = view.getColonyFlag();
+            }
+        }
+
         return this.patterns;
     }
 

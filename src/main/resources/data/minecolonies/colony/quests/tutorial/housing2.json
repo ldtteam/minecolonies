@@ -114,8 +114,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:blockminecoloniesrack",
-        "qty": 8
+        "item": {
+          "id": "minecolonies:blockminecoloniesrack",
+          "count": 8
+        }
       }
     }
   ]

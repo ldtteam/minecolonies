@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonParser;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -13,7 +14,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -21,7 +21,6 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -42,8 +41,8 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -507,7 +506,10 @@ public final class ItemStackUtils
         int value = 0;
         for (final ArmorItem.Type type : ArmorItem.Type.values())
         {
-            value += material.defense().get(type);
+            if (material.defense().containsKey(type))
+            {
+                value += material.defense().get(type);
+            }
         }
         return value + material.toughness() * 4;
     }
@@ -962,10 +964,9 @@ public final class ItemStackUtils
         {
             try
             {
-
-                stack.applyComponents(Utils.deserializeCodecMess(DataComponentPatch.CODEC, provider, TagParser.parseTag(tag)));
+                stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, JsonParser.parseString(tag)));
             }
-            catch (CommandSyntaxException e1)
+            catch (Throwable e1)
             {
                 //Unable to parse tags, drop them.
                 Log.getLogger().error("Unable to parse item definition: " + itemData);
@@ -979,29 +980,25 @@ public final class ItemStackUtils
     }
 
     /**
-     * Parses an item string (formatted for {@link #idToItemStack}) that may
-     * contain replaceable template components:
+     * Parses an item id that may contain replaceable template components:
      *
      * <pre>
      *     [NS]           => {@code baseItemId.getNamespace()}
      *     [PATH]         => {@code baseItemId.getPath()}
      *     [PATH:foo=bar] => {@code baseItemId.getPath()} but with "foo" replaced with "bar"</pre>
      *
-     * @param value      the value to parse
+     * @param itemId     the id to parse
      * @param baseItemId the base item id to use to fill in the components
      * @return a tuple of (boolean, result), where the boolean is false if result didn't resolve to a valid item
      */
     @NotNull
-    public static Tuple<Boolean, String> parseIdTemplate(@Nullable final String value,
+    public static Tuple<Boolean, String> parseIdTemplate(@Nullable String itemId,
                                                          @NotNull final ResourceLocation baseItemId)
     {
-        if (value == null)
+        if (itemId == null)
         {
             return new Tuple<>(false, null);
         }
-
-        final int nbtIndex = value.indexOf('{');
-        String itemId = nbtIndex < 0 ? value : value.substring(0, nbtIndex);
 
         itemId = itemId.replace("[NS]", baseItemId.getNamespace());
         itemId = TEMPLATE_PATH_PATTERN.matcher(itemId).replaceAll(m ->
@@ -1013,8 +1010,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)),
-                itemId + (nbtIndex >= 0 ? value.substring(nbtIndex) : ""));
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)), itemId);
     }
 
     /**

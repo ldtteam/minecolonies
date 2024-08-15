@@ -219,7 +219,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             showLootTooltip = false;
             drops.addAll(recipe.getAdditionalOutputs().stream()
                     .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, 0, false))
-                    .collect(Collectors.toList()));
+                    .toList());
         }
         if (!drops.isEmpty())
         {

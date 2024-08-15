@@ -2,29 +2,31 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:netherite_upgrade_smithing_template"
+      "id": "minecraft:netherite_upgrade_smithing_template"
     }
   ],
   "crafter": "blacksmith_crafting",
   "inputs": [
     {
-      "item": "minecraft:diamond_hoe"
+      "id": "minecraft:diamond_hoe"
     },
     {
-      "item": "minecraft:netherite_upgrade_smithing_template"
+      "id": "minecraft:netherite_upgrade_smithing_template"
     },
     {
-      "item": "minecraft:netherite_ingot"
+      "id": "minecraft:netherite_ingot"
     },
     {
       "count": 7,
-      "item": "minecraft:diamond"
+      "id": "minecraft:diamond"
     },
     {
-      "item": "minecraft:netherrack"
+      "id": "minecraft:netherrack"
     }
   ],
   "intermediate": "minecraft:air",
   "min-building-level": 4,
-  "result": "minecraft:netherite_hoe"
+  "result": {
+    "id": "minecraft:netherite_hoe"
+  }
 }
