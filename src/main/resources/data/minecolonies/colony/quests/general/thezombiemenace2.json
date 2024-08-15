@@ -89,8 +89,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:diamond",
-        "qty": 1
+        "item": {
+          "id": "minecraft:diamond"
+        }
       }
     },
     {

@@ -243,8 +243,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:questlog",
-        "qty": 1
+        "item": {
+          "id": "minecolonies:questlog"
+        }
       }
     },
     {

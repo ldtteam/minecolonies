@@ -123,8 +123,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:book",
-        "qty": 8
+        "item": {
+          "id": "minecraft:book",
+          "count": 8
+        }
       }
     }
   ]

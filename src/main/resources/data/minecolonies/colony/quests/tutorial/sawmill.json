@@ -151,8 +151,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:diamond",
-        "qty": 3
+        "item": {
+          "id": "minecraft:diamond",
+          "count": 3
+        }
       }
     }
   ]

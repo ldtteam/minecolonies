@@ -48,18 +48,21 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:wheat",
+        "item": {
+          "count": 2,
+          "id": "minecraft:wheat"
+        },
         "next-objective": 2,
-        "qty": 2,
         "target": 0
       }
     },
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:cocoa_beans",
+        "item": {
+          "id": "minecraft:cocoa_beans"
+        },
         "next-objective": 3,
-        "qty": 1,
         "target": 0
       }
     },
@@ -127,9 +130,11 @@
     {
       "type": "minecolonies:delivery",
       "details": {
-        "item": "minecraft:cookie",
+        "item": {
+          "count": 8,
+          "id": "minecraft:cookie"
+        },
         "next-objective": 7,
-        "qty": 8,
         "target": 1
       }
     },
@@ -199,15 +204,18 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:cookie",
-        "qty": 8
+        "item": {
+          "count": 8,
+          "id": "minecraft:cookie"
+        }
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:emerald",
-        "qty": 1
+        "item": {
+          "id": "minecraft:emerald"
+        }
       }
     },
     {

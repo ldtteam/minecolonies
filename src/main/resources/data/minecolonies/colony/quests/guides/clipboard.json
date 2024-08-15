@@ -58,8 +58,9 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": "minecolonies:clipboard",
-        "qty": 1,
+        "item": {
+          "id": "minecolonies:clipboard"
+        },
         "next-objective": 2
       }
     },
@@ -83,8 +84,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:clipboard",
-        "qty": 1
+        "item": {
+          "id": "minecolonies:clipboard"
+        }
       }
     }
   ]

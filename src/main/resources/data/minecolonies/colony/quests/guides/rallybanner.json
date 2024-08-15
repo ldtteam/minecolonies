@@ -101,9 +101,10 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": "minecolonies:banner_rally_guards",
+        "item": {
+          "id": "minecolonies:banner_rally_guards"
+        },
         "nbt-mode": "any",
-        "qty": 1,
         "next-objective": 4
       }
     },
@@ -127,8 +128,9 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecolonies:banner_rally_guards",
-        "qty": 1
+        "item": {
+          "id": "minecolonies:banner_rally_guards"
+        }
       }
     }
   ]

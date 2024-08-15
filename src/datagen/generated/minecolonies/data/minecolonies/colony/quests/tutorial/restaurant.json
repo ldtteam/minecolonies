@@ -143,8 +143,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:coal",
-        "qty": 16
+        "item": {
+          "count": 16,
+          "id": "minecraft:coal"
+        }
       }
     }
   ],

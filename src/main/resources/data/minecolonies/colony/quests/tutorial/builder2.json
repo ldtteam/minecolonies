@@ -114,8 +114,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:lantern",
-        "qty": 8
+        "item": {
+          "id": "minecraft:lantern",
+          "count": 8
+        }
       }
     }
   ]

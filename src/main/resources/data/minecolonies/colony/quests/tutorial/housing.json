@@ -158,8 +158,10 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": "minecraft:white_wool",
-        "qty": 16
+        "item": {
+          "id": "minecraft:white_wool",
+          "count": 16
+        }
       }
     }
   ]
