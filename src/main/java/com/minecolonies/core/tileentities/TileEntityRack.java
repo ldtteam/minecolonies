@@ -17,7 +17,6 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -397,12 +396,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); i++)
         {
-            final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
-            if (!inventoryCompound.contains(TAG_EMPTY))
-            {
-                final ItemStack stack = ItemStack.parseOptional(provider, inventoryCompound.getCompound(NbtTagConstants.STACK));
-                inventory.setStackInSlot(i, stack);
-            }
+            inventory.setStackInSlot(i, ItemStack.parseOptional(provider,  inventoryTagList.getCompound(i)));
         }
 
         updateContent();
@@ -430,17 +424,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final CompoundTag inventoryCompound = new CompoundTag();
-            final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack.isEmpty())
-            {
-                inventoryCompound.putBoolean(TAG_EMPTY, true);
-            }
-            else
-            {
-                inventoryCompound.put(NbtTagConstants.STACK, stack.save(provider));
-            }
-            inventoryTagList.add(inventoryCompound);
+            inventoryTagList.add(inventory.getStackInSlot(slot).saveOptional(provider));
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
