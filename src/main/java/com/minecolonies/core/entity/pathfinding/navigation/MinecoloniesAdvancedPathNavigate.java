@@ -6,10 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
@@ -398,11 +395,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         final BlockPos blockpos = pos.below();
         final VoxelShape voxelshape = world.getBlockState(blockpos).getCollisionShape(world, blockpos);
-        if (voxelshape.isEmpty() || voxelshape.max(Direction.Axis.Y) < 1.0)
+        final double maxY = ShapeUtil.max(voxelshape, Direction.Axis.Y);
+        if (maxY < 1.0)
         {
             return pos.getY();
         }
-        return blockpos.getY() + voxelshape.max(Direction.Axis.Y);
+        return blockpos.getY() + maxY;
     }
 
     @Nullable
