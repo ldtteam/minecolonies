@@ -10,8 +10,8 @@ import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
 import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
 import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
@@ -134,6 +134,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public ServerConfiguration(final Builder builder)
     {
         super(builder, MOD_ID);
+        final Predicate<Object> stringValidator = s -> s instanceof String;
 
         createCategory("gameplay");
 
@@ -160,7 +161,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory("research");
         researchCreativeCompletion = defineBoolean("researchcreativecompletion", true);
         researchDebugLog = defineBoolean("researchdebuglog", false);
-        researchResetCost = defineList("researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
+        researchResetCost = defineList("researchresetcost", () -> "item ID, possibly with data", stringValidator, "minecolonies:ancienttome:1");
 
         swapToCategory("commands");
 
@@ -200,52 +201,50 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean("enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList("freetointeractblocks",
-          Arrays.asList
-                  ("dirt",
-                    "0 0 0"),
-          s -> s instanceof String);
+        freeToInteractBlocks = defineList("freetointeractblocks", () -> "block ID or position (x y z)", stringValidator, "dirt", "0 0 0");
 
         swapToCategory("compatibility");
 
         configListStudyItems = defineList("configliststudyitems",
-          Arrays.asList
-                  ("minecraft:paper;400;100", "minecraft:book;600;10"),
-          s -> s instanceof String);
+            () -> "item ID;skillChance;breakChance",
+            stringValidator,
+            "minecraft:paper;400;100",
+            "minecraft:book;600;10");
 
         configListRecruitmentItems = defineList("configlistrecruitmentitems",
-          Arrays.asList
-                  ("minecraft:hay_block;3",
-                    "minecraft:book;2",
-                    "minecraft:enchanted_book;9",
-                    "minecraft:diamond;9",
-                    "minecraft:emerald;8",
-                    "minecraft:baked_potato;1",
-                    "minecraft:gold_ingot;2",
-                    "minecraft:redstone;2",
-                    "minecraft:lapis_lazuli;2",
-                    "minecraft:cake;11",
-                    "minecraft:sunflower;5",
-                    "minecraft:honeycomb;6",
-                    "minecraft:quartz;3"),
-          s -> s instanceof String);
+            () -> "item ID;rarity",
+            stringValidator,
+            "minecraft:hay_block;3",
+            "minecraft:book;2",
+            "minecraft:enchanted_book;9",
+            "minecraft:diamond;9",
+            "minecraft:emerald;8",
+            "minecraft:baked_potato;1",
+            "minecraft:gold_ingot;2",
+            "minecraft:redstone;2",
+            "minecraft:lapis_lazuli;2",
+            "minecraft:cake;11",
+            "minecraft:sunflower;5",
+            "minecraft:honeycomb;6",
+            "minecraft:quartz;3");
         luckyOres = defineList("luckyores",
-          Arrays.asList
-                  ("minecraft:coal_ore!64",
-                    "minecraft:copper_ore!48",
-                    "minecraft:iron_ore!32",
-                    "minecraft:gold_ore!16",
-                    "minecraft:redstone_ore!8",
-                    "minecraft:lapis_ore!4",
-                    "minecraft:diamond_ore!2",
-                    "minecraft:emerald_ore!1"),
-          s -> s instanceof String);
+            () -> "item ID!rarity!building level",
+            stringValidator,
+            "minecraft:coal_ore!64",
+            "minecraft:copper_ore!48",
+            "minecraft:iron_ore!32",
+            "minecraft:gold_ore!16",
+            "minecraft:redstone_ore!8",
+            "minecraft:lapis_ore!4",
+            "minecraft:diamond_ore!2",
+            "minecraft:emerald_ore!1");
 
         diseases = defineList("diseases",
-          Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
+            () -> "name,rarity,item IDs",
+            stringValidator,
+            "Influenza,100,minecraft:carrot,minecraft:potato",
             "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
-          s -> s instanceof String);
+            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple");
 
         auditCraftingTags = defineBoolean("auditcraftingtags", false);
         debugInventories = defineBoolean("debuginventories", false);

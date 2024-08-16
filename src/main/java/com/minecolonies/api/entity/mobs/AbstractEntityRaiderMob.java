@@ -518,6 +518,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
 
     @Nullable
     @Override
+    @SuppressWarnings("deprecation") // override-only
     public SpawnGroupData finalizeSpawn(
       final ServerLevelAccessor worldIn,
       final DifficultyInstance difficultyIn,

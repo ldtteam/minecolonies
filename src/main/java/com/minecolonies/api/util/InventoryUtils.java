@@ -115,6 +115,7 @@ public class InventoryUtils
      */
     public static Item getItemFromBlock(final Block block)
     {
+        // TODO: reevaluate/replace by logic from blockui common package
         return Item.byBlock(block);
     }
 

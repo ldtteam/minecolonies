@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER;
@@ -233,8 +232,8 @@ public class BuildingDyer extends AbstractBuilding
         {
             if (woolItems == null)
             {
-                woolItems = StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false)
-                  .filter(item -> !item.equals(Items.WHITE_WOOL))
+                woolItems = BuiltInRegistries.ITEM.getOrCreateTag(ItemTags.WOOL).stream()
+                  .filter(item -> !item.value().equals(Items.WHITE_WOOL))
                   .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
             }
             return woolItems;

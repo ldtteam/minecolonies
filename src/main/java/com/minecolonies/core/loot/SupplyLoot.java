@@ -68,12 +68,12 @@ public class SupplyLoot extends LootModifier
             if (camp)
             {
                 LootTable stingerLootTable = lootContext.getLevel().getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_CAMP_LT));
-                stingerLootTable.getRandomItemsRaw(lootContext, generatedLoot::add);
+                stingerLootTable.getRandomItems(lootContext, generatedLoot::add);
             }
             else
             {
                 LootTable stingerLootTable = lootContext.getLevel().getServer().reloadableRegistries().getLootTable(ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_SHIP_LT));
-                stingerLootTable.getRandomItemsRaw(lootContext, generatedLoot::add);
+                stingerLootTable.getRandomItems(lootContext, generatedLoot::add);
             }
         }
         return generatedLoot;

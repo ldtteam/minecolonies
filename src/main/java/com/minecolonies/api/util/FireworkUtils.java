@@ -78,7 +78,7 @@ public final class FireworkUtils
         final ItemStack fireworkItem = new ItemStack(Items.FIREWORK_ROCKET);
         List<FireworkExplosion> list = new ArrayList<>();
 
-        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getFireworkColor).toList();
+        final int[] dyeColors = Arrays.stream(DyeColor.values()).mapToInt(DyeColor::getFireworkColor).toArray();
 
         for (int i = 0; i < explosionAmount; i++)
         {
@@ -91,7 +91,7 @@ public final class FireworkUtils
 
             for (int ia = 0; ia < numberOfColours; ia++)
             {
-                colors.add(dyeColors.get(rand.nextInt(15)));
+                colors.add(dyeColors[rand.nextInt(15)]);
             }
             explosionTag.putIntArray(TAG_COLORS, colors);
             list.add(new FireworkExplosion(FireworkExplosion.Shape.values()[rand.nextInt(FireworkExplosion.Shape.values().length)], colors, colors, rand.nextInt(2) == 0, rand.nextInt(2) == 0));
