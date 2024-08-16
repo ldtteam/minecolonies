@@ -18,7 +18,6 @@ import com.minecolonies.core.client.gui.WindowSupplyStory;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -30,12 +29,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RANDOM_KEY;
@@ -85,10 +84,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        final SupplyData currentComponent = ctx.getItemInHand().getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(ctx.getItemInHand());
         if (currentComponent.randomKey == -1)
         {
-            ctx.getItemInHand().set(ModDataComponents.SUPPLY_COMPONENT, new SupplyData(currentComponent.sawStory, currentComponent.instantPlacement, ctx.getClickedPos().asLong()));
+            currentComponent.withRandomKey(ctx.getClickedPos().asLong()).writeToItemStack(ctx.getItemInHand());
         }
 
         if (ctx.getLevel().isClientSide)
@@ -108,10 +107,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
-        final SupplyData currentComponent = stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
         if (currentComponent.randomKey == -1)
         {
-            stack.set(ModDataComponents.SUPPLY_COMPONENT, new SupplyData(currentComponent.sawStory, currentComponent.instantPlacement, playerIn.blockPosition().asLong()));
+            currentComponent.withRandomKey(playerIn.blockPosition().asLong()).writeToItemStack(stack);
         }
 
         if (worldIn.isClientSide)
@@ -140,7 +139,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
                               ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                               : SUPPLY_SHIP_STRUCTURE_NAME;
 
-        final SupplyData currentComponent = itemInHand.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(itemInHand);
         if (!currentComponent.sawStory)
         {
             new WindowSupplyStory(pos, name, itemInHand, hand).open();
@@ -263,7 +262,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
 
     public record SupplyData(boolean sawStory, boolean instantPlacement, long randomKey)
     {
-        public static       DeferredHolder<DataComponentType<?>, DataComponentType<SupplyData>> TYPE  = null;
         public static final SupplyData EMPTY = new SupplyData(false, false, -1);
 
         public static final Codec<SupplyData> CODEC = RecordCodecBuilder.create(
@@ -275,9 +273,34 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
 
         public static final StreamCodec<RegistryFriendlyByteBuf, SupplyData> STREAM_CODEC =
           StreamCodec.composite(
-            ByteBufCodecs.fromCodec(Codec.BOOL), SupplyData::sawStory,
-            ByteBufCodecs.fromCodec(Codec.BOOL), SupplyData::instantPlacement,
-            ByteBufCodecs.fromCodec(Codec.LONG), SupplyData::randomKey,
+            ByteBufCodecs.BOOL, SupplyData::sawStory,
+            ByteBufCodecs.BOOL, SupplyData::instantPlacement,
+            ByteBufCodecs.VAR_LONG, SupplyData::randomKey,
             SupplyData::new);
+
+        public SupplyData withSawStory(final boolean sawStory)
+        {
+            return new SupplyData(sawStory, instantPlacement, randomKey);
+        }
+
+        public SupplyData withRandomKey(final long randomKey)
+        {
+            return new SupplyData(sawStory, instantPlacement, randomKey);
+        }
+
+        public void writeToItemStack(final ItemStack itemStack)
+        {
+            itemStack.set(ModDataComponents.SUPPLY_COMPONENT, this);
+        }
+
+        public static SupplyData readFromItemStack(final ItemStack itemStack)
+        {
+            return itemStack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, SupplyData.EMPTY);
+        }
+
+        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<SupplyData> updater)
+        {
+            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
+        }
     }
 }

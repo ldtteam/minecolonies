@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData.Builder;
 import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.minecolonies.api.util.CraftingUtils;
 import net.minecraft.core.HolderLookup;
@@ -63,13 +64,13 @@ public class ItemNbtCalculator implements DataProvider
                 {
                     if (item.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IMateriallyTexturedBlock texturedBlock)
                     {
-                        final Map<ResourceLocation, Block> texturedComponents = new HashMap<>();
+                        final Builder builder = MaterialTextureData.builder();
                         for (final IMateriallyTexturedBlockComponent key : texturedBlock.getComponents())
                         {
-                            texturedComponents.put(key.getId(), key.getDefault());
+                            builder.setComponent(key.getId(), key.getDefault());
                         }
                         final ItemStack copy = item.copy();
-                        copy.set(ModDataComponents.TEXTURE_DATA, new MaterialTextureData(texturedComponents));
+                        builder.writeToItemStack(copy);
                         listBuilder.add(copy);
                     }
                     else

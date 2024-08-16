@@ -16,6 +16,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.ModDataComponents.HutBlockData;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
@@ -153,7 +155,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
 
-                final ModDataComponents.ColonyId colonyComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+                final ModDataComponents.ColonyId colonyComponent = ColonyId.readFromItemStack(stack);
                 if (colonyComponent != null && tempColony != null && tempColony.getID() != colonyComponent.id())
                 {
                     MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
@@ -186,7 +188,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 int level = 0;
                 boolean finishedUpgrade = false;
-                final ModDataComponents.HutBlockData hutComponent = stack.get(ModDataComponents.HUT_COMPONENT);
+                final ModDataComponents.HutBlockData hutComponent = HutBlockData.readFromItemStack(stack);
                 if (hutComponent != null)
                 {
                     if (hutComponent.level() != -1)

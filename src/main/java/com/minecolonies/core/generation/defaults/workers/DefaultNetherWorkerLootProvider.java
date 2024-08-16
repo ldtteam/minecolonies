@@ -204,7 +204,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
     {
         final ItemStack stack = new ItemStack(ModItems.adventureToken);
-        stack.set(ModDataComponents.ADVENTURE_COMPONENT, new ItemAdventureToken.AdventureData(mob, damage_done, xp_gained));
+        new ItemAdventureToken.AdventureData(mob, damage_done, xp_gained).writeToItemStack(stack);
 
         return SimpleLootTableProvider.itemStack(stack);
     }

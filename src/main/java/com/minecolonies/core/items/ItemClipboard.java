@@ -1,6 +1,5 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.core.client.gui.WindowClipBoard;
@@ -52,7 +51,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            clipboard.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()));
+            new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(clipboard);
 
             if (!ctx.getLevel().isClientSide)
             {
@@ -99,15 +98,11 @@ public class ItemClipboard extends AbstractItemMinecolonies
      * @param player the player entity opening the window
      */
     private static void openWindow(ItemStack stack, Level world, Player player)
-    {
-        final ModDataComponents.ColonyId component = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-        if (component != null)
+    {        
+        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        if (colonyView != null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(component.id(), component.dimension());
-            if (colonyView != null)
-            {
-                new WindowClipBoard(colonyView).open();
-            }
+            new WindowClipBoard(colonyView).open();
         }
         else
         {

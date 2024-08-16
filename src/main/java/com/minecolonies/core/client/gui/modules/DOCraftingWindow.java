@@ -9,7 +9,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
@@ -128,7 +127,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
         if (stack.isEmpty()) return false;
 
-        final MaterialTextureData textureData = stack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
+        final MaterialTextureData textureData = MaterialTextureData.readFromItemStack(stack);
         if (textureData.isEmpty()) return false;
 
         for (final Block block : textureData.getTexturedComponents().values())
@@ -148,7 +147,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         {
             final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
             final IMateriallyTexturedBlock block = DomumOrnamentumUtils.getBlock(stack);
-            final MaterialTextureData textureData = stack.getOrDefault(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);;
+            final MaterialTextureData textureData = MaterialTextureData.readFromItemStack(stack);
             if (block != null && !textureData.isEmpty())     // should always be true due to predicate, but hey you never know...
             {
                 int slot = 0;

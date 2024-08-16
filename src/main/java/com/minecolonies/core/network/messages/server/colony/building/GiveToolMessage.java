@@ -55,8 +55,8 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
-        scepter.set(ModDataComponents.POS_COMPONENT, new ModDataComponents.Pos(building.getID()));
-        scepter.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(colony.getID(), colony.getDimension()));
+        new ModDataComponents.Pos(building.getID()).writeToItemStack(scepter);
+        new ModDataComponents.ColonyId(colony.getID(), colony.getDimension()).writeToItemStack(scepter);
 
         player.getInventory().setChanged();
     }

@@ -51,7 +51,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            questLog.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()));
+            new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(questLog);
             if (!ctx.getLevel().isClientSide)
             {
                 MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
@@ -100,14 +100,10 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     private static void openWindow(ItemStack stack, Level world, Player player)
     {
-        final ModDataComponents.ColonyId component = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-        if (component != null)
+        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        if (colonyView != null)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(component.id(), component.dimension());
-            if (colonyView != null)
-            {
-                new WindowQuestLog(colonyView).open();
-            }
+            new WindowQuestLog(colonyView).open();
         }
         else
         {

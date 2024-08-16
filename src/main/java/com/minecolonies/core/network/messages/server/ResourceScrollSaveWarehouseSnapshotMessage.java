@@ -2,7 +2,7 @@ package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.Pos;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemResourceScroll;
 import net.minecraft.core.BlockPos;
@@ -83,9 +83,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     {
         player.getInventory().items.stream()
           .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
-          .filter(stack -> Objects.equals(builderPos, stack.getOrDefault(ModDataComponents.POS_COMPONENT, ModDataComponents.Pos.EMPTY).pos()))
-          .forEach(stack -> {
-              stack.set(ModDataComponents.WAREHOUSE_SNAPSHOT_COMPONENT, new ItemResourceScroll.WarehouseSnapshot(snapshot, workOrderHash));
-          });
+          .filter(stack -> Objects.equals(builderPos, Pos.readFromItemStack(stack).pos()))
+          .forEach(stack -> new ItemResourceScroll.WarehouseSnapshot(snapshot, workOrderHash).writeToItemStack(stack));
     }
 }

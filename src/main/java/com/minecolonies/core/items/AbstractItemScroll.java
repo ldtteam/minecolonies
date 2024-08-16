@@ -1,7 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -121,8 +120,8 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 
         if (te instanceof TileEntityColonyBuilding colonyBuilding)
         {
-            scroll.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(colonyBuilding.getColonyId(), ((TileEntityColonyBuilding) te).getColony().getDimension()));
-            scroll.set(ModDataComponents.POS_COMPONENT, new ModDataComponents.Pos(ctx.getClickedPos()));
+            new ModDataComponents.ColonyId(colonyBuilding.getColonyId(), ((TileEntityColonyBuilding) te).getColony().getDimension()).writeToItemStack(scroll);
+            new ModDataComponents.Pos(ctx.getClickedPos()).writeToItemStack(scroll);
 
             MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
         }
@@ -145,13 +144,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      */
     protected IColony getColony(final ItemStack stack)
     {
-        final ModDataComponents.ColonyId colonyId = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-        if (colonyId == null)
-        {
-            return null;
-        }
-
-        return IColonyManager.getInstance().getColonyByDimension(colonyId.id(), colonyId.dimension());
+        return ModDataComponents.ColonyId.readColonyFromItemStack(stack);
     }
 
     /**
@@ -162,12 +155,6 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      */
     protected IColony getColonyView(final ItemStack stack)
     {
-        final ModDataComponents.ColonyId colonyId = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-        if (colonyId == null)
-        {
-            return null;
-        }
-
-        return IColonyManager.getInstance().getColonyView(colonyId.id(), colonyId.dimension());
+        return ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
     }
 }

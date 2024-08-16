@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.items.IBlockOverlayItem;
 import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.ModDataComponents.Pos;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -58,15 +60,14 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
         final Player player = useContext.getPlayer();
 
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
-        final ModDataComponents.ColonyId colonyIdComponent = scepter.get(ModDataComponents.COLONY_ID_COMPONENT);
-        final ModDataComponents.Pos posComponent = scepter.get(ModDataComponents.POS_COMPONENT);
+        final IColony colony = ColonyId.readColonyFromItemStack(scepter);
+        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(scepter);
 
-        if (colonyIdComponent == null || posComponent == null)
+        if (colony == null || posComponent == null)
         {
             return InteractionResult.FAIL;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyIdComponent.id(), colonyIdComponent.dimension());
         final BlockPos hutPos = posComponent.pos();
 
         final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
@@ -112,16 +113,14 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
-        final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-        final ModDataComponents.Pos posComponent = stack.get(ModDataComponents.POS_COMPONENT);
+        final IColonyView colony = ColonyId.readColonyViewFromItemStack(stack);
+        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(stack);
 
-        if (colonyIdComponent == null || posComponent == null)
+        if (colony == null || posComponent == null)
         {
             return Collections.emptyList();
         }
 
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
         final BlockPos pos = posComponent.pos();
 
         if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)

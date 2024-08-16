@@ -8,6 +8,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.items.ItemAdventureToken;
+import com.minecolonies.core.items.ItemAdventureToken.AdventureData;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
@@ -270,7 +271,7 @@ public final class LootTableAnalyzer
       @NotNull final HolderLookup.Provider provider,
       @NotNull final ItemStack token)
     {
-        final ItemAdventureToken.AdventureData component = token.get(ADVENTURE_COMPONENT);
+        final ItemAdventureToken.AdventureData component = AdventureData.readFromItemStack(token);
         if (component != null)
         {
             return toDrops(provider, component.entityType().getDefaultLootTable());

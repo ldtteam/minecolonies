@@ -1,10 +1,11 @@
 package com.minecolonies.core.items;
 
-import com.ldtteam.structurize.component.ModDataComponents;
-import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
+import com.ldtteam.structurize.items.AbstractItemWithPosSelector.PosSelection;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.IBlockOverlayItem;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.ModDataComponents.Pos;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack;
@@ -57,8 +58,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
         MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_B_SET).sendTo(context.getPlayer());
 
-        final AbstractItemWithPosSelector.PosSelection component = scepter.getOrDefault(ModDataComponents.POS_SELECTION, AbstractItemWithPosSelector.PosSelection.EMPTY);
-        scepter.set(ModDataComponents.POS_SELECTION, new AbstractItemWithPosSelector.PosSelection(Optional.of(context.getClickedPos()), component.endPos()));
+        PosSelection.updateItemStack(scepter, selection -> selection.setStartPos(context.getClickedPos()));
         storeRestrictedArea(context.getPlayer(), scepter, context.getLevel());
         return InteractionResult.FAIL;
     }
@@ -70,8 +70,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         {
             final ItemStack scepter = player.getMainHandItem();
             MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_A_SET).sendTo(player);
-            final AbstractItemWithPosSelector.PosSelection component = scepter.getOrDefault(ModDataComponents.POS_SELECTION, AbstractItemWithPosSelector.PosSelection.EMPTY);
-            scepter.set(ModDataComponents.POS_SELECTION, new AbstractItemWithPosSelector.PosSelection(component.startPos(), Optional.of(pos)));
+            PosSelection.updateItemStack(scepter, selection -> selection.setStartPos(pos));
             storeRestrictedArea(player, scepter, world);
         }
 
@@ -84,7 +83,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
 
     private void storeRestrictedArea(final Player player, final ItemStack scepter, final Level worldIn)
     {
-        final AbstractItemWithPosSelector.PosSelection component = scepter.getOrDefault(ModDataComponents.POS_SELECTION, AbstractItemWithPosSelector.PosSelection.EMPTY);
+        final PosSelection component = PosSelection.readFromItemStack(scepter);
         final Box box = getBox(worldIn, scepter, component.startPos(), component.endPos());
 
         if (box.anchor() == null || box.corners() == null)
@@ -114,14 +113,13 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
             return;
         }
 
-        final com.minecolonies.api.items.ModDataComponents.ColonyId colonyId = scepter.get(com.minecolonies.api.items.ModDataComponents.COLONY_ID_COMPONENT);
-        if (colonyId == null)
+        final IColony colony = ColonyId.readColonyFromItemStack(scepter);
+        if (colony == null)
         {
             return;
         }
         MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minY, maxY, minZ, maxZ, volume, maxVolume).sendTo(player);
 
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId.id(), colonyId.dimension());
         final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(box.anchor(), BuildingLumberjack.class);
         if (hut == null)
         {
@@ -135,7 +133,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
-        final AbstractItemWithPosSelector.PosSelection component = stack.getOrDefault(ModDataComponents.POS_SELECTION, AbstractItemWithPosSelector.PosSelection.EMPTY);
+        final PosSelection component = PosSelection.readFromItemStack(stack);
         final Box box = getBox(world, stack, component.startPos(), component.endPos());
 
         if (box.anchor() != null)
@@ -162,12 +160,12 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     @NotNull
     private Box getBox(@NotNull final Level world, final ItemStack stack, final Optional<BlockPos> startPos, final Optional<BlockPos> endPos)
     {
-        final com.minecolonies.api.items.ModDataComponents.ColonyId colonyId = stack.get(com.minecolonies.api.items.ModDataComponents.COLONY_ID_COMPONENT);
+        final ColonyId colonyId = ColonyId.readFromItemStack(stack);
         if (colonyId == null)
         {
             return new Box(null, null);
         }
-        final com.minecolonies.api.items.ModDataComponents.Pos posComponent = stack.get(com.minecolonies.api.items.ModDataComponents.POS_COMPONENT);
+        final Pos posComponent = Pos.readFromItemStack(stack);
         final BlockPos start = startPos.orElse(null);
         final BlockPos end = endPos.orElse(null);
 

@@ -10,6 +10,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.ModDataComponents.HutBlockData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
@@ -100,7 +102,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
 
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
-            final ModDataComponents.ColonyId colonyId = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
+            final ModDataComponents.ColonyId colonyId = ColonyId.readFromItemStack(stack);
             if (colony != null && colonyId != null && colony.getID() != colonyId.id())
             {
                 MessageUtils.format(WRONG_COLONY, colonyId.id()).sendTo(player);
@@ -122,7 +124,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
                     hut.setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
                     state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
-                    final ModDataComponents.HutBlockData hutComponent = stack.get(ModDataComponents.HUT_COMPONENT);
+                    final ModDataComponents.HutBlockData hutComponent = HutBlockData.readFromItemStack(stack);
                     if (hutComponent != null)
                     {
                         final IBuilding building = colony.getBuildingManager().getBuilding(pos);

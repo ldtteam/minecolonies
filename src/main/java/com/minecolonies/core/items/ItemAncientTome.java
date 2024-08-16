@@ -33,13 +33,15 @@ public class ItemAncientTome extends AbstractItemMinecolonies
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.blockPosition());
             if (colony != null)
             {
-                stack.set(ModDataComponents.BOOL_COMPONENT, new ModDataComponents.Bool(colony.getRaiderManager().willRaidTonight()));
+                new ModDataComponents.Bool(colony.getRaiderManager().willRaidTonight()).writeToItemStack(stack);
+                
             }
         }
     }
 
+    @Override
     public boolean isFoil(final ItemStack stack)
     {
-        return stack.getOrDefault(ModDataComponents.BOOL_COMPONENT, ModDataComponents.Bool.EMPTY).does();
+        return ModDataComponents.Bool.readFromItemStack(stack).does();
     }
 }

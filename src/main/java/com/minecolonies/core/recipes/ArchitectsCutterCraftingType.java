@@ -65,7 +65,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
 
             final ItemStack output = recipe.getResultItem(world.registryAccess()).copy();
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
-            output.set(ModDataComponents.TEXTURE_DATA, MaterialTextureData.EMPTY);
+            MaterialTextureData.EMPTY.writeToItemStack(output);
 
             recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
                     inputs, 3, Blocks.AIR, null, ToolType.NONE, new ArrayList<>(), -1));

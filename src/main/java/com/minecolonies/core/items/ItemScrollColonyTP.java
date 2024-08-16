@@ -2,6 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.Desc;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -125,14 +126,14 @@ public class ItemScrollColonyTP extends AbstractItemScroll
         tooltip.add(guiHint);
 
         MutableComponent colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
-        final ModDataComponents.Desc component = stack.get(ModDataComponents.DESC_COMPONENT);
+        final ModDataComponents.Desc component = Desc.readFromItemStack(stack);
         if (component == null)
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
                 colonyDesc = Component.literal(colony.getName());
-                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(colony.getName()));
+                new ModDataComponents.Desc(colony.getName()).writeToItemStack(stack);
             }
         }
         else

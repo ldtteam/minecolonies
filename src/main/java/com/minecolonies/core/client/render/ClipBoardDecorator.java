@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -37,11 +38,7 @@ public class ClipBoardDecorator implements IItemDecorator
 
         if (render)
         {
-            final ModDataComponents.ColonyId colonyIdComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-
-            if (colonyIdComponent != null)
-            {
-                colonyView = IColonyManager.getInstance().getColonyView(colonyIdComponent.id(), colonyIdComponent.dimension());
+            colonyView = ColonyId.readColonyViewFromItemStack(stack);
 
                 if (colonyView != null)
                 {
@@ -88,7 +85,6 @@ public class ClipBoardDecorator implements IItemDecorator
                         }
                     }
                 }
-            }
         }
         return false;
     }

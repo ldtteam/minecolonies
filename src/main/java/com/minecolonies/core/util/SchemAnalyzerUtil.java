@@ -158,7 +158,7 @@ public class SchemAnalyzerUtil
                     // Estimate for do recipes giving higher output per block usually, increased minimum of 2 due to added complexity for crafting
                     blockComplexity = Math.max(2, doComplexity / 3);
 
-                    result.set(ModDataComponents.TEXTURE_DATA, textureData);
+                    textureData.writeToItemStack(result);
                 }
 
                 storage = new ItemStorage(result);

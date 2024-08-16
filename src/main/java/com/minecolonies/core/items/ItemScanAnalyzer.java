@@ -3,16 +3,15 @@ package com.minecolonies.core.items;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.component.ModDataComponents;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
+import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.client.gui.WindowSchematicAnalyzer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -28,10 +27,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 import static com.minecolonies.api.items.ModDataComponents.TIME_COMPONENT;
@@ -104,7 +103,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
 
         final ItemStack itemstack = playerIn.getItemInHand(handIn);
-        final PosSelection component = itemstack.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
+        final PosSelection component = PosSelection.readFromItemStack(itemstack);
         final BlockPos firstPos = component.startPos().orElse(null);
         final BlockPos secondPos = component.endPos().orElse(null);
 
@@ -127,7 +126,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             {
                 lastPos = start;
                 lastPos2 = end;
-                final PosSelection data = itemStack.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
+                final PosSelection data = PosSelection.readFromItemStack(itemStack);
 
                 blueprint = saveStructure(worldIn, playerIn, AABB.encapsulatingFullBlocks(data.startPos().orElse(null), data.endPos().orElse(null)));
             }
@@ -150,7 +149,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      */
     private void openAreaBox(final ItemStack tool)
     {
-        final PosSelection component = tool.getOrDefault(ModDataComponents.POS_SELECTION, PosSelection.EMPTY);
+        final PosSelection component = PosSelection.readFromItemStack(tool);
         final BlockPos start = component.startPos().orElse(null);
         final BlockPos end = component.endPos().orElse(null);
         RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
@@ -166,13 +165,13 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             return;
         }
 
-        final Timestamp component = stack.getOrDefault(TIME_COMPONENT, Timestamp.EMPTY);;
+        final Timestamp component = Timestamp.readFromItemStack(stack);
         if (component.time != 0)
         {
             final long prevTime = component.time;
             if ((level.getGameTime() - prevTime) > TIMEOUT_DELAY)
             {
-                stack.set(ModDataComponents.POS_SELECTION.get(), PosSelection.EMPTY);
+                PosSelection.EMPTY.writeToItemStack(stack);
             }
         }
 
@@ -203,7 +202,6 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
 
     public record Timestamp(long time)
     {
-        public static       DeferredHolder<DataComponentType<?>, DataComponentType<ItemScanAnalyzer.Timestamp>> TYPE  = null;
         public static final ItemScanAnalyzer.Timestamp EMPTY = new ItemScanAnalyzer.Timestamp(0);
 
         public static final Codec<ItemScanAnalyzer.Timestamp> CODEC = RecordCodecBuilder.create(
@@ -212,8 +210,23 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
                        .apply(builder, ItemScanAnalyzer.Timestamp::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, ItemScanAnalyzer.Timestamp> STREAM_CODEC =
-          StreamCodec.composite(ByteBufCodecs.fromCodec(Codec.LONG),
+          StreamCodec.composite(ByteBufCodecs.VAR_LONG,
             ItemScanAnalyzer.Timestamp::time,
             ItemScanAnalyzer.Timestamp::new);
+
+        public void writeToItemStack(final ItemStack itemStack)
+        {
+            itemStack.set(ModDataComponents.TIME_COMPONENT, this);
+        }
+
+        public static Timestamp readFromItemStack(final ItemStack itemStack)
+        {
+            return itemStack.getOrDefault(ModDataComponents.TIME_COMPONENT, Timestamp.EMPTY);
+        }
+
+        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<Timestamp> updater)
+        {
+            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
+        }
     }
 }

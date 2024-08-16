@@ -16,6 +16,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
+import com.minecolonies.core.items.ItemSupplyChestDeployer.SupplyData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -53,10 +54,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        final ItemSupplyChestDeployer.SupplyData currentComponent = ctx.getItemInHand().getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(ctx.getItemInHand());
         if (currentComponent.randomKey() == -1)
         {
-            ctx.getItemInHand().set(ModDataComponents.SUPPLY_COMPONENT, new ItemSupplyChestDeployer.SupplyData(currentComponent.sawStory(), currentComponent.instantPlacement(), ctx.getClickedPos().asLong()));
+            currentComponent.withRandomKey(ctx.getClickedPos().asLong()).writeToItemStack(ctx.getItemInHand());
         }
         if (ctx.getLevel().isClientSide)
         {
@@ -76,10 +77,10 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
-        final ItemSupplyChestDeployer.SupplyData currentComponent = stack.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
         if (currentComponent.randomKey() == -1)
         {
-            stack.set(ModDataComponents.SUPPLY_COMPONENT, new ItemSupplyChestDeployer.SupplyData(currentComponent.sawStory(), currentComponent.instantPlacement(), playerIn.blockPosition().asLong()));
+            currentComponent.withRandomKey(playerIn.blockPosition().asLong()).writeToItemStack(stack);
         }
 
         if (worldIn.isClientSide)
@@ -103,7 +104,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
      */
     private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction, final ItemStack itemInHand, final InteractionHand hand)
     {
-        final ItemSupplyChestDeployer.SupplyData currentComponent = itemInHand.getOrDefault(ModDataComponents.SUPPLY_COMPONENT, ItemSupplyChestDeployer.SupplyData.EMPTY);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(itemInHand);
         if (!currentComponent.sawStory())
         {
             new WindowSupplyStory(pos, "supplycamp", itemInHand, hand).open();

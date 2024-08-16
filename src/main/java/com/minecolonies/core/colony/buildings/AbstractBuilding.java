@@ -870,8 +870,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
-        stack.set(ModDataComponents.COLONY_ID_COMPONENT, new ModDataComponents.ColonyId(this.getColony().getID(), this.colony.getDimension()));
-        stack.set(ModDataComponents.HUT_COMPONENT, new ModDataComponents.HutBlockData(this.getBuildingLevel(), false));
+        new ModDataComponents.ColonyId(this.getColony().getID(), this.colony.getDimension()).writeToItemStack(stack);
+        new ModDataComponents.HutBlockData(this.getBuildingLevel(), false).writeToItemStack(stack);
         if (InventoryUtils.addItemStackToProvider(IItemHandlerCapProvider.wrap(player, false), stack))
         {
             this.destroy();

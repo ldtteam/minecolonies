@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.Pos;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -64,7 +64,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
       final ItemStack itemStack, final Level world, final ServerPlayer player)
     {
         final IColony colony = getColony(itemStack);
-        final BlockPos buildingPos = itemStack.getOrDefault(ModDataComponents.POS_COMPONENT, ModDataComponents.Pos.EMPTY).pos();
+        final BlockPos buildingPos = Pos.readFromItemStack(itemStack).pos();
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
         if (!(building instanceof AbstractBuildingGuards))
         {

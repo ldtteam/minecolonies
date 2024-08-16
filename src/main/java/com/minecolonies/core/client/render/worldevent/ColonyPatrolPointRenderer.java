@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModDataComponents.ColonyId;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.core.BlockPos;
 
@@ -37,17 +38,10 @@ public class ColonyPatrolPointRenderer
             return;
         }
 
-        final ModDataComponents.ColonyId colonyComponent = ctx.mainHandItem.get(ModDataComponents.COLONY_ID_COMPONENT);
-        final ModDataComponents.Pos posComponent = ctx.mainHandItem.get(ModDataComponents.POS_COMPONENT);
+        final IColonyView colony = ColonyId.readColonyViewFromItemStack(null);
+        final ModDataComponents.Pos posComponent = ModDataComponents.Pos.readFromItemStack(ctx.mainHandItem);
 
-        if (colonyComponent == null || posComponent == null)
-        {
-            return;
-        }
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyComponent.id(), colonyComponent.dimension());
-
-        if (colony == null)
+        if (colony == null || posComponent == null)
         {
             return;
         }

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.ModDataComponents.Desc;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.ChatFormatting;
@@ -157,17 +157,17 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
 
     private static void toggleItemMode(final Player playerIn, final ItemStack stack)
     {
-        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
+        final String itemMode = Desc.readFromItemStack(stack).desc();
 
         switch (itemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
-                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(TAG_VALUE_MODE_LOCATION));
+                new Desc(TAG_VALUE_MODE_LOCATION).writeToItemStack(stack);
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_LOCATION).create()).sendTo(playerIn);
                 break;
             case TAG_VALUE_MODE_LOCATION:
             default:
-                stack.set(ModDataComponents.DESC_COMPONENT, new ModDataComponents.Desc(TAG_VALUE_MODE_BLOCK));
+                new Desc(TAG_VALUE_MODE_BLOCK).writeToItemStack(stack);
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_BLOCK).create()).sendTo(playerIn);
                 break;
         }
@@ -184,7 +184,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             return boxes;
         }
 
-        final String itemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
+        final String itemMode = Desc.readFromItemStack(stack).desc();
         switch (itemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
@@ -212,7 +212,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
     {
-        final String itemMode = stack.getOrDefault(ModDataComponents.DESC_COMPONENT, ModDataComponents.Desc.EMPTY).desc();
+        final String itemMode = Desc.readFromItemStack(stack).desc();
         final MutableComponent mode;
         switch (itemMode)
         {
@@ -237,7 +237,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
       final BlockPos pos,
       final IColonyView iColonyView)
     {
-        final String tagItemMode = stack.get(ModDataComponents.DESC_COMPONENT).desc();
+        final String tagItemMode = Desc.readFromItemStack(stack).desc();
 
         switch (tagItemMode)
         {
