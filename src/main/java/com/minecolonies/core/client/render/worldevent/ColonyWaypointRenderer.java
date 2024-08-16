@@ -1,13 +1,11 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import net.minecraft.core.BlockPos;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -73,8 +71,11 @@ public class ColonyWaypointRenderer
                 return;
             }
 
-            BlueprintHandler.getInstance().drawAtListOfPositions(RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
-              : wayPointTemplate, new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()), ctx.stageEvent);
+            ctx.renderBlueprint(
+                RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ?
+                    RenderingCache.getOrCreateBlueprintPreviewData("blueprint") :
+                    wayPointTemplate,
+                ctx.nearestColony.getWayPoints().keySet());
         }
     }
 }

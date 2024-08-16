@@ -274,7 +274,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         if (recipe.getIntermediate() != Blocks.AIR)
         {
             final BlockState block = recipe.getIntermediate().defaultBlockState();
-            RenderHelper.renderBlock(stack.pose(), block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
+            RenderHelper.renderBlock(stack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
 
         final LivingEntity animal = recipe.getRequiredEntity();

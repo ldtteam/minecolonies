@@ -23,8 +23,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -195,7 +193,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
                 {
                     if (world.isLoaded(pos) && freeBlocks.contains(world.getBlockState(pos).getBlock()))
                     {
-                        boxes.add(new OverlayBox(AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(pos)), GREEN_OVERLAY, 0.02f, true));
+                        boxes.add(new OverlayBox(pos, GREEN_OVERLAY, 0.02f, true));
                     }
                 }
                 break;
@@ -203,7 +201,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             default:
                 for (final BlockPos pos : colony.getFreePositions())
                 {
-                    boxes.add(new OverlayBox(AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(pos)), GREEN_OVERLAY, 0.02f, true));
+                    boxes.add(new OverlayBox(pos, GREEN_OVERLAY, 0.02f, true));
                 }
                 break;
         }

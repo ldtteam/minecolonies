@@ -1,5 +1,9 @@
 package com.minecolonies.core.client.render.worldevent;
 
+import com.ldtteam.blockui.util.color.ColourARGB;
+import com.ldtteam.blockui.util.color.ColourQuartet;
+import com.ldtteam.blockui.util.color.ColouredVertexConsumer;
+import com.ldtteam.blockui.util.color.IColour;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
@@ -9,15 +13,16 @@ import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +30,6 @@ public class ColonyBorderRenderer
 {
     private static final int RENDER_DIST_THRESHOLD = 3;
     private static final int CHUNK_SIZE = 16;
-    private static final int CHUNK_HEIGHT = 256;
     private static final int PLAYER_CHUNK_STEP = CHUNK_SIZE / 4;
 
     private static VertexBuffer colonies           = null;
@@ -49,7 +53,6 @@ public class ColonyBorderRenderer
 
             final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
             final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
-            final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
             final int nearestColonyId = ctx.nearestColony.getID();
             final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
             final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
@@ -87,8 +90,8 @@ public class ColonyBorderRenderer
             {
                 chunktickets.close();
             }
-            colonies = draw(bufferbuilder, coloniesMap, nearestColonyId, playerChunkPos, playerRenderDist);
-            chunktickets = draw(bufferbuilder, chunkticketsMap, nearestColonyId, playerChunkPos, playerRenderDist);
+            colonies = draw(ctx, coloniesMap, nearestColonyId, playerChunkPos, playerRenderDist);
+            chunktickets = draw(ctx, chunkticketsMap, nearestColonyId, playerChunkPos, playerRenderDist);
         }
 
         final VertexBuffer p = Screen.hasControlDown() ? chunktickets : colonies;
@@ -97,40 +100,29 @@ public class ColonyBorderRenderer
             return;
         }
 
-        pushShaderMVstack(ctx.poseStack);
+        ctx.pushPoseCameraToPos(lastPlayerChunkPos.getWorldPosition());
+        ctx.pushShaderMvMatrixFromPose();
         WorldRenderMacros.LINES.setupRenderState();
         p.bind();
         p.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
         VertexBuffer.unbind();
         WorldRenderMacros.LINES.clearRenderState();
-        popShaderMVstack();
+        ctx.popShaderMvMatrix();
+        ctx.popPose();
     }
 
-
-    private static void pushShaderMVstack(final PoseStack ps)
-    {
-        RenderSystem.getModelViewStack().pushMatrix();
-        RenderSystem.getModelViewStack().mul(ps.last().pose());
-        RenderSystem.applyModelViewMatrix();
-    }
-
-    private static void popShaderMVstack()
-    {
-        RenderSystem.getModelViewStack().popMatrix();
-        RenderSystem.applyModelViewMatrix();
-    }
-
-    private static VertexBuffer draw(final BufferBuilder bufferbuilder,
+    private static VertexBuffer draw(final WorldEventContext ctx,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
         final ChunkPos playerChunkPos,
         final int playerRenderDist)
     {
-        //todo nightenom, all of this.
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
-        final Map<Integer, Color> colonyColours = new HashMap<>();
+        final Map<Integer, IColour> colonyColours = new HashMap<>();
         final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();
 
+        final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
+        final ColouredVertexConsumer buf = new ColouredVertexConsumer(bufferbuilder);
         mapToDraw.forEach((chunkPos, colonyId) -> {
             if (colonyId == 0 || chunkPos.x <= playerChunkPos.x - playerRenderDist || chunkPos.x >= playerChunkPos.x + playerRenderDist
                 || chunkPos.z <= playerChunkPos.z - playerRenderDist || chunkPos.z >= playerChunkPos.z + playerRenderDist)
@@ -140,31 +132,31 @@ public class ColonyBorderRenderer
 
             final boolean isPlayerChunkX = colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
             final boolean isPlayerChunkZ = colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
-            final float minX = chunkPos.getMinBlockX();
-            final float maxX = chunkPos.getMaxBlockX() + 1.0f;
-            final float minZ = chunkPos.getMinBlockZ();
-            final float maxZ = chunkPos.getMaxBlockZ() + 1.0f;
+            final float minX = chunkPos.getMinBlockX() - playerChunkPos.getMinBlockX();
+            final float maxX = chunkPos.getMaxBlockX() - playerChunkPos.getMinBlockX() + 1.0f;
+            final float minZ = chunkPos.getMinBlockZ() - playerChunkPos.getMinBlockZ();
+            final float maxZ = chunkPos.getMaxBlockZ() - playerChunkPos.getMinBlockZ() + 1.0f;
+            final int minY = ctx.clientLevel.getMinBuildHeight();
+            final int maxY = ctx.clientLevel.getMaxBuildHeight();
             final int testedColonyId = colonyId;
 
             if (useColonyColour)
             {
-                final Color colour = colonyColours.computeIfAbsent(colonyId, id ->
+                buf.defaultColor = colonyColours.computeIfAbsent(colonyId, id ->
                 {
-                    final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, Minecraft.getInstance().level.dimension());
+                    final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, ctx.clientLevel.dimension());
                     final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
                             : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
-                    return new Color(team.getColor());
+                    return new ColourARGB(team.getColor() | 0xff000000).asQuartet();
                 });
-
-                bufferbuilder.setColor(colour.getRed(), colour.getGreen(), colour.getBlue(), colour.getAlpha());
             }
             else if (colonyId == playerColonyId)
             {
-                bufferbuilder.setColor(255, 255, 255, 255);
+                buf.defaultColor = new ColourQuartet(255, 255, 255, 255);
             }
             else
             {
-                bufferbuilder.setColor(255, 70, 70, 255);
+                buf.defaultColor = new ColourQuartet(255, 70, 70, 255);
             }
 
             mutableChunkPos.setX(chunkPos.x);
@@ -184,23 +176,23 @@ public class ColonyBorderRenderer
             // vert lines
             if (north || west)
             {
-                bufferbuilder.addVertex(minX, 0, minZ);
-                bufferbuilder.addVertex(minX, CHUNK_HEIGHT, minZ);
+                buf.addVertex(minX, minY, minZ).setDefaultColor();
+                buf.addVertex(minX, maxY, minZ).setDefaultColor();
             }
             if (north || east)
             {
-                bufferbuilder.addVertex(maxX, 0, minZ);
-                bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, minZ);
+                buf.addVertex(maxX, minY, minZ).setDefaultColor();
+                buf.addVertex(maxX, maxY, minZ).setDefaultColor();
             }
             if (south || west)
             {
-                bufferbuilder.addVertex(minX, 0, maxZ);
-                bufferbuilder.addVertex(minX, CHUNK_HEIGHT, maxZ);
+                buf.addVertex(minX, minY, maxZ).setDefaultColor();
+                buf.addVertex(minX, maxY, maxZ).setDefaultColor();
             }
             if (south || east)
             {
-                bufferbuilder.addVertex(maxX, 0, maxZ);
-                bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, maxZ);
+                buf.addVertex(maxX, minY, maxZ).setDefaultColor();
+                buf.addVertex(maxX, maxY, maxZ).setDefaultColor();
             }
 
             // horizontal lines
@@ -210,21 +202,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX + shift, 0, minZ);
-                        bufferbuilder.addVertex(minX + shift, CHUNK_HEIGHT, minZ);
+                        buf.addVertex(minX + shift, minY, minZ).setDefaultColor();
+                        buf.addVertex(minX + shift, maxY, minZ).setDefaultColor();
                     }
-                    for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
+                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX, y, minZ);
-                        bufferbuilder.addVertex(maxX, y, minZ);
+                        buf.addVertex(minX, y, minZ).setDefaultColor();
+                        buf.addVertex(maxX, y, minZ).setDefaultColor();
                     }
                 }
                 else
                 {
-                    for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
+                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.addVertex(minX, y, minZ);
-                        bufferbuilder.addVertex(maxX, y, minZ);
+                        buf.addVertex(minX, y, minZ).setDefaultColor();
+                        buf.addVertex(maxX, y, minZ).setDefaultColor();
                     }
                 }
             }
@@ -234,21 +226,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX + shift, 0, maxZ);
-                        bufferbuilder.addVertex(minX + shift, CHUNK_HEIGHT, maxZ);
+                        buf.addVertex(minX + shift, minY, maxZ).setDefaultColor();
+                        buf.addVertex(minX + shift, maxY, maxZ).setDefaultColor();
                     }
-                    for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
+                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX, y, maxZ);
-                        bufferbuilder.addVertex(maxX, y, maxZ);
+                        buf.addVertex(minX, y, maxZ).setDefaultColor();
+                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
                     }
                 }
                 else
                 {
-                    for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
+                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.addVertex(minX, y, maxZ);
-                        bufferbuilder.addVertex(maxX, y, maxZ);
+                        buf.addVertex(minX, y, maxZ).setDefaultColor();
+                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
                     }
                 }
             }
@@ -258,21 +250,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX, 0, minZ + shift);
-                        bufferbuilder.addVertex(minX, CHUNK_HEIGHT, minZ + shift);
+                        buf.addVertex(minX, minY, minZ + shift).setDefaultColor();
+                        buf.addVertex(minX, maxY, minZ + shift).setDefaultColor();
                     }
-                    for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
+                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(minX, y, minZ);
-                        bufferbuilder.addVertex(minX, y, maxZ);
+                        buf.addVertex(minX, y, minZ).setDefaultColor();
+                        buf.addVertex(minX, y, maxZ).setDefaultColor();
                     }
                 }
                 else
                 {
-                    for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
+                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.addVertex(minX, y, minZ);
-                        bufferbuilder.addVertex(minX, y, maxZ);
+                        buf.addVertex(minX, y, minZ).setDefaultColor();
+                        buf.addVertex(minX, y, maxZ).setDefaultColor();
                     }
                 }
             }
@@ -282,21 +274,21 @@ public class ColonyBorderRenderer
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(maxX, 0, minZ + shift);
-                        bufferbuilder.addVertex(maxX, CHUNK_HEIGHT, minZ + shift);
+                        buf.addVertex(maxX, minY, minZ + shift).setDefaultColor();
+                        buf.addVertex(maxX, maxY, minZ + shift).setDefaultColor();
                     }
-                    for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
+                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.addVertex(maxX, y, minZ);
-                        bufferbuilder.addVertex(maxX, y, maxZ);
+                        buf.addVertex(maxX, y, minZ).setDefaultColor();
+                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
                     }
                 }
                 else
                 {
-                    for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
+                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.addVertex(maxX, y, minZ);
-                        bufferbuilder.addVertex(maxX, y, maxZ);
+                        buf.addVertex(maxX, y, minZ).setDefaultColor();
+                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
                     }
                 }
             }

@@ -92,8 +92,8 @@ public class MineColonies
         final IEventBus modBus = modContainer.getEventBus();
         final IEventBus forgeBus = NeoForge.EVENT_BUS;
     
-        config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
+        config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);

@@ -140,7 +140,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
 
         if (box.anchor() != null)
         {
-            final OverlayBox anchorBox = new OverlayBox(new AABB(box.anchor()), RED_OVERLAY, 0.02f, true);
+            final OverlayBox anchorBox = new OverlayBox(box.anchor(), RED_OVERLAY, 0.02f, true);
 
             if (box.corners() != null)
             {

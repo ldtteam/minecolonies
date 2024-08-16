@@ -19,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BeehiveBlock;
-import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -129,11 +128,11 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
         {
             final List<OverlayBox> overlays = new ArrayList<>();
 
-            overlays.add(new OverlayBox(new AABB(pos), RED_OVERLAY, 0.02f, true));
+            overlays.add(new OverlayBox(pos, RED_OVERLAY, 0.02f, true));
 
             for (final BlockPos hive : hut.getHives())
             {
-                overlays.add(new OverlayBox(new AABB(hive), YELLOW_OVERLAY, 0.04f, true));
+                overlays.add(new OverlayBox(hive, YELLOW_OVERLAY, 0.04f, true));
             }
 
             return overlays;

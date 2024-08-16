@@ -107,6 +107,6 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
         final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
                 .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
                 .setValue(AbstractBlockBarrel.VARIANT, type);
-        RenderHelper.renderBlock(stack.pose(), barrel, 40, 20, 100, -30F, 20F, 25F);
+        RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);
     }
 }

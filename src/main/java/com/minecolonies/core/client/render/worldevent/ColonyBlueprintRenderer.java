@@ -1,11 +1,9 @@
 package com.minecolonies.core.client.render.worldevent;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.BlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
@@ -21,7 +19,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.workorders.view.WorkOrderBuildingView;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.sounds.SoundEvents;
@@ -29,11 +26,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.phys.AABB;
+import org.apache.commons.lang3.concurrent.UncheckedExecutionException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
@@ -66,10 +65,10 @@ public class ColonyBlueprintRenderer
     /**
      * The cache of blueprint data.
      */
-    private static final LoadingCache<BlueprintCacheKey, BlueprintPreviewData> blueprintDataCache = CacheBuilder.newBuilder()
+    private static final Cache<BlueprintCacheKey, BlueprintPreviewData> blueprintDataCache = CacheBuilder.newBuilder()
             .expireAfterAccess(Duration.ofMinutes(2))
             .softValues()
-            .build(CacheLoader.from(ColonyBlueprintRenderer::makeBlueprintPreview));
+            .build();
 
     private static BlockPos lastCacheRebuild = null;
 
@@ -158,17 +157,17 @@ public class ColonyBlueprintRenderer
             lastCacheRebuild = activePosition;
         }
 
-        if (Minecraft.getInstance().level.getGameTime() % 20 == 0)
+        if (ctx.clientLevel.getGameTime() % 20 == 0)
         {
-            processPendingBlueprints();
+            processPendingBlueprints(ctx.clientLevel.registryAccess());
         }
 
         if (shouldRenderBlueprints)
         {
             for (final Map.Entry<BlueprintCacheKey, List<BlockPos>> entry : blueprintRenderCache.entrySet())
             {
-                final BlueprintPreviewData data = blueprintDataCache.getUnchecked(entry.getKey());
-                BlueprintHandler.getInstance().drawAtListOfPositions(data, entry.getValue(), ctx.stageEvent);
+                final BlueprintPreviewData data = getCached(entry.getKey(), ctx.clientLevel.registryAccess());
+                ctx.renderBlueprint(data, entry.getValue());
             }
         }
     }
@@ -184,19 +183,21 @@ public class ColonyBlueprintRenderer
         {
             final BoxRenderData buildingData = entry.getValue();
 
-            if (buildingData.box().pos1() != INVALID_POS)
+            final BlockPos root = buildingData.box().pos1();
+            if (root != INVALID_POS)
             {
-                ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
-                        AABB.encapsulatingFullBlocks(buildingData.box().pos1(), buildingData.box().pos2().offset(1, 1, 1)),
-                        0.08f, 0xFF0000FF, false);
+                ctx.pushPoseCameraToPos(root);
+                ctx.renderLineBox(WorldEventContext.LINES_WITH_WIDTH, BlockPos.ZERO, buildingData.box().pos2().subtract(root), 0xFF0000FF, 3 * WorldEventContext.DEFAULT_LINE_WIDTH);
+                ctx.popPose();
             }
 
             buildingData.box().anchor().ifPresent(pos ->
             {
                 if (ctx.clientPlayer.isShiftKeyDown())
                 {
-                    ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
-                            new AABB(pos), 0.02f, 0xFFFF0000, true);
+                    ctx.pushPoseCameraToPos(pos);
+                    ctx.renderLineBoxWithShadow(BlockPos.ZERO, 0xFFFF0000, WorldEventContext.DEFAULT_LINE_WIDTH);
+                    ctx.popPose();
                 }
             });
 
@@ -208,14 +209,13 @@ public class ColonyBlueprintRenderer
                     final BlockPos pos = citizen.getStatusPosition();
                     if (pos != null)
                     {
-                        ColonyWorldRenderMacros.renderLineBox(ctx.poseStack, ctx.bufferSource,
-                                new AABB(pos), 0.02f, 0xFF00FF00, true);
+                        ctx.pushPoseCameraToPos(pos);
+                        ctx.renderLineBoxWithShadow(BlockPos.ZERO, 0xFF00FF00, WorldEventContext.DEFAULT_LINE_WIDTH);
+                        ctx.popPose();
                     }
                 }
             }
         }
-
-        ColonyWorldRenderMacros.endRenderLineBox(ctx.bufferSource);
     }
 
     private static void rebuildCache(final WorldEventContext ctx, final List<IRenderBlueprintRule> rules)
@@ -237,7 +237,7 @@ public class ColonyBlueprintRenderer
                 posList.add(entry.getKey());
             }
 
-            final BoxRenderData newBox = tryLoadBox(entry.getValue());
+            final BoxRenderData newBox = tryLoadBox(entry.getValue(), ctx.clientLevel.registryAccess());
             if (newBox != null)
             {
                 newBoxes.put(entry.getKey(), newBox);
@@ -257,7 +257,7 @@ public class ColonyBlueprintRenderer
         boxRenderCache = newBoxes;
     }
 
-    private static @Nullable BoxRenderData tryLoadBox(@NotNull final PendingRenderData data)
+    private static @Nullable BoxRenderData tryLoadBox(@NotNull final PendingRenderData data, final HolderLookup.Provider provider)
     {
         if (data.blueprint() == null)
         {
@@ -269,7 +269,7 @@ public class ColonyBlueprintRenderer
             return new BoxRenderData(null, 0);
         }
 
-        final BlueprintPreviewData blueprintData = blueprintDataCache.getUnchecked(data.blueprint());
+        final BlueprintPreviewData blueprintData = getCached(data.blueprint(), provider);
         final Blueprint localBlueprint = blueprintData.getBlueprint();
         if (localBlueprint == null)
         {
@@ -291,13 +291,13 @@ public class ColonyBlueprintRenderer
         }
     }
 
-    private static void processPendingBlueprints()
+    private static void processPendingBlueprints(final HolderLookup.Provider provider)
     {
         final Iterator<Map.Entry<BlockPos, PendingRenderData>> iterator = pendingBoxes.entrySet().iterator();
         while (iterator.hasNext())
         {
             final Map.Entry<BlockPos, PendingRenderData> entry = iterator.next();
-            final BoxRenderData box = tryLoadBox(entry.getValue());
+            final BoxRenderData box = tryLoadBox(entry.getValue(), provider);
             if (box != null)
             {
                 if (box.box() != null || box.builder() != 0)
@@ -309,9 +309,20 @@ public class ColonyBlueprintRenderer
         }
     }
 
-    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key)
+    private static BlueprintPreviewData getCached(final BlueprintCacheKey key, final HolderLookup.Provider provider)
     {
-        final HolderLookup.Provider provider = Minecraft.getInstance().level.registryAccess();
+        try
+        {
+            return blueprintDataCache.get(key, () -> makeBlueprintPreview(key, provider));
+        }
+        catch (final ExecutionException e)
+        {
+            throw new UncheckedExecutionException(e.getCause());
+        }
+    }
+
+    private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key, final HolderLookup.Provider provider)
+    {
         final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path(), provider);
 
         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);

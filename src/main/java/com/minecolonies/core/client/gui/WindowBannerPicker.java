@@ -11,7 +11,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.model.geom.ModelPart;
@@ -276,7 +275,7 @@ public class WindowBannerPicker extends Screen
     public void render(final GuiGraphics stack, int mouseX, int mouseY, float partialTicks)
     {
         super.render(stack, mouseX, mouseY, partialTicks);
-        drawFlag();
+        drawFlag(stack);
 
         // Draw the scrollbar
         int scrollRows = (int) (Math.ceil(this.patterns.size() / (float) PATTERN_COLUMNS) - PATTERN_ROWS);
@@ -304,7 +303,7 @@ public class WindowBannerPicker extends Screen
     /**
      * Sets the large final preview of the banner for rendering
      */
-    private void drawFlag()
+    private void drawFlag(final GuiGraphics stack)
     {
         Lighting.setupForFlatItems();
         double posX = (this.width + PATTERN_HEIGHT/2.0 * PATTERN_COLUMNS) / 2 + SIDE *2;
@@ -316,7 +315,7 @@ public class WindowBannerPicker extends Screen
         transform.translate(0.5D, 0.5D, 0.5D);
         transform.scale(1F, -1F, -1F);
 
-        renderBanner(transform, this.layers);
+        renderBanner(transform, this.layers, stack);
     }
 
     /**
@@ -324,8 +323,9 @@ public class WindowBannerPicker extends Screen
      * @param pattern the banner pattern to render
      * @param x the left x position of the banner
      * @param y the top y position of the banner
+     * @param stack 
      */
-    private void drawBannerPattern(Holder<BannerPattern> pattern, int x, int y)
+    private void drawBannerPattern(Holder<BannerPattern> pattern, int x, int y, GuiGraphics stack)
     {
         Lighting.setupForFlatItems();
 
@@ -340,7 +340,7 @@ public class WindowBannerPicker extends Screen
         transform.translate(0.5D, 0.5D, 0.5D);
         transform.scale(1F, -1F, -1F);
 
-        renderBanner(transform, list);
+        renderBanner(transform, list, stack);
     }
 
     /**
@@ -348,7 +348,7 @@ public class WindowBannerPicker extends Screen
      * @param transform the transformation matrix stack to render with
      * @param layers the pattern-color pairs that form the banner
      */
-    public void renderBanner(PoseStack transform, List<BannerPatternLayers.Layer> layers)
+    public void renderBanner(PoseStack transform, List<BannerPatternLayers.Layer> layers, GuiGraphics stack)
     {
         this.modelRender.xRot= 0.0F;
         this.modelRender.y = -32.0F;
@@ -358,20 +358,17 @@ public class WindowBannerPicker extends Screen
             builder.add(layer);
         }
 
-        // TODO: move to guigraphics buffer
-        MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();
-        BannerRenderer.renderPatterns(
-                transform,
-                source, 15728880,
-                OverlayTexture.NO_OVERLAY,
-                this.modelRender,
-                ModelBakery.BANNER_BASE,
-                true,
-                colors.getSelected(),
-          builder.build()
-        );
+        BannerRenderer.renderPatterns(transform,
+            stack.bufferSource(),
+            15728880,
+            OverlayTexture.NO_OVERLAY,
+            this.modelRender,
+            ModelBakery.BANNER_BASE,
+            true,
+            colors.getSelected(),
+            builder.build());
         transform.popPose();
-        source.endBatch();
+        stack.flush();
     }
 
     @Override
@@ -533,7 +530,7 @@ public class WindowBannerPicker extends Screen
 
             try
             {
-                drawBannerPattern(this.pattern, this.getX(), this.getY());
+                drawBannerPattern(this.pattern, this.getX(), this.getY(), stack);
             }
             catch (final Exception ex)
             {

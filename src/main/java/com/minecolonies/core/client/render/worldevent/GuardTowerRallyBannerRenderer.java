@@ -1,6 +1,5 @@
 package com.minecolonies.core.client.render.worldevent;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
@@ -28,7 +27,9 @@ public class GuardTowerRallyBannerRenderer
 
         for (final BlockPos guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.mainHandItem))
         {
-            WorldRenderMacros.renderBlackLineBox(ctx.bufferSource, ctx.poseStack, guardTower, guardTower, 0.02f);
+            ctx.pushPoseCameraToPos(guardTower);
+            ctx.renderBlackLineBox(BlockPos.ZERO, BlockPos.ZERO, WorldEventContext.DEFAULT_LINE_WIDTH);
+            ctx.popPose();
         }
     }
 }

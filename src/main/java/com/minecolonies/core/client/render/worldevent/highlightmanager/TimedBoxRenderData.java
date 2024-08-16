@@ -1,12 +1,7 @@
 package com.minecolonies.core.client.render.worldevent.highlightmanager;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
-import com.minecolonies.core.client.render.worldevent.ColonyWorldRenderMacros;
 import com.minecolonies.core.client.render.worldevent.WorldEventContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -48,14 +43,13 @@ public class TimedBoxRenderData implements IHighlightRenderData
     @Override
     public void render(final WorldEventContext context)
     {
-        final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        ColonyWorldRenderMacros.renderLineBox(context.poseStack, buffer, new AABB(pos), 0.025f, argbColor, true);
+        context.pushPoseCameraToPos(pos);
+        context.renderLineBoxWithShadow(BlockPos.ZERO, argbColor, WorldEventContext.DEFAULT_LINE_WIDTH);
         if (!text.isEmpty())
         {
-            WorldRenderMacros.renderDebugText(pos, text, context.poseStack, true, 3, buffer);
+            context.renderDebugText(BlockPos.ZERO, text, true, 3);
         }
-        ColonyWorldRenderMacros.endRenderLineBox(buffer);
-        buffer.endBatch();
+        context.popPose();
     }
 
     @Override
