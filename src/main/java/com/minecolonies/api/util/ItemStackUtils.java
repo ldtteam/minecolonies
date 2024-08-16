@@ -936,7 +936,7 @@ public final class ItemStackUtils
     /**
      * Convert an Item string with NBT to an ItemStack
      *
-     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
+     * @param itemData ie: minecraft:potion{"minecraft:potion_contents":{"potion":"minecraft:water"}}
      * @return stack with any defined NBT
      */
     public static ItemStack idToItemStack(final String itemData, final HolderLookup.Provider provider)
@@ -945,20 +945,16 @@ public final class ItemStackUtils
         final int tagIndex = itemId.indexOf("{");
         final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
         itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
-        String[] split = itemId.split(":");
-        if (split.length != 2)
+        final Item item;
+        try
         {
-            if (split.length == 1)
-            {
-                final String[] tempArray = {"minecraft", split[0]};
-                split = tempArray;
-            }
-            else
-            {
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
+            item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
         }
-        final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
+        catch (Throwable t)
+        {
+            Log.getLogger().error("Unable to parse item definition: {}", itemData, t);
+            return ItemStack.EMPTY;
+        }
         final ItemStack stack = new ItemStack(item);
         if (tag != null)
         {
@@ -966,15 +962,15 @@ public final class ItemStackUtils
             {
                 stack.applyComponents(Utils.deserializeCodecMessFromJson(DataComponentPatch.CODEC, provider, JsonParser.parseString(tag)));
             }
-            catch (Throwable e1)
+            catch (Throwable t)
             {
                 //Unable to parse tags, drop them.
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
+                Log.getLogger().error("Unable to parse item definition: {}", itemData, t);
             }
         }
         if (stack.isEmpty())
         {
-            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
+            Log.getLogger().warn("Parsed item definition returned empty: {}", itemData);
         }
         return stack;
     }

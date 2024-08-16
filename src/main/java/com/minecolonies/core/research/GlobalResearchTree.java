@@ -9,15 +9,15 @@ import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -289,20 +289,16 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<ItemStorage> getResearchResetCosts()
+    public List<ItemStorage> getResearchResetCosts(final HolderLookup.Provider provider)
     {
         List<ItemStorage> outputList = new ArrayList<>();
         for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
         {
-            String[] split = itemId.split(":");
-            final Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(split[0], split[1]));
-            final ItemStack stack = new ItemStack(item);
-            if (stack.isEmpty())
+            final ItemStack stack = ItemStackUtils.idToItemStack(itemId, provider);
+            if (!stack.isEmpty())
             {
-                Log.getLogger().warn("Unable to parse Research Reset Cost definition: " + itemId);
-                continue;
+                outputList.add(new ItemStorage(stack, false, true));
             }
-            outputList.add(new ItemStorage(stack, false, true));
         }
         return outputList;
     }

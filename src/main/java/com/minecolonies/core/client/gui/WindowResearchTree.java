@@ -798,7 +798,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawUndoCompleteButton(final Button parent)
     {
-        final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
+        final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts(Minecraft.getInstance().level.registryAccess());
         undoCostIcons = new ItemIcon[costList.size()];
         final List<ItemStorage> missingItems = new ArrayList<>();
         for (int i = 0; i < costList.size(); i++)

@@ -252,7 +252,7 @@ public class LocalResearchTree implements ILocalResearchTree
 
             if (!player.isCreative())
             {
-                final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
+                final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts(colony.getWorld().registryAccess());
                 final InvWrapper playerInv = new InvWrapper(player.getInventory());
                 for (final ItemStorage cost : costList)
                 {

@@ -4,6 +4,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -125,7 +126,7 @@ public interface IGlobalResearchTree
      * Validates and gets the list of research reset costs, if any are set, from their configuration values.
      * @return the list of items in ItemStorage format.
      */
-    List<ItemStorage> getResearchResetCosts();
+    List<ItemStorage> getResearchResetCosts(final HolderLookup.Provider provider);
 
     /**
      * Checks if a specific research effect has been registered, whether or not it is unlocked.
