@@ -145,7 +145,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onLootTableLoad(@NotNull final LootTableLoadEvent event)
     {
-        if (event.getName().equals(Blocks.FERN.getLootTable()))
+        if (event.getName().equals(Blocks.FERN.getLootTable().location()))
         {
             event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.coldBiomes))
                                        .add(AlternativesEntry.alternatives()
@@ -163,14 +163,14 @@ public class EventHandler
                                               .otherwise(LootItem.lootTableItem(ModBlocks.blockSoyBean)
                                                            .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
         }
-        else if (event.getName().equals(Blocks.SUGAR_CANE.getLootTable()))
+        else if (event.getName().equals(Blocks.SUGAR_CANE.getLootTable().location()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockRice)
                                               .when(EntityInBiomeTag.of(ModTags.humidBiomes))
                                               .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
         }
-        else if (event.getName().equals(Blocks.DEAD_BUSH.getLootTable()))
+        else if (event.getName().equals(Blocks.DEAD_BUSH.getLootTable().location()))
         {
             event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.dryBiomes))
                                        .add(AlternativesEntry.alternatives()
@@ -180,7 +180,7 @@ public class EventHandler
                                               .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
                                                            .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
         }
-        else if (event.getName().equals(Blocks.GRASS_BLOCK.getLootTable()))
+        else if (event.getName().equals(Blocks.GRASS_BLOCK.getLootTable().location()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(AlternativesEntry.alternatives()
@@ -246,7 +246,7 @@ public class EventHandler
                                               .otherwise(LootItem.lootTableItem(ModBlocks.blockBellPepper)
                                                            .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
         }
-        else if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON))
+        else if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON.location()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(LootItem.lootTableItem(ModBlocks.blockGarlic)

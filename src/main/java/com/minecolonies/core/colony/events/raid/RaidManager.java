@@ -397,7 +397,7 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }
-                else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID))
+                else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new BarbarianRaidEvent(colony);
                 }

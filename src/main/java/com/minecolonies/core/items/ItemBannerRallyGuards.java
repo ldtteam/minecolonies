@@ -393,7 +393,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
         for (final BlockPos existingTower : getGuardTowerLocations(banner))
         {
-            if (existingTower.equals(guardTower.getLocation()))
+            if (existingTower.equals(guardTower.getLocation().getInDimensionLocation()))
             {
                 return true;
             }
