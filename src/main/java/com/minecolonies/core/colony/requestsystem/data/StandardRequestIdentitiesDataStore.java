@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -22,6 +23,7 @@ import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -94,19 +96,28 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
 
         @NotNull
         @Override
-        public CompoundTag serialize(
-          @NotNull final IFactoryController controller, @NotNull final StandardRequestIdentitiesDataStore standardRequestIdentitiesDataStore)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequestIdentitiesDataStore standardRequestIdentitiesDataStore)
         {
             final CompoundTag systemCompound = new CompoundTag();
 
             systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
-            systemCompound.put(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                CompoundTag mapCompound = new CompoundTag();
-                mapCompound.put(TAG_TOKEN, controller.serialize(token));
-                mapCompound.put(TAG_REQUEST, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
-                return mapCompound;
-            }).collect(NBTUtils.toListNBT()));
-
+            final ListTag listTag = new ListTag();
+            for (final Map.Entry<IToken<?>, IRequest<?>> entry : new HashSet<>(standardRequestIdentitiesDataStore.getIdentities().entrySet()))
+            {
+                try
+                {
+                    CompoundTag mapCompound = new CompoundTag();
+                    mapCompound.put(TAG_TOKEN, controller.serialize(entry.getKey()));
+                    mapCompound.put(TAG_REQUEST, controller.serialize(entry.getValue()));
+                    listTag.add(mapCompound);
+                }
+                catch (final Exception e)
+                {
+                    standardRequestIdentitiesDataStore.getIdentities().remove(entry.getKey());
+                    Log.getLogger().error(e);
+                }
+            }
+            systemCompound.put(TAG_LIST, listTag);
             return systemCompound;
         }
 
@@ -117,16 +128,23 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(tag -> {
-                final IToken<?> id = controller.deserialize(tag.getCompound(TAG_TOKEN));
-                final IRequest<?> request = controller.deserialize(tag.getCompound(TAG_REQUEST));
+            final BiMap<IToken<?>, IRequest<?>> map = HashBiMap.create();
+            for (int i = 0; i < list.size(); i++)
+            {
+                final CompoundTag tag = list.getCompound(i);
+                try
+                {
+                    final IToken<?> id = controller.deserialize(tag.getCompound(TAG_TOKEN));
+                    final IRequest<?> request = controller.deserialize(tag.getCompound(TAG_REQUEST));
+                    map.put(id, request);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error(ex);
+                }
+            }
 
-                return new Tuple<IToken<?>, IRequest<?>>(id, request);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getB()));
-
-            final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(map);
-
-            return new StandardRequestIdentitiesDataStore(token, biMap);
+            return new StandardRequestIdentitiesDataStore(token, map);
         }
 
         @Override
@@ -149,7 +167,15 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
             final int assignmentsSize = buffer.readInt();
             for (int i = 0; i < assignmentsSize; ++i)
             {
-                identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                try
+                {
+                    identities.put(controller.deserialize(buffer), controller.deserialize(buffer));
+                }
+                catch (final Exception ex)
+                {
+                    // If the stack fails, all values have been retrieved from the buffer but the stack validation failed and we filter it out here.
+                    Log.getLogger().error(ex);
+                }
             }
 
             final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(identities);
