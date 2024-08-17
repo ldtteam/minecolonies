@@ -294,9 +294,24 @@ public class GlobalResearchTree implements IGlobalResearchTree
         List<ItemStorage> outputList = new ArrayList<>();
         for (String itemId : MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchResetCost.get())
         {
+            int amount = 1;
+            String[] split = itemId.split(":");
+            if (split.length == 3)
+            {
+                try
+                {
+                    amount = Integer.parseInt(split[2]);
+                }
+                catch (Throwable t)
+                {
+                    Log.getLogger().error("Unable to parse item count: {}", itemId, t);
+                }
+                itemId = split[0] + ":" + split[1];
+            }
             final ItemStack stack = ItemStackUtils.idToItemStack(itemId, provider);
             if (!stack.isEmpty())
             {
+                stack.setCount(amount);
                 outputList.add(new ItemStorage(stack, false, true));
             }
         }
