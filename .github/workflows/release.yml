@@ -16,7 +16,7 @@ jobs:
   release:
     uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@main
     with:
-      java: 21
+      java: 17
       curse_release_type: ${{ contains(github.ref, 'release') && 'release' || 'beta' }}
     secrets:
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
