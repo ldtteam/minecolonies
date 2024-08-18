@@ -19,6 +19,7 @@ on:
 permissions:
   contents: write
   statuses: write
+  packages: write
 
 jobs:
   release:
