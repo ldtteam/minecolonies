@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   release:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.build.yaml@ng7
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@main
     with:
       java: 21
     secrets:
