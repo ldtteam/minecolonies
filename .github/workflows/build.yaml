@@ -1,0 +1,30 @@
+name: Build and Test PRs or General Branches
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - ready_for_review
+      - reopened
+  push:
+    branches:
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+      - 'fix/**'
+      - 'features/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  statuses: write
+
+jobs:
+  release:
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.build.yaml@ng7
+    with:
+      java: 21
+    secrets:
+      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
