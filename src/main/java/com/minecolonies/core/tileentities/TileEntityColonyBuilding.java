@@ -568,7 +568,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (registryName != null && !registryName.getPath().isEmpty())
         {
-            return registryName;
+            return new ResourceLocation(registryName.getNamespace(), registryName.getPath().replace("home", "residence"));
         }
         return getBlockState().getBlock() instanceof AbstractBlockHut<?> ? ((AbstractBlockHut<?>) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
     }

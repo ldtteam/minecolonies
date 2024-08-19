@@ -155,7 +155,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
 
-                final ModDataComponents.ColonyId colonyComponent = ColonyId.readFromItemStack(stack);
+                final ModDataComponents.ColonyId colonyComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
                 if (colonyComponent != null && tempColony != null && tempColony.getID() != colonyComponent.id())
                 {
                     MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
