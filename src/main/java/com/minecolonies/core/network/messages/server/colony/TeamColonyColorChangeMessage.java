@@ -4,6 +4,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.ChatFormatting;
@@ -65,6 +66,13 @@ public class TeamColonyColorChangeMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setColonyColor(ChatFormatting.values()[colorOrdinal]);
-        NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.TEAM_COLOR));
+        try
+        {
+            NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.TEAM_COLOR));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
+        }
     }
 }

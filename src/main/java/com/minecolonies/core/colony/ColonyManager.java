@@ -648,7 +648,14 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
-            NeoForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            try
+            {
+                NeoForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyManagerLoadedEvent", e);
+            }
         }
     }
 
@@ -669,7 +676,14 @@ public final class ColonyManager implements IColonyManager
                 BackUpHelper.backupColonyData(world.registryAccess());
             }
 
-            NeoForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            try
+            {
+                NeoForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyManagerUnloadedEvent", e);
+            }
         }
     }
 
@@ -697,7 +711,14 @@ public final class ColonyManager implements IColonyManager
         }
         view.handleColonyViewMessage(colonyData, isNewSubscription);
 
-        NeoForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        try
+        {
+            NeoForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during ColonyViewUpdatedEvent", e);
+        }
     }
 
     @Override

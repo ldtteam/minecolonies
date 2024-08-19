@@ -423,6 +423,13 @@ public class CustomRecipeManager
             lootTables.put(id, drops);
         }
 
-        NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
+        try
+        {
+            NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during CustomRecipesReloadedEvent", e);
+        }
     }
 }

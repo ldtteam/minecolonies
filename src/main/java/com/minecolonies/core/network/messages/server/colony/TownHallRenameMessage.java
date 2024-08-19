@@ -4,6 +4,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -53,6 +54,13 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setName(name);
-        NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
+        try
+        {
+            NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
+        }
     }
 }

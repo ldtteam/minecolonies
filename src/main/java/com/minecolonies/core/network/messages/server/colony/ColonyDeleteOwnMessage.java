@@ -5,6 +5,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.event.ColonyDeletedEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -51,7 +52,14 @@ public class ColonyDeleteOwnMessage extends AbstractServerPlayMessage
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
             MessageUtils.format(MESSAGE_INFO_COLONY_DESTROY_SUCCESS).sendTo(player);
 
-            NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+            try
+            {
+                NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyDeletedEvent", e);
+            }
         }
         else
         {
