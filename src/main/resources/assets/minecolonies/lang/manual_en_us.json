@@ -93,7 +93,7 @@
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",
 
-	"minecolonies.config.dopatreoncheck": "Enable the Patreon feature unlocks check",
+  "minecolonies.config.dopatreoncheck": "Enable the Patreon feature unlocks check",
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
   "minecolonies.config.initialcitizenamount.comment": "Amount of initial citizens.",
   "minecolonies.config.builderplaceconstructiontape": "Construction Tape Placement",
