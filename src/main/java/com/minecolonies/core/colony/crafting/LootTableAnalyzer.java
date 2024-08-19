@@ -62,19 +62,27 @@ public final class LootTableAnalyzer
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param provider the registry provider
+     * @param provider    the registry provider
      * @param lootTableId the loot table id
      * @return the list of possible drops
      */
     public static List<LootDrop> toDrops(final HolderLookup.Provider provider, @NotNull final ResourceKey<LootTable> lootTableId)
     {
-        return toDrops(provider, provider.holderOrThrow(lootTableId));
+        try
+        {
+            return toDrops(provider, provider.holderOrThrow(lootTableId));
+        }
+        catch (final JsonParseException ex)
+        {
+            Log.getLogger().error(String.format("Failed to parse loot table from %s", lootTableId), ex);
+            return Collections.emptyList();
+        }
     }
 
     /**
      * Evaluate a loot table and report possible drops.
      *
-     * @param provider the registry provider
+     * @param provider  the registry provider
      * @param lootTable the loot table
      * @return the list of possible drops
      */
@@ -87,12 +95,10 @@ public final class LootTableAnalyzer
         }
         catch (final JsonParseException ex)
         {
-            Log.getLogger().error(String.format("Failed to parse loot table from %s",
-                    lootTable.getKey()), ex);
+            Log.getLogger().error(String.format("Failed to parse loot table from %s", lootTable.getKey()), ex);
             return Collections.emptyList();
         }
     }
-
 
     /**
      * Evaluate a loot table and report possible drops.
