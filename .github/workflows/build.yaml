@@ -2,30 +2,18 @@ name: Build and Test PRs or General Branches
 
 on:
   pull_request:
-    types:
-      - synchronize
-      - opened
-      - ready_for_review
-      - reopened
   push:
-    branches:
-      - 'feature/**'
-      - 'bugfix/**'
-      - 'hotfix/**'
-      - 'fix/**'
-      - 'features/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
-  statuses: write
-  packages: write
+  contents: read
 
 jobs:
-  release:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@main
+  build:
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@00ee6267732e5a1be194e77cbac2bd40f020c3b0
     with:
       java: 17
+      gradle_tasks: assemble
     secrets:
       CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
       GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}

@@ -2,11 +2,10 @@ name: Release
 
 on:
   push:
-    branches: [
-      "version/*",
-      "release/*",
-      "testing/*",
-    ]
+    branches:
+      - "version/*"
+      - "release/*"
+      - "testing/*"
 
 permissions:
   contents: write
