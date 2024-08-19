@@ -18,6 +18,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
+    public final ForgeConfigSpec.BooleanValue doPatreonCheck;
     public final ForgeConfigSpec.IntValue     initialCitizenAmount;
     public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
     public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
@@ -129,6 +130,7 @@ public class ServerConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
 
+        doPatreonCheck = defineBoolean(builder, "dopatreoncheck", false);
         initialCitizenAmount = defineInteger(builder, "initialcitizenamount", 4, 1, 10);
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);

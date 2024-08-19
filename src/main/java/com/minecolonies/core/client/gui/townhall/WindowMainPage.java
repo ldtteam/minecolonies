@@ -9,11 +9,15 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.network.messages.server.colony.*;
+import com.minecolonies.core.network.messages.server.colony.ColonyNameStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyStructureStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyTextureStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.TeamColonyColorChangeMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -311,7 +315,9 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
-        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        if (!MinecoloniesAPIProxy.getInstance().getConfig().getServer().doPatreonCheck.get()
+              || isFeatureUnlocked.get()
+              || !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
         {
             return;
         }
