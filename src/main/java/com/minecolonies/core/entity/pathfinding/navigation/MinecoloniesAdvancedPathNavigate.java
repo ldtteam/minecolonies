@@ -248,6 +248,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
+        if (PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID()))
+        {
+            Log.getLogger().info(ourEntity + " started pathjob to:" + dest + " job type:" + job.getClass());
+        }
+
         stop();
 
         this.destination = dest;

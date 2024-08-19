@@ -107,6 +107,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     protected AbstractBuilding building;
 
     /**
+     * Dirty flag for recipes
+     */
+    private boolean recipesDirty = true;
+
+    /**
      * Create a new module.
      * @param jobEntry the entry of the job.
      */
@@ -248,7 +253,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {
         if (jobEntry != null)
         {
@@ -267,38 +272,45 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             buf.writeRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
         }
 
-        final List<IRecipeStorage> storages = new ArrayList<>();
-        final List<IRecipeStorage> disabledStorages = new ArrayList<>();
-        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
-        for (final IToken<?> token : new ArrayList<>(recipes))
+        buf.writeBoolean(recipesDirty || fullSync);
+        if (recipesDirty || fullSync)
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final List<IRecipeStorage> storages = new ArrayList<>();
+            final List<IRecipeStorage> disabledStorages = new ArrayList<>();
+            final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
+            for (final IToken<?> token : new ArrayList<>(recipes))
+            {
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(storage, crafterRecipes)))
-            {
-                removeRecipe(token);
-            }
-            else
-            {
-                storages.add(storage);
-                if (disabledRecipes.contains(token))
+                if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (
+                  !isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(storage, crafterRecipes)))
                 {
-                    disabledStorages.add(storage);
+                    removeRecipe(token);
+                }
+                else
+                {
+                    storages.add(storage);
+                    if (disabledRecipes.contains(token))
+                    {
+                        disabledStorages.add(storage);
+                    }
                 }
             }
+
+            buf.writeInt(storages.size());
+            for (final IRecipeStorage storage : storages)
+            {
+                buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+            }
+
+            buf.writeInt(disabledStorages.size());
+            for (final IRecipeStorage storage : disabledStorages)
+            {
+                buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+            }
         }
 
-        buf.writeInt(storages.size());
-        for (final IRecipeStorage storage : storages)
-        {
-            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
-        }
-
-        buf.writeInt(disabledStorages.size());
-        for (final IRecipeStorage storage : disabledStorages)
-        {
-            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
-        }
+        recipesDirty = false;
 
         buf.writeInt(getMaxRecipes());
         buf.writeUtf(getId());
@@ -558,6 +570,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public void clearRecipes()
     {
         recipes.clear();
+        recipesDirty = true;
     }
 
     @Override
@@ -822,6 +835,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if (recipes.contains(oldRecipe))
         {
+            recipesDirty = true;
             int oldIndex = recipes.indexOf(oldRecipe);
             recipes.add(oldIndex, newRecipe);
             recipes.remove(oldRecipe);
@@ -834,6 +848,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if(recipes.remove(token))
         {
+            recipesDirty = true;
             disabledRecipes.remove(token);
             markDirty();
         }
@@ -849,6 +864,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if (!recipes.contains(token))
         {
+            recipesDirty = true;
             if(atTop)
             {
                 recipes.add(0, token);
@@ -863,6 +879,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public void switchOrder(final int i, final int j, final boolean fullMove)
     {
+        recipesDirty = true;
         if (fullMove)
         {
             if (i > j)
