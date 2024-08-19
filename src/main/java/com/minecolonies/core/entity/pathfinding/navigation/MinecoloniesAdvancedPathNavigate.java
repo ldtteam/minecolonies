@@ -989,7 +989,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (isTracking)
+        if (isTracking && reached != null)
         {
             PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
             reached.clear();
@@ -1033,7 +1033,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (isTracking)
+        if (isTracking && reached != null)
         {
             PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
             reached.clear();
