@@ -227,4 +227,11 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         this.assignedRequests.clear();
         this.assignedRequests.addAll(assignedRequests);
     }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
 }

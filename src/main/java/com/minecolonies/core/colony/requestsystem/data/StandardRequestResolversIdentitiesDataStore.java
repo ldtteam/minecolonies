@@ -120,15 +120,18 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         {
             final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
+            final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create();
 
-            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
-                final IToken<?> id = controller.deserializeTag(provider, CompoundTag.getCompound(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserializeTag(provider, CompoundTag.getCompound(TAG_RESOLVER));
-
-                return new Tuple<IToken<?>, IRequestResolver<?>>(id, resolver);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));
-
-            final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(map);
+            for (int i = 0; i < list.size(); i++)
+            {
+                final CompoundTag mapCompound = list.getCompound(i);
+                final IToken<?> id = controller.deserializeTag(provider, mapCompound.getCompound(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserializeTag(provider, mapCompound.getCompound(TAG_RESOLVER));
+                if (resolver.isValid())
+                {
+                    biMap.put(id, resolver);
+                }
+            }
 
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
         }
