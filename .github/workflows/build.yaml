@@ -11,6 +11,8 @@ on:
 
 permissions:
   contents: read
+  statuses: write
+  packages: write
 
 jobs:
   build:
