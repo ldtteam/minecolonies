@@ -19,12 +19,13 @@ on:
 permissions:
   contents: write
   statuses: write
+  packages: write
 
 jobs:
   release:
     uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@main
     with:
-      java: 21
+      java: 17
     secrets:
       CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
       GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
