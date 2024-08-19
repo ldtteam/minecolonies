@@ -5,6 +5,7 @@ on:
     types:
       - opened
       - edited
+      - synchronize
   push:
   workflow_dispatch:
 
