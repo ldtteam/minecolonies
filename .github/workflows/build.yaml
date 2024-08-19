@@ -1,4 +1,4 @@
-name: Build and Test PRs or General Branches
+name: Build and Pre-release
 
 on:
   pull_request:
