@@ -72,7 +72,7 @@ public final class LootTableAnalyzer
         {
             return toDrops(provider, provider.holderOrThrow(lootTableId));
         }
-        catch (final JsonParseException ex)
+        catch (final IllegalStateException ex)
         {
             Log.getLogger().error(String.format("Failed to parse loot table from %s", lootTableId), ex);
             return Collections.emptyList();
