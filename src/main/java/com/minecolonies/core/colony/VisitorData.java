@@ -82,14 +82,15 @@ public class VisitorData extends CitizenData implements IVisitorData
     /**
      * Loads this citizen data from nbt
      *
-     * @param colony colony to load for
-     * @param nbt    nbt compound to read from
+     * @param colony   colony to load for
+     * @param nbt      nbt compound to read from
+     * @param provider
      * @return new CitizenData
      */
-    public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt)
+    public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt, final HolderLookup.@NotNull Provider provider)
     {
         final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony);
-        data.deserializeNBT(colony.getWorld().registryAccess(), nbt);
+        data.deserializeNBT(provider, nbt);
         return data;
     }
 

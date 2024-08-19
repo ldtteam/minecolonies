@@ -139,7 +139,7 @@ public class VisitorManager implements IVisitorManager
             final ListTag citizenList = visitorManagerNBT.getList(TAG_VISITORS, Tag.TAG_COMPOUND);
             for (final Tag citizen : citizenList)
             {
-                final IVisitorData data = VisitorData.loadVisitorFromNBT(colony, (CompoundTag) citizen);
+                final IVisitorData data = VisitorData.loadVisitorFromNBT(colony, (CompoundTag) citizen, provider);
                 visitorMap.put(data.getId(), data);
             }
 
