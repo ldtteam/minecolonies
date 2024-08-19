@@ -2,6 +2,9 @@ name: Build and Test PRs or General Branches
 
 on:
   pull_request:
+    types:
+      - opened
+      - edited
   push:
   workflow_dispatch:
 
@@ -13,7 +16,10 @@ jobs:
     uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@00ee6267732e5a1be194e77cbac2bd40f020c3b0
     with:
       java: 17
-      gradle_tasks: assemble
-    secrets:
-      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+    secrets: inherit
+  pre-release:
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.prerelease.yaml@00ee6267732e5a1be194e77cbac2bd40f020c3b0
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    with:
+      java: 17
+    secrets: inherit
