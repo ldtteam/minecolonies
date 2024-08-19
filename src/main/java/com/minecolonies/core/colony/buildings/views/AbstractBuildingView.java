@@ -23,6 +23,7 @@ import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -148,7 +149,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     /**
      * Set of building modules this building has.
      */
-    protected Int2ObjectOpenHashMap<IBuildingModuleView> moduleViews = new Int2ObjectOpenHashMap<>();
+    protected Int2ObjectLinkedOpenHashMap<IBuildingModuleView> moduleViews = new Int2ObjectLinkedOpenHashMap<>();
 
     /**
      * Building type
