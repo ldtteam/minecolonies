@@ -131,7 +131,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
             final List<BlockPos> water = new ArrayList<>();
             for (int j = 0; j < waterTagList.size(); ++j)
             {
-                final BlockPos waterPos = NBTUtils.readBlockPos( waterTagList.getCompound(j));
+                final BlockPos waterPos = NBTUtils.readBlockPos(waterTagList.get(j));
                 if (!water.contains(waterPos))
                 {
                     water.add(waterPos);

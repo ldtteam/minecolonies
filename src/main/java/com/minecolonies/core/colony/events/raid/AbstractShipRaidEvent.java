@@ -510,9 +510,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         @NotNull final ListTag spawnerListCompound = new ListTag();
         for (@NotNull final BlockPos entry : spawners)
         {
-            @NotNull final CompoundTag spawnerCompound = new CompoundTag();
-            spawnerCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            spawnerListCompound.add(spawnerCompound);
+            spawnerListCompound.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_SPAWNERS, spawnerListCompound);
 
@@ -536,7 +534,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
-            spawners.add(NBTUtils.readBlockPos(spawnerListCompound.getCompound(i), TAG_POS));
+            spawners.add(NBTUtils.readBlockPos(spawnerListCompound.get(i)));
         }
 
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);

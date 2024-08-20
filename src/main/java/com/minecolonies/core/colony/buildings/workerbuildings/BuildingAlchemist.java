@@ -111,19 +111,19 @@ public class BuildingAlchemist extends AbstractBuilding
         final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < sandPos.size(); ++i)
         {
-            soulsand.add(NBTUtils.readBlockPos(sandPos.getCompound(i), TAG_POS));
+            soulsand.add(NBTUtils.readBlockPos(sandPos.get(i)));
         }
 
         final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < leavesPos.size(); ++i)
         {
-            leaves.add(NBTUtils.readBlockPos(leavesPos.getCompound(i), TAG_POS));
+            leaves.add(NBTUtils.readBlockPos(leavesPos.get(i)));
         }
 
         final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_INT_ARRAY);
         for (int i = 0; i < brewingStandPos.size(); ++i)
         {
-            brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.getCompound(i), TAG_POS));
+            brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.get(i)));
         }
     }
 
@@ -134,27 +134,21 @@ public class BuildingAlchemist extends AbstractBuilding
         @NotNull final ListTag sandCompoundList = new ListTag();
         for (@NotNull final BlockPos entry : soulsand)
         {
-            @NotNull final CompoundTag sandCompound = new CompoundTag();
-            sandCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            sandCompoundList.add(sandCompound);
+            sandCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
 
         @NotNull final ListTag leavesCompoundList = new ListTag();
         for (@NotNull final BlockPos entry : leaves)
         {
-            @NotNull final CompoundTag leaveCompound = new CompoundTag();
-            leaveCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            leavesCompoundList.add(leaveCompound);
+            leavesCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_LEAVES, leavesCompoundList);
 
         @NotNull final ListTag brewingStandCompoundList = new ListTag();
         for (@NotNull final BlockPos entry : brewingStands)
         {
-            @NotNull final CompoundTag brewingStandCompound = new CompoundTag();
-            brewingStandCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            brewingStandCompoundList.add(brewingStandCompound);
+            brewingStandCompoundList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BREWING_STAND, brewingStandCompoundList);
 

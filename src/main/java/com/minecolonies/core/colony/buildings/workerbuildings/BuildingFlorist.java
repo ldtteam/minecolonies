@@ -108,7 +108,7 @@ public class BuildingFlorist extends AbstractBuilding
         final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            plantGround.add(NBTUtils.readBlockPos(compostBinTagList.getCompound(i), TAG_POS));
+            plantGround.add(NBTUtils.readBlockPos(compostBinTagList.get(i)));
         }
     }
 
@@ -119,9 +119,7 @@ public class BuildingFlorist extends AbstractBuilding
         @NotNull final ListTag compostBinTagList = new ListTag();
         for (@NotNull final BlockPos entry : plantGround)
         {
-            @NotNull final CompoundTag compostBinCompound = new CompoundTag();
-            compostBinCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            compostBinTagList.add(compostBinCompound);
+            compostBinTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_PLANTGROUND, compostBinTagList);
 

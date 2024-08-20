@@ -119,7 +119,7 @@ public class BuildingComposter extends AbstractBuilding
         final ListTag compostBinTagList = compound.getList(TAG_BARRELS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            barrels.add(NBTUtils.readBlockPos(compostBinTagList.getCompound(i), TAG_POS));
+            barrels.add(NBTUtils.readBlockPos(compostBinTagList.get(i)));
         }
     }
 
@@ -130,9 +130,7 @@ public class BuildingComposter extends AbstractBuilding
         @NotNull final ListTag compostBinTagList = new ListTag();
         for (@NotNull final BlockPos entry : barrels)
         {
-            @NotNull final CompoundTag compostBinCompound = new CompoundTag();
-            compostBinCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            compostBinTagList.add(compostBinCompound);
+            compostBinTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BARRELS, compostBinTagList);
         return compound;

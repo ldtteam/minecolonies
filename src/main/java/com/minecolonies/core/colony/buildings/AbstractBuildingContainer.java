@@ -79,8 +79,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < containerTagList.size(); ++i)
         {
-            final Tag containerCompound = containerTagList.getCompound(i);
-            containerList.add(NBTUtils.readBlockPos(containerCompound));
+            containerList.add(NBTUtils.readBlockPos(containerTagList.get(i)));
         }
         if (compound.contains(TAG_PRIO))
         {

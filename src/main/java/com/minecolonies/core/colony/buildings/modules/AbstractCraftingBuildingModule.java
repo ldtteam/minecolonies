@@ -254,7 +254,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
+    public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf, final boolean fullSync)
     {
         if (jobEntry != null)
         {
@@ -301,13 +301,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             buf.writeInt(storages.size());
             for (final IRecipeStorage storage : storages)
             {
-                buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+                StandardFactoryController.getInstance().serialize(buf, storage);
             }
 
             buf.writeInt(disabledStorages.size());
             for (final IRecipeStorage storage : disabledStorages)
             {
-                buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+                StandardFactoryController.getInstance().serialize(buf, storage);
             }
         }
 

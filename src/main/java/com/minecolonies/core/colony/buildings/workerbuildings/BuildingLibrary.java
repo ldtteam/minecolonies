@@ -133,7 +133,7 @@ public class BuildingLibrary extends AbstractBuilding
         final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            bookCases.add(NBTUtils.readBlockPos(furnaceTagList.getCompound(i), TAG_POS));
+            bookCases.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));
         }
     }
 
@@ -144,9 +144,7 @@ public class BuildingLibrary extends AbstractBuilding
         @NotNull final ListTag bookcaseTagList = new ListTag();
         for (@NotNull final BlockPos entry : bookCases)
         {
-            @NotNull final CompoundTag bookCompound = new CompoundTag();
-            bookCompound.put(TAG_POS, NBTUtils.writeBlockPos(entry));
-            bookcaseTagList.add(bookCompound);
+            bookcaseTagList.add(NBTUtils.writeBlockPos(entry)));
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);
 

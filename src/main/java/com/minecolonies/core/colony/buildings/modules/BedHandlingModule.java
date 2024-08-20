@@ -37,9 +37,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_INT_ARRAY);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
-            final Tag bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NBTUtils.readBlockPos(bedCompound);
-            bedList.add(bedPos);
+            bedList.add(NBTUtils.readBlockPos(bedTagList.get(i)));
         }
     }
 
