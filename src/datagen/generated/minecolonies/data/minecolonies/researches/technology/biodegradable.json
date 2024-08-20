@@ -12,13 +12,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bone_meal"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:bone_meal"
+      }
     }
   ],
   "researchLevel": 1,

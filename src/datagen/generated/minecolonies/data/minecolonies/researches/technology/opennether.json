@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:technology/morescrolls",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:gilded_blackstone"
-        ]
-      },
-      "quantity": 3
+      "items": {
+        "count": 3,
+        "item": "minecraft:gilded_blackstone"
+      }
     }
   ],
   "researchLevel": 2,

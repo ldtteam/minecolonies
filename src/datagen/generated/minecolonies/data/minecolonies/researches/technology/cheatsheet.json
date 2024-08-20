@@ -13,13 +13,10 @@
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:paper"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:paper"
+      }
     }
   ],
   "researchLevel": 3,

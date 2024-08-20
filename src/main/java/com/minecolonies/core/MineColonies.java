@@ -114,7 +114,6 @@ public class MineColonies
         ModSoundEvents.SOUND_EVENTS.register(modBus);
         ModInteractionsInitializer.DEFERRED_REGISTER.register(modBus);
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(modBus);
-        ModResearchCostTypeInitializer.DEFERRED_REGISTER.register(modBus);
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
         SupplyLoot.GLM.register(modBus);
         ModBannerPatterns.BANNER_PATTERNS.register(modBus);

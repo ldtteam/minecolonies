@@ -13,13 +13,10 @@
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:leather"
-        ]
-      },
-      "quantity": 32
+      "items": {
+        "count": 32,
+        "item": "minecraft:leather"
+      }
     }
   ],
   "researchLevel": 3,

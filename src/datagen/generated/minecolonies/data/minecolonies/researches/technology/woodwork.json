@@ -12,11 +12,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_tag",
-      "item": {
+      "items": {
+        "count": 64,
         "tag": "minecraft:planks"
-      },
-      "quantity": 64
+      }
     }
   ],
   "researchLevel": 1,

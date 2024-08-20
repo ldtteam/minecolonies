@@ -13,13 +13,10 @@
       "level": 5
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_apple"
-        ]
-      },
-      "quantity": 32
+      "items": {
+        "count": 32,
+        "item": "minecraft:golden_apple"
+      }
     }
   ],
   "researchLevel": 5

@@ -28,7 +28,6 @@ import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -50,7 +49,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
 import static com.minecolonies.api.research.ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
@@ -67,7 +65,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public static final ResourceKey<Registry<RecipeTypeEntry>> RECIPE_TYPE_ENTRIES = key("recipetypeentries");
     public static final ResourceKey<Registry<ResearchRequirementEntry>> RESEARCH_REQUIREMENT_TYPES = key("researchrequirementtypes");
     public static final ResourceKey<Registry<ResearchEffectEntry>> RESEARCH_EFFECT_TYPES = key("researcheffecttypes");
-    public static final ResourceKey<Registry<ResearchCostType>> RESEARCH_COST_TYPES = key("researchcosttypes");
     public static final ResourceKey<Registry<QuestRegistries.ObjectiveEntry>> QUEST_OBJECTIVES = key("questobjectives");
     public static final ResourceKey<Registry<QuestRegistries.RewardEntry>> QUEST_REWARDS = key("questrewards");
     public static final ResourceKey<Registry<QuestRegistries.TriggerEntry>> QUEST_TRIGGERS = key("questtriggers");
@@ -94,7 +91,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private Registry<ColonyEventDescriptionTypeRegistryEntry>    colonyEventDescriptionRegistry;
     private Registry<ResearchRequirementEntry>                   researchRequirementRegistry;
     private Registry<ResearchEffectEntry>                        researchEffectRegistry;
-    private Registry<ResearchCostType>                           researchCostRegistry;
     private Registry<RecipeTypeEntry>                            recipeTypeEntryRegistry;
     private Registry<CraftingType>                               craftingTypeRegistry;
     private Registry<QuestRegistries.ObjectiveEntry>             questObjectiveRegistry;
@@ -220,12 +216,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public Registry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
     @Override
-    public Registry<ResearchCostType> getResearchCostRegistry()
-    {
-        return researchCostRegistry;
-    }
-
-    @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         buildingRegistry = event.create(syncedRegistry(BUILDINGS));
@@ -239,7 +229,6 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         recipeTypeEntryRegistry = event.create(syncedRegistry(RECIPE_TYPE_ENTRIES, new ResourceLocation(Constants.MOD_ID, "classic")));
         researchRequirementRegistry = event.create(syncedRegistry(RESEARCH_REQUIREMENT_TYPES, RESEARCH_RESEARCH_REQ_ID));
         researchEffectRegistry = event.create(syncedRegistry(RESEARCH_EFFECT_TYPES, GLOBAL_EFFECT_ID));
-        researchCostRegistry = event.create(syncedRegistry(RESEARCH_COST_TYPES, LIST_ITEM_COST_ID));
         questObjectiveRegistry = event.create(syncedRegistry(QUEST_OBJECTIVES));
         questRewardRegistry = event.create(syncedRegistry(QUEST_REWARDS));
         questTriggerRegistry = event.create(syncedRegistry(QUEST_TRIGGERS));

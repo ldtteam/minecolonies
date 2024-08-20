@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_carrot"
-        ]
-      },
-      "quantity": 8
+      "items": {
+        "count": 8,
+        "item": "minecraft:golden_carrot"
+      }
     }
   ],
   "researchLevel": 3,

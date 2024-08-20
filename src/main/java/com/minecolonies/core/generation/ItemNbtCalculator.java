@@ -7,7 +7,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData.Builder;
-import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.minecolonies.api.util.CraftingUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.TypedDataComponent;
@@ -17,8 +16,10 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -86,7 +87,7 @@ public class ItemNbtCalculator implements DataProvider
             for (final ItemStack stack : allStacks)
             {
                 final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
-                final Set<String> keys = new HashSet<>();
+                final Set<String> keys = new TreeSet<>();
                 for (final TypedDataComponent<?> key : stack.getComponents())
                 {
                     keys.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(key.type()).toString());

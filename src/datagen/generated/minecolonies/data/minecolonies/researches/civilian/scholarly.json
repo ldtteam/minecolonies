@@ -13,13 +13,10 @@
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
-      "quantity": 24
+      "items": {
+        "count": 24,
+        "item": "minecraft:book"
+      }
     }
   ],
   "researchLevel": 4,

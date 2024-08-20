@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:hay_block"
-        ]
-      },
-      "quantity": 32
+      "items": {
+        "count": 32,
+        "item": "minecraft:hay_block"
+      }
     }
   ],
   "researchLevel": 3

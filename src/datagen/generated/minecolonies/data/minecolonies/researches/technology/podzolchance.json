@@ -13,13 +13,10 @@
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:podzol"
-        ]
-      },
-      "quantity": 8
+      "items": {
+        "count": 8,
+        "item": "minecraft:podzol"
+      }
     }
   ],
   "researchLevel": 2,

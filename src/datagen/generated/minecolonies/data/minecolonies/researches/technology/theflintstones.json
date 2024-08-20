@@ -13,13 +13,10 @@
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:brick"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:brick"
+      }
     }
   ],
   "researchLevel": 2,

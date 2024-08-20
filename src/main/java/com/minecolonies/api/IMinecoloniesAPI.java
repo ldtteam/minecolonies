@@ -26,7 +26,6 @@ import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.core.Registry;
@@ -77,8 +76,6 @@ public interface IMinecoloniesAPI
     Registry<ResearchRequirementEntry> getResearchRequirementRegistry();
 
     Registry<ResearchEffectEntry> getResearchEffectRegistry();
-
-    Registry<ResearchCostType> getResearchCostRegistry();
 
     Registry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
 

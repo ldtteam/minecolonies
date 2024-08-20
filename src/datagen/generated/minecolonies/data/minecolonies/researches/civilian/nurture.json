@@ -13,13 +13,10 @@
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cooked_chicken"
-        ]
-      },
-      "quantity": 32
+      "items": {
+        "count": 32,
+        "item": "minecraft:cooked_chicken"
+      }
     }
   ],
   "researchLevel": 2,

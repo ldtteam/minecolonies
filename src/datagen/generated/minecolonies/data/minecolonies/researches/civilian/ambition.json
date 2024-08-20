@@ -8,13 +8,10 @@
   "icon": "minecolonies:blockhutmysticalsite",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:diamond"
-        ]
-      },
-      "quantity": 1
+      "items": {
+        "count": 1,
+        "item": "minecraft:diamond"
+      }
     }
   ],
   "researchLevel": 1,

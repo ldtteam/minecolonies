@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
+ * Similar to {@link net.neoforged.neoforge.common.crafting.SizedIngredient}, but this deliberately skips the
+ * count check in {@link #test(ItemStack)} to more easily support consuming across multiple inventory slots --
+ * and unlike that, it participates as a custom ingredient directly.
  *
  * {
  *     "type": "minecolonies:counted",
@@ -48,9 +51,14 @@ public record CountedIngredient(@NotNull Ingredient child, int count) implements
      */
     public static Ingredient of(@NotNull final Ingredient child, final int count)
     {
-        return new CountedIngredient(child, count).toVanilla();
+        return count == 1 ? child : new CountedIngredient(child, count).toVanilla();
     }
 
+    /**
+     * Tests if the given stack matches the base ingredient.  Note: deliberately does *not* verify the count.
+     * @param stack the stack to test
+     * @return true if the stack is the matching ingredient, regardless of count.
+     */
     @Override
     public boolean test(@Nullable final ItemStack stack)
     {

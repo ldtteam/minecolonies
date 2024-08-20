@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:blockminecoloniesrack"
-        ]
-      },
-      "quantity": 16
+      "items": {
+        "count": 16,
+        "item": "minecolonies:blockminecoloniesrack"
+      }
     }
   ],
   "researchLevel": 3,

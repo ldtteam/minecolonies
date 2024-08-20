@@ -13,22 +13,16 @@
       "level": 9
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:clipboard"
-        ]
-      },
-      "quantity": 1
+      "items": {
+        "count": 1,
+        "item": "minecolonies:clipboard"
+      }
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
-      "quantity": 16
+      "items": {
+        "count": 16,
+        "item": "minecraft:book"
+      }
     }
   ],
   "researchLevel": 3,

@@ -10,13 +10,10 @@
   "parentResearch": "minecolonies:technology/loaded",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:emerald"
-        ]
-      },
-      "quantity": 256
+      "items": {
+        "count": 256,
+        "item": "minecraft:emerald"
+      }
     }
   ],
   "researchLevel": 6

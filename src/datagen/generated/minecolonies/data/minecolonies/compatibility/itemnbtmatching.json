@@ -112,8 +112,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:fancy_door"
   },
@@ -125,8 +125,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:fancy_trapdoors"
   },
@@ -231,8 +231,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:panel"
   },
@@ -253,8 +253,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:post"
   },
@@ -335,8 +335,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:vanilla_doors_compat"
   },
@@ -366,8 +366,8 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:block_state",
-      "domum_ornamentum:texture_data"
+      "domum_ornamentum:texture_data",
+      "minecraft:block_state"
     ],
     "item": "domum_ornamentum:vanilla_trapdoors_compat"
   },
@@ -407,8 +407,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecolonies:banner_rally_guards"
   },
@@ -638,10 +638,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecolonies:chiefsword"
   },
@@ -747,10 +747,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecolonies:iron_scimitar"
   },
@@ -832,8 +832,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecolonies:pharaoscepter"
   },
@@ -966,9 +966,9 @@
   },
   {
     "checkednbtkeys": [
-      "structurize:pos_selection",
       "minecraft:enchantments",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "structurize:pos_selection"
     ],
     "item": "minecolonies:scan_analyzer"
   },
@@ -978,8 +978,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecolonies:scepterguard"
   },
@@ -989,8 +989,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecolonies:scepterpermission"
   },
@@ -1049,8 +1049,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecolonies:spear"
   },
@@ -1540,8 +1540,8 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:bow"
   },
@@ -1710,40 +1710,40 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:chainmail_boots"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:chainmail_chestplate"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:chainmail_helmet"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:chainmail_leggings"
   },
@@ -2091,10 +2091,10 @@
   },
   {
     "checkednbtkeys": [
+      "minecraft:charged_projectiles",
       "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:max_damage",
-      "minecraft:charged_projectiles"
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:crossbow"
   },
@@ -2347,10 +2347,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:diamond_axe"
   },
@@ -2360,30 +2360,30 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:diamond_boots"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:diamond_chestplate"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:diamond_helmet"
   },
@@ -2397,10 +2397,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:diamond_leggings"
   },
@@ -2410,10 +2410,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:diamond_sword"
   },
@@ -2503,15 +2503,15 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:stored_enchantments",
-      "minecraft:enchantment_glint_override"
+      "minecraft:enchantment_glint_override",
+      "minecraft:stored_enchantments"
     ],
     "item": "minecraft:enchanted_book"
   },
   {
     "checkednbtkeys": [
-      "minecraft:food",
-      "minecraft:enchantment_glint_override"
+      "minecraft:enchantment_glint_override",
+      "minecraft:food"
     ],
     "item": "minecraft:enchanted_golden_apple"
   },
@@ -2758,20 +2758,20 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:golden_axe"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:golden_boots"
   },
@@ -2784,20 +2784,20 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:golden_chestplate"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:golden_helmet"
   },
@@ -2811,20 +2811,20 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:golden_leggings"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:golden_sword"
   },
@@ -3050,10 +3050,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:iron_axe"
   },
@@ -3066,20 +3066,20 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:iron_boots"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:iron_chestplate"
   },
@@ -3092,10 +3092,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:iron_helmet"
   },
@@ -3112,10 +3112,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:iron_leggings"
   },
@@ -3128,10 +3128,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:iron_sword"
   },
@@ -3222,30 +3222,30 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:leather_boots"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:leather_chestplate"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:leather_helmet"
   },
@@ -3259,10 +3259,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:leather_leggings"
   },
@@ -3441,9 +3441,9 @@
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
       "minecraft:enchantments",
-      "minecraft:tool",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:mace"
   },
@@ -3695,12 +3695,12 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:netherite_axe"
   },
@@ -3712,34 +3712,34 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:netherite_boots"
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:netherite_chestplate"
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:netherite_helmet"
   },
@@ -3751,12 +3751,12 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:netherite_leggings"
   },
@@ -3768,12 +3768,12 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:fire_resistant",
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:fire_resistant",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:netherite_sword"
   },
@@ -4539,10 +4539,10 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:enchantments",
       "minecraft:banner_patterns",
-      "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:shield"
   },
@@ -4777,10 +4777,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:stone_axe"
   },
@@ -4811,10 +4811,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:stone_sword"
   },
@@ -4982,9 +4982,9 @@
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
       "minecraft:enchantments",
-      "minecraft:tool",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:trident"
   },
@@ -5039,10 +5039,10 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:enchantments",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:turtle_helmet"
   },
@@ -5288,9 +5288,9 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:item_name",
       "minecraft:banner_patterns",
-      "minecraft:hide_additional_tooltip"
+      "minecraft:hide_additional_tooltip",
+      "minecraft:item_name"
     ],
     "item": "minecraft:white_banner"
   },
@@ -5357,9 +5357,9 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:repair_cost",
       "minecraft:dyed_color",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
     ],
     "item": "minecraft:wolf_armor"
   },
@@ -5369,20 +5369,20 @@
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:wooden_axe"
   },
   {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
-      "minecraft:tool",
       "minecraft:enchantments",
+      "minecraft:max_damage",
       "minecraft:repair_cost",
-      "minecraft:max_damage"
+      "minecraft:tool"
     ],
     "item": "minecraft:wooden_sword"
   },
@@ -5475,19 +5475,19 @@
   },
   {
     "checkednbtkeys": [
-      "structurize:pos_selection",
       "minecraft:enchantments",
-      "structurize:scan_tool",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "structurize:pos_selection",
+      "structurize:scan_tool"
     ],
     "item": "structurize:sceptersteel"
   },
   {
     "checkednbtkeys": [
-      "structurize:pos_selection",
       "minecraft:enchantments",
-      "structurize:tags",
-      "minecraft:max_damage"
+      "minecraft:max_damage",
+      "structurize:pos_selection",
+      "structurize:tags"
     ],
     "item": "structurize:sceptertag"
   },

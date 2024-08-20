@@ -14,9 +14,12 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,6 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -34,15 +38,19 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1097,6 +1105,84 @@ public final class ItemStackUtils
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));
         }
         citizenData.markDirty(60);
+    }
+
+    /**
+     * Given an {@link Ingredient}, tries to produce a reasonable friendly UI name for its contents.
+     * @param ingredient the ingredient to check.
+     * @return the friendly name.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static Component getTranslatedName(@NotNull final SizedIngredient ingredient)
+    {
+        if (ingredient.ingredient().hasNoItems())
+        {
+            return Component.empty();
+        }
+
+        final ItemStack[] items = ingredient.getItems();
+        final Optional<TagKey<Item>> tag = getTagEquivalent(items);
+
+        return Component.translatable("%sx %s", ingredient.count(), tag.map(t ->
+        {
+            final String key = "com.minecolonies.coremod.research.tags." + t.location();
+            return (Component) (I18n.exists(key)
+                    ? Component.translatable(key)
+                    : Component.translatable("com.minecolonies.coremod.research.tags.other", t.location().toString()));
+        }).orElseGet(() ->
+        {
+            if (items.length == 1)
+            {
+                return items[0].getItem().getDescription();
+            }
+            return Component.translatable(String.join("/", Collections.nCopies(items.length, "%s")),
+                    Arrays.stream(items).map(ItemStack::getItem).map(Item::getDescription).toArray());
+        }));
+    }
+
+    /**
+     * Attempts to find a tag that exactly matches the given list of item stacks.
+     * @param stacks a list of item stacks.
+     * @return a tag that seems to match it, if found.
+     */
+    public static Optional<TagKey<Item>> getTagEquivalent(@NotNull final ItemStack[] stacks)
+    {
+        final List<Item> values = Arrays.stream(stacks)
+                .map(ItemStack::getItem)
+                .toList();
+
+        if (values.size() <= 1)
+        {
+            return Optional.empty();
+        }
+
+        return BuiltInRegistries.ITEM.getTags()
+                .filter(e ->
+                {
+                    HolderSet.Named<Item> tag = e.getSecond();
+                    return areEquivalent(tag, values);
+                })
+                .map(Pair::getFirst)
+                .findFirst();
+    }
+
+    private static boolean areEquivalent(@NotNull final HolderSet.Named<Item> tag, @NotNull final List<Item> values)
+    {
+        final int count = tag.size();
+        if (count != values.size())
+        {
+            return false;
+        }
+        for (int i = 0; i < count; i++)
+        {
+            final Item tagValue = tag.get(i).value();
+            final Item value = values.get(i);
+            if (!value.equals(tagValue))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

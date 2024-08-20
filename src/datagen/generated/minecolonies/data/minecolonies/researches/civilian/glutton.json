@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:civilian/epicure",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cookie"
-        ]
-      },
-      "quantity": 512
+      "items": {
+        "count": 512,
+        "item": "minecraft:cookie"
+      }
     }
   ],
   "researchLevel": 6,

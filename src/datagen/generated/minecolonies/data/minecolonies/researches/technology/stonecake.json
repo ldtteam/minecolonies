@@ -12,13 +12,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:chiseled_stone_bricks"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:chiseled_stone_bricks"
+      }
     }
   ],
   "researchLevel": 1,

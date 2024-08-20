@@ -13,13 +13,10 @@
       "mandatory-building": "blacksmith"
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
-      "quantity": 32
+      "items": {
+        "count": 32,
+        "item": "minecraft:iron_ingot"
+      }
     }
   ],
   "researchLevel": 5,

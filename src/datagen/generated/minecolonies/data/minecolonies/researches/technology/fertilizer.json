@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:wheat_seeds"
-        ]
-      },
-      "quantity": 512
+      "items": {
+        "count": 512,
+        "item": "minecraft:wheat_seeds"
+      }
     }
   ],
   "researchLevel": 5,
