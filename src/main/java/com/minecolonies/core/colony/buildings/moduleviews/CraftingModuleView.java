@@ -88,26 +88,29 @@ public class CraftingModuleView extends AbstractBuildingModuleView
             }
         }
 
-        recipes.clear();
-        disabledRecipes.clear();
-
-        final int recipesSize = buf.readInt();
-        for (int i = 0; i < recipesSize; i++)
+        if (buf.readBoolean())
         {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf);
-            if (storage != null)
+            recipes.clear();
+            disabledRecipes.clear();
+
+            final int recipesSize = buf.readInt();
+            for (int i = 0; i < recipesSize; i++)
             {
-                recipes.add(storage);
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
+                if (storage != null)
+                {
+                    recipes.add(storage);
+                }
             }
-        }
 
-        final int disabledRecipeSize = buf.readInt();
-        for (int i = 0; i < disabledRecipeSize; i++)
-        {
-            final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf);
-            if (storage != null)
+            final int disabledRecipeSize = buf.readInt();
+            for (int i = 0; i < disabledRecipeSize; i++)
             {
-                disabledRecipes.add(storage);
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
+                if (storage != null)
+                {
+                    disabledRecipes.add(storage);
+                }
             }
         }
 
