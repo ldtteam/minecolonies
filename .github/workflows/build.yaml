@@ -9,6 +9,10 @@ on:
       - labeled
       - unlabeled
   push:
+    branches:
+      - "version/*"
+      - "release/*"
+      - "testing/*"
   workflow_dispatch:
 
 permissions:
