@@ -48,7 +48,7 @@ dependencies {
 
     compileOnly "info.journeymap:journeymap-api-neoforge:${project.jmapApiVersion}"
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
-         runtimeOnly "flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}-neoforge"
+         runtimeOnly "flat:journeymap-neoforge:${project.jmapVersion}"
     }
     // replace "compileOnly" with "implementation" when you want to include it for testing
     // compileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
