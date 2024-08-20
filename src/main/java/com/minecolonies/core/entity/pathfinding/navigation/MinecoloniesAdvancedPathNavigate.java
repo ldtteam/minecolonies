@@ -248,6 +248,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
+        if (PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID()))
+        {
+            Log.getLogger().info(ourEntity + " started pathjob to:" + dest + " job type:" + job.getClass().getSimpleName());
+        }
+
         stop();
 
         this.destination = dest;
@@ -984,7 +989,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (isTracking)
+        if (isTracking && reached != null)
         {
             PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
             reached.clear();
@@ -1028,7 +1033,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (isTracking)
+        if (isTracking && reached != null)
         {
             PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
             reached.clear();
