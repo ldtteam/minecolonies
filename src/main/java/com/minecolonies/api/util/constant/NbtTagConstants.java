@@ -458,9 +458,9 @@ public final class NbtTagConstants
     public static final String TAG_FLAG_PATTERNS = "colonyflag";
 
     /**
-     * Tag used by vanilla to store banner patterns
+     * Tag we use to store the patterns.
      */
-    public static final String TAG_BANNER_PATTERNS = "Patterns";
+    public static final String TAG_BANNER_PATTERNS = "cbpatterns";
 
     /**
      * Tag used by vanilla to store a single pattern in banner pattern-color pairs

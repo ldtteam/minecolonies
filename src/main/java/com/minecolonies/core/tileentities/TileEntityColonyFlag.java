@@ -56,7 +56,11 @@ public class TileEntityColonyFlag extends BlockEntity
     {
         super.loadAdditional(compound, provider);
 
-        this.patterns = Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_BANNER_PATTERNS));
+        if (compound.contains(TAG_BANNER_PATTERNS))
+        {
+            this.patterns = Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_BANNER_PATTERNS));
+        }
+
         this.colonyId = compound.getInt(TAG_COLONY_ID);
 
         if(this.colonyId == -1 && this.hasLevel())
