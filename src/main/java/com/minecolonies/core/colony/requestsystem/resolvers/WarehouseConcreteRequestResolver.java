@@ -69,4 +69,11 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
         }
         return false;
     }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
 }

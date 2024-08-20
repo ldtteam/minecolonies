@@ -170,4 +170,11 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     {
         return Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
     }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
 }

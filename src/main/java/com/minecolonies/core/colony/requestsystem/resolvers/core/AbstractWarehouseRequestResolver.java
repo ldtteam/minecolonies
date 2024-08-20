@@ -325,4 +325,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     {
         return CONST_WAREHOUSE_RESOLVER_PRIORITY;
     }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
 }
