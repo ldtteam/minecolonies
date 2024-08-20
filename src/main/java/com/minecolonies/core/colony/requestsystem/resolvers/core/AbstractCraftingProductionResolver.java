@@ -261,4 +261,10 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
+
+    @Override
+    public boolean isValid()
+    {
+        return jobEntry != null;
+    }
 }
