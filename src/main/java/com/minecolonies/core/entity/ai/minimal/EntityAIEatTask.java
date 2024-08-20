@@ -197,7 +197,7 @@ public class EntityAIEatTask implements IStateAI
 
         citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-        new ItemParticleEffectMessage(citizen.getMainHandItem(),
+        new ItemParticleEffectMessage(foodStack,
             citizen.getX(),
             citizen.getY(),
             citizen.getZ(),
