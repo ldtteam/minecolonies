@@ -423,7 +423,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (wo instanceof WorkOrderBuilding)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
-                NeoForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
+                try
+                {
+                    NeoForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during BuildingConstructionEvent", e);
+                }
                 switch (wo.getWorkOrderType())
                 {
                     case BUILD:

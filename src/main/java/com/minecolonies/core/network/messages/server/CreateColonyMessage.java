@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.event.ColonyCreatedEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -171,8 +172,14 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
 
             new OpenBuildingUIMessage(building).sendToPlayer(sender);;
 
-
-            NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
+            try
+            {
+                NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyCreatedEvent", e);
+            }
             return;
         }
 

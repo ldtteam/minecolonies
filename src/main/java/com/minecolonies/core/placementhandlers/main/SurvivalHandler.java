@@ -173,7 +173,14 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   rotMir,
                   packName,
                   blueprintPath);
-                NeoForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
+                try
+                {
+                    NeoForge.EVENT_BUS.post(new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(world.dimension(), world, blockPos), world.getBlockState(blockPos.below()), player));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during EntityPlaceEvent", e);
+                }
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 if (tempColony == null)

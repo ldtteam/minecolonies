@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.server.colony;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
@@ -37,7 +38,14 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setColonyFlag(patterns);
-        NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.FLAG));
+        try
+        {
+            NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.FLAG));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
+        }
     }
 
     @Override

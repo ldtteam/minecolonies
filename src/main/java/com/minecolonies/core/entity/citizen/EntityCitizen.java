@@ -1654,7 +1654,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
               Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
 
-            NeoForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
+            try
+            {
+                NeoForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during CitizenRemovedEvent", e);
+            }
         }
         super.die(damageSource);
     }

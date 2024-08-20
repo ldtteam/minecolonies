@@ -358,8 +358,14 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        NeoForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
-
+        try
+        {
+            NeoForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during CitizenAddedEvent", e);
+        }
         return citizenData;
     }
 
@@ -614,8 +620,14 @@ public class CitizenManager implements ICitizenManager
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
 
-                NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
-
+                try
+                {
+                    NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during CitizenAddedEvent", e);
+                }
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
             }
