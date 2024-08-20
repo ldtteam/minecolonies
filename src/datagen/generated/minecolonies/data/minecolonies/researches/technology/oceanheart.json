@@ -13,13 +13,10 @@
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:heart_of_the_sea"
-        ]
-      },
-      "quantity": 1
+      "items": {
+        "count": 1,
+        "item": "minecraft:heart_of_the_sea"
+      }
     }
   ],
   "researchLevel": 4,

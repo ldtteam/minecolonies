@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:technology/isthisredstone",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:redstone"
-        ]
-      },
-      "quantity": 256
+      "items": {
+        "count": 256,
+        "item": "minecraft:redstone"
+      }
     }
   ],
   "researchLevel": 3,

@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bookshelf"
-        ]
-      },
-      "quantity": 6
+      "items": {
+        "count": 6,
+        "item": "minecraft:bookshelf"
+      }
     }
   ],
   "researchLevel": 3,

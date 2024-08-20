@@ -13,11 +13,10 @@
       "level": 5
     },
     {
-      "type": "minecolonies:item_tag",
-      "item": {
+      "items": {
+        "count": 64,
         "tag": "minecraft:gold_ores"
-      },
-      "quantity": 64
+      }
     }
   ],
   "researchLevel": 5

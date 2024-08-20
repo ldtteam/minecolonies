@@ -13,13 +13,10 @@
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_boots"
-        ]
-      },
-      "quantity": 1
+      "items": {
+        "count": 1,
+        "item": "minecraft:iron_boots"
+      }
     }
   ],
   "researchLevel": 2,

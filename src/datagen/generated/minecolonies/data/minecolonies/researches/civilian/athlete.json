@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:civilian/swift",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rabbit_foot"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:rabbit_foot"
+      }
     }
   ],
   "researchLevel": 6,

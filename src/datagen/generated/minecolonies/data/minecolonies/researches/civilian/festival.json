@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cake"
-        ]
-      },
-      "quantity": 9
+      "items": {
+        "count": 9,
+        "item": "minecraft:cake"
+      }
     }
   ],
   "researchLevel": 3,

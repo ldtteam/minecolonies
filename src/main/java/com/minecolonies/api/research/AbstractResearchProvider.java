@@ -4,7 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -14,6 +16,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -22,8 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
-import static com.minecolonies.api.research.ModResearchCostTypes.TAG_ITEM_COST_ID;
+import static com.minecolonies.core.research.GlobalResearch.RESEARCH_ITEM_LIST_PROP;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -36,14 +38,18 @@ import static com.minecolonies.api.research.ModResearchCostTypes.TAG_ITEM_COST_I
 public abstract class AbstractResearchProvider implements DataProvider
 {
     protected final PackOutput packOutput;
+    private final CompletableFuture<HolderLookup.Provider> providerFuture;
+    protected HolderLookup.Provider provider;
 
     /**
      * The abstract variant of a ResearchProvider, to register to fires during runData.
      * @param packOutput  the pack output.
      */
-    public AbstractResearchProvider(@NotNull final PackOutput packOutput)
+    public AbstractResearchProvider(@NotNull final PackOutput packOutput,
+                                    @NotNull final CompletableFuture<HolderLookup.Provider> provider)
     {
         this.packOutput = packOutput;
+        this.providerFuture = provider;
     }
 
     /**
@@ -76,46 +82,51 @@ public abstract class AbstractResearchProvider implements DataProvider
     @Override
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final JsonObject langJson = new JsonObject();
+        return providerFuture.thenCompose(p ->
+        {
+            provider = p;
 
-        for(final ResearchBranch branch : getResearchBranchCollection())
-        {
-            research.add(new Tuple<>(branch.json, new Tuple<>(branch.id.getNamespace(), branch.id.getPath())));
-            if(branch.translatedName != null && !branch.translatedName.isEmpty())
-            {
-                addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
-            }
-            if(branch.translatedSubtitle != null && !branch.translatedSubtitle.isEmpty())
-            {
-                addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".subtitle", branch.translatedSubtitle);
-            }
-        }
-        for(final ResearchEffect effect : getResearchEffectCollection())
-        {
-            research.add(new Tuple<>(effect.json, new Tuple<>(effect.id.getNamespace(), effect.id.getPath())));
-            if(effect.translatedName != null && !effect.translatedName.isEmpty())
-            {
-                addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
-            }
-            if(effect.translatedSubtitle != null && !effect.translatedSubtitle.isEmpty())
-            {
-                addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".subtitle", effect.translatedSubtitle);
-            }
-        }
-        for(final Research research : getResearchCollection())
-        {
-            this.research.add(new Tuple<>(research.json, new Tuple<>(research.id.getNamespace(), research.id.getPath())));
+            final JsonObject langJson = new JsonObject();
 
-            if(research.translatedName != null && !research.translatedName.isEmpty())
+            for(final ResearchBranch branch : getResearchBranchCollection())
             {
-                addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
+                research.add(new Tuple<>(branch.json, new Tuple<>(branch.id.getNamespace(), branch.id.getPath())));
+                if(branch.translatedName != null && !branch.translatedName.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
+                }
+                if(branch.translatedSubtitle != null && !branch.translatedSubtitle.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".subtitle", branch.translatedSubtitle);
+                }
             }
-            if(research.translatedSubtitle != null && !research.translatedSubtitle.isEmpty())
+            for(final ResearchEffect effect : getResearchEffectCollection())
             {
-                addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
+                research.add(new Tuple<>(effect.json, new Tuple<>(effect.id.getNamespace(), effect.id.getPath())));
+                if(effect.translatedName != null && !effect.translatedName.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
+                }
+                if(effect.translatedSubtitle != null && !effect.translatedSubtitle.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".subtitle", effect.translatedSubtitle);
+                }
             }
-        }
-        return generateAll(cache, langJson);
+            for(final Research research : getResearchCollection())
+            {
+                this.research.add(new Tuple<>(research.json, new Tuple<>(research.id.getNamespace(), research.id.getPath())));
+
+                if(research.translatedName != null && !research.translatedName.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
+                }
+                if(research.translatedSubtitle != null && !research.translatedSubtitle.isEmpty())
+                {
+                    addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
+                }
+            }
+            return generateAll(cache, langJson);
+        });
     }
 
     protected CompletableFuture<?> generateAll(CachedOutput cache, final JsonObject langJson)
@@ -539,65 +550,71 @@ public abstract class AbstractResearchProvider implements DataProvider
          * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
          * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
          *
-         * @param item  The item to require.
-         * @param count The number of the item to require.
+         * @param item     The item to require.
+         * @param count    The count to require.
+         * @param provider The registry provider.
          * @return this.
          */
-        public Research addItemCost(final Item item, final int count)
+        public Research addItemCost(final Item item, final int count, final HolderLookup.Provider provider)
         {
-            return addItemCost(List.of(item), count);
+            return addItemCost(SizedIngredient.of(item, count), provider);
         }
 
         /**
          * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
          * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
          *
-         * @param items The item to require.
-         * @param count The number of the item to require.
+         * @param tag      The tag to require.
+         * @param count    The count to require.
+         * @param provider The registry provider.
          * @return this.
          */
-        public Research addItemCost(final List<Item> items, final int count)
+        public Research addItemCost(final TagKey<Item> tag, final int count, final HolderLookup.Provider provider)
+        {
+            return addItemCost(SizedIngredient.of(tag, count), provider);
+        }
+
+        /**
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         *
+         * @param item     The item to require.
+         * @param provider The registry provider.
+         * @return this.
+         */
+        public Research addItemCost(final SizedIngredient item, final HolderLookup.Provider provider)
+        {
+            return addItemCost(List.of(item), provider);
+        }
+
+        /**
+         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
+         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
+         *
+         * @param items    The items to require.
+         * @param provider The registry provider.
+         * @return this.
+         */
+        public Research addItemCost(final List<SizedIngredient> items, final HolderLookup.Provider provider)
         {
             final JsonArray reqArray = getRequirementsArray();
 
-            JsonArray itemArr = new JsonArray();
-            for (Item item : items)
+            if (items.isEmpty())
             {
-                itemArr.add(BuiltInRegistries.ITEM.getKey(item).toString());
+                return this;
             }
 
-            JsonObject itemObj = new JsonObject();
-            itemObj.add("items", itemArr);
-
+            final JsonElement itemJson;
+            if (items.size() == 1)
+            {
+                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.FLAT_CODEC, provider, items.getFirst());
+            }
+            else
+            {
+                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.FLAT_CODEC.listOf(), provider, items);
+            }
             JsonObject req = new JsonObject();
-            req.addProperty("type", LIST_ITEM_COST_ID.toString());
-            req.add("item",itemObj);
-            req.addProperty("quantity", count);
-            reqArray.add(req);
-
-            this.json.add("requirements", reqArray);
-            return this;
-        }
-
-        /**
-         * Adds an item cost to the research. This will be consumed when beginning the research, and will not be refunded.
-         * Multiple ItemCosts are supported, but for UI reasons it's encouraged to keep to 5 or less.
-         *
-         * @param tag   The tag to require.
-         * @param count The number of the item to require.
-         * @return this.
-         */
-        public Research addItemCost(final TagKey<Item> tag, final int count)
-        {
-            final JsonArray reqArray = getRequirementsArray();
-
-            JsonObject itemObj = new JsonObject();
-            itemObj.addProperty("tag", tag.location().toString());
-
-            JsonObject req = new JsonObject();
-            req.addProperty("type", TAG_ITEM_COST_ID.toString());
-            req.add("item", itemObj);
-            req.addProperty("quantity", count);
+            req.add(RESEARCH_ITEM_LIST_PROP, itemJson);
             reqArray.add(req);
 
             this.json.add("requirements", reqArray);

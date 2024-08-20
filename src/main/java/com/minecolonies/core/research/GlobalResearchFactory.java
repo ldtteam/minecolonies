@@ -1,13 +1,10 @@
 package com.minecolonies.core.research;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
-import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
@@ -22,15 +19,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.SIMPLE_ITEM_COST_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
@@ -79,14 +77,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
         compound.putBoolean(TAG_IMMUTABLE, research.isImmutable());
         compound.putBoolean(TAG_HIDDEN, research.isHidden());
-        @NotNull final ListTag costTagList = research.getCostList().stream().map(cost ->
-        {
-            final CompoundTag costCompound = new CompoundTag();
-            costCompound.putString(TAG_COST_TYPE, cost.getType().getId().toString());
-            cost.write(costCompound);
-            return compound;
-        }).collect(NBTUtils.toListNBT());
-        compound.put(TAG_COSTS, costTagList);
+        compound.put(TAG_COSTS, Utils.serializeCodecMess(SizedIngredient.FLAT_CODEC.listOf(), provider, research.getCostList()));
 
         @NotNull final ListTag reqTagList = research.getResearchRequirement().stream().map(req ->
         {
@@ -140,14 +131,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
-        {
-            final ResourceLocation res = compound.contains(TAG_COST_TYPE) ? ResourceLocation.parse(compound.getString(TAG_COST_TYPE)) : SIMPLE_ITEM_COST_ID;
-            final ResearchCostType researchCostType = IMinecoloniesAPI.getInstance().getResearchCostRegistry().get(res);
-            final IResearchCost instance = researchCostType.createInstance();
-            instance.read(compound);
-            research.addCost(instance);
-        });
+        final List<SizedIngredient> costs = Utils.deserializeCodecMess(SizedIngredient.FLAT_CODEC.listOf(), provider, nbt.get(TAG_COSTS));
+        research.addCosts(costs);
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Tag.TAG_COMPOUND)).
              forEach(compound ->
                      research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance()
@@ -178,12 +163,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeBoolean(input.isAutostart());
         packetBuffer.writeBoolean(input.isImmutable());
         packetBuffer.writeBoolean(input.isHidden());
-        packetBuffer.writeVarInt(input.getCostList().size());
-        for (IResearchCost cost : input.getCostList())
-        {
-            packetBuffer.writeById(IMinecoloniesAPI.getInstance().getResearchCostRegistry()::getIdOrThrow, cost.getType());
-            cost.serialize(packetBuffer);
-        }
+        Utils.serializeCodecMess(SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), packetBuffer, input.getCostList());
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
         for (IResearchRequirement req : input.getResearchRequirement())
         {
@@ -224,14 +204,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder,iconTexture, iconStack, subtitle, hasOnlyChild, hidden, autostart, instant, immutable);
 
-        final int costSize = buffer.readVarInt();
-        for(int i = 0; i < costSize; i++)
-        {
-            final ResearchCostType researchCostType = buffer.readById(IMinecoloniesAPI.getInstance().getResearchCostRegistry()::byIdOrThrow);
-            final IResearchCost cost = researchCostType.createInstance();
-            cost.deserialize(buffer);
-            research.addCost(cost);
-        }
+        final List<SizedIngredient> costs = Utils.deserializeCodecMess(SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), buffer);
+        research.addCosts(costs);
 
         final int reqCount = buffer.readVarInt();
         for(int i = 0; i < reqCount; i++)

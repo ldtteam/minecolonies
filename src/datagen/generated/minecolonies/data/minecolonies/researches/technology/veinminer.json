@@ -13,11 +13,10 @@
       "level": 1
     },
     {
-      "type": "minecolonies:item_tag",
-      "item": {
+      "items": {
+        "count": 32,
         "tag": "minecraft:iron_ores"
-      },
-      "quantity": 32
+      }
     }
   ],
   "researchLevel": 2

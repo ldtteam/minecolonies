@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_block"
-        ]
-      },
-      "quantity": 2
+      "items": {
+        "count": 2,
+        "item": "minecraft:iron_block"
+      }
     }
   ],
   "researchLevel": 2

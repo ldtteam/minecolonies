@@ -3,16 +3,15 @@ package com.minecolonies.core.research;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.MineColonies;
+import com.minecolonies.api.util.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -21,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
 
@@ -161,7 +160,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The costList of the research.
      */
-    private final List<IResearchCost> costList = new ArrayList<>();
+    private final List<SizedIngredient> costList = new ArrayList<>();
 
     /**
      * The id of the parent research which has to be completed first.
@@ -386,15 +385,16 @@ public class GlobalResearch implements IGlobalResearch
             return true;
         }
 
-        for (final IResearchCost ingredient : costList)
+        for (final SizedIngredient ingredient : costList)
         {
-            int totalCount = 0;
-            for (final Item cost : ingredient.getItems())
+            if (ingredient.ingredient().hasNoItems())
             {
-                final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> stack.getItem().equals(cost));
-                totalCount += count;
+                return false;
             }
-            if (totalCount < ingredient.getCount())
+
+            final int requiredCount = ingredient.count();
+            final int totalCount = InventoryUtils.getItemCountInItemHandler(inventory, ingredient.ingredient());
+            if (totalCount < requiredCount)
             {
                 return false;
             }
@@ -403,7 +403,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public List<IResearchCost> getCostList()
+    public List<SizedIngredient> getCostList()
     {
         return ImmutableList.copyOf(costList);
     }
@@ -529,9 +529,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void addCost(final IResearchCost cost)
+    public void addCosts(final List<SizedIngredient> cost)
     {
-        costList.add(cost);
+        costList.addAll(cost);
     }
 
     public void addEffect(final IResearchEffect<?> effect)
@@ -577,12 +577,13 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * Parse a Json object into a new GlobalResearch.
      *
-     * @param researchJson      the json representing the recipe
-     * @param resourceLocation  the json location.
-     * @param effectCategories  a map of effect categories, by id.
-     * @param checkIcons     if icons need to be validated.  This can only be performed on the client, and should only need to be done once.
+     * @param researchJson     the json representing the recipe
+     * @param resourceLocation the json location.
+     * @param effectCategories a map of effect categories, by id.
+     * @param checkIcons       if icons need to be validated.  This can only be performed on the client, and should only need to be done once.
+     * @param provider         registry provider.
      */
-    public GlobalResearch(@NotNull final JsonObject researchJson, final ResourceLocation resourceLocation, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, final boolean checkIcons)
+    public GlobalResearch(@NotNull final JsonObject researchJson, final ResourceLocation resourceLocation, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, final boolean checkIcons, final HolderLookup.Provider provider)
     {
         this.id = resourceLocation;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
@@ -618,7 +619,7 @@ public class GlobalResearch implements IGlobalResearch
             this.itemIcon = parseIconItemStacks(iconString);
         }
 
-        parseRequirements(researchJson);
+        parseRequirements(researchJson, provider);
         parseEffects(researchJson, effectCategories);
     }
 
@@ -806,8 +807,9 @@ public class GlobalResearch implements IGlobalResearch
      * Gets the Research Building, Item, and Research requirements, and if present and valid, assigns them in the GlobalResearch.
      *
      * @param researchJson A json object to evaluate for requirements properties.
+     * @param provider     Registry provider.
      */
-    private void parseRequirements(final JsonObject researchJson)
+    private void parseRequirements(final JsonObject researchJson, final HolderLookup.Provider provider)
     {
         if (researchJson.has(RESEARCH_REQUIREMENTS_PROP) && researchJson.get(RESEARCH_REQUIREMENTS_PROP).isJsonArray())
         {
@@ -821,13 +823,15 @@ public class GlobalResearch implements IGlobalResearch
                 final JsonObject rootObject = reqArrayElement.getAsJsonObject();
 
                 // ItemRequirements. If no count, assumes 1x.
-                if (IMinecoloniesAPI.getInstance().getResearchCostRegistry().entrySet().stream().anyMatch(entry -> entry.getValue().hasCorrectJsonFields(rootObject)))
+                if (rootObject.has(RESEARCH_ITEM_LIST_PROP) && rootObject.get(RESEARCH_ITEM_LIST_PROP).isJsonArray())
                 {
-                    final Optional<IResearchCost> cost = IMinecoloniesAPI.getInstance().getResearchCostRegistry().entrySet().stream()
-                                                           .filter(entry -> entry.getValue().hasCorrectJsonFields(rootObject))
-                                                           .map(entry -> entry.getValue().parseFromJson(rootObject))
-                                                           .findFirst();
-                    cost.ifPresent(this.costList::add);
+                    final List<SizedIngredient> ingredients = Utils.deserializeCodecMessFromJson(SizedIngredient.FLAT_CODEC.listOf(), provider, rootObject.get(RESEARCH_ITEM_LIST_PROP));
+                    costList.addAll(ingredients);
+                }
+                else if (rootObject.has(RESEARCH_ITEM_LIST_PROP) && rootObject.get(RESEARCH_ITEM_LIST_PROP).isJsonObject())
+                {
+                    final SizedIngredient ingredient = Utils.deserializeCodecMessFromJson(SizedIngredient.FLAT_CODEC, provider, rootObject.get(RESEARCH_ITEM_LIST_PROP));
+                    costList.add(ingredient);
                 }
                 // Building Requirements. If no level, assume 1x.
                 else if (rootObject.has(RESEARCH_REQUIRED_BUILDING_PROP)

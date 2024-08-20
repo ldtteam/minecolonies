@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:civilian/compress",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_carrot"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:golden_carrot"
+      }
     }
   ],
   "researchLevel": 6

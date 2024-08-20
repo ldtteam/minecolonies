@@ -13,13 +13,10 @@
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bow"
-        ]
-      },
-      "quantity": 5
+      "items": {
+        "count": 5,
+        "item": "minecraft:bow"
+      }
     }
   ],
   "researchLevel": 3

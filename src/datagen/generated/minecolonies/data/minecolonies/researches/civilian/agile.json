@@ -13,13 +13,10 @@
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rabbit_foot"
-        ]
-      },
-      "quantity": 10
+      "items": {
+        "count": 10,
+        "item": "minecraft:rabbit_foot"
+      }
     }
   ],
   "researchLevel": 4,

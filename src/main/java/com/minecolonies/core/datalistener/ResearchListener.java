@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.research.costs.IResearchCost;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -20,13 +19,12 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.core.research.GlobalResearch.*;
 import static com.minecolonies.core.research.GlobalResearchBranch.*;
@@ -147,12 +145,12 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
     /**
      * Parses out a json map for elements containing Researches, validates that they have required fields, and generates a GlobalResearch for each.
      *
-     * @param object             A Map containing the resource location of each json file, and the element within that json file.
-     * @param effectCategories   A Map containing the effect categories by effectId.
-     * @param removeResearches   A Collection of researches to remove, if present.
-     * @param removeBranches     A Collection of research branches to remove, including all component researches, if present.
-     * @param checkResourceLoc   If the client should check resource locations at the time.  This can not be run on the server.
-     * @return                   A Map containing the ResearchIds and the GlobalResearches each ID corresponds to.
+     * @param object           A Map containing the resource location of each json file, and the element within that json file.
+     * @param effectCategories A Map containing the effect categories by effectId.
+     * @param removeResearches A Collection of researches to remove, if present.
+     * @param removeBranches   A Collection of research branches to remove, including all component researches, if present.
+     * @param checkResourceLoc If the client should check resource locations at the time.  This can not be run on the server.
+     * @return A Map containing the ResearchIds and the GlobalResearches each ID corresponds to.
      */
     private Map<ResourceLocation, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, final Collection<ResourceLocation> removeResearches, final Collection<ResourceLocation> removeBranches, boolean checkResourceLoc)
     {
@@ -218,7 +216,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
 
             //Pretty much anything else should be allowed: it's plausible pack designers may want a research type without a cost or effect.
             //It's possible we could dynamically derive university levels from parents, but doing so as a rule will prevent research branches that start at T2 or deeper.
-            final GlobalResearch research = new GlobalResearch(researchJson, entry.getKey(), effectCategories, checkResourceLoc);
+            final GlobalResearch research = new GlobalResearch(researchJson, entry.getKey(), effectCategories, checkResourceLoc, getRegistryLookup());
 
             Log.getLogger().debug("Parsed research recipe from " + entry.getKey() + " [" + research.getBranch() + "/" + research.getId() + "]");
             Log.getLogger().debug(research.getName() + " at " + research.getDepth() + "/" + research.getParent());
@@ -226,9 +224,9 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             {
                 Log.getLogger().debug("Requirement: " + requirement.getDesc());
             }
-            for (IResearchCost itemS : research.getCostList())
+            for (SizedIngredient itemS : research.getCostList())
             {
-                Log.getLogger().debug("Cost: " + itemS.toString());
+                Log.getLogger().debug("Cost: {}x {}", itemS.count(), String.join("/", Arrays.stream(itemS.ingredient().getItems()).map(ItemStack::toString).toList()));
             }
             for (IResearchEffect<?> researchEffect : research.getEffects())
             {

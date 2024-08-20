@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:combat/retreat",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:emerald"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:emerald"
+      }
     }
   ],
   "researchLevel": 6

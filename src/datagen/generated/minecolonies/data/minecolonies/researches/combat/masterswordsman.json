@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:combat/provost",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:diamond"
-        ]
-      },
-      "quantity": 64
+      "items": {
+        "count": 64,
+        "item": "minecraft:diamond"
+      }
     }
   ],
   "researchLevel": 6

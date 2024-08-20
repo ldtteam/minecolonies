@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:civilian/reflective",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
-      "quantity": 128
+      "items": {
+        "count": 128,
+        "item": "minecraft:book"
+      }
     }
   ],
   "researchLevel": 6,
