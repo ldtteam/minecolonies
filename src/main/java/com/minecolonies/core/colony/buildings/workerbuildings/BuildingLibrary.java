@@ -144,7 +144,7 @@ public class BuildingLibrary extends AbstractBuilding
         @NotNull final ListTag bookcaseTagList = new ListTag();
         for (@NotNull final BlockPos entry : bookCases)
         {
-            bookcaseTagList.add(NBTUtils.writeBlockPos(entry)));
+            bookcaseTagList.add(NBTUtils.writeBlockPos(entry));
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);
 
