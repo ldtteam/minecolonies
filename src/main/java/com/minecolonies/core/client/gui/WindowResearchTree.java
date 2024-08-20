@@ -156,6 +156,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             parent.removeChild(undoText);
         }
 
+        ResourceLocation id = ResourceLocation.tryParse(button.getID());
+
         // Check for an empty button Id.  These reflect disabled buttons normally
         // but a sufficiently malformed data pack may also have a blank research id,
         // and we don't want to try to try to parse that.
@@ -168,12 +170,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         else if (button.getID().contains("undo:"))
         {
             final String undoName = button.getID().substring(button.getID().indexOf(':') + 1);
-            if(!ResourceLocation.isValidPath(undoName))
+            id = ResourceLocation.tryParse(undoName);
+            if (id == null)
             {
                 return;
             }
-            final ResourceLocation undoID = ResourceLocation.parse(undoName);
-            final ILocalResearch cancelResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, undoID);
+            final ILocalResearch cancelResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, id);
             if (cancelResearch != null)
             {
                 // Can't rely on getting an updated research count after the cancellation in any predictable timeframe.
@@ -194,86 +196,89 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 close();
             }
         }
-        else if (ResourceLocation.isValidPath(button.getID())
-                   && IGlobalResearchTree.getInstance().getResearch(branch, ResourceLocation.parse(button.getID())) != null
-                   && (building.getBuildingLevel() >= IGlobalResearchTree.getInstance().getResearch(branch, ResourceLocation.parse(button.getID())).getDepth()
-                         || building.getBuildingLevel() == building.getBuildingMaxLevel()))
+        else
         {
-            final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, ResourceLocation.parse(button.getID()));
-            final ILocalResearch localResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, research.getId());
-            if (localResearch == null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
-                  (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())) || (mc.player.isCreative())))
+            if (id != null
+                       && IGlobalResearchTree.getInstance().getResearch(branch, id) != null
+                       && (building.getBuildingLevel() >= IGlobalResearchTree.getInstance().getResearch(branch, id).getDepth()
+                             || building.getBuildingLevel() == building.getBuildingMaxLevel()))
             {
-                // This side won't actually start research; it'll be overridden the next colony update from the server.
-                // It will, however, update for the next WindowResearchTree if the colony update is slow to come back.
-                // Again, the server will prevent someone from paying items twice, but this avoids some confusion.
-                research.startResearch(building.getColony().getResearchManager().getResearchTree());
-                // don't need to offset count here, as the startResearch will pad it until the new Colony data comes in.
-                last.updateResearchCount(0);
-                if (research.getDepth() > building.getBuildingMaxLevel())
+                final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, id);
+                final ILocalResearch localResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, research.getId());
+                if (localResearch == null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
+                      (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())) || (mc.player.isCreative())))
                 {
-                    hasMax = true;
-                }
-                new TryResearchMessage(building, research.getId(), research.getBranch(), false).sendToServer();
-                close();
-            }
-            else if (localResearch != null)
-            {
-                // Generally allow in-progress research to be cancelled.
-                // This still costs items, so mostly only beneficial to free up a researcher slot.
-                if (localResearch.getState() == ResearchState.IN_PROGRESS)
-                {
-                    drawUndoProgressButton(button);
-                }
-                if (localResearch.getState() == ResearchState.FINISHED)
-                {
-                    // Immutable must never allow UndoComplete.
-                    // Autostart research should not allow undo of completed research as well, as it will attempt to restart it on colony reload.
-                    if(research.isImmutable() || research.isAutostart())
+                    // This side won't actually start research; it'll be overridden the next colony update from the server.
+                    // It will, however, update for the next WindowResearchTree if the colony update is slow to come back.
+                    // Again, the server will prevent someone from paying items twice, but this avoids some confusion.
+                    research.startResearch(building.getColony().getResearchManager().getResearchTree());
+                    // don't need to offset count here, as the startResearch will pad it until the new Colony data comes in.
+                    last.updateResearchCount(0);
+                    if (research.getDepth() > building.getBuildingMaxLevel())
                     {
-                        return;
+                        hasMax = true;
                     }
-                    // don't allow research with completed or in-progress children to be reset.  They must be reset individually.
-                    for (ResourceLocation childId : research.getChildren())
+                    new TryResearchMessage(building, research.getId(), research.getBranch(), false).sendToServer();
+                    close();
+                }
+                else if (localResearch != null)
+                {
+                    // Generally allow in-progress research to be cancelled.
+                    // This still costs items, so mostly only beneficial to free up a researcher slot.
+                    if (localResearch.getState() == ResearchState.IN_PROGRESS)
                     {
-                        if (building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId) != null
-                              && building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId).getState() != ResearchState.NOT_STARTED)
+                        drawUndoProgressButton(button);
+                    }
+                    if (localResearch.getState() == ResearchState.FINISHED)
+                    {
+                        // Immutable must never allow UndoComplete.
+                        // Autostart research should not allow undo of completed research as well, as it will attempt to restart it on colony reload.
+                        if(research.isImmutable() || research.isAutostart())
                         {
                             return;
                         }
-                    }
-                    // Generally allow "unrestricted-tree" branches to undo complete research, if not prohibited.
-                    // This is more meant to allow "unrestricted-tree"-style research's effects to be toggled on and off at a small cost.
-                    // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
-                    if (branchType == ResearchBranchType.UNLOCKABLES)
-                    {
-                        drawUndoCompleteButton(button);
-                    }
-                    // above-max-level research prohibits other options, and should be resetable.
-                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())
-                    {
-                        drawUndoCompleteButton(button);
-                        return;
-                    }
-                    // researches with an ancestor with OnlyChild status should be undoable, no children are complete or in-progress.
-                    ResourceLocation parentId = IGlobalResearchTree.getInstance().getResearch(branch, research.getId()).getParent();
-                    while (!parentId.getPath().isEmpty())
-                    {
-                        if (IGlobalResearchTree.getInstance().getResearch(branch, parentId) != null
-                              && IGlobalResearchTree.getInstance().getResearch(branch, parentId).hasOnlyChild())
+                        // don't allow research with completed or in-progress children to be reset.  They must be reset individually.
+                        for (ResourceLocation childId : research.getChildren())
+                        {
+                            if (building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId) != null
+                                  && building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId).getState() != ResearchState.NOT_STARTED)
+                            {
+                                return;
+                            }
+                        }
+                        // Generally allow "unrestricted-tree" branches to undo complete research, if not prohibited.
+                        // This is more meant to allow "unrestricted-tree"-style research's effects to be toggled on and off at a small cost.
+                        // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
+                        if (branchType == ResearchBranchType.UNLOCKABLES)
                         {
                             drawUndoCompleteButton(button);
-                            break;
                         }
-                        parentId = IGlobalResearchTree.getInstance().getResearch(branch, parentId).getParent();
+                        // above-max-level research prohibits other options, and should be resetable.
+                        if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())
+                        {
+                            drawUndoCompleteButton(button);
+                            return;
+                        }
+                        // researches with an ancestor with OnlyChild status should be undoable, no children are complete or in-progress.
+                        ResourceLocation parentId = IGlobalResearchTree.getInstance().getResearch(branch, research.getId()).getParent();
+                        while (!parentId.getPath().isEmpty())
+                        {
+                            if (IGlobalResearchTree.getInstance().getResearch(branch, parentId) != null
+                                  && IGlobalResearchTree.getInstance().getResearch(branch, parentId).hasOnlyChild())
+                            {
+                                drawUndoCompleteButton(button);
+                                break;
+                            }
+                            parentId = IGlobalResearchTree.getInstance().getResearch(branch, parentId).getParent();
+                        }
                     }
                 }
             }
-        }
-        // Cancel the entire WindowResearchTree
-        else if (button.getID().equals("cancel"))
-        {
-            last.open();
+            // Cancel the entire WindowResearchTree
+            else if (button.getID().equals("cancel"))
+            {
+                last.open();
+            }
         }
     }
 
