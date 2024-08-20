@@ -926,7 +926,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
             }
 
-            if (!(block instanceof SpecialPlantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, block.defaultBlockState()).isTrue())
+            if (!(block instanceof SaplingBlock) || block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, block.defaultBlockState()).isFalse()
                   || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
                 job.getTree().removeStump(pos);

@@ -185,7 +185,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             }
         }
 
-        final ItemStack primaryOutput = ItemStack.parseOptional(provider, nbt);
+        final ItemStack primaryOutput = ItemStack.parseOptional(provider, nbt.getCompound(NbtTagConstants.STACK));
 
         final Block intermediate = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound(BLOCK_TAG)).getBlock();
 

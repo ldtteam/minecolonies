@@ -34,6 +34,7 @@ public final class NbtTagConstants
     public static final String TAG_CHUNK_CLAIM       = "chunkclaimdata";
     public static final String TAG_CHUNK_POS         = "chunkpos";
     public static final String STACK                 = "stack";
+    public static final String SLOT                 = "slot";
 
     /**
      * @deprecated Superseeded by request-based pickup system.

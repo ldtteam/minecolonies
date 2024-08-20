@@ -550,8 +550,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             if (!(this.mainInventory.get(i)).isEmpty())
             {
                 final CompoundTag compoundNBT = new CompoundTag();
-                compoundNBT.putByte("Slot", (byte) i);
-                invTagList.add(this.mainInventory.get(i).saveOptional(provider));
+                compoundNBT.putByte(NbtTagConstants.SLOT, (byte) i);
+                compoundNBT.put(NbtTagConstants.STACK, this.mainInventory.get(i).saveOptional(provider));
+                invTagList.add(compoundNBT);
                 freeSlots--;
             }
         }
@@ -563,7 +564,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
             if (!(this.armorInventory.get(i)).isEmpty())
             {
                 final CompoundTag compoundNBT = new CompoundTag();
-                compoundNBT.putByte("Slot", (byte) i);
+                compoundNBT.putByte(NbtTagConstants.SLOT, (byte) i);
                 compoundNBT.put(NbtTagConstants.STACK, this.armorInventory.get(i).saveOptional(provider));
                 armorTagList.add(compoundNBT);
             }
@@ -578,76 +579,44 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
      */
     public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
-        if (nbtTagCompound.contains(TAG_ARMOR_INVENTORY))
+        int size = nbtTagCompound.getInt(TAG_INV_SIZE);
+        if (this.mainInventory.size() < size)
         {
-            int size = nbtTagCompound.getInt(TAG_INV_SIZE);
-            if (this.mainInventory.size() < size)
+            size -= size % ROW_SIZE;
+            this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
+        }
+
+        freeSlots = mainInventory.size();
+
+        final ListTag nbtTagList = nbtTagCompound.getList(TAG_INVENTORY, 10);
+        for (int i = 0; i < nbtTagList.size(); i++)
+        {
+            final CompoundTag compoundNBT = nbtTagList.getCompound(i);
+            final int j = compoundNBT.getByte(NbtTagConstants.SLOT) & 255;
+            final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT.getCompound(NbtTagConstants.STACK));
+
+            if (!itemstack.isEmpty())
             {
-                size -= size % ROW_SIZE;
-                this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
-            }
-
-            freeSlots = mainInventory.size();
-
-            final ListTag nbtTagList = nbtTagCompound.getList(TAG_INVENTORY, 10);
-            for (int i = 0; i < nbtTagList.size(); i++)
-            {
-                final CompoundTag compoundNBT = nbtTagList.getCompound(i);
-                final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
-
-                if (!itemstack.isEmpty())
+                if (j < this.mainInventory.size())
                 {
-                    if (j < this.mainInventory.size())
-                    {
-                        this.mainInventory.set(j, itemstack);
-                        freeSlots--;
-                    }
-                }
-            }
-
-            final ListTag armorTagList = nbtTagCompound.getList(TAG_ARMOR_INVENTORY, 10);
-            for (int i = 0; i < armorTagList.size(); ++i)
-            {
-                final CompoundTag compoundNBT = armorTagList.getCompound(i);
-                final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT.getCompound(NbtTagConstants.STACK));
-
-                if (!itemstack.isEmpty())
-                {
-                    if (j < this.armorInventory.size())
-                    {
-                        this.armorInventory.set(j, itemstack);
-                    }
+                    this.mainInventory.set(j, itemstack);
+                    freeSlots--;
                 }
             }
         }
-        else
+
+        final ListTag armorTagList = nbtTagCompound.getList(TAG_ARMOR_INVENTORY, 10);
+        for (int i = 0; i < armorTagList.size(); ++i)
         {
-            final ListTag nbtTagList = nbtTagCompound.getList(TAG_INVENTORY, 10);
-            if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
+            final CompoundTag compoundNBT = armorTagList.getCompound(i);
+            final int j = compoundNBT.getByte(SLOT) & 255;
+            final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT.getCompound(NbtTagConstants.STACK));
+
+            if (!itemstack.isEmpty())
             {
-                int size = nbtTagList.getCompound(0).getInt(TAG_SIZE);
-                size -= size % ROW_SIZE;
-                this.mainInventory = NonNullList.withSize(size, ItemStackUtils.EMPTY);
-            }
-
-            freeSlots = mainInventory.size();
-
-            for (int i = 1; i < nbtTagList.size(); i++)
-            {
-                final CompoundTag compoundNBT = nbtTagList.getCompound(i);
-
-                final int j = compoundNBT.getByte("Slot") & 255;
-                final ItemStack itemstack = ItemStack.parseOptional(provider, compoundNBT);
-
-                if (!itemstack.isEmpty())
+                if (j < this.armorInventory.size())
                 {
-                    if (j < this.mainInventory.size())
-                    {
-                        this.mainInventory.set(j, itemstack);
-                        freeSlots--;
-                    }
+                    this.armorInventory.set(j, itemstack);
                 }
             }
         }
