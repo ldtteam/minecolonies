@@ -677,7 +677,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (blueprint == null)
         {
-            Log.getLogger().error("Invalid building details for reactivation");
             return;
         }
 
