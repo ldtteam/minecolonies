@@ -22,12 +22,12 @@ permissions:
 
 jobs:
   build:
-    uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@a19a8e0fe0b9c7a1624d84bcd725921d8c3653c3
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@319ec9bfb30bfec19466f1f3ca4addd36c16d24c
     with:
       java: 17
     secrets: inherit
   pre-release:
-    uses: Thodor12/operapublicacreator/.github/workflows/gradle.prerelease.yaml@a19a8e0fe0b9c7a1624d84bcd725921d8c3653c3
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.prerelease.yaml@319ec9bfb30bfec19466f1f3ca4addd36c16d24c
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains( github.event.pull_request.labels.*.name, 'Pre-release')
     with:
       java: 17
