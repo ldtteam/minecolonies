@@ -90,7 +90,7 @@ public class PathJobEscapeWater extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.dist(preferredDirection, x, y, z) * 2;
+        return BlockPosUtil.dist(preferredDirection, x, y, z) * 2 / (y / 10.0);
     }
 
     /**
