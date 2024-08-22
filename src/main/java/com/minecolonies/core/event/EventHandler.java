@@ -180,7 +180,7 @@ public class EventHandler
                                               .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
                                                            .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
         }
-        else if (event.getName().equals(Blocks.GRASS_BLOCK.getLootTable().location()))
+        else if (event.getName().equals(Blocks.SHORT_GRASS.getLootTable().location()))
         {
             event.getTable().addPool(LootPool.lootPool()
                                        .add(AlternativesEntry.alternatives()

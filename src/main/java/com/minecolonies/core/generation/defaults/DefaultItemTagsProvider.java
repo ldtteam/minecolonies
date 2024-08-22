@@ -48,7 +48,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.compostables)
           .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
-          .add(Items.GRASS_BLOCK, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
+          .add(Items.SHORT_GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
           .add(Items.KELP, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE)
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)
@@ -243,7 +243,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
                 .add(Items.HAY_BLOCK)
-                .add(Items.GRASS_BLOCK)
+                .add(Items.SHORT_GRASS)
                 .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))

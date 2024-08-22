@@ -414,9 +414,9 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer, new ResourceLocation(MOD_ID, "doublefern"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.TALL_GRASS)
-                .requires(Items.GRASS_BLOCK)
-                .requires(Items.GRASS_BLOCK)
-                .unlockedBy("has_grass", has(Items.GRASS_BLOCK))
+                .requires(Items.SHORT_GRASS)
+                .requires(Items.SHORT_GRASS)
+                .unlockedBy("has_grass", has(Items.SHORT_GRASS))
                 .save(consumer, new ResourceLocation(MOD_ID, "doublegrass"));
     }
 

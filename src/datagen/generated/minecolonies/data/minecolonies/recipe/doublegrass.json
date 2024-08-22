@@ -3,10 +3,10 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "minecraft:grass_block"
+      "item": "minecraft:short_grass"
     },
     {
-      "item": "minecraft:grass_block"
+      "item": "minecraft:short_grass"
     }
   ],
   "result": {

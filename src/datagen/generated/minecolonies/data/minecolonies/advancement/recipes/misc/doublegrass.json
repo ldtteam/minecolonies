@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "minecraft:grass_block"
+            "items": "minecraft:short_grass"
           }
         ]
       },
