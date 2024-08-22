@@ -179,7 +179,7 @@ public class Stack implements IConcreteDeliverable
         this.matchOreDic = matchOreDic;
         this.result = result;
         this.count = count;
-        this.minCount = minCount;
+        this.minCount = Math.min(minCount, count);
         this.canBeResolvedByBuilding = canBeResolvedByBuilding;
     }
 
@@ -342,7 +342,7 @@ public class Stack implements IConcreteDeliverable
     @Override
     public IDeliverable copyWithCount(final int newCount)
     {
-        return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.matchOreDic, this.result, newCount, Math.min(newCount, this.minCount));
+        return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.matchOreDic, this.result, newCount, this.minCount);
     }
 
     @NotNull
