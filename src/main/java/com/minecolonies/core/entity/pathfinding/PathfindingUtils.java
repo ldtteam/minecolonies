@@ -259,7 +259,7 @@ public class PathfindingUtils
         FluidState fluidState = pFluidState;
         if (fluidState == null)
         {
-            fluidState = world.getFluidState(pos);
+            fluidState = state.getFluidState();
         }
 
         if (fluidState == empty || fluidState.isEmpty())
