@@ -187,14 +187,12 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             }
         }
 
-
         index = 3;
         int eqIndex = 0;
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
         {
             if (equipmentSlot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
             {
-                eqIndex++;
                 this.addSlot(
                   new Slot(new SimpleContainer(inventory.getArmorInSlot(equipmentSlot)), 0, INVENTORY_BAR_SIZE + 215,
                     23 + eqIndex * PLAYER_INVENTORY_OFFSET_EACH)
@@ -238,6 +236,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                       }
                   });
                 index--;
+                eqIndex++;
             }
         }
 
