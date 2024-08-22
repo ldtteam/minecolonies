@@ -826,7 +826,10 @@ public final class ColonyView implements IColonyView
 
         if (buf.readBoolean())
         {
-            this.requestManager = new StandardRequestManager(this);
+            if (this.requestManager == null)
+            {
+                this.requestManager = new StandardRequestManager(this);
+            }
             this.requestManager.deserialize(StandardFactoryController.getInstance(), buf);
         }
 

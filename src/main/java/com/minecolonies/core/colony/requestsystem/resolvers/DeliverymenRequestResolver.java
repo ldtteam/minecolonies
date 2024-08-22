@@ -15,6 +15,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,6 +41,12 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
         if (manager.getColony().getWorld().isClientSide)
+        {
+            return false;
+        }
+
+        if (manager.getColony().getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation()) instanceof IWareHouse
+              && !requestToCheck.getRequester().getLocation().equals(getLocation()))
         {
             return false;
         }

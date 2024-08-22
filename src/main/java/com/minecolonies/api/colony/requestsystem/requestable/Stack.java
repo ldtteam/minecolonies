@@ -181,7 +181,7 @@ public class Stack implements IConcreteDeliverable
         this.matchOreDic = matchOreDic;
         this.result = result;
         this.count = count;
-        this.minCount = minCount;
+        this.minCount = Math.min(minCount, count);
         this.canBeResolvedByBuilding = canBeResolvedByBuilding;
     }
 
