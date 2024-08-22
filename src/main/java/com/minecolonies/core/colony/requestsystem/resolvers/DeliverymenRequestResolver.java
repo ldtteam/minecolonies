@@ -45,7 +45,8 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return false;
         }
 
-        if (!requestToCheck.getRequester().getLocation().equals(getLocation()))
+        if (manager.getColony().getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation()) instanceof IWareHouse
+              && !requestToCheck.getRequester().getLocation().equals(getLocation()))
         {
             return false;
         }
