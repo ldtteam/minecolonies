@@ -11,6 +11,7 @@ import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -90,7 +91,7 @@ public class PathJobFindWater extends AbstractPathJob
                 }
             }
 
-            final PathJobFindFishingPos job = new PathJobFindFishingPos(world, new BlockPos(n.x, n.y, n.z), hutLocation, 10);
+            final PathJobFindFishingPos job = new PathJobFindFishingPos(world, new BlockPos(n.x, n.y, n.z), hutLocation, 10, entity);
             job.setPathingOptions(getPathingOptions());
             final Path path = job.search();
             if (path != null && path.canReach())
@@ -124,9 +125,10 @@ public class PathJobFindWater extends AbstractPathJob
           final LevelReader world,
           final @NotNull BlockPos start,
           final @NotNull BlockPos direction,
-          final int distance)
+          final int distance,
+        final Mob entity)
         {
-            super(world, start, distance + 100, new PathResult(), null);
+            super(world, start, distance + 100, new PathResult(), entity);
             this.direction = direction;
             this.distance = distance;
         }

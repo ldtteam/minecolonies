@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.other;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.loot.ModLootTables;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
@@ -49,7 +47,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     public static final int XP_PER_CATCH = 2;
 
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_BITING       = SynchedEntityData.defineId(FishingHook.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_BITING       = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final RandomSource syncronizedRandom = RandomSource.create();
 
@@ -66,9 +64,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     private BobberState currentState = BobberState.FLYING;
     private final int luck;
     private final int lureSpeed;
-
-    AbstractEntityCitizen angler = null;
-    private int anglerId = -1;
 
     private NewBobberEntity(EntityType<? extends Projectile> type, Level level, int luck, int lure)
     {
@@ -157,7 +152,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     public void tick() {
         this.syncronizedRandom.setSeed(this.getUUID().getLeastSignificantBits() ^ this.level().getGameTime());
         super.tick();
-        AbstractEntityCitizen citizen = this.getAngler();
+        AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
         if (citizen == null) {
             this.discard();
         } else if (this.level().isClientSide || !this.shouldStopFishing(citizen)) {
@@ -500,11 +495,10 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
 
     public int retrieve(ItemStack p_37157_)
     {
-        AbstractEntityCitizen citizen = this.getAngler();
+        AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
         if (!this.level().isClientSide && citizen != null && !this.shouldStopFishing(citizen))
         {
             int i = 0;
-            net.neoforged.neoforge.event.entity.player.ItemFishedEvent event = null;
             if (this.hookedEntity != null)
             {
                 this.pullEntity(this.hookedEntity);
@@ -522,11 +516,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                                           .create(LootContextParamSets.FISHING);
                 LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(ModLootTables.FISHING);
                 List<ItemStack> list = loottable.getRandomItems(lootparams);
-                if (event.isCanceled())
-                {
-                    this.discard();
-                    return event.getRodDamage();
-                }
 
                 for (ItemStack itemstack : list)
                 {
@@ -548,10 +537,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
             }
 
             this.discard();
-            if (event != null)
-            {
-                return event.getRodDamage();
-            }
             return i;
         }
         else
@@ -595,34 +580,16 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         return false;
     }
 
-    @Nullable
-    public AbstractEntityCitizen getAngler()
-    {
-        return this.angler;
-    }
-
-
     @Override
     public void writeSpawnData(final RegistryFriendlyByteBuf buffer)
     {
-        if (angler != null)
-        {
-            buffer.writeInt(angler.getId());
-        }
-        else
-        {
-            buffer.writeInt(-1);
-        }
+
     }
 
     @Override
     public void readSpawnData(final RegistryFriendlyByteBuf additionalData)
     {
-        final int citizenId = additionalData.readInt();
-        if (citizenId != -1)
-        {
-            anglerId = citizenId;
-        }
+
     }
 
     public boolean isReadyToCatch()
@@ -636,11 +603,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     public void setInUse()
     {
         this.life = 100;
-    }
-
-    private void setAngler(final EntityCitizen worker, final int fishingLuckBonus, final int i)
-    {
-
     }
 
     enum BobberState

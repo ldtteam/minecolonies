@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
+import com.minecolonies.core.entity.other.NewBobberEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -22,7 +23,7 @@ public class ModEntities
 
     public static EntityType<? extends AbstractEntityCitizen> VISITOR;
 
-    public static EntityType<? extends Projectile> FISHHOOK;
+    public static EntityType<NewBobberEntity> FISHHOOK;
 
     public static EntityType<? extends PathfinderMob> MERCENARY;
 

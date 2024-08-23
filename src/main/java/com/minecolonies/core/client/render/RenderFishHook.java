@@ -2,7 +2,6 @@ package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.entity.other.NewBobberEntity;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -10,7 +9,6 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * Determines how the fish hook is rendered.
  */
 @OnlyIn(Dist.CLIENT)
-public class RenderFishHook extends EntityRenderer<Entity>
+public class RenderFishHook extends EntityRenderer<NewBobberEntity>
 {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
@@ -49,14 +47,9 @@ public class RenderFishHook extends EntityRenderer<Entity>
     }
 
     @Override
-    public void render(@NotNull Entity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks)
+    public void render(@NotNull NewBobberEntity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks)
     {
-        if (!(entity instanceof NewBobberEntity))
-        {
-            return;
-        }
-        AbstractEntityCitizen citizen = ((NewBobberEntity) entity).getAngler();
-        if (citizen != null)
+        if (entity.getOwner() instanceof AbstractEntityCitizen citizen)
         {
             poseStack.pushPose();
             poseStack.pushPose();
@@ -152,7 +145,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
      */
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final Entity entity)
+    public ResourceLocation getTextureLocation(@NotNull final NewBobberEntity entity)
     {
         return getTexture();
     }
