@@ -514,10 +514,7 @@ public final class ItemStackUtils
         int value = 0;
         for (final ArmorItem.Type type : ArmorItem.Type.values())
         {
-            if (material.defense().containsKey(type))
-            {
-                value += material.defense().get(type);
-            }
+            value += material.defense().getOrDefault(type, 0);
         }
         return value + material.toughness() * 4;
     }
