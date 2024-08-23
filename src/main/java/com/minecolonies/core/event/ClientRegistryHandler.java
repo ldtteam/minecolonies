@@ -138,6 +138,8 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_alchemist"), "male_alchemist");
     public static final ModelLayerLocation FEMALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_alchemist"), "female_alchemist");
 
+    public static final ModelLayerLocation MERCENARY    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mercenary"), "mercenary");
+
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
     public static final ModelLayerLocation PHARAO       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pharao"), "pharao");
@@ -158,6 +160,8 @@ public class ClientRegistryHandler
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
     {
+        event.registerLayerDefinition(MERCENARY, MercenaryModel::createMesh);
+
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
         event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
         event.registerLayerDefinition(AMAZON_SPEARMAN, ModelAmazonSpearman::createMesh);
