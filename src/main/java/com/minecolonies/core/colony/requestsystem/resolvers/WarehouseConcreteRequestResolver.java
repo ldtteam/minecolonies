@@ -7,9 +7,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
-import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,42 +29,41 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     }
 
     @Override
-    protected boolean internalCanResolve(final List<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
+    protected boolean internalCanResolve(final Level level, final List<BuildingWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
     {
         final IDeliverable deliverable = requestToCheck.getRequest();
 
-        if(deliverable instanceof IConcreteDeliverable)
+        if (deliverable instanceof IConcreteDeliverable)
         {
             boolean ignoreNBT = false;
             boolean ignoreDamage = false;
-            if (deliverable instanceof Stack)
+            if (deliverable instanceof Stack stack)
             {
-                if (!((Stack) requestToCheck.getRequest()).matchNBT())
-                {
-                    ignoreNBT = true;
-                }
-                if (!((Stack) requestToCheck.getRequest()).matchDamage())
-                {
-                    ignoreDamage = true;
-                }
+                ignoreNBT = !stack.matchNBT();
+                ignoreDamage = !stack.matchDamage();
             }
-            for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+            int totalCount = 0;
+            for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
             {
-                for (final TileEntityWareHouse wareHouse : wareHouses)
+                for (final BuildingWareHouse wareHouse : wareHouses)
                 {
-                    if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable)
+                    if (wareHouse.getTileEntity() == null)
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
-                        {
-                            return true;
-                        }
+                        continue;
+                    }
+
+                    if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
+                    {
+                        totalCount += Math.max(0, wareHouse.getTileEntity().getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getMinimumCount()) - neDeliverable.getLeftOver());
                     }
                     else
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, 0))
-                        {
-                            return true;
-                        }
+                        totalCount += wareHouse.getTileEntity().getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getMinimumCount());
+                    }
+
+                    if (totalCount >= requestToCheck.getRequest().getMinimumCount())
+                    {
+                        return true;
                     }
                 }
             }
