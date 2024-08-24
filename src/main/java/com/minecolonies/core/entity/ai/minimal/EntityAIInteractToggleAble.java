@@ -1,12 +1,12 @@
 package com.minecolonies.core.entity.ai.minimal;
 
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
@@ -49,7 +49,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * The max distance the gate has to be from the citizen.
      */
-    private static final double MAX_DISTANCE = 6.25D;
+    private static final double MAX_DISTANCE = 5D;
 
     /**
      * Default toggleables which can be used in this AI
@@ -61,7 +61,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * Our citizen.
      */
-    protected Mob entity;
+    protected AbstractFastMinecoloniesEntity entity;
 
     /**
      * Map of positions and initial state
@@ -81,7 +81,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * Update timer while active, delay between toggle actions
      */
-    private int updateTimer = 10;
+    private int updateTimer = 0;
 
     /**
      * Execution timer for occasionally checking for toggleables
@@ -93,7 +93,7 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private final int offSet;
 
-    public EntityAIInteractToggleAble(@NotNull final Mob entityIn, final ToggleAble... toggleAbles)
+    public EntityAIInteractToggleAble(@NotNull final AbstractFastMinecoloniesEntity entityIn, final ToggleAble... toggleAbles)
     {
         super();
         this.entity = entityIn;
@@ -116,7 +116,7 @@ public class EntityAIInteractToggleAble extends Goal
     public boolean canUse()
     {
         // Reactive check for detected collisions
-        if ((this.entity.horizontalCollision || entity.verticalCollision && !entity.onGround()) && updateTimer-- <= 0)
+        if ((entity.hadHorizontalCollission() || entity.verticalCollision && !entity.onGround()) && updateTimer-- <= 0)
         {
             updateTimer = 10;
             return checkPath();
@@ -351,6 +351,7 @@ public class EntityAIInteractToggleAble extends Goal
         }
         toggleAblePositions.clear();
         myToggled.clear();
+        updateTimer = 0;
     }
 
     /**

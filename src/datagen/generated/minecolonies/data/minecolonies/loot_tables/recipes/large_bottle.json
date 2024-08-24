@@ -10,7 +10,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:glass_bottle",
+          "name": "minecolonies:large_empty_bottle",
           "quality": 1,
           "weight": 0
         }
@@ -18,5 +18,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:recipes/glass_bottle"
+  "random_sequence": "minecolonies:recipes/large_bottle"
 }

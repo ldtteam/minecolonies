@@ -1,5 +1,6 @@
 package com.minecolonies.core.tileentities;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
@@ -7,7 +8,6 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,8 +42,53 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
-        final List<Tuple<ItemStack, BlockPos>> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
-        return targetStacks.stream().mapToInt(tuple -> ItemStackUtils.getSize(tuple.getA())).sum() >= count;
+        int totalCount = 0;
+        if (getBuilding() != null)
+        {
+            for (@NotNull final BlockPos pos : getBuilding().getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(level, pos))
+                {
+                    final BlockEntity entity = getLevel().getBlockEntity(pos);
+                    if (entity instanceof final TileEntityRack rack && !rack.isEmpty())
+                    {
+                        totalCount += rack.getItemCount(itemStackSelectionPredicate);
+                        if (totalCount >= count)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int getCountInWarehouse(@NotNull final ItemStorage storage, int count)
+    {
+        int totalCount = 0;
+        if (getBuilding() != null)
+        {
+            for (@NotNull final BlockPos pos : getBuilding().getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(level, pos))
+                {
+                    final BlockEntity entity = getLevel().getBlockEntity(pos);
+                    if (entity instanceof final TileEntityRack rack && !rack.isEmpty())
+                    {
+                        totalCount += rack.getCount(storage);
+                        if (totalCount >= count)
+                        {
+                            return totalCount;
+                        }
+                    }
+                }
+            }
+        }
+
+        return totalCount;
     }
 
     @Override
@@ -90,21 +135,15 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         {
             for (@NotNull final BlockPos pos : getBuilding().getContainers())
             {
-                final BlockEntity entity = getLevel().getBlockEntity(pos);
-                if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
+                if (WorldUtil.isBlockLoaded(level, pos))
                 {
-                    final TileEntityRack rack = (TileEntityRack) entity;
-                    for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
+                    final BlockEntity entity = getLevel().getBlockEntity(pos);
+                    if (entity instanceof final TileEntityRack rack && !rack.isEmpty() && rack.getItemCount(itemStackSelectionPredicate) > 0)
                     {
-                        found.add(new Tuple<>(stack, pos));
-                    }
-                }
-
-                if (entity instanceof ChestBlockEntity && InventoryUtils.hasItemInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
-                {
-                    for (final ItemStack stack : InventoryUtils.filterItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), itemStackSelectionPredicate))
-                    {
-                        found.add(new Tuple<>(stack, pos));
+                        for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
+                        {
+                            found.add(new Tuple<>(stack, pos));
+                        }
                     }
                 }
             }

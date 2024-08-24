@@ -62,7 +62,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT)), new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(ModItems.breadDough, 2))
                 .minBuildingLevel(3)
-                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_BOTTLE)
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
                 .showTooltip(true)
                 .build(consumer);
 

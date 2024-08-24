@@ -13,6 +13,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +52,11 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     private List<Entity> entityPushCache = new ArrayList<>();
 
     /**
+     * The timepoint at which the entity last collided
+     */
+    private long lastHorizontalCollision = 0;
+
+    /**
      * Create a new instance.
      *
      * @param type    from type.
@@ -82,6 +88,23 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public void setCanBeStuck(final boolean canBeStuck)
     {
         this.canBeStuck = canBeStuck;
+    }
+
+    @Override
+    protected boolean isHorizontalCollisionMinor(Vec3 vec3)
+    {
+        lastHorizontalCollision = level.getGameTime();
+        return super.isHorizontalCollisionMinor(vec3);
+    }
+
+    /**
+     * Whether the citizen collided in the last 10 ticks
+     *
+     * @return
+     */
+    public boolean hadHorizontalCollission()
+    {
+        return level.getGameTime() - lastHorizontalCollision < 10;
     }
 
     @Override
@@ -286,5 +309,30 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public void updateSwimAmount()
     {
 
+    }
+
+    /**
+     * Static Byte values to avoid frequent autoboxing
+     */
+    final Byte ENABLE  = 2;
+    final Byte DISABLE = 0;
+
+    @Override
+    public void setShiftKeyDown(boolean enable)
+    {
+        if (enable)
+        {
+            this.entityData.set(DATA_SHARED_FLAGS_ID, ENABLE);
+        }
+        else
+        {
+            this.entityData.set(DATA_SHARED_FLAGS_ID, DISABLE);
+        }
+    }
+
+    @Override
+    public boolean isShiftKeyDown()
+    {
+        return (this.entityData.get(DATA_SHARED_FLAGS_ID)).byteValue() == ENABLE.byteValue();
     }
 }
