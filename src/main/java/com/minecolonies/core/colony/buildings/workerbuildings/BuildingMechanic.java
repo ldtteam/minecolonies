@@ -8,7 +8,6 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.AbstractDOCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
@@ -101,7 +100,7 @@ public class BuildingMechanic extends AbstractBuilding
         }
     }
 
-    public static class DOCraftingModule extends AbstractDOCraftingBuildingModule
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Domum
     {
         /**
          * Create a new module.
