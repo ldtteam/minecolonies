@@ -2,7 +2,7 @@ plugins {
   id "org.sonarqube" version "3.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/Thodor12/OperaPublicaCreator/gh_updates_ng7/gradle/mod.gradle'
+apply from: 'https://raw.githubusercontent.com/Thodor12/OperaPublicaCreator/port/gh_updates_ng7/gradle/mod.gradle'
 
 idea {
     module {
