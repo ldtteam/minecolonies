@@ -1,7 +1,6 @@
 package com.minecolonies.core.compatibility.journeymap;
 
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -23,6 +22,7 @@ public class EventListener
 {
     @NotNull
     private final Journeymap jmap;
+    private boolean viewsUpdated;
 
     public EventListener(@NotNull final Journeymap jmap)
     {
@@ -43,20 +43,13 @@ public class EventListener
     {
         if (!event.getLevel().isClientSide()) return;
 
-        if (event.getLevel() instanceof Level)
+        if (event.getLevel() instanceof final Level level)
         {
-            final ResourceKey<Level> dimension = ((Level) event.getLevel()).dimension();
+            final ResourceKey<Level> dimension = level.dimension();
 
+            ColonyBorderMapping.updateChunk(this.jmap, dimension, event.getChunk());
             ColonyDeathpoints.updateChunk(this.jmap, dimension, event.getChunk());
         }
-    }
-
-    @SubscribeEvent
-    public void onColonyChunkDataUpdated(@NotNull final ClientChunkUpdatedEvent event)
-    {
-        final ResourceKey<Level> dimension = event.getChunk().getLevel().dimension();
-
-        ColonyBorderMapping.updateChunk(this.jmap, dimension, event.getChunk());
     }
 
     @SubscribeEvent
@@ -65,6 +58,7 @@ public class EventListener
         final IColonyView colony = event.getColony();
         final Set<BlockPos> graves = colony.getGraveManager().getGraves().keySet();
 
+        viewsUpdated = true;
         ColonyDeathpoints.updateGraves(this.jmap, colony, graves);
     }
 
@@ -74,6 +68,12 @@ public class EventListener
         final Level world = Minecraft.getInstance().level;
         if (world != null)
         {
+            if (viewsUpdated)
+            {
+                viewsUpdated = false;
+                ColonyBorderMapping.queueChunks(this.jmap, world.dimension());
+            }
+
             ColonyBorderMapping.updatePending(this.jmap, world.dimension());
         }
     }
