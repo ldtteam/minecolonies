@@ -4,10 +4,15 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ColonyUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
+import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
 import journeymap.api.v2.client.display.Context;
 import journeymap.api.v2.client.display.DisplayType;
 import journeymap.api.v2.client.display.PolygonOverlay;
@@ -20,9 +25,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ArrayListDeque;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +42,16 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  */
 public class ColonyBorderMapping
 {
-    private static final Map<ResourceKey<Level>, Map<Integer, ColonyBorderOverlay>> overlays = new HashMap<>();
+    /**
+     * Number of chunk update entries to process per tick, to avoid over-processing.
+     */
+    private static final int UPDATES_PER_TICK = 250;
 
-    static final Codec<List<ColonyBorderOverlay>> DIM_BORDER_CODEC = ColonyBorderOverlay.CODEC.listOf();
+    private static final Map<ResourceKey<Level>, Int2ObjectRBTreeMap<ColonyBorderOverlay>> overlays = new HashMap<>();
+    private static final Queue<ChunkOwnership> pendingClaims = new ArrayListDeque<>();
+    private static ResourceKey<Level> pendingClaimsDimension;
+
+    private static final Codec<List<ColonyBorderOverlay>> DIM_BORDER_CODEC = ColonyBorderOverlay.CODEC.listOf();
 
     /**
      * Static utility class
@@ -67,8 +80,8 @@ public class ColonyBorderMapping
     {
         if (overlays.containsKey(dimension)) return;    // don't bother reloading
 
-        final Map<Integer, ColonyBorderOverlay> dimensionOverlays =
-                overlays.computeIfAbsent(dimension, k -> new HashMap<>());
+        final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays =
+                overlays.computeIfAbsent(dimension, k -> new Int2ObjectRBTreeMap<>());
 
         final Path dataPath = jmap.getDataPath(dimension).resolve("border.json");
         jmap.loadData(dataPath, "colony border data", DIM_BORDER_CODEC)
@@ -87,7 +100,7 @@ public class ColonyBorderMapping
     public static void unload(@NotNull final Journeymap jmap,
                               @NotNull final ResourceKey<Level> dimension)
     {
-        final Map<Integer, ColonyBorderOverlay> dimensionOverlays = overlays.remove(dimension);
+        final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.remove(dimension);
 
         if (dimensionOverlays != null)
         {
@@ -100,6 +113,11 @@ public class ColonyBorderMapping
             jmap.saveData(dataPath, "colony border data", DIM_BORDER_CODEC,
                     new ArrayList<>(dimensionOverlays.values()));
         }
+
+        if (pendingClaimsDimension == dimension)
+        {
+            pendingClaims.clear();
+        }
     }
 
     /**
@@ -111,35 +129,82 @@ public class ColonyBorderMapping
      */
     public static void updateChunk(@NotNull final Journeymap jmap,
                                    @NotNull final ResourceKey<Level> dimension,
-                                   @NotNull final LevelChunk chunk)
+                                   @NotNull final ChunkAccess chunk)
+    {
+        updateChunk(jmap, dimension, ColonyUtils.getOwningColony(chunk), chunk.getPos());
+    }
+
+    private static void updateChunk(@NotNull final Journeymap jmap,
+                                    @NotNull final ResourceKey<Level> dimension,
+                                    final int id,
+                                    @NotNull final ChunkPos pos)
     {
         final Level world = Minecraft.getInstance().level;
         if (world == null || !dimension.equals(world.dimension())) return;
 
-        final Map<Integer, ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
+        final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
         if (dimensionOverlays == null) return;  // not ready yet
 
         boolean changed = false;
-        final int id = ColonyUtils.getOwningColony(chunk);
         if (id == 0)
         {
-            for (final Map<Integer, ColonyBorderOverlay> overlayMap : overlays.values())
+            for (final AbstractInt2ObjectMap<ColonyBorderOverlay> overlayMap : overlays.values())
             {
                 for (final ColonyBorderOverlay overlay : overlayMap.values())
                 {
-                    changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
+                    changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(pos));
                 }
             }
         }
         else
         {
-            final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
-            final IColonyView colony = colonyManager.getColonyView(id, dimension);
-
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
-            changed |= overlay.updateChunks(Collections.singleton(chunk.getPos()), Collections.emptySet());
-            changed |= overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
+            changed |= overlay.updateChunks(Collections.singleton(pos), Collections.emptySet());
+        }
+    }
+
+    public static void queueChunks(@NotNull final Journeymap jmap,
+                                   @NotNull final ResourceKey<Level> dimension)
+    {
+        final Level world = Minecraft.getInstance().level;
+        if (world == null || !dimension.equals(world.dimension())) return;
+
+        if (pendingClaimsDimension != world.dimension())
+        {
+            pendingClaims.clear();
+            pendingClaimsDimension = world.dimension();
+        }
+        else if (!pendingClaims.isEmpty())
+        {
+            // we haven't finished processing the last set yet; to avoid leaking memory and
+            // getting even further behind, let's let that finish before we queue any more work.
+            return;
+        }
+
+        final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
+        final Map<ChunkPos, IChunkClaimData> claims = colonyManager.getClaimData(dimension);
+        final IntRBTreeSet colonies = new IntRBTreeSet();
+
+        for (final Map.Entry<ChunkPos, IChunkClaimData> entry : claims.entrySet())
+        {
+            final int id = entry.getValue().getOwningColony();
+            pendingClaims.add(new ChunkOwnership(entry.getKey(), id));
+            if (id != 0)
+            {
+                colonies.add(id);
+            }
+        }
+
+        final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
+        if (dimensionOverlays == null) return;  // not ready yet
+
+        for (final int id : colonies)
+        {
+            final ColonyBorderOverlay overlay = dimensionOverlays
+                    .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
+            final IColonyView colony = colonyManager.getColonyView(id, dimension);
+            overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
         }
     }
 
@@ -152,13 +217,23 @@ public class ColonyBorderMapping
     public static void updatePending(@NotNull final Journeymap jmap,
                                      @NotNull final ResourceKey<Level> dimension)
     {
-        final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
-
-        for (final Map.Entry<Integer, ColonyBorderOverlay> colonyEntry : overlays.getOrDefault(dimension, Collections.emptyMap()).entrySet())
+        if (dimension == pendingClaimsDimension)
         {
-            colonyEntry.getValue().updatePending(jmap, dimension, colonyEntry.getKey(), colonyManager);
+            for (int i = 0; i < UPDATES_PER_TICK && !pendingClaims.isEmpty(); ++i)
+            {
+                final ChunkOwnership entry = pendingClaims.poll();
+                updateChunk(jmap, dimension, entry.id(), entry.pos());
+            }
+        }
+
+        for (final Int2ObjectMap.Entry<ColonyBorderOverlay> colonyEntry : overlays.getOrDefault(dimension, new Int2ObjectRBTreeMap<>()).int2ObjectEntrySet())
+        {
+            colonyEntry.getValue().updatePending(jmap);
         }
     }
+
+    /** Chunk -> owning colony mapping entry. */
+    private record ChunkOwnership(@NotNull ChunkPos pos, int id) { }
 
     /** Overlay tracking information for one entire colony */
     private static class ColonyBorderOverlay
@@ -232,8 +307,7 @@ public class ColonyBorderMapping
                     .setScale(2f)
                     .setFontShadow(true);
 
-            this.noText = new TextProperties()
-                    .setActiveUIs((Context.UI []) EnumSet.noneOf(Context.UI.class).toArray());
+            this.noText = new TextProperties().setActiveUIs();
         }
 
         /** Add or remove chunks from this overlay */
@@ -287,12 +361,8 @@ public class ColonyBorderMapping
         }
 
         /** Update the map overlays if needed */
-        public void updatePending(@NotNull final Journeymap jmap,
-                                  @NotNull final ResourceKey<Level> dimension,
-                                  final int id,
-                                  @NotNull final IColonyManager colonyManager)
+        public void updatePending(@NotNull final Journeymap jmap)
         {
-            final IColonyView colony = colonyManager.getColonyView(id, dimension);
             final JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions());
             final JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.getBorderMinimapStyle(jmap.getOptions());
             final boolean enabled = this.permitted
@@ -317,7 +387,6 @@ public class ColonyBorderMapping
 
                     final List<MapPolygonWithHoles> polygons = PolygonHelper.createChunksPolygon(this.chunks, 256);
 
-                    int index = 0;
                     for (final MapPolygonWithHoles polygon : polygons)
                     {
                         // fullscreen map
@@ -326,7 +395,7 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(fullscreenStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay overlay = new PolygonOverlay(String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon.hull, polygon.holes);
                             overlay.setOverlayGroupName(this.name)
                                     .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
                                     .setTextProperties(this.text)
@@ -341,7 +410,7 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(minimapStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay mini = new PolygonOverlay(String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon.hull, polygon.holes);
                             mini.setOverlayGroupName(this.name)
                                     .setActiveUIs(Context.UI.Minimap)
                                     .setTextProperties(this.noText);
