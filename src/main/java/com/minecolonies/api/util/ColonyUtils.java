@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.claim.IChunkClaimData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -63,7 +63,7 @@ public final class ColonyUtils
      * @param chunk the chunk to check.
      * @return the colony id.
      */
-    public static int getOwningColony(final LevelChunk chunk)
+    public static int getOwningColony(final ChunkAccess chunk)
     {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? NO_COLONY_ID : cap.getOwningColony();
@@ -74,7 +74,7 @@ public final class ColonyUtils
      * @param chunk the chunk they are at.
      * @return the map from colony to building claims.
      */
-    public static Map<Integer, Set<BlockPos>> getAllClaimingBuildings(final LevelChunk chunk)
+    public static Map<Integer, Set<BlockPos>> getAllClaimingBuildings(final ChunkAccess chunk)
     {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new HashMap<>() : cap.getAllClaimingBuildings();
@@ -85,7 +85,7 @@ public final class ColonyUtils
      * @param chunk the chunk to get it from.
      * @return the list.
      */
-    public static List<Integer> getStaticClaims(final LevelChunk chunk)
+    public static List<Integer> getStaticClaims(final ChunkAccess chunk)
     {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ArrayList<>() : cap.getStaticClaimColonies();
@@ -97,7 +97,7 @@ public final class ColonyUtils
      * @return the ownership data, or null.
      */
     @Nullable
-    public static ChunkCapData getChunkCapData(final LevelChunk chunk)
+    public static ChunkCapData getChunkCapData(final ChunkAccess chunk)
     {
         final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(chunk.getLevel().dimension(), chunk.getPos());
         return cap == null ? new ChunkCapData(chunk.getPos().x, chunk.getPos().z) : new ChunkCapData(chunk.getPos().x, chunk.getPos().z, cap.getOwningColony(), cap.getStaticClaimColonies(), cap.getAllClaimingBuildings());

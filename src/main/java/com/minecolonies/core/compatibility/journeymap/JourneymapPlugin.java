@@ -108,7 +108,7 @@ public class JourneymapPlugin implements IClientPlugin
             else
             {
                 final String jobId = entity.getEntityData().get(DATA_JOB);
-                final JobEntry jobEntry = IJobRegistry.getInstance().get(ResourceLocation.parse(jobId));
+                final JobEntry jobEntry = jobId.isEmpty() ? null : IJobRegistry.getInstance().get(ResourceLocation.parse(jobId));
                 final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
 
                 if (job instanceof AbstractJobGuard
