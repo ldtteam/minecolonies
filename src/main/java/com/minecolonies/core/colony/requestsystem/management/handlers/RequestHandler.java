@@ -189,12 +189,12 @@ public class RequestHandler implements IRequestHandler
                 if (attemptResult != null)
                 {
                     previousResolver = resolver;
-                    previousMetric = resolver.getSuitabilityMetric(request);
+                    previousMetric = resolver.getSuitabilityMetric(manager, request);
                 }
             }
             else
             {
-                final int currentResolverMetric = resolver.getSuitabilityMetric(request);
+                final int currentResolverMetric = resolver.getSuitabilityMetric(manager, request);
                 if (currentResolverMetric < previousMetric)
                 {
                     @Nullable List<IToken<?>> tempAttemptResolveRequest =
@@ -202,7 +202,7 @@ public class RequestHandler implements IRequestHandler
                     if (tempAttemptResolveRequest != null)
                     {
                         previousResolver = resolver;
-                        previousMetric = resolver.getSuitabilityMetric(request);
+                        previousMetric = resolver.getSuitabilityMetric(manager, request);
                         attemptResult = tempAttemptResolveRequest;
                     }
                 }
@@ -238,8 +238,7 @@ public class RequestHandler implements IRequestHandler
         //TODO: Change this false to simulation.
         resolver.onRequestAssigned(manager, request, false);
 
-        for (final IToken<?> childRequestToken :
-          attemptResult)
+        for (final IToken<?> childRequestToken : attemptResult)
         {
             final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
@@ -247,8 +246,7 @@ public class RequestHandler implements IRequestHandler
             request.addChild(childRequest.getId());
         }
 
-        for (final IToken<?> childRequestToken :
-          attemptResult)
+        for (final IToken<?> childRequestToken : attemptResult)
         {
             final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
 
@@ -338,8 +336,7 @@ public class RequestHandler implements IRequestHandler
         }
 
         //Assign the followup request if need be
-        if (followupRequests != null && !followupRequests.isEmpty() &&
-              followupRequests.stream().anyMatch(followupRequest -> !isAssigned(followupRequest.getId())))
+        if (followupRequests != null && !followupRequests.isEmpty())
         {
             followupRequests.stream()
               .filter(followupRequest -> !isAssigned(followupRequest.getId()))
@@ -614,8 +611,6 @@ public class RequestHandler implements IRequestHandler
     @Override
     public IRequest<?> getRequestOrNull(final IToken<?> token)
     {
-        manager.log("Retrieving the request for: " + token);
-
         return manager.getRequestIdentitiesDataStore().getIdentities().get(token);
     }
 

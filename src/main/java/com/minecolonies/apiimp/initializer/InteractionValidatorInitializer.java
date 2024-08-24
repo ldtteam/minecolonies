@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -33,7 +34,7 @@ import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
@@ -174,7 +175,7 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModule(ITEMLIST_FOODEXCLUSION).getList();
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles(citizen.getWorkBuilding().getBuildingLevel() - 1))
             {
                 if (!exclusionList.contains(storage))
@@ -259,6 +260,12 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + SLEPTTONIGHT),
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD),
+          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) != null);
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD + NOKITCHEN),
+          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper

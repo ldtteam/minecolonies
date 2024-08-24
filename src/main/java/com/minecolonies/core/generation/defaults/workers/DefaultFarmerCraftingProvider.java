@@ -2,14 +2,13 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -47,9 +46,9 @@ public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(FARMER, MODULE_CRAFTING, "mud")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.DIRT)),
-                        new ItemStorage(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER))))
+                        new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(Items.MUD))
-                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_BOTTLE)
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
                 .build(consumer);
     }
 }

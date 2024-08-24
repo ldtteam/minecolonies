@@ -35,6 +35,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 
 public class BuildingNetherWorker extends AbstractBuilding
 {
@@ -223,7 +224,7 @@ public class BuildingNetherWorker extends AbstractBuilding
      */
     public boolean isAllowedFood(ItemStack stack)
     {
-        ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        ItemListModule listModule = this.getModule(ITEMLIST_FOODEXCLUSION);
         return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack)) && !ItemStackUtils.ISCOOKABLE.test(stack);
     }
 
@@ -293,20 +294,6 @@ public class BuildingNetherWorker extends AbstractBuilding
     public static int getPeriodDays()
     {
         return PERIOD_DAYS;
-    }
-
-    /**
-     * On initial construction or reset request, excludes the tagged food by default.
-     *
-     * @param listModule The food exclusion module.
-     */
-    public static void onResetFoodExclusionList(final ItemListModule listModule)
-    {
-        listModule.clearItems();
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ModTags.excludedFood))
-        {
-            listModule.addItem(new ItemStorage(new ItemStack(item)));
-        }
     }
 
     @Override

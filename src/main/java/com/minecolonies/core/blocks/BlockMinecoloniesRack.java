@@ -3,48 +3,49 @@ package com.minecolonies.core.blocks;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 
 /**
  * Block for the shelves of the warehouse.
@@ -85,7 +86,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public BlockMinecoloniesRack()
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, RackType.DEFAULT));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, RackType.EMPTY));
     }
 
     @Override
@@ -118,21 +119,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        final BlockPos pos = context.getClickedPos();
-        final BlockState state = defaultBlockState();
-
-        for (Direction direction : UPDATE_SHAPE_ORDER)
-        {
-            if (direction != Direction.DOWN && direction != Direction.UP)
-            {
-                final BlockState relativeState = context.getLevel().getBlockState(pos.relative(direction));
-                if (relativeState.getBlock() == ModBlocks.blockRack && !relativeState.getValue(VARIANT).isDoubleVariant())
-                {
-                    return state.setValue(VARIANT, RackType.EMPTYAIR).setValue(FACING, direction);
-                }
-            }
-        }
-
         if (context.getPlayer() != null)
         {
             return defaultBlockState().setValue(FACING, context.getPlayer().getDirection().getOpposite());
@@ -174,43 +160,56 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
       @NotNull final BlockPos pos,
       @NotNull final BlockPos neighbourPos)
     {
-        final BlockEntity bEntity1 = level.getBlockEntity(pos);
-        final BlockEntity bEntity2 = level.getBlockEntity(neighbourPos);
-
-        if (pos.subtract(neighbourPos).getY() != 0)
+        if (state.getBlock() != this || pos.subtract(neighbourPos).getY() != 0)
         {
             return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
         }
 
-        // Is this a double chest and our connection is being removed.
-        if (bEntity1 instanceof TileEntityRack)
+        if (neighbourState.getBlock() != this)
         {
-            if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
+            // Reset to single
+            if (state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
             {
-                // Reset to single
-                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
+                return state.setValue(VARIANT, ((TileEntityRack) level.getBlockEntity(pos)).isEmpty() ? RackType.EMPTY : RackType.FULL);
             }
-            // If its not a double variant and the new neighbor is neither, then connect.
-            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && neighbourState.hasProperty(VARIANT) && neighbourState.getValue(VARIANT)
-              .isDoubleVariant() && neighbourState.getValue(FACING).equals(BY_NORMAL.get(((neighbourPos.subtract(pos)).asLong())).getOpposite()))
+
+            return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
+        }
+
+        // Connect two
+        if (!state.getValue(VARIANT).isDoubleVariant() && !neighbourState.getValue(VARIANT).isDoubleVariant())
+        {
+            final BlockEntity here = level.getBlockEntity(pos);
+            final BlockEntity neighbour = level.getBlockEntity(neighbourPos);
+
+            if (!(here instanceof TileEntityRack) || !(neighbour instanceof TileEntityRack))
             {
-                if (neighbourState.getValue(VARIANT) == RackType.EMPTYAIR)
-                {
-                    return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE)
-                      .setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
-                }
-                else
-                {
-                    return state.setValue(VARIANT, RackType.EMPTYAIR).setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
-                }
+                return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
             }
-            else if (bEntity2 instanceof TileEntityRack
-                       && neighbourState.getValue(FACING).equals(state.getValue(FACING).getOpposite())
-                       && neighbourState.getValue(VARIANT) != RackType.EMPTYAIR)
+
+            boolean isEmpty = ((TileEntityRack) here).isEmpty() && ((TileEntityRack) neighbour).isEmpty();
+
+            level.setBlock(neighbourPos,
+              neighbourState.setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()).getOpposite()).setValue(VARIANT, RackType.NO_RENDER),
+              1);
+            return state.setValue(VARIANT, isEmpty ? RackType.EMPTY_DOUBLE : RackType.FULL_DOUBLE)
+                     .setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()));
+        }
+
+        // Validate double variant
+        if (state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
+        {
+            if (!neighbourState.getValue(FACING).equals(state.getValue(FACING).getOpposite()) || !neighbourState.getValue(VARIANT).isDoubleVariant())
             {
-                return state.setValue(VARIANT, RackType.EMPTYAIR);
+                return state.setValue(VARIANT, ((TileEntityRack) level.getBlockEntity(pos)).isEmpty() ? RackType.EMPTY : RackType.FULL);
+            }
+
+            if (neighbourState.getValue(VARIANT) != RackType.NO_RENDER && state.getValue(VARIANT) != RackType.NO_RENDER)
+            {
+                return state.setValue(VARIANT, RackType.NO_RENDER);
             }
         }
+
         return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
     }
 

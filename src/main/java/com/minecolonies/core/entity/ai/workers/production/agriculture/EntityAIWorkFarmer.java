@@ -21,12 +21,15 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.MinecoloniesFarmland;
 import com.minecolonies.core.colony.buildings.modules.FieldsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFarmer;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
+import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.network.messages.client.CompostParticleMessage;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
@@ -78,9 +81,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private static final int MAX_BLOCKS_MINED = 64;
 
     /**
-     * The standard delay the farmer should have.
+     * The default delay the farmer should have.
      */
-    private static final int STANDARD_DELAY = 40;
+    private static final int DEFAULT_DELAY = 40;
 
     /**
      * The smallest delay the farmer should have.
@@ -355,17 +358,33 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos findHoeableSurface(@NotNull BlockPos position, @NotNull final FarmField farmField)
     {
         position = getSurfacePos(position);
-        if (position == null
-              || farmField.isNoPartOfField(world, position)
+        if (position == null)
+        {
+            return null;
+        }
+        final BlockState blockState = world.getBlockState(position);
+        if (farmField.isNoPartOfField(world, position)
               || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
               || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-              || !world.getBlockState(position).is(BlockTags.DIRT)
+              || (!blockState.is(BlockTags.DIRT) && !(blockState.getBlock() instanceof MinecoloniesFarmland) && !(blockState.getBlock() instanceof FarmBlock))
+              ||  isRightFarmLandForCrop(farmField, blockState)
+              || (world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock)
         )
         {
             return null;
         }
 
-        final BlockState blockState = world.getBlockState(position);
+        final BlockState aboveState = world.getBlockState(position.above());
+        if (aboveState.canBeReplaced() && !(aboveState.getBlock() instanceof MinecoloniesCropBlock))
+        {
+            world.destroyBlock(position.above(), true);
+        }
+
+        if (!isRightFarmLandForCrop(farmField, blockState))
+        {
+            return position;
+        }
+
         final BlockHitResult blockHitResult = new BlockHitResult(Vec3.ZERO, Direction.UP, position, false);
         final UseOnContext useOnContext = new UseOnContext(world,
           null,
@@ -569,7 +588,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 equipHoe();
                 worker.swing(worker.getUsedItemHand());
-                world.setBlockAndUpdate(position, Blocks.FARMLAND.defaultBlockState());
+                createCorrectFarmlandForSeed(farmField.getSeed(), position);
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(LAND_TILLED, worker.getCitizenColonyHandler().getColony().getDay());
@@ -579,6 +598,41 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
         return true;
+    }
+
+    /**
+     * Create the correct farmland for a given seed.
+     * @param seed the crop.
+     * @param pos the position.
+     */
+    private void createCorrectFarmlandForSeed(final ItemStack seed, final BlockPos pos)
+    {
+        if (seed.getItem() instanceof ItemCrop itemCrop)
+        {
+            world.setBlockAndUpdate(pos, ((MinecoloniesCropBlock) itemCrop.getBlock()).getPreferredFarmland().defaultBlockState());
+        }
+        else
+        {
+            world.setBlockAndUpdate(pos, Blocks.FARMLAND.defaultBlockState());
+        }
+    }
+
+    /**
+     * Check if this is the right farm land for the specific crop.
+     * @param farmField the field we're testing this for.
+     * @param blockState the state we're testing this on.
+     * @return true if so.
+     */
+    private boolean isRightFarmLandForCrop(final FarmField farmField, final BlockState blockState)
+    {
+        if (farmField.getSeed().getItem() instanceof ItemCrop itemCrop)
+        {
+            return blockState.getBlock() == ((MinecoloniesCropBlock) itemCrop.getBlock()).getPreferredFarmland();
+        }
+        else
+        {
+            return blockState.getBlock() instanceof FarmBlock;
+        }
     }
 
     /**
@@ -626,7 +680,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLevelDelay()
     {
-        return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
+        return (int) Math.max(SMALLEST_DELAY, DEFAULT_DELAY - ((getPrimarySkillLevel() / 2.0) * DELAY_DIVIDER));
     }
 
     /**
@@ -662,14 +716,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         position = getSurfacePos(position);
         if (position == null
               || farmField.isNoPartOfField(world, position)
-              || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
-              || (world.getBlockState(position.above()).getBlock() instanceof StemBlock)
-              || (world.getBlockState(position).getBlock() instanceof BlockScarecrow)
-              || !(world.getBlockState(position).getBlock() instanceof FarmBlock)
+              || world.getBlockState(position.above()).getBlock() instanceof CropBlock
+              || world.getBlockState(position.above()).getBlock() instanceof StemBlock
+              || world.getBlockState(position).getBlock() instanceof BlockScarecrow
+              || !isRightFarmLandForCrop(farmField, world.getBlockState(position))
+              || world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock
         )
         {
             return null;
         }
+
         return position;
     }
 
@@ -692,7 +748,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
 
-        if (item.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() instanceof CropBlock || blockItem.getBlock() instanceof StemBlock))
+        if (item.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() instanceof CropBlock || blockItem.getBlock() instanceof StemBlock || blockItem.getBlock() instanceof MinecoloniesCropBlock))
         {
             @NotNull final Item seed = item.getItem();
             if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
@@ -728,7 +784,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return position;
         }
 
-        if (isCrop(block))
+        if (block instanceof CropBlock)
         {
             @NotNull CropBlock crop = (CropBlock) block;
             if (crop.isMaxAge(state))
@@ -748,7 +804,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 crop.growCrops(world, position.above(), state);
                 state = world.getBlockState(position.above());
                 block = state.getBlock();
-                if (isCrop(block))
+                if (block instanceof CropBlock)
                 {
                     crop = (CropBlock) block;
                 }
@@ -759,18 +815,37 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             return crop.isMaxAge(state) ? position : null;
         }
-        return null;
-    }
+        else if (block instanceof MinecoloniesCropBlock minecoloniesCrop)
+        {
+            if (minecoloniesCrop.isMaxAge(state))
+            {
+                return position;
+            }
+            final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
+            if (amountOfCompostInInv == 0)
+            {
+                return null;
+            }
 
-    /**
-     * Check if a block is a crop.
-     *
-     * @param block the block.
-     * @return true if so.
-     */
-    public boolean isCrop(final Block block)
-    {
-        return block instanceof CropBlock;
+            if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
+            {
+                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
+                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                minecoloniesCrop.attemptGrow(state, (ServerLevel) world, position.above());
+                state = world.getBlockState(position.above());
+                block = state.getBlock();
+                if (block instanceof MinecoloniesCropBlock)
+                {
+                    minecoloniesCrop = (MinecoloniesCropBlock) block;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return minecoloniesCrop.isMaxAge(state) ? position : null;
+        }
+        return null;
     }
 
     @Override

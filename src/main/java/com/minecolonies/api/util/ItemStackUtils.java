@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -47,7 +48,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -110,7 +110,7 @@ public final class ItemStackUtils
       {
           final FoodProperties foodProperties = stack.isEdible() ? stack.getFoodProperties(null) : null;
           return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.getNutrition() > 0
-                     && foodProperties.getSaturationModifier() > 0;
+                     && foodProperties.getSaturationModifier() > 0 && !stack.is(ModTags.excludedFood);
       };
 
     /**
@@ -1116,13 +1116,10 @@ public final class ItemStackUtils
     public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
         ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
+        final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
 
-        final double satIncrease =
-          itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
-
-        citizenData.increaseSaturation(satIncrease / 2.0);
+        citizenData.increaseSaturation(satIncrease);
 
         // Special handling for these as those are stackable + have a return per item.
         if (foodStack.getItem() instanceof HoneyBottleItem)

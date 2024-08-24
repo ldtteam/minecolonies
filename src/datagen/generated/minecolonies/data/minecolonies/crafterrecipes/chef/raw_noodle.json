@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:durum"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:raw_noodle"
+}

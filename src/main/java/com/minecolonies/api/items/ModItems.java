@@ -79,6 +79,40 @@ public final class ModItems
     public static Item buildGoggles;
     public static Item scanAnalyzer;
 
+    public static Item butter;
+    public static Item cabochis;
+    public static Item cheddar_cheese;
+    public static Item congee;
+    public static Item cooked_rice;
+    public static Item eggplant_dolma;
+    public static Item feta_cheese;
+    public static Item flatbread;
+    public static Item hand_pie;
+    public static Item lamb_stew;
+    public static Item lembas_scone;
+    public static Item manchet_bread;
+    public static Item manchet_dough;
+    public static Item muffin;
+    public static Item muffin_dough;
+    public static Item pasta_plain;
+    public static Item pasta_tomato;
+    public static Item pepper_hummus;
+    public static Item pita_hummus;
+    public static Item pottage;
+    public static Item raw_noodle;
+    public static Item rice_ball;
+    public static Item stew_trencher;
+    public static Item stuffed_pepper;
+    public static Item stuffed_pita;
+    public static Item sushi_roll;
+    public static Item tofu;
+
+    public static Item large_water_bottle;
+    public static Item large_milk_bottle;
+    public static Item large_soy_milk_bottle;
+    public static Item large_empty_bottle;
+
+
     /**
      * Private constructor to hide the implicit public one.
      */

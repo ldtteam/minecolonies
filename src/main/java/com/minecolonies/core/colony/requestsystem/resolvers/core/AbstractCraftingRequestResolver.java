@@ -101,7 +101,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public int getSuitabilityMetric(@NotNull IRequest<? extends IDeliverable> request)
+    public int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull IRequest<? extends IDeliverable> request)
     {
         return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
     }
@@ -368,5 +368,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        return jobEntry != null;
     }
 }

@@ -157,7 +157,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     private void killMobs()
     {
-        if (building.getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
+        if (building.getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() != null && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
         {
             final BlockPos buildingPos = job.getWorkOrder().getLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
@@ -215,7 +215,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                   5,
                   worker);
                 gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
-                pathJob.getPathingOptions().canDrop = false;
+                pathJob.getPathingOptions().dropCost = 200;
             }
             else if (gotoPath.isDone())
             {
@@ -251,9 +251,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
+    public int getBlockMiningTime(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
-        return (int) (super.getBlockMiningDelay(state, pos) * SPEED_BUFF_0);
+        return (int) (super.getBlockMiningTime(state, pos) * SPEED_BUFF_0);
     }
 
     /**

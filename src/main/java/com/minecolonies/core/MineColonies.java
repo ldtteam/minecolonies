@@ -18,6 +18,7 @@ import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
@@ -46,6 +47,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -133,6 +135,8 @@ public class MineColonies
 
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+
+        logIncompatibilities();
     }
 
     @SubscribeEvent
@@ -224,5 +228,22 @@ public class MineColonies
     public static Configuration getConfig()
     {
         return config;
+    }
+
+    /**
+     * Report known incompatibilities to the log.
+     */
+    private void logIncompatibilities()
+    {
+        if (ModList.get().getModContainerById("minecolonies_tweaks").isPresent())
+        {
+            Log.getLogger().warn("|======================================================================================================================================|");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("| Minecolonies has detected an addon mod that alters Minecolonies core code recklessly: 'Tweaks/Compatibility addon for Minecolonies'. |");
+            Log.getLogger().warn("|          Please report any bugs or issues you find directly to the authors of this addon, as the Official Minecolonies Team          |");
+            Log.getLogger().warn("|               will not be able to provide you any support with potential issues that will arise when using this addon.               |");
+            Log.getLogger().warn("|                                                                                                                                      |");
+            Log.getLogger().warn("|======================================================================================================================================|");
+        }
     }
 }

@@ -761,6 +761,9 @@
     "item": "minecolonies:barrel_block"
   },
   {
+    "item": "minecolonies:bell_pepper"
+  },
+  {
     "item": "minecolonies:blockconstructiontape"
   },
   {
@@ -948,7 +951,22 @@
     "item": "minecolonies:build_goggles"
   },
   {
+    "item": "minecolonies:butter"
+  },
+  {
+    "item": "minecolonies:cabbage"
+  },
+  {
+    "item": "minecolonies:cabochis"
+  },
+  {
     "item": "minecolonies:cake_batter"
+  },
+  {
+    "item": "minecolonies:cheddar_cheese"
+  },
+  {
+    "item": "minecolonies:chickpea"
   },
   {
     "checkednbtkeys": [
@@ -977,13 +995,43 @@
     "item": "minecolonies:composted_dirt"
   },
   {
+    "item": "minecolonies:congee"
+  },
+  {
+    "item": "minecolonies:cooked_rice"
+  },
+  {
     "item": "minecolonies:cookie_dough"
   },
   {
     "item": "minecolonies:decorationcontroller"
   },
   {
+    "item": "minecolonies:durum"
+  },
+  {
+    "item": "minecolonies:eggplant"
+  },
+  {
+    "item": "minecolonies:eggplant_dolma"
+  },
+  {
+    "item": "minecolonies:farmland"
+  },
+  {
+    "item": "minecolonies:feta_cheese"
+  },
+  {
     "item": "minecolonies:firearrow"
+  },
+  {
+    "item": "minecolonies:flatbread"
+  },
+  {
+    "item": "minecolonies:floodedfarmland"
+  },
+  {
+    "item": "minecolonies:garlic"
   },
   {
     "item": "minecolonies:gate_iron"
@@ -993,6 +1041,9 @@
   },
   {
     "item": "minecolonies:golden_bread"
+  },
+  {
+    "item": "minecolonies:hand_pie"
   },
   {
     "checkednbtkeys": [
@@ -1006,7 +1057,31 @@
     "item": "minecolonies:iron_scimitar"
   },
   {
+    "item": "minecolonies:lamb_stew"
+  },
+  {
+    "item": "minecolonies:large_empty_bottle"
+  },
+  {
+    "item": "minecolonies:large_milk_bottle"
+  },
+  {
+    "item": "minecolonies:large_soy_milk_bottle"
+  },
+  {
+    "item": "minecolonies:large_water_bottle"
+  },
+  {
+    "item": "minecolonies:lembas_scone"
+  },
+  {
     "item": "minecolonies:magicpotion"
+  },
+  {
+    "item": "minecolonies:manchet_bread"
+  },
+  {
+    "item": "minecolonies:manchet_dough"
   },
   {
     "item": "minecolonies:mediumquarry"
@@ -1016,6 +1091,21 @@
   },
   {
     "item": "minecolonies:mistletoe"
+  },
+  {
+    "item": "minecolonies:muffin"
+  },
+  {
+    "item": "minecolonies:muffin_dough"
+  },
+  {
+    "item": "minecolonies:onion"
+  },
+  {
+    "item": "minecolonies:pasta_plain"
+  },
+  {
+    "item": "minecolonies:pasta_tomato"
   },
   {
     "checkednbtkeys": [
@@ -1117,6 +1207,9 @@
     "item": "minecolonies:pirate_top"
   },
   {
+    "item": "minecolonies:pita_hummus"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1161,13 +1254,25 @@
     "item": "minecolonies:plate_armor_legs"
   },
   {
+    "item": "minecolonies:pottage"
+  },
+  {
     "item": "minecolonies:questlog"
+  },
+  {
+    "item": "minecolonies:raw_noodle"
   },
   {
     "item": "minecolonies:raw_pumpkin_pie"
   },
   {
     "item": "minecolonies:resourcescroll"
+  },
+  {
+    "item": "minecolonies:rice"
+  },
+  {
+    "item": "minecolonies:rice_ball"
   },
   {
     "checkednbtkeys": [
@@ -1262,6 +1367,9 @@
     "item": "minecolonies:simplequarry"
   },
   {
+    "item": "minecolonies:soybean"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1273,6 +1381,15 @@
     "item": "minecolonies:spear"
   },
   {
+    "item": "minecolonies:stew_trencher"
+  },
+  {
+    "item": "minecolonies:stuffed_pepper"
+  },
+  {
+    "item": "minecolonies:stuffed_pita"
+  },
+  {
     "item": "minecolonies:sugary_bread"
   },
   {
@@ -1280,6 +1397,15 @@
   },
   {
     "item": "minecolonies:supplychestdeployer"
+  },
+  {
+    "item": "minecolonies:sushi_roll"
+  },
+  {
+    "item": "minecolonies:tofu"
+  },
+  {
+    "item": "minecolonies:tomato"
   },
   {
     "item": "minecraft:acacia_boat"
@@ -3402,6 +3528,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3412,6 +3541,9 @@
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },
@@ -3424,6 +3556,9 @@
   {
     "checkednbtkeys": [
       {
+        "key": "display"
+      },
+      {
         "key": "Enchantments"
       },
       {
@@ -3433,10 +3568,18 @@
     "item": "minecraft:leather_helmet"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "display"
+      }
+    ],
     "item": "minecraft:leather_horse_armor"
   },
   {
     "checkednbtkeys": [
+      {
+        "key": "display"
+      },
       {
         "key": "Enchantments"
       },

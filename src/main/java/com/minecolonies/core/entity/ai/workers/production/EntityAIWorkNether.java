@@ -18,7 +18,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.modules.ExpeditionLogModule;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
@@ -35,7 +34,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
@@ -61,7 +59,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
@@ -865,7 +863,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private List<ItemStack> getEdiblesList()
     {
-        final List<ItemStorage> allowedItems = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+        final List<ItemStorage> allowedItems = building.getModule(ITEMLIST_FOODEXCLUSION).getList();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
     }

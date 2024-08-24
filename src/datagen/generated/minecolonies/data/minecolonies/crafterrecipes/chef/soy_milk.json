@@ -1,0 +1,21 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:large_water_bottle"
+    },
+    {
+      "item": "minecolonies:soybean"
+    },
+    {
+      "item": "minecolonies:soybean"
+    },
+    {
+      "item": "minecolonies:soybean"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:large_soy_milk_bottle"
+}

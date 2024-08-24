@@ -1,0 +1,21 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:raw_noodle"
+    },
+    {
+      "item": "minecolonies:butter"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "minecolonies:garlic"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:pasta_plain"
+}

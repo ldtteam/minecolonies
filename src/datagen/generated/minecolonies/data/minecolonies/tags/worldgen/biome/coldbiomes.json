@@ -1,0 +1,33 @@
+{
+  "values": [
+    "#minecraft:is_taiga",
+    "#minecraft:spawns_snow_foxes",
+    "#minecraft:polar_bears_spawn_on_alternate_blocks",
+    "#forge:is_cold",
+    "#minecraft:is_end",
+    "#forge:is_snowy",
+    "minecraft:cold_ocean",
+    "minecraft:deep_cold_ocean",
+    "minecraft:deep_frozen_ocean",
+    "minecraft:deep_dark",
+    "minecraft:frozen_ocean",
+    "minecraft:deep_frozen_ocean",
+    "minecraft:frozen_river",
+    "minecraft:frozen_peaks",
+    "minecraft:grove",
+    "minecraft:ice_spikes",
+    "minecraft:jagged_peaks",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:snowy_beach",
+    "minecraft:snowy_plains",
+    "minecraft:snowy_taiga",
+    "minecraft:snowy_slopes",
+    "minecraft:stony_peaks",
+    "minecraft:stony_shore",
+    "minecraft:taiga",
+    "minecraft:windswept_forest",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_gravelly_hills"
+  ]
+}

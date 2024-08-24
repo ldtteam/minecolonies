@@ -15,6 +15,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.core.colony.buildings.modules.WarehouseRequestQueueModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.network.chat.MutableComponent;
@@ -44,6 +45,12 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return false;
         }
 
+        if (manager.getColony().getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation()) instanceof IWareHouse
+              && !requestToCheck.getRequester().getLocation().equals(getLocation()))
+        {
+            return false;
+        }
+
         return hasCouriers(manager);
     }
 
@@ -66,9 +73,15 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     }
 
     @Override
-    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    public int getSuitabilityMetric(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        final int distance = (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+        if (wareHouse == null)
+        {
+            return distance;
+        }
+        return Math.max(distance/10, 1) + wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getMutableRequestList().size();
     }
 
     @Nullable
@@ -163,5 +176,12 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
       @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
     }
 }

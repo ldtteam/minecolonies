@@ -1,0 +1,27 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:eggplant"
+    },
+    {
+      "item": "minecolonies:feta_cheese"
+    },
+    {
+      "item": "minecolonies:garlic"
+    },
+    {
+      "item": "minecolonies:tomato"
+    },
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecolonies:onion"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:eggplant_dolma"
+}

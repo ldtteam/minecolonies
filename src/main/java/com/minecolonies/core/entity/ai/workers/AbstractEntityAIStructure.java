@@ -477,7 +477,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
-            if (structurePlacer.getB().getStage() != CLEAR_WATER)
+            if (structurePlacer.getB().getStage() != CLEAR_WATER && !result.getIteratorPos().equals(NULL_POS))
             {
                 gotoPos = result.getIteratorPos();
             }
@@ -585,7 +585,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param handler
      * @return
      */
-    private boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    protected boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
         if (info.getBlockInfo().getState().getBlock() == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get())
         {
@@ -664,6 +664,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         if (worldState.getBlock() instanceof AirBlock || worldState.getBlock() == Blocks.WATER)
         {
             return BUILDING_STEP;
+        }
+
+        if (!walkToConstructionSite(blockToMine))
+        {
+            return getState();
         }
 
         if (!mineBlock(blockToMine, getCurrentWorkingPosition()))

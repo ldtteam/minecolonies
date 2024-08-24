@@ -7,11 +7,11 @@
       "item": "minecraft:wheat"
     },
     {
-      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+      "item": "minecolonies:large_water_bottle"
     }
   ],
   "intermediate": "minecraft:air",
-  "loot-table": "minecolonies:recipes/glass_bottle",
+  "loot-table": "minecolonies:recipes/large_bottle",
   "min-building-level": 3,
   "result": "minecolonies:bread_dough",
   "show-tooltip": true

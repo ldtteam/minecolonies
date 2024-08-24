@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
@@ -109,7 +110,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             resource.setAmountInDelivery(0);
             for (final Delivery delivery : deliveries)
             {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, false))
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true))
                 {
                     resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
                 }
@@ -188,10 +189,10 @@ public class WindowResourceList extends AbstractWindowSkeleton
             final IWorkOrderView workOrderView = moduleView.getBuildingView().getColony().getWorkOrder(moduleView.getWorkOrderId());
             if (workOrderView != null)
             {
-                findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(Component.literal(workOrderView
-                                                                                                    .getDisplayName()
-                                                                                                    .getString()
-                                                                                                    .replace("\n", " ")));
+                final Text pane = findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class);
+                final Component text = Component.literal(workOrderView.getDisplayName().getString().replace("\n", " "));
+                pane.setText(text);
+                PaneBuilders.tooltipBuilder().hoverPane(pane).build().setText(text);
             }
         }
     }

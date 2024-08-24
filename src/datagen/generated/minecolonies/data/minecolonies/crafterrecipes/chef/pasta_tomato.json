@@ -1,0 +1,27 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:raw_noodle"
+    },
+    {
+      "item": "minecolonies:tomato"
+    },
+    {
+      "item": "minecolonies:tomato"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "minecolonies:garlic"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 1,
+  "result": "minecolonies:pasta_tomato"
+}

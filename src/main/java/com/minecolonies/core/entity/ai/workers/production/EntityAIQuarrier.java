@@ -360,6 +360,20 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
+    protected boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    {
+        if (super.skipClearing(info, pos, handler))
+        {
+            return true;
+        }
+        final BlockState state = handler.getWorld().getBlockState(pos);
+        // The blocks have been placed earlier by the quarrier. E.g. fences and walls can have the wrong blockstate
+        // (due to connecting to yet to be mined blocks), which means the block state is incorrect, and they would be mined by the quarrier,
+        // only to be replaced after the next restart. Instead, skip them now if the block itself is correct
+        return state.getBlock() == info.getBlockInfo().getState().getBlock();
+    }
+
+    @Override
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;

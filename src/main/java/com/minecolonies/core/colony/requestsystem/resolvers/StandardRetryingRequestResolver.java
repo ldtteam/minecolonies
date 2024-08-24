@@ -306,4 +306,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
               }
           });
     }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
 }

@@ -1,0 +1,22 @@
+{
+  "values": [
+    "#minecraft:has_structure/village_plains",
+    "#forge:is_plains",
+    "#forge:is_swamp",
+    "minecraft:birch_forest",
+    "minecraft:cherry_grove",
+    "minecraft:dark_forest",
+    "minecraft:deep_lukewarm_ocean",
+    "minecraft:deep_ocean",
+    "minecraft:flower_forest",
+    "minecraft:forest",
+    "minecraft:lukewarm_ocean",
+    "minecraft:meadow",
+    "minecraft:mushroom_fields",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:plains",
+    "minecraft:river",
+    "minecraft:sunflower_plains",
+    "minecraft:swamp"
+  ]
+}

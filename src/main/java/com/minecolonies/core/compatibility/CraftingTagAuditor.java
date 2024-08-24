@@ -9,6 +9,9 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -32,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -55,6 +59,7 @@ public class CraftingTagAuditor
     {
         createFile("item tag audit", server, "tag_item_audit.csv", writer -> doItemTagAudit(writer, server));
         createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
+        createFile("path block audit", server, "path_block_audit.csv", writer -> doPathBlockTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
         createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
@@ -166,6 +171,38 @@ public class CraftingTagAuditor
         }
     }
 
+    private static void doPathBlockTagAudit(@NotNull final BufferedWriter writer,
+                                            @NotNull final MinecraftServer server) throws IOException
+    {
+        writer.write("block,name,path,climbable,dangerous");
+        writer.newLine();
+
+        for (final Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries())
+        {
+            writer.write(entry.getKey().location().toString());
+            writer.write(',');
+            writer.write('"');
+            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write('"');
+            writer.write(',');
+            if (entry.getValue().defaultBlockState().is(ModTags.pathingBlocks))
+            {
+                writer.write("path");
+            }
+            writer.write(',');
+            if (entry.getValue().defaultBlockState().is(ModTags.freeClimbBlocks))
+            {
+                writer.write("climb");
+            }
+            writer.write(',');
+            if (entry.getValue().defaultBlockState().is(ModTags.dangerousBlocks))
+            {
+                writer.write("danger");
+            }
+            writer.newLine();
+        }
+    }
+
     private static void doRecipeAudit(@NotNull final BufferedWriter writer,
                                       @NotNull final MinecraftServer server,
                                       @NotNull final CustomRecipeManager customRecipeManager) throws IOException
@@ -175,7 +212,8 @@ public class CraftingTagAuditor
         final List<Animal> animals = RecipeAnalyzer.createAnimals(server.overworld());
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
-                .sorted(Comparator.comparing(m -> m instanceof SimpleCraftingModule).reversed())
+                .sorted(Comparator.comparing((ICraftingBuildingModule m) -> m instanceof SimpleCraftingModule).reversed()
+                        .thenComparing(ICraftingBuildingModule::getCustomRecipeKey))
                 .toList();  // sort the simple modules first (2x2 crafting, personal only)
         final List<AnimalHerdingModule> herders = getHerdingModules();
         final Map<ItemStorage, Map<Object, List<IGenericRecipe>>> craftingMap = new HashMap<>();
@@ -243,6 +281,7 @@ public class CraftingTagAuditor
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
                 .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER.get()))
+                .sorted(Comparator.comparing(ICraftingBuildingModule::getCustomRecipeKey))
                 .toList();
 
         writer.write("type,");
@@ -325,7 +364,11 @@ public class CraftingTagAuditor
                                     @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
-        writer.write(",nutrition,maxlevel");
+        writer.write(",nutrition,maxlevel,tier");
+        for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
+        {
+            writer.write(",actual" + level);
+        }
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
@@ -340,10 +383,17 @@ public class CraftingTagAuditor
             writer.write(',');
             writer.write(Integer.toString(properties.getNutrition()));
             writer.write(',');
-
-            // minNutrition = getBuildingLevel() - 1
-            // maxLevel     = getNutrition()     + 1
-            writer.write(Integer.toString(Math.min(5, properties.getNutrition() + 1)));
+            writer.write(Integer.toString(FoodUtils.getBuildingLevelForFood(item)));
+            writer.write(',');
+            if (item.getItem() instanceof final IMinecoloniesFoodItem mcolFood)
+            {
+                writer.write(Integer.toString(mcolFood.getTier()));
+            }
+            for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
+            {
+                writer.write(',');
+                writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, level, 0)));
+            }
 
             writer.newLine();
         }

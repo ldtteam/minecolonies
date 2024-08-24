@@ -45,10 +45,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,6 +136,8 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_alchemist"), "male_alchemist");
     public static final ModelLayerLocation FEMALE_ALCHEMIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_alchemist"), "female_alchemist");
 
+    public static final ModelLayerLocation MERCENARY    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mercenary"), "mercenary");
+
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
     public static final ModelLayerLocation PHARAO       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "pharao"), "pharao");
@@ -159,6 +158,8 @@ public class ClientRegistryHandler
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
     {
+        event.registerLayerDefinition(MERCENARY, MercenaryModel::createMesh);
+
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
         event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
         event.registerLayerDefinition(AMAZON_SPEARMAN, ModelAmazonSpearman::createMesh);
@@ -322,6 +323,9 @@ public class ClientRegistryHandler
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.floodedFarmland, RenderType.cutout());
+
+        Arrays.stream(ModBlocks.getCrops()).forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, RenderType.cutout()));
 
         ItemProperties.register(ModItems.spear, new ResourceLocation("throwing"), (item, world, entity, light) ->
                                                                            (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);

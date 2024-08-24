@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -20,14 +21,18 @@ public final class ModCreativeTabs
 {
     public static final DeferredRegister<CreativeModeTab> TAB_REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> GENERAL = TAB_REG.register("general", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+    public static final RegistryObject<CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
-                                                                                                      .title(Component.literal("Minecolonies")).displayItems((config, output) -> {
+                                                                                                      .title(Component.translatable("com.minecolonies.creativetab.huts")).displayItems((config, output) -> {
           for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
           {
               output.accept(hut);
           }
+      }).build());
 
+    public static final RegistryObject<CreativeModeTab> GENERAL = TAB_REG.register("mcgeneral", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+                                                                                                      .icon(() -> new ItemStack(ModBlocks.blockRack))
+                                                                                                      .title(Component.translatable("com.minecolonies.creativetab.general")).displayItems((config, output) -> {
           output.accept(ModBlocks.blockScarecrow);
           output.accept(ModBlocks.blockPlantationField);
           output.accept(ModBlocks.blockRack);
@@ -57,16 +62,6 @@ public final class ModCreativeTabs
           output.accept(ModItems.buildGoggles);
           output.accept(ModItems.scanAnalyzer);
           output.accept(ModItems.questLog);
-
-          output.accept(ModItems.breadDough);
-          output.accept(ModItems.cookieDough);
-          output.accept(ModItems.cakeBatter);
-          output.accept(ModItems.rawPumpkinPie);
-
-          output.accept(ModItems.milkyBread);
-          output.accept(ModItems.sugaryBread);
-          output.accept(ModItems.goldenBread);
-          output.accept(ModItems.chorusBread);
 
           output.accept(ModItems.scrollColonyTP);
           output.accept(ModItems.scrollColonyAreaTP);
@@ -106,6 +101,61 @@ public final class ModCreativeTabs
           output.accept(ModItems.sifterMeshFlint);
           output.accept(ModItems.sifterMeshIron);
           output.accept(ModItems.sifterMeshDiamond);
+      }).build());
+
+    public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+                                                                                                      .icon(() -> new ItemStack(ModBlocks.blockTomato))
+                                                                                                      .title(Component.translatable("com.minecolonies.creativetab.food")).displayItems((config, output) -> {
+          output.accept(ModBlocks.farmland);
+          output.accept(ModBlocks.floodedFarmland);
+
+          for (final Block crop : ModBlocks.getCrops())
+          {
+              output.accept(crop);
+          }
+
+          output.accept(ModItems.breadDough);
+          output.accept(ModItems.cookieDough);
+          output.accept(ModItems.cakeBatter);
+          output.accept(ModItems.rawPumpkinPie);
+
+          output.accept(ModItems.milkyBread);
+          output.accept(ModItems.sugaryBread);
+          output.accept(ModItems.goldenBread);
+          output.accept(ModItems.chorusBread);
+
+          output.accept(ModItems.butter);
+          output.accept(ModItems.cabochis);
+          output.accept(ModItems.cheddar_cheese);
+          output.accept(ModItems.congee);
+          output.accept(ModItems.cooked_rice);
+          output.accept(ModItems.eggplant_dolma);
+          output.accept(ModItems.feta_cheese);
+          output.accept(ModItems.flatbread);
+          output.accept(ModItems.hand_pie);
+          output.accept(ModItems.lamb_stew);
+          output.accept(ModItems.lembas_scone);
+          output.accept(ModItems.manchet_bread);
+          output.accept(ModItems.pasta_plain);
+          output.accept(ModItems.pasta_tomato);
+          output.accept(ModItems.pita_hummus);
+          output.accept(ModItems.pottage);
+          output.accept(ModItems.rice_ball);
+          output.accept(ModItems.stew_trencher);
+          output.accept(ModItems.stuffed_pepper);
+          output.accept(ModItems.stuffed_pita);
+          output.accept(ModItems.sushi_roll);
+          output.accept(ModItems.tofu);
+
+          output.accept(ModItems.large_water_bottle);
+          output.accept(ModItems.large_milk_bottle);
+          output.accept(ModItems.large_soy_milk_bottle);
+          output.accept(ModItems.large_empty_bottle);
+
+          output.accept(ModItems.muffin);
+          output.accept(ModItems.muffin_dough);
+          output.accept(ModItems.manchet_dough);
+          output.accept(ModItems.raw_noodle);
       }).build());
 
     /**
