@@ -2,11 +2,10 @@ name: Release
 
 on:
   push:
-    branches: [
-      "version/*",
-      "release/*",
-      "testing/*",
-    ]
+    branches:
+      - "version/*"
+      - "release/*"
+      - "testing/*"
 
 permissions:
   contents: write
@@ -14,14 +13,8 @@ permissions:
 
 jobs:
   release:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@ng7
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.release.yaml@port/gh_updates_ng7
     with:
-      java: 21
+      java: 17
       curse_release_type: ${{ contains(github.ref, 'release') && 'release' || 'beta' }}
-    secrets:
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      MAVEN_USER: ${{ secrets.MAVEN_USER }}
-      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
-      CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+    secrets: inherit
