@@ -7,9 +7,12 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData.Builder;
+import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.util.CraftingUtils;
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -84,50 +87,56 @@ public class ItemNbtCalculator implements DataProvider
             allStacks = listBuilder.build();
 
             final TreeMap<String, Set<String>> keyMapping = new TreeMap<>();
+            final Set<DataComponentType<?>> typesToRemove = new ReferenceArraySet<>();
+
+            // We ignore damage in nbt.
+            typesToRemove.add(DataComponents.DAMAGE);
+
+            // The following we don't care about matching.
+            typesToRemove.add(DataComponents.LORE);
+            typesToRemove.add(DataComponents.MAX_STACK_SIZE);
+            typesToRemove.add(DataComponents.RARITY);
+            typesToRemove.add(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+            ModDataComponents.REGISTRY.getEntries().forEach(t -> typesToRemove.add(t.get()));
+            com.ldtteam.structurize.component.ModDataComponents.REGISTRY.getEntries().forEach(t -> typesToRemove.add(t.get()));
+
             for (final ItemStack stack : allStacks)
             {
                 final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
-                final Set<String> keys = new TreeSet<>();
-                for (final TypedDataComponent<?> key : stack.getComponents())
-                {
-                    keys.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(key.type()).toString());
-                }
+                final Set<DataComponentType<?>> keys = new ReferenceArraySet<>(stack.getComponents().keySet());
 
                 if (stack.getItem() instanceof ArmorItem)
                 {
-                    keys.add("minecraft:dyed_color");
+                    keys.add(DataComponents.DYED_COLOR);
                 }
                 if (!stack.isEnchantable())
                 {
-                    keys.remove("minecraft:enchantments");
+                    keys.remove(DataComponents.ENCHANTMENTS);
                 }
                 if (!stack.isRepairable())
                 {
-                    keys.remove("minecraft:repair_cost");
+                    keys.remove(DataComponents.REPAIR_COST);
                 }
                 if (stack.getAttributeModifiers().modifiers().isEmpty())
                 {
-                    keys.remove("minecraft:attribute_modifiers");
+                    keys.remove(DataComponents.ATTRIBUTE_MODIFIERS);
                 }
 
-                // We ignore damage in nbt.
-                keys.remove("minecraft:damage");
+                keys.removeAll(typesToRemove);
 
-                // The following we don't care about matching.
-                keys.remove("minecraft:lore");
-                keys.remove("minecraft:max_stack_size");
-                keys.remove("minecraft:rarity");
+                keyMapping.compute(resourceLocation.toString(), (k, keysInMap) -> {
+                    if (keysInMap == null)
+                    {
+                        keysInMap = new TreeSet<>();
+                    }
 
-                if (keyMapping.containsKey(resourceLocation.toString()))
-                {
-                    final Set<String> list = keyMapping.get(resourceLocation.toString());
-                    list.addAll(keys);
-                    keyMapping.put(resourceLocation.toString(), list);
-                }
-                else
-                {
-                    keyMapping.put(resourceLocation.toString(), keys);
-                }
+                    for (final DataComponentType<?> type : keys)
+                    {
+                        keysInMap.add(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(type).toString());
+                    }
+
+                    return keysInMap;
+                });
             }
 
             final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(new ResourceLocation(MOD_ID, "itemnbtmatching"), "json");
