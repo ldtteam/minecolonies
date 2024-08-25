@@ -13,6 +13,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModul
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -237,7 +238,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_SNAPSHOT).sendTo(ctx.getPlayer());
             }
-            else
+            else if (buildingEntity.getBuilding() != null)
             {
                 final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
