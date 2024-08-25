@@ -76,6 +76,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
                         new ItemStorage(new ItemStack(Items.HONEY_BOTTLE))))
                 .result(new ItemStack(ModItems.sugaryBread, 4))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_GLASS_BOTTLE)
                 .minBuildingLevel(3)
                 .showTooltip(true)
                 .build(consumer);
@@ -84,17 +85,19 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
                         new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
                 .result(new ItemStack(ModItems.milkyBread, 4))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
                 .minBuildingLevel(4)
                 .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "smilky_bread")
-          .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
-            new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle))))
-          .result(new ItemStack(ModItems.milkyBread, 4))
-          .minBuildingLevel(4)
-          .showTooltip(true)
-          .build(consumer);
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
+                        new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle))))
+                .result(new ItemStack(ModItems.milkyBread, 4))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
+                .minBuildingLevel(4)
+                .showTooltip(true)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "golden_bread")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 8)),
@@ -149,19 +152,21 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(new ItemStack(Items.SUGAR, 2)),
                         new ItemStorage(new ItemStack(Items.EGG))))
                 .result(new ItemStack(ModItems.cakeBatter))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
                 .minBuildingLevel(4)
                 .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "scake_batter")
-          .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
-            new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle, 3)),
-            new ItemStorage(new ItemStack(Items.SUGAR, 2)),
-            new ItemStorage(new ItemStack(Items.EGG))))
-          .result(new ItemStack(ModItems.cakeBatter))
-          .minBuildingLevel(4)
-          .showTooltip(true)
-          .build(consumer);
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHEAT, 3)),
+                        new ItemStorage(new ItemStack(ModItems.large_soy_milk_bottle, 3)),
+                        new ItemStorage(new ItemStack(Items.SUGAR, 2)),
+                        new ItemStorage(new ItemStack(Items.EGG))))
+                .result(new ItemStack(ModItems.cakeBatter))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
+                .minBuildingLevel(4)
+                .showTooltip(true)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cake")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.cakeBatter))))
@@ -171,60 +176,62 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "lembas_scone")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModItems.butter)),
-            new ItemStorage(new ItemStack(Items.HONEY_BOTTLE))))
-          .result(new ItemStack(ModItems.lembas_scone))
-          .minBuildingLevel(1)
-          .build(consumer);
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModItems.butter)),
+                        new ItemStorage(new ItemStack(Items.HONEY_BOTTLE))))
+                .result(new ItemStack(ModItems.lembas_scone))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_GLASS_BOTTLE)
+                .minBuildingLevel(1)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "manchet_dough")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModItems.butter))))
-          .result(new ItemStack(ModItems.manchet_dough, 2))
-          .minBuildingLevel(1)
-          .build(consumer);
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModItems.butter))))
+                .result(new ItemStack(ModItems.manchet_dough, 2))
+                .minBuildingLevel(1)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "muffin_dough")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModItems.butter)),
-            new ItemStorage(new ItemStack(Items.SUGAR)),
-            new ItemStorage(new ItemStack(Items.SWEET_BERRIES))))
-          .result(new ItemStack(ModItems.muffin_dough, 2))
-          .minBuildingLevel(1)
-          .build(consumer);
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModItems.butter)),
+                        new ItemStorage(new ItemStack(Items.SUGAR)),
+                        new ItemStorage(new ItemStack(Items.SWEET_BERRIES))))
+                .result(new ItemStack(ModItems.muffin_dough, 2))
+                .minBuildingLevel(1)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "flatbread")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
-          .result(new ItemStack(ModItems.flatbread, 1))
-          .minBuildingLevel(1)
-          .build(consumer);
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
+                .result(new ItemStack(ModItems.flatbread, 1))
+                .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
+                .minBuildingLevel(1)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "muffin")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.muffin_dough))))
-          .result(new ItemStack(ModItems.muffin))
-          .minBuildingLevel(1)
-          .intermediate(Blocks.FURNACE)
-          .build(consumer);
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.muffin_dough))))
+                .result(new ItemStack(ModItems.muffin))
+                .minBuildingLevel(1)
+                .intermediate(Blocks.FURNACE)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "manchet")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.manchet_dough))))
-          .result(new ItemStack(ModItems.manchet_bread))
-          .minBuildingLevel(1)
-          .intermediate(Blocks.FURNACE)
-          .build(consumer);
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.manchet_dough))))
+                .result(new ItemStack(ModItems.manchet_bread))
+                .minBuildingLevel(1)
+                .intermediate(Blocks.FURNACE)
+                .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "water_jug")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_empty_bottle))))
-          .result(ModItems.large_water_bottle.getDefaultInstance())
-          .build(consumer);
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_empty_bottle))))
+                .result(ModItems.large_water_bottle.getDefaultInstance())
+                .build(consumer);
     }
 }

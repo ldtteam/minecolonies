@@ -1,6 +1,5 @@
 package com.minecolonies.core.network.messages.client.colony;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.sounds.SoundManager;
@@ -152,14 +151,14 @@ public class PlaySoundForCitizenMessage implements IMessage
     public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
-        buf.writeInt(this.soundSource.ordinal());
-        buf.writeBlockPos(this.pos);
-        buf.writeUtf(this.dimensionID.location().toString());
-        buf.writeFloat(this.volume);
-        buf.writeFloat(this.pitch);
-        buf.writeInt(this.length);
-        buf.writeInt(this.repetitions);
-        buf.writeInt(this.entityid);
+        buf.writeInt(soundSource.ordinal());
+        buf.writeBlockPos(pos);
+        buf.writeUtf(dimensionID.location().toString());
+        buf.writeFloat(volume);
+        buf.writeFloat(pitch);
+        buf.writeInt(length);
+        buf.writeInt(repetitions);
+        buf.writeInt(entityid);
     }
 
     @Override

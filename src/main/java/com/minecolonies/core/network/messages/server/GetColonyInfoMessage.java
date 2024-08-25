@@ -23,7 +23,7 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.HUT_BLOCK_MISSING_BUILDING;
 import static com.minecolonies.core.MineColonies.getConfig;
 
 /**
@@ -111,6 +111,11 @@ public class GetColonyInfoMessage implements IMessage
         }
         else
         {
+            if (nextColony == null)
+            {
+                return;
+            }
+
             final int blockRange = Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()) << 4;
             final int distance = (int) BlockPosUtil.getDistance(pos, nextColony.getCenter());
 
