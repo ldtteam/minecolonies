@@ -1,7 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.core.client.gui.WindowClipBoard;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
@@ -51,7 +51,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(clipboard);
+            new ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(clipboard);
 
             if (!ctx.getLevel().isClientSide)
             {
@@ -99,7 +99,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     private static void openWindow(ItemStack stack, Level world, Player player)
     {        
-        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
         if (colonyView != null)
         {
             new WindowClipBoard(colonyView).open();

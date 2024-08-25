@@ -5,9 +5,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
-import com.minecolonies.api.items.ModDataComponents.Pos;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -61,7 +60,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
 
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
         final IColony colony = ColonyId.readColonyFromItemStack(scepter);
-        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(scepter);
+        final Pos posComponent = Pos.readFromItemStack(scepter);
 
         if (colony == null || posComponent == null)
         {
@@ -114,7 +113,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
         final IColonyView colony = ColonyId.readColonyViewFromItemStack(stack);
-        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(stack);
+        final Pos posComponent = Pos.readFromItemStack(stack);
 
         if (colony == null || posComponent == null)
         {

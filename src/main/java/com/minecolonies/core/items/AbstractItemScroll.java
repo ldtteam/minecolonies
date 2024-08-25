@@ -2,7 +2,8 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
@@ -120,8 +121,8 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 
         if (te instanceof TileEntityColonyBuilding colonyBuilding)
         {
-            new ModDataComponents.ColonyId(colonyBuilding.getColonyId(), ((TileEntityColonyBuilding) te).getColony().getDimension()).writeToItemStack(scroll);
-            new ModDataComponents.Pos(ctx.getClickedPos()).writeToItemStack(scroll);
+            new ColonyId(colonyBuilding.getColonyId(), ((TileEntityColonyBuilding) te).getColony().getDimension()).writeToItemStack(scroll);
+            new Pos(ctx.getClickedPos()).writeToItemStack(scroll);
 
             MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
         }
@@ -144,7 +145,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      */
     protected IColony getColony(final ItemStack stack)
     {
-        return ModDataComponents.ColonyId.readColonyFromItemStack(stack);
+        return ColonyId.readColonyFromItemStack(stack);
     }
 
     /**
@@ -155,6 +156,6 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      */
     protected IColony getColonyView(final ItemStack stack)
     {
-        return ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        return ColonyId.readColonyViewFromItemStack(stack);
     }
 }

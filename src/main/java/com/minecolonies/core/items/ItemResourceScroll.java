@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
-import com.minecolonies.api.items.ModDataComponents.Pos;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.Pos;
+import com.minecolonies.api.items.component.WarehouseSnapshot;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.core.client.gui.WindowResourceList;
 import com.minecolonies.core.tileentities.TileEntityRack;
@@ -17,15 +17,10 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -42,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -70,13 +64,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     private static void openWindow(final ItemStack stack, final Player player)
     {
-        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
         if (colonyView == null)
         {
             MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
         }
 
-        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(stack);
+        final Pos posComponent = Pos.readFromItemStack(stack);
         if (posComponent == null)
         {
             MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
@@ -89,7 +83,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 final String currentHash = getWorkOrderHash(buildingView);
                 final WarehouseSnapshot warehouseSnapshotComponent = WarehouseSnapshot.readFromItemStack(stack);
-                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash);
+                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash());
 
                 Map<String, Integer> warehouseSnapshot = new HashMap<>();
                 if (snapshotNeedsUpdate)
@@ -100,9 +94,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 else
                 {
                     // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
-                    if (!warehouseSnapshotComponent.hash.isEmpty())
+                    if (!warehouseSnapshotComponent.hash().isEmpty())
                     {
-                        warehouseSnapshot = warehouseSnapshotComponent.snapshot;
+                        warehouseSnapshot = warehouseSnapshotComponent.snapshot();
                     }
                 }
 
@@ -152,7 +146,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     private static void updateWarehouseSnapshot(final BlockPos warehousePos, final ItemStack stack, final Player player)
     {
         final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        final ModDataComponents.Pos posComponent = Pos.readFromItemStack(stack);
+        final Pos posComponent = Pos.readFromItemStack(stack);
 
         if (colonyView == null || posComponent == null)
         {
@@ -171,7 +165,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (warehouseSnapshotData != null)
                 {
-                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot, warehouseSnapshotData.hash).sendToServer();
+                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot(), warehouseSnapshotData.hash()).sendToServer();
                 }
                 else
                 {
@@ -191,7 +185,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @return a map containing the snapshot, or null in case a fault appears.
      */
     @Nullable
-    private static ItemResourceScroll.WarehouseSnapshot gatherWarehouseSnapshot(
+    private static WarehouseSnapshot gatherWarehouseSnapshot(
       final IBuildingView buildingView,
       final BlockPos warehouseBlockPos,
       final String hash,
@@ -267,8 +261,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         {
             if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
-                new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(scroll);
-                new ModDataComponents.Pos(buildingEntity.getPosition()).writeToItemStack(scroll);
+                new ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(scroll);
+                new Pos(buildingEntity.getPosition()).writeToItemStack(scroll);
 
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
@@ -319,8 +313,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         super.appendHoverText(stack, ctx, tooltip, flagIn);
 
-        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
-        final ModDataComponents.Pos posComponent = ModDataComponents.Pos.readFromItemStack(stack);
+        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
+        final Pos posComponent = Pos.readFromItemStack(stack);
 
         if (colonyView == null || posComponent == null)
         {
@@ -338,43 +332,6 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                               ? Component.literal(ChatFormatting.DARK_PURPLE + name)
                               : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
-        }
-    }
-
-    /**
-     * Container class for warehouse snapshot data.
-     *
-     * @param snapshot the snapshot data.
-     * @param hash     the work order hash for comparison between work orders.
-     */
-    public record WarehouseSnapshot(Map<String, Integer> snapshot, String hash)
-    {
-        public static final WarehouseSnapshot EMPTY = new WarehouseSnapshot(Map.of(), "");
-
-        public static final Codec<WarehouseSnapshot> CODEC = RecordCodecBuilder.create(
-          builder -> builder
-                       .group(Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("snapshot").forGetter(WarehouseSnapshot::snapshot),
-                         Codec.STRING.fieldOf("hash").forGetter(WarehouseSnapshot::hash))
-                       .apply(builder, WarehouseSnapshot::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, WarehouseSnapshot> STREAM_CODEC =
-          StreamCodec.composite(ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VAR_INT),
-            WarehouseSnapshot::snapshot, ByteBufCodecs.STRING_UTF8, WarehouseSnapshot::hash,
-            WarehouseSnapshot::new);
-
-        public void writeToItemStack(final ItemStack itemStack)
-        {
-            itemStack.set(ModDataComponents.WAREHOUSE_SNAPSHOT_COMPONENT, this);
-        }
-
-        public static WarehouseSnapshot readFromItemStack(final ItemStack itemStack)
-        {
-            return itemStack.getOrDefault(ModDataComponents.WAREHOUSE_SNAPSHOT_COMPONENT, WarehouseSnapshot.EMPTY);
-        }
-
-        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<WarehouseSnapshot> updater)
-        {
-            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
         }
     }
 }

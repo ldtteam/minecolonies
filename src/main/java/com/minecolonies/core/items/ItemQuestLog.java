@@ -2,7 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -51,7 +51,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            new ModDataComponents.ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(questLog);
+            new ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(questLog);
             if (!ctx.getLevel().isClientSide)
             {
                 MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
@@ -100,7 +100,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     private static void openWindow(ItemStack stack, Level world, Player player)
     {
-        final IColonyView colonyView = ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
         if (colonyView != null)
         {
             new WindowQuestLog(colonyView).open();

@@ -2,7 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.Bool;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -33,7 +33,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.blockPosition());
             if (colony != null)
             {
-                new ModDataComponents.Bool(colony.getRaiderManager().willRaidTonight()).writeToItemStack(stack);
+                new Bool(colony.getRaiderManager().willRaidTonight()).writeToItemStack(stack);
                 
             }
         }
@@ -42,6 +42,6 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     @Override
     public boolean isFoil(final ItemStack stack)
     {
-        return ModDataComponents.Bool.readFromItemStack(stack).does();
+        return Bool.readFromItemStack(stack).does();
     }
 }

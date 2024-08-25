@@ -6,9 +6,9 @@ import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.core.BlockPos;
 
@@ -39,7 +39,7 @@ public class ColonyPatrolPointRenderer
         }
 
         final IColonyView colony = ColonyId.readColonyViewFromItemStack(null);
-        final ModDataComponents.Pos posComponent = ModDataComponents.Pos.readFromItemStack(ctx.mainHandItem);
+        final Pos posComponent = Pos.readFromItemStack(ctx.mainHandItem);
 
         if (colony == null || posComponent == null)
         {

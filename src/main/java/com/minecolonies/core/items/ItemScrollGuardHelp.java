@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
-import com.minecolonies.api.items.ModDataComponents.Pos;
+import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;

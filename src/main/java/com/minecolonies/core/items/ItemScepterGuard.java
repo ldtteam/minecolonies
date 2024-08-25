@@ -4,18 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
-import com.minecolonies.api.items.ModDataComponents.Pos;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.LastPos;
+import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +21,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.UnaryOperator;
 
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
@@ -64,7 +58,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final @Nullable LastPos lastPosComp = LastPos.readFromItemStack(scepter);
         if (lastPosComp != null)
         {
-            if (lastPosComp.pos.equals(ctx.getClickedPos()))
+            if (lastPosComp.pos().equals(ctx.getClickedPos()))
             {
                 ctx.getPlayer().getInventory().removeItemNoUpdate(ctx.getPlayer().getInventory().selected);
                 MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGETS_FINISHED).sendTo(ctx.getPlayer());
@@ -87,7 +81,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final ItemStack stack, final Player playerIn)
     {
         final IColony colony = ColonyId.readColonyFromItemStack(stack);
-        final @Nullable ModDataComponents.Pos posComp = Pos.readFromItemStack(stack);
+        final @Nullable Pos posComp = Pos.readFromItemStack(stack);
         final @Nullable LastPos lastPosComp = LastPos.readFromItemStack(stack);
         if (posComp == null)
         {
@@ -128,35 +122,5 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         new LastPos(pos).writeToItemStack(stack);
         return InteractionResult.SUCCESS;
-    }
-
-    public record LastPos(BlockPos pos)
-    {
-        public static final LastPos EMPTY = new LastPos(BlockPos.ZERO);
-
-        public static final Codec<LastPos> CODEC = RecordCodecBuilder.create(
-          builder -> builder
-                       .group(BlockPos.CODEC.fieldOf("pos").forGetter(LastPos::pos))
-                       .apply(builder, LastPos::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, LastPos> STREAM_CODEC =
-          StreamCodec.composite(BlockPos.STREAM_CODEC,
-            LastPos::pos,
-            LastPos::new);
-
-        public void writeToItemStack(final ItemStack itemStack)
-        {
-            itemStack.set(ModDataComponents.LAST_POS_COMPONENT, this);
-        }
-
-        public static LastPos readFromItemStack(final ItemStack itemStack)
-        {
-            return itemStack.getOrDefault(ModDataComponents.LAST_POS_COMPONENT, LastPos.EMPTY);
-        }
-
-        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<LastPos> updater)
-        {
-            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
-        }
     }
 }

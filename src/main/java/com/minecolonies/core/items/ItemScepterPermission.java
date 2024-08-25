@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.ModDataComponents.Desc;
+import com.minecolonies.api.items.component.Desc;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.ChatFormatting;

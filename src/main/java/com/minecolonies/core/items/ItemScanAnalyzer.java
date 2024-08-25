@@ -6,16 +6,11 @@ import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
-import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.component.Timestamp;
 import com.minecolonies.core.client.gui.WindowSchematicAnalyzer;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,10 +25,9 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 
 import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
-import static com.minecolonies.api.items.ModDataComponents.TIME_COMPONENT;
+import static com.minecolonies.api.items.component.ModDataComponents.TIME_COMPONENT;
 
 /**
  * Item used to analyze schematics or selected blocks
@@ -166,9 +160,9 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         }
 
         final Timestamp component = Timestamp.readFromItemStack(stack);
-        if (component.time != 0)
+        if (component.time() != 0)
         {
-            final long prevTime = component.time;
+            final long prevTime = component.time();
             if ((level.getGameTime() - prevTime) > TIMEOUT_DELAY)
             {
                 PosSelection.EMPTY.writeToItemStack(stack);
@@ -198,35 +192,5 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
           BlueprintUtil.createBlueprint(world, zero, false, (short) (box.getXsize() + 1), (short) (box.getYsize() + 1), (short) (box.getZsize() + 1), fileName, Optional.empty());
 
         return bp;
-    }
-
-    public record Timestamp(long time)
-    {
-        public static final ItemScanAnalyzer.Timestamp EMPTY = new ItemScanAnalyzer.Timestamp(0);
-
-        public static final Codec<ItemScanAnalyzer.Timestamp> CODEC = RecordCodecBuilder.create(
-          builder -> builder
-                       .group(Codec.LONG.fieldOf("timestamp").forGetter(ItemScanAnalyzer.Timestamp::time))
-                       .apply(builder, ItemScanAnalyzer.Timestamp::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, ItemScanAnalyzer.Timestamp> STREAM_CODEC =
-          StreamCodec.composite(ByteBufCodecs.VAR_LONG,
-            ItemScanAnalyzer.Timestamp::time,
-            ItemScanAnalyzer.Timestamp::new);
-
-        public void writeToItemStack(final ItemStack itemStack)
-        {
-            itemStack.set(ModDataComponents.TIME_COMPONENT, this);
-        }
-
-        public static Timestamp readFromItemStack(final ItemStack itemStack)
-        {
-            return itemStack.getOrDefault(ModDataComponents.TIME_COMPONENT, Timestamp.EMPTY);
-        }
-
-        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<Timestamp> updater)
-        {
-            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
-        }
     }
 }
