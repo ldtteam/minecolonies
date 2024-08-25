@@ -20,7 +20,7 @@ public class GuardTowerRallyBannerRenderer
         }
 
         final ColonyId component = ColonyId.readFromItemStack(ctx.mainHandItem);
-        if (component.id() == -1 || component.dimension() != ctx.clientLevel.dimension())
+        if (!component.hasColonyId() || component.dimension() != ctx.clientLevel.dimension())
         {
             return;
         }

@@ -155,7 +155,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
 
                 final ColonyId colonyComponent = ColonyId.readFromItemStack(stack);
-                if (colonyComponent != null && tempColony != null && tempColony.getID() != colonyComponent.id())
+                if (colonyComponent.hasColonyId() && tempColony != null && tempColony.getID() != colonyComponent.id())
                 {
                     MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
