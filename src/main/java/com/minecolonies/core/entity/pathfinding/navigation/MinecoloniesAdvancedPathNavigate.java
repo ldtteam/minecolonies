@@ -1177,4 +1177,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             this.pauseTicks = pauseTicks;
         }
     }
+
+    @Override
+    public PathResult getPathResult()
+    {
+        return pathResult;
+    }
 }

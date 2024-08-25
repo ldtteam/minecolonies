@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ShapeUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
@@ -20,17 +19,17 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
     /**
      * Position to go close to
      */
-    protected final BlockPos desiredPosition;
+    public final BlockPos desiredPosition;
 
     /**
      * Position to stay nearby
      */
-    protected final BlockPos nearbyPosition;
+    public final BlockPos nearbyPosition;
 
     /**
      * Required distance to reach
      */
-    protected final int distToDesired;
+    public final int distToDesired;
 
     public PathJobMoveCloseToXNearY(
       final Level world,

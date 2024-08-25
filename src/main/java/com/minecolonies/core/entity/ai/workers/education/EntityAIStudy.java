@@ -10,10 +10,11 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.JobStudent;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
+import com.minecolonies.core.entity.pathfinding.navigation.PathfindingAIHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,7 +109,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             studyPos = building.getRandomBookShelf();
         }
 
-        if (walkToBlock(studyPos))
+        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7))
         {
             setDelay(WALK_DELAY);
             return getState();
