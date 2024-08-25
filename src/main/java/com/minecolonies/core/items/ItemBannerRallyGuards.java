@@ -96,7 +96,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 }
             }
         }
-        else if (context.getLevel().getBlockState(context.getClickedPos()).getBlock().equals(ModBlocks.blockColonyBanner))
+        else if (context.getLevel().getBlockState(context.getClickedPos()).getBlock().equals(ModBlocks.blockColonyBanner.get()))
         {
             if (context.getLevel().isClientSide())
             {

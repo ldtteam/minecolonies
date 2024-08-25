@@ -16,6 +16,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
@@ -368,6 +369,16 @@ public abstract class AbstractResearchProvider implements DataProvider
         /**
          * Sets an Item research icon.  This icon will only be displayed after research is completed.
          * @param item  The item to use as an icon.
+         * @return this
+         */
+        public Research setIcon(final ItemLike item)
+        {
+            return setIcon(item.asItem());
+        }
+
+        /**
+         * Sets an Item research icon.  This icon will only be displayed after research is completed.
+         * @param item  The item to use as an icon.
          * @param count The number to mark the icon.
          * @return this
          */
@@ -379,6 +390,17 @@ public abstract class AbstractResearchProvider implements DataProvider
             }
             this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item).toString() + ":" + count);
             return this;
+        }
+
+        /**
+         * Sets an Item research icon.  This icon will only be displayed after research is completed.
+         * @param item  The item to use as an icon.
+         * @param count The number to mark the icon.
+         * @return this
+         */
+        public Research setIcon(final ItemLike item, final int count)
+        {
+            return setIcon(item.asItem(), count);
         }
 
         /**
@@ -555,7 +577,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param provider The registry provider.
          * @return this.
          */
-        public Research addItemCost(final Item item, final int count, final HolderLookup.Provider provider)
+        public Research addItemCost(final ItemLike item, final int count, final HolderLookup.Provider provider)
         {
             return addItemCost(SizedIngredient.of(item, count), provider);
         }

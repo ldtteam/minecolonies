@@ -289,8 +289,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final AdvancementHolder postAndStash = Advancement.Builder.advancement()
                 .parent(buildDeliveryPerson)
                 .display(make(AdvancementType.TASK, ModBlocks.blockPostBox, "post_and_stash"))
-                .addCriterion("postbox", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox))
-                .addCriterion("stash", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash))
+                .addCriterion("postbox", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox.get()))
+                .addCriterion("stash", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash.get()))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "post_and_stash"), fileHelper);
 
         // --- education ---

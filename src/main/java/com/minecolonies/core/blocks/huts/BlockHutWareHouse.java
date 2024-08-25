@@ -23,13 +23,6 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
         super();
     }
 
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutwarehouse";
-    }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)

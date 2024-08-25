@@ -5,6 +5,7 @@ import com.ldtteam.common.language.LanguageHandler;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.configuration.ClientConfiguration;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
@@ -95,6 +96,8 @@ public class MineColonies
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
+        ModBlocks.REGISTRY.register(modBus);
+        ModItems.REGISTRY.register(modBus);
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);
         ModIngredientTypeInitializer.DEFERRED_REGISTER.register(modBus);

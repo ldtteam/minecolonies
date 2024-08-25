@@ -27,8 +27,6 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import java.util.EnumMap;
 import java.util.List;
 
-import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
-import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
 import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
@@ -118,10 +116,8 @@ public final class ModItemsInitializer
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "scroll_highlight"), ModItems.scrollHighLight);
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", SANTA_HAT, ArmorItem.Type.HELMET, new Item.Properties());
-        ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, new Item.Properties());
-        ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, new Item.Properties());
 
-        ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", new Item.Properties());
+        ModItems.flagBanner = new ItemColonyFlagBanner(ModBlocks.blockColonyBanner.get(), ModBlocks.blockColonyWallBanner.get(), new Item.Properties().stacksTo(1));
         ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", PIRATE_ARMOR_1, ArmorItem.Type.HELMET, new Item.Properties());
         ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", PIRATE_ARMOR_1, ArmorItem.Type.CHESTPLATE, new Item.Properties());
         ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", PIRATE_ARMOR_1, ArmorItem.Type.LEGGINGS, new Item.Properties());
@@ -255,8 +251,6 @@ public final class ModItemsInitializer
 
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "santa_hat"), ModItems.santaHat);
-        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, IRON_GATE), ModItems.irongate);
-        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, WOODEN_GATE), ModItems.woodgate);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "colony_banner"), ModItems.flagBanner);
 
 

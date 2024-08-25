@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
@@ -22,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.MapColor;
@@ -135,7 +133,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape(getDescriptionId())).setStyle((Style.EMPTY).withColor(
               ChatFormatting.RED)));
         }
 
@@ -149,13 +147,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public boolean getValidBreak()
     {
         return validTownHallBreak;
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhuttownhall";
     }
 
     @Override

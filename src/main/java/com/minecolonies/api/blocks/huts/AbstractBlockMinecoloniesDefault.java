@@ -1,10 +1,6 @@
 package com.minecolonies.api.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
-import net.minecraft.core.Registry;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
@@ -38,26 +34,9 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
      * Height of the collision box.
      */
     public static final double            HEIGHT_COLLISION = 2.2;
-    /**
-     * Registry name for this block.
-     */
-    public static final String            REGISTRY_NAME    = "blockhutfield";
 
     public AbstractBlockMinecoloniesDefault(final Properties properties)
     {
         super(properties);
-    }
-
-    @Override
-    public B registerBlock(final Registry<Block> registry)
-    {
-        Registry.register(registry, getRegistryName(), this);
-        return (B) this;
-    }
-
-    @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, getRegistryName(), new BlockItem(this, properties));
     }
 }

@@ -6,17 +6,13 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesDirectional;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowDecorationController;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -61,11 +57,6 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     private static final float BLOCK_HARDNESS = 5F;
 
     /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "decorationcontroller";
-
-    /**
      * The resistance this block has.
      */
     private static final float RESISTANCE = 1F;
@@ -108,12 +99,6 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
     protected MapCodec<BlockDecorationController> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override

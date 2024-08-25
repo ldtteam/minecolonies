@@ -46,7 +46,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof IMateriallyTexturedBlock && blockState.getBlock() != ModBlocks.blockRack;
+        return blockState.getBlock() instanceof IMateriallyTexturedBlock && blockState.getBlock() != ModBlocks.blockRack.get();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
         if(tileEntity != null)
         {
             final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
-            if (state.getBlock() == ModBlocks.blockNamedGrave)
+            if (state.getBlock() == ModBlocks.blockNamedGrave.get())
             {
                 final Direction facing = state.getValue(AbstractBlockMinecoloniesDefault.FACING);
                 switch (facing)

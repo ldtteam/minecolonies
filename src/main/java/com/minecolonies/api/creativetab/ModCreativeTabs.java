@@ -4,13 +4,14 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.world.level.block.Block;
 
 /**
  * Class used to handle the creativeTab of minecolonies.
@@ -22,7 +23,7 @@ public final class ModCreativeTabs
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.huts")).displayItems((config, output) -> {
-          for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
+          for (final DeferredBlock<? extends AbstractBlockHut<?>> hut : ModBlocks.getHuts())
           {
               output.accept(hut);
           }
@@ -69,8 +70,8 @@ public final class ModCreativeTabs
 
           output.accept(ModItems.santaHat);
 
-          output.accept(ModItems.irongate);
-          output.accept(ModItems.woodgate);
+          output.accept(ModBlocks.blockIronGate);
+          output.accept(ModBlocks.blockWoodenGate);
 
           output.accept(ModItems.flagBanner);
 
@@ -107,7 +108,7 @@ public final class ModCreativeTabs
           output.accept(ModBlocks.farmland);
           output.accept(ModBlocks.floodedFarmland);
 
-          for (final Block crop : ModBlocks.getCrops())
+          for (final DeferredBlock<MinecoloniesCropBlock> crop : ModBlocks.getCrops())
           {
               output.accept(crop);
           }

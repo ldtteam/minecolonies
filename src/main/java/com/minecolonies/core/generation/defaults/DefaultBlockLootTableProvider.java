@@ -3,6 +3,7 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -24,8 +25,10 @@ import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
 import net.minecraft.world.level.storage.loot.functions.SetBannerPatternFunction;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +46,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     public void generate()
     {
         HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        saveBlocks(Arrays.asList(ModBlocks.getHuts()));
+        saveBlocks(ModBlocks.getHuts());
 
         saveBlock(ModBlocks.blockHutWareHouse);
         saveBlock(ModBlocks.blockStash);
@@ -67,9 +70,9 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         saveBlock(ModBlocks.farmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
         saveBlock(ModBlocks.floodedFarmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
 
-        for (Block block : ModBlocks.getCrops())
+        for (DeferredBlock<MinecoloniesCropBlock> block : ModBlocks.getCrops())
         {
-            final LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 6));
+            final LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 6));
             saveBlock(block, lootPool -> lootPool.add(LootItem.lootTableItem(block.asItem()).when(cropCondition).apply(ApplyBonusCount.addBonusBinomialDistributionCount(registrylookup.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3)).otherwise(LootItem.lootTableItem(block.asItem()))));
         }
 
@@ -94,18 +97,18 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         saveBannerBlock(Blocks.YELLOW_BANNER);
     }
 
-    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks)
+    private <T extends Block> void saveBlocks(@NotNull final List<DeferredBlock<? extends T>> blocks)
     {
-        for (final Block block : blocks)
+        for (final DeferredBlock<?> block : blocks)
         {
             saveBlock(block);
         }
     }
 
-    private void saveBlock(@NotNull final Block block)
+    private void saveBlock(@NotNull final DeferredBlock<?> block)
     {
         final LootPoolSingletonContainer.Builder<?> item = LootItem.lootTableItem(block);
-        if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
+        if (block.get() instanceof AbstractBlockHut || block.get() instanceof BlockMinecoloniesRack)
         {
             item.apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY));
         }
@@ -113,11 +116,11 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         this.saveBlock(block, lootPool -> lootPool.add(item).when(ExplosionCondition.survivesExplosion()));
     }
 
-    private void saveBlock(@NotNull final Block block, final Consumer<Builder> lootPoolConfigurer)
+    private void saveBlock(@NotNull final DeferredBlock<?> block, final Consumer<Builder> lootPoolConfigurer)
     {
             final Builder lootPoolbuilder = LootPool.lootPool();
             lootPoolConfigurer.accept(lootPoolbuilder);
-            add(block, LootTable.lootTable().withPool(lootPoolbuilder));
+            add(block.get(), LootTable.lootTable().withPool(lootPoolbuilder));
     }
 
     private void saveBannerBlock(@NotNull final Block block)
@@ -134,7 +137,10 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     @Override
     protected Iterable<Block> getKnownBlocks()
     {
-        return Stream.concat(Arrays.stream(ModBlocks.getCrops()), Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
+        final List<DeferredBlock<?>> blocks = new ArrayList<>();
+        blocks.addAll(ModBlocks.getCrops());
+        blocks.addAll(ModBlocks.getHuts());
+        blocks.addAll(List.of(
             ModBlocks.blockHutWareHouse,
             ModBlocks.blockStash,
             //ModBlocks.blockConstructionTape, // no loot table
@@ -150,8 +156,9 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             ModBlocks.blockCompostedDirt,
             //ModBlocks.blockDecorationPlaceholder, // creative only
             ModBlocks.floodedFarmland,
-            ModBlocks.farmland,
+            ModBlocks.farmland));
 
+        return Stream.concat(blocks.stream().map(DeferredBlock::get).map(Block.class::cast), Stream.of(
             Blocks.BLACK_BANNER,
             Blocks.BLUE_BANNER,
             Blocks.BROWN_BANNER,
@@ -168,6 +175,6 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             Blocks.PURPLE_BANNER,
             Blocks.RED_BANNER,
             Blocks.YELLOW_BANNER
-        )).map(Block.class::cast)).toList();
+        )).toList();
     }
 }

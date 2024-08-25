@@ -194,7 +194,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     public void updateBlock(final Level worldIn)
     {
         final BlockState barrel = level.getBlockState(worldPosition);
-        if (barrel.getBlock() == ModBlocks.blockBarrel)
+        if (barrel.getBlock() == ModBlocks.blockBarrel.get())
         {
             worldIn.setBlockAndUpdate(worldPosition, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
             setChanged();

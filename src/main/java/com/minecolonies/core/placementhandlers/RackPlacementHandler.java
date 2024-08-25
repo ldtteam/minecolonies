@@ -40,7 +40,7 @@ public class RackPlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final RotationMirror settings)
     {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack.get())
         {
             return ActionProcessingResult.SUCCESS;
         }
@@ -62,7 +62,7 @@ public class RackPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack && !complete)
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack.get() && !complete)
         {
             return itemList;
         }

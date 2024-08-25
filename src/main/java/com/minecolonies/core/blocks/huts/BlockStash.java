@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
@@ -37,13 +36,6 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     private static final VoxelShape SHAPE_EAST  = Block.box(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_SOUTH = Block.box(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_WEST  = Block.box(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockstash";
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(final @NotNull BlockPos blockPos, final @NotNull BlockState blockState)

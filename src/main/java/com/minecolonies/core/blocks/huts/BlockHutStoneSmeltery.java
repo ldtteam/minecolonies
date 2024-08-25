@@ -3,20 +3,12 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the StoneSmeltery. No different from {@link AbstractBlockHut}
  */
 public class BlockHutStoneSmeltery extends AbstractBlockHut<BlockHutStoneSmeltery>
 {
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutstonesmeltery";
-    }
-
     @Override
     public BuildingEntry getBuildingEntry()
     {

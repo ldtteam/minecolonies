@@ -34,7 +34,7 @@ public class NamedGravePlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final RotationMirror settings)
     {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockNamedGrave)
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockNamedGrave.get())
         {
             return ActionProcessingResult.SUCCESS;
         }

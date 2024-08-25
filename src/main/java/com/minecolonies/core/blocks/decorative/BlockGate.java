@@ -7,8 +7,8 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
  */
 public class BlockGate extends AbstractBlockGate
 {
-    public BlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
+    public BlockGate(final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(name, hardness, maxWidth, maxHeight);
+        super(hardness, maxWidth, maxHeight);
     }
 }

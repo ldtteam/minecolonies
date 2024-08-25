@@ -984,7 +984,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         return block == null
                  || BlockUtils.isWater(block)
                  || block.is(BlockTags.LEAVES)
-                 || block.getBlock() == ModBlocks.blockDecorationPlaceholder;
+                 || block.getBlock() == ModBlocks.blockDecorationPlaceholder.get();
     }
 
     /**

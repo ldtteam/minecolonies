@@ -1,6 +1,8 @@
 package com.minecolonies.api.items;
 
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Class handling the registering of the mod items.
@@ -10,6 +12,8 @@ import net.minecraft.world.item.Item;
 @SuppressWarnings({"squid:ClassVariableVisibilityCheck", "squid:S2444", "squid:S1444"})
 public final class ModItems
 {
+    public static final DeferredRegister.Items REGISTRY = DeferredRegister.createItems(Constants.MOD_ID);
+
     public static Item supplyChest;
     public static Item permTool;
     public static Item scepterGuard;
@@ -48,8 +52,6 @@ public final class ModItems
     public static Item santaHat;
 
     public static Item flagBanner;
-    public static Item irongate;
-    public static Item woodgate;
 
     public static Item breadDough;
     public static Item cookieDough;

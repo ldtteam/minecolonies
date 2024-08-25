@@ -9,13 +9,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -37,10 +35,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -49,10 +43,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 
 /**
  * Block for the shelves of the warehouse.
@@ -76,11 +68,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     private static final float BLOCK_HARDNESS = 10.0F;
 
     /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockminecoloniesrack";
-
-    /**
      * The resistance this block has.
      */
     private static final float RESISTANCE = Float.POSITIVE_INFINITY;
@@ -94,12 +81,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, RackType.EMPTY));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override

@@ -12,13 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockHutEnchanter extends AbstractBlockHut<BlockHutEnchanter>
 {
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutenchanter";
-    }
-
     @Override
     public BuildingEntry getBuildingEntry()
     {

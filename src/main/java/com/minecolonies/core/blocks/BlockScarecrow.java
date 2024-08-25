@@ -5,15 +5,12 @@ import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -53,12 +50,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
     }
 
     @Nullable
