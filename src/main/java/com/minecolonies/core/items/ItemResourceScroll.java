@@ -263,16 +263,16 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
       final Player playerIn,
       final InteractionHand hand)
     {
-        final ItemStack clipboard = playerIn.getItemInHand(hand);
+        final ItemStack resourceScroll = playerIn.getItemInHand(hand);
 
         if (!worldIn.isClientSide)
         {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, resourceScroll);
         }
 
-        openWindow(clipboard, playerIn);
+        openWindow(resourceScroll, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, resourceScroll);
     }
 
     @Override
