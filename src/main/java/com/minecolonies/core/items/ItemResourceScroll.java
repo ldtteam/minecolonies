@@ -51,7 +51,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     public ItemResourceScroll(final Item.Properties properties)
     {
-        super("resourcescroll", properties.stacksTo(STACKSIZE));
+        super("resourcescroll", properties.stacksTo(1));
     }
 
     /**

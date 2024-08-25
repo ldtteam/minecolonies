@@ -26,7 +26,7 @@ public class ItemColonyFlagBanner extends BannerItem
 {
     public ItemColonyFlagBanner(String name, Properties properties)
     {
-        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16));
+        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(1));
     }
 
     public ItemColonyFlagBanner(Block standingBanner, Block wallBanner, Properties builder)
