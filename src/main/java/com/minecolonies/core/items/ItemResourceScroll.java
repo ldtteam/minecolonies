@@ -1,11 +1,8 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.api.items.component.Pos;
+import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.items.component.WarehouseSnapshot;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.core.client.gui.WindowResourceList;
@@ -64,53 +61,33 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     private static void openWindow(final ItemStack stack, final Player player)
     {
-        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        if (colonyView == null)
+        final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
+        if (!(buildingView instanceof final BuildingBuilder.View builderBuildingView))
         {
             MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+            return;
         }
 
-        final Pos posComponent = Pos.readFromItemStack(stack);
-        if (posComponent == null)
+        final String currentHash = getWorkOrderHash(buildingView);
+        final WarehouseSnapshot warehouseSnapshotComponent = WarehouseSnapshot.readFromItemStack(stack);
+        final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash());
+
+        Map<String, Integer> warehouseSnapshot = new HashMap<>();
+        if (snapshotNeedsUpdate)
         {
-            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
-        }
-
-        if (colonyView != null)
-        {
-            final IBuildingView buildingView = colonyView.getBuilding(posComponent.pos());
-            if (buildingView instanceof BuildingBuilder.View builderBuildingView)
-            {
-                final String currentHash = getWorkOrderHash(buildingView);
-                final WarehouseSnapshot warehouseSnapshotComponent = WarehouseSnapshot.readFromItemStack(stack);
-                final boolean snapshotNeedsUpdate = !Objects.equals(currentHash, warehouseSnapshotComponent.hash());
-
-                Map<String, Integer> warehouseSnapshot = new HashMap<>();
-                if (snapshotNeedsUpdate)
-                {
-                    // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
-                    new ResourceScrollSaveWarehouseSnapshotMessage(posComponent.pos()).sendToServer();
-                }
-                else
-                {
-                    // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
-                    if (!warehouseSnapshotComponent.hash().isEmpty())
-                    {
-                        warehouseSnapshot = warehouseSnapshotComponent.snapshot();
-                    }
-                }
-
-                new WindowResourceList(builderBuildingView, warehouseSnapshot).open();
-            }
-            else
-            {
-                MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
-            }
+            // If the hashes no longer match one another, the NBT data is out of sync, inform the server to wipe the NBT.
+            new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID()).sendToServer();
         }
         else
         {
-            MessageUtils.format(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY)).sendTo(player);
+            // If the hashes are still up-to-date, load the old snapshot data from the NBT, if any exists.
+            if (!warehouseSnapshotComponent.hash().isEmpty())
+            {
+                warehouseSnapshot = warehouseSnapshotComponent.snapshot();
+            }
         }
+
+        new WindowResourceList(builderBuildingView, warehouseSnapshot).open();
     }
 
     /**
@@ -145,33 +122,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     private static void updateWarehouseSnapshot(final BlockPos warehousePos, final ItemStack stack, final Player player)
     {
-        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        final Pos posComponent = Pos.readFromItemStack(stack);
+        final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
 
-        if (colonyView == null || posComponent == null)
+        if (!(buildingView instanceof BuildingBuilder.View))
         {
             MessageUtils.format(COM_MINECOLONIES_SCROLL_NO_COLONY).sendTo(player);
             return;
         }
 
-        if (colonyView != null)
-        {
-            final BlockPos builderPos = posComponent.pos();
-            final IBuildingView buildingView = colonyView.getBuilding(builderPos);
-            if (buildingView instanceof BuildingBuilder.View)
-            {
-                final String currentHash = getWorkOrderHash(buildingView);
-                final WarehouseSnapshot warehouseSnapshotData = gatherWarehouseSnapshot(buildingView, warehousePos, currentHash, player);
+        final String currentHash = getWorkOrderHash(buildingView);
+        final WarehouseSnapshot warehouseSnapshotData = gatherWarehouseSnapshot(buildingView, warehousePos, currentHash, player);
 
-                if (warehouseSnapshotData != null)
-                {
-                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos, warehouseSnapshotData.snapshot(), warehouseSnapshotData.hash()).sendToServer();
-                }
-                else
-                {
-                    new ResourceScrollSaveWarehouseSnapshotMessage(builderPos).sendToServer();
-                }
-            }
+        if (warehouseSnapshotData != null)
+        {
+            new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID(), warehouseSnapshotData.snapshot(), warehouseSnapshotData.hash()).sendToServer();
+        }
+        else
+        {
+            new ResourceScrollSaveWarehouseSnapshotMessage(buildingView.getID()).sendToServer();
         }
     }
 
@@ -261,8 +229,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         {
             if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
-                new ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(scroll);
-                new Pos(buildingEntity.getPosition()).writeToItemStack(scroll);
+                buildingEntity.getBuilding().writeToItemStack(scroll);
 
                 MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
@@ -313,25 +280,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         super.appendHoverText(stack, ctx, tooltip, flagIn);
 
-        final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        final Pos posComponent = Pos.readFromItemStack(stack);
-
-        if (colonyView == null || posComponent == null)
+        final IBuildingView buildingView = BuildingId.readBuildingViewFromItemStack(stack);
+        if (buildingView instanceof BuildingBuilder.View builderBuildingView)
         {
-            super.appendHoverText(stack, ctx, tooltip, flagIn);
-            return;
-        }
-
-        if (colonyView != null)
-        {
-            final IBuildingView buildingView = colonyView.getBuilding(posComponent.pos());
-            if (buildingView instanceof BuildingBuilder.View builderBuildingView)
-            {
-                String name = builderBuildingView.getWorkerName();
-                tooltip.add(name != null && !name.trim().isEmpty()
-                              ? Component.literal(ChatFormatting.DARK_PURPLE + name)
-                              : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
-            }
+            String name = builderBuildingView.getWorkerName();
+            tooltip.add(name != null && !name.trim().isEmpty()
+                          ? Component.literal(ChatFormatting.DARK_PURPLE + name)
+                          : Component.translatableEscape(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
         }
     }
 }

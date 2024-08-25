@@ -1,12 +1,7 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.api.items.component.Pos;
+import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -57,20 +52,12 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
         }
 
         final Player player = useContext.getPlayer();
-
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
-        final IColony colony = ColonyId.readColonyFromItemStack(scepter);
-        final Pos posComponent = Pos.readFromItemStack(scepter);
 
-        if (colony == null || posComponent == null)
+        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingBeekeeper building))
         {
             return InteractionResult.FAIL;
         }
-
-        final BlockPos hutPos = posComponent.pos();
-
-        final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
-        final BuildingBeekeeper building = (BuildingBeekeeper) hut;
 
         if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
         {
@@ -112,21 +99,11 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
-        final IColonyView colony = ColonyId.readColonyViewFromItemStack(stack);
-        final Pos posComponent = Pos.readFromItemStack(stack);
-
-        if (colony == null || posComponent == null)
-        {
-            return Collections.emptyList();
-        }
-
-        final BlockPos pos = posComponent.pos();
-
-        if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
+        if (BuildingId.readBuildingViewFromItemStack(stack) instanceof final BuildingBeekeeper.View hut)
         {
             final List<OverlayBox> overlays = new ArrayList<>();
 
-            overlays.add(new OverlayBox(pos, RED_OVERLAY, 0.02f, true));
+            overlays.add(new OverlayBox(hut.getPosition(), RED_OVERLAY, 0.02f, true));
 
             for (final BlockPos hive : hut.getHives())
             {

@@ -41,6 +41,11 @@ public record SupplyData(boolean sawStory, boolean instantPlacement, long random
         return new SupplyData(sawStory, instantPlacement, randomKey);
     }
 
+    public boolean hasRandomKey()
+    {
+        return randomKey != EMPTY.randomKey;
+    }
+
     public void writeToItemStack(final ItemStack itemStack)
     {
         itemStack.set(ModDataComponents.SUPPLY_COMPONENT, this);

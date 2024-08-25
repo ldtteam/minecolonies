@@ -126,18 +126,18 @@ public class ItemScrollColonyTP extends AbstractItemScroll
 
         MutableComponent colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
         final Desc component = Desc.readFromItemStack(stack);
-        if (component == null)
+        if (component.isEmpty())
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
                 colonyDesc = Component.literal(colony.getName());
-                new Desc(colony.getName()).writeToItemStack(stack);
+                new Desc(colonyDesc).writeToItemStack(stack);
             }
         }
         else
         {
-            colonyDesc = Component.literal(TAG_DESC);
+            colonyDesc = component.desc();
         }
         final MutableComponent guiHint2 = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));

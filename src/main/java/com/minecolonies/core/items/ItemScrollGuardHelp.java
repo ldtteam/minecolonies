@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
-import com.minecolonies.api.items.component.Pos;
+import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -27,7 +27,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
 
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -63,16 +62,14 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     protected ItemStack onItemUseSuccess(
       final ItemStack itemStack, final Level world, final ServerPlayer player)
     {
-        final IColony colony = getColony(itemStack);
-        final BlockPos buildingPos = Pos.readFromItemStack(itemStack).pos();
-        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
-        if (!(building instanceof AbstractBuildingGuards))
+        if (!(BuildingId.readBuildingFromItemStack(itemStack) instanceof final AbstractBuildingGuards building))
         {
             MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(player);
             return itemStack;
         }
 
         itemStack.shrink(1);
+        final IColony colony = building.getColony();
         final List<ICitizenData> guards = new ArrayList<>(building.getAllAssignedCitizen());
 
         if (world.random.nextInt(10) == 0 || colony.getWorld() != world)
@@ -109,10 +106,10 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                 }
 
                 colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.blockPosition(), true);
-                citizenData.setNextRespawnPosition(buildingPos);
+                citizenData.setNextRespawnPosition(building.getID());
 
                 building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
-                ((AbstractBuildingGuards) building).setPlayerToFollow(player);
+                building.setPlayerToFollow(player);
                 final GuardFollowModeSetting grouping = building.getSetting(AbstractBuildingGuards.FOLLOW_MODE);
                 if (grouping.getValue().equals(GuardFollowModeSetting.LOOSE))
                 {

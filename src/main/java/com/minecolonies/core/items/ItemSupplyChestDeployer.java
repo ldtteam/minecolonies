@@ -76,7 +76,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     public InteractionResult useOn(final UseOnContext ctx)
     {
         final SupplyData currentComponent = SupplyData.readFromItemStack(ctx.getItemInHand());
-        if (currentComponent.randomKey() == -1)
+        if (!currentComponent.hasRandomKey())
         {
             currentComponent.withRandomKey(ctx.getClickedPos().asLong()).writeToItemStack(ctx.getItemInHand());
         }
@@ -99,7 +99,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
         final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
-        if (currentComponent.randomKey() == -1)
+        if (currentComponent.hasRandomKey())
         {
             currentComponent.withRandomKey(playerIn.blockPosition().asLong()).writeToItemStack(stack);
         }

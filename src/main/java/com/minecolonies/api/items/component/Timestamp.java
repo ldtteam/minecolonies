@@ -11,7 +11,7 @@ import java.util.function.UnaryOperator;
 
 public record Timestamp(long time)
 {
-    public static final Timestamp EMPTY = new Timestamp(0);
+    public static final Timestamp EMPTY = new Timestamp(-1);
 
     public static final Codec<Timestamp> CODEC = RecordCodecBuilder.create(
       builder -> builder
@@ -26,6 +26,11 @@ public record Timestamp(long time)
     public void writeToItemStack(final ItemStack itemStack)
     {
         itemStack.set(ModDataComponents.TIME_COMPONENT, this);
+    }
+
+    public boolean hasTime()
+    {
+        return time != EMPTY.time;
     }
 
     public static Timestamp readFromItemStack(final ItemStack itemStack)

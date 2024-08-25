@@ -83,7 +83,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                     return InteractionResult.FAIL;
                 }
 
-                new ColonyId(building.getColony().getID(), building.getColony().getDimension()).writeToItemStack(banner);
+                building.getColony().writeToItemStack(banner);
                 final ILocation location = building.getLocation();
                 if (removeGuardTowerAtLocation(banner, location.getInDimensionLocation()))
                 {
@@ -136,7 +136,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      * Get the colony from the stack data.
      * @param stack the stack to get it from.
      * @return the colony or null if not found.
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     @Nullable
     private static IColony getColony(final ItemStack stack, final Level world)
     {
@@ -289,7 +291,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @param banner The banner of which the guard towers should be retrieved
      * @return The list of guardtower positions, or an empty list if anything goes wrong during retrieval.
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     public static List<BlockPos> getGuardTowerLocations(final ItemStack banner)
     {
         return RallyData.readFromItemStack(banner).towers();
@@ -401,7 +405,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @param stack The banner that should be checked
      * @return true if the banner is active
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     public static boolean isActive(final ItemStack stack)
     {
         return RallyData.readFromItemStack(stack).active();

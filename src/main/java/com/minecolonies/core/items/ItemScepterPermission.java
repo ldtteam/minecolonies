@@ -4,7 +4,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.component.Desc;
+import com.minecolonies.api.items.component.ModDataComponents;
+import com.minecolonies.api.items.component.PermissionMode;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.ChatFormatting;
@@ -38,21 +39,6 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
  */
 public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem
 {
-    /**
-     * The NBT tag of the mode
-     */
-    private static final String TAG_ITEM_MODE = "scepterMode";
-
-    /**
-     * the scepters block mode tag value
-     */
-    private static final String TAG_VALUE_MODE_BLOCK = "modeBlock";
-
-    /**
-     * the scepters location mode tag value
-     */
-    private static final String TAG_VALUE_MODE_LOCATION = "modeLocation";
-
     private static final int GREEN_OVERLAY = 0xFF00FF00;
     private static final int BLOCK_OVERLAY_RANGE_XZ = 32;
     private static final int BLOCK_OVERLAY_RANGE_Y = 6;
@@ -66,7 +52,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterpermission", properties.stacksTo(1).durability(2));
+        super("scepterpermission", properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
     }
 
     @NotNull
@@ -157,17 +143,14 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
 
     private static void toggleItemMode(final Player playerIn, final ItemStack stack)
     {
-        final String itemMode = Desc.readFromItemStack(stack).desc();
-
-        switch (itemMode)
+        switch (PermissionMode.readFromItemStack(stack))
         {
-            case TAG_VALUE_MODE_BLOCK:
-                new Desc(TAG_VALUE_MODE_LOCATION).writeToItemStack(stack);
+            case BLOCK:
+                PermissionMode.LOCATION.writeToItemStack(stack);
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_LOCATION).create()).sendTo(playerIn);
                 break;
-            case TAG_VALUE_MODE_LOCATION:
-            default:
-                new Desc(TAG_VALUE_MODE_BLOCK).writeToItemStack(stack);
+            case LOCATION:
+                PermissionMode.BLOCK.writeToItemStack(stack);
                 MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_BLOCK).create()).sendTo(playerIn);
                 break;
         }
@@ -184,10 +167,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
             return boxes;
         }
 
-        final String itemMode = Desc.readFromItemStack(stack).desc();
-        switch (itemMode)
+        switch (PermissionMode.readFromItemStack(stack))
         {
-            case TAG_VALUE_MODE_BLOCK:
+            case BLOCK:
                 final Set<Block> freeBlocks = new HashSet<>(colony.getFreeBlocks());
                 for (final BlockPos pos : BlockPos.withinManhattan(player.blockPosition(), BLOCK_OVERLAY_RANGE_XZ, BLOCK_OVERLAY_RANGE_Y, BLOCK_OVERLAY_RANGE_XZ))
                 {
@@ -197,8 +179,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
                     }
                 }
                 break;
-            case TAG_VALUE_MODE_LOCATION:
-            default:
+            case LOCATION:
                 for (final BlockPos pos : colony.getFreePositions())
                 {
                     boxes.add(new OverlayBox(pos, GREEN_OVERLAY, 0.02f, true));
@@ -212,18 +193,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
     {
-        final String itemMode = Desc.readFromItemStack(stack).desc();
-        final MutableComponent mode;
-        switch (itemMode)
+        final MutableComponent mode = switch (PermissionMode.readFromItemStack(stack))
         {
-            case TAG_VALUE_MODE_BLOCK:
-                mode = Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_BLOCK);
-                break;
-            case TAG_VALUE_MODE_LOCATION:
-            default:
-                mode = Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_LOCATION);
-                break;
-        }
+            case BLOCK -> Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_BLOCK);
+            case LOCATION -> Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_LOCATION);
+        };
         tooltip.add(Component.translatable(TOOL_PERMISSION_SCEPTER_MODE, mode.withStyle(ChatFormatting.YELLOW)));
 
         super.appendHoverText(stack, ctx, tooltip, flags);
@@ -237,17 +211,10 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
       final BlockPos pos,
       final IColonyView iColonyView)
     {
-        final String tagItemMode = Desc.readFromItemStack(stack).desc();
-
-        switch (tagItemMode)
+        return switch (PermissionMode.readFromItemStack(stack))
         {
-            case TAG_VALUE_MODE_BLOCK:
-                return handleAddBlockType(playerIn, worldIn, pos, iColonyView);
-            case TAG_VALUE_MODE_LOCATION:
-                return handleAddLocation(playerIn, worldIn, pos, iColonyView);
-            default:
-                toggleItemMode(playerIn, stack);
-                return handleItemAction(stack, playerIn, worldIn, pos, iColonyView);
-        }
+            case BLOCK -> handleAddBlockType(playerIn, worldIn, pos, iColonyView);
+            case LOCATION -> handleAddLocation(playerIn, worldIn, pos, iColonyView);
+        };
     }
 }

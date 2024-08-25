@@ -3,6 +3,7 @@ package com.minecolonies.core.items;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
+import com.ldtteam.structurize.component.ModDataComponents;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
-import static com.minecolonies.api.items.component.ModDataComponents.TIME_COMPONENT;
 
 /**
  * Item used to analyze schematics or selected blocks
@@ -38,7 +38,6 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      * NBT constants
      */
     public static String TEMP_SCAN = "selection.blueprint";
-    public static String LAST_TIME = "lastworldtime";
 
     /**
      * Time after which the selection is ignored
@@ -56,7 +55,10 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
       @NotNull final String name,
       final Item.Properties properties)
     {
-        super(properties.durability(0).setNoRepair().rarity(Rarity.UNCOMMON));
+        super(properties.durability(0)
+            .setNoRepair()
+            .rarity(Rarity.UNCOMMON)
+            .component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
     }
 
     /**
@@ -95,20 +97,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand handIn)
     {
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
-
-        final ItemStack itemstack = playerIn.getItemInHand(handIn);
-        final PosSelection component = PosSelection.readFromItemStack(itemstack);
-        final BlockPos firstPos = component.startPos().orElse(null);
-        final BlockPos secondPos = component.endPos().orElse(null);
-
-        return new InteractionResultHolder<>(
-          onAirRightClick(
-            firstPos,
-            secondPos,
-            worldIn,
-            playerIn,
-            itemstack),
-          itemstack);
+        return super.use(worldIn, playerIn, handIn);
     }
 
     @Override
@@ -159,17 +148,14 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
             return;
         }
 
-        final Timestamp component = Timestamp.readFromItemStack(stack);
-        if (component.time() != 0)
-        {
-            final long prevTime = component.time();
-            if ((level.getGameTime() - prevTime) > TIMEOUT_DELAY)
+        Timestamp.updateItemStack(stack, component -> {
+            if (component.hasTime() && (level.getGameTime() - component.time()) > TIMEOUT_DELAY)
             {
                 PosSelection.EMPTY.writeToItemStack(stack);
             }
-        }
 
-        stack.set(TIME_COMPONENT.get(), new Timestamp(level.getGameTime()));
+            return new Timestamp(level.getGameTime());
+        });
     }
 
     /**

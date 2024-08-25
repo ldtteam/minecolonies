@@ -22,7 +22,7 @@ public record ColonyId(int id, ResourceKey<Level> dimension)
 
     public static final Codec<ColonyId> CODEC = RecordCodecBuilder.create(
       builder -> builder
-                   .group(Codec.INT.fieldOf("colony_id").forGetter(ColonyId::id),
+                   .group(Codec.INT.fieldOf("id").forGetter(ColonyId::id),
                      Level.RESOURCE_KEY_CODEC.fieldOf("dimension").forGetter(ColonyId::dimension))
                    .apply(builder, ColonyId::new));
 

@@ -51,7 +51,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            new ColonyId(buildingEntity.getColonyId(), buildingEntity.getLevel().dimension()).writeToItemStack(clipboard);
+            buildingEntity.getColony().writeToItemStack(clipboard);
 
             if (!ctx.getLevel().isClientSide)
             {

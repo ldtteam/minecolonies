@@ -42,8 +42,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.items.component.ModDataComponents.ADVENTURE_COMPONENT;
-
 /**
  * Utility helper that analyzes a loot table to determine a likely list of drops, along with
  * their drop rate, for presentation in JEI (and perhaps other purposes).  This is just

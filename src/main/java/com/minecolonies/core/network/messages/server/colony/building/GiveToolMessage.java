@@ -3,8 +3,6 @@ package com.minecolonies.core.network.messages.server.colony.building;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.api.items.component.Pos;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
@@ -56,8 +54,7 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
-        new Pos(building.getID()).writeToItemStack(scepter);
-        new ColonyId(colony.getID(), colony.getDimension()).writeToItemStack(scepter);
+        building.writeToItemStack(scepter);
 
         player.getInventory().setChanged();
     }
