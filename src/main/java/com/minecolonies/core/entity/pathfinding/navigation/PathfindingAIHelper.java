@@ -35,7 +35,7 @@ public class PathfindingAIHelper
                 return false;
             }
 
-            PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(entity.level, desiredPosition, nearbyPosition, distToDesired, entity);
+            PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(entity.level(), desiredPosition, nearbyPosition, distToDesired, entity);
             nav.setPathJob(pathJob, desiredPosition, 1.0, false);
         }
 
