@@ -9,9 +9,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
-import com.minecolonies.api.items.ModDataComponents.HutBlockData;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.HutBlockData;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
@@ -102,10 +101,10 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
 
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
-            final ModDataComponents.ColonyId colonyComponent = stack.get(ModDataComponents.COLONY_ID_COMPONENT);
-            if (colony != null && colonyComponent != null && colony.getID() != colonyComponent.id())
+            final ColonyId colonyId = ColonyId.readFromItemStack(stack);
+            if (colony != null && colonyId != null && colony.getID() != colonyId.id())
             {
-                MessageUtils.format(WRONG_COLONY, colonyComponent.id()).sendTo(player);
+                MessageUtils.format(WRONG_COLONY, colonyId.id()).sendTo(player);
                 return;
             }
 
@@ -124,7 +123,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
                     hut.setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
                     state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
-                    final ModDataComponents.HutBlockData hutComponent = HutBlockData.readFromItemStack(stack);
+                    final HutBlockData hutComponent = HutBlockData.readFromItemStack(stack);
                     if (hutComponent != null)
                     {
                         final IBuilding building = colony.getBuildingManager().getBuilding(pos);

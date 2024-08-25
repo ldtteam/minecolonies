@@ -1,11 +1,9 @@
 package com.minecolonies.core.items;
 
+import com.ldtteam.structurize.component.ModDataComponents;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector.PosSelection;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.IBlockOverlayItem;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
-import com.minecolonies.api.items.ModDataComponents.Pos;
+import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack;
@@ -24,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
@@ -43,7 +40,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.stacksTo(1));
+        super("scepterlumberjack", properties.stacksTo(1).component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
     }
 
     @NotNull
@@ -84,21 +81,21 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     private void storeRestrictedArea(final Player player, final ItemStack scepter, final Level worldIn)
     {
         final PosSelection component = PosSelection.readFromItemStack(scepter);
-        final Box box = getBox(worldIn, scepter, component.startPos(), component.endPos());
+        final Tuple<BlockPos, BlockPos> box = getBox(worldIn, scepter, component);
 
-        if (box.anchor() == null || box.corners() == null)
+        if (box == null)
         {
             return;
         }
-        assert box.corners().getA() != null && box.corners().getB() != null;
+        assert box.getA() != null && box.getB() != null;
 
         // Check restricted area isn't too large
-        final int minX = Math.min(box.corners().getA().getX(), box.corners().getB().getX());
-        final int minY = Math.min(box.corners().getA().getY(), box.corners().getB().getY());
-        final int minZ = Math.min(box.corners().getA().getZ(), box.corners().getB().getZ());
-        final int maxX = Math.max(box.corners().getA().getX(), box.corners().getB().getX());
-        final int maxY = Math.max(box.corners().getA().getY(), box.corners().getB().getY());
-        final int maxZ = Math.max(box.corners().getA().getZ(), box.corners().getB().getZ());
+        final int minX = Math.min(box.getA().getX(), box.getB().getX());
+        final int minY = Math.min(box.getA().getY(), box.getB().getY());
+        final int minZ = Math.min(box.getA().getZ(), box.getB().getZ());
+        final int maxX = Math.max(box.getA().getX(), box.getB().getX());
+        final int maxY = Math.max(box.getA().getY(), box.getB().getY());
+        final int maxZ = Math.max(box.getA().getZ(), box.getB().getZ());
 
         final int distX = maxX - minX;
         final int distY = maxY - minY;
@@ -113,20 +110,13 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
             return;
         }
 
-        final IColony colony = ColonyId.readColonyFromItemStack(scepter);
-        if (colony == null)
+        if (!(BuildingId.readBuildingFromItemStack(scepter) instanceof final BuildingLumberjack hut))
         {
             return;
         }
+
         MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minY, maxY, minZ, maxZ, volume, maxVolume).sendTo(player);
-
-        final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(box.anchor(), BuildingLumberjack.class);
-        if (hut == null)
-        {
-            return;
-        }
-
-        hut.setRestrictedArea(box.corners().getA(), box.corners().getB());
+        hut.setRestrictedArea(box.getA(), box.getB());
     }
 
     @NotNull
@@ -134,15 +124,16 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
         final PosSelection component = PosSelection.readFromItemStack(stack);
-        final Box box = getBox(world, stack, component.startPos(), component.endPos());
+        final BuildingId buildingId = BuildingId.readFromItemStack(stack);
+        final Tuple<BlockPos, BlockPos> box = getBox(world, stack, component);
 
-        if (box.anchor() != null)
+        if (buildingId.hasId())
         {
-            final OverlayBox anchorBox = new OverlayBox(box.anchor(), RED_OVERLAY, 0.02f, true);
+            final OverlayBox anchorBox = new OverlayBox(buildingId.id(), RED_OVERLAY, 0.02f, true);
 
-            if (box.corners() != null && box.corners().getA() != null && box.corners().getB() != null)
+            if (box != null)
             {
-                final AABB bounds = AABB.encapsulatingFullBlocks(box.corners().getA(), box.corners().getB().offset(1, 1, 1)).inflate(1);
+                final AABB bounds = AABB.encapsulatingFullBlocks(box.getA(), box.getB().offset(1, 1, 1)).inflate(1);
                 // inflate(1) is due to implementation of BlockPosUtil.isInArea
 
                 return List.of(anchorBox, new OverlayBox(bounds, GREEN_OVERLAY, 0.02f, true));
@@ -154,37 +145,27 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         return Collections.emptyList();
     }
 
-    private record Box(@Nullable BlockPos anchor, @Nullable Tuple<BlockPos, BlockPos> corners) { }
-
-    @NotNull
-    private Box getBox(@NotNull final Level world, final ItemStack stack, final Optional<BlockPos> startPos, final Optional<BlockPos> endPos)
+    @Nullable
+    private Tuple<BlockPos, BlockPos> getBox(@NotNull final Level world, final ItemStack stack, final PosSelection selection)
     {
-        final ColonyId colonyId = ColonyId.readFromItemStack(stack);
-        if (colonyId == null)
-        {
-            return new Box(null, null);
-        }
-        final Pos posComponent = Pos.readFromItemStack(stack);
-        final BlockPos start = startPos.orElse(null);
-        final BlockPos end = endPos.orElse(null);
+        final BlockPos start = selection.startPos().orElse(null);
+        final BlockPos end = selection.endPos().orElse(null);
 
         if (world.isClientSide())
         {
-            return new Box(posComponent.pos(), new Tuple<>(start, end));
+            return new Tuple<>(start, end);
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId.id(), colonyId.dimension());
-        if (colony != null && colony.getBuildingManager().getBuilding(posComponent.pos()) instanceof final BuildingLumberjack hut)
+        if (BuildingId.readBuildingFromItemStack(stack) instanceof final BuildingLumberjack hut)
         {
             final BlockPos startRestriction = start != null ? start : Objects.requireNonNullElse(hut.getStartRestriction(), BlockPos.ZERO);
             final BlockPos endRestriction = end != null ? end : Objects.requireNonNullElse(hut.getEndRestriction(), BlockPos.ZERO);
             if (!startRestriction.equals(BlockPos.ZERO) && !endRestriction.equals(BlockPos.ZERO))
             {
-                return new Box(posComponent.pos(), new Tuple<>(startRestriction, endRestriction));
+                return new Tuple<>(startRestriction, endRestriction);
             }
-            return new Box(posComponent.pos(), null);
         }
 
-        return new Box(null, null);
+        return null;
     }
 }

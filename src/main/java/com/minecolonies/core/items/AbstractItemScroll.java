@@ -2,8 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -120,10 +119,8 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 
         if (te instanceof TileEntityColonyBuilding colonyBuilding)
         {
-            new ModDataComponents.ColonyId(colonyBuilding.getColonyId(), ((TileEntityColonyBuilding) te).getColony().getDimension()).writeToItemStack(scroll);
-            new ModDataComponents.Pos(ctx.getClickedPos()).writeToItemStack(scroll);
-
-            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
+            colonyBuilding.getBuilding().writeToItemStack(scroll);
+            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, colonyBuilding.getColony().getName()).sendTo(ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
@@ -141,10 +138,12 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      *
      * @param stack to use
      * @return colony
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     protected IColony getColony(final ItemStack stack)
     {
-        return ModDataComponents.ColonyId.readColonyFromItemStack(stack);
+        return ColonyId.readColonyFromItemStack(stack);
     }
 
     /**
@@ -152,9 +151,11 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      *
      * @param stack to use
      * @return colony
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     protected IColony getColonyView(final ItemStack stack)
     {
-        return ModDataComponents.ColonyId.readColonyViewFromItemStack(stack);
+        return ColonyId.readColonyViewFromItemStack(stack);
     }
 }

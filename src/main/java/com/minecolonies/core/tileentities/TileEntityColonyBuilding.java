@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.ITickable;
@@ -716,5 +717,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 this.readSchematicDataFromNBT(teCompound);
             }
         }
+    }
+
+    /**
+     * Write the colony id to the itemstack.
+     * @param stack the stack to write it to.
+     */
+    public void writeColonyToItemStack(final ItemStack stack)
+    {
+        new ColonyId(getColonyId(), getLevel().dimension()).writeToItemStack(stack);
     }
 }

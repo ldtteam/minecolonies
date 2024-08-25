@@ -5,10 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.component.AdventureData;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.core.items.ItemAdventureToken;
-import com.minecolonies.core.items.ItemAdventureToken.AdventureData;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
@@ -42,8 +41,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import static com.minecolonies.api.items.ModDataComponents.ADVENTURE_COMPONENT;
 
 /**
  * Utility helper that analyzes a loot table to determine a likely list of drops, along with
@@ -277,7 +274,7 @@ public final class LootTableAnalyzer
       @NotNull final HolderLookup.Provider provider,
       @NotNull final ItemStack token)
     {
-        final ItemAdventureToken.AdventureData component = AdventureData.readFromItemStack(token);
+        final AdventureData component = AdventureData.readFromItemStack(token);
         if (component != null)
         {
             return toDrops(provider, component.entityType().getDefaultLootTable());

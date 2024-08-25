@@ -14,7 +14,7 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.AdventureData;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -24,7 +24,6 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWork
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.items.ItemAdventureToken;
-import com.minecolonies.core.items.ItemAdventureToken.AdventureData;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -431,7 +430,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             ItemStack currStack = job.getCraftedResults().poll();
             if (currStack.getItem() instanceof ItemAdventureToken)
             {
-                final @Nullable ItemAdventureToken.AdventureData component = AdventureData.readFromItemStack(currStack);
+                final @Nullable AdventureData component = AdventureData.readFromItemStack(currStack);
                 if (component != null)
                 {
                     {

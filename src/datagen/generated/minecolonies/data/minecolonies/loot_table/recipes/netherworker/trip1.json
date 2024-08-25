@@ -106,7 +106,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 5.0,
                   "entity": "minecraft:zombified_piglin",
                   "xp": 5
@@ -124,7 +124,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 3.0,
                   "entity": "minecraft:magma_cube",
                   "xp": 4
@@ -142,7 +142,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 3.0,
                   "entity": "minecraft:hoglin",
                   "xp": 5
@@ -160,7 +160,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 12.0,
                   "entity": "minecraft:ghast",
                   "xp": 5
@@ -178,7 +178,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 7.0,
                   "entity": "minecraft:enderman",
                   "xp": 5
@@ -196,7 +196,7 @@
           "functions": [
             {
               "components": {
-                "structurize:adventure": {
+                "minecolonies:adventure": {
                   "damage": 5.0,
                   "entity": "minecraft:blaze",
                   "xp": 10

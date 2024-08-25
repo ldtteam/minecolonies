@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import net.minecraft.core.BlockPos;
 

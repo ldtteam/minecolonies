@@ -15,7 +15,7 @@
           "functions": [
             {
               "components": {
-                "structurize:supplies": {
+                "minecolonies:supplies": {
                   "Placement": true,
                   "randkey": -1,
                   "sawstory": false
