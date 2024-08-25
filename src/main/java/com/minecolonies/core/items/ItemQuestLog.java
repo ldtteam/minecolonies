@@ -51,7 +51,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            buildingEntity.getColony().writeToItemStack(questLog);
+            buildingEntity.writeColonyToItemStack(questLog);
             if (!ctx.getLevel().isClientSide)
             {
                 MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
