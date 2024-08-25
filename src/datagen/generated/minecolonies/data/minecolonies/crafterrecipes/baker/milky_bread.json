@@ -11,6 +11,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/large_bottle",
   "min-building-level": 4,
   "result": {
     "count": 4,
