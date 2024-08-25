@@ -1,6 +1,6 @@
 package com.minecolonies.api.items.component;
 
-import com.ldtteam.structurize.api.constants.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
