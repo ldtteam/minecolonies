@@ -31,6 +31,11 @@ public record ColonyId(int id, ResourceKey<Level> dimension)
         ColonyId::id, ResourceKey.streamCodec(Registries.DIMENSION), ColonyId::dimension,
         ColonyId::new);
 
+    public boolean hasColonyId()
+    {
+        return id != EMPTY.id;
+    }
+
     public void writeToItemStack(final ItemStack itemStack)
     {
         itemStack.set(ModDataComponents.COLONY_ID_COMPONENT, this);

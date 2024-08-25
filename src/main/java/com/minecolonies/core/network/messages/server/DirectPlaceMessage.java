@@ -102,7 +102,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             final ColonyId colonyId = ColonyId.readFromItemStack(stack);
-            if (colony != null && colonyId != null && colony.getID() != colonyId.id())
+            if (colony != null && colonyId.hasColonyId() && colony.getID() != colonyId.id())
             {
                 MessageUtils.format(WRONG_COLONY, colonyId.id()).sendTo(player);
                 return;
