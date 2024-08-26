@@ -19,6 +19,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.component.BuildingId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Tuple;
@@ -503,4 +504,13 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @return true if so.
      */
     boolean canEat(final ItemStack stack);
+
+    /**
+     * Saves reference of this building and colony to given itemStack.
+     */
+    default void writeToItemStack(final ItemStack stack)
+    {
+        getColony().writeToItemStack(stack);
+        new BuildingId(getID()).writeToItemStack(stack);
+    }
 }

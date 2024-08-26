@@ -144,14 +144,14 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
-        buf.writeInt(this.soundSource.ordinal());
-        buf.writeBlockPos(this.pos);
-        buf.writeUtf(this.dimensionID.location().toString());
-        buf.writeFloat(this.volume);
-        buf.writeFloat(this.pitch);
-        buf.writeInt(this.length);
-        buf.writeInt(this.repetitions);
-        buf.writeInt(this.entityid);
+        buf.writeInt(soundSource.ordinal());
+        buf.writeBlockPos(pos);
+        buf.writeUtf(dimensionID.location().toString());
+        buf.writeFloat(volume);
+        buf.writeFloat(pitch);
+        buf.writeInt(length);
+        buf.writeInt(repetitions);
+        buf.writeInt(entityid);
     }
 
     public PlaySoundForCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)

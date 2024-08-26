@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -23,17 +24,23 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  */
 public class DefaultRecipeLootProvider implements LootTableSubProvider
 {
+    public static final ResourceLocation LOOT_TABLE_GLASS_BOTTLE = new ResourceLocation(MOD_ID, "recipes/glass_bottle");
+    public static final ResourceLocation LOOT_TABLE_LARGE_BOTTLE = new ResourceLocation(MOD_ID, "recipes/large_bottle");
+    public static final ResourceLocation LOOT_TABLE_GRAVEL = new ResourceLocation(MOD_ID, "recipes/gravel");
+
     public DefaultRecipeLootProvider(@NotNull final HolderLookup.Provider provider)
     {
 
     }
 
-    public static final ResourceLocation LOOT_TABLE_LARGE_BOTTLE = new ResourceLocation(MOD_ID, "recipes/large_bottle");
-    public static final ResourceLocation LOOT_TABLE_GRAVEL = new ResourceLocation(MOD_ID, "recipes/gravel");
-
     @Override
     public void generate(final BiConsumer<ResourceKey<LootTable>, LootTable.Builder> generator)
     {
+        generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_GLASS_BOTTLE), LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))
+                        .add(LootItem.lootTableItem(Items.GLASS_BOTTLE).setWeight(0).setQuality(1))));
+
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_LARGE_BOTTLE), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))

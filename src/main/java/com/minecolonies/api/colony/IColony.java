@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.ChatFormatting;
@@ -16,6 +17,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -489,4 +491,12 @@ public interface IColony
      * @return the cit.
      */
     ICitizen getCitizen(int id);
+
+    /**
+     * Saves reference of this colony to given itemStack.
+     */
+    default void writeToItemStack(final ItemStack itemStack)
+    {
+        new ColonyId(getID(), getDimension()).writeToItemStack(itemStack);
+    }
 }

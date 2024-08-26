@@ -4,8 +4,8 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.component.SupplyData;
 import com.minecolonies.core.event.ColonyStoryListener;
-import com.minecolonies.core.items.ItemSupplyChestDeployer;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
@@ -70,7 +70,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
 
         List<MutableComponent> story = new ArrayList<>();
 
-        final ItemSupplyChestDeployer.SupplyData currentComponent = ItemSupplyChestDeployer.SupplyData.readFromItemStack(stack);
+        final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
         if (currentComponent.instantPlacement()) // if free dungeon loot nbt tag on item.
         {
             final Random random = new Random(currentComponent.randomKey());

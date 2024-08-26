@@ -1,8 +1,8 @@
 package com.minecolonies.core.generation.defaults;
 
-import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.core.items.ItemSupplyChestDeployer;
+import com.minecolonies.api.items.component.ModDataComponents;
+import com.minecolonies.api.items.component.SupplyData;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
@@ -46,7 +46,7 @@ public class DefaultSupplyLootProvider implements LootTableSubProvider
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyCamp)
                                         .when(LootItemRandomChanceCondition.randomChance(0.1f))
-                                        .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new ItemSupplyChestDeployer.SupplyData(false, true, -1)))
+                                        .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new SupplyData(false, true, -1)))
                                         .apply(SetNameFunction.setName(Component.translatableEscape("item.minecolonies.supply.free", ModItems.supplyCamp.getDescription()), SetNameFunction.Target.ITEM_NAME)))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
                                         .when(LootItemRandomChanceCondition.randomChance(0.2f))
@@ -58,7 +58,7 @@ public class DefaultSupplyLootProvider implements LootTableSubProvider
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyChest)
                                         .when(LootItemRandomChanceCondition.randomChance(0.1f))
-                                       .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new ItemSupplyChestDeployer.SupplyData(false, true, -1)))
+                                       .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new SupplyData(false, true, -1)))
                                         .apply(SetNameFunction.setName(Component.translatableEscape("item.minecolonies.supply.free", ModItems.supplyChest.getDescription()), SetNameFunction.Target.ITEM_NAME)))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
                                         .when(LootItemRandomChanceCondition.randomChance(0.2f))

@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.items.ModDataComponents;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.component.ColonyId;
+import com.minecolonies.api.items.component.RallyData;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -18,12 +18,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
 
 import static com.minecolonies.api.research.util.ResearchConstants.STANDARD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -89,7 +83,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                     return InteractionResult.FAIL;
                 }
 
-                new ModDataComponents.ColonyId(building.getColony().getID(), building.getColony().getDimension()).writeToItemStack(banner);
+                building.getColony().writeToItemStack(banner);
                 final ILocation location = building.getLocation();
                 if (removeGuardTowerAtLocation(banner, location.getInDimensionLocation()))
                 {
@@ -142,7 +136,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      * Get the colony from the stack data.
      * @param stack the stack to get it from.
      * @return the colony or null if not found.
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     @Nullable
     private static IColony getColony(final ItemStack stack, final Level world)
     {
@@ -217,11 +213,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
 
         boolean activeRaid = false;
-        if (rallyData.towers.isEmpty())
+        if (rallyData.towers().isEmpty())
         {
             MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
         }
-        else if (rallyData.active)
+        else if (rallyData.active())
         {
             broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), null);
             MessageUtils.format(TOOL_RALLY_BANNER_DEACTIVATED).sendTo(playerIn);
@@ -295,7 +291,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @param banner The banner of which the guard towers should be retrieved
      * @return The list of guardtower positions, or an empty list if anything goes wrong during retrieval.
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     public static List<BlockPos> getGuardTowerLocations(final ItemStack banner)
     {
         return RallyData.readFromItemStack(banner).towers();
@@ -407,7 +405,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      *
      * @param stack The banner that should be checked
      * @return true if the banner is active
+     * @deprecated use inline
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     public static boolean isActive(final ItemStack stack)
     {
         return RallyData.readFromItemStack(stack).active();
@@ -463,54 +463,5 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
 
         super.appendHoverText(stack, ctx, tooltip, flagIn);
-    }
-
-    public record RallyData(List<BlockPos> towers, boolean active)
-    {
-        public static final RallyData EMPTY = new RallyData(List.of(), false);
-
-        public static final Codec<RallyData> CODEC = RecordCodecBuilder.create(
-          builder -> builder
-                       .group(Codec.list(BlockPos.CODEC).fieldOf("pos").forGetter(RallyData::towers),
-                         Codec.BOOL.fieldOf("active").forGetter(RallyData::active))
-                       .apply(builder, RallyData::new));
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, RallyData> STREAM_CODEC =
-          StreamCodec.composite(BlockPos.STREAM_CODEC.apply(ByteBufCodecs.list()),
-            RallyData::towers, ByteBufCodecs.BOOL, RallyData::active,
-            RallyData::new);
-
-        public RallyData withActive(final boolean active)
-        {
-            return new RallyData(towers, active);
-        }
-
-        public RallyData withPosRemoval(final BlockPos posToRemove)
-        {
-            final ArrayList<BlockPos> copy = new ArrayList<>(towers);
-            return copy.remove(posToRemove) ? new RallyData(Collections.unmodifiableList(copy), active) : this;
-        }
-
-        public RallyData withPosAddition(final BlockPos posToAdd)
-        {
-            final ArrayList<BlockPos> copy = new ArrayList<>(towers);
-            copy.add(posToAdd);
-            return new RallyData(Collections.unmodifiableList(copy), active);
-        }
-
-        public void writeToItemStack(final ItemStack itemStack)
-        {
-            itemStack.set(ModDataComponents.RALLY_COMPONENT, this);
-        }
-
-        public static RallyData readFromItemStack(final ItemStack itemStack)
-        {
-            return itemStack.getOrDefault(ModDataComponents.RALLY_COMPONENT, RallyData.EMPTY);
-        }
-
-        public static void updateItemStack(final ItemStack itemStack, final UnaryOperator<RallyData> updater)
-        {
-            updater.apply(readFromItemStack(itemStack)).writeToItemStack(itemStack);
-        }
     }
 }

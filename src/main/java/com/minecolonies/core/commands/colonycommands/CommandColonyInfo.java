@@ -22,7 +22,7 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
 {
     public static final  String ID_TEXT           = "ID: ";
     public static final  String NAME_TEXT         = "Name: ";
-    private static final String MAYOR_TEXT        = "Mayor: ";
+    public static final String MAYOR_TEXT = "Mayor: ";
     private static final String COORDINATES_TEXT  = "Coordinates: ";
     private static final String COORDINATES_XYZ   = "x=%s y=%s z=%s";
     private static final String CITIZENS          = "Citizens: ";
@@ -54,7 +54,7 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
         }
 
         final BlockPos position = colony.getCenter();
-        context.getSource().sendSuccess(() -> Component.literal(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.literal(ID_TEXT + colony.getID() + " " + NAME_TEXT + colony.getName()), true);
         final String mayor = colony.getPermissions().getOwnerName();
         context.getSource().sendSuccess(() -> Component.literal(MAYOR_TEXT + mayor), true);
         context.getSource()
@@ -63,7 +63,6 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
           .sendSuccess(() -> Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
             ChatFormatting.GREEN)), true);
         context.getSource().sendSuccess(() -> Component.literal(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
-        context.getSource().sendSuccess(() -> Component.literal(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {

@@ -3,12 +3,9 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.items.ModDataComponents.ColonyId;
+import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.core.BlockPos;
 
@@ -38,15 +35,7 @@ public class ColonyPatrolPointRenderer
             return;
         }
 
-        final IColonyView colony = ColonyId.readColonyViewFromItemStack(null);
-        final ModDataComponents.Pos posComponent = ModDataComponents.Pos.readFromItemStack(ctx.mainHandItem);
-
-        if (colony == null || posComponent == null)
-        {
-            return;
-        }
-
-        final IBuildingView guardTowerView = colony.getBuilding(posComponent.pos());
+        final IBuildingView guardTowerView = BuildingId.readBuildingViewFromItemStack(ctx.mainHandItem);
         if (guardTowerView == null)
         {
             return;
