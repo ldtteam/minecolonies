@@ -9,15 +9,15 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
-import com.ldtteam.common.language.LanguageHandler;
 import com.minecolonies.api.client.render.modeltype.ISimpleModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView.MapEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
@@ -37,9 +37,16 @@ import java.util.Map;
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FULFILLED;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_INVENTORY;
+import static com.minecolonies.core.client.gui.map.MinecraftMap.MAP_CENTER;
 
 public class WindowColonyMap extends AbstractWindowSkeleton
 {
+    /**
+     * Static multiplier to make background map larger -> icons smaller
+     */
+    private static final int MAP_ZOOM = 2;
+    private static final int MAP_SIZE = MinecraftMap.MAP_SIZE * MAP_ZOOM;
+
     /**
      * Link to the xml file of the window.
      */
@@ -71,12 +78,11 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private Map<ICitizenDataView, Pane>             citizens       = new HashMap<>();
     private Map<IBuildingView, ItemIcon>            buildings      = new HashMap<>();
     private Map<ColonyListMessage.ColonyInfo, View> coloniesImages = new HashMap<>();
-    private List<MinecraftMap>                      maps           = new ArrayList<>();
 
     /**
      * building reference of the view
      */
-    private IBuildingView building;
+    private ITownHallView building;
 
     /**
      * Scale formatting
@@ -91,27 +97,58 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * Check if it has maps.
      */
-    private boolean hasMaps = false;
+    private final boolean hasMaps;
+
+    /**
+     * Top left corner for map positioning
+     */
+    private final BlockPos worldPosRoot;
 
     /**
      * Constructor for the skeleton class of the windows.
      *
      * @param building The building the info window is for.
      */
-    public WindowColonyMap(final IBuildingView building)
+    public WindowColonyMap(final ITownHallView building)
     {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.building = building;
-        playerPos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), 0, Minecraft.getInstance().player.blockPosition().getZ());
-        final ZoomDragView parent = findPaneOfTypeByID("dragView", ZoomDragView.class);
-        dragView = new ZoomDragView();
-        dragView.setSize(parent.getWidth(), parent.getHeight());
-        dragView.setPosition(parent.getX(), parent.getY());
-        parent.addChild(dragView);
-        if (addMaps())
+        playerPos = Minecraft.getInstance().player.blockPosition();
+        dragView = findPaneOfTypeByID("dragView", ZoomDragView.class);
+
+        hasMaps = !building.getMapDataList().isEmpty();
+        findPaneByID("warning").setVisible(!hasMaps);
+
+        if (hasMaps)
         {
+            // compute top left corner using all provided maps
+            // then shift even more to top left to provide spacing for one more "fake" map
+            // another fake map is added to bottom right for same reason
+            int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE, maxScale = 0;
+            for (final MapEntry entry : building.getMapDataList())
+            {
+                final int scale = 1 << entry.mapData().scale;
+                maxScale = Math.max(maxScale, scale);
+                minX = Math.min(minX, entry.mapData().centerX - MAP_CENTER * scale);
+                maxX = Math.max(maxX, entry.mapData().centerX + MAP_CENTER * scale);
+                minZ = Math.min(minZ, entry.mapData().centerZ - MAP_CENTER * scale);
+                maxZ = Math.max(maxZ, entry.mapData().centerZ + MAP_CENTER * scale);
+            }
+            worldPosRoot = new BlockPos(minX - MAP_SIZE * maxScale, 0, minZ - MAP_SIZE * maxScale);
+
+            addMaps();
+            final MinecraftMap bottomRightFake = new MinecraftMap();
+            bottomRightFake.setSize(MAP_SIZE * maxScale, MAP_SIZE * maxScale);
+            bottomRightFake.setID("mapBottomRight" + maxX + "-" + maxZ);
+            putPaneTopLeftCornerAtWorldPos(bottomRightFake, new BlockPos(maxX, 0, maxZ));
+            dragView.addChild(bottomRightFake);
+
             addCitizens(building.getColony());
             addCenterPos();
+        }
+        else
+        {
+            worldPosRoot = null;
         }
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
@@ -129,39 +166,22 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     }
 
     /**
-     * Add the map. Return false if has no maps.
-     * @return true if so.
+     * Add the map.
      */
-    private boolean addMaps()
+    private void addMaps()
     {
-        for (final MinecraftMap map : maps)
+        for (final MapEntry mapEntry : building.getMapDataList())
         {
-            dragView.removeChild(map);
-            map.close();
-        }
-
-        maps.clear();
-
-        for (final MapItemSavedData mapData : ((BuildingTownHall.View) building).getMapDataList())
-        {
-            if (mapData.scale != 0)
-            {
-                continue;
-            }
-
-            hasMaps = true;
+            final MapItemSavedData mapData = mapEntry.mapData();
+            final int scale = 1 << mapData.scale;
 
             final MinecraftMap mapImage = new MinecraftMap();
-            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.centerX - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.centerZ - 64)).getZ());
+            putPaneTopLeftCornerAtWorldPos(mapImage, new BlockPos(mapData.centerX - MAP_CENTER * scale, 0, mapData.centerZ - MAP_CENTER * scale));
             mapImage.setID("map" + mapData.centerX + "-" + mapData.centerZ);
-            mapImage.setMapData(mapData);
-            mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
-            dragView.addChild(mapImage, 0);
-            maps.add(mapImage);
+            mapImage.setMapData(mapEntry.mapId(), mapData);
+            mapImage.setSize(MAP_SIZE * scale, MAP_SIZE * scale);
+            dragView.addChild(mapImage);
         }
-
-        findPaneByID("warning").setVisible(!hasMaps);
-        return hasMaps;
     }
 
     /**
@@ -186,7 +206,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 final EntityCitizen citizen = (EntityCitizen) building.getColony().getWorld().getEntity(entry.getKey().getEntityId());
                 if (citizen != null)
                 {
-                    entry.getValue().setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
+                    putPaneCenterAtWorldPos(entry.getValue(), citizen.blockPosition());
                 }
             }
 
@@ -203,11 +223,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private void updateScale()
     {
-        for (final ColonyListMessage.ColonyInfo info : colonies)
-        {
-            updateColonyInfoImage(info);
-        }
-
         for (final ColonyListMessage.ColonyInfo info : colonies)
         {
             updateColonyInfoImage(info);
@@ -252,7 +267,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             }
         }
 
-        addMaps();
         findPaneOfTypeByID("scale", Text.class).setText(Component.literal(scaleformet.format(1 / currentScale) + "x"));
     }
 
@@ -279,8 +293,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
         if (currentScale < COLONY_DETAIL_SCALE)
         {
-            colonyPane.setPosition(worldPosToUIPos(colonyInfo.getCenter()).getX() - colonyPane.getWidth() / 2,
-              worldPosToUIPos(colonyInfo.getCenter()).getZ() - colonyPane.getHeight() / 2);
+            putPaneCenterAtWorldPos(colonyPane, colonyInfo.getCenter());
             colonyPane.on();
         }
         else
@@ -297,7 +310,13 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         final Image citizenImage = new Image();
         citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
         citizenImage.setSize(16, 16);
-        citizenImage.setPosition(worldPosToUIPos(playerPos).getX(), worldPosToUIPos(playerPos).getZ());
+        putPaneTopLeftCornerAtWorldPos(citizenImage, playerPos);
+
+        dragView.setScaleRaw(4.0 / 5);
+        dragView.setScrollX(dragView.calcInverseAbsoluteX(citizenImage.getX()) - dragView.getWidth() / 2);
+        dragView.setScrollY(dragView.calcInverseAbsoluteY(citizenImage.getY()) - dragView.getHeight() / 2);
+
+        putPaneCenterAtWorldPos(citizenImage, playerPos);
         dragView.addChild(citizenImage);
     }
 
@@ -341,7 +360,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             this.buildings.put(buildingView, uiBuilding);
         }
 
-        uiBuilding.setPosition(worldPosToUIPos(buildingView.getID()).getX(), worldPosToUIPos(buildingView.getID()).getZ());
+        putPaneCenterAtWorldPos(uiBuilding, buildingView.getID());
     }
 
     /**
@@ -357,7 +376,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             if (citizen != null)
             {
                 final View citizenView = new View();
-                citizenView.setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
+                putPaneCenterAtWorldPos(citizenView, citizen.blockPosition());
 
                 final Image citizenImage = new Image();
                 citizenImage.setImage(((ISimpleModelType) IModelTypeRegistry.getInstance().getModelType(citizen.getModelType())).getTextureIcon(citizen), false);
@@ -369,7 +388,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 if (!data.getJob().isEmpty())
                 {
                     citizenImage.setSize(8, 8);
-                    builder.newLine().append(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
+                    builder.newLine().append(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.job.label", Component.translatable(data.getJob())));
                 }
                 builder.color(COLOR_TEXT_FULFILLED).build();
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());
@@ -393,24 +412,28 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         }
     }
 
-    /**
-     * Scales the world pos to the UI pos, current scales positions which are farther out to display closer so you get a decent overview of nearby colonies which can be quite far away
-     *
-     * @param worldPos
-     * @return
-     */
-    private BlockPos worldPosToUIPos(final BlockPos worldPos)
+    private void putPaneTopLeftCornerAtWorldPos(final Pane pane, final BlockPos worldPos)
     {
-        return BlockPos.containing(
-          dragView.getWidth() / 2.0 - ((playerPos.getX() - worldPos.getX()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getX() - worldPos.getX()) / 1000f))) * currentScale,
-          0,
-          dragView.getHeight() / 2.0 - ((playerPos.getZ() - worldPos.getZ()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getZ() - worldPos.getZ()) / 1000f))) * currentScale);
+        applyWorldPosToPane(pane, worldPos, 0, 0);
     }
 
-    @Override
-    public void onClosed()
+    private void putPaneCenterAtWorldPos(final Pane pane, final BlockPos worldPos)
     {
-        super.onClosed();
-        maps.forEach(MinecraftMap::close);
+        applyWorldPosToPane(pane, worldPos, -pane.getWidth() / 2, -pane.getHeight() / 2);
+    }
+
+    private void applyWorldPosToPane(final Pane pane, final BlockPos worldPos, final int offsetUiX, final int offsetUiZ)
+    {
+        // vector from player pos
+        int x = worldPos.getX() - worldPosRoot.getX();
+        int z = worldPos.getZ() - worldPosRoot.getZ();
+
+        x *= MAP_ZOOM;
+        z *= MAP_ZOOM;
+
+        x += offsetUiX;
+        z += offsetUiZ;
+
+        pane.setPosition(x, z);
     }
 }
