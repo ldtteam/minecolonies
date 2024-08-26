@@ -113,7 +113,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * Additional nodes that get explored when reaching the target, useful when the destination is an area or not in a great spot.
      * Pathjobs may increase this value as they see fit
      */
-    protected int extraNodes = 0;
+    public int extraNodes = 0;
 
     /**
      * Debug settings
@@ -763,7 +763,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 costFrom = node.parent;
             }
 
-            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, isDiving, onRoad, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
+            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, isDiving, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
             nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state, belowState);
 
             if (nextCost > maxCost)
@@ -897,6 +897,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         double cost = 1;
 
+        if (pathingOptions.randomnessFactor > 0.0d)
+        {
+            cost += ColonyConstants.rand.nextDouble() * pathingOptions.randomnessFactor;
+        }
+
         if (!isSwimming)
         {
             if (onPath)
@@ -907,11 +912,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 cost *= pathingOptions.onRailCost;
             }
-        }
-
-        if (pathingOptions.randomnessFactor > 0.0d)
-        {
-            cost += ColonyConstants.rand.nextDouble() * pathingOptions.randomnessFactor;
         }
 
         if (state.getBlock() == Blocks.CAVE_AIR)
