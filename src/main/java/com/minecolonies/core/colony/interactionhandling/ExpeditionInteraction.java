@@ -24,6 +24,7 @@ import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTyp
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
+import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -63,15 +64,15 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     /**
      * All possible answer fields.
      */
-    private static final Component acceptOkAnswer        = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPT);
-    private static final Component acceptCancelAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
-    private static final Component prepareFinishAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_START);
-    private static final Component prepareGetSheetAnswer = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_GET_SHEET);
-    private static final Component prepareLaterAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_NOW);
-    private static final Component prepareCancelAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
-    private static final Component finishedViewAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_VIEW_RESULTS);
-    private static final Component finishedLaterAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_NOW);
-    private static final Component finishedCancelAnswer  = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_NOT_INTERESTED);
+    private static final Component acceptOkAnswer        = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_CREATED_ACCEPT);
+    private static final Component acceptCancelAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_CREATED_NOT_INTERESTED);
+    private static final Component prepareFinishAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPTED_START);
+    private static final Component prepareGetSheetAnswer = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPTED_GET_SHEET);
+    private static final Component prepareLaterAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPTED_NOT_NOW);
+    private static final Component prepareCancelAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_ACCEPTED_NOT_INTERESTED);
+    private static final Component finishedViewAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_VIEW_RESULTS);
+    private static final Component finishedLaterAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_NOT_NOW);
+    private static final Component finishedCancelAnswer  = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_NOT_INTERESTED);
 
     /**
      * Default constructor.
@@ -205,7 +206,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
             }
         }
 
-        if (response.equals(acceptCancelAnswer) || response.equals(prepareCancelAnswer))
+        if (response.equals(acceptCancelAnswer) || response.equals(prepareCancelAnswer) || response.equals(finishedCancelAnswer))
         {
             // Remove the visitor and remove the expedition
             if (!player.level.isClientSide && data instanceof IVisitorData visitorData)
@@ -213,6 +214,15 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
                 data.getColony().getVisitorManager().removeCivilian(visitorData);
             }
             data.getColony().getExpeditionManager().removeCreatedExpedition(expeditionId);
+        }
+
+        if (response.equals(finishedViewAnswer))
+        {
+            if (player.level.isClientSide && data instanceof IVisitorViewData visitorData)
+            {
+                // Open the loot view
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(visitorData.getColony(), data.getName(), visitorData.getEntityId()));
+            }
         }
 
         return false;

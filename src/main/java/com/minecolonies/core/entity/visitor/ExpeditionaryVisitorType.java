@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.visitor.*;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.entity.ai.visitor.EntityAIExpeditionary;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_FINISHED_LEAVING_MESSAGE;
 
 /**
  * Visitor type for expeditionary visitors in the town hall.
@@ -60,7 +62,8 @@ public class ExpeditionaryVisitorType implements IVisitorType
     }
 
     @Override
-    public @NotNull InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
+    @NotNull
+    public InteractionResult onPlayerInteraction(final AbstractEntityVisitor visitor, final Player player, final Level level, final InteractionHand hand)
     {
         visitor.getEntityStateController().setCurrentDelay(TICKS_SECOND * 10);
         visitor.getNavigation().stop();
@@ -71,13 +74,23 @@ public class ExpeditionaryVisitorType implements IVisitorType
     @Override
     public void update(final IVisitorData visitor)
     {
-        final Integer despawnTime = visitor.getExtraDataValue(EXTRA_DATA_DESPAWN_TIME);
         final Optional<AbstractEntityCitizen> entity = visitor.getEntity();
-        if (entity.isPresent()
-              && entity.get().level.getGameTime() >= despawnTime
-              && visitor.getColony().getExpeditionManager().getExpeditionStatus(visitor.getId()).equals(ExpeditionStatus.UNKNOWN))
+        if (entity.isEmpty())
+        {
+            return;
+        }
+
+        final ExpeditionStatus expeditionStatus = visitor.getColony().getExpeditionManager().getExpeditionStatus(visitor.getId());
+        final Integer despawnTime = visitor.getExtraDataValue(EXTRA_DATA_DESPAWN_TIME);
+        if (entity.get().level.getGameTime() >= despawnTime && expeditionStatus.equals(ExpeditionStatus.UNKNOWN))
         {
             visitor.getColony().getVisitorManager().removeCivilian(visitor);
+        }
+
+        if (expeditionStatus == ExpeditionStatus.FINISHED && entity.get().getInventoryCitizen().isEmpty())
+        {
+            visitor.getColony().getVisitorManager().removeCivilian(visitor);
+            MessageUtils.format(EXPEDITION_FINISHED_LEAVING_MESSAGE, visitor.getName()).sendTo(visitor.getColony()).forManagers();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -16,19 +17,22 @@ import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
+import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_TOWNHALL_LIST_STATUS;
+import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 
 /**
  * Gui for viewing past expeditions.
@@ -46,6 +50,8 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     private static final String LIST_ACTIVE_EXPEDITIONS                   = "active_expeditions";
     private static final String LIST_FINISHED_EXPEDITIONS                 = "finished_expeditions";
     private static final String LABEL_EXPEDITION_NAME                     = "expedition_name";
+    private static final String IMAGE_EXPEDITION_DIFFICULTY               = "expedition_difficulty";
+    private static final String LABEL_EXPEDITION_DIFFICULTY_LEVEL         = "expedition_difficulty_level";
     private static final String LABEL_EXPEDITION_STATUS                   = "expedition_status";
     private static final String BUTTON_EXPEDITION_OPEN                    = "expedition_open";
     private static final String LABEL_EMPTY                               = "empty_text";
@@ -129,6 +135,18 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                 }
 
                 pane.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
+
+                final ColonyExpeditionTypeDifficulty difficulty = expeditionType.difficulty();
+                pane.findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, Image.class)
+                  .setImage(new ResourceLocation("textures/item/" + difficulty.getIcon().toString() + ".png"), true);
+                pane.findPaneOfTypeByID(LABEL_EXPEDITION_DIFFICULTY_LEVEL, Text.class)
+                  .setText(Component.literal(String.valueOf(expeditionType.difficulty().getLevel())));
+
+                PaneBuilders.tooltipBuilder()
+                  .append(Component.translatable(EXPEDITIONARY_DIFFICULTY, Component.translatable(EXPEDITIONARY_DIFFICULTY_PREFIX + difficulty.getKey()))
+                            .withStyle(difficulty.getStyle()))
+                  .hoverPane(findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, Image.class))
+                  .build();
 
                 final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(expedition.getId());
                 if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
@@ -253,13 +271,15 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                     for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
                                     {
                                         final int itemIndex = colIndex + rowData.listOffsetIndex;
-                                        if (currentStage.getRewards().size() <= itemIndex)
+                                        if (currentStage.getRewards().size() > itemIndex)
                                         {
-                                            break;
+                                            final ItemStack item = currentStage.getRewards().get(itemIndex);
+                                            childRewards.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
                                         }
-
-                                        final ItemStack item = currentStage.getRewards().get(itemIndex);
-                                        childRewards.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(item);
+                                        else
+                                        {
+                                            childRewards.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, ItemIcon.class).setItem(Items.AIR.getDefaultInstance());
+                                        }
                                     }
                                 }
                                 case KILLS ->
@@ -269,19 +289,28 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                                     for (int colIndex = 0; colIndex < ITEMS_PER_ROW; colIndex++)
                                     {
                                         final int itemIndex = colIndex + rowData.listOffsetIndex;
-                                        if (currentStage.getKills().size() <= itemIndex)
+                                        if (currentStage.getKills().size() > itemIndex)
                                         {
-                                            break;
+                                            final MobKill item = currentStage.getKills().get(itemIndex);
+                                            final EntityIcon entityIcon = childKills.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
+
+                                            final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
+                                            if (encounter != null)
+                                            {
+                                                entityIcon.setEntity(encounter.getEntityType());
+                                                entityIcon.setCount(item.count());
+                                            }
+                                            else
+                                            {
+                                                entityIcon.resetEntity();
+                                                entityIcon.setCount(0);
+                                            }
                                         }
-
-                                        final MobKill item = currentStage.getKills().get(itemIndex);
-                                        final EntityIcon entityIcon = childKills.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
-
-                                        final ExpeditionEncounter encounter = ExpeditionEncounterManager.getInstance().getEncounter(item.encounterId());
-                                        if (encounter != null)
+                                        else
                                         {
-                                            entityIcon.setEntity(encounter.getEntityType());
-                                            entityIcon.setCount(item.count());
+                                            final EntityIcon entityIcon = childKills.findPaneOfTypeByID(PARTIAL_ITEM_PREFIX + colIndex, EntityIcon.class);
+                                            entityIcon.resetEntity();
+                                            entityIcon.setCount(0);
                                         }
                                     }
                                 }

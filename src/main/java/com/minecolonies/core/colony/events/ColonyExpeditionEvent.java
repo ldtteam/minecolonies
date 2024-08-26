@@ -21,7 +21,6 @@ import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTyp
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
 import com.minecolonies.core.items.ItemAdventureToken;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -41,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootParams.Builder;
 import net.minecraftforge.common.extensions.IForgeItemStack;
@@ -295,7 +293,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
             {
                 expedition.mobKilled(encounter.getId());
                 final List<ItemStack> loot = processLootTable(encounter.getLootTable(), expeditionType);
-                loot.forEach(expedition::rewardFound);
+                loot.forEach(this::processReward);
             }
         }
     }
@@ -367,13 +365,6 @@ public class ColonyExpeditionEvent implements IColonyEvent
             case TOKEN_TAG_EXPEDITION_TYPE_STRUCTURE_START:
             {
                 final ResourceLocation structureId = new ResourceLocation(compound.getString(TOKEN_TAG_EXPEDITION_STRUCTURE));
-                final Optional<StructureType<?>> structureType = BuiltInRegistries.STRUCTURE_TYPE.getOptional(structureId);
-                if (structureType.isEmpty())
-                {
-                    Log.getLogger().warn("Expedition loot table referred to structure type '{}' which does not exist.", structureType);
-                    break;
-                }
-
                 getExpedition().advanceStage(Component.translatable(EXPEDITION_STAGE_STRUCTURE + structureId));
 
                 if (structureId.equals(getStructureId(RUINED_PORTAL_ID)))
@@ -536,6 +527,19 @@ public class ColonyExpeditionEvent implements IColonyEvent
     }
 
     /**
+     * Process a rewards by inserting it into the expedition inventory, if successful, log that we found the rewards.
+     *
+     * @param itemStack the input item stack.
+     */
+    private void processReward(final ItemStack itemStack)
+    {
+        if (InventoryUtils.addItemStackToItemHandler(inventory, itemStack))
+        {
+            getExpedition().rewardFound(itemStack);
+        }
+    }
+
+    /**
      * Processes the next item from the loot table list.
      */
     private void processLootTableEntry()
@@ -560,7 +564,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         }
         else
         {
-            getExpedition().rewardFound(nextItem);
+            processReward(nextItem);
         }
     }
 

@@ -323,26 +323,71 @@
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/village_desert",
           "weight": 50
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/village_plains",
           "weight": 50
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/village_savanna",
           "weight": 50
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/village_snowy",
           "weight": 50
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/village_taiga",
           "weight": 50
         },
@@ -368,11 +413,31 @@
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/igloo",
           "weight": 20
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/swamp_hut",
           "weight": 20
         },
@@ -383,31 +448,89 @@
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/shipwreck",
           "weight": 15
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium",
+                "hard"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/buried_treasure",
           "weight": 15
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/monument",
           "weight": 10
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/mansion",
           "weight": 10
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/stronghold",
           "weight": 5
         },
         {
           "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
           "name": "minecolonies:expeditions/structures/ancient_city",
           "weight": 5
         }

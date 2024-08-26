@@ -17,14 +17,16 @@
                       emptyscale="0.8"
                       emptycolor="black">
                     <box size="172 36" linewidth="1">
-                        <text id="expedition_name" pos="3 3" size="148 15" color="black"/>
+                        <text id="expedition_name" pos="3 3" size="120 15" color="black"/>
                         <buttonimage id="expedition_open"
                                      pos="155 3"
                                      size="14 15"
                                      source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                                      disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
                         <image pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png" enabled="false"/>
-                        <text id="expedition_status" pos="3 18" size="169 15" color="black" textscale="0.8"/>
+                        <image id="expedition_difficulty" size="16 16" pos="126 3"/>
+                        <text id="expedition_difficulty_level" pos="142 3" size="10 15"/>
+                        <text id="expedition_status" pos="3 34" size="169 15" color="black" textscale="0.8"/>
                     </box>
                 </list>
             </box>
@@ -37,7 +39,9 @@
                       emptyscale="0.8"
                       emptycolor="black">
                     <box size="172 36" linewidth="1">
-                        <text id="expedition_name" pos="3 3" size="148 15" color="black"/>
+                        <text id="expedition_name" pos="3 3" size="122 15" color="black"/>
+                        <image id="expedition_difficulty" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="128 3" visible="false"/>
+                        <text id="expedition_difficulty_level" pos="144 3" size="8 15"/>
                         <buttonimage id="expedition_open"
                                      pos="155 3"
                                      size="14 15"

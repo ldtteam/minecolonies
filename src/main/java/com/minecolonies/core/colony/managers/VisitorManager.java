@@ -45,22 +45,18 @@ public class VisitorManager implements IVisitorManager
     public static String TAG_VISIT_MANAGER = "visitManager";
     public static String TAG_VISITORS      = "visitors";
     public static String TAG_NEXTID        = "nextID";
-
-    /**
-     * Map with visitor ID and data
-     */
-    private Map<Integer, IVisitorData> visitorMap = new HashMap<>();
-
-    /**
-     * Whether this manager is dirty and needs re-serialize
-     */
-    private boolean isDirty = false;
-
     /**
      * The colony of the manager.
      */
     private final IColony colony;
-
+    /**
+     * Map with visitor ID and data
+     */
+    private Map<Integer, IVisitorData> visitorMap = new HashMap<>();
+    /**
+     * Whether this manager is dirty and needs re-serialize
+     */
+    private boolean isDirty = false;
     /**
      * The next free ID
      */
@@ -225,71 +221,6 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public IVisitorData spawnOrCreateVisitor(final IVisitorType visitorType, IVisitorData data, final Level world, final BlockPos spawnPos)
-    {
-        if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
-        {
-            return data;
-        }
-
-        if (data == null)
-        {
-            data = createAndRegisterVisitorData(visitorType);
-        }
-
-        final AbstractEntityVisitor citizenEntity = visitorType.getEntityCreator().apply(world);
-        if (citizenEntity == null)
-        {
-            return data;
-        }
-
-        citizenEntity.setUUID(data.getUUID());
-        citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
-        world.addFreshEntity(citizenEntity);
-
-        citizenEntity.setCitizenId(data.getId());
-        citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
-        if (citizenEntity.isAddedToWorld())
-        {
-            citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
-        }
-
-        return data;
-    }
-
-    /**
-     * Spawn an expeditionary citizen.
-     */
-    public void spawnExpeditionary()
-    {
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
-        if (expeditionType != null)
-        {
-            final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-            newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
-            newVisitor.triggerInteraction(new ExpeditionInteraction());
-
-            if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.id()))
-            {
-                spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
-                  newVisitor,
-                  colony.getWorld(),
-                  BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition()));
-            }
-        }
-    }
-
-    @Override
-    public IVisitorData createAndRegisterVisitorData(final IVisitorType visitorType)
-    {
-        markDirty();
-        final IVisitorData data = new VisitorData(nextVisitorID--, colony, visitorType);
-        data.initForNewCivilian();
-        visitorMap.put(data.getId(), data);
-        return data;
-    }
-
-    @Override
     public void removeCivilian(@NotNull final IVisitorData citizen)
     {
         final IVisitorData data = visitorMap.remove(citizen.getId());
@@ -324,6 +255,81 @@ public class VisitorManager implements IVisitorManager
             if (colony.getExpeditionManager().canStartNewExpedition())
             {
                 spawnExpeditionary();
+            }
+        }
+    }
+
+    @Override
+    public boolean tickVisitorData()
+    {
+        for (IVisitorData visitorData : this.getCivilianDataMap().values())
+        {
+            visitorData.update();
+        }
+        return false;
+    }
+
+    @Override
+    public IVisitorData spawnOrCreateVisitor(final IVisitorType visitorType, IVisitorData data, final Level world, final BlockPos spawnPos)
+    {
+        if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
+        {
+            return data;
+        }
+
+        if (data == null)
+        {
+            data = createAndRegisterVisitorData(visitorType);
+        }
+
+        final AbstractEntityVisitor citizenEntity = visitorType.getEntityCreator().apply(world);
+        if (citizenEntity == null)
+        {
+            return data;
+        }
+
+        citizenEntity.setUUID(data.getUUID());
+        citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
+        world.addFreshEntity(citizenEntity);
+
+        citizenEntity.setCitizenId(data.getId());
+        citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
+        if (citizenEntity.isAddedToWorld())
+        {
+            citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+        }
+
+        return data;
+    }
+
+    @Override
+    public IVisitorData createAndRegisterVisitorData(final IVisitorType visitorType)
+    {
+        markDirty();
+        final IVisitorData data = new VisitorData(nextVisitorID--, colony, visitorType);
+        data.initForNewCivilian();
+        visitorMap.put(data.getId(), data);
+        return data;
+    }
+
+    /**
+     * Spawn an expeditionary citizen.
+     */
+    public void spawnExpeditionary()
+    {
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
+        if (expeditionType != null)
+        {
+            final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
+            newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+            newVisitor.triggerInteraction(new ExpeditionInteraction());
+
+            if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.id()))
+            {
+                spawnOrCreateVisitor(ModVisitorTypes.expeditionary.get(),
+                  newVisitor,
+                  colony.getWorld(),
+                  BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition()));
             }
         }
     }
