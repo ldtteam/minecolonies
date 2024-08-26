@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   release:
-    uses: Thodor12/operapublicacreator/.github/workflows/gradle.release.yaml@port/gh_updates_ng7
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.release.yaml@ng7
     with:
       java: 21
       curse_release_type: ${{ contains(github.ref, 'release') && 'release' || 'beta' }}
