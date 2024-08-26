@@ -46,7 +46,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
-        super("supplycampdeployer", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @NotNull

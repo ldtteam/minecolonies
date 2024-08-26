@@ -52,7 +52,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public ItemBannerRallyGuards(final Properties properties)
     {
-        super("banner_rally_guards", properties.stacksTo(1).durability(0));
+        super(properties.stacksTo(1).durability(0));
     }
 
     @NotNull

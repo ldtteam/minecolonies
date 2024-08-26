@@ -57,7 +57,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     /**
      * The weapon item stack, defaults to a generic ItemStack of the spear.
      */
-    protected ItemStack weapon = new ItemStack(ModItems.spear);
+    protected ItemStack weapon = ModItems.spear.toStack();
 
     /**
      * The value of damage the spear has dealt.

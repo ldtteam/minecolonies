@@ -118,9 +118,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkInputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.get().getDescriptionId()))
         {
-            return ModItems.large_empty_bottle.getDefaultInstance();
+            return ModItems.large_empty_bottle.toStack();
         }
         return Items.BUCKET.getDefaultInstance();
     }
@@ -131,9 +131,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkOutputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.get().getDescriptionId()))
         {
-            return ModItems.large_milk_bottle.getDefaultInstance();
+            return ModItems.large_milk_bottle.toStack();
         }
         return Items.MILK_BUCKET.getDefaultInstance();
     }
@@ -201,10 +201,10 @@ public class BuildingCowboy extends AbstractBuilding
                         Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
                         1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
                 recipes.add(new GenericRecipe(null,
-                        new ItemStack(ModItems.large_milk_bottle),                                          // output
+                        ModItems.large_milk_bottle.toStack(),                                               // output
                         Collections.emptyList(),                                                            // alt output
                         Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(ModItems.large_empty_bottle))),  // input
+                        Collections.singletonList(Collections.singletonList(ModItems.large_empty_bottle.toStack())),  // input
                         1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
             }
 

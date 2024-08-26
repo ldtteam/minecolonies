@@ -329,9 +329,9 @@ public class ClientRegistryHandler
 
         ModBlocks.getCrops().stream().forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut.get(), RenderType.cutout()));
 
-        ItemProperties.register(ModItems.spear, ResourceLocation.withDefaultNamespace("throwing"), (item, world, entity, light) ->
+        ItemProperties.register(ModItems.spear.get(), ResourceLocation.withDefaultNamespace("throwing"), (item, world, entity, light) ->
                                                                            (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
-        ItemProperties.register(ModItems.buildGoggles, ResourceLocation.withDefaultNamespace("disabled"), (item, world, entity, light) ->
+        ItemProperties.register(ModItems.buildGoggles.get(), ResourceLocation.withDefaultNamespace("disabled"), (item, world, entity, light) ->
                 (ColonyBlueprintRenderer.willRenderBlueprints() ? 0.0F : 1.0F));
     }
 

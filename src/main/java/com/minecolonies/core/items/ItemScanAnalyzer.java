@@ -23,7 +23,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -51,24 +50,12 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     private static BlockPos  lastPos2  = BlockPos.ZERO;
     public static  Blueprint blueprint = null;
 
-    public ItemScanAnalyzer(
-      @NotNull final String name,
-      final Item.Properties properties)
+    public ItemScanAnalyzer(final Item.Properties properties)
     {
         super(properties.durability(0)
             .setNoRepair()
             .rarity(Rarity.UNCOMMON)
             .component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
-    }
-
-    /**
-     * MC constructor.
-     *
-     * @param properties properties
-     */
-    public ItemScanAnalyzer(final Properties properties)
-    {
-        super(properties);
     }
 
     /**
@@ -122,7 +109,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     @Override
     public AbstractItemWithPosSelector getRegisteredItemInstance()
     {
-        return (AbstractItemWithPosSelector) ModItems.scanAnalyzer;
+        return ModItems.scanAnalyzer.get();
     }
 
     /**

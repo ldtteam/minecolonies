@@ -39,7 +39,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     public ItemQuestLog(final Item.Properties properties)
     {
-        super("questlog", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 
     @Override

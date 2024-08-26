@@ -45,7 +45,7 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
     public ToolRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.plateArmorChest));
+        this.icon = guiHelper.createDrawableItemStack(ModItems.plateArmorChest.toStack());
         this.slot = guiHelper.getSlotDrawable();
     }
 

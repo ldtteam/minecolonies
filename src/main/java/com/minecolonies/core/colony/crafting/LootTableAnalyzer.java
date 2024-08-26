@@ -176,7 +176,7 @@ public final class LootTableAnalyzer
                     modifier = result.getB();
                 }
                 modifier = adjustModifier(modifier, conditions);
-                if (stack.getItem().equals(ModItems.adventureToken))
+                if (stack.getItem().equals(ModItems.adventureToken.get()))
                 {
                     final List<LootDrop> mobDrops = expandAdventureToken(provider, stack);
                     for (final LootDrop drop : mobDrops)

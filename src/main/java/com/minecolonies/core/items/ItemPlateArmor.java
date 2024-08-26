@@ -19,7 +19,6 @@ public class ItemPlateArmor extends ArmorItem
      * @param name            the name.
      */
     public ItemPlateArmor(
-      @NotNull final String name,
       @NotNull final Holder<ArmorMaterial> materialIn,
       @NotNull final ArmorItem.Type equipmentSlotIn,
       final Properties properties)

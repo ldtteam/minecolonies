@@ -14,6 +14,6 @@ public class ItemCakeBatter extends AbstractItemMinecolonies
      */
     public ItemCakeBatter(final Properties properties)
     {
-        super("cake_batter", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 }

@@ -35,9 +35,9 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
      * @param name       The name of this item
      * @param properties the properties.
      */
-    public AbstractItemScroll(final String name, final Properties properties)
+    public AbstractItemScroll(final Properties properties)
     {
-        super(name, properties);
+        super(properties);
     }
 
     @Override

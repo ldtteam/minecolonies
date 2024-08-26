@@ -53,7 +53,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     /**
      * Predicate to define an ancient tome which can be enchanted.
      */
-    private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.getItem() == ModItems.ancientTome;
+    private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.getItem() == ModItems.ancientTome.get();
 
     /**
      * Predicate to define an ancient tome which can be enchanted.
@@ -177,7 +177,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         for (final IToken<?> token : craftingModule.getRecipes())
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && !storage.getInput().isEmpty() && storage.getInput().get(0).getItem() == ModItems.ancientTome && craftingModule.isDisabled(token))
+            if (storage != null && !storage.getInput().isEmpty() && storage.getInput().get(0).getItem() == ModItems.ancientTome.get() && craftingModule.isDisabled(token))
             {
                 ancientTomeCraftingDisabled = true;
             }
@@ -194,7 +194,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                     needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
-                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
+                checkIfRequestForItemExistOrCreateAsync(ModItems.ancientTome.toStack(), 1, 1, false);
                 return IDLE;
             }
         }

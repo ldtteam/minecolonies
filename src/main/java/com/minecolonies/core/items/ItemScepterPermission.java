@@ -52,7 +52,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterpermission", properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
+        super(properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
     }
 
     @NotNull

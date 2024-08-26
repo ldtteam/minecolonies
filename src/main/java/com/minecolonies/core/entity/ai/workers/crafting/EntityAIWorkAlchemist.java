@@ -265,7 +265,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (worker.getRandom().nextInt(120) < 1)
             {
                 worker.decreaseSaturationForContinuousAction();
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.mistletoe, 1));
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), ModItems.mistletoe.toStack());
                 walkTo = null;
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 return INVENTORY_FULL;

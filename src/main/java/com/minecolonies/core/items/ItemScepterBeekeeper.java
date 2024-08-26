@@ -39,7 +39,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
      */
     public ItemScepterBeekeeper(final Properties properties)
     {
-        super("scepterbeekeeper", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @Override

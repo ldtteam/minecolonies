@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.items.ModArmorMaterials;
 import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
@@ -97,6 +98,7 @@ public class MineColonies
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
         ModBlocks.REGISTRY.register(modBus);
+        ModArmorMaterials.REGISTRY.register(modBus);
         ModItems.REGISTRY.register(modBus);
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);
@@ -120,7 +122,6 @@ public class MineColonies
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
         SupplyLoot.GLM.register(modBus);
         ModBannerPatterns.BANNER_PATTERNS.register(modBus);
-        ModItemsInitializer.DEFERRED_REGISTER.register(modBus);
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(modBus);
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(modBus);
@@ -414,7 +415,7 @@ public class MineColonies
             {
                 return new SpearItemTileEntityRenderer();
             }
-        }, ModItems.spear);
+        }, ModItems.spear.get());
     }
 
     /**

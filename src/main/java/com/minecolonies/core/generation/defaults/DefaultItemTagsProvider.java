@@ -139,10 +139,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         copy(ModTags.fungiBlocks, ModTags.fungi);
 
         tag(ModTags.meshes)
-          .add(ModItems.sifterMeshString)
-          .add(ModItems.sifterMeshFlint)
-          .add(ModItems.sifterMeshIron)
-          .add(ModItems.sifterMeshDiamond);
+          .add(ModItems.sifterMeshString.get())
+          .add(ModItems.sifterMeshFlint.get())
+          .add(ModItems.sifterMeshIron.get())
+          .add(ModItems.sifterMeshDiamond.get());
 
         tag(ModTags.excludedFood)
           .add(Items.ENCHANTED_GOLDEN_APPLE)
@@ -152,8 +152,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.TROPICAL_FISH)
           .add(Items.PUFFERFISH)
           .add(Items.SUSPICIOUS_STEW)
-          .add(ModItems.chorusBread)
-          .add(ModItems.goldenBread);
+          .add(ModItems.chorusBread.get())
+          .add(ModItems.goldenBread.get());
 
         tag(ModTags.breakable_ore)
           .addTag(ItemTags.COAL_ORES)
@@ -213,9 +213,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.DRIED_KELP)
           .add(Items.DRIED_KELP_BLOCK)
           .add(Items.EGG)
-          .add(ModItems.large_milk_bottle)
-          .add(ModItems.large_soy_milk_bottle)
-          .add(ModItems.large_water_bottle)
+          .add(ModItems.large_milk_bottle.get())
+          .add(ModItems.large_soy_milk_bottle.get())
+          .add(ModItems.large_water_bottle.get())
           .add(Items.MILK_BUCKET);
 
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_COOK))
@@ -488,10 +488,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_REDUCEABLE))
           .add(Items.GLOWSTONE)
-          .add(ModItems.breadDough)
-          .add(ModItems.cookieDough)
-          .add(ModItems.rawPumpkinPie)
-          .add(ModItems.cakeBatter)
+          .add(ModItems.breadDough.get())
+          .add(ModItems.cookieDough.get())
+          .add(ModItems.rawPumpkinPie.get())
+          .add(ModItems.cakeBatter.get())
           .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES)
           .addTags(Tags.Items.GRAVELS, Tags.Items.SANDS)
           .addTags(Tags.Items.INGOTS, storageBlocks);

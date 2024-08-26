@@ -122,7 +122,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     {
         if (done)
         {
-            ItemStack compostStack = new ItemStack(ModItems.compost, 6);
+            ItemStack compostStack = ModItems.compost.toStack(6);
             if (hitFace != null) // Spawn all as ItemEntity
             {
                 playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
@@ -321,7 +321,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
         {
             this.done = false;
             this.updateBlock(this.level);
-            return new ItemStack(ModItems.compost, (int) (6 * multiplier));
+            return ModItems.compost.toStack((int) (6 * multiplier));
         }
         return ItemStack.EMPTY;
     }

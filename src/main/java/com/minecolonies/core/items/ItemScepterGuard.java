@@ -31,7 +31,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      */
     public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterguard", properties.stacksTo(1).durability(2).component(ModDataComponents.PATROL_TARGET, PatrolTarget.EMPTY));
+        super(properties.stacksTo(1).durability(2).component(ModDataComponents.PATROL_TARGET, PatrolTarget.EMPTY));
     }
 
     @NotNull
