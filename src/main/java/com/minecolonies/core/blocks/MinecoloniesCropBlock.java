@@ -1,6 +1,5 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
-public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<MinecoloniesCropBlock>
+public class MinecoloniesCropBlock extends Block
 {
     public static final  IntegerProperty AGE = IntegerProperty.create("age", 0, 6);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[] {

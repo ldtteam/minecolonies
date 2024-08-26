@@ -1,13 +1,13 @@
 package com.minecolonies.core.blocks.schematic;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 /**
  * This block is a waypoint, which makes citizens path to it.
  */
-public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
+public class BlockWaypoint extends Block
 {
     /**
      * The hardness this block has.

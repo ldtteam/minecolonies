@@ -2,7 +2,6 @@ package com.minecolonies.core.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesDirectional;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
@@ -47,7 +46,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 /**
  * Creates a decoration controller block.
  */
-public class BlockDecorationController extends AbstractBlockMinecoloniesDirectional<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock
+public class BlockDecorationController extends DirectionalBlock implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock
 {
     public static final MapCodec<BlockDecorationController> CODEC = simpleCodec(BlockDecorationController::new);
 

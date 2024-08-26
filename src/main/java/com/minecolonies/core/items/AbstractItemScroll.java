@@ -8,6 +8,7 @@ import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.UseAnim;
@@ -25,7 +26,7 @@ import net.minecraft.world.InteractionResultHolder;
 /**
  * Scroll items base class, does colony registering/checks.
  */
-public abstract class AbstractItemScroll extends AbstractItemMinecolonies
+public abstract class AbstractItemScroll extends Item
 {
     public static final int    FAIL_RESPONSES_TOTAL = 10;
 

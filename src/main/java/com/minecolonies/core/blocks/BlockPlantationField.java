@@ -1,7 +1,6 @@
 package com.minecolonies.core.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -41,7 +40,7 @@ import java.util.Map;
 /**
  * Block class for the plantation field block.
  */
-public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
+public class BlockPlantationField extends HorizontalDirectionalBlock implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
 {
     public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
 

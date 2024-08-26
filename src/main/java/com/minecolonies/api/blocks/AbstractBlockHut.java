@@ -75,7 +75,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable,
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Block implements IBuilderUndestroyable,
                                                                                                                         IAnchorBlock,
                                                                                                                         ITickableBlockMinecolonies,
                                                                                                                         INamedBlueprintAnchorBlock,

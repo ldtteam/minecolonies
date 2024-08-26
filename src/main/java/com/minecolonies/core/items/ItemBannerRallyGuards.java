@@ -21,6 +21,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.InteractionResultHolder;
@@ -43,7 +44,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
  */
-public class ItemBannerRallyGuards extends AbstractItemMinecolonies
+public class ItemBannerRallyGuards extends Item
 {
     /**
      * Rally Guards Banner constructor. Sets max stack to 1, like other tools.

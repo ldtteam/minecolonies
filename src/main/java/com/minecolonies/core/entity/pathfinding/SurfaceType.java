@@ -5,8 +5,8 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.core.blocks.BlockScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -69,7 +69,7 @@ public enum SurfaceType
         if (block instanceof FenceBlock
               || block instanceof FenceGateBlock
               || block instanceof WallBlock
-              || block instanceof AbstractBlockMinecoloniesDefault
+              || block instanceof BlockScarecrow
               || block instanceof BambooStalkBlock
               || block instanceof BambooSaplingBlock
               || block instanceof DoorBlock)

@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements ITickableBlockMinecolonies
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends HorizontalDirectionalBlock implements ITickableBlockMinecolonies
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 

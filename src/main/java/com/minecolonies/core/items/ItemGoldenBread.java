@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -20,7 +21,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Golden Bread, made by the Baker. Heals 2 hearts 
  */
-public class ItemGoldenBread extends AbstractItemMinecolonies
+public class ItemGoldenBread extends Item
 {
 
     /**

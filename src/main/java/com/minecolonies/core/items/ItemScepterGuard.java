@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
  */
-public class ItemScepterGuard extends AbstractItemMinecolonies
+public class ItemScepterGuard extends Item
 {
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.

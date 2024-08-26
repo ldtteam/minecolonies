@@ -2,9 +2,9 @@ package com.minecolonies.core.entity.pathfinding;
 
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -130,7 +130,7 @@ public class PathfindingUtils
                 bs = level.getBlockState(pos);
             }
         }
-        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || (bs.blocksMotion() && !canStandInSolidBlock(bs)))
+        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof BlockScarecrow || (bs.blocksMotion() && !canStandInSolidBlock(bs)))
         {
             final VoxelShape shape = bs.getCollisionShape(level, pos);
             if (shape.isEmpty())

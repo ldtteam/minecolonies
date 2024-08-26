@@ -1,6 +1,5 @@
 package com.minecolonies.api.blocks.decorative;
 
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
@@ -20,7 +19,7 @@ import javax.annotation.Nullable;
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
  */
-public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> extends AbstractBannerBlock implements IBlockMinecolonies<AbstractColonyFlagBanner<B>>
+public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> extends AbstractBannerBlock
 {
     public AbstractColonyFlagBanner(final DyeColor dyeColor, final Properties properties)
     {
