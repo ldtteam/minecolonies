@@ -284,11 +284,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean isCompost(final ItemStack itemStack)
     {
-        if (itemStack.getItem() == ModItems.compost.get())
+        if (itemStack.is(ModItems.compost))
         {
             return true;
         }
-        return itemStack.getItem() == Items.BONE_MEAL;
+        return itemStack.is(Items.BONE_MEAL);
     }
 
     /**

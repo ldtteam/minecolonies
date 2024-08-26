@@ -3,6 +3,7 @@ package com.minecolonies.api.crafting;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -291,6 +292,16 @@ public class ItemStorage
     public Item getItem()
     {
         return stack.getItem();
+    }
+
+    /**
+     * Compares whether this storage holds given item
+     *
+     * @return true if item matches
+     */
+    public boolean is(final Holder<Item> item)
+    {
+        return stack.is(item);
     }
 
     /**

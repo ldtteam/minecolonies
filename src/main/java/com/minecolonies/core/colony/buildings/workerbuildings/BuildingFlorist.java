@@ -65,7 +65,7 @@ public class BuildingFlorist extends AbstractBuilding
     public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> stack.getItem() == ModItems.compost.get(), new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> stack.is(ModItems.compost), new Tuple<>(STACKSIZE, true));
     }
 
     /**

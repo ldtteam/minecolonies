@@ -243,7 +243,7 @@ public class BuildingAlchemist extends AbstractBuilding
             if (!super.isRecipeCompatible(recipe))
                 return false;
 
-            return recipe.getPrimaryOutput().getItem() == ModItems.magicpotion.get();
+            return recipe.getPrimaryOutput().is(ModItems.magicpotion);
         }
 
         @Override

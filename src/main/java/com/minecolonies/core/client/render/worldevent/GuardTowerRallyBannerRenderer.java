@@ -14,7 +14,7 @@ public class GuardTowerRallyBannerRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.bannerRallyGuards.get())
+        if (!ctx.mainHandItem.is(ModItems.bannerRallyGuards))
         {
             return;
         }

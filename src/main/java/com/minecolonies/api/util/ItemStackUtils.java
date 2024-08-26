@@ -123,7 +123,7 @@ public final class ItemStackUtils
     /**
      * Predicate to check for compost items.
      */
-    public static final Predicate<ItemStack> IS_COMPOST = stack -> !stack.isEmpty() && stack.getItem() == ModItems.compost.get();
+    public static final Predicate<ItemStack> IS_COMPOST = stack -> !stack.isEmpty() && stack.is(ModItems.compost);
 
     /**
      * Private constructor to hide the implicit one.

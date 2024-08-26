@@ -51,11 +51,11 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         {
             // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
-              item -> item.getItem() == ModItems.magicpotion.get(),
+              item -> item.is(ModItems.magicpotion),
               32,
               worker.getInventoryCitizen());
 
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion.get()) < 8)
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.is(ModItems.magicpotion)) < 8)
             {
                 checkIfRequestForItemExistOrCreateAsync(ModItems.magicpotion.toStack(), 16, 8);
             }

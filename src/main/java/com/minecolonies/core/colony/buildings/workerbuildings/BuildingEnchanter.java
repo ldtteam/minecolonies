@@ -36,7 +36,7 @@ public class BuildingEnchanter extends AbstractBuilding
     public BuildingEnchanter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> stack.getItem() == ModItems.ancientTome.get(), new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> stack.is(ModItems.ancientTome), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull

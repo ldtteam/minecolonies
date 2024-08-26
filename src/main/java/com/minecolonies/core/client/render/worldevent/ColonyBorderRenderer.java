@@ -39,7 +39,7 @@ public class ColonyBorderRenderer
 
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.buildTool.get() || !ctx.hasNearestColony())
+        if (!ctx.mainHandItem.is(ModItems.buildTool) || !ctx.hasNearestColony())
         {
             return;
         }

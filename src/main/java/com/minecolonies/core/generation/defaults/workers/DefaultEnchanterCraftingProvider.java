@@ -404,7 +404,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
         recipe(ENCHANTER, MODULE_CUSTOM, "scroll_tp")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
                         new ItemStorage(new ItemStack(Items.COMPASS)),
-                        new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
+                        new ItemStorage(com.ldtteam.structurize.items.ModItems.buildTool.toStack())))
                 .result(ModItems.scrollColonyTP.toStack(3))
                 .showTooltip(true)
                 .build(consumer);

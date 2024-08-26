@@ -185,7 +185,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             for (final ItemStack secOutput : secOutputs)
             {
-                if (!secOutput.isEmpty() && secOutput.getItem() != ModItems.buildTool.get())
+                if (!secOutput.isEmpty() && secOutput.is(ModItems.buildTool))
                 {
                     this.secondaryOutputs.add(secOutput);
                 }
@@ -196,7 +196,7 @@ public class RecipeStorage implements IRecipeStorage
         for (final ItemStorage input : input)
         {
             ItemStorage inputItem = input;
-            if (inputItem.isEmpty() || inputItem.getItem() == ModItems.buildTool.get())
+            if (inputItem.isEmpty() || inputItem.is(ModItems.buildTool))
             {
                 continue;
             }

@@ -790,7 +790,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 this.setItemSlot(EquipmentSlot.HEAD, ModItems.santaHat.toStack());
             }
         }
-        else if (!hat.isEmpty() && hat.getItem() == ModItems.santaHat.get())
+        else if (!hat.isEmpty() && hat.is(ModItems.santaHat))
         {
             this.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
         }

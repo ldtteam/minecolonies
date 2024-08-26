@@ -322,7 +322,7 @@ public class GenericRecipe implements IGenericRecipe
             final IngredientStacks newIngredient = new IngredientStacks(ingredient);
             // also ignore the build tool as an ingredient, since colony crafters don't require it.
             //   (see RecipeStorage.calculateCleanedInput() for why)
-            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).getItem() == buildTool.get()) continue;
+            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).is(buildTool)) continue;
 
             final IngredientStacks existing = ingredients.get(newIngredient);
             if (existing == null)
