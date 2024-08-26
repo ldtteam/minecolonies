@@ -12,6 +12,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/large_bottle",
   "min-building-level": 4,
   "result": "minecolonies:milky_bread",
   "show-tooltip": true

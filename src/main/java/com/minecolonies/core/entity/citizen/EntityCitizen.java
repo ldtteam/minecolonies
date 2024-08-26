@@ -28,9 +28,6 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
@@ -39,6 +36,7 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.HappinessConstants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
@@ -52,14 +50,16 @@ import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.entity.ai.minimal.EntityAICitizenChild;
+import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.event.EventHandler;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -92,7 +92,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -104,6 +107,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1642,7 +1646,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
               Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
 
-            MinecraftForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
+            try
+            {
+                MinecraftForge.EVENT_BUS.post(new CitizenRemovedEvent(citizenData, damageSource));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during CitizenRemovedEvent", e);
+            }
         }
         super.die(damageSource);
     }
@@ -1923,6 +1934,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
     {
+        if (soundEvent == null || !ForgeRegistries.SOUND_EVENTS.containsKey(soundEvent.getLocation()))
+        {
+            return;
+        }
+
         Network.getNetwork().sendToPosition(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level, length, repetitions),
           new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), BLOCK_BREAK_SOUND_RANGE, level.dimension()));
     }
@@ -1930,6 +1946,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
     {
+        if (soundEvent == null || !ForgeRegistries.SOUND_EVENTS.containsKey(soundEvent.getLocation()))
+        {
+            return;
+        }
+
         Network.getNetwork()
           .sendToPosition(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level, volume, pitch, length, repetitions),
             new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), BLOCK_BREAK_SOUND_RANGE, level.dimension()));

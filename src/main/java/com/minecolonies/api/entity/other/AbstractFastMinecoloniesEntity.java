@@ -310,4 +310,29 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     {
 
     }
+
+    /**
+     * Static Byte values to avoid frequent autoboxing
+     */
+    final Byte ENABLE  = 2;
+    final Byte DISABLE = 0;
+
+    @Override
+    public void setShiftKeyDown(boolean enable)
+    {
+        if (enable)
+        {
+            this.entityData.set(DATA_SHARED_FLAGS_ID, ENABLE);
+        }
+        else
+        {
+            this.entityData.set(DATA_SHARED_FLAGS_ID, DISABLE);
+        }
+    }
+
+    @Override
+    public boolean isShiftKeyDown()
+    {
+        return (this.entityData.get(DATA_SHARED_FLAGS_ID)).byteValue() == ENABLE.byteValue();
+    }
 }

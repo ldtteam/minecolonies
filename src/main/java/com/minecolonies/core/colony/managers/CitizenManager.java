@@ -358,8 +358,14 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
-
+        try
+        {
+            MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during CitizenAddedEvent", e);
+        }
         return citizenData;
     }
 
@@ -612,8 +618,14 @@ public class CitizenManager implements ICitizenManager
 
                 spawnOrCreateCitizen(newCitizen, colony.getWorld(), null, true);
 
-                MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
-
+                try
+                {
+                    MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during CitizenAddedEvent", e);
+                }
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
             }

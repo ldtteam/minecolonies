@@ -3,10 +3,9 @@ package com.minecolonies.api.util;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -325,7 +324,7 @@ public final class EntityUtils
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         final BlockPos pos = BlockPos.containing(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
-        return pos.distSqr(new Vec3i(x, y, z)) < MathUtils.square(range);
+        return BlockPosUtil.distSqr(pos, x, y, z) < MathUtils.square(range);
     }
 
     /**
