@@ -20,7 +20,7 @@ public final class Pond
     /**
      * The minimum pond requirements.
      */
-    public static final int WATER_POOL_WIDTH_REQUIREMENT  = 7;
+    public static final int WATER_POOL_WIDTH_REQUIREMENT  = 5;
     public static final int WATER_DEPTH_REQUIREMENT       = 2;
 
     /**
