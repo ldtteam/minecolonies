@@ -514,7 +514,12 @@ public final class ItemStackUtils
         int value = 0;
         for (final ArmorItem.Type type : ArmorItem.Type.values())
         {
-            value += material.defense().getOrDefault(type, 0);
+            // intentionally get to prevent stupid mods putting null as value
+            final Integer defense = material.defense().get(type);
+            if (defense != null)
+            {
+                value += defense;
+            }
         }
         return value + material.toughness() * 4;
     }
