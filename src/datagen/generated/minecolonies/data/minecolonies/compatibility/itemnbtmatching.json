@@ -967,8 +967,7 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:max_damage",
-      "structurize:pos_selection"
+      "minecraft:max_damage"
     ],
     "item": "minecolonies:scan_analyzer"
   },
@@ -2503,14 +2502,12 @@
   },
   {
     "checkednbtkeys": [
-      "minecraft:enchantment_glint_override",
       "minecraft:stored_enchantments"
     ],
     "item": "minecraft:enchanted_book"
   },
   {
     "checkednbtkeys": [
-      "minecraft:enchantment_glint_override",
       "minecraft:food"
     ],
     "item": "minecraft:enchanted_golden_apple"
@@ -2519,9 +2516,6 @@
     "item": "minecraft:enchanting_table"
   },
   {
-    "checkednbtkeys": [
-      "minecraft:enchantment_glint_override"
-    ],
     "item": "minecraft:end_crystal"
   },
   {
@@ -2567,9 +2561,6 @@
     "item": "minecraft:evoker_spawn_egg"
   },
   {
-    "checkednbtkeys": [
-      "minecraft:enchantment_glint_override"
-    ],
     "item": "minecraft:experience_bottle"
   },
   {
@@ -3682,9 +3673,6 @@
     "item": "minecraft:nether_sprouts"
   },
   {
-    "checkednbtkeys": [
-      "minecraft:enchantment_glint_override"
-    ],
     "item": "minecraft:nether_star"
   },
   {
@@ -5465,9 +5453,6 @@
     "item": "structurize:blocktagsubstitution"
   },
   {
-    "checkednbtkeys": [
-      "structurize:pos_selection"
-    ],
     "item": "structurize:caliper"
   },
   {
@@ -5476,18 +5461,14 @@
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:max_damage",
-      "structurize:pos_selection",
-      "structurize:scan_tool"
+      "minecraft:max_damage"
     ],
     "item": "structurize:sceptersteel"
   },
   {
     "checkednbtkeys": [
       "minecraft:enchantments",
-      "minecraft:max_damage",
-      "structurize:pos_selection",
-      "structurize:tags"
+      "minecraft:max_damage"
     ],
     "item": "structurize:sceptertag"
   },

@@ -2,8 +2,8 @@ package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.items.component.SupplyData;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.items.ItemSupplyChestDeployer.SupplyData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;

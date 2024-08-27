@@ -10,13 +10,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ISupplyItem;
-import com.minecolonies.api.items.ModDataComponents;
+import com.minecolonies.api.items.component.SupplyData;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
-import com.minecolonies.core.items.ItemSupplyChestDeployer.SupplyData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -55,7 +54,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     public InteractionResult useOn(final UseOnContext ctx)
     {
         final SupplyData currentComponent = SupplyData.readFromItemStack(ctx.getItemInHand());
-        if (currentComponent.randomKey() == -1)
+        if (!currentComponent.hasRandomKey())
         {
             currentComponent.withRandomKey(ctx.getClickedPos().asLong()).writeToItemStack(ctx.getItemInHand());
         }
@@ -78,7 +77,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
         final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
-        if (currentComponent.randomKey() == -1)
+        if (!currentComponent.hasRandomKey())
         {
             currentComponent.withRandomKey(playerIn.blockPosition().asLong()).writeToItemStack(stack);
         }

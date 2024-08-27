@@ -2,13 +2,12 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.items.ModDataComponents;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.component.AdventureData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.core.generation.CustomRecipeProvider.CustomRecipeBuilder;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
-import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -204,7 +203,7 @@ public class DefaultNetherWorkerLootProvider extends CustomRecipeAndLootTablePro
     private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
     {
         final ItemStack stack = new ItemStack(ModItems.adventureToken);
-        new ItemAdventureToken.AdventureData(mob, damage_done, xp_gained).writeToItemStack(stack);
+        new AdventureData(mob, damage_done, xp_gained).writeToItemStack(stack);
 
         return SimpleLootTableProvider.itemStack(stack);
     }

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IColonyManager
@@ -442,6 +443,13 @@ public interface IColonyManager
      * @param claimData the claim data to add.
      */
     void addClaimData(IColony colony, Long2ObjectMap<ChunkClaimData> claimData);
+
+    /**
+     * Get the claim data for the whole dimension.
+     * @param dimension the dim.
+     * @return the claim data.
+     */
+    Map<ChunkPos, IChunkClaimData> getClaimData(final ResourceKey<Level> dimension);
 
     /**
      * Get the claim data for a dimension and pos.

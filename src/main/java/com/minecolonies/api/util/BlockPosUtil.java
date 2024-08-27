@@ -58,6 +58,11 @@ public final class BlockPosUtil
     public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
+     * Hopefully future proof safe zero pos
+     */
+    public static final BlockPos SAFE_ZERO = BlockPos.ZERO.below(1 << 12); // should be less than two bytes of var_int
+
+    /**
      * Selects a solid position with air above
      */
     public static final BiPredicate<BlockGetter, BlockPos> SOLID_AIR_POS_SELECTOR = (world, pos) -> {

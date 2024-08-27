@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony;
 
+import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -48,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -884,6 +886,14 @@ public final class ColonyManager implements IColonyManager
     public void addClaimData(final IColony colony, final Long2ObjectMap<ChunkClaimData> claimData)
     {
         this.chunkClaimData.computeIfAbsent(colony.getDimension(), (k) -> new Long2ObjectOpenHashMap<>()).putAll(claimData);
+    }
+
+    @Override
+    public Map<ChunkPos, IChunkClaimData> getClaimData(final ResourceKey<Level> dimension)
+    {
+        final Map<Long, ChunkClaimData> map = this.chunkClaimData.getOrDefault(dimension, new Long2ObjectOpenHashMap<>());
+        return Maps.asMap(map.keySet().stream().map(ChunkPos::new).collect(Collectors.toSet()),
+                p -> map.getOrDefault(p.toLong(), null));
     }
 
     @Nullable
