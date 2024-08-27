@@ -2,12 +2,15 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Utility class to search for fisher ponds.
@@ -17,8 +20,7 @@ public final class Pond
     /**
      * The minimum pond requirements.
      */
-    public static final int WATER_POOL_WIDTH_REQUIREMENT  = 5;
-    public static final int WATER_POOL_LENGTH_REQUIREMENT = 5;
+    public static final int WATER_POOL_WIDTH_REQUIREMENT  = 7;
     public static final int WATER_DEPTH_REQUIREMENT       = 2;
 
     /**
@@ -28,33 +30,33 @@ public final class Pond
      * @param water The coordinate to check.
      * @return true if water.
      */
-    public static boolean checkWater(@NotNull final BlockGetter world, @NotNull final BlockPos water)
+    public static boolean checkPond(@NotNull final BlockGetter world, @NotNull final BlockPos water, @Nullable final MutableBlockPos problematicPosition)
     {
-        final BlockPos.MutableBlockPos tempPos = water.mutable();
-
-        for (int i = 1; i < WATER_DEPTH_REQUIREMENT; i++)
+        for (final MutableBlockPos tempPos : BlockPos.spiralAround(water, (WATER_POOL_WIDTH_REQUIREMENT - 1) / 2, Direction.SOUTH, Direction.EAST))
         {
-            if (!isWaterForFishing(world, world.getBlockState(tempPos.set(water.getX(), water.getY() - i, water.getZ())), tempPos))
+            if (!isWaterForFishing(world, tempPos))
             {
+                if (problematicPosition != null)
+                {
+                    problematicPosition.set(tempPos);
+                }
                 return false;
             }
-        }
 
-        for (int x = -WATER_POOL_WIDTH_REQUIREMENT / 2; x < WATER_POOL_WIDTH_REQUIREMENT / 2; x++)
-        {
-            for (int z = -WATER_POOL_LENGTH_REQUIREMENT; z < WATER_POOL_LENGTH_REQUIREMENT / 2; z++)
+            for (int y = 1; y < WATER_DEPTH_REQUIREMENT; y++)
             {
-                tempPos.set(water.getX() + x, water.getY(), water.getZ() + z);
-                final BlockState state = world.getBlockState(tempPos);
-
-                if (!isWaterForFishing(world, state, tempPos))
+                // 70% chance to check, to on avg prefer cleared areas
+                if (ColonyConstants.rand.nextInt(100) < 30)
                 {
-                    return false;
+                    break;
                 }
 
-                // 70% chance to check, to on avg prefer cleared areas
-                if (ColonyConstants.rand.nextInt(100) >= 30 && !isWaterForFishing(world, world.getBlockState(tempPos.set(water.getX(), water.getY() - 1, water.getZ())), tempPos))
+                if (!isWaterForFishing(world, tempPos.setY(tempPos.getY() - y)))
                 {
+                    if (problematicPosition != null)
+                    {
+                        problematicPosition.set(tempPos);
+                    }
                     return false;
                 }
             }
@@ -67,12 +69,12 @@ public final class Pond
      * Checks if the water is fine for fishing, see vanilla FishingHook checks
      *
      * @param world
-     * @param state
      * @param pos
      * @return
      */
-    public static boolean isWaterForFishing(final BlockGetter world, final BlockState state, final BlockPos pos)
+    public static boolean isWaterForFishing(final BlockGetter world, final BlockPos pos)
     {
+        final BlockState state = world.getBlockState(pos);
         if (!state.isAir() && !state.is(Blocks.LILY_PAD))
         {
             FluidState fluidstate = state.getFluidState();
