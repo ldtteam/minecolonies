@@ -138,6 +138,7 @@ public final class ModCreativeTabs
           output.accept(ModItems.manchet_bread);
           output.accept(ModItems.pasta_plain);
           output.accept(ModItems.pasta_tomato);
+          output.accept(ModItems.pepper_hummus);
           output.accept(ModItems.pita_hummus);
           output.accept(ModItems.pottage);
           output.accept(ModItems.rice_ball);
