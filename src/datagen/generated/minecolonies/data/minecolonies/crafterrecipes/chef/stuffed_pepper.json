@@ -22,6 +22,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:stuffed_pepper"
+  "result": "minecolonies:stuffed_pepper",
+  "show-tooltip": true
 }

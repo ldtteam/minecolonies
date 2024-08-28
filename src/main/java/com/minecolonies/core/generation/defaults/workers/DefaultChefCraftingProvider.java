@@ -42,7 +42,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.butter))
           .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cabochis")
@@ -52,14 +52,14 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.BOWL)),
             new ItemStorage(new ItemStack(ModItems.manchet_bread))))
           .result(new ItemStack(ModItems.cabochis))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cheddar_cheese")
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.cheddar_cheese))
           .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "congee")
@@ -69,7 +69,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.BOWL)),
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage))))
           .result(new ItemStack(ModItems.congee))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cooked_rice")
@@ -77,7 +77,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockRice)),
             new ItemStorage(new ItemStack(Items.BOWL))))
           .result(new ItemStack(ModItems.cooked_rice))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "eggplant_dolma")
@@ -89,14 +89,14 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
           .result(new ItemStack(ModItems.eggplant_dolma))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "feta_cheese")
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
           .result(new ItemStack(ModItems.feta_cheese))
           .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "hand_pie")
@@ -107,7 +107,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
             new ItemStorage(new ItemStack(Items.MUTTON))))
           .result(new ItemStack(ModItems.hand_pie))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "lamb_stew")
@@ -122,7 +122,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
             new ItemStorage(new ItemStack(Items.MUTTON))))
           .result(new ItemStack(ModItems.lamb_stew))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "pasta_plain")
@@ -132,7 +132,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.BOWL)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
           .result(new ItemStack(ModItems.pasta_plain))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "pasta_tomato")
@@ -144,7 +144,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.BOWL)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
           .result(new ItemStack(ModItems.pasta_tomato))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "pita_hummus")
@@ -156,7 +156,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
           .result(new ItemStack(ModItems.pita_hummus))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "pottage")
@@ -168,14 +168,14 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.CARROT)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
           .result(new ItemStack(ModItems.pottage))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "raw_noodle")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockDurum))))
           .result(new ItemStack(ModItems.raw_noodle))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "rice_ball")
@@ -184,7 +184,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.DRIED_KELP)),
             new ItemStorage(new ItemStack(ModItems.cooked_rice))))
           .result(new ItemStack(ModItems.rice_ball, 2))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "stew_trencher")
@@ -194,7 +194,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
           .result(new ItemStack(ModItems.stew_trencher))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "stuffed_pepper")
@@ -206,7 +206,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockEggplant))))
           .result(new ItemStack(ModItems.stuffed_pepper))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "stuffed_pita")
@@ -217,7 +217,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
           .result(new ItemStack(ModItems.stuffed_pita))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "sushi_roll")
@@ -228,14 +228,14 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.DRIED_KELP)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
           .result(new ItemStack(ModItems.sushi_roll, 2))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "tofu")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)), new ItemStorage(new ItemStack(ModBlocks.blockSoyBean))))
           .result(new ItemStack(ModItems.tofu))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "pepper_hummus")
@@ -246,7 +246,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
             new ItemStorage(new ItemStack(ModBlocks.blockChickpea))))
           .result(new ItemStack(ModItems.pepper_hummus, 2))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
 
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "soy_milk")
@@ -256,7 +256,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)),
             new ItemStorage(new ItemStack(ModBlocks.blockSoyBean))))
           .result(new ItemStack(ModItems.large_soy_milk_bottle))
-          .minBuildingLevel(1)
+          .showTooltip(true)
           .build(consumer);
     }
 }
