@@ -22,12 +22,12 @@ permissions:
 
 jobs:
   build:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.build.yaml@ng7
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@fix/changelog-merging
     with:
       java: 21
     secrets: inherit
   pre-release:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.prerelease.yaml@ng7
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.prerelease.yaml@fix/changelog-merging
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains( github.event.pull_request.labels.*.name, 'Pre-release')
     with:
       java: 21
