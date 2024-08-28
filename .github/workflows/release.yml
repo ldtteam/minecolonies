@@ -1,12 +1,19 @@
 name: Release
 
 on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - reopened
+      - edited
+      - labeled
+      - unlabeled
   push:
     branches:
       - "version/*"
       - "release/*"
       - "testing/*"
-  workflow_dispatch:
 
 permissions:
   contents: write
