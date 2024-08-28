@@ -1,13 +1,13 @@
 name: Build and Pre-release
 
 on:
-#  pull_request:
-#    types:
-#      - opened
-#      - edited
-#      - synchronize
-#      - labeled
-#      - unlabeled
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
   push:
     branches:
       - "version/*"
