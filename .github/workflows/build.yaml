@@ -1,18 +1,13 @@
 name: Build and Pre-release
 
 on:
-#  pull_request:
-#    types:
-#      - opened
-#      - edited
-#      - synchronize
-#      - labeled
-#      - unlabeled
-  push:
-    branches:
-      - "version/*"
-      - "release/*"
-      - "testing/*"
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
   workflow_dispatch:
 
 permissions:
@@ -22,12 +17,12 @@ permissions:
 
 jobs:
   build:
-    uses: Thodor12/operapublicacreator/.github/workflows/gradle.build.yaml@fix/changelog-merging
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.build.yaml@ng7
     with:
       java: 21
     secrets: inherit
   pre-release:
-    uses: Thodor12/operapublicacreator/.github/workflows/gradle.prerelease.yaml@fix/changelog-merging
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.prerelease.yaml@ng7
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains( github.event.pull_request.labels.*.name, 'Pre-release')
     with:
       java: 21
