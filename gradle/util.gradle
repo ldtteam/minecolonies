@@ -1,7 +1,14 @@
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
 // Allow more than 400 errors.
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xmaxerrs" << "1000"
+        options.compilerArgs << "-Xmaxerrs" << "5000"
     }
 }
 
