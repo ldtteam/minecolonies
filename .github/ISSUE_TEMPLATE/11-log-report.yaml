@@ -1,5 +1,6 @@
 name: Log Report
 description: If the console log told you to report sth to the Developers.
+title: AI log upload
 labels: [Bug, AI log]
 body:
   - type: checkboxes
