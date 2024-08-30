@@ -1,6 +1,5 @@
 name: Log Report
 description: If the console log told you to report sth to the Developers.
-title: "[BUG] <title>"
 labels: [Bug, AI log]
 body:
   - type: checkboxes
@@ -8,33 +7,39 @@ body:
       label: Is there an existing issue for this?
       description: Please search to see if an issue already exists for the bug you encountered.
       options:
-        - label: I have searched the existing issues
+        - label: I have searched the existing issues.
           required: true
   - type: checkboxes
     attributes:
       label: Are you using the latest MineColonies Version?
-      description: Please check to see if any newer version fixes the issue you're experiencing.
+      description: |
+        Please check to see if any newer version fixes the issue you're experiencing.
+        [List of all MineColonies versions](https://www.curseforge.com/minecraft/mc-mods/minecolonies/files/all)
+        [List of all Structurize versions](https://www.curseforge.com/minecraft/mc-mods/structurize/files/all)
+        [List of all BlockUI versions](https://www.curseforge.com/minecraft/mc-mods/blockui/files/all)
       options:
-        - label:  I am running the latest **beta** version of MineColonies for my Minecraft version.
+        - label: |
+            I am running the latest **beta/release** version of MineColonies for my Minecraft version.
+            I am also running the latest versions of other mods that are part of my problem.
           required: true
   - type: checkboxes
     attributes:
       label: Did you check on the Wiki? or ask on Discord?
-      description: Please check on our wiki (https://wiki.minecolonies.ldtteam.com/) or ask on discord (https://discord.minecolonies.com/) if your issue is covered there.
+      description: Please check on our [wiki](https://wiki.minecolonies.ldtteam.com/) or ask on [discord](https://discord.minecolonies.com/) if your issue is covered there.
       options:
         - label: I checked the MineColonies Wiki and made sure my issue is not covered there. Or I was sent from discord to open an issue here.
           required: true
   - type: dropdown
+    id: mc_version
     attributes:
       label: Minecraft Version
-      description: Minecraft Version
-      options: [1.19.2, 1.20.1]
+      options: ["1.20", "1.21"]
     validations:
       required: true
   - type: input
     attributes:
       label: MineColonies Version
-      description: MineColonies Version
+      description: Exact MineColonies version either from file name or in-game mod list.
       placeholder: 1.xx.xx-XXXX
     validations:
       required: true
@@ -69,7 +74,7 @@ body:
   - type: input
     attributes:
       label: Logs
-      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist (https://gist.github.com/) or pastebin (https://pastebin.com/) and paste the link here.
+      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to eg. [gist](https://gist.github.com/) or [pastebin](https://pastebin.com/) and paste the link here.
     validations:
       required: true
   - type: textarea
@@ -77,14 +82,15 @@ body:
       label: Anything else?
       description: |
         Links? References? Anything that will give us more context about the issue you are encountering!
-        
-        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+        Tip: You can attach images or log files by clicking any text area to highlight it and then dragging files in.
+  - type: textarea
+    attributes:
+      label: "Footer"
+      description: This is issue footer. Please leave this text as is.
       value: |
-        
-        
-        
-        
+        ---
+        ## Viewers
         * Add a thumbs-up to the bug report if you are also affected. This helps the bug report become more visible to the team and doesn't clutter the comments.
         * Add a comment if you have any insights or background information that isn't already part of the conversation.
     validations:
-      required: false
+      required: true
