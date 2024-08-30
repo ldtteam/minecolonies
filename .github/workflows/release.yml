@@ -6,6 +6,7 @@ on:
       - "version/*"
       - "release/*"
       - "testing/*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,8 +14,15 @@ permissions:
 
 jobs:
   release:
-    uses: ldtteam/operapublicacreator/.github/workflows/gradle.publish.yaml@ng7
+    uses: Thodor12/operapublicacreator/.github/workflows/gradle.publish.yaml@port/gh_updates_ng7
     with:
       java: 21
       curse_release_type: ${{ contains(github.ref, 'release') && 'release' || 'beta' }}
-    secrets: inherit
+      gradle_tasks: assemble
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+      CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
+      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
+      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
