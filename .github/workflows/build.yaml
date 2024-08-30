@@ -1,31 +1,28 @@
-name: Build and Test PRs or General Branches
+name: Build and Pre-release
 
 on:
   pull_request:
     types:
-      - synchronize
       - opened
-      - ready_for_review
-      - reopened
-  push:
-    branches:
-      - 'feature/**'
-      - 'bugfix/**'
-      - 'hotfix/**'
-      - 'fix/**'
-      - 'features/**'
+      - synchronize
+      - labeled
+      - unlabeled
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   statuses: write
   packages: write
 
 jobs:
-  release:
+  build:
     uses: ldtteam/operapublicacreator/.github/workflows/gradle.build.yaml@ng7
     with:
       java: 21
-    secrets:
-      CROWDIN_API_KEY: ${{ secrets.CROWDIN_API_KEY }}
-      GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+    secrets: inherit
+  pre-release:
+    uses: ldtteam/operapublicacreator/.github/workflows/gradle.prerelease.yaml@ng7
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains( github.event.pull_request.labels.*.name, 'Pre-release')
+    with:
+      java: 21
+    secrets: inherit
