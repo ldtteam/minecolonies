@@ -1,12 +1,12 @@
 name: Build and Pre-release
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
-      - unlabeled
+#  pull_request:
+#    types:
+#      - opened
+#      - synchronize
+#      - labeled
+#      - unlabeled
   workflow_dispatch:
 
 permissions:
