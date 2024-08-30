@@ -6,7 +6,6 @@ on:
       - "version/*"
       - "release/*"
       - "testing/*"
-  workflow_dispatch:
 
 permissions:
   contents: write
