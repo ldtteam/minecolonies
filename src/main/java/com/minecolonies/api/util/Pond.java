@@ -28,29 +28,15 @@ public final class Pond
      *
      * @param world The world the player is in.
      * @param water The coordinate to check.
+     * @param problematicPosition Will contain position of problematic block (if not null && pond was not found).
      * @return true if water.
      */
     public static boolean checkPond(@NotNull final BlockGetter world, @NotNull final BlockPos water, @Nullable final MutableBlockPos problematicPosition)
     {
         for (final MutableBlockPos tempPos : BlockPos.spiralAround(water, (WATER_POOL_WIDTH_REQUIREMENT - 1) / 2, Direction.SOUTH, Direction.EAST))
         {
-            if (!isWaterForFishing(world, tempPos))
+            for (int y = 0; y < WATER_DEPTH_REQUIREMENT; y++)
             {
-                if (problematicPosition != null)
-                {
-                    problematicPosition.set(tempPos);
-                }
-                return false;
-            }
-
-            for (int y = 1; y < WATER_DEPTH_REQUIREMENT; y++)
-            {
-                // 70% chance to check, to on avg prefer cleared areas
-                if (ColonyConstants.rand.nextInt(100) < 30)
-                {
-                    break;
-                }
-
                 if (!isWaterForFishing(world, tempPos.setY(tempPos.getY() - y)))
                 {
                     if (problematicPosition != null)
@@ -58,6 +44,12 @@ public final class Pond
                         problematicPosition.set(tempPos);
                     }
                     return false;
+                }
+
+                // 70% chance to check, to on avg prefer cleared areas
+                if (ColonyConstants.rand.nextInt(100) < 30)
+                {
+                    break;
                 }
             }
         }
