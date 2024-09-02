@@ -29,7 +29,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * The type of container.
      */
-    private int id;
+    protected int id;
 
     /**
      * Empty public constructor.

@@ -86,6 +86,12 @@ public class NetworkChannel
     private final AtomicInteger messageCounter = new AtomicInteger();
 
     /**
+     * Next available free index for network messages.
+     * Index 0 is reserved
+     */
+    private int nextMessageId = 1;
+
+    /**
      * Creates a new instance of network channel.
      *
      * @param channelName unique channel name
@@ -104,160 +110,158 @@ public class NetworkChannel
     {
         setupInternalMessages();
 
-        int idx = 0;
-
         //  ColonyView messages
-        registerMessage(++idx, ColonyViewMessage.class, ColonyViewMessage::new);
-        registerMessage(++idx, ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage::new);
-        registerMessage(++idx, ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage::new);
-        registerMessage(++idx, ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);
-        registerMessage(++idx, ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage::new);
-        registerMessage(++idx, ColonyViewFieldsUpdateMessage.class, ColonyViewFieldsUpdateMessage::new);
-        registerMessage(++idx, PermissionsMessage.View.class, PermissionsMessage.View::new);
-        registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
-        registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
-        registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
-        registerMessage(++idx, ColonyViewResearchManagerViewMessage.class, ColonyViewResearchManagerViewMessage::new);
+        registerMessage(ColonyViewMessage.class, ColonyViewMessage::new);
+        registerMessage(ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage::new);
+        registerMessage(ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage::new);
+        registerMessage(ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);
+        registerMessage(ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage::new);
+        registerMessage(ColonyViewFieldsUpdateMessage.class, ColonyViewFieldsUpdateMessage::new);
+        registerMessage(PermissionsMessage.View.class, PermissionsMessage.View::new);
+        registerMessage(ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
+        registerMessage(ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
+        registerMessage(UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
+        registerMessage(ColonyViewResearchManagerViewMessage.class, ColonyViewResearchManagerViewMessage::new);
 
         //  Permission Request messages
-        registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
-        registerMessage(++idx, PermissionsMessage.AddPlayer.class, PermissionsMessage.AddPlayer::new);
-        registerMessage(++idx, PermissionsMessage.RemovePlayer.class, PermissionsMessage.RemovePlayer::new);
-        registerMessage(++idx, PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank::new);
-        registerMessage(++idx, PermissionsMessage.AddPlayerOrFakePlayer.class, PermissionsMessage.AddPlayerOrFakePlayer::new);
-        registerMessage(++idx, PermissionsMessage.AddRank.class, PermissionsMessage.AddRank::new);
-        registerMessage(++idx, PermissionsMessage.RemoveRank.class, PermissionsMessage.RemoveRank::new);
-        registerMessage(++idx, PermissionsMessage.EditRankType.class, PermissionsMessage.EditRankType::new);
-        registerMessage(++idx, PermissionsMessage.SetSubscriber.class, PermissionsMessage.SetSubscriber::new);
+        registerMessage(PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
+        registerMessage(PermissionsMessage.AddPlayer.class, PermissionsMessage.AddPlayer::new);
+        registerMessage(PermissionsMessage.RemovePlayer.class, PermissionsMessage.RemovePlayer::new);
+        registerMessage(PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank::new);
+        registerMessage(PermissionsMessage.AddPlayerOrFakePlayer.class, PermissionsMessage.AddPlayerOrFakePlayer::new);
+        registerMessage(PermissionsMessage.AddRank.class, PermissionsMessage.AddRank::new);
+        registerMessage(PermissionsMessage.RemoveRank.class, PermissionsMessage.RemoveRank::new);
+        registerMessage(PermissionsMessage.EditRankType.class, PermissionsMessage.EditRankType::new);
+        registerMessage(PermissionsMessage.SetSubscriber.class, PermissionsMessage.SetSubscriber::new);
 
         //  Colony Request messages
-        registerMessage(++idx, BuildRequestMessage.class, BuildRequestMessage::new);
-        registerMessage(++idx, OpenInventoryMessage.class, OpenInventoryMessage::new);
-        registerMessage(++idx, TownHallRenameMessage.class, TownHallRenameMessage::new);
-        registerMessage(++idx, MinerSetLevelMessage.class, MinerSetLevelMessage::new);
-        registerMessage(++idx, RecallCitizenMessage.class, RecallCitizenMessage::new);
-        registerMessage(++idx, HireFireMessage.class, HireFireMessage::new);
-        registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
-        registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
-        registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
-        registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
-        registerMessage(++idx, RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
-        registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
-        registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
-        registerMessage(++idx, ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);
-        registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
-        registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
-        registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
-        registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
-        registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
+        registerMessage(BuildRequestMessage.class, BuildRequestMessage::new);
+        registerMessage(OpenInventoryMessage.class, OpenInventoryMessage::new);
+        registerMessage(TownHallRenameMessage.class, TownHallRenameMessage::new);
+        registerMessage(MinerSetLevelMessage.class, MinerSetLevelMessage::new);
+        registerMessage(RecallCitizenMessage.class, RecallCitizenMessage::new);
+        registerMessage(HireFireMessage.class, HireFireMessage::new);
+        registerMessage(WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
+        registerMessage(AssignFieldMessage.class, AssignFieldMessage::new);
+        registerMessage(AssignmentModeMessage.class, AssignmentModeMessage::new);
+        registerMessage(GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
+        registerMessage(RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
+        registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
+        registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
+        registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);
+        registerMessage(CreateColonyMessage.class, CreateColonyMessage::new);
+        registerMessage(ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
+        registerMessage(ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
+        registerMessage(GiveToolMessage.class, GiveToolMessage::new);
+        registerMessage(ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
 
-        registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
-        registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
-        registerMessage(++idx, AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
-        registerMessage(++idx, ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
-        registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
-        registerMessage(++idx, ForcePickupMessage.class, ForcePickupMessage::new);
-        registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
-        registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
-        registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
-        registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
-        registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
-        registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
-        registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
-        registerMessage(++idx, ColonyFlagChangeMessage.class, ColonyFlagChangeMessage::new);
-        registerMessage(++idx, ColonyStructureStyleMessage.class, ColonyStructureStyleMessage::new);
-        registerMessage(++idx, PauseCitizenMessage.class, PauseCitizenMessage::new);
-        registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
-        registerMessage(++idx, SortWarehouseMessage.class, SortWarehouseMessage::new);
-        registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
-        registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
-        registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
-        registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
-        registerMessage(++idx, DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
-        registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
-        registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
-        registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
-        registerMessage(++idx, InteractionResponse.class, InteractionResponse::new);
-        registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
-        registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
-        registerMessage(++idx, AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
-        registerMessage(++idx, RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
-        registerMessage(++idx, FarmFieldPlotResizeMessage.class, FarmFieldPlotResizeMessage::new);
-        registerMessage(++idx, FarmFieldRegistrationMessage.class, FarmFieldRegistrationMessage::new);
-        registerMessage(++idx, FarmFieldUpdateSeedMessage.class, FarmFieldUpdateSeedMessage::new);
-        registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
-        registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
-        registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);
-        registerMessage(++idx, AssignFilterableEntityMessage.class, AssignFilterableEntityMessage::new);
-        registerMessage(++idx, BuildPickUpMessage.class, BuildPickUpMessage::new);
-        registerMessage(++idx, SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
-        registerMessage(++idx, ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
-        registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
-        registerMessage(++idx, PlantationFieldBuildRequestMessage.class, PlantationFieldBuildRequestMessage::new);
-        registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
-        registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
-        registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
-        registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
-        registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
-        registerMessage(++idx, InteractionClose.class, InteractionClose::new);
-        registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
-        registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
-        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(AssignUnassignMessage.class, AssignUnassignMessage::new);
+        registerMessage(OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
+        registerMessage(AddRemoveRecipeMessage.class, AddRemoveRecipeMessage::new);
+        registerMessage(ChangeRecipePriorityMessage.class, ChangeRecipePriorityMessage::new);
+        registerMessage(ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
+        registerMessage(ForcePickupMessage.class, ForcePickupMessage::new);
+        registerMessage(UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
+        registerMessage(TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
+        registerMessage(UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
+        registerMessage(BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
+        registerMessage(RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
+        registerMessage(AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
+        registerMessage(TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
+        registerMessage(ColonyFlagChangeMessage.class, ColonyFlagChangeMessage::new);
+        registerMessage(ColonyStructureStyleMessage.class, ColonyStructureStyleMessage::new);
+        registerMessage(PauseCitizenMessage.class, PauseCitizenMessage::new);
+        registerMessage(RestartCitizenMessage.class, RestartCitizenMessage::new);
+        registerMessage(SortWarehouseMessage.class, SortWarehouseMessage::new);
+        registerMessage(PostBoxRequestMessage.class, PostBoxRequestMessage::new);
+        registerMessage(HireMercenaryMessage.class, HireMercenaryMessage::new);
+        registerMessage(HutRenameMessage.class, HutRenameMessage::new);
+        registerMessage(BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
+        registerMessage(DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
+        registerMessage(DirectPlaceMessage.class, DirectPlaceMessage::new);
+        registerMessage(TeleportToColonyMessage.class, TeleportToColonyMessage::new);
+        registerMessage(EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
+        registerMessage(InteractionResponse.class, InteractionResponse::new);
+        registerMessage(TryResearchMessage.class, TryResearchMessage::new);
+        registerMessage(HireSpiesMessage.class, HireSpiesMessage::new);
+        registerMessage(AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
+        registerMessage(RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
+        registerMessage(FarmFieldPlotResizeMessage.class, FarmFieldPlotResizeMessage::new);
+        registerMessage(FarmFieldRegistrationMessage.class, FarmFieldRegistrationMessage::new);
+        registerMessage(FarmFieldUpdateSeedMessage.class, FarmFieldUpdateSeedMessage::new);
+        registerMessage(AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
+        registerMessage(BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
+        registerMessage(TriggerSettingMessage.class, TriggerSettingMessage::new);
+        registerMessage(AssignFilterableEntityMessage.class, AssignFilterableEntityMessage::new);
+        registerMessage(BuildPickUpMessage.class, BuildPickUpMessage::new);
+        registerMessage(SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
+        registerMessage(ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
+        registerMessage(MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
+        registerMessage(PlantationFieldBuildRequestMessage.class, PlantationFieldBuildRequestMessage::new);
+        registerMessage(ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
+        registerMessage(CourierHiringModeMessage.class, CourierHiringModeMessage::new);
+        registerMessage(QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
+        registerMessage(ToggleRecipeMessage.class, ToggleRecipeMessage::new);
+        registerMessage(ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
+        registerMessage(InteractionClose.class, InteractionClose::new);
+        registerMessage(GetColonyInfoMessage.class, GetColonyInfoMessage::new);
+        registerMessage(PickupBlockMessage.class, PickupBlockMessage::new);
+        registerMessage(MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
 
         //Client side only
-        registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
-        registerMessage(++idx, CompostParticleMessage.class, CompostParticleMessage::new);
-        registerMessage(++idx, ItemParticleEffectMessage.class, ItemParticleEffectMessage::new);
-        registerMessage(++idx, LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage::new);
-        registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage::new);
-        registerMessage(++idx, OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage::new);
-        registerMessage(++idx, UpdateClientWithCompatibilityMessage.class, UpdateClientWithCompatibilityMessage::new);
-        registerMessage(++idx, CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);
-        registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
-        registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);
-        registerMessage(++idx, VanillaParticleMessage.class, VanillaParticleMessage::new);
-        registerMessage(++idx, StopMusicMessage.class, StopMusicMessage::new);
-        registerMessage(++idx, PlayAudioMessage.class, PlayAudioMessage::new);
-        registerMessage(++idx, PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
-        registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
-        registerMessage(++idx, SyncPathMessage.class, SyncPathMessage::new);
-        registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
-        registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
-        registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
-        registerMessage(++idx, OpenDecoBuildWindowMessage.class, OpenDecoBuildWindowMessage::new);
-        registerMessage(++idx, OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
-        registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
-        registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
-        registerMessage(++idx, OpenColonyFoundingCovenantMessage.class, OpenColonyFoundingCovenantMessage::new);
-        registerMessage(++idx, OpenBuildingUIMessage.class, OpenBuildingUIMessage::new);
-        registerMessage(++idx, OpenCantFoundColonyWarningMessage.class, OpenCantFoundColonyWarningMessage::new);
-        registerMessage(++idx, OpenDeleteAbandonColonyMessage.class, OpenDeleteAbandonColonyMessage::new);
-        registerMessage(++idx, OpenReactivateColonyMessage.class, OpenReactivateColonyMessage::new);
+        registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
+        registerMessage(CompostParticleMessage.class, CompostParticleMessage::new);
+        registerMessage(ItemParticleEffectMessage.class, ItemParticleEffectMessage::new);
+        registerMessage(LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage::new);
+        registerMessage(UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage::new);
+        registerMessage(OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage::new);
+        registerMessage(UpdateClientWithCompatibilityMessage.class, UpdateClientWithCompatibilityMessage::new);
+        registerMessage(CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);
+        registerMessage(StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
+        registerMessage(SleepingParticleMessage.class, SleepingParticleMessage::new);
+        registerMessage(VanillaParticleMessage.class, VanillaParticleMessage::new);
+        registerMessage(StopMusicMessage.class, StopMusicMessage::new);
+        registerMessage(PlayAudioMessage.class, PlayAudioMessage::new);
+        registerMessage(PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
+        registerMessage(ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
+        registerMessage(SyncPathMessage.class, SyncPathMessage::new);
+        registerMessage(SyncPathReachedMessage.class, SyncPathReachedMessage::new);
+        registerMessage(ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
+        registerMessage(PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
+        registerMessage(OpenDecoBuildWindowMessage.class, OpenDecoBuildWindowMessage::new);
+        registerMessage(OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
+        registerMessage(SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
+        registerMessage(GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
+        registerMessage(OpenColonyFoundingCovenantMessage.class, OpenColonyFoundingCovenantMessage::new);
+        registerMessage(OpenBuildingUIMessage.class, OpenBuildingUIMessage::new);
+        registerMessage(OpenCantFoundColonyWarningMessage.class, OpenCantFoundColonyWarningMessage::new);
+        registerMessage(OpenDeleteAbandonColonyMessage.class, OpenDeleteAbandonColonyMessage::new);
+        registerMessage(OpenReactivateColonyMessage.class, OpenReactivateColonyMessage::new);
 
         //JEI Messages
-        registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);
+        registerMessage(TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);
 
         //Advancement Messages
-        registerMessage(++idx, OpenGuiWindowTriggerMessage.class, OpenGuiWindowTriggerMessage::new);
-        registerMessage(++idx, ClickGuiButtonTriggerMessage.class, ClickGuiButtonTriggerMessage::new);
+        registerMessage(OpenGuiWindowTriggerMessage.class, OpenGuiWindowTriggerMessage::new);
+        registerMessage(ClickGuiButtonTriggerMessage.class, ClickGuiButtonTriggerMessage::new);
 
         // Colony-Independent items
-        registerMessage(++idx, RemoveFromRallyingListMessage.class, RemoveFromRallyingListMessage::new);
-        registerMessage(++idx, ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
+        registerMessage(RemoveFromRallyingListMessage.class, RemoveFromRallyingListMessage::new);
+        registerMessage(ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
 
         // Research-related messages.
-        registerMessage(++idx, GlobalResearchTreeMessage.class, GlobalResearchTreeMessage::new);
+        registerMessage(GlobalResearchTreeMessage.class, GlobalResearchTreeMessage::new);
 
         // Crafter Recipe-related messages
-        registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
+        registerMessage(CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
 
-        registerMessage(++idx, ColonyListMessage.class, ColonyListMessage::new);
+        registerMessage(ColonyListMessage.class, ColonyListMessage::new);
 
         // Resource scroll NBT share message
-        registerMessage(++idx, ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);
+        registerMessage(ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);
 
         // Crafting GUI
-        registerMessage(++idx, SwitchRecipeCraftingTeachingMessage.class, SwitchRecipeCraftingTeachingMessage::new);
+        registerMessage(SwitchRecipeCraftingTeachingMessage.class, SwitchRecipeCraftingTeachingMessage::new);
     }
 
     private void setupInternalMessages()
@@ -278,14 +282,15 @@ public class NetworkChannel
      * Register a message into rawChannel.
      *
      * @param <MSG>      message class type
-     * @param id         network id
      * @param msgClazz   message class
      * @param msgCreator supplier with new instance of msgClazz
      */
-    private <MSG extends IMessage> void registerMessage(final int id, final Class<MSG> msgClazz, final Supplier<MSG> msgCreator)
+    public <MSG extends IMessage> void registerMessage(final Class<MSG> msgClazz, final Supplier<MSG> msgCreator)
     {
-        this.messagesTypes.put(id, new NetworkingMessageEntry<>(msgCreator));
-        this.messageTypeToIdMap.put(msgClazz, id);
+        this.messagesTypes.put(nextMessageId, new NetworkingMessageEntry<>(msgCreator));
+        this.messageTypeToIdMap.put(msgClazz, nextMessageId);
+
+        ++nextMessageId;
     }
 
     /**
