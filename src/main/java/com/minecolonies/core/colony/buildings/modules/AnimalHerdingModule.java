@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
@@ -102,7 +102,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
                 0,
                 Blocks.AIR,
                 animal.getLootTable(),
-                ToolType.AXE,
+                ModToolTypes.axe.get(),
                 animal,
                 Collections.emptyList(),
                 0));

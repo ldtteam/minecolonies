@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.ai.workers.guard;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
@@ -11,7 +12,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
@@ -103,7 +103,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     public boolean canAttack()
     {
         final int weaponSlot =
-          InventoryUtils.getFirstSlotOfItemHandlerContainingTool(user.getInventoryCitizen(), ToolType.BOW, 0, user.getCitizenData().getWorkBuilding().getMaxToolLevel());
+          InventoryUtils.getFirstSlotOfItemHandlerContainingTool(user.getInventoryCitizen(), ModToolTypes.bow.get(), 0, user.getCitizenData().getWorkBuilding().getMaxToolLevel());
 
         if (weaponSlot != -1)
         {

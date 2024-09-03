@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.core.BlockPos;
@@ -74,7 +74,7 @@ public class BuildingChickenHerder extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.EGG), Collections.emptyList(), Collections.emptyList(),
-                    Collections.emptyList(), 0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+                    Collections.emptyList(), 0, Blocks.AIR, null, ModToolTypes.none.get(), animal, Collections.emptyList(), 0));
 
             return recipes;
         }

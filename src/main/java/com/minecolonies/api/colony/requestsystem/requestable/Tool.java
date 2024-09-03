@@ -3,16 +3,18 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -93,7 +95,7 @@ public class Tool implements IDeliverable
     public static Tool deserialize(final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
-        final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
+        final IToolType type = ToolTypeEntry.getToolType(nbt.getString(NBT_TYPE));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
         final ItemStack result = ItemStack.of(nbt.getCompound(NBT_RESULT));
@@ -129,7 +131,7 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        final IToolType type = ToolType.getToolType(buffer.readUtf(32767));
+        final IToolType type = ToolTypeEntry.getToolType(buffer.readUtf(32767));
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
@@ -189,16 +191,16 @@ public class Tool implements IDeliverable
                                          && stack.getCount() >= 1
                                          && getToolClasses(stack).stream()
                                               .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                                              .map(ToolType::getToolType)
-                                              .anyMatch(t -> t != ToolType.NONE && (stack.getDamageValue() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
+                                              .map(ToolTypeEntry::getToolType)
+                                              .anyMatch(t -> t != ModToolTypes.none.get() && (stack.getDamageValue() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
                                                 t,
                                                 getMinLevel(),
                                                 getMaxLevel()));
 
         if (!toolTypeResult)
         {
-            return (stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD))
-                     || (stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ToolType.FLINT_N_STEEL));
+            return (stack.getItem() instanceof ShieldItem && toolClass.equals(ModToolTypes.shield.get()))
+                     || (stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ModToolTypes.flint_and_steel.get()));
         }
 
         return toolTypeResult;
@@ -213,79 +215,13 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        if (stack.canPerformAction(ToolActions.AXE_DIG))
-        {
-            set.add(ToolType.AXE.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.PICKAXE_DIG))
-        {
-            set.add(ToolType.PICKAXE.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.SHOVEL_DIG))
-        {
-            set.add(ToolType.SHOVEL.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.HOE_DIG))
-        {
-            set.add(ToolType.HOE.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.SWORD_SWEEP))
-        {
-            set.add(ToolType.SWORD.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.SHEARS_DIG))
-        {
-            set.add(ToolType.SHEARS.getName());
-        }
-
-        if (stack.canPerformAction(ToolActions.FISHING_ROD_CAST))
-        {
-            set.add(ToolType.FISHINGROD.getName());
-        }
-
-        if (stack.getItem() instanceof BowItem)
-        {
-            set.add("bow");
-        }
-        else if (stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
-        {
-            set.add("weapon");
-        }
-        else if (stack.getItem() instanceof ShieldItem)
-        {
-            set.add("shield");
-        }
-        else if (stack.getItem() instanceof ArmorItem)
-        {
-            /*
-             * There is no armor class for each type of armor.
-             * So what we need to do is check the equipment Slot of this
-             * armor to send back what type of armor this if for the request
-             * system.
-             */
-            final ArmorItem armor = (ArmorItem) stack.getItem();
-            if (armor.getEquipmentSlot() == EquipmentSlot.CHEST)
-            {
-                set.add("chestplate");
-            }
-            else if (armor.getEquipmentSlot() == EquipmentSlot.FEET)
-            {
-                set.add("boots");
-            }
-            else if (armor.getEquipmentSlot() == EquipmentSlot.HEAD)
-            {
-                set.add("helmet");
-            }
-            else if (armor.getEquipmentSlot() == EquipmentSlot.LEGS)
-            {
-                set.add("leggings");
+        for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
+            ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
+            if (toolType.checkIsTool(stack)) {
+                set.add(toolType.getName());
             }
         }
+
         return set;
     }
 
@@ -296,7 +232,10 @@ public class Tool implements IDeliverable
      */
     public boolean isArmor()
     {
-        return toolClass == ToolType.HELMET || toolClass == ToolType.LEGGINGS || toolClass == ToolType.CHESTPLATE || toolClass == ToolType.BOOTS;
+        return toolClass == ModToolTypes.helmet.get() ||
+                toolClass == ModToolTypes.leggings.get() ||
+                toolClass == ModToolTypes.chestplate.get() ||
+                toolClass == ModToolTypes.boots.get();
     }
 
     @Override

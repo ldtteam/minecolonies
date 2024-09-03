@@ -13,13 +13,12 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -212,7 +211,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      */
     private IAIState harvestMistleToe()
     {
-        if (checkForToolOrWeapon(ToolType.SHEARS))
+        if (checkForToolOrWeapon(ModToolTypes.shears.get()))
         {
             return IDLE;
         }
@@ -251,7 +250,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             final BlockState state = world.getBlockState(walkTo);
 
             final int slot =
-              InventoryUtils.getFirstSlotOfItemHandlerContainingTool(worker.getInventoryCitizen(), ToolType.SHEARS, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
+              InventoryUtils.getFirstSlotOfItemHandlerContainingTool(worker.getInventoryCitizen(), ModToolTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
             worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, slot);
 
             worker.swing(InteractionHand.MAIN_HAND);

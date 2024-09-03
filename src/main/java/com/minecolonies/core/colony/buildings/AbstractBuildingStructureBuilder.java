@@ -4,10 +4,11 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -134,10 +135,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                     }
                 }
             }
-            if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.HOE, stack, localAlreadyKept))
+            if (checkIfShouldKeepTool(ModToolTypes.pickaxe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ModToolTypes.shovel.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ModToolTypes.axe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ModToolTypes.hoe.get(), stack, localAlreadyKept))
             {
                 localAlreadyKept.add(new ItemStorage(stack, 1, true));
                 return 0;
@@ -154,13 +155,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @param localAlreadyKept the already kept stacks.
      * @return true if should keep.
      */
-    private boolean checkIfShouldKeepTool(final ToolType type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    private boolean checkIfShouldKeepTool(final IToolType type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         if (ItemStackUtils.hasToolLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
         {
             for (final ItemStorage storage : localAlreadyKept)
             {
-                if (ItemStackUtils.getMiningLevel(stack, type) <= ItemStackUtils.getMiningLevel(storage.getItemStack(), type))
+                if (type.getMiningLevel(stack) <= type.getMiningLevel(storage.getItemStack()))
                 {
                     return false;
                 }

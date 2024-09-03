@@ -1,7 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -47,8 +48,8 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
-        return ToolType.NONE;
+        return ModToolTypes.none.get();
     }
 }

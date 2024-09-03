@@ -23,9 +23,9 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -66,7 +66,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.scaledPriority;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -862,7 +861,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean retrieveToolInTileEntity(final BlockEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
-        if (ToolType.NONE.equals(toolType))
+        if (ModToolTypes.none.get().equals(toolType))
         {
             return false;
         }
@@ -1032,7 +1031,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    if (ToolType.NONE.equals(toolType))
+                    if (ModToolTypes.none.get().equals(toolType))
                     {
                         return false;
                     }
@@ -1320,7 +1319,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private void updateToolFlag(@NotNull final IToolType toolType, final int required)
     {
-        if (ToolType.PICKAXE.equals(toolType))
+        if (ModToolTypes.pickaxe.get().equals(toolType))
         {
             checkForToolOrWeapon(toolType, required);
         }
@@ -1342,7 +1341,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
-        if (toolType == ToolType.NONE)
+        if (toolType == ModToolTypes.none.get())
         {
             return NO_TOOL;
         }
@@ -1355,7 +1354,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
-            final int level = ItemStackUtils.getMiningLevel(item, toolType);
+            final int level = toolType.getMiningLevel(item);
 
             if (level > -1 && level >= required && level < bestLevel && ItemStackUtils.verifyToolLevel(item, level, required, maxToolLevel))
             {

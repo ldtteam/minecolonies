@@ -9,10 +9,10 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -133,7 +133,7 @@ public class BuildingDyer extends AbstractBuilding
                         {
                             recipes.add(new GenericRecipe(null, result, List.of(),
                                     List.of(List.of(item), dyeItems), 2, Blocks.AIR,
-                                    null, ToolType.NONE, List.of(), 0));
+                                    null, ModToolTypes.none.get(), List.of(), 0));
                         }
                     }
                 }

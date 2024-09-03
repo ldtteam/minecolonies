@@ -1,7 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -38,8 +39,8 @@ public class CactusPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
-        return ToolType.NONE;
+        return ModToolTypes.none.get();
     }
 }

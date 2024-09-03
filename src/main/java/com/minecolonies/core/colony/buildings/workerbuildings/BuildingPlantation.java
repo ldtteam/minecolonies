@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.client.gui.modules.PlantationFieldsModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -71,8 +71,8 @@ public class BuildingPlantation extends AbstractBuilding
     public BuildingPlantation(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHEARS, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ModToolTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ModToolTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     @Override

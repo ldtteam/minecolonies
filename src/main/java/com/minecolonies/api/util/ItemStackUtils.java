@@ -11,8 +11,9 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
@@ -36,9 +37,8 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -274,8 +274,8 @@ public final class ItemStackUtils
             return false;
         }
 
-        final int level = Compatibility.isTinkersWeapon(stack) ? Compatibility.getToolLevel(stack) : getMiningLevel(stack, toolType);
-        return isTool(stack, toolType) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
+        final int level = Compatibility.isTinkersWeapon(stack) ? Compatibility.getToolLevel(stack) : toolType.getMiningLevel(stack);
+        return toolType.checkIsTool(stack) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
     }
 
     /**
@@ -295,68 +295,6 @@ public final class ItemStackUtils
     }
 
     /**
-     * Calculate the mining level an item has as a tool of certain type.
-     *
-     * @param stack    the stack to test.
-     * @param toolType the tool category.
-     * @return integer value for mining level &gt;= 0 is okay.
-     */
-    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
-    {
-        if (toolType == ToolType.NONE)
-        {
-            //empty hand is best on blocks who don't care (0 better 1)
-            return stack == null ? 0 : 1;
-        }
-        if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
-        {
-            return -1;
-        }
-        if (!isTool(stack, toolType))
-        {
-            return -1;
-        }
-
-        if (toolType == ToolType.SWORD && Compatibility.isTinkersWeapon(stack))
-        {
-            return Compatibility.getToolLevel(stack);
-        }
-        else if (Compatibility.isTinkersTool(stack, toolType))
-        {
-            return Compatibility.getToolLevel(stack);
-        }
-
-        if (ToolType.HELMET.equals(toolType)
-                || ToolType.BOOTS.equals(toolType)
-                || ToolType.CHESTPLATE.equals(toolType)
-                || ToolType.LEGGINGS.equals(toolType))
-        {
-            if (stack.getItem() instanceof final ArmorItem armorItem)
-            {
-                return getArmorLevel(armorItem.getMaterial());
-            }
-        }
-        else if (stack.getItem() instanceof final TieredItem tieredItem)  // most tools
-        {
-            return tieredItem.getTier().getLevel();
-        }
-        else if (toolType.equals(ToolType.FISHINGROD))
-        {
-            return getFishingRodLevel(stack);
-        }
-        else if (toolType.equals(ToolType.SHEARS))
-        {
-            return 0;
-        }
-        else if (!toolType.hasVariableMaterials())
-        {
-            //We need a hut level 1 minimum
-            return 1;
-        }
-        return -1;
-    }
-
-    /**
      * Check if the first stack is a better tool than the second stack.
      *
      * @param stack1 the first stack to check.
@@ -365,97 +303,13 @@ public final class ItemStackUtils
      */
     public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
     {
-        for (final ToolType toolType : ToolType.values())
-        {
-            if (isTool(stack1, toolType) && isTool(stack2, toolType) && getMiningLevel(stack1, toolType) > getMiningLevel(stack2, toolType))
+        for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
+            ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
+            if (toolType.checkIsTool(stack1) && toolType.checkIsTool(stack2) && toolType.getMiningLevel(stack1) > toolType.getMiningLevel(stack2))
             {
                 return true;
             }
         }
-        return false;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Tool of type.
-     *
-     * @param itemStack Item to check.
-     * @param toolType  Type of the tool.
-     * @return true if item can be used, otherwise false.
-     */
-    public static boolean isTool(@Nullable final ItemStack itemStack, final IToolType toolType)
-    {
-        if (isEmpty(itemStack))
-        {
-            return false;
-        }
-
-        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ToolActions.AXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.HOE.equals(toolType))
-        {
-            for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
-            {
-                if (!itemStack.canPerformAction(action))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (ToolType.BOW.equals(toolType))
-        {
-            return itemStack.getItem() instanceof BowItem;
-        }
-        if (ToolType.SWORD.equals(toolType))
-        {
-            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
-        }
-        if (ToolType.FISHINGROD.equals(toolType) && itemStack.canPerformAction(ToolActions.FISHING_ROD_CAST))
-        {
-            return true;
-        }
-        if (ToolType.SHEARS.equals(toolType) && itemStack.canPerformAction(ToolActions.SHEARS_DIG) && itemStack.canPerformAction(ToolActions.SHEARS_HARVEST))
-        {
-            return true;
-        }
-        if (ToolType.HELMET.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.LEGGINGS.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.CHESTPLATE.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.BOOTS.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.SHIELD.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ShieldItem;   //canPerformAction(ToolActions.SHIELD_BLOCK) ?
-        }
-        if (ToolType.FLINT_N_STEEL.equals(toolType))
-        {
-            return itemStack.getItem() instanceof FlintAndSteelItem;
-        }
-
         return false;
     }
 
@@ -483,7 +337,7 @@ public final class ItemStackUtils
      * @param material type of material of the armor
      * @return armor level
      */
-    private static int getArmorLevel(final ArmorMaterial material)
+    public static int getArmorLevel(final ArmorMaterial material)
     {
         final float armorLevel = getArmorValue(material);
 

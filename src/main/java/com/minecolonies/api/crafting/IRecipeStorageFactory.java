@@ -3,8 +3,8 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -90,7 +90,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
         final ResourceLocation lootTable = context.length < 9 ? null : (ResourceLocation) context[8];
-        final IToolType requiredTool = context.length < 10 || context[9] == null ? ToolType.NONE : (IToolType) context[9];
+        final IToolType requiredTool = context.length < 10 || context[9] == null ? ModToolTypes.none.get() : (IToolType) context[9];
         return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
     }
 

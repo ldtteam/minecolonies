@@ -24,10 +24,10 @@ public class TinkersToolProxy
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
      * @param stack the stack to check for.
-     * @param toolType the tool type.
+     * @param toolId the tool type ID.
      * @return true if so.
      */
-    public boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType)
+    public boolean isTinkersTool(@Nullable final ItemStack stack, final String toolId)
     {
         return false;
     }

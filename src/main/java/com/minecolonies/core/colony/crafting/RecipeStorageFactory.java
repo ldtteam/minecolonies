@@ -8,9 +8,10 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -218,8 +219,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
 
-        final IToolType requiredTool = nbt.contains(TOOL_TAG) ? ToolType.getToolType(nbt.getString(TOOL_TAG)) : ToolType.NONE;
-
+        final IToolType requiredTool = nbt.contains(TOOL_TAG) ? ToolTypeEntry.getToolType(nbt.getString(TOOL_TAG)) : ModToolTypes.none.get();
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 
@@ -293,7 +293,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(buffer.readItem());
         }
 
-        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+        final IToolType requiredTool = ToolTypeEntry.getToolType(buffer.readUtf());
 
         ResourceLocation lootTable = null;
         if(buffer.readBoolean())

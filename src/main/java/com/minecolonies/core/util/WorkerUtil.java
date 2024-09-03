@@ -8,12 +8,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
@@ -73,7 +73,7 @@ public final class WorkerUtil
     /**
      * List of tools to test blocks against, used for finding right tool.
      */
-    public static List<Tuple<ToolType, ItemStack>> tools;
+    public static List<Tuple<IToolType, ItemStack>> tools;
 
     private WorkerUtil()
     {
@@ -85,15 +85,15 @@ public final class WorkerUtil
      *
      * @return the list of possible tools.
      */
-    public static List<Tuple<ToolType, ItemStack>> getOrInitTestTools()
+    public static List<Tuple<IToolType, ItemStack>> getOrInitTestTools()
     {
         if (tools == null)
         {
             tools = new ArrayList<>();
-            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.NETHERITE_HOE)));
-            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.NETHERITE_SHOVEL)));
-            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.NETHERITE_AXE)));
-            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.NETHERITE_PICKAXE)));
+            tools.add(new Tuple<>(ModToolTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
+            tools.add(new Tuple<>(ModToolTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
+            tools.add(new Tuple<>(ModToolTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
+            tools.add(new Tuple<>(ModToolTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
         }
         return tools;
     }
@@ -181,12 +181,12 @@ public final class WorkerUtil
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
-            return ToolType.SHEARS;
+            return ModToolTypes.shears.get();
         }
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            for (final Tuple<IToolType, ItemStack> tool : getOrInitTestTools())
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
@@ -205,7 +205,7 @@ public final class WorkerUtil
             }
         }
 
-        return ToolType.NONE;
+        return ModToolTypes.none.get();
     }
 
     /**

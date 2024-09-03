@@ -10,10 +10,9 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
@@ -184,7 +183,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     {
         final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
 
-        if (requiredTool != ToolType.NONE)
+        if (requiredTool != ModToolTypes.none.get())
         {
             if (withBackground)
             {
@@ -192,8 +191,8 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             }
 
             slot.addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
-                    .filter(stack -> ItemStackUtils.isTool(stack, requiredTool))
-                    .sorted(Comparator.comparing(stack -> ItemStackUtils.getMiningLevel(stack, requiredTool)))
+                    .filter(requiredTool::checkIsTool)
+                    .sorted(Comparator.comparing(requiredTool::getMiningLevel))
                     .toList());
         }
     }

@@ -8,7 +8,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -66,7 +66,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
             }
 
             recipes.add(new GenericRecipe(recipe.getId(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ToolType.NONE, new ArrayList<>(), -1));
+                    inputs, 3, Blocks.AIR, null, ModToolTypes.none.get(), new ArrayList<>(), -1));
         }
 
         return recipes;

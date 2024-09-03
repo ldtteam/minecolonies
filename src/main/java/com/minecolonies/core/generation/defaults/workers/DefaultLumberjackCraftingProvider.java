@@ -2,7 +2,7 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -41,7 +41,7 @@ public class DefaultLumberjackCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(LUMBERJACK, MODULE_CUSTOM, "strip_bamboo_block")
           .inputs(List.of(new ItemStorage(new ItemStack(Items.BAMBOO_BLOCK))))
           .result(new ItemStack(Items.STRIPPED_BAMBOO_BLOCK))
-          .requiredTool(ToolType.AXE)
+          .requiredTool(ModToolTypes.axe.get())
           .build(consumer);
     }
 }

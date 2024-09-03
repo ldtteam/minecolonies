@@ -10,12 +10,13 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
+import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -230,7 +231,7 @@ public class CustomRecipe
     /**
      * The tool required to craft this recipe
      */
-    private IToolType requiredTool = ToolType.NONE;
+    private IToolType requiredTool = ModToolTypes.none.get();
 
     /**
      * Cache of the recipe storage for performance
@@ -291,7 +292,7 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
         {
-            recipe.requiredTool = ToolType.getToolType(recipeJson.get(RECIPE_TOOL_PROP).getAsString());
+            recipe.requiredTool = ToolTypeEntry.getToolType(recipeJson.get(RECIPE_TOOL_PROP).getAsString());
         }
 
         if (recipeJson.has(RECIPE_SECONDARY_PROP))
@@ -960,7 +961,7 @@ public class CustomRecipe
         {
             lootTable = null;
         }
-        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+        final IToolType requiredTool = ToolTypeEntry.getToolType(buffer.readUtf());
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();

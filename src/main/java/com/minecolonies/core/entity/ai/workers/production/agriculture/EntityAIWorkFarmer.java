@@ -12,12 +12,12 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
@@ -389,7 +389,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final UseOnContext useOnContext = new UseOnContext(world,
           null,
           InteractionHand.MAIN_HAND,
-          getInventory().getStackInSlot(InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())),
+          getInventory().getStackInSlot(InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ModToolTypes.hoe.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())),
           blockHitResult);
         final BlockState toolModifiedState = blockState.getToolModifiedState(useOnContext, ToolActions.HOE_TILL, true);
         if (toolModifiedState == null || !toolModifiedState.is(Blocks.FARMLAND))
@@ -504,7 +504,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private IAIState workAtField()
     {
         final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
-        if (checkForToolOrWeapon(ToolType.HOE) || module.getCurrentField() == null)
+        if (checkForToolOrWeapon(ModToolTypes.hoe.get()) || module.getCurrentField() == null)
         {
             return PREPARING;
         }
@@ -582,7 +582,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean hoeIfAble(BlockPos position, final FarmField farmField)
     {
         position = findHoeableSurface(position, farmField);
-        if (position != null && !checkForToolOrWeapon(ToolType.HOE))
+        if (position != null && !checkForToolOrWeapon(ModToolTypes.hoe.get()))
         {
             if (mineBlock(position.above()))
             {
@@ -923,7 +923,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ModToolTypes.hoe.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 
     /**

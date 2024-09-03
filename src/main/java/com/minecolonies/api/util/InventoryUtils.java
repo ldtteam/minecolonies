@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -1629,8 +1629,8 @@ public class InventoryUtils
     public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
-            ItemStackUtils.getMiningLevel(stack, toolType),
+          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (toolType.checkIsTool(stack) && ItemStackUtils.verifyToolLevel(stack,
+            toolType.getMiningLevel(stack),
             requiredLevel, maximumLevel)))) > -1;
     }
 

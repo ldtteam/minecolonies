@@ -6,10 +6,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
@@ -281,7 +281,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(building.getSetting(AbstractBuilding.USE_SHEARS).getValue() ? ToolType.SHEARS : ToolType.HOE))
+        if (checkForToolOrWeapon(ModToolTypes.axe.get()) || checkForToolOrWeapon(building.getSetting(AbstractBuilding.USE_SHEARS).getValue() ? ModToolTypes.shears.get() : ModToolTypes.hoe.get()))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
@@ -460,7 +460,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState chopWood()
     {
-        if (checkForToolOrWeapon(ToolType.AXE))
+        if (checkForToolOrWeapon(ModToolTypes.axe.get()))
         {
             return IDLE;
         }

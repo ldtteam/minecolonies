@@ -14,9 +14,9 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.modules.ExpeditionLogModule;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
@@ -263,11 +263,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
-        boolean missingAxe = checkForToolOrWeapon(ToolType.AXE);
-        boolean missingPick = checkForToolOrWeapon(ToolType.PICKAXE);
-        boolean missingShovel = checkForToolOrWeapon(ToolType.SHOVEL);
-        boolean missingSword = checkForToolOrWeapon(ToolType.SWORD);
-        boolean missingLighter = checkForToolOrWeapon(ToolType.FLINT_N_STEEL);
+        boolean missingAxe = checkForToolOrWeapon(ModToolTypes.axe.get());
+        boolean missingPick = checkForToolOrWeapon(ModToolTypes.pickaxe.get());
+        boolean missingShovel = checkForToolOrWeapon(ModToolTypes.shovel.get());
+        boolean missingSword = checkForToolOrWeapon(ModToolTypes.sword.get());
+        boolean missingLighter = checkForToolOrWeapon(ModToolTypes.flint_and_steel.get());
         if (missingAxe || missingPick || missingShovel || missingSword || missingLighter)
         {
             worker.getCitizenData().setIdleAtJob(true);
@@ -438,7 +438,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if (tag.contains(TAG_DAMAGE))
                     {
                         equipArmor(true);
-                        worker.setItemSlot(EquipmentSlot.MAINHAND, findTool(ToolType.SWORD));
+                        worker.setItemSlot(EquipmentSlot.MAINHAND, findTool(ModToolTypes.sword.get()));
 
                         DamageSource source = world.damageSources().source(DamageSourceKeys.NETHER);
 
@@ -483,7 +483,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 {
                                     sword.hurtAndBreak(1, worker, entity -> {
                                         // the sword broke; try to find another sword
-                                        worker.setItemSlot(EquipmentSlot.MAINHAND, findTool(ToolType.SWORD));
+                                        worker.setItemSlot(EquipmentSlot.MAINHAND, findTool(ModToolTypes.sword.get()));
                                     });
                                 }
                             }
@@ -762,7 +762,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private void useFlintAndSteel()
     {
-        final ItemStack tool = findTool(ToolType.FLINT_N_STEEL);
+        final ItemStack tool = findTool(ModToolTypes.flint_and_steel.get());
         tool.hurtAndBreak(1, worker, entity -> {});
     }
 
@@ -839,16 +839,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
 
         final List<ItemStack> equipment = new ArrayList<>();
-        equipment.add(findTool(ToolType.SWORD));
+        equipment.add(findTool(ModToolTypes.sword.get()));
 
         equipment.add(worker.getInventoryCitizen().getArmorInSlot(EquipmentSlot.HEAD));
         equipment.add(worker.getInventoryCitizen().getArmorInSlot(EquipmentSlot.CHEST));
         equipment.add(worker.getInventoryCitizen().getArmorInSlot(EquipmentSlot.LEGS));
         equipment.add(worker.getInventoryCitizen().getArmorInSlot(EquipmentSlot.FEET));
 
-        equipment.add(findTool(ToolType.PICKAXE));
-        equipment.add(findTool(ToolType.AXE));
-        equipment.add(findTool(ToolType.SHOVEL));
+        equipment.add(findTool(ModToolTypes.pickaxe.get()));
+        equipment.add(findTool(ModToolTypes.axe.get()));
+        equipment.add(findTool(ModToolTypes.shovel.get()));
         equipment.add(findItem(edible::matches));
         expeditionLog.setEquipment(equipment);
 
@@ -904,7 +904,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
                 if (virtualEquipmentSlots.containsKey(item.getType()) && !ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                 {
-                    bestLevel = ItemStackUtils.getMiningLevel(virtualEquipmentSlots.get(item.getType()), item.getItemNeeded());
+                    bestLevel = item.getItemNeeded().getMiningLevel(virtualEquipmentSlots.get(item.getType()));
                 }
                 else
                 {
@@ -914,7 +914,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         if (!virtualEquipmentSlots.containsKey(item.getType()) || ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                         {
                             virtualEquipmentSlots.put(item.getType(), invItem);
-                            bestLevel = ItemStackUtils.getMiningLevel(invItem, item.getItemNeeded());
+                            bestLevel = item.getItemNeeded().getMiningLevel(invItem);
                         }
                     }
                     else
@@ -946,7 +946,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 continue;
                             }
 
-                            int currentLevel = ItemStackUtils.getMiningLevel(stack, item.getItemNeeded());
+                            int currentLevel = item.getItemNeeded().getMiningLevel(stack);
 
                             if (currentLevel > bestLevel)
                             {

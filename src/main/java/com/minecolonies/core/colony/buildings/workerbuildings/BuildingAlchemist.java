@@ -6,8 +6,8 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
@@ -66,9 +66,9 @@ public class BuildingAlchemist extends AbstractBuilding
     public BuildingAlchemist(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHEARS, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ModToolTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack ->  itemStack.getItem() == Items.NETHER_WART, new Tuple<>(16, false));
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ModToolTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     @NotNull
@@ -266,14 +266,14 @@ public class BuildingAlchemist extends AbstractBuilding
                     Collections.emptyList(),
                     Collections.emptyList(),
                     1, Blocks.OAK_LEAVES,
-                    null, ToolType.SHEARS, Collections.emptyList(), -1));
+                    null, ModToolTypes.shears.get(), Collections.emptyList(), -1));
 
             // growing netherwart
             recipes.add(new GenericRecipe(null, new ItemStack(Items.NETHER_WART, 4),
                     Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.NETHER_WART))),
                     1, Blocks.SOUL_SAND,
-                    null, ToolType.NONE, Collections.emptyList(), -1));
+                    null, ModToolTypes.none.get(), Collections.emptyList(), -1));
 
             return recipes;
         }

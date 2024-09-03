@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -26,7 +26,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
-        toolsNeeded.add(ToolType.BOW);
+        toolsNeeded.add(ModToolTypes.bow.get());
         new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 

@@ -76,6 +76,7 @@ public class MineColonies
         TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchants.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModToolTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBuildingsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModFieldsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModGuardTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());

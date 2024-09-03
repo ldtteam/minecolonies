@@ -7,9 +7,9 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -159,7 +159,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         setDelay(DECIDING_DELAY);
         if (!building.getHarvestTypes().equals(BuildingBeekeeper.HONEY))
         {
-            if (checkForToolOrWeapon(ToolType.SHEARS))
+            if (checkForToolOrWeapon(ModToolTypes.shears.get()))
             {
                 return getState();
             }
@@ -330,7 +330,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         }
         if (building.getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB) || (building.getHarvestTypes().equals(BuildingBeekeeper.BOTH) && lastHarvestedBottle))
         {
-            if (!equipTool(InteractionHand.MAIN_HAND, ToolType.SHEARS))
+            if (!equipTool(InteractionHand.MAIN_HAND, ModToolTypes.shears.get()))
             {
                 return PREPARING;
             }
@@ -355,7 +355,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         worker.swing(InteractionHand.MAIN_HAND);
         final ItemStack itemStack = worker.getMainHandItem();
-        if (!building.getHarvestTypes().equals(BuildingBeekeeper.HONEY) && ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
+        if (!building.getHarvestTypes().equals(BuildingBeekeeper.HONEY) && ModToolTypes.shears.get().checkIsTool(itemStack))
         {
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
 
@@ -484,11 +484,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     /**
      * Sets the tool as held item.
      *
-     * @param toolType the {@link ToolType} we want to equip
+     * @param toolType the {@link IToolType} we want to equip
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final InteractionHand hand, final ToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final IToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -504,7 +504,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param toolType this herders tool type.
      * @return slot number.
      */
-    private int getToolSlot(final ToolType toolType)
+    private int getToolSlot(final IToolType toolType)
     {
         final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
           TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());

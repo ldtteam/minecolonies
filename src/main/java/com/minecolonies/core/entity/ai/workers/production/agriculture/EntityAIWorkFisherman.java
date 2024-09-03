@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobFindWater;
@@ -13,7 +14,6 @@ import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
@@ -196,7 +196,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private IAIState prepareForFishing()
     {
-        if (checkForToolOrWeapon(ToolType.FISHINGROD))
+        if (checkForToolOrWeapon(ModToolTypes.fishing_rod.get()))
         {
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
             playNeedRodSound();
@@ -257,9 +257,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())
+        return InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), ModToolTypes.fishing_rod.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel())
                  && worker.getMainHandItem() != null
-                 && !ItemStackUtils.isTool(worker.getMainHandItem(), ToolType.FISHINGROD);
+                 && !ModToolTypes.fishing_rod.get().checkIsTool(worker.getMainHandItem());
     }
 
     /**
@@ -617,7 +617,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.FISHINGROD,
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ModToolTypes.fishing_rod.get(),
           TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 

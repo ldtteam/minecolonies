@@ -3,7 +3,7 @@ package com.minecolonies.core.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -90,7 +90,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(MECHANIC, MODULE_CRAFTING, "deoxidize_" + ForgeRegistries.ITEMS.getKey(input).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))
-                .requiredTool(ToolType.AXE)
+                .requiredTool(ModToolTypes.axe.get())
                 .build(consumer);
     }
 }

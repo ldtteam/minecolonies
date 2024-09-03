@@ -8,11 +8,11 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
@@ -163,7 +163,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (buildingGraveyard == null || checkForToolOrWeapon(ModToolTypes.shovel.get()) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
@@ -220,7 +220,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (checkForToolOrWeapon(ModToolTypes.shovel.get()) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
@@ -269,7 +269,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private boolean digIfAble(final BlockPos position, final BlockEntity entity)
     {
-        if (!checkForToolOrWeapon(ToolType.SHOVEL))
+        if (!checkForToolOrWeapon(ModToolTypes.shovel.get()))
         {
             equipShovel();
             final GraveData graveData = (GraveData) ((TileEntityGrave) entity).getGraveData();
@@ -294,7 +294,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL)
+        if (checkForToolOrWeapon(ModToolTypes.shovel.get())
               || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
@@ -424,7 +424,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         @Nullable final BuildingGraveyard buildingGraveyard = building;
         final GraveyardManagementModule module = buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class);
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL) || module.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ModToolTypes.shovel.get()) || module.getLastGraveData() == null)
         {
             return IDLE;
         }
@@ -508,7 +508,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private int getShovelSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ModToolTypes.shovel.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 
     /**

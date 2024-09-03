@@ -2,10 +2,10 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,7 +56,7 @@ public class GenericRecipe implements IGenericRecipe
             intermediate = Blocks.AIR;
         }
         return new GenericRecipe(recipe.getId(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
-                size, intermediate, null, ToolType.NONE, new ArrayList<>(), -1);
+                size, intermediate, null, ModToolTypes.none.get(), new ArrayList<>(), -1);
     }
 
     @Nullable
