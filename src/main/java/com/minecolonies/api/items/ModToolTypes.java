@@ -67,6 +67,7 @@ public class ModToolTypes {
                 .setName("")
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_NONE))
+                .setIsTool(itemStack -> true)
                 .setToolLevel(itemStack -> itemStack == null ? 0 : 1)
                 .build());
 
