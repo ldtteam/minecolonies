@@ -34,17 +34,16 @@ public final class ToolsAnalyzer
 
         for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
         {
-            for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
-                ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
-                if (toolType == ModToolTypes.none.get() || !toolType.checkIsTool(stack)) { continue; }
+            for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
+                if (toolType.get() == ModToolTypes.none.get() || !toolType.get().checkIsTool(stack)) { continue; }
 
-                tryAddingToolWithLevel(toolItems, toolType, stack);
+                tryAddingToolWithLevel(toolItems, toolType.get(), stack);
 
                 if (stack.isEnchantable())
                 {
                     for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel)
                     {
-                        tryAddingEnchantedTool(toolItems, toolType, stack, enchantLevel);
+                        tryAddingEnchantedTool(toolItems, toolType.get(), stack, enchantLevel);
                     }
                 }
             }

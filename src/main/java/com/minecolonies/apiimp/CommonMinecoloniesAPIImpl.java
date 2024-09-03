@@ -23,6 +23,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
@@ -55,6 +56,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final  ICitizenDataManager                                     citizenDataManager     = new CitizenDataManager();
     private final  IMobAIRegistry                                          mobAIRegistry          = new MobAIRegistry();
     private final  IPathNavigateRegistry                                   pathNavigateRegistry   = new PathNavigateRegistry();
+    private        IForgeRegistry<ToolTypeEntry>                           toolTypeRegistry;
     private        IForgeRegistry<BuildingEntry>                           buildingRegistry;
     private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
     private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
@@ -203,6 +205,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
+        event.create(new RegistryBuilder<ToolTypeEntry>()
+                        .setName(new ResourceLocation(Constants.MOD_ID, "tooltypes"))
+                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                        .disableSaving()
+                        .allowModification()
+                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> toolTypeRegistry = b);
+
         event.create(new RegistryBuilder<BuildingEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))

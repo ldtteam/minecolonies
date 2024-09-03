@@ -215,10 +215,9 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
-            ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
-            if (toolType.checkIsTool(stack)) {
-                set.add(toolType.getName());
+        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
+            if (toolType.get().checkIsTool(stack)) {
+                set.add(toolType.get().getName());
             }
         }
 

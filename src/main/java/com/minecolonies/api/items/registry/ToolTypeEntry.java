@@ -80,10 +80,9 @@ public class ToolTypeEntry implements IToolType {
 
     public static IToolType getToolType(final String tool)
     {
-        for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
-            ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
-            if (toolType.getName().equals(tool)) {
-                return toolType;
+        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
+            if (toolType.get().getName().equals(tool)) {
+                return toolType.get();
             }
         }
 

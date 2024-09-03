@@ -304,9 +304,8 @@ public final class ItemStackUtils
      */
     public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
     {
-        for (ResourceLocation resourceLocation : ModToolTypes.toolTypes) {
-            ToolTypeEntry toolType = ModToolTypes.getToolType(resourceLocation);
-            if (toolType.checkIsTool(stack1) && toolType.checkIsTool(stack2) && toolType.getMiningLevel(stack1) > toolType.getMiningLevel(stack2))
+        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
+            if (toolType.get().checkIsTool(stack1) && toolType.get().checkIsTool(stack2) && toolType.get().getMiningLevel(stack1) > toolType.get().getMiningLevel(stack2))
             {
                 return true;
             }
