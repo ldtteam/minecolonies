@@ -38,108 +38,39 @@ public class ModToolTypesInitializer {
                 .setName(ModToolTypes.PICKAXE_ID)
                 .setVariableMaterials(true)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
-                .setIsTool(itemStack -> itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.PICKAXE_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return -1;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, ModToolTypes.PICKAXE_ID))
+                .setToolLevel(itemStack -> ItemStackUtils.vanillaToolLevel(ModToolTypes.PICKAXE_ID, itemStack))
                 .build());
 
         ModToolTypes.shovel = register(ModToolTypes.SHOVEL_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.SHOVEL_ID)
                 .setVariableMaterials(true)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL))
-                .setIsTool(itemStack -> itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.SHOVEL_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return -1;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, ModToolTypes.SHOVEL_ID))
+                .setToolLevel(itemStack -> ItemStackUtils.vanillaToolLevel(ModToolTypes.SHOVEL_ID, itemStack))
                 .build());
 
         ModToolTypes.axe = register(ModToolTypes.AXE_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.AXE_ID)
                 .setVariableMaterials(true)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE))
-                .setIsTool(itemStack -> itemStack.canPerformAction(ToolActions.AXE_DIG))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.AXE_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return -1;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, ModToolTypes.AXE_ID))
+                .setToolLevel(itemStack -> ItemStackUtils.vanillaToolLevel(ModToolTypes.AXE_ID, itemStack))
                 .build());
 
         ModToolTypes.hoe = register(ModToolTypes.HOE_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.HOE_ID)
                 .setVariableMaterials(true)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE))
-                .setIsTool(itemStack -> {
-                    for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
-                    {
-                        if (!itemStack.canPerformAction(action))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                })
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.HOE_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return -1;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, ModToolTypes.HOE_ID))
+                .setToolLevel(itemStack -> ItemStackUtils.vanillaToolLevel(ModToolTypes.HOE_ID, itemStack))
                 .build());
 
         ModToolTypes.sword = register(ModToolTypes.SWORD_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.SWORD_ID)
                 .setVariableMaterials(true)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                .setIsTool(itemStack ->  itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack))
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS)  || Compatibility.isTinkersWeapon(itemStack))
                 .setToolLevel(itemStack -> {
                     final String toolId = ModToolTypes.SWORD_ID;
                     if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
@@ -163,86 +94,31 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOW))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof BowItem)
-                .setToolLevel(itemStack -> {
-                    if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(itemStack -> 1)
                 .build());
 
         ModToolTypes.fishing_rod = register(ModToolTypes.FISHING_ROD_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.FISHING_ROD_ID)
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_FISHING_ROD))
-                .setIsTool(itemStack -> itemStack.canPerformAction(ToolActions.FISHING_ROD_CAST))
-                .setToolLevel(itemStack -> {
-                    if (itemStack.getItem() == Items.FISHING_ROD)
-                    {
-                        return 1;
-                    }
-                    if (!itemStack.isDamageableItem())
-                    {
-                        return 5;
-                    }
-                    final int rodDurability = itemStack.getMaxDamage();
-                    if (rodDurability <= (Tiers.WOOD.getUses() + 22))
-                    {
-                        return 1;
-                    }
-                    else if (rodDurability <= (Tiers.IRON.getUses() + 6))
-                    {
-                        return 2;
-                    }
-                    return 3;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_FISHING_ROD_ACTIONS))
+                .setToolLevel(itemStack -> ItemStackUtils.durabilityBasedLevel(itemStack, Items.FISHING_ROD.getMaxDamage()))
                 .build());
 
         ModToolTypes.shears = register(ModToolTypes.SHEARS_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.SHEARS_ID)
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHEARS))
-                .setIsTool(itemStack ->  itemStack.canPerformAction(ToolActions.SHEARS_DIG) && itemStack.canPerformAction(ToolActions.SHEARS_HARVEST))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.SHEARS_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 0;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHEARS_ACTIONS))
+                .setToolLevel(itemStack -> ItemStackUtils.durabilityBasedLevel(itemStack, Items.SHEARS.getMaxDamage()))
                 .build());
 
         ModToolTypes.shield = register(ModToolTypes.SHIELD_ID, () -> new ToolTypeEntry.Builder()
                 .setName(ModToolTypes.SHIELD_ID)
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHIELD))
-                .setIsTool(itemStack -> itemStack.getItem() instanceof ShieldItem)
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.SHIELD_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setIsTool(itemStack -> ItemStackUtils.canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHIELD_ACTIONS))
+                .setToolLevel(itemStack -> ItemStackUtils.durabilityBasedLevel(itemStack, Items.SHIELD.getMaxDamage()))
                 .build());
 
         ModToolTypes.helmet = register(ModToolTypes.HELMET_ID, () -> new ToolTypeEntry.Builder()
@@ -250,22 +126,7 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.HELMET_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (itemStack.getItem() instanceof final ArmorItem armorItem)
-                    {
-                        return ItemStackUtils.getArmorLevel(armorItem.getMaterial());
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(ItemStackUtils::armorLevel)
                 .build());
 
         ModToolTypes.leggings = register(ModToolTypes.LEGGINGS_ID, () -> new ToolTypeEntry.Builder()
@@ -273,22 +134,7 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.LEGGINGS_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (itemStack.getItem() instanceof final ArmorItem armorItem)
-                    {
-                        return ItemStackUtils.getArmorLevel(armorItem.getMaterial());
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(ItemStackUtils::armorLevel)
                 .build());
 
         ModToolTypes.chestplate = register(ModToolTypes.CHESTPLATE_ID, () -> new ToolTypeEntry.Builder()
@@ -296,22 +142,7 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.CHESTPLATE_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (itemStack.getItem() instanceof final ArmorItem armorItem)
-                    {
-                        return ItemStackUtils.getArmorLevel(armorItem.getMaterial());
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(ItemStackUtils::armorLevel)
                 .build());
 
         ModToolTypes.boots = register(ModToolTypes.BOOTS_ID, () -> new ToolTypeEntry.Builder()
@@ -319,22 +150,7 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.BOOTS_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (itemStack.getItem() instanceof final ArmorItem armorItem)
-                    {
-                        return ItemStackUtils.getArmorLevel(armorItem.getMaterial());
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(ItemStackUtils::armorLevel)
                 .build());
 
         ModToolTypes.flint_and_steel = register(ModToolTypes.FLINT_AND_STEEL_ID, () -> new ToolTypeEntry.Builder()
@@ -342,22 +158,7 @@ public class ModToolTypesInitializer {
                 .setVariableMaterials(false)
                 .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LIGHTER))
                 .setIsTool(itemStack -> itemStack.getItem() instanceof FlintAndSteelItem)
-                .setToolLevel(itemStack -> {
-                    final String toolId = ModToolTypes.FLINT_AND_STEEL_ID;
-                    if (!Compatibility.getMiningLevelCompatibility(itemStack, toolId))
-                    {
-                        return -1;
-                    }
-                    else if (Compatibility.isTinkersTool(itemStack, toolId))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return 1;
-                })
+                .setToolLevel(itemStack -> ItemStackUtils.durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
                 .build());
     }
 

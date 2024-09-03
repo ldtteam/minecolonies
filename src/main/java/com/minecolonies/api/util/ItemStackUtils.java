@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
@@ -1005,6 +1006,64 @@ public final class ItemStackUtils
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
         }
         citizenData.markDirty(60);
+    }
+
+    /**
+     * Get the tool level for vanilla tools.
+     *
+     * @param toolId The type of vanilla tool
+     * @param itemStack The item stack to check
+     * @return The tool level
+     */
+    public static int vanillaToolLevel(final String toolId, ItemStack itemStack) {
+        if (Compatibility.isTinkersTool(itemStack, toolId))
+        {
+            return Compatibility.getToolLevel(itemStack);
+        }
+        else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
+        {
+            return tieredItem.getTier().getLevel();
+        }
+        return -1;
+    }
+
+    /**
+     * Get the armor level.
+     *
+     * @param itemStack The item stack to check
+     * @return The armor level
+     */
+    public static int armorLevel(ItemStack itemStack) {
+        if (itemStack.getItem() instanceof final ArmorItem armorItem)
+        {
+            return ItemStackUtils.getArmorLevel(armorItem.getMaterial());
+        }
+        return -1;
+    }
+
+    /**
+     * Get the durability based item level.
+     *
+     * @param itemStack The item stack to check
+     * @return The item level
+     */
+    public static int durabilityBasedLevel(ItemStack itemStack, int vanillaItemDurability) {
+        if (!itemStack.isDamageableItem())
+        {
+            return 5;
+        }
+
+        return Math.min(itemStack.getMaxDamage() / vanillaItemDurability, 5);
+    }
+
+
+    public static Boolean canPerformDefaultActions(ItemStack itemStack, Set<ToolAction> actions) {
+        for (final ToolAction toolAction : actions) {
+            if (!itemStack.canPerformAction(toolAction)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
