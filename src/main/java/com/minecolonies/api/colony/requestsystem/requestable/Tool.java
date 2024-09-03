@@ -186,8 +186,7 @@ public class Tool implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        //API:Map the given strings a proper way.
-        final boolean toolTypeResult = !ItemStackUtils.isEmpty(stack)
+        return !ItemStackUtils.isEmpty(stack)
                                          && stack.getCount() >= 1
                                          && getToolClasses(stack).stream()
                                               .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
@@ -197,13 +196,6 @@ public class Tool implements IDeliverable
                                                 getMinLevel(),
                                                 getMaxLevel()));
 
-        if (!toolTypeResult)
-        {
-            return (stack.getItem() instanceof ShieldItem && toolClass.equals(ModToolTypes.shield.get()))
-                     || (stack.getItem() instanceof FlintAndSteelItem && toolClass.equals(ModToolTypes.flint_and_steel.get()));
-        }
-
-        return toolTypeResult;
     }
 
     private Set<String> getToolClasses(final ItemStack stack)

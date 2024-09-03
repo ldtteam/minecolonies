@@ -5,6 +5,10 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;
 
+/**
+ * An interface that defines a tool type that can
+ * be used within the Colony.
+ */
 public interface IToolType
 {
     /**
@@ -13,15 +17,6 @@ public interface IToolType
      * @return The name of the tool type.
      */
     String getName();
-
-    /**
-     * Whether or not the tool use material.
-     * <p>
-     * such as wood, gold, stone, iron or diamond
-     *
-     * @return true if using material
-     */
-    boolean hasVariableMaterials();
 
     /**
      * Text displayed to the user.
@@ -46,6 +41,10 @@ public interface IToolType
      */
     int getMiningLevel(ItemStack itemStack);
 
+    /**
+     * The comparator used to compare two IToolTypes. The names
+     * are used for the comparison.
+     */
     class IToolTypeComparator implements Comparator<IToolType> {
         public int compare(IToolType o1, IToolType o2) {
             return o1.getName().compareTo(o2.getName());

@@ -195,7 +195,7 @@ public class WindowListRecipes extends AbstractModuleWindow
 
                 final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
                 intermediate.setVisible(false);
-                if(recipe.getRequiredTool() != ModToolTypes.none.get())
+                if (recipe.getRequiredTool() != ModToolTypes.none.get())
                 {
                     intermediate.setText(recipe.getRequiredTool().getDisplayName());
                     intermediate.setVisible(true);
