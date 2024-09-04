@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.Log;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.network.FriendlyByteBuf;
@@ -55,7 +56,14 @@ public class ColonyDeleteOwnMessage implements IMessage
 
             if (isLogicalServer)
             {
-                MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+                try
+                {
+                    MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during ColonyDeletedEvent", e);
+                }
             }
         }
         else
