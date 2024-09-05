@@ -15,6 +15,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
@@ -124,6 +125,12 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     public String getType()
     {
         return ModInteractionResponseHandlers.EXPEDITION.getPath();
+    }
+
+    @Override
+    public ResourceLocation getInteractionIcon()
+    {
+        return new ResourceLocation(Constants.MOD_ID, EXPEDITION_INTERACTION_ICON);
     }
 
     @Override
