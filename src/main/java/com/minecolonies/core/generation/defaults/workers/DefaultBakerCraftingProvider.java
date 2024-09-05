@@ -182,7 +182,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(new ItemStack(Items.HONEY_BOTTLE))))
                 .result(new ItemStack(ModItems.lembas_scone))
                 .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_GLASS_BOTTLE)
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "manchet_dough")
@@ -191,7 +191,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
                         new ItemStorage(new ItemStack(ModItems.butter))))
                 .result(new ItemStack(ModItems.manchet_dough, 2))
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "muffin_dough")
@@ -202,7 +202,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(new ItemStack(Items.SUGAR)),
                         new ItemStorage(new ItemStack(Items.SWEET_BERRIES))))
                 .result(new ItemStack(ModItems.muffin_dough, 2))
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "flatbread")
@@ -212,20 +212,20 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
                 .result(new ItemStack(ModItems.flatbread, 1))
                 .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "muffin")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.muffin_dough))))
                 .result(new ItemStack(ModItems.muffin))
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);
 
         CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "manchet")
                 .inputs(List.of(new ItemStorage(new ItemStack(ModItems.manchet_dough))))
                 .result(new ItemStack(ModItems.manchet_bread))
-                .minBuildingLevel(1)
+                .showTooltip(true)
                 .intermediate(Blocks.FURNACE)
                 .build(consumer);
 
