@@ -51,7 +51,6 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
     private static final String LIST_FINISHED_EXPEDITIONS                 = "finished_expeditions";
     private static final String LABEL_EXPEDITION_NAME                     = "expedition_name";
     private static final String IMAGE_EXPEDITION_DIFFICULTY               = "expedition_difficulty";
-    private static final String LABEL_EXPEDITION_DIFFICULTY_LEVEL         = "expedition_difficulty_level";
     private static final String LABEL_EXPEDITION_STATUS                   = "expedition_status";
     private static final String BUTTON_EXPEDITION_OPEN                    = "expedition_open";
     private static final String LABEL_EMPTY                               = "empty_text";
@@ -139,13 +138,11 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                 final ColonyExpeditionTypeDifficulty difficulty = expeditionType.difficulty();
                 pane.findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, Image.class)
                   .setImage(new ResourceLocation("textures/item/" + difficulty.getIcon().toString() + ".png"), true);
-                pane.findPaneOfTypeByID(LABEL_EXPEDITION_DIFFICULTY_LEVEL, Text.class)
-                  .setText(Component.literal(String.valueOf(expeditionType.difficulty().getLevel())));
 
                 PaneBuilders.tooltipBuilder()
                   .append(Component.translatable(EXPEDITIONARY_DIFFICULTY, Component.translatable(EXPEDITIONARY_DIFFICULTY_PREFIX + difficulty.getKey()))
                             .withStyle(difficulty.getStyle()))
-                  .hoverPane(findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, Image.class))
+                  .hoverPane(findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, ItemIcon.class))
                   .build();
 
                 final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(expedition.getId());

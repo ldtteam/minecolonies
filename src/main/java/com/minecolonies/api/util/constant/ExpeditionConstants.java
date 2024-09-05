@@ -11,6 +11,8 @@ public class ExpeditionConstants
     public static final String EXPEDITION_SHEET_INVENTORY = "com.minecolonies.core.expedition_sheet.inventory";
 
     @NonNls
+    public static final String EXPEDITION_INTERACTION_VALIDATOR_ID                     = "com.minecolonies.core.expedition_interaction_validator_id";
+    @NonNls
     public static final String EXPEDITION_INTERACTION_INQUIRY_ACCEPT                   = "com.minecolonies.core.expedition.interaction.inquiry.accept";
     @NonNls
     public static final String EXPEDITION_INTERACTION_INQUIRY_PREPARE                  = "com.minecolonies.core.expedition.interaction.inquiry.prepare";

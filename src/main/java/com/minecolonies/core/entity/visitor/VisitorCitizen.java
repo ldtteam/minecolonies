@@ -190,7 +190,7 @@ public class VisitorCitizen extends AbstractEntityVisitor
             if (damageSource.getEntity() instanceof LivingEntity livingEntity && damage > 1.01F)
             {
                 final IBuilding home = getCitizenData().getHomeBuilding();
-                if (home.hasModule(BuildingModules.TAVERN_VISITOR))
+                if (home != null && home.hasModule(BuildingModules.TAVERN_VISITOR))
                 {
                     final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())

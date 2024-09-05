@@ -54,6 +54,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DEFAULT_DESPAWN_TIME;
+import static com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.EXTRA_DATA_DESPAWN_TIME;
 import static com.minecolonies.core.generation.ExpeditionResourceManager.getStructureId;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.RUINED_PORTAL_ID;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.STRONGHOLD_ID;
@@ -523,6 +525,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         {
             InventoryUtils.clearItemHandler(leaderData.getInventory());
             InventoryUtils.transferAllItemHandler(inventory, leaderData.getInventory());
+            leaderData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
         }
     }
 

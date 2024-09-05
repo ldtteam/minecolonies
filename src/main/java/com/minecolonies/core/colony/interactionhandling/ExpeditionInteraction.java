@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandl
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedition;
-import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.items.AbstractItemExpeditionSheet.ExpeditionSheetInfo;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -82,8 +81,9 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         super(Component.empty(),
           true,
           ChatPriority.IMPORTANT,
-          data -> data instanceof IVisitorData visitorData && visitorData.getVisitorType().equals(ModVisitorTypes.expeditionary.get()),
-          null);
+          null,
+          Component.translatable(EXPEDITION_INTERACTION_VALIDATOR_ID));
+        this.loadValidator();
     }
 
     /**
