@@ -75,8 +75,8 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new DynamicHappinessSupplier(IDLEATJOB_FUNCTION),
           new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
-        addModifier(new ExpirationBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), 3, true));
-        addModifier(new ExpirationBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), 7, true));
+        addModifier(new TimeBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), (modifier, d) -> true, new Tuple<>(0, 2d), new Tuple<>(2, 1.6d), new Tuple<>(3, 1d)));
+        addModifier(new TimeBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), (modifier, d) -> true, new Tuple<>(0, 2d), new Tuple<>(4, 1.6d), new Tuple<>(7, 1d)));
     }
 
     /**
@@ -156,7 +156,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void read(final CompoundTag compound)
+    public void read(final CompoundTag compound, final boolean persist)
     {
         // Only deserialize for new version. Old can keep the above defaults just fine.
         if (compound.contains(TAG_NEW_HAPPINESS))
@@ -168,11 +168,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 final String id = compoundTag.getString(TAG_ID);
                 if (happinessFactors.containsKey(id))
                 {
-                    happinessFactors.get(id).read(compoundTag);
+                    happinessFactors.get(id).read(compoundTag, persist);
                 }
                 else if (VALID_HAPPINESS_MODIFIERS.contains(id))
                 {
-                    final IHappinessModifier modifier = HappinessRegistry.loadFrom(compoundTag);
+                    final IHappinessModifier modifier = HappinessRegistry.loadFrom(compoundTag, persist);
                     if (modifier != null)
                     {
                         happinessFactors.put(modifier.getId(), modifier);
@@ -183,13 +183,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void write(final CompoundTag compound)
+    public void write(final CompoundTag compound, final boolean persist)
     {
         final ListTag listTag = new ListTag();
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             final CompoundTag compoundNbt = new CompoundTag();
-            happinessModifier.write(compoundNbt);
+            happinessModifier.write(compoundNbt, persist);
             listTag.add(compoundNbt);
         }
 

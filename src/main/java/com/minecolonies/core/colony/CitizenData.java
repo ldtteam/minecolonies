@@ -997,7 +997,7 @@ public class CitizenData implements ICitizenData
         }
 
         final CompoundTag happinessCompound = new CompoundTag();
-        citizenHappinessHandler.write(happinessCompound);
+        citizenHappinessHandler.write(happinessCompound, false);
         buf.writeNbt(happinessCompound);
 
         buf.writeInt(status != null ? status.getId() : -1);
@@ -1234,7 +1234,7 @@ public class CitizenData implements ICitizenData
             nbtTagCompound.put("job", jobCompound);
         }
 
-        citizenHappinessHandler.write(nbtTagCompound);
+        citizenHappinessHandler.write(nbtTagCompound, true);
         citizenMournHandler.write(nbtTagCompound);
 
         inventory.write(nbtTagCompound);
@@ -1399,7 +1399,7 @@ public class CitizenData implements ICitizenData
             }
         }
 
-        this.citizenHappinessHandler.read(nbtTagCompound);
+        this.citizenHappinessHandler.read(nbtTagCompound, true);
         this.citizenMournHandler.read(nbtTagCompound);
 
         if (nbtTagCompound.contains(TAG_LEVEL_MAP) && !nbtTagCompound.contains(TAG_NEW_SKILLS))
