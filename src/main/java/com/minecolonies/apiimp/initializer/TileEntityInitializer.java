@@ -21,31 +21,19 @@ public class TileEntityInitializer
 
     static
     {
-        MinecoloniesTileEntities.SCARECROW = simple("scarecrow", TileEntityScarecrow::new, ModBlocks.blockScarecrow);
-
+        MinecoloniesTileEntities.SCARECROW        = simple("scarecrow", TileEntityScarecrow::new, ModBlocks.blockScarecrow);
         MinecoloniesTileEntities.PLANTATION_FIELD = simple("plantationfield", TileEntityPlantationField::new, ModBlocks.blockPlantationField);
-
-        MinecoloniesTileEntities.BARREL = simple("barrel", TileEntityBarrel::new, ModBlocks.blockBarrel);
-
-        MinecoloniesTileEntities.BUILDING = list("colonybuilding", TileEntityColonyBuilding::new, ModBlocks.getHuts());
-
-        MinecoloniesTileEntities.DECO_CONTROLLER = simple("decorationcontroller", TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder);
-
-        MinecoloniesTileEntities.RACK = simple("rack", TileEntityRack::new, ModBlocks.blockRack);
-
-        MinecoloniesTileEntities.GRAVE = simple("grave", TileEntityGrave::new, ModBlocks.blockGrave);
-
-        MinecoloniesTileEntities.NAMED_GRAVE = simple("namedgrave", TileEntityNamedGrave::new, ModBlocks.blockNamedGrave);
-
-        MinecoloniesTileEntities.WAREHOUSE = simple("warehouse", TileEntityWareHouse::new, ModBlocks.blockHutWareHouse);
-
-        MinecoloniesTileEntities.COMPOSTED_DIRT = simple("composteddirt", TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt);
-
-        MinecoloniesTileEntities.ENCHANTER = simple("enchanter", TileEntityEnchanter::new, ModBlocks.blockHutEnchanter);
-
-        MinecoloniesTileEntities.STASH = simple("stash", TileEntityStash::new, ModBlocks.blockStash);
-
-        MinecoloniesTileEntities.COLONY_FLAG = list("colony_flag", TileEntityColonyFlag::new, List.of(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner));
+        MinecoloniesTileEntities.BARREL           = simple("barrel", TileEntityBarrel::new, ModBlocks.blockBarrel);
+        MinecoloniesTileEntities.BUILDING         = list("colonybuilding", TileEntityColonyBuilding::new, ModBlocks.getHuts());
+        MinecoloniesTileEntities.DECO_CONTROLLER  = simple("decorationcontroller", TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder);
+        MinecoloniesTileEntities.RACK             = simple("rack", TileEntityRack::new, ModBlocks.blockRack);
+        MinecoloniesTileEntities.GRAVE            = simple("grave", TileEntityGrave::new, ModBlocks.blockGrave);
+        MinecoloniesTileEntities.NAMED_GRAVE      = simple("namedgrave", TileEntityNamedGrave::new, ModBlocks.blockNamedGrave);
+        MinecoloniesTileEntities.WAREHOUSE        = simple("warehouse", TileEntityWareHouse::new, ModBlocks.blockHutWareHouse);
+        MinecoloniesTileEntities.COMPOSTED_DIRT   = simple("composteddirt", TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt);
+        MinecoloniesTileEntities.ENCHANTER        = simple("enchanter", TileEntityEnchanter::new, ModBlocks.blockHutEnchanter);
+        MinecoloniesTileEntities.STASH            = simple("stash", TileEntityStash::new, ModBlocks.blockStash);
+        MinecoloniesTileEntities.COLONY_FLAG      = list("colony_flag", TileEntityColonyFlag::new, List.of(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner));
     }
 
     private static <BE extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<BE>> simple(final String id,

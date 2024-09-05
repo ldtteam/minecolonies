@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class BuildingEntry
          * @param buildingBlock The block.
          * @return The builder.
          */
-        public Builder setBuildingBlock(final DeferredBlock<? extends AbstractBlockHut<?>> buildingBlock)
+        public Builder setBuildingBlock(final Supplier<? extends AbstractBlockHut<?>> buildingBlock)
         {
             this.buildingBlock = buildingBlock.get();
             return this;
