@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.fields.plantation;
 
 import com.minecolonies.api.colony.fields.modules.IFieldModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -137,7 +137,7 @@ public interface IPlantationModule extends IFieldModule
      *
      * @return the tool to work on this module.
      */
-    IToolType getRequiredTool();
+    ToolTypeEntry getRequiredTool();
 
     /**
      * Hashcode implementation for this field.

@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.workers.util;
 
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 

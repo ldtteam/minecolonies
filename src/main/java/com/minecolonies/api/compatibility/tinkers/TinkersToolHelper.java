@@ -1,6 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
-import com.minecolonies.api.items.registry.ToolTypeEntry;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

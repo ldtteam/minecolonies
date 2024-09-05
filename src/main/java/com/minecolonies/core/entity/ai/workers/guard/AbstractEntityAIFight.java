@@ -4,11 +4,11 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
@@ -38,7 +38,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     /**
      * Tools and Items needed by the worker.
      */
-    public final List<IToolType> toolsNeeded = new ArrayList<>();
+    public final List<ToolTypeEntry> toolsNeeded = new ArrayList<>();
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -115,7 +115,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState prepare()
     {
-        for (final IToolType tool : toolsNeeded)
+        for (final ToolTypeEntry tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
             {

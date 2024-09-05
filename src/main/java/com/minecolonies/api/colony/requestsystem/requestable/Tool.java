@@ -1,17 +1,18 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.items.ModToolTypes;
-import com.minecolonies.api.items.registry.ToolTypeEntry;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.IToolTypeRegistry;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -36,7 +37,7 @@ public class Tool implements IDeliverable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
-    private final IToolType toolClass;
+    private final ToolTypeEntry toolClass;
 
     @NotNull
     private final Integer minLevel;
@@ -47,12 +48,12 @@ public class Tool implements IDeliverable
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
 
-    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
+    public Tool(@NotNull final ToolTypeEntry toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel)
     {
         this(toolClass, minLevel, maxLevel, ItemStackUtils.EMPTY);
     }
 
-    public Tool(@NotNull final IToolType toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
+    public Tool(@NotNull final ToolTypeEntry toolClass, @NotNull final Integer minLevel, @NotNull final Integer maxLevel, @NotNull final ItemStack result)
     {
         this.toolClass = toolClass;
         this.minLevel = minLevel;
@@ -72,7 +73,7 @@ public class Tool implements IDeliverable
     {
         final CompoundTag compound = new CompoundTag();
 
-        compound.putString(NBT_TYPE, tool.getToolClass().getName());
+        compound.putString(NBT_TYPE, tool.getToolClass().getRegistryName().toString());
         compound.putInt(NBT_MIN_LEVEL, tool.getMinLevel());
         compound.putInt(NBT_MAX_LEVEL, tool.getMaxLevel());
         compound.put(NBT_RESULT, tool.getResult().serializeNBT());
@@ -86,7 +87,7 @@ public class Tool implements IDeliverable
      * @return The tool class that is requested.
      */
     @NotNull
-    public IToolType getToolClass()
+    public ToolTypeEntry getToolClass()
     {
         return toolClass;
     }
@@ -124,7 +125,7 @@ public class Tool implements IDeliverable
     public static Tool deserialize(final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
-        final IToolType type = ToolTypeEntry.getToolType(nbt.getString(NBT_TYPE));
+        final ToolTypeEntry type = IToolTypeRegistry.getInstance().getValue(new ResourceLocation(nbt.getString(NBT_TYPE)));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
         final ItemStack result = ItemStack.of(nbt.getCompound(NBT_RESULT));
@@ -141,7 +142,7 @@ public class Tool implements IDeliverable
      */
     public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Tool input)
     {
-        buffer.writeUtf(input.getToolClass().getName());
+        buffer.writeResourceLocation(input.getToolClass().getRegistryName());
         buffer.writeInt(input.getMinLevel());
         buffer.writeInt(input.getMaxLevel());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
@@ -160,7 +161,7 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        final IToolType type = ToolTypeEntry.getToolType(buffer.readUtf(32767));
+        final ToolTypeEntry type = IToolTypeRegistry.getInstance().getValue(buffer.readResourceLocation());
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
@@ -176,24 +177,19 @@ public class Tool implements IDeliverable
             return false;
         }
 
-        if (stack.getCount() < 1)
+        for (ToolTypeEntry toolType : IToolTypeRegistry.getInstance())
         {
-            return false;
-        }
-
-        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes)
-        {
-            if (!getToolClass().equals(toolType.get()))
+            if (!getToolClass().equals(toolType))
             {
                 continue;
             }
 
-            if (toolType == ModToolTypes.none)
+            if (toolType == ModToolTypes.none.get())
             {
                 continue;
             }
 
-            if (stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, toolType.get(), getMinLevel(), getMaxLevel()))
+            if (stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, toolType, getMinLevel(), getMaxLevel()))
             {
                 return true;
             }

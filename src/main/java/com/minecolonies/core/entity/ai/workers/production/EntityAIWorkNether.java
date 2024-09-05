@@ -14,9 +14,9 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.modules.ExpeditionLogModule;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
@@ -772,7 +772,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         return slotOfStack < 0 ? ItemStack.EMPTY : worker.getInventoryCitizen().getStackInSlot(slotOfStack);
     }
 
-    private ItemStack findTool(@NotNull final IToolType tool)
+    private ItemStack findTool(@NotNull final ToolTypeEntry tool)
     {
         return findItem(stack -> ItemStackUtils.hasToolLevel(stack, tool, 0, building.getMaxToolLevel()));
     }

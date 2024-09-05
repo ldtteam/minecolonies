@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.crafting;
 
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,12 +16,12 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
  * @param toolLevels          basic items accepted at each building level.
  * @param enchantedToolLevels (some) enchanted items accepted at each building level.
  */
-public record ToolUsage(@NotNull IToolType tool,
+public record ToolUsage(@NotNull ToolTypeEntry tool,
                         @NotNull List<List<ItemStack>> toolLevels,
                         @NotNull List<List<ItemStack>> enchantedToolLevels)
 {
     @NotNull
-    public static ToolUsage create(@NotNull final IToolType tool)
+    public static ToolUsage create(@NotNull final ToolTypeEntry tool)
     {
         final List<List<ItemStack>> basicLevels = new ArrayList<>();
         final List<List<ItemStack>> enchantedLevels = new ArrayList<>();

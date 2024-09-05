@@ -1,10 +1,10 @@
-package com.minecolonies.api.items.registry;
+package com.minecolonies.api.tools.registry;
 
-import com.minecolonies.api.items.ModToolTypes;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.tools.ModToolTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -13,8 +13,13 @@ import java.util.function.Predicate;
  * An entry in the ToolType registry that defines the types of
  * tools within the colony.
  */
-public class ToolTypeEntry implements IToolType
+public final class ToolTypeEntry
 {
+    /**
+     * The registry identifier for this tool type.
+     */
+    private final ResourceLocation registryName;
+
     /**
      * The name of the tool type.
      */
@@ -45,31 +50,18 @@ public class ToolTypeEntry implements IToolType
      * @param isTool      A predicate for determining if an itemstack is the tool type
      * @param itemLevel   A function to return the item level of an item stack
      */
-    private ToolTypeEntry(final String name, final Component displayName, final Predicate<ItemStack> isTool, final Function<ItemStack, Integer> itemLevel)
+    private ToolTypeEntry(final String name, final Component displayName, final Predicate<ItemStack> isTool, final Function<ItemStack, Integer> itemLevel, final ResourceLocation registryName)
     {
         this.name = name;
         this.displayName = displayName;
         this.isTool = isTool;
         this.itemLevel = itemLevel;
+        this.registryName = registryName;
     }
 
-    /**
-     * Get the registered ToolTypeEntry from a tool ID.
-     *
-     * @param toolId The target ID
-     * @return The ToolTypeEntry
-     */
-    public static IToolType getToolType(final String toolId)
+    public ResourceLocation getRegistryName()
     {
-        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes)
-        {
-            if (toolType.get().getName().equals(toolId))
-            {
-                return toolType.get();
-            }
-        }
-
-        return ModToolTypes.none.get();
+        return registryName;
     }
 
     /**
@@ -94,7 +86,7 @@ public class ToolTypeEntry implements IToolType
      * @param itemStack to test
      * @return Whether the item stack can act as the tool.
      */
-    public Boolean checkIsTool(ItemStack itemStack)
+    public boolean checkIsTool(ItemStack itemStack)
     {
         return isTool.test(itemStack);
     }
@@ -116,6 +108,11 @@ public class ToolTypeEntry implements IToolType
     public static class Builder
     {
         /**
+         * The registry identifier for this tool type.
+         */
+        private ResourceLocation registryName;
+
+        /**
          * The name of the tool type.
          */
         private String name;
@@ -136,6 +133,17 @@ public class ToolTypeEntry implements IToolType
          * given ItemStack.
          */
         private Function<ItemStack, Integer> itemLevel;
+
+        /**
+         * Set the registry identifier for this tool type.
+         *
+         * @param registryName The registry identifier
+         * @return this
+         */
+        public Builder setRegistryName(final ResourceLocation registryName) {
+            this.registryName = registryName;
+            return this;
+        }
 
         /**
          * Set the name for the new ToolTypeEntry
@@ -192,7 +200,17 @@ public class ToolTypeEntry implements IToolType
          */
         public ToolTypeEntry build()
         {
-            return new ToolTypeEntry(name, displayName, isTool, itemLevel);
+            return new ToolTypeEntry(name, displayName, isTool, itemLevel, registryName);
+        }
+    }
+
+    /**
+     * The comparator used to compare two ToolTypeEntries. The names
+     * are used for the comparison.
+     */
+    public static class Comparator implements java.util.Comparator<ToolTypeEntry> {
+        public int compare(ToolTypeEntry o1, ToolTypeEntry o2) {
+            return o1.name.compareTo(o2.name);
         }
     }
 }

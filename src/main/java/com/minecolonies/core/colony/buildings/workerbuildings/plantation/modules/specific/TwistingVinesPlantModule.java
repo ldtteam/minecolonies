@@ -1,8 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.items.ModToolTypes;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -72,7 +72,7 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public IToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
         return ModToolTypes.none.get();
     }

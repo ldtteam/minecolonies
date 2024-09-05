@@ -2,8 +2,8 @@ package com.minecolonies.core.colony.buildings.workerbuildings.plantation.module
 
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.ModToolTypes;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -60,7 +60,7 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public IToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
         return ModToolTypes.none.get();
     }

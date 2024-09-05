@@ -7,9 +7,9 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -484,11 +484,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     /**
      * Sets the tool as held item.
      *
-     * @param toolType the {@link IToolType} we want to equip
+     * @param toolType the {@link ToolTypeEntry} we want to equip
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final InteractionHand hand, final IToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final ToolTypeEntry toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -504,7 +504,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param toolType this herders tool type.
      * @return slot number.
      */
-    private int getToolSlot(final IToolType toolType)
+    private int getToolSlot(final ToolTypeEntry toolType)
     {
         final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
           TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());

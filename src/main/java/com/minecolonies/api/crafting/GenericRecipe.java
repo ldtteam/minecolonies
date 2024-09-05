@@ -2,10 +2,10 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -92,8 +92,8 @@ public class GenericRecipe implements IGenericRecipe
     private final int gridSize;
     private final Block intermediate;
     private final ResourceLocation lootTable;
-    private final IToolType requiredTool;
-    private final LivingEntity requiredEntity;
+    private final ToolTypeEntry    requiredTool;
+    private final LivingEntity     requiredEntity;
     private final List<Component> restrictions;
     private final int levelSort;
 
@@ -103,7 +103,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final IToolType requiredTool,
+                         @NotNull final ToolTypeEntry requiredTool,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
@@ -128,7 +128,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final IToolType requiredTool,
+                         @NotNull final ToolTypeEntry requiredTool,
                          @Nullable final LivingEntity requiredEntity,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
@@ -241,7 +241,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     @Override
-    public IToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
         return this.requiredTool;
     }

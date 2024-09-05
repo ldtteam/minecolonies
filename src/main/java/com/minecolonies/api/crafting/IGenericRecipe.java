@@ -1,7 +1,7 @@
 package com.minecolonies.api.crafting;
 
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -126,7 +126,7 @@ public interface IGenericRecipe
      * @return The required tool.
      */
     @NotNull
-    IToolType getRequiredTool();
+    ToolTypeEntry getRequiredTool();
 
     /**
      * Gets a creature required to produce this recipe, if any.

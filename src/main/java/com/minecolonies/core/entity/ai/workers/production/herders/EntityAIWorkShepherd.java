@@ -2,9 +2,9 @@ package com.minecolonies.core.entity.ai.workers.production.herders;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
@@ -52,9 +52,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
     @NotNull
     @Override
-    public List<IToolType> getExtraToolsNeeded()
+    public List<ToolTypeEntry> getExtraToolsNeeded()
     {
-        final List<IToolType> toolsNeeded = super.getExtraToolsNeeded();
+        final List<ToolTypeEntry> toolsNeeded = super.getExtraToolsNeeded();
         if (building.getSetting(BuildingShepherd.SHEARING).getValue())
         {
             toolsNeeded.add(ModToolTypes.shears.get());

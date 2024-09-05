@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.entity.citizen.EntityCitizen;

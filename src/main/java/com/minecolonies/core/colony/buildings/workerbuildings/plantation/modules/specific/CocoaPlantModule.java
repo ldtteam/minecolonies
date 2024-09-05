@@ -1,9 +1,9 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -63,7 +63,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
     }
 
     @Override
-    public IToolType getRequiredTool()
+    public ToolTypeEntry getRequiredTool()
     {
         return ModToolTypes.axe.get();
     }

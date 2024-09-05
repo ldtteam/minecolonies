@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -11,9 +12,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.items.ModToolTypes;
-import com.minecolonies.api.items.registry.ToolTypeEntry;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.registry.IToolTypeRegistry;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +25,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,9 +36,7 @@ import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -268,7 +265,7 @@ public final class ItemStackUtils
      * @param maximumLevel the maximum level for the tool to find.
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean hasToolLevel(@Nullable final ItemStack stack, final ToolTypeEntry toolType, final int minimalLevel, final int maximumLevel)
     {
         if (isEmpty(stack))
         {
@@ -304,8 +301,8 @@ public final class ItemStackUtils
      */
     public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
     {
-        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
-            if (toolType.get().checkIsTool(stack1) && toolType.get().checkIsTool(stack2) && toolType.get().getMiningLevel(stack1) > toolType.get().getMiningLevel(stack2))
+        for (ToolTypeEntry toolType : IToolTypeRegistry.getInstance()) {
+            if (toolType.checkIsTool(stack1) && toolType.checkIsTool(stack2) && toolType.getMiningLevel(stack1) > toolType.getMiningLevel(stack2))
             {
                 return true;
             }

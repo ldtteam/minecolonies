@@ -2,7 +2,7 @@ package com.minecolonies.core.compatibility.jei;
 
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;

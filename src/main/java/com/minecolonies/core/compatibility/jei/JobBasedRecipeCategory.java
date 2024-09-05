@@ -10,9 +10,9 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
@@ -178,7 +178,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
      * @param withBackground true to display a slot background when present (no background is shown when no tool)
      */
     protected void addToolSlot(@NotNull final IRecipeLayoutBuilder builder,
-                               @NotNull final IToolType requiredTool,
+                               @NotNull final ToolTypeEntry requiredTool,
                                final int x, final int y, final boolean withBackground)
     {
         final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");

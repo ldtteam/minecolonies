@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -155,7 +155,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @param localAlreadyKept the already kept stacks.
      * @return true if should keep.
      */
-    private boolean checkIfShouldKeepTool(final IToolType type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    private boolean checkIfShouldKeepTool(final ToolTypeEntry type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
         if (ItemStackUtils.hasToolLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
         {

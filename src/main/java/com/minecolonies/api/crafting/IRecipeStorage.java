@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -192,7 +192,7 @@ public interface IRecipeStorage
      * Get the additional tool needed beyond the recipe (if any)
      * @return the required tool
      */
-    IToolType getRequiredTool();
+    ToolTypeEntry getRequiredTool();
 
     /** 
      * Get the location/id of the Loot table used for optional outputs

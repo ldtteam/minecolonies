@@ -23,9 +23,9 @@ import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -859,7 +859,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param maxLevel the max tool level.
      * @return true if found the tool.
      */
-    public boolean retrieveToolInTileEntity(final BlockEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    public boolean retrieveToolInTileEntity(final BlockEntity entity, final ToolTypeEntry toolType, final int minLevel, final int maxLevel)
     {
         if (ModToolTypes.none.get().equals(toolType))
         {
@@ -890,14 +890,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param toolType type of tool we check for.
      * @return false if we have the tool
      */
-    public boolean checkForToolOrWeapon(@NotNull final IToolType toolType)
+    public boolean checkForToolOrWeapon(@NotNull final ToolTypeEntry toolType)
     {
         final boolean needTool = checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
         worker.getCitizenData().setIdleAtJob(needTool);
         return needTool;
     }
 
-    protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
+    protected boolean checkForToolOrWeapon(@NotNull final ToolTypeEntry toolType, final int minimalLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           building.getOpenRequestsOfTypeFiltered(
@@ -931,7 +931,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param minLevel min. level of the tool
      * @param maxLevel min. level of the tool
      */
-    protected void checkForToolOrWeaponAsync(@NotNull final IToolType toolType, final int minLevel, final int maxLevel)
+    protected void checkForToolOrWeaponAsync(@NotNull final ToolTypeEntry toolType, final int minLevel, final int maxLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           building.getOpenRequestsOfTypeFiltered(
@@ -970,7 +970,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @param armorType the armor type.
      */
-    protected void cancelAsynchRequestForArmor(final IToolType armorType)
+    protected void cancelAsynchRequestForArmor(final ToolTypeEntry armorType)
     {
         final List<IRequest<? extends Tool>> openRequests =
           building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
@@ -986,7 +986,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param key the tooltype.
      * @return true if so.
      */
-    private boolean hasOpenToolRequest(final IToolType key)
+    private boolean hasOpenToolRequest(final ToolTypeEntry key)
     {
         return building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
@@ -1001,7 +1001,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param minimalLevel the minimal level.
      * @return true if we need a tool.
      */
-    private boolean checkForNeededTool(@NotNull final IToolType toolType, final int minimalLevel)
+    private boolean checkForNeededTool(@NotNull final ToolTypeEntry toolType, final int minimalLevel)
     {
         final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -1021,7 +1021,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param minimalLevel the minimal level the tool should have.
      * @return true if a stack of that type was found
      */
-    public boolean retrieveToolInHut(final IToolType toolType, final int minimalLevel)
+    public boolean retrieveToolInHut(final ToolTypeEntry toolType, final int minimalLevel)
     {
         if (building != null)
         {
@@ -1294,7 +1294,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
+        final ToolTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
         if (building.getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
@@ -1317,7 +1317,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param toolType the tool needed
      * @param required the level needed (for pickaxe only)
      */
-    private void updateToolFlag(@NotNull final IToolType toolType, final int required)
+    private void updateToolFlag(@NotNull final ToolTypeEntry toolType, final int required)
     {
         if (ModToolTypes.pickaxe.get().equals(toolType))
         {
@@ -1338,7 +1338,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
+        final ToolTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
         if (toolType == ModToolTypes.none.get())

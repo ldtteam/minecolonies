@@ -8,12 +8,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
@@ -73,7 +73,7 @@ public final class WorkerUtil
     /**
      * List of tools to test blocks against, used for finding right tool.
      */
-    public static List<Tuple<IToolType, ItemStack>> tools;
+    public static List<Tuple<ToolTypeEntry, ItemStack>> tools;
 
     private WorkerUtil()
     {
@@ -85,7 +85,7 @@ public final class WorkerUtil
      *
      * @return the list of possible tools.
      */
-    public static List<Tuple<IToolType, ItemStack>> getOrInitTestTools()
+    public static List<Tuple<ToolTypeEntry, ItemStack>> getOrInitTestTools()
     {
         if (tools == null)
         {
@@ -177,7 +177,7 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
+    public static ToolTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
@@ -186,7 +186,7 @@ public final class WorkerUtil
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<IToolType, ItemStack> tool : getOrInitTestTools())
+            for (final Tuple<ToolTypeEntry, ItemStack> tool : getOrInitTestTools())
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {

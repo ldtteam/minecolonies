@@ -1,15 +1,14 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.items.ModToolTypes;
+import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.jobs.AbstractJob;
@@ -165,9 +164,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return a list of tools or empty.
      */
     @NotNull
-    public List<IToolType> getExtraToolsNeeded()
+    public List<ToolTypeEntry> getExtraToolsNeeded()
     {
-        final List<IToolType> toolsNeeded = new ArrayList<>();
+        final List<ToolTypeEntry> toolsNeeded = new ArrayList<>();
         toolsNeeded.add(ModToolTypes.axe.get());
         return toolsNeeded;
     }
@@ -299,7 +298,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        for (final IToolType tool : getExtraToolsNeeded())
+        for (final ToolTypeEntry tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -687,11 +686,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Sets the tool as held item.
      *
-     * @param toolType the {@link IToolType} we want to equip
+     * @param toolType the {@link ToolTypeEntry} we want to equip
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final InteractionHand hand, final IToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final ToolTypeEntry toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -707,7 +706,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param toolType this herders tool type.
      * @return slot number.
      */
-    private int getToolSlot(final IToolType toolType)
+    private int getToolSlot(final ToolTypeEntry toolType)
     {
         final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
           TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
