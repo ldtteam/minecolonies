@@ -67,9 +67,10 @@ public class HappinessRegistry
      * Static getter to load a happiness modifier from a compound.
      *
      * @param compound the compound to load it from.
+     * @param persist  whether we're reading from persisted data or from networking.
      * @return the modifier instance.
      */
-    public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
+    public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound, final boolean persist)
     {
         final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
                                                 ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
@@ -80,7 +81,7 @@ public class HappinessRegistry
         {
             try
             {
-                modifier.read(provider, compound);
+                modifier.read(provider, compound, persist);
             }
             catch (final RuntimeException ex)
             {

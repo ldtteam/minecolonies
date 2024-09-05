@@ -362,7 +362,7 @@ public class CitizenDataView implements ICitizenDataView
         sortedInteractions = new ArrayList<>(citizenChatOptions.values());
         sortedInteractions.sort(Comparator.comparingInt(e -> -e.getPriority().getPriority()));
 
-        citizenHappinessHandler.read(buf.registryAccess(), buf.readNbt());
+        citizenHappinessHandler.read(buf.registryAccess(), buf.readNbt(), false);
 
         int statusindex = buf.readInt();
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
