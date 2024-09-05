@@ -2,22 +2,18 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.items.ModToolTypes;
 import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,8 +25,8 @@ public class Tool implements IDeliverable
     /**
      * Set of type tokens belonging to this class.
      */
-    private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Tool.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+    private final static Set<TypeToken<?>> TYPE_TOKENS =
+      ReflectionUtils.getSuperClasses(TypeToken.of(Tool.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TYPE      = "Type";
@@ -82,6 +78,39 @@ public class Tool implements IDeliverable
         compound.put(NBT_RESULT, tool.getResult().serializeNBT());
 
         return compound;
+    }
+
+    /**
+     * Returns the tool class that is requested.
+     *
+     * @return The tool class that is requested.
+     */
+    @NotNull
+    public IToolType getToolClass()
+    {
+        return toolClass;
+    }
+
+    /**
+     * The minimal tool level requested.
+     *
+     * @return The minimal tool level requested.
+     */
+    @NotNull
+    public Integer getMinLevel()
+    {
+        return minLevel;
+    }
+
+    /**
+     * The maximum tool level requested.
+     *
+     * @return The maximum tool level requested.
+     */
+    @NotNull
+    public Integer getMaxLevel()
+    {
+        return maxLevel;
     }
 
     /**
@@ -139,94 +168,38 @@ public class Tool implements IDeliverable
         return new Tool(type, minLevel, maxLevel, result);
     }
 
-    /**
-     * Returns the tool class that is requested.
-     *
-     * @return The tool class that is requested.
-     */
-    @NotNull
-    public IToolType getToolClass()
-    {
-        return toolClass;
-    }
-
-    /**
-     * The minimal tool level requested.
-     *
-     * @return The minimal tool level requested.
-     */
-    @NotNull
-    public Integer getMinLevel()
-    {
-        return minLevel;
-    }
-
-    /**
-     * The maximum tool level requested.
-     *
-     * @return The maximum tool level requested.
-     */
-    @NotNull
-    public Integer getMaxLevel()
-    {
-        return maxLevel;
-    }
-
-    /**
-     * The resulting stack if set during creation, else ItemStack.Empty.
-     *
-     * @return The resulting stack.
-     */
-    @NotNull
-    public ItemStack getResult()
-    {
-        return result;
-    }
-
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack)
-                                         && stack.getCount() >= 1
-                                         && getToolClasses(stack).stream()
-                                              .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
-                                              .map(ToolTypeEntry::getToolType)
-                                              .anyMatch(t -> t != ModToolTypes.none.get() && (stack.getDamageValue() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
-                                                t,
-                                                getMinLevel(),
-                                                getMaxLevel()));
-
-    }
-
-    private Set<String> getToolClasses(final ItemStack stack)
-    {
-        final Set<String> set = new HashSet<>();
-
         if (ItemStackUtils.isEmpty(stack))
         {
-            return set;
+            return false;
         }
 
-        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes) {
-            if (toolType.get().checkIsTool(stack)) {
-                set.add(toolType.get().getName());
+        if (stack.getCount() < 1)
+        {
+            return false;
+        }
+
+        for (RegistryObject<ToolTypeEntry> toolType : ModToolTypes.toolTypes)
+        {
+            if (!getToolClass().equals(toolType.get()))
+            {
+                continue;
+            }
+
+            if (toolType == ModToolTypes.none)
+            {
+                continue;
+            }
+
+            if (stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, toolType.get(), getMinLevel(), getMaxLevel()))
+            {
+                return true;
             }
         }
 
-        return set;
-    }
-
-    /**
-     * Check if the tool is armor.
-     *
-     * @return true if so.
-     */
-    public boolean isArmor()
-    {
-        return toolClass == ModToolTypes.helmet.get() ||
-                toolClass == ModToolTypes.leggings.get() ||
-                toolClass == ModToolTypes.chestplate.get() ||
-                toolClass == ModToolTypes.boots.get();
+        return false;
     }
 
     @Override
@@ -241,6 +214,17 @@ public class Tool implements IDeliverable
         return 1;
     }
 
+    /**
+     * The resulting stack if set during creation, else ItemStack.Empty.
+     *
+     * @return The resulting stack.
+     */
+    @NotNull
+    public ItemStack getResult()
+    {
+        return result;
+    }
+
     @Override
     public void setResult(@NotNull final ItemStack result)
     {
@@ -253,6 +237,27 @@ public class Tool implements IDeliverable
         return new Tool(this.toolClass, this.minLevel, this.maxLevel, this.result);
     }
 
+    /**
+     * Check if the tool is armor.
+     *
+     * @return true if so.
+     */
+    public boolean isArmor()
+    {
+        return toolClass == ModToolTypes.helmet.get() || toolClass == ModToolTypes.leggings.get() || toolClass == ModToolTypes.chestplate.get()
+                 || toolClass == ModToolTypes.boots.get();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result1 = getToolClass().hashCode();
+        result1 = 31 * result1 + getMinLevel().hashCode();
+        result1 = 31 * result1 + getMaxLevel().hashCode();
+        result1 = 31 * result1 + getResult().hashCode();
+        return result1;
+    }
+
     @Override
     public boolean equals(final Object o)
     {
@@ -260,12 +265,10 @@ public class Tool implements IDeliverable
         {
             return true;
         }
-        if (!(o instanceof Tool))
+        if (!(o instanceof final Tool tool))
         {
             return false;
         }
-
-        final Tool tool = (Tool) o;
 
         if (!getToolClass().equals(tool.getToolClass()))
         {
@@ -280,16 +283,6 @@ public class Tool implements IDeliverable
             return false;
         }
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getResult(), tool.getResult());
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result1 = getToolClass().hashCode();
-        result1 = 31 * result1 + getMinLevel().hashCode();
-        result1 = 31 * result1 + getMaxLevel().hashCode();
-        result1 = 31 * result1 + getResult().hashCode();
-        return result1;
     }
 
     @Override

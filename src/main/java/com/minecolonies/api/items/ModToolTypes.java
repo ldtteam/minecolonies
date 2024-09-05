@@ -79,29 +79,29 @@ public class ModToolTypes
         pickaxe = register(PICKAXE_ID,
           () -> new ToolTypeEntry.Builder().setName(PICKAXE_ID)
                   .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, PICKAXE_ID))
-                  .setToolLevel(itemStack -> vanillaToolLevel(PICKAXE_ID, itemStack))
+                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, pickaxe.get()))
+                  .setToolLevel(itemStack -> vanillaToolLevel(pickaxe.get(), itemStack))
                   .build());
 
         shovel = register(SHOVEL_ID,
           () -> new ToolTypeEntry.Builder().setName(SHOVEL_ID)
                   .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, SHOVEL_ID))
-                  .setToolLevel(itemStack -> vanillaToolLevel(SHOVEL_ID, itemStack))
+                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, shovel.get()))
+                  .setToolLevel(itemStack -> vanillaToolLevel(shovel.get(), itemStack))
                   .build());
 
         axe = register(AXE_ID,
           () -> new ToolTypeEntry.Builder().setName(AXE_ID)
                   .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, AXE_ID))
-                  .setToolLevel(itemStack -> vanillaToolLevel(AXE_ID, itemStack))
+                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, axe.get()))
+                  .setToolLevel(itemStack -> vanillaToolLevel(axe.get(), itemStack))
                   .build());
 
         hoe = register(HOE_ID,
           () -> new ToolTypeEntry.Builder().setName(HOE_ID)
                   .setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, HOE_ID))
-                  .setToolLevel(itemStack -> vanillaToolLevel(HOE_ID, itemStack))
+                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, hoe.get()))
+                  .setToolLevel(itemStack -> vanillaToolLevel(hoe.get(), itemStack))
                   .build());
 
         sword = register(SWORD_ID,
@@ -214,13 +214,13 @@ public class ModToolTypes
     /**
      * Get the tool level for vanilla tools.
      *
-     * @param toolId    The type of vanilla tool
+     * @param toolType  The type of vanilla tool
      * @param itemStack The item stack to check
      * @return The tool level
      */
-    public static int vanillaToolLevel(final String toolId, ItemStack itemStack)
+    public static int vanillaToolLevel(final ToolTypeEntry toolType, ItemStack itemStack)
     {
-        if (Compatibility.isTinkersTool(itemStack, toolId))
+        if (Compatibility.isTinkersTool(itemStack, toolType))
         {
             return Compatibility.getToolLevel(itemStack);
         }

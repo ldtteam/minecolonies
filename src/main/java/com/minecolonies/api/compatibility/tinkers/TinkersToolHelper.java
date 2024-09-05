@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
+import com.minecolonies.api.items.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -104,11 +105,11 @@ public final class TinkersToolHelper extends TinkersToolProxy
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
      * @param stack the stack to check for.
-     * @param toolId the tool type ID.
+     * @param toolType the tool type.
      * @return true if so.
      */
     @Override
-    public boolean isTinkersTool(@Nullable final ItemStack stack, final String toolId)
+    public boolean isTinkersTool(@Nullable final ItemStack stack, final ToolTypeEntry toolType)
     {
         return false;
         /*
