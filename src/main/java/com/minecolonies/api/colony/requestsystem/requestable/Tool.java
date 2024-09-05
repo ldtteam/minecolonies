@@ -177,25 +177,11 @@ public class Tool implements IDeliverable
             return false;
         }
 
-        for (ToolTypeEntry toolType : IToolTypeRegistry.getInstance())
-        {
-            if (!getToolClass().equals(toolType))
-            {
-                continue;
-            }
-
-            if (toolType == ModToolTypes.none.get())
-            {
-                continue;
-            }
-
-            if (stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, toolType, getMinLevel(), getMaxLevel()))
-            {
-                return true;
-            }
+        if (!getToolClass().checkIsTool(stack)) {
+            return false;
         }
 
-        return false;
+        return stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, getToolClass(), getMinLevel(), getMaxLevel());
     }
 
     @Override
