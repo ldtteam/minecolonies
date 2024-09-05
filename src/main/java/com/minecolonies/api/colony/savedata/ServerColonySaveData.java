@@ -133,7 +133,6 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
             IColonyManager.getInstance().write(provider, managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
         }
-        Log.getLogger().warn("Writing " + colonies.getSize() + " colonies to disk!");
 
         inputTag.put(Constants.MOD_ID, compound);
         return inputTag;
