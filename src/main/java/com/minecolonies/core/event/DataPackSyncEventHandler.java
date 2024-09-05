@@ -2,6 +2,7 @@ package com.minecolonies.core.event;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.compatibility.CraftingTagAuditor;
@@ -48,6 +49,7 @@ public class DataPackSyncEventHandler
          */
         private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
+            Log.getLogger().warn("Starting Compat Discovery");
             FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
