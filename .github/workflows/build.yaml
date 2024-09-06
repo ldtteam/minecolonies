@@ -4,15 +4,9 @@ on:
   pull_request:
     types:
       - opened
-      - edited
       - synchronize
       - labeled
       - unlabeled
-  push:
-    branches:
-      - "version/*"
-      - "release/*"
-      - "testing/*"
   workflow_dispatch:
 
 permissions:

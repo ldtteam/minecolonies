@@ -315,7 +315,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
-        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        if (isFeatureUnlocked.get() || !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
         {
             return;
         }

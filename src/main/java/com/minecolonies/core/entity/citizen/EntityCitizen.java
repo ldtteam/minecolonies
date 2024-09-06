@@ -61,6 +61,7 @@ import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.event.EventHandler;
+import com.minecolonies.core.event.TextureReloadListener;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
@@ -1999,6 +2000,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenColonyHandler != null)
         {
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
+
+        if (level().isClientSide && dataAccessor == DATA_STYLE)
+        {
+            if (!TextureReloadListener.TEXTURE_PACKS.contains(getEntityData().get(DATA_STYLE)))
+            {
+                getEntityData().set(DATA_STYLE, TextureReloadListener.TEXTURE_PACKS.get(0));
+            }
         }
     }
 

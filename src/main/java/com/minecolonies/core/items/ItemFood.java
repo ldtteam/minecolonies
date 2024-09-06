@@ -18,11 +18,6 @@ import java.util.List;
 public class ItemFood extends Item implements IMinecoloniesFoodItem
 {
     /**
-     * The job producing this.
-     */
-    private final String producer;
-
-    /**
      * The food tier.
      */
     private final int tier;
@@ -31,20 +26,17 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
      * Creates a new food item.
      *
      * @param builder the item properties to use.
-     * @param producer the key for the worker that produces it.
      * @param tier the nutrition tier.
      */
-    public ItemFood(@NotNull final Properties builder, final String producer, final int tier)
+    public ItemFood(@NotNull final Properties builder, final int tier)
     {
         super(builder);
-        this.producer = producer;
         this.tier = tier;
     }
 
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.FOOD_TOOLTIP + this.producer));
         tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
     }
 

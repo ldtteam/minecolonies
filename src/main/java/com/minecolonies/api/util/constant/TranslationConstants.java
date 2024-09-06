@@ -408,8 +408,6 @@ public final class TranslationConstants
     @NonNls
     public static final String CROP_TOOLTIP                                                         = "com.minecolonies.core.item.crop.tooltip";
     @NonNls
-    public static final String FOOD_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.";
-    @NonNls
     public static final String TIER_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.tier.";
     @NonNls
     public static final String BIOME_TOOLTIP                                                        = "com.minecolonies.core.item.crop.tooltip.biome";

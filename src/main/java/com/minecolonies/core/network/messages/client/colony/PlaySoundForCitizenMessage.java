@@ -150,7 +150,7 @@ public class PlaySoundForCitizenMessage implements IMessage
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
+        buf.writeResourceLocation(this.soundEvent.getLocation());
         buf.writeInt(soundSource.ordinal());
         buf.writeBlockPos(pos);
         buf.writeUtf(dimensionID.location().toString());
