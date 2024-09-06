@@ -42,6 +42,11 @@ public class DataPackSyncEventHandler
     public static class ServerEvents
     {
         /**
+         * If the initial worldload was done.
+         */
+        private static boolean loaded = false;
+
+        /**
          * Updates internal caches of vanilla recipes and tags.
          * This is only called server-side, after JsonReloadListeners have finished.
          *
@@ -70,6 +75,7 @@ public class DataPackSyncEventHandler
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
             QuestJsonListener.sendGlobalQuestPackets(player);
         }
+
 
         /**
          * This event fires on server-side both at initial world load and whenever a new player
@@ -104,16 +110,34 @@ public class DataPackSyncEventHandler
             {
                 sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
-            else
-            {
-                discoverCompatLists(server);
-            }
 
             if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
                     (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
             {
                 CraftingTagAuditor.doRecipeAudit(server, recipeManager);
             }
+        }
+
+        /**
+         * Handle initial load. But only once.
+         * @param server the server to load it for.
+         */
+        public static void load(@NotNull final MinecraftServer server)
+        {
+            if (loaded)
+            {
+                return;
+            }
+            loaded = true;
+            discoverCompatLists(server);
+        }
+
+        /**
+         * Reset on shutdown.
+         */
+        public static void reset()
+        {
+            loaded = false;
         }
     }
 

@@ -172,7 +172,6 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
             IColonyManager.getInstance().read(provider, compound.getCompound(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
-        Log.getLogger().warn("Loaded: " + colonies.getSize() + " colonies from disk!");
 
         // Check colonies for duplicates causing issues.
         for (final BlockPos pos : tempColonies.keySet())
