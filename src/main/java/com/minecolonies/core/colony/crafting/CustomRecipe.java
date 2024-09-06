@@ -949,7 +949,7 @@ public class CustomRecipe
     public static CustomRecipe deserialize(@NotNull final FriendlyByteBuf buffer)
     {
         final String crafter = buffer.readUtf();
-        final ResourceLocation recipeId = ToolTypeEntry.parseResourceLocation(buffer.readResourceLocation());
+        final ResourceLocation recipeId = buffer.readResourceLocation();
         final Set<ResourceLocation> researchReq = deserializeIds(buffer);
         final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
         final ResourceLocation lootTable;
