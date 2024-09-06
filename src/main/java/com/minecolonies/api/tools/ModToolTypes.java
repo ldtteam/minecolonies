@@ -55,25 +55,25 @@ public class ModToolTypes
         pickaxe = register("pickaxe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
                   .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
-                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
+                  .setToolLevel(ModToolTypes::vanillaToolLevel)
                   .build());
 
         shovel = register("shovel",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL))
                   .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
-                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
+                  .setToolLevel(ModToolTypes::vanillaToolLevel)
                   .build());
 
         axe = register("axe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE))
                   .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
-                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
+                  .setToolLevel(ModToolTypes::vanillaToolLevel)
                   .build());
 
         hoe = register("hoe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE))
                   .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
-                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
+                  .setToolLevel(ModToolTypes::vanillaToolLevel)
                   .build());
 
         sword = register("sword",
@@ -146,8 +146,10 @@ public class ModToolTypes
                   .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
                   .build());
     }
+
     /**
      * Get the tooltype registry.
+     *
      * @return The tooltype registry
      */
     public static IForgeRegistry<ToolTypeEntry> getRegistry()
@@ -155,6 +157,13 @@ public class ModToolTypes
         return IMinecoloniesAPI.getInstance().getToolTypeRegistry();
     }
 
+    /**
+     * Register a new tooltype to the registry.
+     *
+     * @param id The unique ID of the tool type
+     * @param consumer The consumer that builds the tool type
+     * @return The registry entry
+     */
     private static RegistryObject<ToolTypeEntry> register(final String id, final Consumer<ToolTypeEntry.Builder> consumer)
     {
         ToolTypeEntry.Builder toolType = new ToolTypeEntry.Builder()
@@ -170,7 +179,7 @@ public class ModToolTypes
      * @param itemStack The item stack to check
      * @return The tool level
      */
-    public static int vanillaToolLevel(final ToolTypeEntry toolType, ItemStack itemStack)
+    public static int vanillaToolLevel(final ItemStack itemStack, final ToolTypeEntry toolType)
     {
         if (Compatibility.isTinkersTool(itemStack, toolType))
         {

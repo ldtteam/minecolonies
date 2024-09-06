@@ -271,8 +271,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        final int level = Compatibility.isTinkersWeapon(stack) ? Compatibility.getToolLevel(stack) : toolType.getMiningLevel(stack);
-        return toolType.checkIsTool(stack) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
+        return toolType.checkIsTool(stack) && verifyToolLevel(stack, toolType.getMiningLevel(stack), minimalLevel, maximumLevel);
     }
 
     /**
