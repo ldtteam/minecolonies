@@ -26,27 +26,31 @@ import java.util.function.Consumer;
  */
 public class ModToolTypes
 {
-    public final static DeferredRegister<ToolTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "tooltypes"), Constants.MOD_ID);
+    public static final DeferredRegister<ToolTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "tooltypes"), Constants.MOD_ID);
 
-    public final static RegistryObject<ToolTypeEntry> none;
-    public final static RegistryObject<ToolTypeEntry> pickaxe;
-    public final static RegistryObject<ToolTypeEntry> shovel;
-    public final static RegistryObject<ToolTypeEntry> axe;
-    public final static RegistryObject<ToolTypeEntry> hoe;
-    public final static RegistryObject<ToolTypeEntry> sword;
-    public final static RegistryObject<ToolTypeEntry> bow;
-    public final static RegistryObject<ToolTypeEntry> fishing_rod;
-    public final static RegistryObject<ToolTypeEntry> shears;
-    public final static RegistryObject<ToolTypeEntry> shield;
-    public final static RegistryObject<ToolTypeEntry> helmet;
-    public final static RegistryObject<ToolTypeEntry> leggings;
-    public final static RegistryObject<ToolTypeEntry> chestplate;
-    public final static RegistryObject<ToolTypeEntry> boots;
-    public final static RegistryObject<ToolTypeEntry> flint_and_steel;
+    public static final RegistryObject<ToolTypeEntry> none;
+    public static final RegistryObject<ToolTypeEntry> pickaxe;
+    public static final RegistryObject<ToolTypeEntry> shovel;
+    public static final RegistryObject<ToolTypeEntry> axe;
+    public static final RegistryObject<ToolTypeEntry> hoe;
+    public static final RegistryObject<ToolTypeEntry> sword;
+    public static final RegistryObject<ToolTypeEntry> bow;
+    public static final RegistryObject<ToolTypeEntry> fishing_rod;
+    public static final RegistryObject<ToolTypeEntry> shears;
+    public static final RegistryObject<ToolTypeEntry> shield;
+    public static final RegistryObject<ToolTypeEntry> helmet;
+    public static final RegistryObject<ToolTypeEntry> leggings;
+    public static final RegistryObject<ToolTypeEntry> chestplate;
+    public static final RegistryObject<ToolTypeEntry> boots;
+    public static final RegistryObject<ToolTypeEntry> flint_and_steel;
 
     static
     {
-        none =
+        none = register("none",
+          builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_NONE))
+                   .setIsTool((itemStack, toolType) -> true)
+                   .setToolLevel((itemStack, toolType) -> -1)
+                   .build());
 
         pickaxe = register("pickaxe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))

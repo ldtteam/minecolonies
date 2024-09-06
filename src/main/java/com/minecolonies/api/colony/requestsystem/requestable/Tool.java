@@ -160,8 +160,7 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        ResourceLocation resLoc = ToolTypeEntry.parseResourceLocation(buffer.readResourceLocation());
-        final ToolTypeEntry type = ModToolTypes.getRegistry().getValue(resLoc);
+        final ToolTypeEntry type = ModToolTypes.getRegistry().getValue(buffer.readResourceLocation());
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
