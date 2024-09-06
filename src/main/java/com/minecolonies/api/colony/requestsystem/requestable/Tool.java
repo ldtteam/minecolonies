@@ -1,10 +1,8 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.IToolTypeRegistry;
 import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
@@ -125,7 +123,8 @@ public class Tool implements IDeliverable
     public static Tool deserialize(final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
-        final ToolTypeEntry type = IToolTypeRegistry.getInstance().getValue(new ResourceLocation(nbt.getString(NBT_TYPE)));
+        String resLoc = nbt.getString(NBT_TYPE);
+        final ToolTypeEntry type = ModToolTypes.getRegistry().getValue(ToolTypeEntry.parseResourceLocation(resLoc));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
         final ItemStack result = ItemStack.of(nbt.getCompound(NBT_RESULT));
@@ -161,7 +160,8 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        final ToolTypeEntry type = IToolTypeRegistry.getInstance().getValue(buffer.readResourceLocation());
+        ResourceLocation resLoc = ToolTypeEntry.parseResourceLocation(buffer.readResourceLocation());
+        final ToolTypeEntry type = ModToolTypes.getRegistry().getValue(resLoc);
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
@@ -177,11 +177,7 @@ public class Tool implements IDeliverable
             return false;
         }
 
-        if (!getToolClass().checkIsTool(stack)) {
-            return false;
-        }
-
-        return stack.getDamageValue() > 0 || !stack.isDamaged() && ItemStackUtils.hasToolLevel(stack, getToolClass(), getMinLevel(), getMaxLevel());
+        return ItemStackUtils.hasToolLevel(stack, getToolClass(), getMinLevel(), getMaxLevel());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.minecolonies.api.tools;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
@@ -26,74 +28,54 @@ public class ModToolTypes
 {
     public final static DeferredRegister<ToolTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "tooltypes"), Constants.MOD_ID);
 
-    public static final String NONE_ID            = "none";
-    public static final String PICKAXE_ID         = "pickaxe";
-    public static final String SHOVEL_ID          = "shovel";
-    public static final String AXE_ID             = "axe";
-    public static final String HOE_ID             = "hoe";
-    public static final String SWORD_ID           = "sword";
-    public static final String BOW_ID             = "bow";
-    public static final String FISHING_ROD_ID     = "rod";
-    public static final String SHEARS_ID          = "shears";
-    public static final String SHIELD_ID          = "shield";
-    public static final String HELMET_ID          = "helmet";
-    public static final String LEGGINGS_ID        = "leggings";
-    public static final String CHESTPLATE_ID      = "chestplate";
-    public static final String BOOTS_ID           = "boots";
-    public static final String FLINT_AND_STEEL_ID = "flintandsteel";
-
-    public static RegistryObject<ToolTypeEntry> none;
-    public static RegistryObject<ToolTypeEntry> pickaxe;
-    public static RegistryObject<ToolTypeEntry> shovel;
-    public static RegistryObject<ToolTypeEntry> axe;
-    public static RegistryObject<ToolTypeEntry> hoe;
-    public static RegistryObject<ToolTypeEntry> sword;
-    public static RegistryObject<ToolTypeEntry> bow;
-    public static RegistryObject<ToolTypeEntry> fishing_rod;
-    public static RegistryObject<ToolTypeEntry> shears;
-    public static RegistryObject<ToolTypeEntry> shield;
-    public static RegistryObject<ToolTypeEntry> helmet;
-    public static RegistryObject<ToolTypeEntry> leggings;
-    public static RegistryObject<ToolTypeEntry> chestplate;
-    public static RegistryObject<ToolTypeEntry> boots;
-    public static RegistryObject<ToolTypeEntry> flint_and_steel;
+    public final static RegistryObject<ToolTypeEntry> none;
+    public final static RegistryObject<ToolTypeEntry> pickaxe;
+    public final static RegistryObject<ToolTypeEntry> shovel;
+    public final static RegistryObject<ToolTypeEntry> axe;
+    public final static RegistryObject<ToolTypeEntry> hoe;
+    public final static RegistryObject<ToolTypeEntry> sword;
+    public final static RegistryObject<ToolTypeEntry> bow;
+    public final static RegistryObject<ToolTypeEntry> fishing_rod;
+    public final static RegistryObject<ToolTypeEntry> shears;
+    public final static RegistryObject<ToolTypeEntry> shield;
+    public final static RegistryObject<ToolTypeEntry> helmet;
+    public final static RegistryObject<ToolTypeEntry> leggings;
+    public final static RegistryObject<ToolTypeEntry> chestplate;
+    public final static RegistryObject<ToolTypeEntry> boots;
+    public final static RegistryObject<ToolTypeEntry> flint_and_steel;
 
     static
     {
-        none = register(NONE_ID,
-          builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_NONE))
-                  .setIsTool(itemStack -> true)
-                  .setToolLevel(itemStack -> itemStack == null ? 0 : -1)
-                  .build());
+        none =
 
-        pickaxe = register(PICKAXE_ID,
+        pickaxe = register("pickaxe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, pickaxe.get()))
-                  .setToolLevel(itemStack -> vanillaToolLevel(pickaxe.get(), itemStack))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
+                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
                   .build());
 
-        shovel = register(SHOVEL_ID,
+        shovel = register("shovel",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, shovel.get()))
-                  .setToolLevel(itemStack -> vanillaToolLevel(shovel.get(), itemStack))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
+                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
                   .build());
 
-        axe = register(AXE_ID,
+        axe = register("axe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, axe.get()))
-                  .setToolLevel(itemStack -> vanillaToolLevel(axe.get(), itemStack))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
+                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
                   .build());
 
-        hoe = register(HOE_ID,
+        hoe = register("hoe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, hoe.get()))
-                  .setToolLevel(itemStack -> vanillaToolLevel(hoe.get(), itemStack))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack, toolType))
+                  .setToolLevel((itemStack, toolType) -> vanillaToolLevel(toolType, itemStack))
                   .build());
 
-        sword = register(SWORD_ID,
+        sword = register("sword",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS) || Compatibility.isTinkersWeapon(itemStack))
-                  .setToolLevel(itemStack -> {
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS) || Compatibility.isTinkersWeapon(itemStack))
+                  .setToolLevel((itemStack, toolType) -> {
                       if (Compatibility.isTinkersWeapon(itemStack))
                       {
                           return Compatibility.getToolLevel(itemStack);
@@ -106,65 +88,72 @@ public class ModToolTypes
                   })
                   .build());
 
-        bow = register(BOW_ID,
+        bow = register("bow",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOW))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof BowItem)
-                  .setToolLevel(itemStack -> durabilityBasedLevel(itemStack, Items.BOW.getMaxDamage()))
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof BowItem)
+                  .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.BOW.getMaxDamage()))
                   .build());
 
-        fishing_rod = register(FISHING_ROD_ID,
+        fishing_rod = register("rod",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_FISHING_ROD))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_FISHING_ROD_ACTIONS))
-                  .setToolLevel(itemStack -> durabilityBasedLevel(itemStack, Items.FISHING_ROD.getMaxDamage()))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_FISHING_ROD_ACTIONS))
+                  .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.FISHING_ROD.getMaxDamage()))
                   .build());
 
-        shears = register(SHEARS_ID,
+        shears = register("shears",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHEARS))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHEARS_ACTIONS))
-                  .setToolLevel(itemStack -> durabilityBasedLevel(itemStack, Items.SHEARS.getMaxDamage()))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHEARS_ACTIONS))
+                  .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.SHEARS.getMaxDamage()))
                   .build());
 
-        shield = register(SHIELD_ID,
+        shield = register("shield",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHIELD))
-                  .setIsTool(itemStack -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHIELD_ACTIONS))
-                  .setToolLevel(itemStack -> durabilityBasedLevel(itemStack, Items.SHIELD.getMaxDamage()))
+                  .setIsTool((itemStack, toolType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHIELD_ACTIONS))
+                  .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.SHIELD.getMaxDamage()))
                   .build());
 
-        helmet = register(HELMET_ID,
+        helmet = register("helmet",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
-                  .setToolLevel(ModToolTypes::armorLevel)
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
+                  .setToolLevel((itemStack, toolType) -> ModToolTypes.armorLevel(itemStack))
                   .build());
 
-        leggings = register(LEGGINGS_ID,
+        leggings = register("leggings",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
-                  .setToolLevel(ModToolTypes::armorLevel)
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
+                  .setToolLevel((itemStack, toolType) -> ModToolTypes.armorLevel(itemStack))
                   .build());
 
-        chestplate = register(CHESTPLATE_ID,
+        chestplate = register("chestplate",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
-                  .setToolLevel(ModToolTypes::armorLevel)
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
+                  .setToolLevel((itemStack, toolType) -> ModToolTypes.armorLevel(itemStack))
                   .build());
 
-        boots = register(BOOTS_ID,
+        boots = register("boots",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
-                  .setToolLevel(ModToolTypes::armorLevel)
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
+                  .setToolLevel((itemStack, toolType) -> ModToolTypes.armorLevel(itemStack))
                   .build());
 
-        flint_and_steel = register(FLINT_AND_STEEL_ID,
+        flint_and_steel = register("flintandsteel",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LIGHTER))
-                  .setIsTool(itemStack -> itemStack.getItem() instanceof FlintAndSteelItem)
-                  .setToolLevel(itemStack -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
+                  .setIsTool((itemStack, toolType) -> itemStack.getItem() instanceof FlintAndSteelItem)
+                  .setToolLevel((itemStack, toolType) -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
                   .build());
+    }
+    /**
+     * Get the tooltype registry.
+     * @return The tooltype registry
+     */
+    public static IForgeRegistry<ToolTypeEntry> getRegistry()
+    {
+        return IMinecoloniesAPI.getInstance().getToolTypeRegistry();
     }
 
     private static RegistryObject<ToolTypeEntry> register(final String id, final Consumer<ToolTypeEntry.Builder> consumer)
     {
         ToolTypeEntry.Builder toolType = new ToolTypeEntry.Builder()
-                                           .setName(id)
                                            .setRegistryName(new ResourceLocation(Constants.MOD_ID, id));
         consumer.accept(toolType);
         return DEFERRED_REGISTER.register(id, toolType::build);

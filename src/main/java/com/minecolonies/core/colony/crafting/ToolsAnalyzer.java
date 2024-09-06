@@ -1,9 +1,7 @@
 package com.minecolonies.core.colony.crafting;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.IToolTypeRegistry;
 import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +31,7 @@ public final class ToolsAnalyzer
 
         for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
         {
-            for (ToolTypeEntry toolType : IToolTypeRegistry.getInstance()) {
+            for (ToolTypeEntry toolType : ModToolTypes.getRegistry()) {
                 if (toolType == ModToolTypes.none.get() || !toolType.checkIsTool(stack)) { continue; }
 
                 tryAddingToolWithLevel(toolItems, toolType, stack);

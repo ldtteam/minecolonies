@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.crafting;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -10,7 +9,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.IToolTypeRegistry;
 import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -220,7 +218,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
 
-        final ToolTypeEntry requiredTool = nbt.contains(TOOL_TAG) ? IToolTypeRegistry.getInstance().getValue(new ResourceLocation(nbt.getString(TOOL_TAG))) : ModToolTypes.none.get();
+        final String resLoc = nbt.getString(TOOL_TAG);
+        final ToolTypeEntry requiredTool = nbt.contains(TOOL_TAG) ? ModToolTypes.getRegistry().getValue(ToolTypeEntry.parseResourceLocation(resLoc)) : ModToolTypes.none.get();
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 
@@ -294,7 +293,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(buffer.readItem());
         }
 
-        final ToolTypeEntry requiredTool = IToolTypeRegistry.getInstance().getValue(buffer.readResourceLocation());
+        final ResourceLocation resLoc = ToolTypeEntry.parseResourceLocation(buffer.readResourceLocation());
+        final ToolTypeEntry requiredTool = ModToolTypes.getRegistry().getValue(resLoc);
 
         ResourceLocation lootTable = null;
         if(buffer.readBoolean())

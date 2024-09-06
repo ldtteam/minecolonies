@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.crafting;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -12,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.IToolTypeRegistry;
 import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -293,7 +291,8 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
         {
-            recipe.requiredTool = IToolTypeRegistry.getInstance().getValue(new ResourceLocation(recipeJson.get(RECIPE_TOOL_PROP).getAsString()));
+            String resLoc = recipeJson.get(RECIPE_TOOL_PROP).getAsString();
+            recipe.requiredTool = ModToolTypes.getRegistry().getValue(ToolTypeEntry.parseResourceLocation(resLoc));
         }
 
         if (recipeJson.has(RECIPE_SECONDARY_PROP))
@@ -950,7 +949,7 @@ public class CustomRecipe
     public static CustomRecipe deserialize(@NotNull final FriendlyByteBuf buffer)
     {
         final String crafter = buffer.readUtf();
-        final ResourceLocation recipeId = buffer.readResourceLocation();
+        final ResourceLocation recipeId = ToolTypeEntry.parseResourceLocation(buffer.readResourceLocation());
         final Set<ResourceLocation> researchReq = deserializeIds(buffer);
         final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
         final ResourceLocation lootTable;
@@ -962,7 +961,7 @@ public class CustomRecipe
         {
             lootTable = null;
         }
-        final ToolTypeEntry requiredTool = IToolTypeRegistry.getInstance().getValue(buffer.readResourceLocation());
+        final ToolTypeEntry requiredTool = ModToolTypes.getRegistry().getValue(buffer.readResourceLocation());
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();
