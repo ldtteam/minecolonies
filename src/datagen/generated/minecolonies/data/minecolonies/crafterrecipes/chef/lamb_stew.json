@@ -31,6 +31,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:lamb_stew"
+  "result": "minecolonies:lamb_stew",
+  "show-tooltip": true
 }

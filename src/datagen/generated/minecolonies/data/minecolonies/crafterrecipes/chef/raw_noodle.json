@@ -7,6 +7,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:raw_noodle"
+  "result": "minecolonies:raw_noodle",
+  "show-tooltip": true
 }

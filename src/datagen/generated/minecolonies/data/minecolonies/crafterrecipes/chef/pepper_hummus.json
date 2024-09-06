@@ -20,6 +20,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:pepper_hummus"
+  "result": "minecolonies:pepper_hummus",
+  "show-tooltip": true
 }
