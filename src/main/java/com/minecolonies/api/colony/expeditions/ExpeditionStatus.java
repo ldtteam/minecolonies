@@ -8,21 +8,46 @@ public enum ExpeditionStatus
     /**
      * The expedition has been created but not accepted yet.
      */
-    CREATED,
+    CREATED(true),
     /**
      * The expedition has been accepted but has not been sent away just yet.
      */
-    ACCEPTED,
+    ACCEPTED(true),
     /**
      * The expedition is currently active.
      */
-    ONGOING,
+    ONGOING(false),
     /**
      * The expedition is finished.
      */
-    FINISHED,
+    FINISHED(true),
     /**
      * The expedition does not exist.
      */
-    UNKNOWN
+    UNKNOWN(true);
+
+    /**
+     * Whether the tied visitor may be removed during the given phase of the expedition.
+     */
+    private final boolean mayRemoveVisitor;
+
+    /**
+     * Internal constructor.
+     *
+     * @param mayRemoveVisitor whether the tied visitor may be removed during the given phase of the expedition.
+     */
+    ExpeditionStatus(boolean mayRemoveVisitor)
+    {
+        this.mayRemoveVisitor = mayRemoveVisitor;
+    }
+
+    /**
+     * Check whether the tied visitor may be removed during the given phase of the expedition.
+     *
+     * @return true if so.
+     */
+    public boolean mayRemoveVisitor()
+    {
+        return mayRemoveVisitor;
+    }
 }

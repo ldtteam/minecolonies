@@ -17,6 +17,7 @@ import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionInteraction;
+import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -321,7 +322,7 @@ public class VisitorManager implements IVisitorManager
         if (expeditionType != null)
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());
-            newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+            newVisitor.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DespawnTime.fromNow(colony.getWorld(), DEFAULT_DESPAWN_TIME));
             newVisitor.triggerInteraction(new ExpeditionInteraction());
 
             if (colony.getExpeditionManager().addExpedition(newVisitor.getId(), expeditionType.id()))

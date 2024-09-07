@@ -2677,6 +2677,11 @@
   "com.minecolonies.coremod.setting.minecolonies:milk_item": "Milk Item:",
 
   "item.minecolonies.expedition_sheet": "Expedition Guide",
+  "com.minecolonies.core.expedition_sheet.description.visitor": "Expeditionary: ",
+  "com.minecolonies.core.expedition_sheet.description.visitor.left": "Left the colony",
+  "com.minecolonies.core.expedition_sheet.description.timeout": "Expires in: %s",
+  "com.minecolonies.core.expedition_sheet.description.timeout.minutes": "minutes",
+  "com.minecolonies.core.expedition_sheet.description.timeout.expired": "Expired",
   "com.minecolonies.core.expedition_sheet.inventory": "Expedition Guide Inventory",
 
   "com.minecolonies.core.expedition.interaction.inquiry.accept": "Hello! I am going on an expedition to %s, but I need some people and supplies. Could you help me out?",

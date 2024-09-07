@@ -1596,7 +1596,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ICitizenDataView getVisitor(final int citizenId)
+    public IVisitorViewData getVisitor(final int citizenId)
     {
         return visitors.get(citizenId);
     }

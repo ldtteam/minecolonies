@@ -22,6 +22,7 @@ import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
@@ -187,7 +188,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
             data.getColony().getExpeditionManager().acceptExpedition(expeditionId);
             if (data instanceof IVisitorData visitorData)
             {
-                visitorData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+                visitorData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DespawnTime.fromNow(player.level, DEFAULT_DESPAWN_TIME));
             }
         }
 

@@ -8,7 +8,17 @@ import org.jetbrains.annotations.NonNls;
 public class ExpeditionConstants
 {
     @NonNls
-    public static final String EXPEDITION_SHEET_INVENTORY = "com.minecolonies.core.expedition_sheet.inventory";
+    public static final String EXPEDITION_SHEET_DESCRIPTION_VISITOR         = "com.minecolonies.core.expedition_sheet.description.visitor";
+    @NonNls
+    public static final String EXPEDITION_SHEET_DESCRIPTION_VISITOR_LEFT    = "com.minecolonies.core.expedition_sheet.description.visitor.left";
+    @NonNls
+    public static final String EXPEDITION_SHEET_DESCRIPTION_TIMEOUT         = "com.minecolonies.core.expedition_sheet.description.timeout";
+    @NonNls
+    public static final String EXPEDITION_SHEET_DESCRIPTION_TIMEOUT_MINUTES = "com.minecolonies.core.expedition_sheet.description.timeout.minutes";
+    @NonNls
+    public static final String EXPEDITION_SHEET_DESCRIPTION_TIMEOUT_EXPIRED = "com.minecolonies.core.expedition_sheet.description.timeout.expired";
+    @NonNls
+    public static final String EXPEDITION_SHEET_INVENTORY                   = "com.minecolonies.core.expedition_sheet.inventory";
 
     @NonNls
     public static final String EXPEDITION_INTERACTION_ICON                             = "textures/icons/expedition.png";

@@ -20,6 +20,7 @@ import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTyp
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
+import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -525,7 +526,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         {
             InventoryUtils.clearItemHandler(leaderData.getInventory());
             InventoryUtils.transferAllItemHandler(inventory, leaderData.getInventory());
-            leaderData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DEFAULT_DESPAWN_TIME);
+            leaderData.setExtraDataValue(EXTRA_DATA_DESPAWN_TIME, DespawnTime.fromNow(colony.getWorld(), DEFAULT_DESPAWN_TIME));
         }
     }
 

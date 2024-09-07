@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.entity.ai.visitor.EntityAIExpeditionary;
+import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_FINISHED_LEAVING_MESSAGE;
+import static net.minecraft.world.level.Level.TICKS_PER_DAY;
 
 /**
  * Visitor type for expeditionary visitors in the town hall.
@@ -33,9 +35,9 @@ public class ExpeditionaryVisitorType implements IVisitorType
     public static final DespawnTimeData EXTRA_DATA_DESPAWN_TIME = new DespawnTimeData();
 
     /**
-     * Despawn time of 20 minutes.
+     * Despawn time of 1 day.
      */
-    public static final int DEFAULT_DESPAWN_TIME = 24000;
+    public static final long DEFAULT_DESPAWN_TIME = TICKS_PER_DAY;
 
     @Override
     public ResourceLocation getId()
@@ -81,10 +83,15 @@ public class ExpeditionaryVisitorType implements IVisitorType
         }
 
         final ExpeditionStatus expeditionStatus = visitor.getColony().getExpeditionManager().getExpeditionStatus(visitor.getId());
-        final Integer despawnTime = visitor.getExtraDataValue(EXTRA_DATA_DESPAWN_TIME);
-        if (entity.get().level.getGameTime() >= despawnTime && expeditionStatus.equals(ExpeditionStatus.UNKNOWN))
+        final DespawnTime despawnTime = visitor.getExtraDataValue(EXTRA_DATA_DESPAWN_TIME);
+        if (expeditionStatus.mayRemoveVisitor() && despawnTime.isElapsed(visitor.getColony().getWorld()))
         {
             visitor.getColony().getVisitorManager().removeCivilian(visitor);
+
+            if (expeditionStatus == ExpeditionStatus.CREATED || expeditionStatus == ExpeditionStatus.ACCEPTED)
+            {
+                visitor.getColony().getExpeditionManager().removeCreatedExpedition(visitor.getId());
+            }
         }
 
         if (expeditionStatus == ExpeditionStatus.FINISHED && entity.get().getInventoryCitizen().isEmpty())
@@ -95,27 +102,63 @@ public class ExpeditionaryVisitorType implements IVisitorType
     }
 
     /**
-     * Extra data for storing the de-spawn time.
+     * Extra data for storing the despawn time.
      */
-    public static class DespawnTimeData extends AbstractVisitorExtraData<Integer>
+    public static class DespawnTimeData extends AbstractVisitorExtraData<DespawnTime>
     {
+        /**
+         * Holder for the despawn time data.
+         *
+         * @param start    when the data was last set.
+         * @param duration how long the duration will be for.
+         */
+        public record DespawnTime(long start, long duration)
+        {
+            /**
+             * Create a new instance for the despawn time.
+             *
+             * @param level    the level calling from.
+             * @param duration the duration of the despawn timer.
+             * @return the created instance.
+             */
+            public static DespawnTime fromNow(Level level, long duration)
+            {
+                return new DespawnTime(level.getGameTime(), duration);
+            }
+
+            /**
+             * Check if the despawn timer has elapsed.
+             *
+             * @param level the level calling from.
+             * @return true if so.
+             */
+            public boolean isElapsed(Level level)
+            {
+                return duration <= 0 || level.getGameTime() > start + duration;
+            }
+        }
+
+        /**
+         * Default constructor.
+         */
         public DespawnTimeData()
         {
-            super("despawn-time", 0);
+            super("despawn-time", new DespawnTime(0, 0));
         }
 
         @Override
         public CompoundTag serializeNBT()
         {
             final CompoundTag compound = new CompoundTag();
-            compound.putInt("time", getValue());
+            compound.putLong("start", getValue().start);
+            compound.putLong("time", getValue().duration);
             return compound;
         }
 
         @Override
         public void deserializeNBT(final CompoundTag compoundTag)
         {
-            setValue(compoundTag.getInt("time"));
+            setValue(new DespawnTime(compoundTag.getLong("start"), compoundTag.getLong("time")));
         }
     }
 }
