@@ -14,7 +14,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ public class Stack implements IConcreteDeliverable
     private static final String NBT_STACK       = "Stack";
     private static final String NBT_MATCHMETA   = "MatchMeta";
     private static final String NBT_MATCHNBT    = "MatchNBT";
-    private static final String NBT_MATCHOREDIC  = "MatchOreDic";
     private static final String NBT_BUILDING_RES = "BuildingRes";
     private static final String NBT_RESULT       = "Result";
     private static final String NBT_COUNT       = "Count";
@@ -53,11 +51,6 @@ public class Stack implements IConcreteDeliverable
      * If NBT should match.
      */
     private boolean matchNBT;
-
-    /**
-     * If oredict should match.
-     */
-    private boolean matchOreDic;
 
     /**
      * The required count.
@@ -95,7 +88,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack, boolean matchDurability)
     {
-        this(stack, matchDurability, true, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
+        this(stack, matchDurability, true, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
     }
 
 
@@ -118,7 +111,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStorage itemStorage)
     {
-        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), false, ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
+        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), !itemStorage.ignoreNBT(), ItemStackUtils.EMPTY, itemStorage.getAmount(), itemStorage.getAmount());
     }
 
     /**
@@ -130,7 +123,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
     {
-        this(stack, true, matchNBT, false, ItemStackUtils.EMPTY, count, minCount);
+        this(stack, true, matchNBT, ItemStackUtils.EMPTY, count, minCount);
     }
 
     /**
@@ -139,7 +132,6 @@ public class Stack implements IConcreteDeliverable
      * @param stack       the required stack.
      * @param matchDamage   if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
-     * @param matchOreDic if the oredict has to be matched.
      * @param result      the result stack.
      * @param count       the count.
      * @param minCount    the min count.
@@ -148,12 +140,11 @@ public class Stack implements IConcreteDeliverable
       @NotNull final ItemStack stack,
       final boolean matchDamage,
       final boolean matchNBT,
-      final boolean matchOreDic,
       @NotNull final ItemStack result,
       final int count,
       final int minCount)
     {
-        this(stack, matchDamage, matchNBT, matchOreDic, ItemStackUtils.EMPTY, count, minCount, true);
+        this(stack, matchDamage, matchNBT, ItemStackUtils.EMPTY, count, minCount, true);
     }
 
     /**
@@ -162,13 +153,12 @@ public class Stack implements IConcreteDeliverable
      * @param stack       the required stack.
      * @param matchDamage   if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
-     * @param matchOreDic if the oredict has to be matched.
      * @param result      the result stack.
      * @param count       the count.
      * @param minCount    the min count.
      * @param canBeResolvedByBuilding if can be resolved by building.
      */
-    public Stack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final boolean matchOreDic, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding)
+    public Stack(final ItemStack stack, final boolean matchDamage, final boolean matchNBT, final ItemStack result, final int count, final int minCount, final boolean canBeResolvedByBuilding)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -178,7 +168,6 @@ public class Stack implements IConcreteDeliverable
         this.theStack = stack.copy();
         this.matchDamage = matchDamage;
         this.matchNBT = matchNBT;
-        this.matchOreDic = matchOreDic;
         this.result = result;
         this.count = count;
         this.minCount = Math.min(minCount, count);
@@ -198,7 +187,6 @@ public class Stack implements IConcreteDeliverable
         compound.put(NBT_STACK, input.theStack.saveOptional(provider));
         compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
-        compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
         compound.putBoolean(NBT_BUILDING_RES, input.canBeResolvedByBuilding);
 
         if (!ItemStackUtils.isEmpty(input.result))
@@ -223,7 +211,6 @@ public class Stack implements IConcreteDeliverable
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
-        final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final boolean canBeResolved = compound.contains(NBT_BUILDING_RES) ? compound.getBoolean(NBT_BUILDING_RES) : true;
 
         final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
@@ -236,7 +223,7 @@ public class Stack implements IConcreteDeliverable
             minCount = compound.getInt(NBT_MINCOUNT);
         }
 
-        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount, canBeResolved);
+        return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
     }
 
     /**
@@ -251,7 +238,6 @@ public class Stack implements IConcreteDeliverable
         Utils.serializeCodecMess(buffer, input.theStack);
         buffer.writeBoolean(input.matchDamage);
         buffer.writeBoolean(input.matchNBT);
-        buffer.writeBoolean(input.matchOreDic);
         buffer.writeBoolean(input.canBeResolvedByBuilding);
 
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
@@ -275,27 +261,18 @@ public class Stack implements IConcreteDeliverable
         final ItemStack stack = Utils.deserializeCodecMess(buffer);
         final boolean matchMeta = buffer.readBoolean();
         final boolean matchNBT = buffer.readBoolean();
-        final boolean matchOreDic = buffer.readBoolean();
         final boolean canBeResolved = buffer.readBoolean();
 
         final ItemStack result = buffer.readBoolean() ? Utils.deserializeCodecMess(buffer) : ItemStack.EMPTY;
 
         int count = buffer.readInt();
         int minCount = buffer.readInt();
-        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result, count, minCount, canBeResolved);
+        return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
     }
 
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        if (matchOreDic)
-        {
-            if (!Collections.disjoint(stack.getTags().toList(), theStack.getTags().toList()))
-            {
-                return true;
-            }
-        }
-
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchDamage, matchNBT);
     }
 
@@ -344,7 +321,7 @@ public class Stack implements IConcreteDeliverable
     @Override
     public IDeliverable copyWithCount(final int newCount)
     {
-        return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.matchOreDic, this.result, newCount, this.minCount);
+        return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.result, newCount, this.minCount);
     }
 
     @NotNull
@@ -380,10 +357,7 @@ public class Stack implements IConcreteDeliverable
         {
             return false;
         }
-        if (matchOreDic != stack1.matchOreDic)
-        {
-            return false;
-        }
+
         if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack()))
         {
             return false;
@@ -397,7 +371,6 @@ public class Stack implements IConcreteDeliverable
         int result1 = getStack().hashCode();
         result1 = 31 * result1 + (matchDamage ? 1 : 0);
         result1 = 31 * result1 + (matchNBT ? 1 : 0);
-        result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + (canBeResolvedByBuilding ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();
         return result1;

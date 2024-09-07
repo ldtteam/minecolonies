@@ -547,7 +547,7 @@ public class Colony implements IColony
             {
                 ticketedChunks.add(chunkPos);
                 ticketedChunksDirty = true;
-                ((ServerChunkCache) world.getChunkSource()).addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos(), true);
+                world.getChunkSource().addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos(), true);
             }
         }
     }
