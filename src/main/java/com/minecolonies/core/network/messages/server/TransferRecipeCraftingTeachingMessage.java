@@ -48,14 +48,14 @@ public class TransferRecipeCraftingTeachingMessage extends AbstractServerPlayMes
     protected TransferRecipeCraftingTeachingMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        itemStacks = buf.readMap(FriendlyByteBuf::readInt, b -> ItemStack.STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
+        itemStacks = buf.readMap(FriendlyByteBuf::readInt, b -> ItemStack.OPTIONAL_STREAM_CODEC.decode((RegistryFriendlyByteBuf) b));
         complete = buf.readBoolean();
     }
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, (b, v) -> ItemStack.STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, v));
+        buf.writeMap(itemStacks, FriendlyByteBuf::writeInt, (b, v) -> ItemStack.OPTIONAL_STREAM_CODEC.encode((RegistryFriendlyByteBuf) b, v));
         buf.writeBoolean(complete);
     }
 

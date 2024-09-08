@@ -226,7 +226,8 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             }
             for (SizedIngredient itemS : research.getCostList())
             {
-                Log.getLogger().debug("Cost: {}x {}", itemS.count(), String.join("/", Arrays.stream(itemS.ingredient().getItems()).map(ItemStack::toString).toList()));
+                // Can't log the contents or otherwise bad caching occurs.
+                Log.getLogger().debug("Cost: {}x {}", itemS.count(), String.join("/", itemS.toString()));
             }
             for (IResearchEffect<?> researchEffect : research.getEffects())
             {
