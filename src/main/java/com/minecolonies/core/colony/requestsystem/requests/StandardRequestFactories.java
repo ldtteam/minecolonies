@@ -1016,9 +1016,9 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest request)
         {
-            return serializeToNBT(provider, controller, request, Stack::serialize);
+            return serializeToNBT(controller, request, Stack::serialize);
         }
 
         /**
@@ -1031,9 +1031,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.MinStackRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public StandardRequests.MinStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(provider, controller, nbt, MinimumStack::deserialize,
+            return deserializeFromNBT(controller, nbt, MinimumStack::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.MinStackRequest.class),
                 requested,
                 token,
@@ -1043,16 +1043,16 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest input, final RegistryFriendlyByteBuf packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest input, final FriendlyByteBuf packetBuffer)
         {
-            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Stack::serialize);
+            serializeToFriendlyByteBuf(controller, input, packetBuffer, Stack::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.MinStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        public StandardRequests.MinStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
-            return deserializeFromRegistryFriendlyByteBuf(controller,
+            return deserializeFromFriendlyByteBuf(controller,
               buffer,
               MinimumStack::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.MinStackRequest.class),
