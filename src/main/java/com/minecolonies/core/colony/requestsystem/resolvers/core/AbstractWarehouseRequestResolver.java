@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -24,7 +24,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -82,6 +81,16 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             {
                 return false;
             }
+
+            if (requestToCheck.getRequest() instanceof MinimumStack)
+            {
+                final IBuilding otherWarehouse = colony.getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation());
+                if (otherWarehouse != null)
+                {
+                    return false;
+                }
+            }
+
 
             if (!isRequestChainValid(manager, requestToCheck))
             {
