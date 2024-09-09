@@ -85,7 +85,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             if (requestToCheck.getRequest() instanceof MinimumStack)
             {
                 final IBuilding otherWarehouse = colony.getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation());
-                if (otherWarehouse != null)
+                if (otherWarehouse.getBuildingType() == ModBuildings.wareHouse.get())
                 {
                     return false;
                 }
