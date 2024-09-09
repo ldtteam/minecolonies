@@ -85,6 +85,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
         this.validatorId = validatorId;
+        if (this.validatorId == null)
+        {
+            this.validatorId = Component.empty();
+            Log.getLogger().error("Validator id is null: " + this.getClass() + " " + this.getInquiry(), new Exception());
+        }
     }
 
     /**
