@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
@@ -213,6 +214,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      */
     protected void loadValidator()
     {
+        if (validatorId == null)
+        {
+            validatorId = Component.empty();
+            Log.getLogger().error("Validator id is null: " + this.getClass() + " " + this.getInquiry());
+        }
         this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
     }
 
