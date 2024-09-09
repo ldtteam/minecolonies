@@ -219,11 +219,6 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      */
     protected void loadValidator()
     {
-        if (validatorId == null)
-        {
-            validatorId = Component.empty();
-            Log.getLogger().error("Validator id is null: " + this.getClass() + " " + this.getInquiry());
-        }
         this.validator = InteractionValidatorRegistry.getStandardInteractionValidatorPredicate(validatorId);
     }
 

@@ -26,7 +26,7 @@ public class SimpleNotificationInteraction extends StandardInteraction
       final Component inquiry,
       final IChatPriority priority)
     {
-        super(inquiry, null, priority);
+        super(inquiry, Component.empty(), priority);
     }
 
     @Override
