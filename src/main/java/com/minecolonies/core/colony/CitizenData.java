@@ -1002,7 +1002,7 @@ public class CitizenData implements ICitizenData
             buf.writeInt(subInteractions.size());
             for (final IInteractionResponseHandler interactionHandler : subInteractions)
             {
-                buf.writeNbt(interactionHandler.serializeNBT(colony.getWorld().registryAccess()));
+                buf.writeNbt(interactionHandler.serializeNBT(buf.registryAccess()));
             }
         }
         else
