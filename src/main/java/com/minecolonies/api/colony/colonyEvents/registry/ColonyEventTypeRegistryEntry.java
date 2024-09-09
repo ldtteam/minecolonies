@@ -50,9 +50,9 @@ public class ColonyEventTypeRegistryEntry
      * @param compound the nbt to deserialize the event from.
      * @return the deserialized event.
      */
-    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @Nonnull final CompoundTag compound)
+    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @NotNull final HolderLookup.Provider provider, @Nonnull final CompoundTag compound)
     {
-        return eventCreator.apply(colony, compound, colony.getWorld().registryAccess());
+        return eventCreator.apply(colony, compound, provider);
     }
 
     /**

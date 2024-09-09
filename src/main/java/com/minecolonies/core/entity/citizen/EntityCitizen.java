@@ -593,12 +593,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level().isClientSide())
             {
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
-                    .sendToTrackingEntity(this);
+                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
             }
         }
         else
@@ -626,12 +625,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (!level().isClientSide())
         {
-            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
-
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
-            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
-                .sendToTrackingEntity(this);
+            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
         }
 
         interactionCooldown = 100;
