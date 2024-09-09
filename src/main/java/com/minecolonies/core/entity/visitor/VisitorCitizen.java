@@ -516,17 +516,9 @@ VisitorCitizen extends AbstractEntityCitizen
         {
             if (!level.isClientSide())
             {
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                Network.getNetwork()
-                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
-                    getX(),
-                    getY(),
-                    getZ(),
-                    getXRot(),
-                    getYRot(),
-                    getEyeHeight()), this);
-
+                Network.getNetwork().sendToTrackingEntity(new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()), this);
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 MessageUtils.forCitizen(this, MESSAGE_INTERACTION_VISITOR_FOOD).sendTo(player);
             }
             return InteractionResult.CONSUME;
