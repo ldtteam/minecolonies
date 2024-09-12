@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -15,11 +15,11 @@ import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The structureBuilder building.
@@ -135,10 +135,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                     }
                 }
             }
-            if (checkIfShouldKeepTool(ModToolTypes.pickaxe.get(), stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ModToolTypes.shovel.get(), stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ModToolTypes.axe.get(), stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ModToolTypes.hoe.get(), stack, localAlreadyKept))
+            if (checkIfShouldKeepEquipment(ModEquipmentTypes.pickaxe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.shovel.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.axe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.hoe.get(), stack, localAlreadyKept))
             {
                 localAlreadyKept.add(new ItemStorage(stack, 1, true));
                 return 0;
@@ -148,16 +148,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     /**
-     * Check if a certain tool should be kept or dumped.
+     * Check if certain equipment should be kept or dumped.
      *
-     * @param type             the type of the tool.
+     * @param type             the type of the equipment.
      * @param stack            the stack to check.
      * @param localAlreadyKept the already kept stacks.
      * @return true if should keep.
      */
-    private boolean checkIfShouldKeepTool(final ToolTypeEntry type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    private boolean checkIfShouldKeepEquipment(final EquipmentTypeEntry type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        if (ItemStackUtils.hasToolLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
+        if (ItemStackUtils.hasEquipmentLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()))
         {
             for (final ItemStorage storage : localAlreadyKept)
             {

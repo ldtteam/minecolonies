@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.workers.util;
 
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -54,7 +54,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * Tool type that is needed.
      */
-    private final ToolTypeEntry itemNeeded;
+    private final EquipmentTypeEntry itemNeeded;
 
     /**
      * Create a classification for a tool level.
@@ -67,7 +67,7 @@ public class GuardGear implements Predicate<ItemStack>
      * @param buildingLevelRange level range that the item will be required.
      */
     public GuardGear(
-      final ToolTypeEntry item, final EquipmentSlot type,
+      final EquipmentTypeEntry item, final EquipmentSlot type,
       final int minArmorLevel,
       final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
       final Tuple<Integer, Integer> buildingLevelRange)
@@ -125,7 +125,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * @return return the tool type that is needed
      */
-    public ToolTypeEntry getItemNeeded()
+    public EquipmentTypeEntry getItemNeeded()
     {
         return itemNeeded;
     }
@@ -150,7 +150,7 @@ public class GuardGear implements Predicate<ItemStack>
     public boolean test(final ItemStack stack)
     {
         return
-          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
+          (ItemStackUtils.hasEquipmentLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
              && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
             || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlot.MAINHAND)
             || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);

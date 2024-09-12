@@ -1,8 +1,8 @@
 package com.minecolonies.core.colony.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -27,12 +27,12 @@ public final class ToolsAnalyzer
     @NotNull
     public static List<ToolUsage> findTools()
     {
-        final Map<ToolTypeEntry, ToolUsage> toolItems = new HashMap<>();
+        final Map<EquipmentTypeEntry, ToolUsage> toolItems = new HashMap<>();
 
         for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
         {
-            for (ToolTypeEntry toolType : ModToolTypes.getRegistry()) {
-                if (toolType == ModToolTypes.none.get() || !toolType.checkIsTool(stack)) { continue; }
+            for (EquipmentTypeEntry toolType : ModEquipmentTypes.getRegistry()) {
+                if (toolType == ModEquipmentTypes.none.get() || !toolType.checkIsEquipment(stack)) { continue; }
 
                 tryAddingToolWithLevel(toolItems, toolType, stack);
 
@@ -46,11 +46,11 @@ public final class ToolsAnalyzer
             }
         }
 
-        return toolItems.values().stream().sorted(Comparator.comparing(ToolUsage::tool, new ToolTypeEntry.Comparator())).toList();
+        return toolItems.values().stream().sorted(Comparator.comparing(ToolUsage::tool, new EquipmentTypeEntry.Comparator())).toList();
     }
 
-    private static void tryAddingEnchantedTool(@NotNull final Map<ToolTypeEntry, ToolUsage> toolItems,
-                                               @NotNull final ToolTypeEntry tool,
+    private static void tryAddingEnchantedTool(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
+                                               @NotNull final EquipmentTypeEntry tool,
                                                @NotNull final ItemStack stack,
                                                final int enchantLevel)
     {
@@ -77,8 +77,8 @@ public final class ToolsAnalyzer
         }
     }
 
-    private static void tryAddingToolWithLevel(@NotNull final Map<ToolTypeEntry, ToolUsage> toolItems,
-                                               @NotNull final ToolTypeEntry tool,
+    private static void tryAddingToolWithLevel(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
+                                               @NotNull final EquipmentTypeEntry tool,
                                                @NotNull final ItemStack stack)
     {
         int level = tool.getMiningLevel(stack);

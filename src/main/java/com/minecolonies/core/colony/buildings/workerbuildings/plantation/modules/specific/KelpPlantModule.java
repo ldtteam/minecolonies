@@ -1,8 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -100,8 +100,8 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public ToolTypeEntry getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
-        return ModToolTypes.none.get();
+        return ModEquipmentTypes.none.get();
     }
 }

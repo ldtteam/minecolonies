@@ -3,7 +3,7 @@ package com.minecolonies.core.entity.ai.workers.guard;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
@@ -103,7 +103,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     public boolean canAttack()
     {
         final int weaponSlot =
-          InventoryUtils.getFirstSlotOfItemHandlerContainingTool(user.getInventoryCitizen(), ModToolTypes.bow.get(), 0, user.getCitizenData().getWorkBuilding().getMaxToolLevel());
+          InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(), ModEquipmentTypes.bow.get(), 0, user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
 
         if (weaponSlot != -1)
         {

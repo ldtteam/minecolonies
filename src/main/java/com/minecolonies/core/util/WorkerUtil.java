@@ -6,10 +6,10 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -73,7 +73,7 @@ public final class WorkerUtil
     /**
      * List of tools to test blocks against, used for finding right tool.
      */
-    public static List<Tuple<ToolTypeEntry, ItemStack>> tools;
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> tools;
 
     private WorkerUtil()
     {
@@ -85,15 +85,15 @@ public final class WorkerUtil
      *
      * @return the list of possible tools.
      */
-    public static List<Tuple<ToolTypeEntry, ItemStack>> getOrInitTestTools()
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> getOrInitTestTools()
     {
         if (tools == null)
         {
             tools = new ArrayList<>();
-            tools.add(new Tuple<>(ModToolTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
-            tools.add(new Tuple<>(ModToolTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
-            tools.add(new Tuple<>(ModToolTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
-            tools.add(new Tuple<>(ModToolTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
+            tools.add(new Tuple<>(ModEquipmentTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
         }
         return tools;
     }
@@ -177,16 +177,16 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static ToolTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
+    public static EquipmentTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
-            return ModToolTypes.shears.get();
+            return ModEquipmentTypes.shears.get();
         }
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<ToolTypeEntry, ItemStack> tool : getOrInitTestTools())
+            for (final Tuple<EquipmentTypeEntry, ItemStack> tool : getOrInitTestTools())
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
@@ -205,7 +205,7 @@ public final class WorkerUtil
             }
         }
 
-        return ModToolTypes.none.get();
+        return ModEquipmentTypes.none.get();
     }
 
     /**

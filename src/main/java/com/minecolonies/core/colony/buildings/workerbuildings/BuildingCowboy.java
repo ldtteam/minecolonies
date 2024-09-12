@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.tools.ModToolTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
@@ -189,7 +189,7 @@ public class BuildingCowboy extends AbstractBuilding
                         Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
                         Collections.emptyList(),                                                            // extra output
                         Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
-                        1, Blocks.AIR, null, ModToolTypes.none.get(), animal, Collections.emptyList(), 0));
+                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
             }
             else if (animal instanceof Cow)
             {
@@ -198,13 +198,13 @@ public class BuildingCowboy extends AbstractBuilding
                         Collections.emptyList(),                                                            // alt output
                         Collections.emptyList(),                                                            // extra output
                         Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
-                        1, Blocks.AIR, null, ModToolTypes.none.get(), animal, Collections.emptyList(), 0));
+                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
                 recipes.add(new GenericRecipe(null,
                         new ItemStack(ModItems.large_milk_bottle),                                          // output
                         Collections.emptyList(),                                                            // alt output
                         Collections.emptyList(),                                                            // extra output
                         Collections.singletonList(Collections.singletonList(new ItemStack(ModItems.large_empty_bottle))),  // input
-                        1, Blocks.AIR, null, ModToolTypes.none.get(), animal, Collections.emptyList(), 0));
+                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
             }
 
             return recipes;

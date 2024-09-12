@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
@@ -256,22 +256,22 @@ public final class ItemStackUtils
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level in a worker's inventory.
+     * Verifies if there is equipment with an acceptable level in a worker's inventory.
      *
      * @param stack        the stack to test.
-     * @param toolType     the type of tool needed
-     * @param minimalLevel the minimum level for the tool to find.
-     * @param maximumLevel the maximum level for the tool to find.
-     * @return true if tool is acceptable
+     * @param equipmentType     the type of equipment needed
+     * @param minimalLevel the minimum level for the equipment to find.
+     * @param maximumLevel the maximum level for the equipment to find.
+     * @return true if equipment is acceptable
      */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final ToolTypeEntry toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean hasEquipmentLevel(@Nullable final ItemStack stack, final EquipmentTypeEntry equipmentType, final int minimalLevel, final int maximumLevel)
     {
         if (isEmpty(stack))
         {
             return false;
         }
 
-        return toolType.checkIsTool(stack) && verifyToolLevel(stack, toolType.getMiningLevel(stack), minimalLevel, maximumLevel);
+        return equipmentType.checkIsEquipment(stack) && verifyEquipmentLevel(stack, equipmentType.getMiningLevel(stack), minimalLevel, maximumLevel);
     }
 
     /**
@@ -291,39 +291,50 @@ public final class ItemStackUtils
     }
 
     /**
-     * Check if the first stack is a better tool than the second stack.
-     *
-     * @param stack1 the first stack to check.
-     * @param stack2 the second to compare with.
-     * @return true if better, false if worse or either of them is not a tool.
-     */
-    public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
-    {
-        for (ToolTypeEntry toolType : ModToolTypes.getRegistry()) {
-            if (toolType.checkIsTool(stack1) && toolType.checkIsTool(stack2) && toolType.getMiningLevel(stack1) > toolType.getMiningLevel(stack2))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Verifies if an item has an appropriated grade.
      *
-     * @param itemStack    the type of tool needed
-     * @param toolLevel    the tool level
+     * @param itemStack    the equipment
+     * @param equipmentLevel    the equipment level
      * @param minimalLevel the minimum level needed
      * @param maximumLevel the maximum level needed (usually the worker's hut level)
-     * @return true if tool is acceptable
+     * @return true if equipment is acceptable
      */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
+    public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (toolLevel < minimalLevel)
+        if (equipmentLevel < minimalLevel)
         {
             return false;
         }
-        return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
+        return (equipmentLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
+    }
+
+    /**
+     * Calculates the max level enchantment this equipment has.
+     *
+     * @param itemStack the equipment to check.
+     * @return max enchantment level.
+     */
+    public static int getMaxEnchantmentLevel(final ItemStack itemStack)
+    {
+        if (itemStack == null)
+        {
+            return 0;
+        }
+        int maxLevel = 0;
+        if (itemStack != null)
+        {
+            final ListTag ListNBT = itemStack.getEnchantmentTags();
+
+            if (ListNBT != null)
+            {
+                for (int j = 0; j < ListNBT.size(); ++j)
+                {
+                    final int level = ListNBT.getCompound(j).getShort("lvl");
+                    maxLevel = level > maxLevel ? level : maxLevel;
+                }
+            }
+        }
+        return Math.max(maxLevel - 1, 0);
     }
 
     /**
@@ -377,60 +388,22 @@ public final class ItemStackUtils
     }
 
     /**
-     * Estimates the fishing rod tier from available durability and enchantment status.
+     * Check if the first stack is better equipment than the second stack.
      *
-     * @param itemStack the tool to check.
-     * @return equivalent tool level.
+     * @param stack1 the first stack to check.
+     * @param stack2 the second to compare with.
+     * @return true if better, false if worse or either of them are not equipment.
      */
-    private static int getFishingRodLevel(final ItemStack itemStack)
+    public static boolean isBetterEquipment(final ItemStack stack1, final ItemStack stack2)
     {
-        if (itemStack.getItem() == Items.FISHING_ROD)
+        for (EquipmentTypeEntry equipmentType : ModEquipmentTypes.getRegistry())
         {
-            return 1;
-        }
-        if (!itemStack.isDamageableItem())
-        {
-            return 5;
-        }
-        final int rodDurability = itemStack.getMaxDamage();
-        if (rodDurability <= (Tiers.WOOD.getUses() + 22))
-        {
-            return 1;
-        }
-        else if (rodDurability <= (Tiers.IRON.getUses() + 6))
-        {
-            return 2;
-        }
-        return 3;
-    }
-
-    /**
-     * Calculates the max level enchantment this tool has.
-     *
-     * @param itemStack the tool to check.
-     * @return max enchantment level.
-     */
-    public static int getMaxEnchantmentLevel(final ItemStack itemStack)
-    {
-        if (itemStack == null)
-        {
-            return 0;
-        }
-        int maxLevel = 0;
-        if (itemStack != null)
-        {
-            final ListTag ListNBT = itemStack.getEnchantmentTags();
-
-            if (ListNBT != null)
+            if (equipmentType.checkIsEquipment(stack1) && equipmentType.checkIsEquipment(stack2) && equipmentType.getMiningLevel(stack1) > equipmentType.getMiningLevel(stack2))
             {
-                for (int j = 0; j < ListNBT.size(); ++j)
-                {
-                    final int level = ListNBT.getCompound(j).getShort("lvl");
-                    maxLevel = level > maxLevel ? level : maxLevel;
-                }
+                return true;
             }
         }
-        return Math.max(maxLevel - 1, 0);
+        return false;
     }
 
     /**

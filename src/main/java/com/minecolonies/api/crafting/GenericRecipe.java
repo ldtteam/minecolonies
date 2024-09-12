@@ -2,8 +2,8 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.network.chat.Component;
@@ -56,7 +56,7 @@ public class GenericRecipe implements IGenericRecipe
             intermediate = Blocks.AIR;
         }
         return new GenericRecipe(recipe.getId(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
-                size, intermediate, null, ModToolTypes.none.get(), new ArrayList<>(), -1);
+                size, intermediate, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1);
     }
 
     @Nullable
@@ -91,9 +91,9 @@ public class GenericRecipe implements IGenericRecipe
     private final List<List<ItemStack>> inputs;
     private final int gridSize;
     private final Block intermediate;
-    private final ResourceLocation lootTable;
-    private final ToolTypeEntry    requiredTool;
-    private final LivingEntity     requiredEntity;
+    private final ResourceLocation   lootTable;
+    private final EquipmentTypeEntry requiredTool;
+    private final LivingEntity       requiredEntity;
     private final List<Component> restrictions;
     private final int levelSort;
 
@@ -103,7 +103,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final ToolTypeEntry requiredTool,
+                         @NotNull final EquipmentTypeEntry requiredTool,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
@@ -128,7 +128,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final ToolTypeEntry requiredTool,
+                         @NotNull final EquipmentTypeEntry requiredTool,
                          @Nullable final LivingEntity requiredEntity,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
@@ -241,7 +241,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     @Override
-    public ToolTypeEntry getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
         return this.requiredTool;
     }

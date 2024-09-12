@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
 import net.minecraft.data.CachedOutput;
@@ -115,9 +115,9 @@ public abstract class CustomRecipeProvider implements DataProvider
         }
 
         @NotNull
-        public CustomRecipeBuilder requiredTool(@NotNull final ToolTypeEntry toolType)
+        public CustomRecipeBuilder requiredTool(@NotNull final EquipmentTypeEntry toolType)
         {
-            if (toolType != ModToolTypes.none.get())
+            if (toolType != ModEquipmentTypes.none.get())
             {
                 this.json.addProperty(CustomRecipe.RECIPE_TOOL_PROP, toolType.getRegistryName().toString());
             }

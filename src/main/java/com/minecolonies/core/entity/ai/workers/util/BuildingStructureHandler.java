@@ -8,7 +8,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -248,9 +248,9 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         final List<ItemStack> itemList = new ArrayList<>();
         for (final ItemStack stack : requiredItems)
         {
-            if (ModToolTypes.flint_and_steel.get().checkIsTool(stack))
+            if (ModEquipmentTypes.flint_and_steel.get().checkIsEquipment(stack))
             {
-                if (structureAI.checkForToolOrWeapon(ModToolTypes.flint_and_steel.get()))
+                if (structureAI.checkForToolOrWeapon(ModEquipmentTypes.flint_and_steel.get()))
                 {
                     return false;
                 }

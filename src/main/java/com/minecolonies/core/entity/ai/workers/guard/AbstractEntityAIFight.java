@@ -4,8 +4,8 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -25,7 +25,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 
 /**
  * Class taking of the abstract guard methods for both archer and knights.
@@ -38,7 +38,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     /**
      * Tools and Items needed by the worker.
      */
-    public final List<ToolTypeEntry> toolsNeeded = new ArrayList<>();
+    public final List<EquipmentTypeEntry> toolsNeeded = new ArrayList<>();
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -115,7 +115,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState prepare()
     {
-        for (final ToolTypeEntry tool : toolsNeeded)
+        for (final EquipmentTypeEntry tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -124,7 +124,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
               stack -> !ItemStackUtils.isEmpty(stack)
                          && ItemStackUtils.doesItemServeAsWeapon(stack)
-                         && ItemStackUtils.hasToolLevel(stack, tool, 0, building.getMaxToolLevel()),
+                         && ItemStackUtils.hasEquipmentLevel(stack, tool, 0, building.getMaxEquipmentLevel()),
               itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
         }
 
@@ -151,7 +151,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             {
                 continue;
             }
-            if (item.getItemNeeded() == ModToolTypes.shield.get()
+            if (item.getItemNeeded() == ModEquipmentTypes.shield.get()
                   && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
             {
                 continue;

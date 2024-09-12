@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -265,12 +265,12 @@ public class BuildingBeekeeper extends AbstractBuilding
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ModToolTypes.shears.get(), animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal, Collections.emptyList(), 0));
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
                     Collections.emptyList(), Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
-                    0, Blocks.AIR, null, ModToolTypes.none.get(), animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
 
             return recipes;
         }

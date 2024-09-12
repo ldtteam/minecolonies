@@ -2,8 +2,8 @@ package com.minecolonies.core.entity.ai.workers.production.herders;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.tools.ModToolTypes;
-import com.minecolonies.api.tools.registry.ToolTypeEntry;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
@@ -52,12 +52,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
     @NotNull
     @Override
-    public List<ToolTypeEntry> getExtraToolsNeeded()
+    public List<EquipmentTypeEntry> getExtraToolsNeeded()
     {
-        final List<ToolTypeEntry> toolsNeeded = super.getExtraToolsNeeded();
+        final List<EquipmentTypeEntry> toolsNeeded = super.getExtraToolsNeeded();
         if (building.getSetting(BuildingShepherd.SHEARING).getValue())
         {
-            toolsNeeded.add(ModToolTypes.shears.get());
+            toolsNeeded.add(ModEquipmentTypes.shears.get());
         }
         return toolsNeeded;
     }
@@ -116,7 +116,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return DECIDE;
         }
 
-        if (!equipTool(InteractionHand.MAIN_HAND, ModToolTypes.shears.get()))
+        if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.shears.get()))
         {
             return PREPARING;
         }

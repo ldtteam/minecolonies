@@ -3,7 +3,7 @@ package com.minecolonies.core.entity.ai.workers.guard.training;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
@@ -303,17 +303,17 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     @Override
     protected boolean isSetup()
     {
-        if (checkForToolOrWeapon(ModToolTypes.sword.get()))
+        if (checkForToolOrWeapon(ModEquipmentTypes.sword.get()))
         {
             return false;
         }
 
-        if (checkForToolOrWeapon(ModToolTypes.shield.get()))
+        if (checkForToolOrWeapon(ModEquipmentTypes.shield.get()))
         {
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ModToolTypes.sword.get(), 0, building.getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.sword.get(), 0, building.getMaxEquipmentLevel());
         if (weaponSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);

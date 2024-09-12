@@ -9,7 +9,7 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -208,7 +208,7 @@ public class BuildingSmeltery extends AbstractBuilding
                         1,                   //grid
                         Blocks.AIR,                 //intermediate
                         getLootTable(input),        //loottable
-                        ModToolTypes.pickaxe.get(),
+                        ModEquipmentTypes.pickaxe.get(),
                         Collections.emptyList(),    //restrictions
                         -1));               //levelsort
             }

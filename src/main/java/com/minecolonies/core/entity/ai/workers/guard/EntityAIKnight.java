@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
-import com.minecolonies.api.tools.ModToolTypes;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -27,11 +27,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         super(job);
         super.registerTargets();
 
-        toolsNeeded.add(ModToolTypes.sword.get());
+        toolsNeeded.add(ModEquipmentTypes.sword.get());
 
         for (final List<GuardGear> list : itemsNeeded)
         {
-            list.add(new GuardGear(ModToolTypes.shield.get(), EquipmentSlot.OFFHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
+            list.add(new GuardGear(ModEquipmentTypes.shield.get(), EquipmentSlot.OFFHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }
 
         new KnightCombatAI((EntityCitizen) worker, getStateAI(), this);
