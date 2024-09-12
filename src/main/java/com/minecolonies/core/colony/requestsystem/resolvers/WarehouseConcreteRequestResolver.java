@@ -11,10 +11,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * ----------------------- Not Documented Object ---------------------
@@ -29,46 +26,49 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     }
 
     @Override
-    protected boolean internalCanResolve(final Level level, final List<BuildingWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
+    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck)
     {
         final IDeliverable deliverable = requestToCheck.getRequest();
-
-        if (deliverable instanceof IConcreteDeliverable)
+        if (!(deliverable instanceof IConcreteDeliverable))
         {
-            boolean ignoreNBT = false;
-            boolean ignoreDamage = false;
-            if (deliverable instanceof Stack stack)
+            return 0;
+        }
+
+        boolean ignoreNBT = false;
+        boolean ignoreDamage = false;
+        if (deliverable instanceof Stack stack)
+        {
+            ignoreNBT = !stack.matchNBT();
+            ignoreDamage = !stack.matchDamage();
+        }
+        int totalCount = 0;
+        for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+        {
+            if (wareHouse.getTileEntity() == null)
             {
-                ignoreNBT = !stack.matchNBT();
-                ignoreDamage = !stack.matchDamage();
+                continue;
             }
-            int totalCount = 0;
-            for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+
+            if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
             {
-                for (final BuildingWareHouse wareHouse : wareHouses)
-                {
-                    if (wareHouse.getTileEntity() == null)
-                    {
-                        continue;
-                    }
+                totalCount += Math.max(0,
+                  wareHouse.getTileEntity()
+                    .getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT),
+                      requestToCheck.getRequest().getMinimumCount()) - neDeliverable.getLeftOver());
+            }
+            else
+            {
+                totalCount += wareHouse.getTileEntity()
+                                .getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT),
+                                  requestToCheck.getRequest().getMinimumCount());
+            }
 
-                    if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
-                    {
-                        totalCount += Math.max(0, wareHouse.getTileEntity().getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getMinimumCount()) - neDeliverable.getLeftOver());
-                    }
-                    else
-                    {
-                        totalCount += wareHouse.getTileEntity().getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getMinimumCount());
-                    }
-
-                    if (totalCount >= requestToCheck.getRequest().getMinimumCount())
-                    {
-                        return true;
-                    }
-                }
+            if (totalCount >= requestToCheck.getRequest().getCount())
+            {
+                return totalCount;
             }
         }
-        return false;
+        return totalCount;
     }
 
     @Override

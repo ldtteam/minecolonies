@@ -92,6 +92,32 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     @Override
+    public int getCountInWarehouse(@NotNull final Predicate<ItemStack> predicate, int count)
+    {
+        int totalCount = 0;
+        if (getBuilding() != null)
+        {
+            for (@NotNull final BlockPos pos : getBuilding().getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(level, pos))
+                {
+                    final BlockEntity entity = getLevel().getBlockEntity(pos);
+                    if (entity instanceof final TileEntityRack rack && !rack.isEmpty())
+                    {
+                        totalCount += rack.getItemCount(predicate);
+                        if (totalCount >= count)
+                        {
+                            return totalCount;
+                        }
+                    }
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT)
     {
         return hasMatchingItemStackInWarehouse(itemStack, count, ignoreNBT, 0);

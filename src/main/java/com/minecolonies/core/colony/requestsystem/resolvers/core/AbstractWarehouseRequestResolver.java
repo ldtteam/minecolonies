@@ -29,7 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,12 +56,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     }
 
     /**
-     * Override to implement decendent specific checks during canResolveRequest
-     * @param wareHouses
-     * @param requestToCheck
-     * @return
+     * Override to implement specific warehouse counting rules.
+     * @param wareHouse the warehouse to check.
+     * @param requestToCheck the requested item.
+     * @return the available quantity.
      */
-    protected abstract boolean internalCanResolve(final Level level, final List<BuildingWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
+    protected abstract int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
@@ -91,23 +90,37 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 }
             }
 
-
             if (!isRequestChainValid(manager, requestToCheck))
+            {
+                return false;
+            }
+
+            final TileEntityWareHouse wareHouseTE = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
+            if (wareHouseTE == null)
+            {
+                return false;
+            }
+
+            int totalCount = getWarehouseInternalCount((BuildingWareHouse) wareHouse, requestToCheck);
+            if (totalCount <= 0)
             {
                 return false;
             }
 
             try
             {
-                final List<BuildingWareHouse> wareHouses = new ArrayList<>();
                 for (final Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
                 {
-                    if (building.getValue().getBuildingType() == ModBuildings.wareHouse.get())
+                    if (building.getValue().getBuildingType() == ModBuildings.wareHouse.get() && building.getValue() != wareHouse)
                     {
-                        wareHouses.add((BuildingWareHouse) building.getValue());
+                        totalCount += getWarehouseInternalCount((BuildingWareHouse) building.getValue(), requestToCheck);
+                        if (totalCount >= requestToCheck.getRequest().getCount())
+                        {
+                            return true;
+                        }
                     }
                 }
-                return internalCanResolve(colony.getWorld(), wareHouses, requestToCheck);
+                return false;
             }
             catch (Exception e)
             {
@@ -156,9 +169,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final Colony colony = (Colony) manager.getColony();
-
         final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
-
+        if (wareHouse == null)
+        {
+            return Lists.newArrayList();
+        }
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
         if (request.getRequest() instanceof INonExhaustiveDeliverable)
