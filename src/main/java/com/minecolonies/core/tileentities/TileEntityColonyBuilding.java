@@ -514,7 +514,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         if (rotationMirror == null)
         {
-            processBlueprint(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint"), level.registryAccess()));
+            calcRotation(StructurePacks.getBlueprint(this.packMeta, this.path.replace("0.blueprint", "1.blueprint"), level.registryAccess()));
         }
         return rotationMirror;
     }
@@ -681,42 +681,46 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             return;
         }
 
-        final BlockState structureState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (structureState != null)
+        calcRotation(blueprint);
+
+        final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+
+        if (info.getTileEntityData() != null)
         {
-            if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
-            {
-                Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", blueprint.getName()));
-                return;
-            }
-            final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
-            final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
+            final CompoundTag teCompound = info.getTileEntityData().copy();
+            final CompoundTag tagData = teCompound.getCompound(TAG_BLUEPRINTDATA);
 
-            final int rotation;
-            if (structureRotation <= worldRotation)
-            {
-                rotation = worldRotation - structureRotation;
-            }
-            else
-            {
-                rotation = 4 + worldRotation - structureRotation;
-            }
-
-            rotationMirror = RotationMirror.of(Rotation.values()[rotation], rotationMirror == null ? Mirror.NONE : rotationMirror.mirror());
-            blueprint.setRotationMirror(rotationMirror, level);
-            final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
-
-            if (info.getTileEntityData() != null)
-            {
-                final CompoundTag teCompound = info.getTileEntityData().copy();
-                final CompoundTag tagData = teCompound.getCompound(TAG_BLUEPRINTDATA);
-
-                tagData.putString(TAG_PACK, blueprint.getPackName());
-                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
-                tagData.putString(TAG_NAME, location);
-                this.readSchematicDataFromNBT(teCompound);
-            }
+            tagData.putString(TAG_PACK, blueprint.getPackName());
+            final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
+            tagData.putString(TAG_NAME, location);
+            this.readSchematicDataFromNBT(teCompound);
         }
+    }
+
+    private void calcRotation(final Blueprint blueprint)
+    {
+        final BlockState structureState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+        if (structureState == null || !(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
+        {
+            rotationMirror = RotationMirror.NONE;
+            return;
+        }
+
+        final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
+        final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
+
+        final int rotation;
+        if (structureRotation <= worldRotation)
+        {
+            rotation = worldRotation - structureRotation;
+        }
+        else
+        {
+            rotation = 4 + worldRotation - structureRotation;
+        }
+
+        rotationMirror = RotationMirror.of(Rotation.values()[rotation], rotationMirror == null ? Mirror.NONE : rotationMirror.mirror());
+        blueprint.setRotationMirror(rotationMirror, level);
     }
 
     /**
