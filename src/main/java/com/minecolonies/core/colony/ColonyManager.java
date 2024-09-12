@@ -611,7 +611,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            getColonies(event.level).forEach(c -> c.onWorldTick(event));
+            for (final IColony colony : getColonies(event.level))
+            {
+                try
+                {
+                    colony.onWorldTick(event);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error("Something went wrong ticking colony: " + colony.getID(), ex);
+                }
+            }
         }
     }
 
