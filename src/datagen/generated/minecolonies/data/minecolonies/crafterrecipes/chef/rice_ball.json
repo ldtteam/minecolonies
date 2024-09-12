@@ -14,6 +14,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:rice_ball"
+  "result": "minecolonies:rice_ball",
+  "show-tooltip": true
 }
