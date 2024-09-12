@@ -1,12 +1,15 @@
 package com.minecolonies.core.entity.visitor;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.visitor.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import net.minecraft.core.BlockPos;
@@ -15,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 
 /**
@@ -96,6 +101,27 @@ public class RegularVisitorType implements IVisitorType
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public void onDied(final VisitorCitizen visitor, final DamageSource cause)
+    {
+        IColony colony = visitor.getCitizenColonyHandler().getColony();
+        if (colony != null && visitor.getCitizenData() != null)
+        {
+            colony.getVisitorManager().removeCivilian(visitor.getCitizenData());
+            if (visitor.getCitizenData().getHomeBuilding() instanceof final TavernBuildingModule tavern)
+            {
+                tavern.setNoVisitorTime(visitor.level.getRandom().nextInt(5000) + 30000);
+            }
+
+            final String deathLocation = BlockPosUtil.getString(visitor.blockPosition());
+
+            MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, visitor.getCitizenData().getName(), cause.getMsgId(), deathLocation)
+              .withPriority(MessagePriority.DANGER)
+              .sendTo(colony)
+              .forManagers();
+        }
     }
 
     /**

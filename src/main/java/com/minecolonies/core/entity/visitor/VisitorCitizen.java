@@ -12,11 +12,8 @@ import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
 import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
@@ -59,7 +56,6 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -228,23 +224,7 @@ public class VisitorCitizen extends AbstractEntityVisitor
         super.die(cause);
         if (!level.isClientSide())
         {
-            IColony colony = getCitizenColonyHandler().getColony();
-            if (colony != null && getCitizenData() != null)
-            {
-                colony.getVisitorManager().removeCivilian(getCitizenData());
-                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
-                {
-                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
-                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
-                }
-
-                final String deathLocation = BlockPosUtil.getString(blockPosition());
-
-                MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation)
-                  .withPriority(MessagePriority.DANGER)
-                  .sendTo(colony)
-                  .forManagers();
-            }
+            visitorType.onDied(this, cause);
         }
     }
 

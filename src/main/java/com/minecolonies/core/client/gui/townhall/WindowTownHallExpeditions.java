@@ -134,16 +134,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
                 }
 
                 pane.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
-
-                final ColonyExpeditionTypeDifficulty difficulty = expeditionType.difficulty();
-                pane.findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, Image.class)
-                  .setImage(new ResourceLocation("textures/item/" + difficulty.getIcon().toString() + ".png"), true);
-
-                PaneBuilders.tooltipBuilder()
-                  .append(Component.translatable(EXPEDITIONARY_DIFFICULTY, Component.translatable(EXPEDITIONARY_DIFFICULTY_PREFIX + difficulty.getKey()))
-                            .withStyle(difficulty.getStyle()))
-                  .hoverPane(findPaneOfTypeByID(IMAGE_EXPEDITION_DIFFICULTY, ItemIcon.class))
-                  .build();
+                renderDifficultyImage(pane, expeditionType);
 
                 final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(expedition.getId());
                 if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
@@ -212,6 +203,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
             }
 
             detailsContainer.findPaneOfTypeByID(LABEL_EXPEDITION_NAME, Text.class).setText(expeditionType.name());
+            renderDifficultyImage(detailsContainer, expeditionType);
 
             final ExpeditionStatus expeditionStatus = colony.getExpeditionManager().getExpeditionStatus(openedExpedition.getId());
             if (expeditionStatus.equals(ExpeditionStatus.FINISHED))
@@ -358,6 +350,31 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         }
     }
 
+    /**
+     * Render the difficulty image.
+     *
+     * @param container      the container to find the image in.
+     * @param expeditionType the expedition type.
+     */
+    private void renderDifficultyImage(final Pane container, final ColonyExpeditionType expeditionType)
+    {
+        final ColonyExpeditionTypeDifficulty difficulty = expeditionType.difficulty();
+        container.findPaneOfTypeByID(WindowTownHallExpeditions.IMAGE_EXPEDITION_DIFFICULTY, Image.class)
+          .setImage(new ResourceLocation("textures/item/" + difficulty.getIcon().toString() + ".png"), true);
+
+        PaneBuilders.tooltipBuilder()
+          .append(Component.translatable(EXPEDITIONARY_DIFFICULTY, Component.translatable(EXPEDITIONARY_DIFFICULTY_PREFIX + difficulty.getKey()))
+                    .withStyle(difficulty.getStyle()))
+          .hoverPane(container.findPaneOfTypeByID(WindowTownHallExpeditions.IMAGE_EXPEDITION_DIFFICULTY, Image.class))
+          .build();
+    }
+
+    /**
+     * Extract the results data from an expedition instance.
+     *
+     * @param colonyExpedition the expedition instance.
+     * @return the list of data.
+     */
     private List<OpenedExpeditionResultData> getResultRowData(@Nullable final ColonyExpedition colonyExpedition)
     {
         if (colonyExpedition == null)
@@ -397,6 +414,9 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         return results;
     }
 
+    /**
+     * The type of result row.
+     */
     private enum OpenedExpeditionResultType
     {
         HEADER,
@@ -404,8 +424,10 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
         KILLS
     }
 
+    /**
+     * Container class for the opened expedition.
+     */
     private record OpenedExpeditionResultData(OpenedExpeditionResultType type, int stageIndex, int listOffsetIndex)
     {
-
     }
 }

@@ -65,7 +65,8 @@
 
             <view id="expedition_details" size="100% 100%">
                 <text id="expedition_name" size="100% 15" color="black"/>
-                <text id="expedition_status" pos="0 15" size="100% 15" color="black" textscale="0.8"/>
+                <image id="expedition_difficulty" size="16 15" pos="0 15"/>
+                <text id="expedition_status" pos="20 15" size="100% 15" color="black" textscale="0.8"/>
 
                 <text pos="0 40" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_items)" color="black"/>
                 <box pos="0 55" size="100% 20" linewidth="1">

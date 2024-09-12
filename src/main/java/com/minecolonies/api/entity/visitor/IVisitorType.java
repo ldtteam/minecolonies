@@ -1,9 +1,11 @@
 package com.minecolonies.api.entity.visitor;
 
 import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +68,14 @@ public interface IVisitorType
         visitor.getLookControl().setLookAt(player);
         return InteractionResult.PASS;
     }
+
+    /**
+     * Fired upon death of a visitor.
+     *
+     * @param visitor the visitor that has died.
+     * @param cause   the damage source that caused them to die.
+     */
+    default void onDied(final VisitorCitizen visitor, DamageSource cause) {}
 
     /**
      * Tick the data to update values.
