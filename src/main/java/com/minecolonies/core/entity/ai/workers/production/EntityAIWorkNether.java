@@ -875,7 +875,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, edible::matches);
-        final ICitizenData citizenData = worker.getCitizenData();
         if (slot > -1)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
