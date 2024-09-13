@@ -32,10 +32,10 @@ public class ItemOverlayBoxesRenderer
                     ctx.poseStack.translate(bounds.minX - ctx.cameraPosition.x(), bounds.minY - ctx.cameraPosition.y(), bounds.minZ - ctx.cameraPosition.z());
                     bounds = bounds.move(-bounds.minX, -bounds.minY, -bounds.minZ);
                 }
-                else if (bounds != null)
+                else
                 {
                     ctx.pushPoseCameraToPos(pos);
-                    bounds = bounds.move(pos.multiply(-1));
+                    if (bounds != null) bounds = bounds.move(pos.multiply(-1));
                 }
 
                 if (box.showThroughBlocks())
