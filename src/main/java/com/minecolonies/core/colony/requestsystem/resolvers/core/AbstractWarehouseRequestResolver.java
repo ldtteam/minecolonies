@@ -120,7 +120,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                         }
                     }
                 }
-                return false;
+                return totalCount >= requestToCheck.getRequest().getCount();
             }
             catch (Exception e)
             {
