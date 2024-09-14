@@ -1,6 +1,5 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
@@ -69,22 +68,6 @@ public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuildi
      */
     @NotNull
     public abstract List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate);
-
-    /**
-     * Get the count up to some maxCount for some itemstorage in the warehouse.
-     * @param storage the storage.
-     * @param maxCount the count.
-     * @return the maxCount or less.
-     */
-    public abstract int getCountInWarehouse(@NotNull final ItemStorage storage, int maxCount);
-
-    /**
-     * Get the count up to some maxCount for some itemstack predicate in the warehouse.
-     * @param predicate the predicate.
-     * @param maxCount the count.
-     * @return the maxCount or less.
-     */
-    public abstract int getCountInWarehouse(@NotNull final Predicate<ItemStack> predicate, int maxCount);
 
     /**
      * Dump the inventory of a citizen into the warehouse. Go through all items and search the right chest to dump it in.

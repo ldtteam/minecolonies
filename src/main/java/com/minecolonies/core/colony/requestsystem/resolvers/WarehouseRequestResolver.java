@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
 import org.jetbrains.annotations.NotNull;
@@ -30,17 +30,6 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
             return 0;
         }
 
-        int totalCount = 0;
-        final AbstractTileEntityWareHouse tileEntityWareHouse = wareHouse.getTileEntity();
-        if (tileEntityWareHouse != null)
-        {
-            totalCount += tileEntityWareHouse.getCountInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount());
-            if (totalCount >= requestToCheck.getRequest().getCount())
-            {
-                return totalCount;
-            }
-        }
-
-        return totalCount;
+        return InventoryUtils.hasBuildingEnoughElseCount(wareHouse, itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount());
     }
 }

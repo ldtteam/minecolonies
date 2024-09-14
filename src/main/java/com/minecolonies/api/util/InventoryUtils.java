@@ -754,12 +754,8 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
-                else if (entity instanceof ChestBlockEntity)
-                {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
-                }
 
-                if (totalCount > count)
+                if (totalCount >= count)
                 {
                     return Integer.MAX_VALUE;
                 }
@@ -791,7 +787,7 @@ public class InventoryUtils
                     totalCount += ((TileEntityRack) entity).getItemCount(stack);
                 }
 
-                if (totalCount > count)
+                if (totalCount >= count)
                 {
                     return totalCount;
                 }
@@ -840,10 +836,6 @@ public class InventoryUtils
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
-                }
-                else if (entity instanceof ChestBlockEntity)
-                {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack()));
                 }
             }
         }

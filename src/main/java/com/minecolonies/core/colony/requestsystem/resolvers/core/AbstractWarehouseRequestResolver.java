@@ -95,12 +95,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 return false;
             }
 
-            final TileEntityWareHouse wareHouseTE = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
-            if (wareHouseTE == null)
-            {
-                return false;
-            }
-
             int totalCount = getWarehouseInternalCount((BuildingWareHouse) wareHouse, requestToCheck);
             if (totalCount <= 0)
             {

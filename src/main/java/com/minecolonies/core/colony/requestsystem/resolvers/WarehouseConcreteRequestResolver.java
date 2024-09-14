@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliv
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
 import net.minecraft.world.item.ItemStack;
@@ -44,23 +45,15 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
         int totalCount = 0;
         for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
         {
-            if (wareHouse.getTileEntity() == null)
-            {
-                continue;
-            }
-
             if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
             {
-                totalCount += Math.max(0,
-                  wareHouse.getTileEntity()
-                    .getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT),
-                      requestToCheck.getRequest().getMinimumCount()) - neDeliverable.getLeftOver());
+                totalCount += Math.max(0, InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
+                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount() + neDeliverable.getLeftOver()) - neDeliverable.getLeftOver());
             }
             else
             {
-                totalCount += wareHouse.getTileEntity()
-                                .getCountInWarehouse(new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT),
-                                  requestToCheck.getRequest().getMinimumCount());
+                totalCount += InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
+                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount());
             }
 
             if (totalCount >= requestToCheck.getRequest().getCount())
