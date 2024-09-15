@@ -149,7 +149,7 @@ public class BuildingModules
         .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)),
         () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,ToolModuleView> BEEKEEPER_TOOL        =
-      new BuildingEntry.ModuleProducer<>("beekeeper_tool", null, () -> () -> new ToolModuleView(ModItems.scepterBeekeeper));
+      new BuildingEntry.ModuleProducer<>("beekeeper_tool", null, () -> () -> new ToolModuleView(ModItems.scepterBeekeeper.get()));
     public static final BuildingEntry.ModuleProducer<BuildingBeekeeper.HerdingModule,IBuildingModuleView> BEEKEEPER_HERDING     =
       new BuildingEntry.ModuleProducer<>("beekeeper_herding", BuildingBeekeeper.HerdingModule::new, null);
 
@@ -443,7 +443,7 @@ public class BuildingModules
         .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting())
         .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,ToolModuleView> FORESTER_TOOL     =
-      new BuildingEntry.ModuleProducer<>("forester_zone", null, () -> () -> new ToolModuleView(ModItems.scepterLumberjack));
+      new BuildingEntry.ModuleProducer<>("forester_zone", null, () -> () -> new ToolModuleView(ModItems.scepterLumberjack.get()));
 
     public static final BuildingEntry.ModuleProducer<HospitalAssignmentModule,WorkerBuildingModuleView> HEALER_WORK           =
       new BuildingEntry.ModuleProducer<>("healer_work",
@@ -528,7 +528,7 @@ public class BuildingModules
 
     public static final BuildingEntry.ModuleProducer<IBuildingModule,ToolModuleView> GUARD_TOOL     =
       new BuildingEntry.ModuleProducer<>("tool_scepterguard_view", null, () -> () -> new ToolModuleView(
-        ModItems.scepterGuard));
+        ModItems.scepterGuard.get()));
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> GUARD_SETTINGS = new BuildingEntry.ModuleProducer<>("guard_settings", () -> new SettingsModule()
       .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW, GuardTaskSetting.PATROL_MINE))
       .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))

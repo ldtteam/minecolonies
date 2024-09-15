@@ -3,8 +3,6 @@ package com.minecolonies.core.blocks;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
-import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,11 +35,6 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     private static final float  BLOCK_HARDNESS = 5F;
 
     /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME     = "blockminecoloniesnamedgrave";
-
-    /**
      * The resistance this block has.
      */
     private static final float  RESISTANCE     = 1F;
@@ -51,12 +44,6 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
         super(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noLootTable());
         final BlockState bs = this.defaultBlockState();
         this.registerDefaultState(bs.setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
@@ -149,6 +136,6 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos)
     {
         return !worldIn.isEmptyBlock(pos.below())
-                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockNamedGrave;
+                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockNamedGrave.get();
     }
 }

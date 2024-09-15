@@ -23,13 +23,6 @@ public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSC
     private static final VoxelShape SHAPE_SOUTH = Block.box(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_WEST  = Block.box(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
 
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockpostbox";
-    }
-
     @Override
     public BuildingEntry getBuildingEntry()
     {

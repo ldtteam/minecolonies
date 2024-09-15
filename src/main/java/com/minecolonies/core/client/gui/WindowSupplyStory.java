@@ -76,7 +76,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
             final Random random = new Random(currentComponent.randomKey());
             final List<Holder.Reference<Biome>> biomes = mc.level.registryAccess().registryOrThrow(Registries.BIOME).holders().toList();
             final Holder<Biome> biome = biomes.get(random.nextInt(biomes.size()));
-            if (stack.getItem() == ModItems.supplyCamp)
+            if (stack.is(ModItems.supplyCamp))
             {
                 story.add(Component.literal(ColonyStoryListener.pickRandom(ColonyStoryListener.supplyCampStories, biome, random)));
             }
@@ -90,7 +90,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
         story.add(Component.translatable("com.minecolonies.core.gui.supplies.guide", Component.translatable(stack.getItem().getDescriptionId())));
         story.add(Component.empty());
 
-        if (stack.getItem() == ModItems.supplyCamp)
+        if (stack.is(ModItems.supplyCamp))
         {
             story.add(Component.translatable("com.minecolonies.core.gui.supplycamp.guide"));
         }

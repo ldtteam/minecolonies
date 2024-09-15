@@ -39,7 +39,7 @@ import net.minecraft.world.InteractionResultHolder;
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
  */
-public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements ISupplyItem
+public class ItemSupplyChestDeployer extends Item implements ISupplyItem
 {
     /**
      * StructureIterator name and location.
@@ -68,7 +68,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
     {
-        super("supplychestdeployer", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @NotNull

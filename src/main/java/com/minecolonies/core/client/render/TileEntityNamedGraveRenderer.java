@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -55,9 +55,9 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
         if(tileEntity != null)
         {
             final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
-            if (state.getBlock() == ModBlocks.blockNamedGrave)
+            if (state.getBlock() == ModBlocks.blockNamedGrave.get())
             {
-                final Direction facing = state.getValue(AbstractBlockMinecoloniesDefault.FACING);
+                final Direction facing = state.getValue(BlockScarecrow.FACING);
                 switch (facing)
                 {
                     case NORTH:

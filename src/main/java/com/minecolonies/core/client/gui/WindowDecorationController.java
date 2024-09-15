@@ -94,7 +94,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                         if (blueprint != null)
                         {
                             final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-                            if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
+                            if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder.get())
                             {
                                 findPaneByID(BUTTON_REPAIR).show();
                             }
@@ -110,7 +110,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                               if (blueprint != null)
                               {
                                   final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-                                  if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
+                                  if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder.get())
                                   {
                                       findPaneByID(BUTTON_BUILD).show();
                                   }

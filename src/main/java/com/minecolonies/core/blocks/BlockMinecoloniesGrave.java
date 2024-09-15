@@ -8,8 +8,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -37,7 +35,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 
@@ -50,11 +47,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
      * The hardness this block has.
      */
     private static final float BLOCK_HARDNESS = 1.5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockminecoloniesgrave";
 
     /**
      * The resistance this block has.
@@ -70,12 +62,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     {
         super(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, GraveType.DEFAULT));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override

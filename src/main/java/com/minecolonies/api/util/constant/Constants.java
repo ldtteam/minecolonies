@@ -157,9 +157,6 @@ public final class Constants
      */
     public static final int SLOT_PER_LINE = 9;
 
-    public static final String SCIMITAR_NAME     = "iron_scimitar";
-    public static final String CHIEFSWORD_NAME   = "chiefsword";
-
     public static final int GLOW_EFFECT_DURATION   = 20 * 30;
     public static final int GLOW_EFFECT_MULTIPLIER = 20;
     public static final int GLOW_EFFECT_DISTANCE   = 60;

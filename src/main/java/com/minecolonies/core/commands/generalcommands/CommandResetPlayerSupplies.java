@@ -42,7 +42,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             return 0;
         }
 
-        player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
+        player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest.get()), -1);
         context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_RESET_SUPPLY_SUCCESS), true);
         MessageUtils.format(COMMAND_RESET_SUPPLY_SUCCESS).sendTo(player);
         return 1;

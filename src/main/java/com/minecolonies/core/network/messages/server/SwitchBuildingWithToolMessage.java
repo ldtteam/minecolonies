@@ -67,7 +67,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
             {
                 stackSlot = i;
             }
-            else if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
+            else if (player.getInventory().getItem(i).is(ModItems.buildTool))
             {
                 buildToolSlot = i;
             }
@@ -75,7 +75,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
 
         for (int i = 9; i < player.getInventory().getContainerSize(); i++)
         {
-            if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
+            if (player.getInventory().getItem(i).is(ModItems.buildTool))
             {
                 buildToolSlot = i;
             }
@@ -84,7 +84,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
         if (stackSlot != -1 && buildToolSlot != -1)
         {
             player.getInventory().setItem(buildToolSlot, player.getInventory().getItem(stackSlot).copy());
-            player.getInventory().setItem(stackSlot, new ItemStack(ModItems.buildTool.get(), 1));
+            player.getInventory().setItem(stackSlot, ModItems.buildTool.toStack());
         }
     }
 }

@@ -14,8 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +74,7 @@ public final class ConstructionTapeHelper
         final Level world = colony.getWorld();
 
         final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().offset(-1, 0, -1), orgCorners.getB().offset(1, 0, 1));
-        final BlockState constructionTape = ModBlocks.blockConstructionTape.defaultBlockState();
+        final BlockState constructionTape = ModBlocks.blockConstructionTape.get().defaultBlockState();
 
         final int x = Math.min(corners.getA().getX(), corners.getB().getX());
         final int y = Math.max(corners.getA().getY(), corners.getB().getY());
@@ -249,14 +249,14 @@ public final class ConstructionTapeHelper
     public static void removeTapeIfNecessary(
       @NotNull final Level world,
       @NotNull final BlockPos block,
-      @NotNull final Block tapeOrTapeCorner,
+      @NotNull final DeferredBlock<?> tapeOrTapeCorner,
       final int minHeight,
       final int maxHeight)
     {
         for (int y = minHeight; y <= maxHeight; y++)
         {
             final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
-            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
+            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner.get())
             {
                 world.removeBlock(newBlock, false);
                 break;

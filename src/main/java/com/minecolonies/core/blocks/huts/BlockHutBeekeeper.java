@@ -10,17 +10,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
 {
     /**
-     * Method to return the name of the block.
-     *
-     * @return Name of the block.
-     */
-    @Override
-    public String getHutName()
-    {
-        return "blockhutbeekeeper";
-    }
-
-    /**
      * Method to get the building registry entry.
      *
      * @return The building entry.

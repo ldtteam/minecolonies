@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.minecolonies.api.items.ModArmorMaterials;
 import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -9,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.apiimp.initializer.ModItemsInitializer.GOGGLES;
-
 public class ItemBuildGoggles extends ArmorItem
 {
     /**
@@ -19,11 +18,9 @@ public class ItemBuildGoggles extends ArmorItem
      * @param name            the name.
      * @param properties      the item properties.
      */
-    public ItemBuildGoggles(
-            @NotNull final String name,
-            final Item.Properties properties)
+    public ItemBuildGoggles(final Item.Properties properties)
     {
-        super(GOGGLES, Type.HELMET, properties.setNoRepair().rarity(Rarity.UNCOMMON));
+        super(ModArmorMaterials.GOGGLES, Type.HELMET, properties.setNoRepair().rarity(Rarity.UNCOMMON));
     }
 
     @Override

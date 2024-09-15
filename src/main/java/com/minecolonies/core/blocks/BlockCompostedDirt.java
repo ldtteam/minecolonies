@@ -1,11 +1,9 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
@@ -23,9 +21,8 @@ import javax.annotation.Nullable;
 /**
  * Block that if activated with BoneMeal or Compost by an AI will produce flowers by intervals until it deactivates
  */
-public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt> implements ITickableBlockMinecolonies
+public class BlockCompostedDirt extends Block implements ITickableBlockMinecolonies
 {
-    private static final String     BLOCK_NAME     = "composted_dirt";
     private static final float      BLOCK_HARDNESS = 5f;
     private static final float      RESISTANCE     = 1f;
     private final static VoxelShape SHAPE          = Shapes.box(0, 0, 0, 1, 1, 1);
@@ -36,12 +33,6 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     public BlockCompostedDirt()
     {
         super(Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT).strength(BLOCK_HARDNESS, RESISTANCE).sound(SoundType.GRAVEL));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Nullable

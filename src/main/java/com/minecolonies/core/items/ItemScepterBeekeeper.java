@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -27,7 +28,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Beekeeper Scepter Item class. Used to give tasks to Beekeeper.
  */
-public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterBeekeeper extends Item implements IBlockOverlayItem
 {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int YELLOW_OVERLAY = 0xFFFFFF00;
@@ -39,7 +40,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
      */
     public ItemScepterBeekeeper(final Properties properties)
     {
-        super("scepterbeekeeper", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @Override

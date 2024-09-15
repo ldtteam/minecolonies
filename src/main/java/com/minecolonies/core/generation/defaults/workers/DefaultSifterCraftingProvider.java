@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.neoforged.neoforge.registries.DeferredItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -251,10 +252,10 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
         private final int minBuildingLevel;
         private final LootTable.Builder lootTable;
 
-        public SifterMeshDetails(@NotNull final Item mesh, final int minBuildingLevel, @NotNull final LootTable.Builder lootTable)
+        public SifterMeshDetails(@NotNull final DeferredItem<?> mesh, final int minBuildingLevel, @NotNull final LootTable.Builder lootTable)
         {
-            this.name = BuiltInRegistries.ITEM.getKey(mesh).getPath().replace("sifter_mesh_", "");
-            this.mesh = mesh;
+            this.name = mesh.getId().getPath().replace("sifter_mesh_", "");
+            this.mesh = mesh.get();
             this.minBuildingLevel = minBuildingLevel;
             this.lootTable = lootTable;
         }

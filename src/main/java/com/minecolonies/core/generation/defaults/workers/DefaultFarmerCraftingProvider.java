@@ -47,7 +47,7 @@ public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
 
         recipe(FARMER, MODULE_CRAFTING, "mud")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.DIRT)),
-                        new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
+                        new ItemStorage(ModItems.large_water_bottle.toStack())))
                 .result(new ItemStack(Items.MUD))
                 .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
                 .build(consumer);

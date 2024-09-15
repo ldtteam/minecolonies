@@ -16,19 +16,17 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -36,11 +34,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -79,7 +75,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable,
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Block implements IBuilderUndestroyable,
                                                                                                                         IAnchorBlock,
                                                                                                                         ITickableBlockMinecolonies,
                                                                                                                         INamedBlueprintAnchorBlock,
@@ -116,11 +112,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
-     * The hut's lower-case building-registry-compatible name.
-     */
-    private final String name;
-
-    /**
      * The timepoint of the last chat warning message
      */
     private long lastBreakTickWarn = 0;
@@ -134,7 +125,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
     }
 
     @Override
@@ -161,15 +151,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         super(properties.noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
     }
-
-    /**
-     * Method to return the name of the block.
-     *
-     * @return Name of the block.
-     */
-    public abstract String getHutName();
 
     @Nullable
     @Override
@@ -341,22 +323,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         setPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    /**
-     * Get the registry name frm the blck hut.
-     * @return the key.
-     */
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, getHutName());
-    }
-
-    @Override
-    public B registerBlock(final Registry<Block> registry)
-    {
-        Registry.register(registry, getRegistryName(), this);
-        return (B) this;
-    }
-
     @Override
     public boolean isVisible(@Nullable final CompoundTag beData)
     {
@@ -378,7 +344,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape(getDescriptionId())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -437,7 +403,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         catch (final NumberFormatException exception)
         {
-            Log.getLogger().error("Couldn't get level from hut: " + getHutName() + ". Potential corrubt blockEntity data.");
+            Log.getLogger().error("Couldn't get level from hut: " + BuiltInRegistries.BLOCK.getKey(this) + ". Potential corrubt blockEntity data.");
             return 0;
         }
     }
@@ -488,7 +454,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);
         if (building == null)
         {
-            if (anchor.getBlock() != ModBlocks.blockHutTownHall)
+            if (anchor.getBlock() != ModBlocks.blockHutTownHall.get())
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
@@ -545,7 +511,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (colony == null)
         {
-            if(anchor == ModBlocks.blockHutTownHall)
+            if(anchor == ModBlocks.blockHutTownHall.get())
             {
                 return true;
             }
@@ -581,11 +547,5 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public String getBlueprintName()
     {
         return getBuildingEntry().getRegistryName().getPath();
-    }
-
-    @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, getRegistryName(), new ItemBlockHut(this, properties));
     }
 }

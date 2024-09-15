@@ -1,19 +1,15 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
@@ -42,23 +39,34 @@ import org.jetbrains.annotations.Nullable;
  * The net.minecraft.core.Directions, placement and activation.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow> implements EntityBlock, IBuildingBrowsableBlock
+public class BlockScarecrow extends Block implements EntityBlock, IBuildingBrowsableBlock
 {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+    public static final DirectionProperty FACING           = HorizontalDirectionalBlock.FACING;
+    /**
+     * Start of the collision box at y.
+     */
+    public static final double            BOTTOM_COLLISION = 0.0;
+    /**
+     * Start of the collision box at x and z.
+     */
+    public static final double            START_COLLISION  = 0.1;
+    /**
+     * End of the collision box.
+     */
+    public static final double            END_COLLISION    = 0.9;
+    /**
+     * Height of the collision box.
+     */
+    public static final double            HEIGHT_COLLISION = 2.2;
 
     /**
      * Constructor called on block placement.
      */
     public BlockScarecrow()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
+        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(10F, 10F));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
     }
 
     @Nullable

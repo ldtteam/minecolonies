@@ -1,11 +1,13 @@
 package com.minecolonies.core.items;
 
+import net.minecraft.world.item.Item;
+
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Class handling Raw Pumpkin Pie.
  */
-public class ItemRawPumpkinPie extends AbstractItemMinecolonies
+public class ItemRawPumpkinPie extends Item
 {
     /**
      * Sets the name, creative tab, and registers the Raw Pumpkin Pie item.
@@ -14,6 +16,6 @@ public class ItemRawPumpkinPie extends AbstractItemMinecolonies
      */
     public ItemRawPumpkinPie(final Properties properties)
     {
-        super("raw_pumpkin_pie", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 }

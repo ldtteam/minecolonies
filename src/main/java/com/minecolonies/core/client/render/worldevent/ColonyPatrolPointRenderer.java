@@ -30,7 +30,7 @@ public class ColonyPatrolPointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard)
+        if (ctx.mainHandItem.getItem() != ModItems.scepterGuard.get())
         {
             return;
         }

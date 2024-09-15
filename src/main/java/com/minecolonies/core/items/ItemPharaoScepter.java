@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -106,7 +105,7 @@ public class ItemPharaoScepter extends BowItem
             return arrow;
         }
 
-        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level(), new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner(), weaponStack);
+        AbstractArrow entity = ModItems.firearrow.get().createArrow(arrow.level(), ModItems.firearrow.toStack(), (LivingEntity) arrow.getOwner(), weaponStack);
         entity.pickup = AbstractArrow.Pickup.DISALLOWED;
         entity.setRemainingFireTicks(3 * TICKS_PER_SECOND);
 

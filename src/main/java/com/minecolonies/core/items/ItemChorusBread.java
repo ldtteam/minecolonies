@@ -8,6 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -23,7 +24,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Chorus Bread, made by the baker. Teleports user to surface.
  */
-public class ItemChorusBread extends AbstractItemMinecolonies
+public class ItemChorusBread extends Item
 {
 
     /**
@@ -42,7 +43,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
      */
     public ItemChorusBread(final Properties properties)
     {
-        super("chorus_bread", properties.stacksTo(STACKSIZE).food(chorusBread));
+        super(properties.stacksTo(STACKSIZE).food(chorusBread));
     }
 
    /**

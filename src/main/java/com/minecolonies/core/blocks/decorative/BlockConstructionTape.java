@@ -1,9 +1,7 @@
 package com.minecolonies.core.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,11 +34,6 @@ import net.minecraft.core.Direction.Plane;
 public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
 {
     public static final MapCodec<BlockConstructionTape> CODEC = simpleCodec(BlockConstructionTape::new);
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockconstructiontape";
 
     /**
      * Constructor for the Construction Tape decoration.
@@ -79,12 +72,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     protected MapCodec<BlockConstructionTape> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @NotNull

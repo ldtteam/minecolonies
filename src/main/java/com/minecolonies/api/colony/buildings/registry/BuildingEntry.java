@@ -51,9 +51,9 @@ public class BuildingEntry
          * @param buildingBlock The block.
          * @return The builder.
          */
-        public Builder setBuildingBlock(final AbstractBlockHut<?> buildingBlock)
+        public Builder setBuildingBlock(final Supplier<? extends AbstractBlockHut<?>> buildingBlock)
         {
-            this.buildingBlock = buildingBlock;
+            this.buildingBlock = buildingBlock.get();
             return this;
         }
 

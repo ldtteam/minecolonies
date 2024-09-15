@@ -1,5 +1,6 @@
 package com.minecolonies.core.generation.defaults.workers;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
@@ -43,13 +44,13 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
     {
         recipe(MECHANIC, MODULE_CRAFTING, "gate_wood")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.OAK_LOG, 5))))
-                .result(new ItemStack(ModItems.woodgate))
+                .result(new ItemStack(ModBlocks.blockWoodenGate))
                 .showTooltip(true)
                 .build(consumer);
 
         recipe(MECHANIC, MODULE_CRAFTING, "gate_iron")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_NUGGET, 5))))
-                .result(new ItemStack(ModItems.irongate))
+                .result(new ItemStack(ModBlocks.blockIronGate))
                 .showTooltip(true)
                 .build(consumer);
 

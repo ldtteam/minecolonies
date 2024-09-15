@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class describing the quest log item.
  */
-public class ItemQuestLog extends AbstractItemMinecolonies
+public class ItemQuestLog extends Item
 {
     /**
      * Tag of the colony.
@@ -39,7 +39,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     public ItemQuestLog(final Item.Properties properties)
     {
-        super("questlog", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 
     @Override

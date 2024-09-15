@@ -55,7 +55,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
      */
     public ItemScrollGuardHelp(final Properties properties)
     {
-        super("scroll_guard_help", properties);
+        super(properties);
     }
 
     @Override

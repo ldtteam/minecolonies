@@ -41,10 +41,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
      */
     private static final float  BLOCK_HARDNESS = 5F;
     /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME     = "barrel_block";
-    /**
      * The resistance this block has.
      */
     private static final float  RESISTANCE     = 1F;
@@ -64,12 +60,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
     protected MapCodec<BlockBarrel> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
@@ -149,6 +139,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
     public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos)
     {
         return !worldIn.isEmptyBlock(pos.below())
-                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockBarrel;
+                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockBarrel.get();
     }
 }

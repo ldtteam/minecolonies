@@ -222,7 +222,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             structureAI.getWorker().queueSound(state.getSoundType().getPlaceSound(), worldPos, 10, 0);
         }
 
-        if (state.getBlock() == ModBlocks.blockWayPoint)
+        if (state.getBlock() == ModBlocks.blockWayPoint.get())
         {
             structureAI.getWorker().getCitizenColonyHandler().getColony().addWayPoint(worldPos, state);
         }
@@ -347,7 +347,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
         return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
                  || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
-                 || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
+                 || (block1 == ModBlocks.blockRack.get() && block2 == ModBlocks.blockRack.get());
     }
 
     /**

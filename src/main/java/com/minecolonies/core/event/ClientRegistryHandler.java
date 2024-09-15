@@ -317,21 +317,21 @@ public class ClientRegistryHandler
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE.get(), TileEntityNamedGraveRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.DECO_CONTROLLER.get(), TileEntityDecoControllerRenderer::new);
 
-        Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.floodedFarmland, RenderType.cutout());
+        ModBlocks.getHuts().stream()
+          .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut.get(), renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockRack.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockDecorationPlaceholder.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.floodedFarmland.get(), RenderType.cutout());
 
-        Arrays.stream(ModBlocks.getCrops()).forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, RenderType.cutout()));
+        ModBlocks.getCrops().stream().forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut.get(), RenderType.cutout()));
 
-        ItemProperties.register(ModItems.spear, ResourceLocation.withDefaultNamespace("throwing"), (item, world, entity, light) ->
+        ItemProperties.register(ModItems.spear.get(), ResourceLocation.withDefaultNamespace("throwing"), (item, world, entity, light) ->
                                                                            (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
-        ItemProperties.register(ModItems.buildGoggles, ResourceLocation.withDefaultNamespace("disabled"), (item, world, entity, light) ->
+        ItemProperties.register(ModItems.buildGoggles.get(), ResourceLocation.withDefaultNamespace("disabled"), (item, world, entity, light) ->
                 (ColonyBlueprintRenderer.willRenderBlueprints() ? 0.0F : 1.0F));
     }
 

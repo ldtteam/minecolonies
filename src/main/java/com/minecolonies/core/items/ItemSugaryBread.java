@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Sweet Bread, made by the baker. Adds speed, removes poison
  */
-public class ItemSugaryBread extends AbstractItemMinecolonies
+public class ItemSugaryBread extends Item
 {
 
     /**
@@ -41,7 +42,7 @@ public class ItemSugaryBread extends AbstractItemMinecolonies
      */
     public ItemSugaryBread(final Properties properties)
     {
-        super("sugary_bread", properties.stacksTo(STACKSIZE).food(sweetBread));
+        super(properties.stacksTo(STACKSIZE).food(sweetBread));
     }
 
    /**

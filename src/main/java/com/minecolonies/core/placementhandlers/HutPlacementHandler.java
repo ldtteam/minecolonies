@@ -120,7 +120,7 @@ public class HutPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (blockState.getBlock() != ModBlocks.blockHutBarracksTower)
+        if (blockState.getBlock() != ModBlocks.blockHutBarracksTower.get())
         {
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         }

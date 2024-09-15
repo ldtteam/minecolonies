@@ -186,6 +186,6 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
     @Override
     public List<Item> getValidBonemeal()
     {
-        return List.of(Items.BONE_MEAL, ModItems.compost);
+        return List.of(Items.BONE_MEAL, ModItems.compost.get());
     }
 }

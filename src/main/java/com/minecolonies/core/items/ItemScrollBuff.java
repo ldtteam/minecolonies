@@ -38,7 +38,7 @@ public class ItemScrollBuff extends AbstractItemScroll
      */
     public ItemScrollBuff(final Properties properties)
     {
-        super("scroll_buff", properties);
+        super(properties);
     }
 
     @Override

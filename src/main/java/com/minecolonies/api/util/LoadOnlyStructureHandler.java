@@ -81,6 +81,6 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
         return itemStack == null
                  || itemStack.isEmpty()
                  || itemStack.is(ItemTags.LEAVES)
-                 || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+                 || itemStack.getItem() == ModBlocks.blockDecorationPlaceholder.asItem();
     }
 }

@@ -39,7 +39,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.title = Component.translatableEscape(ModBlocks.blockBarrel.getDescriptionId()).getString();
+        this.title = Component.translatableEscape(ModBlocks.blockBarrel.get().getDescriptionId()).getString();
 
         this.background = guiHelper.createBlankDrawable(80, 50);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.blockBarrel));
@@ -104,7 +104,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
                      final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
-        final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
+        final BlockState barrel = ModBlocks.blockBarrel.get().defaultBlockState()
                 .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
                 .setValue(AbstractBlockBarrel.VARIANT, type);
         RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);

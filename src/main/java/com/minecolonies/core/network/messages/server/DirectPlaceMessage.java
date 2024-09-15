@@ -99,7 +99,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
 
-        if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
+        if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall.get()) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             final ColonyId colonyId = ColonyId.readFromItemStack(stack);
             if (colony != null && colonyId.hasColonyId() && colony.getID() != colonyId.id())

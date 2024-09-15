@@ -255,7 +255,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
+            if (event.getState().getBlock() == ModBlocks.blockHutTownHall.get() && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
                 return;
@@ -271,7 +271,7 @@ public class ColonyPermissionEventHandler
 
             building.destroy();
 
-            if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
+            if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall.get())
             {
                 IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, world);
             }

@@ -3,10 +3,8 @@ package com.minecolonies.core.blocks.decorative;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -126,10 +124,4 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(HORIZONTAL_FACING); }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME_WALL);
-    }
 }

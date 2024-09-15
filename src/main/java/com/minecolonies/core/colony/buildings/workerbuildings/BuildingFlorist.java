@@ -65,7 +65,7 @@ public class BuildingFlorist extends AbstractBuilding
     public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> stack.getItem() == ModItems.compost, new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> stack.is(ModItems.compost), new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -95,7 +95,7 @@ public class BuildingFlorist extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos))
+        if (block == ModBlocks.blockCompostedDirt.get() && !plantGround.contains(pos))
         {
             plantGround.add(pos);
         }

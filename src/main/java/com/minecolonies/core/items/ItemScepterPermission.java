@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
  */
-public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterPermission extends Item implements IBlockOverlayItem
 {
     private static final int GREEN_OVERLAY = 0xFF00FF00;
     private static final int BLOCK_OVERLAY_RANGE_XZ = 32;
@@ -52,7 +52,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterpermission", properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
+        super(properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
     }
 
     @NotNull

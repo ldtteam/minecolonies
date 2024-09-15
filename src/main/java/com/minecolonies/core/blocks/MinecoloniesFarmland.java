@@ -1,10 +1,7 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -38,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
+public class MinecoloniesFarmland extends Block implements SimpleWaterloggedBlock
 {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -48,13 +45,10 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     public static final    IntegerProperty MOISTURE     = BlockStateProperties.MOISTURE;
     protected final VoxelShape shape;
 
-    private final ResourceLocation    blockId;
-
-    public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
+    public MinecoloniesFarmland(final boolean waterLogged, final double height)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
         this.shape = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
     }
@@ -192,12 +186,6 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> blockStateBuilder)
     {
         blockStateBuilder.add(MOISTURE, WATERLOGGED);
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return blockId;
     }
 
     @Override

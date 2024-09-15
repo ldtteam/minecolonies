@@ -106,7 +106,7 @@ public class BuildingComposter extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockBarrel && !barrels.contains(pos))
+        if (block == ModBlocks.blockBarrel.get() && !barrels.contains(pos))
         {
             barrels.add(pos);
         }

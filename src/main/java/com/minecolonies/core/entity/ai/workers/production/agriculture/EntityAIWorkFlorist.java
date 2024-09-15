@@ -169,7 +169,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             }
             else
             {
-                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.compost, COMPOST_REQUEST_QTY));
+                checkIfRequestForItemExistOrCreateAsync(ModItems.compost.toStack(COMPOST_REQUEST_QTY));
             }
         }
 

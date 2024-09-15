@@ -19,7 +19,7 @@ import static net.minecraft.world.item.BoneMealItem.applyBonemeal;
 /**
  * Class used to handle the compost item.
  */
-public class ItemCompost extends AbstractItemMinecolonies
+public class ItemCompost extends Item
 {
 
     /***
@@ -28,7 +28,7 @@ public class ItemCompost extends AbstractItemMinecolonies
      */
     public ItemCompost(final Item.Properties properties)
     {
-        super("compost", properties.stacksTo(Constants.STACKSIZE));
+        super(properties.stacksTo(Constants.STACKSIZE));
     }
 
     /**

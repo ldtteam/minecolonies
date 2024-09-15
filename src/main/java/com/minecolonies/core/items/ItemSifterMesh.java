@@ -1,11 +1,11 @@
 package com.minecolonies.core.items;
 
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.Item;
 
 /**
  * Class handling Sifter Mesh.
  */
-public class ItemSifterMesh extends AbstractItemMinecolonies
+public class ItemSifterMesh extends Item
 {
     /**
      * Sets the name, creative tab, and registers the Sifter Mesh item.
@@ -13,9 +13,8 @@ public class ItemSifterMesh extends AbstractItemMinecolonies
      * @param properties the properties.
      */
     public ItemSifterMesh(
-        @NotNull final String name,
         final Properties properties)
     {
-        super(name, properties);
+        super(properties);
     }
 }

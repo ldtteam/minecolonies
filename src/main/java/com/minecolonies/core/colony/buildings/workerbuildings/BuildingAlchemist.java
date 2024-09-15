@@ -243,7 +243,7 @@ public class BuildingAlchemist extends AbstractBuilding
             if (!super.isRecipeCompatible(recipe))
                 return false;
 
-            return recipe.getPrimaryOutput().getItem() == ModItems.magicpotion;
+            return recipe.getPrimaryOutput().is(ModItems.magicpotion);
         }
 
         @Override
@@ -258,7 +258,7 @@ public class BuildingAlchemist extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // growing mistletoe
-            recipes.add(new GenericRecipe(null, new ItemStack(ModItems.mistletoe),
+            recipes.add(new GenericRecipe(null, ModItems.mistletoe.toStack(),
                     Collections.emptyList(),
                     Collections.emptyList(),
                     1, Blocks.OAK_LEAVES,

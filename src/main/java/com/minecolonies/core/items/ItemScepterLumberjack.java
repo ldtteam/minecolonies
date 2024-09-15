@@ -11,6 +11,7 @@ import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -28,7 +29,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
  */
-public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterLumberjack extends Item implements IBlockOverlayItem
 {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int GREEN_OVERLAY = 0xFF00FF00;
@@ -40,7 +41,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.stacksTo(1).component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
+        super(properties.stacksTo(1).component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
     }
 
     @NotNull

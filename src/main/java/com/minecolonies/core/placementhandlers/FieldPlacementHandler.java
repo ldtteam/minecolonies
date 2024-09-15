@@ -39,7 +39,7 @@ public class FieldPlacementHandler implements IPlacementHandler
       BlockPos centerPos,
       final RotationMirror settings)
     {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockScarecrow)
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockScarecrow.get())
         {
             return ActionProcessingResult.SUCCESS;
         }

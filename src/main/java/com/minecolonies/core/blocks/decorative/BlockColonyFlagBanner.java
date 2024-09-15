@@ -1,10 +1,8 @@
 package com.minecolonies.core.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -103,11 +101,5 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ROTATION);
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
     }
 }

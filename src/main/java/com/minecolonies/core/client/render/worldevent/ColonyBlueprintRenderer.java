@@ -380,7 +380,7 @@ public class ColonyBlueprintRenderer
         {
             return RenderingCache.hasBlueprint("blueprint") &&
                     MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get() &&
-                    ctx.mainHandItem.getItem() == buildTool.get();
+                    ctx.mainHandItem.is(buildTool);
         }
 
         @Override

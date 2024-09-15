@@ -22,22 +22,12 @@ public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 1.9, 0.9);
 
-    public BlockHutGraveyard()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         return SHAPE;
     }
-
-    @NotNull
-    @Override
-    public String getHutName() { return "blockhutgraveyard"; }
 
     @Override
     public BuildingEntry getBuildingEntry()

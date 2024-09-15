@@ -1,22 +1,18 @@
 package com.minecolonies.core.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowPlantationField;
 import com.minecolonies.core.colony.fields.PlantationField;
 import com.minecolonies.core.tileentities.TileEntityPlantationField;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -44,7 +40,7 @@ import java.util.Map;
 /**
  * Block class for the plantation field block.
  */
-public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
+public class BlockPlantationField extends HorizontalDirectionalBlock implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
 {
     public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
 
@@ -57,11 +53,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * The hardness this block has.
      */
     private static final float BLOCK_HARDNESS = 5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockhutplantationfield";
 
     /**
      * The resistance this block has.
@@ -91,12 +82,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     protected MapCodec<BlockPlantationField> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override

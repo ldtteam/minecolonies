@@ -388,7 +388,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
         final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
-                new ItemStack(ModItems.ancientTome), true, true));
+                ModItems.ancientTome.toStack(), true, true));
 
         for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
         {
@@ -404,34 +404,34 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
         recipe(ENCHANTER, MODULE_CUSTOM, "scroll_tp")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
                         new ItemStorage(new ItemStack(Items.COMPASS)),
-                        new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
-                .result(new ItemStack(ModItems.scrollColonyTP, 3))
+                        new ItemStorage(com.ldtteam.structurize.items.ModItems.buildTool.toStack())))
+                .result(ModItems.scrollColonyTP.toStack(3))
                 .showTooltip(true)
                 .build(consumer);
 
         recipe(ENCHANTER, MODULE_CUSTOM, "scroll_area_tp")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3))))
-                .result(new ItemStack(ModItems.scrollColonyAreaTP))
+                .inputs(List.of(new ItemStorage(ModItems.scrollColonyTP.toStack(3))))
+                .result(ModItems.scrollColonyAreaTP.toStack())
                 .minBuildingLevel(2)
                 .showTooltip(true)
                 .build(consumer);
 
         recipe(ENCHANTER, MODULE_CUSTOM, "scroll_guard_help")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP)),
+                .inputs(List.of(new ItemStorage(ModItems.scrollColonyTP.toStack()),
                         new ItemStorage(new ItemStack(Items.LAPIS_LAZULI, 5)),
                         new ItemStorage(new ItemStack(Items.ENDER_PEARL)),
                         new ItemStorage(new ItemStack(Items.PAPER))))
-                .result(new ItemStack(ModItems.scrollGuardHelp, 2))
+                .result(ModItems.scrollGuardHelp.toStack(2))
                 .minBuildingLevel(3)
                 .minResearchId(ResearchConstants.MORE_SCROLLS)
                 .showTooltip(true)
                 .build(consumer);
 
         recipe(ENCHANTER, MODULE_CUSTOM, "scroll_highlight")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3)),
+                .inputs(List.of(new ItemStorage(ModItems.scrollColonyTP.toStack(3)),
                         new ItemStorage(new ItemStack(Items.GLOWSTONE_DUST, 6)),
                         new ItemStorage(new ItemStack(Items.PAPER, 2))))
-                .result(new ItemStack(ModItems.scrollHighLight, 5))
+                .result(ModItems.scrollHighLight.toStack(5))
                 .minBuildingLevel(3)
                 .minResearchId(ResearchConstants.MORE_SCROLLS)
                 .showTooltip(true)

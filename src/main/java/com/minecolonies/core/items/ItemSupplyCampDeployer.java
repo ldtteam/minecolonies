@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 /**
  * Class to handle the placement of the supplychest and with it the supplycamp.
  */
-public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements ISupplyItem
+public class ItemSupplyCampDeployer extends Item implements ISupplyItem
 {
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
@@ -46,7 +46,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
-        super("supplycampdeployer", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @NotNull

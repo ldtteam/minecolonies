@@ -26,7 +26,7 @@ public class DefaultItemModelProvider extends ItemModelProvider
     {
         final ResourceLocation disabledGoggles = modLoc("build_goggles_disabled");
         basicItem(disabledGoggles);
-        basicItem(ModItems.buildGoggles)
+        basicItem(ModItems.buildGoggles.get())
                 .override()
                     .predicate(ResourceLocation.withDefaultNamespace("disabled"), 1.0F)
                     .model(getExistingFile(disabledGoggles))

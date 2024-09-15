@@ -1,20 +1,9 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BoneMealItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -29,25 +18,15 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
-public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<MinecoloniesCropBlock>
+public class MinecoloniesCropBlock extends Block
 {
-    public static String BELL_PEPPER = "bell_pepper";
-    public static String CABBAGE = "cabbage";
-    public static String CHICKPEA = "chickpea";
-    public static String DURUM = "durum";
-    public static String EGGPLANT = "eggplant";
-    public static String GARLIC = "garlic";
-    public static String ONION = "onion";
-    public static String SOYBEAN = "soybean";
-    public static String TOMATO = "tomato";
-    public static String RICE = "rice";
-
     public static final  IntegerProperty AGE = IntegerProperty.create("age", 0, 6);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[] {
       Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
@@ -58,20 +37,18 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
       Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0),
       Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)};
 
-    private final Block preferredFarmland;
+    private final DeferredBlock<?> preferredFarmland;
 
-    private final ResourceLocation blockId;
     private final TagKey<Biome>    preferredBiome;
 
     /**
      * Constructor to create a block of this type.
      * @param blockName the block id.
      */
-    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, @Nullable final TagKey<Biome> preferredBiome)
+    public MinecoloniesCropBlock(final DeferredBlock<?> preferredFarmland, @Nullable final TagKey<Biome> preferredBiome)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
         this.preferredBiome = preferredBiome;
     }
@@ -126,7 +103,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     @Override
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, @NotNull BlockPos pos)
     {
-        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (preferredBiome == null || level.getBiome(pos).is(preferredBiome));
+        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland.get() && (preferredBiome == null || level.getBiome(pos).is(preferredBiome));
     }
 
     @Override
@@ -154,24 +131,12 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
         return pathComputationType == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, pathComputationType);
     }
 
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return blockId;
-    }
-
-    @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, getRegistryName(), new ItemCrop(this, properties, preferredBiome));
-    }
-
     /**
      * Get the preferred farmland for this crop.
      * @return the preferred farmland.
      */
     public Block getPreferredFarmland()
     {
-        return preferredFarmland;
+        return preferredFarmland.get();
     }
 }

@@ -28,7 +28,7 @@ public class BarracksTowerHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-         return blockState.getBlock() == ModBlocks.blockHutBarracksTower;
+         return blockState.getBlock() == ModBlocks.blockHutBarracksTower.get();
     }
 
     @Override

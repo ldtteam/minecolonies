@@ -44,7 +44,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
      */
     public ItemScrollColonyTP(final Properties properties)
     {
-        super("scroll_tp", properties);
+        super(properties);
     }
 
     @Override
