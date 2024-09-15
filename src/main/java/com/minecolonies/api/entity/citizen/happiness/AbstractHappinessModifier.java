@@ -62,7 +62,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
+    public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
         this.id = compoundNBT.getString(TAG_ID);
         this.weight = compoundNBT.getDouble(TAG_WEIGHT);
@@ -79,7 +79,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
         compoundNBT.putString(TAG_ID, this.id);
         compoundNBT.putDouble(TAG_WEIGHT, this.weight);
