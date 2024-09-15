@@ -90,7 +90,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 }
             }
 
-            if (!isRequestChainValid(manager, requestToCheck))
+            if (!isRequestChainValid(manager, requestToCheck, requestToCheck))
             {
                 return false;
             }
@@ -130,11 +130,16 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      * @param requestToCheck
      * @return
      */
-    public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
+    public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck, final IRequest<?> initialRequest)
     {
         if (!requestToCheck.hasParent())
         {
             return true;
+        }
+
+        if (requestToCheck.equals(initialRequest))
+        {
+            return false;
         }
 
         final IRequest<?> parentRequest = manager.getRequestForToken(requestToCheck.getParent());
@@ -145,7 +150,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             return true;
         }
 
-        return isRequestChainValid(manager, parentRequest);
+        return isRequestChainValid(manager, parentRequest, initialRequest);
     }
 
     @Nullable

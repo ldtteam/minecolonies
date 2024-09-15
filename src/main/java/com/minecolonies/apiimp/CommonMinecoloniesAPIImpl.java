@@ -23,6 +23,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
@@ -54,8 +55,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final  IColonyManager                                          colonyManager          = new ColonyManager();
     private final  ICitizenDataManager                                     citizenDataManager     = new CitizenDataManager();
     private final  IMobAIRegistry                                          mobAIRegistry          = new MobAIRegistry();
-    private final  IPathNavigateRegistry                                   pathNavigateRegistry   = new PathNavigateRegistry();
-    private        IForgeRegistry<BuildingEntry>                           buildingRegistry;
+    private final  IPathNavigateRegistry              pathNavigateRegistry   = new PathNavigateRegistry();
+    private        IForgeRegistry<EquipmentTypeEntry> equipmentTypeRegistry;
+    private        IForgeRegistry<BuildingEntry>      buildingRegistry;
     private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
     private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
     private final  IJobDataManager                                         jobDataManager         = new JobDataManager();
@@ -203,6 +205,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
+        event.create(new RegistryBuilder<EquipmentTypeEntry>()
+                        .setName(new ResourceLocation(Constants.MOD_ID, "equipmenttypes"))
+                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                        .disableSaving()
+                        .allowModification()
+                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> equipmentTypeRegistry = b);
+
         event.create(new RegistryBuilder<BuildingEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
@@ -377,6 +386,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return happinessFunctionRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<EquipmentTypeEntry> getEquipmentTypeRegistry()
+    {
+        return equipmentTypeRegistry;
     }
 }
 

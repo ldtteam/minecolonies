@@ -60,7 +60,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void read(final CompoundTag compoundNBT)
+    public void read(final CompoundTag compoundNBT, final boolean persist)
     {
         this.id = compoundNBT.getString(TAG_ID);
         this.weight = compoundNBT.getDouble(TAG_WEIGHT);
@@ -77,7 +77,7 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void write(final CompoundTag compoundNBT)
+    public void write(final CompoundTag compoundNBT, final boolean persist)
     {
         compoundNBT.putString(TAG_ID, this.id);
         compoundNBT.putDouble(TAG_WEIGHT, this.weight);
