@@ -1,6 +1,5 @@
 package com.minecolonies.core.tileentities;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
@@ -63,32 +62,6 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         }
 
         return false;
-    }
-
-    @Override
-    public int getCountInWarehouse(@NotNull final ItemStorage storage, int count)
-    {
-        int totalCount = 0;
-        if (getBuilding() != null)
-        {
-            for (@NotNull final BlockPos pos : getBuilding().getContainers())
-            {
-                if (WorldUtil.isBlockLoaded(level, pos))
-                {
-                    final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof final TileEntityRack rack && !rack.isEmpty())
-                    {
-                        totalCount += rack.getCount(storage);
-                        if (totalCount >= count)
-                        {
-                            return totalCount;
-                        }
-                    }
-                }
-            }
-        }
-
-        return totalCount;
     }
 
     @Override

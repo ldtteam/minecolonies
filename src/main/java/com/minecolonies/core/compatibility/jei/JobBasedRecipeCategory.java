@@ -10,10 +10,9 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
@@ -179,12 +178,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
      * @param withBackground true to display a slot background when present (no background is shown when no tool)
      */
     protected void addToolSlot(@NotNull final IRecipeLayoutBuilder builder,
-                               @NotNull final IToolType requiredTool,
+                               @NotNull final EquipmentTypeEntry requiredTool,
                                final int x, final int y, final boolean withBackground)
     {
         final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
 
-        if (requiredTool != ToolType.NONE)
+        if (requiredTool != ModEquipmentTypes.none.get())
         {
             if (withBackground)
             {
@@ -192,8 +191,8 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             }
 
             slot.addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
-                    .filter(stack -> ItemStackUtils.isTool(stack, requiredTool))
-                    .sorted(Comparator.comparing(stack -> ItemStackUtils.getMiningLevel(stack, requiredTool)))
+                    .filter(requiredTool::checkIsEquipment)
+                    .sorted(Comparator.comparing(requiredTool::getMiningLevel))
                     .toList());
         }
     }

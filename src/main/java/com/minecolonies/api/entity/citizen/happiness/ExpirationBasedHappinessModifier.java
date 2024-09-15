@@ -15,17 +15,12 @@ public final class ExpirationBasedHappinessModifier extends AbstractHappinessMod
     /**
      * The number of passed days.
      */
-    private int days = 0;
+    private int days;
 
     /**
      * Period of time this modifier applies.
      */
     private int period;
-
-    /**
-     * If this should give a penalty if not active.
-     */
-    private boolean inverted;
 
     /**
      * Create an instance of the happiness modifier.
@@ -38,22 +33,8 @@ public final class ExpirationBasedHappinessModifier extends AbstractHappinessMod
     public ExpirationBasedHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier, final int period)
     {
         super(id, weight, supplier);
+        this.days = period;
         this.period = period;
-    }
-
-    /**
-     * Create an instance of the happiness modifier.
-     *
-     * @param id       its string id.
-     * @param weight   its weight.
-     * @param period   the period.
-     * @param supplier the supplier to get the factor.
-     * @param inverted if inverted.
-     */
-    public ExpirationBasedHappinessModifier(final String id, final double weight, final IHappinessSupplierWrapper supplier, final int period, final boolean inverted)
-    {
-        this(id, weight, supplier, period);
-        this.inverted = inverted;
     }
 
     /**
@@ -67,22 +48,11 @@ public final class ExpirationBasedHappinessModifier extends AbstractHappinessMod
     @Override
     public double getFactor(final ICitizenData data)
     {
-        if (inverted)
+        if (days > 0 && days <= period)
         {
-            if (days <= period)
-            {
-                return 1.0;
-            }
             return super.getFactor(data);
         }
-        else
-        {
-            if (days < period)
-            {
-                return super.getFactor(data);
-            }
-            return 1.0;
-        }
+        return 1.0;
     }
 
     @Override
@@ -107,21 +77,19 @@ public final class ExpirationBasedHappinessModifier extends AbstractHappinessMod
     }
 
     @Override
-    public void read(final CompoundTag compoundNBT)
+    public void read(final CompoundTag compoundNBT, final boolean persist)
     {
-        super.read(compoundNBT);
+        super.read(compoundNBT, persist);
         this.days = compoundNBT.getInt(TAG_DAY);
-        this.inverted = compoundNBT.getBoolean(TAG_INVERTED);
         this.period = compoundNBT.getInt(TAG_PERIOD);
     }
 
     @Override
-    public void write(final CompoundTag compoundNBT)
+    public void write(final CompoundTag compoundNBT, final boolean persist)
     {
-        super.write(compoundNBT);
+        super.write(compoundNBT, persist);
         compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.EXPIRATION_MODIFIER.toString());
         compoundNBT.putInt(TAG_DAY, days);
-        compoundNBT.putBoolean(TAG_INVERTED, inverted);
         compoundNBT.putInt(TAG_PERIOD, period);
     }
 }
