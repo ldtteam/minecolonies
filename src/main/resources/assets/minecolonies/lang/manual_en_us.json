@@ -2405,7 +2405,7 @@
   "com.minecolonies.building.shepherd.desc": "Breeds, feeds, and shears sheep to provide wool for the colony",
   "com.minecolonies.building.swineherder.desc": "Handles swine to produce porkchop",
   "com.minecolonies.building.cowboy.desc": "Handles cows to produce milk, leather, and beef",
-  "com.minecolonies.building.chickenherder.desc": "Handles chicken to produce feathers and eggs",
+  "com.minecolonies.building.chickenherder.desc": "Handles chickens to produce feathers and eggs",
   "com.minecolonies.building.rabbithutch.desc": "Handles rabbits to produce rabbit drops",
   "com.minecolonies.building.stonesmeltery.desc": "Processes and refines various stone blocks through smelting in a furnace",
   "com.minecolonies.building.beekeeper.desc": "Handles bees to produce honey through careful breeding and harvesting",
@@ -2450,7 +2450,7 @@
   "com.minecolonies.building.mediumquarry.desc": "Large excavation area for a quarrier, used for mining and extracting stones",
   "com.minecolonies.building.kitchen.desc": "Prepares unique and tasty dishes your citizens will appreciate",
 
-  "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
+  "com.minecolonies.coremod.structures.nocustomhuts": "The builder has never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.structures.buildingmissing": "The builder had a problem locating this blueprint, please try again.",
 
