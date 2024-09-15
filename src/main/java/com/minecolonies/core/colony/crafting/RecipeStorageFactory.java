@@ -216,10 +216,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(ItemStack.of(secOutputTag));
         }
 
-        final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
+        final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null;
+        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().getValue(EquipmentTypeEntry.parseResourceLocation(nbt.getString(TOOL_TAG)));
 
-        final String resLoc = nbt.getString(TOOL_TAG);
-        final EquipmentTypeEntry requiredTool = nbt.contains(TOOL_TAG) ? ModEquipmentTypes.getRegistry().getValue(EquipmentTypeEntry.parseResourceLocation(resLoc)) : ModEquipmentTypes.none.get();
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 
