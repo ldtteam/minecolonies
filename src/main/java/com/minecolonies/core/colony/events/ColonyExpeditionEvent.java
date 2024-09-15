@@ -9,11 +9,11 @@ import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatusType;
 import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
@@ -610,7 +610,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
      */
     private float getWeaponDamage(final ItemStack itemStack, final MobType target)
     {
-        if (ItemStackUtils.isTool(itemStack, ToolType.SWORD))
+        if (ModEquipmentTypes.sword.get().checkIsEquipment(itemStack))
         {
             if (Compatibility.isTinkersWeapon(itemStack))
             {
@@ -623,7 +623,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
             }
         }
 
-        if (ItemStackUtils.isTool(itemStack, ToolType.BOW))
+        if (ModEquipmentTypes.bow.get().checkIsEquipment(itemStack))
         {
             return 6;
         }

@@ -4,16 +4,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionEquipmentRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionFoodRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionItemRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
-import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionToolRequirement;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -32,17 +33,17 @@ public class ColonyExpeditionTypeParser
     /**
      * The json property keys.
      */
-    private static final String PROP_NAME                 = "name";
-    private static final String PROP_TO_TEXT              = "to-text";
-    private static final String PROP_DIFFICULTY           = "difficulty";
-    private static final String PROP_DIMENSION            = "dimension";
-    private static final String PROP_LOOT_TABLE           = "loot-table";
-    private static final String PROP_REQUIREMENTS         = "requirements";
-    private static final String PROP_REQUIREMENT_TYPE     = "type";
-    private static final String PROP_REQUIREMENT_AMOUNT   = "amount";
-    private static final String PROP_REQUIREMENT_TOOL_KEY = "tool";
-    private static final String PROP_REQUIREMENT_ITEM_KEY = "item";
-    private static final String PROP_GUARDS               = "guards";
+    private static final String PROP_NAME                      = "name";
+    private static final String PROP_TO_TEXT                   = "to-text";
+    private static final String PROP_DIFFICULTY                = "difficulty";
+    private static final String PROP_DIMENSION                 = "dimension";
+    private static final String PROP_LOOT_TABLE                = "loot-table";
+    private static final String PROP_REQUIREMENTS              = "requirements";
+    private static final String PROP_REQUIREMENT_TYPE          = "type";
+    private static final String PROP_REQUIREMENT_AMOUNT        = "amount";
+    private static final String PROP_REQUIREMENT_EQUIPMENT_KEY = "equipment";
+    private static final String PROP_REQUIREMENT_ITEM_KEY      = "item";
+    private static final String PROP_GUARDS                    = "guards";
 
     /**
      * Requirement types
@@ -117,14 +118,24 @@ public class ColonyExpeditionTypeParser
         {
             case REQUIREMENT_TYPE_TOOL ->
             {
-                final IToolType toolType = ToolType.getToolType(requirement.getAsJsonPrimitive(PROP_REQUIREMENT_TOOL_KEY).getAsString());
-                yield new ColonyExpeditionToolRequirement(toolType, amount);
+                final ResourceLocation equipmentTypeId = new ResourceLocation(requirement.getAsJsonPrimitive(PROP_REQUIREMENT_EQUIPMENT_KEY).getAsString());
+                final EquipmentTypeEntry equipmentTypeEntry = IMinecoloniesAPI.getInstance().getEquipmentTypeRegistry().getValue(equipmentTypeId);
+                if (equipmentTypeEntry == null)
+                {
+                    yield null;
+                }
+                yield new ColonyExpeditionEquipmentRequirement(equipmentTypeEntry, amount);
             }
             case REQUIREMENT_TYPE_FOOD -> new ColonyExpeditionFoodRequirement(amount);
             case REQUIREMENT_TYPE_ITEM ->
             {
                 final ResourceLocation itemId = new ResourceLocation(requirement.getAsJsonPrimitive(PROP_REQUIREMENT_ITEM_KEY).getAsString());
-                yield new ColonyExpeditionItemRequirement(ForgeRegistries.ITEMS.getValue(itemId), amount);
+                final Item item = ForgeRegistries.ITEMS.getValue(itemId);
+                if (item == null)
+                {
+                    yield null;
+                }
+                yield new ColonyExpeditionItemRequirement(item, amount);
             }
             default -> null;
         };
@@ -150,10 +161,10 @@ public class ColonyExpeditionTypeParser
             final JsonObject requirementObject = new JsonObject();
             requirementObject.addProperty(PROP_REQUIREMENT_AMOUNT, requirement.getAmount());
 
-            if (requirement instanceof ColonyExpeditionToolRequirement toolRequirement)
+            if (requirement instanceof ColonyExpeditionEquipmentRequirement toolRequirement)
             {
                 requirementObject.addProperty(PROP_REQUIREMENT_TYPE, REQUIREMENT_TYPE_TOOL);
-                requirementObject.addProperty(PROP_REQUIREMENT_TOOL_KEY, toolRequirement.getToolType().getName());
+                requirementObject.addProperty(PROP_REQUIREMENT_EQUIPMENT_KEY, toolRequirement.getEquipmentType().getRegistryName().toString());
             }
             else if (requirement instanceof ColonyExpeditionFoodRequirement)
             {

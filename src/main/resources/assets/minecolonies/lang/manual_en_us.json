@@ -2709,7 +2709,7 @@
   "com.minecolonies.core.expedition.gui.items.subheader.not_met": "Some items are missing",
   "com.minecolonies.core.expedition.gui.items.requirement.type.food": "Any food",
   "com.minecolonies.core.expedition.gui.items.requirement.type.item": "%s",
-  "com.minecolonies.core.expedition.gui.items.requirement.type.tool": "Any %s",
+  "com.minecolonies.core.expedition.gui.items.requirement.type.equipment": "Any %s",
   "com.minecolonies.core.expedition.gui.guards.header": "Required Guards (%d)",
   "com.minecolonies.core.expedition.gui.guards.subheader.met": "Enough guards",
   "com.minecolonies.core.expedition.gui.guards.subheader.not_met": "Guards needed: %d",

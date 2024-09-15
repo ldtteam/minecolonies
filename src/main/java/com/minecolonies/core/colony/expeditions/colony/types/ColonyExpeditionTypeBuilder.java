@@ -1,10 +1,10 @@
 package com.minecolonies.core.colony.expeditions.colony.types;
 
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionEquipmentRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionFoodRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionItemRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
-import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionToolRequirement;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
@@ -76,26 +76,26 @@ public class ColonyExpeditionTypeBuilder
     }
 
     /**
-     * Adds a tool requirement to this expedition type builder, with an amount of 1.
+     * Adds an equipment requirement to this expedition type builder, with an amount of 1.
      *
-     * @param toolType the tool type.
+     * @param equipmentType the equipment type.
      * @return the builder for chaining.
      */
-    public ColonyExpeditionTypeBuilder addToolRequirement(final ToolType toolType)
+    public ColonyExpeditionTypeBuilder addEquipmentRequirement(final EquipmentTypeEntry equipmentType)
     {
-        return addToolRequirement(toolType, 1);
+        return addEquipmentRequirement(equipmentType, 1);
     }
 
     /**
-     * Adds a tool requirement to this expedition type builder.
+     * Adds an equipment requirement to this expedition type builder.
      *
-     * @param toolType the tool type.
-     * @param amount   the amount needed.
+     * @param equipmentType the equipment type.
+     * @param amount        the amount needed.
      * @return the builder for chaining.
      */
-    public ColonyExpeditionTypeBuilder addToolRequirement(final ToolType toolType, final int amount)
+    public ColonyExpeditionTypeBuilder addEquipmentRequirement(final EquipmentTypeEntry equipmentType, final int amount)
     {
-        this.requirements.add(new ColonyExpeditionToolRequirement(toolType, amount));
+        this.requirements.add(new ColonyExpeditionEquipmentRequirement(equipmentType, amount));
         return this;
     }
 

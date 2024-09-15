@@ -13,10 +13,10 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition.GuardsComparator;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.generic.ResourceItem;
@@ -159,13 +159,13 @@ public class WindowExpeditionSheet extends AbstractWindowSkeleton
      */
     public static ItemStack getFirstWeapon(final IItemHandler inventory)
     {
-        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.SWORD, 0, 5);
+        final int swordSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(inventory, ModEquipmentTypes.sword.get(), 0, 5);
         if (swordSlot != -1)
         {
             return inventory.getStackInSlot(swordSlot);
         }
 
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(inventory, ToolType.BOW, 0, 5);
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(inventory, ModEquipmentTypes.bow.get(), 0, 5);
         if (bowSlot != -1)
         {
             return inventory.getStackInSlot(bowSlot);
