@@ -3,11 +3,12 @@ package com.minecolonies.core.entity.ai.workers.production.herders;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.jobs.AbstractJob;
@@ -32,7 +33,7 @@ import java.util.stream.Stream;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
@@ -163,10 +164,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return a list of tools or empty.
      */
     @NotNull
-    public List<ToolType> getExtraToolsNeeded()
+    public List<EquipmentTypeEntry> getExtraToolsNeeded()
     {
-        final List<ToolType> toolsNeeded = new ArrayList<>();
-        toolsNeeded.add(ToolType.AXE);
+        final List<EquipmentTypeEntry> toolsNeeded = new ArrayList<>();
+        toolsNeeded.add(ModEquipmentTypes.axe.get());
         return toolsNeeded;
     }
 
@@ -297,7 +298,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        for (final ToolType tool : getExtraToolsNeeded())
+        for (final EquipmentTypeEntry tool : getExtraToolsNeeded())
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -332,7 +333,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final List<? extends Animal> animals = searchForAnimals(current_module::isCompatible);
 
-        if (!equipTool(InteractionHand.MAIN_HAND, ToolType.AXE))
+        if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.axe.get()))
         {
             return START_WORKING;
         }
@@ -685,11 +686,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Sets the tool as held item.
      *
-     * @param toolType the {@link ToolType} we want to equip
+     * @param toolType the {@link EquipmentTypeEntry} we want to equip
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final InteractionHand hand, final ToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final EquipmentTypeEntry toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -705,10 +706,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param toolType this herders tool type.
      * @return slot number.
      */
-    private int getToolSlot(final ToolType toolType)
+    private int getToolSlot(final EquipmentTypeEntry toolType)
     {
-        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
-          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
+        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), toolType,
+          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
 
         if (slot == -1)
         {

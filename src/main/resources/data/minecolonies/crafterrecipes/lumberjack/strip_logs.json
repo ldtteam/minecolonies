@@ -24,6 +24,6 @@
       }
     ],
     "intermediate": "minecraft:air",
-    "tool": "axe"
+    "tool": "minecolonies:axe"
   }
 }

@@ -1066,7 +1066,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
-                    if (kept.getAmount() >= toKeep && !ItemStackUtils.isBetterTool(stack, kept.getItemStack()))
+                    if (kept.getAmount() >= toKeep && !ItemStackUtils.isBetterEquipment(stack, kept.getItemStack()))
                     {
                         return stack.getCount();
                     }
