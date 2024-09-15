@@ -73,7 +73,12 @@ public class ColonyExpeditionItemRequirement extends ColonyExpeditionRequirement
     @Override
     public RequirementHandler createHandler(final IItemHandler inventory)
     {
-        return new ItemRequirementHandler(new RequirementHandlerOptions(inventory, shouldConsumeOnStart));
+        return new ItemRequirementHandler(new RequirementHandlerOptions(inventory, (builder, stack) -> {
+            if (!shouldConsumeOnStart)
+            {
+                builder.addEquipment(stack);
+            }
+        }));
     }
 
     /**

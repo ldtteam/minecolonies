@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.visitor.expeditionary;
+package com.minecolonies.core.client.gui.expedition_sheet;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
@@ -46,9 +46,9 @@ import static com.minecolonies.api.util.constant.ExpeditionConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Main window for the expeditionary their GUI.
+ * Main window for the expedition sheet GUI.
  */
-public class MainWindowExpeditionary extends AbstractWindowSkeleton
+public class WindowExpeditionSheet extends AbstractWindowSkeleton
 {
     /**
      * Window constants.
@@ -120,7 +120,7 @@ public class MainWindowExpeditionary extends AbstractWindowSkeleton
     /**
      * Default constructor.
      */
-    public MainWindowExpeditionary(
+    public WindowExpeditionSheet(
       final @NotNull IColonyView colonyView,
       final @NotNull ColonyExpeditionType expeditionType,
       final @NotNull InteractionHand hand,

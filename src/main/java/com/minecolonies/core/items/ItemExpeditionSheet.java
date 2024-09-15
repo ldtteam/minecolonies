@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedi
 import com.minecolonies.api.items.AbstractItemExpeditionSheet;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.core.client.gui.visitor.expeditionary.MainWindowExpeditionary;
+import com.minecolonies.core.client.gui.expedition_sheet.WindowExpeditionSheet;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
@@ -125,8 +125,8 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             return InteractionResultHolder.pass(itemStack);
         }
 
-        final MainWindowExpeditionary windowExpeditionary = new MainWindowExpeditionary((IColonyView) colony, expeditionType, hand, new ExpeditionSheetContainerManager(itemStack));
-        windowExpeditionary.open();
+        final WindowExpeditionSheet windowExpeditionSheet = new WindowExpeditionSheet((IColonyView) colony, expeditionType, hand, new ExpeditionSheetContainerManager(itemStack));
+        windowExpeditionSheet.open();
         return InteractionResultHolder.success(itemStack);
     }
 
@@ -170,8 +170,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
             lines.add(Component.translatable(EXPEDITION_SHEET_DESCRIPTION_VISITOR)
                         .append(Component.translatable(EXPEDITION_SHEET_DESCRIPTION_VISITOR_LEFT))
                         .withStyle(ChatFormatting.GRAY));
-            final MutableComponent timeComponent = Component.translatable(EXPEDITION_SHEET_DESCRIPTION_TIMEOUT_EXPIRED).withStyle(ChatFormatting.RED);
-            lines.add(Component.translatable(EXPEDITION_SHEET_DESCRIPTION_TIMEOUT, timeComponent).withStyle(ChatFormatting.GRAY));
+            lines.add(Component.translatable(EXPEDITION_SHEET_DESCRIPTION_TIMEOUT_EXPIRED).withStyle(ChatFormatting.RED));
         }
     }
 

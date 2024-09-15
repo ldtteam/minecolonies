@@ -2,13 +2,12 @@ package com.minecolonies.api.colony.managers.interfaces.expeditions;
 
 import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
-import com.minecolonies.api.colony.expeditions.IExpeditionMember;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -91,12 +90,11 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
     /**
      * Mark as expedition as finished.
      *
-     * @param id        the expedition id.
-     * @param members   the list of members.
-     * @param equipment the list of equipment.
+     * @param id      the expedition id.
+     * @param builder the builder used for getting extra expedition information.
      * @return true if the expedition exists.
      */
-    boolean startExpedition(final int id, final List<IExpeditionMember<?>> members, final List<ItemStack> equipment);
+    boolean startExpedition(final int id, final ColonyExpeditionBuilder builder);
 
     /**
      * Mark as expedition as finished.
@@ -146,24 +144,6 @@ public interface IColonyExpeditionManager extends INBTSerializable<CompoundTag>
      * @return true if so.
      */
     boolean meetsRequirements(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager inventory);
-
-    /**
-     * Extract the items from the expedition sheet.
-     *
-     * @param expeditionTypeId the expedition type id.
-     * @param containerManager the expedition sheet container instance.
-     * @return the final list of items to provide to the expedition.
-     */
-    List<ItemStack> extractItemsFromSheet(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager containerManager);
-
-    /**
-     * Extract the items from the expedition sheet.
-     *
-     * @param expeditionType   the expedition type instance.
-     * @param containerManager the expedition sheet container instance.
-     * @return the final list of items to provide to the expedition.
-     */
-    List<ItemStack> extractItemsFromSheet(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager containerManager);
 
     /**
      * Unlock nether expeditions.

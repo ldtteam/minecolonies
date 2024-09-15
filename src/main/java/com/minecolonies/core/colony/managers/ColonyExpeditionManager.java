@@ -5,18 +5,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.expeditions.ExpeditionFinishedStatus;
 import com.minecolonies.api.colony.expeditions.ExpeditionStatus;
-import com.minecolonies.api.colony.expeditions.IExpeditionMember;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.FinishedExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.entity.visitor.ModVisitorTypes;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
-import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
-import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
@@ -25,18 +22,19 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -204,12 +202,12 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
     }
 
     @Override
-    public boolean startExpedition(final int id, final List<IExpeditionMember<?>> members, final List<ItemStack> equipment)
+    public boolean startExpedition(final int id, final ColonyExpeditionBuilder builder)
     {
         final boolean exists = createdExpeditions.containsKey(id);
         if (exists && createdExpeditions.get(id).accepted())
         {
-            activeExpeditions.put(id, createdExpeditions.get(id).createExpedition(members, equipment));
+            activeExpeditions.put(id, createdExpeditions.get(id).createExpedition(builder));
             createdExpeditions.remove(id);
             updateCaches();
 
@@ -286,30 +284,6 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
                  .map(m -> m.createHandler(new InvWrapper(inventory)))
                  .anyMatch(f -> f.getAvailabilityStatus().equals(ResourceAvailability.NOT_NEEDED))
                  && inventory.getMembers().size() >= expeditionType.guards();
-    }
-
-    @Override
-    public List<ItemStack> extractItemsFromSheet(final ResourceLocation expeditionTypeId, final ExpeditionSheetContainerManager containerManager)
-    {
-        return parseExpeditionAndRunActual(expeditionTypeId, containerManager, this::extractItemsFromSheet, List.of());
-    }
-
-    @Override
-    public List<ItemStack> extractItemsFromSheet(final ColonyExpeditionType expeditionType, final ExpeditionSheetContainerManager containerManager)
-    {
-        final List<ItemStack> items = new ArrayList<>();
-
-        final IItemHandler handler = new InvWrapper(containerManager);
-        for (final ColonyExpeditionRequirement requirement : expeditionType.requirements())
-        {
-            final RequirementHandler requirementHandler = requirement.createHandler(handler);
-            if (!requirementHandler.shouldConsumeOnStart())
-            {
-                items.addAll(InventoryUtils.filterItemHandler(handler, requirementHandler.getItemPredicate()));
-            }
-        }
-
-        return InventoryUtils.processItemStackListAndMerge(items);
     }
 
     @Override

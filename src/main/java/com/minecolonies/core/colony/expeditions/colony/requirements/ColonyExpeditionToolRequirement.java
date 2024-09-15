@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,16 @@ public class ColonyExpeditionToolRequirement extends ColonyExpeditionRequirement
     @Override
     public ToolRequirementHandler createHandler(final IItemHandler inventorySupplier)
     {
-        return new ToolRequirementHandler(new RequirementHandlerOptions(inventorySupplier, false));
+        return new ToolRequirementHandler(new RequirementHandlerOptions(inventorySupplier, (builder, stack) -> {
+            if (stack.getItem() instanceof ArmorItem armorItem)
+            {
+                builder.getLeader().setArmor(armorItem.getEquipmentSlot(), stack);
+            }
+            else
+            {
+                builder.addEquipment(stack);
+            }
+        }));
     }
 
     /**

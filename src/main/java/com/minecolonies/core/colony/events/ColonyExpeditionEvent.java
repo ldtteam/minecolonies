@@ -512,12 +512,14 @@ public class ColonyExpeditionEvent implements IColonyEvent
             {
                 member.removeFromColony(colony);
             }
-
-            // Apply usage damage to all armor of all members.
-            final ArmorList armor = getArmor(member);
-            damageArmor(armor,
-              armor.getTotalArmor() * Mth.randomBetween(random, MIN_PERCENTAGE_USAGE_DAMAGE, MAX_PERCENTAGE_USAGE_DAMAGE),
-              slot -> member.setArmor(slot, ItemStack.EMPTY));
+            else
+            {
+                // Apply usage damage to all armor of all members.
+                final ArmorList armor = getArmor(member);
+                damageArmor(armor,
+                  armor.getTotalArmor() * Mth.randomBetween(random, MIN_PERCENTAGE_USAGE_DAMAGE, MAX_PERCENTAGE_USAGE_DAMAGE),
+                  slot -> member.setArmor(slot, ItemStack.EMPTY));
+            }
         }
 
         // Add all the loot to the leader inventory

@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.expeditions.colony.requirements;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -54,7 +55,7 @@ public class ColonyExpeditionFoodRequirement extends ColonyExpeditionRequirement
     @Override
     public RequirementHandler createHandler(final IItemHandler inventory)
     {
-        return new FoodRequirementHandler(new RequirementHandlerOptions(inventory, false));
+        return new FoodRequirementHandler(new RequirementHandlerOptions(inventory, ColonyExpeditionBuilder::addEquipment));
     }
 
     /**

@@ -1,11 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces.expeditions;
 
-import com.minecolonies.api.colony.expeditions.IExpeditionMember;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Container class for created expedition instances.
@@ -29,12 +25,11 @@ public record CreatedExpedition(int id, ResourceLocation expeditionTypeId, boole
     /**
      * Turn this created expedition into a full-fledged expedition instance.
      *
-     * @param members   the list of members.
-     * @param equipment the list of equipment.
+     * @param builder the builder containing additional information.
      * @return the complete expedition instance.
      */
-    public ColonyExpedition createExpedition(final List<IExpeditionMember<?>> members, final List<ItemStack> equipment)
+    public ColonyExpedition createExpedition(final ColonyExpeditionBuilder builder)
     {
-        return new ColonyExpedition(id, expeditionTypeId, members.stream().collect(Collectors.toMap(IExpeditionMember::getId, v -> v)), equipment);
+        return builder.build(id, expeditionTypeId);
     }
 }

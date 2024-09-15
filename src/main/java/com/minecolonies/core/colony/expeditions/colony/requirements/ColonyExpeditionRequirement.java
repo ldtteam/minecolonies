@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.expeditions.colony.requirements;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.client.gui.generic.ResourceItem.Resource;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 /**
@@ -19,10 +21,10 @@ public abstract class ColonyExpeditionRequirement
     /**
      * Container class for the different options passed to requirement handlers.
      *
-     * @param inventory      the inventory.
-     * @param consumeOnStart whether the input items for this requirement should be immediately consumed on start.
+     * @param inventory             the inventory.
+     * @param processOnStartHandler handler function to process what to do with a given item on expedition start.
      */
-    public record RequirementHandlerOptions(IItemHandler inventory, boolean consumeOnStart)
+    public record RequirementHandlerOptions(IItemHandler inventory, BiConsumer<ColonyExpeditionBuilder, ItemStack> processOnStartHandler)
     {
     }
 
@@ -117,13 +119,11 @@ public abstract class ColonyExpeditionRequirement
         }
 
         /**
-         * Get whether the input items for this requirement should be immediately consumed on start.
-         *
-         * @return true if so.
+         * Execute a function checking what should happen to the given item
          */
-        public boolean shouldConsumeOnStart()
+        public void processOnStart(final ColonyExpeditionBuilder builder, final ItemStack itemStack)
         {
-            return options.consumeOnStart;
+            options.processOnStartHandler.accept(builder, itemStack);
         }
     }
 }

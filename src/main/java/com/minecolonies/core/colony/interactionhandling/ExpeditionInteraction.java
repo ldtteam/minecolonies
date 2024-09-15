@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandl
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.ColonyExpedition;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.CreatedExpedition;
+import com.minecolonies.api.items.AbstractItemExpeditionSheet;
 import com.minecolonies.api.items.AbstractItemExpeditionSheet.ExpeditionSheetInfo;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
@@ -20,6 +22,9 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.events.ColonyExpeditionEvent;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
+import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
+import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
@@ -33,9 +38,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
@@ -74,6 +83,35 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     private static final Component finishedViewAnswer    = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_VIEW_RESULTS);
     private static final Component finishedLaterAnswer   = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_NOT_NOW);
     private static final Component finishedCancelAnswer  = Component.translatable(EXPEDITION_INTERACTION_RESPONSE_FINISHED_NOT_INTERESTED);
+
+    /**
+     * Predicates
+     */
+    private static final BiPredicate<ItemStack, IColony> IS_FINISHED_EXPEDITION_SHEET = (stack, colony) -> {
+        if (stack.getItem() instanceof AbstractItemExpeditionSheet expeditionSheet)
+        {
+            final ExpeditionSheetInfo expeditionSheetInfo = expeditionSheet.getExpeditionSheetInfo(stack);
+            if (expeditionSheetInfo == null)
+            {
+                return false;
+            }
+
+            if (colony.getID() != expeditionSheetInfo.colonyId())
+            {
+                return false;
+            }
+
+            final CreatedExpedition createdExpedition = colony.getExpeditionManager().getCreatedExpedition(expeditionSheetInfo.expeditionId());
+            if (createdExpedition == null)
+            {
+                return false;
+            }
+
+            return colony.getExpeditionManager().meetsRequirements(createdExpedition.expeditionTypeId(), new ExpeditionSheetContainerManager(stack));
+        }
+
+        return false;
+    };
 
     /**
      * Default constructor.
@@ -239,67 +277,79 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
     /**
      * Starts the expedition, assuming all preconditions are met to be able to start said expedition.
      *
-     * @param data   the visitor that is being talked to.
-     * @param player the current player.
+     * @param visitorData the visitor that is being talked to.
+     * @param player      the current player.
      */
-    private void tryStartExpedition(final IVisitorData data, final Player player)
+    private void tryStartExpedition(final IVisitorData visitorData, final Player player)
     {
+        final IColony colony = visitorData.getColony();
+
         // Get the expedition instance.
-        final CreatedExpedition createdExpedition = data.getColony().getExpeditionManager().getCreatedExpedition(data.getId());
+        final CreatedExpedition createdExpedition = colony.getExpeditionManager().getCreatedExpedition(visitorData.getId());
         if (createdExpedition == null)
         {
             return;
         }
 
-        // Try to find the first expedition sheet in the player their inventory that meets the requirements.
-        final Optional<ItemStack> expeditionSheet = InventoryUtils.filterItemHandler(new InvWrapper(player.getInventory()), stack -> {
-            if (!stack.is(ModItems.expeditionSheet))
-            {
-                return false;
-            }
+        // Get the expedition type.
+        final ColonyExpeditionType colonyExpeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(createdExpedition.expeditionTypeId());
+        if (colonyExpeditionType == null)
+        {
+            Log.getLogger().warn("Starting expedition failed, expedition type '{}' does not exist on the server side.", createdExpedition.expeditionTypeId());
+            return;
+        }
 
-            return data.getColony().getExpeditionManager().meetsRequirements(createdExpedition.expeditionTypeId(), new ExpeditionSheetContainerManager(stack));
-        }).stream().findFirst();
+        // Find in which slot a valid expedition sheet is located.
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), stack -> IS_FINISHED_EXPEDITION_SHEET.test(stack, colony));
+        final ItemStack expeditionSheet = player.getInventory().getItem(slot);
         if (expeditionSheet.isEmpty())
         {
             return;
         }
 
         // Create all the data needed for creating an expedition
-        final ExpeditionSheetContainerManager expeditionSheetContainerManager = new ExpeditionSheetContainerManager(expeditionSheet.get());
-        final IExpeditionMember<?> leader = new ExpeditionVisitorMember(data);
-        final List<IExpeditionMember<?>> members = new ArrayList<>(List.of(leader));
-        for (final int id : expeditionSheetContainerManager.getMembers())
+        final ExpeditionSheetContainerManager expeditionSheetContainerManager = new ExpeditionSheetContainerManager(expeditionSheet);
+
+        final ColonyExpeditionBuilder colonyExpeditionBuilder = new ColonyExpeditionBuilder(new ExpeditionVisitorMember(visitorData));
+        expeditionSheetContainerManager.getMembers()
+          .forEach(memberId -> colonyExpeditionBuilder.addMember(new ExpeditionCitizenMember(colony.getCitizenManager().getCivilian(memberId))));
+
+        // Process the requirements
+        final IItemHandler handler = new InvWrapper(expeditionSheetContainerManager);
+        for (final ColonyExpeditionRequirement requirement : colonyExpeditionType.requirements())
         {
-            members.add(new ExpeditionCitizenMember(data.getColony().getCitizenManager().getCivilian(id)));
+            final RequirementHandler requirementHandler = requirement.createHandler(handler);
+            List<ItemStack> matchingItems = InventoryUtils.filterItemHandler(handler, requirementHandler.getItemPredicate());
+            matchingItems.forEach(item -> requirementHandler.processOnStart(colonyExpeditionBuilder, item));
         }
-        final List<ItemStack> equipment = data.getColony().getExpeditionManager().extractItemsFromSheet(createdExpedition.expeditionTypeId(), expeditionSheetContainerManager);
 
         // Attempt to start the expedition
-        if (!data.getColony().getExpeditionManager().startExpedition(data.getId(), members, equipment))
+        if (!colony.getExpeditionManager().startExpedition(visitorData.getId(), colonyExpeditionBuilder))
         {
             return;
         }
 
-        MessageUtils.format(EXPEDITION_START_MESSAGE, leader.getName())
-          .withPriority(MessagePriority.IMPORTANT)
-          .sendTo(data.getColony())
-          .forManagers();
-
         // Remove the expedition sheet from the inventory
-        InventoryUtils.tryRemoveStackFromItemHandler(new InvWrapper(player.getInventory()), expeditionSheet.get());
+        player.getInventory().removeItem(slot, 1);
 
         // Create the event related to this expedition.
-        final ColonyExpedition expedition = Objects.requireNonNull(data.getColony().getExpeditionManager().getActiveExpedition(data.getId()));
-        data.getColony().getEventManager().addEvent(new ColonyExpeditionEvent(data.getColony(), expedition));
+        final ColonyExpedition expedition = Objects.requireNonNull(colony.getExpeditionManager().getActiveExpedition(visitorData.getId()));
+        colony.getEventManager().addEvent(new ColonyExpeditionEvent(colony, expedition));
+
+        // Send expedition start message
+        MessageUtils.format(EXPEDITION_START_MESSAGE, visitorData.getName())
+          .withPriority(MessagePriority.IMPORTANT)
+          .sendTo(colony)
+          .forManagers();
 
         // Add all members to the travelling manager and de-spawn them.
-        final BlockPos townHallReturnPosition = BlockPosUtil.findSpawnPosAround(data.getColony().getWorld(), data.getColony().getBuildingManager().getTownHall().getPosition());
+        final BlockPos townHallReturnPosition =
+          BlockPosUtil.findSpawnPosAround(colony.getWorld(), colony.getBuildingManager().getTownHall().getPosition());
         for (final IExpeditionMember<?> member : expedition.getMembers())
         {
-            data.getColony().getTravelingManager().startTravellingTo(member.getId(), townHallReturnPosition, TICKS_HOUR, false);
+            colony.getTravelingManager().startTravellingTo(member.getId(), townHallReturnPosition, TICKS_HOUR, false);
 
-            final ICivilianData memberData = member.resolveCivilianData(data.getColony());
+            final ICivilianData memberData = member.resolveCivilianData(colony);
             if (memberData != null)
             {
                 memberData.getEntity().ifPresent(entity -> entity.remove(RemovalReason.DISCARDED));
