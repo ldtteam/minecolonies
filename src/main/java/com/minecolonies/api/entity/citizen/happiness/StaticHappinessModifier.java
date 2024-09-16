@@ -31,9 +31,9 @@ public final class StaticHappinessModifier extends AbstractHappinessModifier
     }
 
     @Override
-    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT)
+    public void write(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
-        super.write(provider, compoundNBT);
+        super.write(provider, compoundNBT, persist);
         compoundNBT.putString(NbtTagConstants.TAG_MODIFIER_TYPE, HappinessRegistry.STATIC_MODIFIER.toString());
     }
 }

@@ -59,6 +59,7 @@ import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.event.EventHandler;
+import com.minecolonies.core.event.TextureReloadListener;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
@@ -592,12 +593,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level().isClientSide())
             {
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
-                    .sendToTrackingEntity(this);
+                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
             }
         }
         else
@@ -625,12 +625,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (!level().isClientSide())
         {
-            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
-
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
-            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight())
-                .sendToTrackingEntity(this);
+            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+            ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
         }
 
         interactionCooldown = 100;
@@ -1936,6 +1934,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenColonyHandler != null)
         {
             citizenColonyHandler.onSyncDataUpdate(dataAccessor);
+        }
+
+        if (level().isClientSide && dataAccessor == DATA_STYLE)
+        {
+            if (!TextureReloadListener.TEXTURE_PACKS.contains(getEntityData().get(DATA_STYLE)))
+            {
+                getEntityData().set(DATA_STYLE, TextureReloadListener.TEXTURE_PACKS.get(0));
+            }
         }
     }
 

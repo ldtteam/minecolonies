@@ -903,7 +903,6 @@ public final class StandardRequestFactories
     @SuppressWarnings(Suppression.BIG_CLASS)
     public static final class BurnableRequestFactory implements IRequestFactory<Burnable, StandardRequests.BurnableRequest>
     {
-
         @Override
         public StandardRequests.BurnableRequest getNewInstance(
           @NotNull final Burnable input,
@@ -970,6 +969,105 @@ public final class StandardRequestFactories
         public short getSerializationId()
         {
             return SerializationIdentifierConstants.BURNABLE_REQUEST_ID;
+        }
+    }
+
+    public static final class MinimumStackRequestFactory implements IRequestFactory<MinimumStack, StandardRequests.MinStackRequest>
+    {
+        /**
+         * Method to get a new instance of a request given the input and token.
+         *
+         * @param input        The input to build a new request for.
+         * @param location     The location of the requester.
+         * @param token        The token to build the request from.
+         * @param initialState The initial state of the request request.
+         * @return The new output instance for a given input.
+         */
+        @Override
+        public StandardRequests.MinStackRequest getNewInstance(
+          @NotNull final MinimumStack input,
+          @NotNull final IRequester location,
+          @NotNull final IToken<?> token,
+          @NotNull final RequestState initialState)
+        {
+            return new StandardRequests.MinStackRequest(location, token, initialState, input);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<StandardRequests.MinStackRequest> getFactoryOutputType()
+        {
+            return TypeToken.of(StandardRequests.MinStackRequest.class);
+        }
+
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public TypeToken<MinimumStack> getFactoryInputType()
+        {
+            return TypeToken.of(MinimumStack.class);
+        }
+
+        /**
+         * Method to serialize a given Request.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest request)
+        {
+            return serializeToNBT(provider, controller, request, Stack::serialize);
+        }
+
+        /**
+         * Method to deserialize a given Request.
+         *
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
+         */
+        @NotNull
+        @Override
+        @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
+        public StandardRequests.MinStackRequest deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        {
+            return deserializeFromNBT(provider, controller, nbt, MinimumStack::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.MinStackRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @NotNull
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.MinStackRequest input, final RegistryFriendlyByteBuf packetBuffer)
+        {
+            serializeToRegistryFriendlyByteBuf(controller, input, packetBuffer, Stack::serialize);
+        }
+
+        @NotNull
+        @Override
+        public StandardRequests.MinStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final RegistryFriendlyByteBuf buffer) throws Throwable
+        {
+            return deserializeFromRegistryFriendlyByteBuf(controller,
+              buffer,
+              MinimumStack::deserialize,
+              (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.MinStackRequest.class),
+                requested,
+                token,
+                requester,
+                requestState));
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return SerializationIdentifierConstants.MIN_STACK_REQUEST_ID;
         }
     }
 

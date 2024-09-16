@@ -132,7 +132,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         final float inaccuracy = 99f / level;
         final Holder<MobEffect> effect;
-        final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+        final ItemStack stack = Items.SPLASH_POTION.getDefaultInstance();
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
@@ -151,7 +151,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             predicate = (entity, eff) -> !AbstractEntityAIGuard.isAttackableTarget(user, entity);
         }
 
-        stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Holder.direct(new Potion(new MobEffectInstance(effect, time, gotMaterial ? 2 : 0)))));
+        stack.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY.withEffectAdded((new MobEffectInstance(effect, time, gotMaterial ? 2 : 0))));
         DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, predicate);
 
         if (gotMaterial)

@@ -7,12 +7,15 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.AbstractInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
@@ -82,6 +85,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
         this.validatorId = validatorId;
+        if (this.validatorId == null)
+        {
+            this.validatorId = Component.empty();
+            Log.getLogger().error("Validator id is null: " + this.getClass() + " " + this.getInquiry(), new Exception());
+        }
     }
 
     /**
@@ -184,12 +192,10 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListTag list = new ListTag();
         for (final Component element : parents)
         {
-            final CompoundTag elementTag = new CompoundTag();
-            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element, provider));
-            list.add(elementTag);
+            list.add(Utils.serializeCodecMess(ComponentSerialization.CODEC, provider, element));
         }
         compoundNBT.put(TAG_PARENTS, list);
-        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId, provider));
+        compoundNBT.put(TAG_VALIDATOR_ID, Utils.serializeCodecMess(ComponentSerialization.CODEC, provider, validatorId));
         return compoundNBT;
     }
 
@@ -200,11 +206,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
         this.parents.clear();
         final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++)
+        for (Tag tag : list)
         {
-            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT), provider));
+            this.parents.add(Utils.deserializeCodecMess(ComponentSerialization.CODEC, provider, tag));
         }
-        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID), provider);
+        this.validatorId = Utils.deserializeCodecMess(ComponentSerialization.CODEC, provider, compoundNBT.get(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

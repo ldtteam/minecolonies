@@ -35,7 +35,7 @@ public class ItemOverlayBoxesRenderer
                 else
                 {
                     ctx.pushPoseCameraToPos(pos);
-                    bounds = bounds.move(pos.multiply(-1));
+                    if (bounds != null) bounds = bounds.move(pos.multiply(-1));
                 }
 
                 if (box.showThroughBlocks())

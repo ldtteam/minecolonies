@@ -636,7 +636,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (!event.getLevel().isClientSide)
         {
-            getColonies(event.getLevel()).forEach(c -> c.onWorldTick(event));
+            for (final IColony colony : getColonies(event.getLevel()))
+            {
+                try
+                {
+                    colony.onWorldTick(event);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error("Something went wrong ticking colony: " + colony.getID(), ex);
+                }
+            }
         }
     }
 

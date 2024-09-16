@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -113,7 +114,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     {
         if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
         {
-            final Collection<IToken<?>> list = building.getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
+            final Collection<IToken<?>> list = building.getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(MinimumStack.class), new ArrayList<>());
 
             for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
             {
@@ -133,7 +134,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                     if (request == null)
                     {
                         itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                        final Stack stack = new Stack(itemStack, false);
+                        final MinimumStack stack = new MinimumStack(itemStack, false);
                         stack.setCanBeResolvedByBuilding(false);
                         building.createRequest(stack, false);
                     }

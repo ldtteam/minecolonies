@@ -415,6 +415,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             pathResult = searchWater(SEARCH_RANGE * 3, 1.0D, job.getPonds());
             return getState();
         }
+        if (pathResult.isDone())
+        {
+            pathResult.getJob().syncDebug();
+        }
         if (pathResult.failedToReachDestination())
         {
             return setRandomWater();

@@ -25,6 +25,7 @@ public class FMLEventHandler
     public static void onServerTick(final ServerTickEvent.Pre event)
     {
         IColonyManager.getInstance().onServerTick(event);
+        DataPackSyncEventHandler.ServerEvents.load(event.getServer());
     }
 
     @SubscribeEvent
@@ -77,5 +78,6 @@ public class FMLEventHandler
     public static void onServerStopped(@NotNull final ServerStoppingEvent event)
     {
         Pathfinding.shutdown();
+        DataPackSyncEventHandler.ServerEvents.reset();
     }
 }

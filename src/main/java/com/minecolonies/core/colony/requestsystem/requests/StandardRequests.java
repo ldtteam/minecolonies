@@ -777,6 +777,49 @@ public final class StandardRequests
     }
 
     /**
+     * Request for a single ItemStack.
+     */
+    public static class MinStackRequest extends AbstractRequest<MinimumStack>
+    {
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final MinimumStack requested)
+        {
+            super(requester, token, requested);
+        }
+
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final MinimumStack requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public Component getShortDisplayString()
+        {
+            final MutableComponent combined = Component.literal("");
+
+            if (getRequest().getMinimumCount() == getRequest().getCount())
+            {
+                combined.append(Component.literal(getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+            else
+            {
+                combined.append(Component.literal(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+
+            return combined;
+        }
+
+        @NotNull
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return getRequest().getRequestedItems();
+        }
+    }
+
+    /**
      * Find the position the request is in the list.
      * @return the position.
      * @param colony the colony.
