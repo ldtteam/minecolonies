@@ -1,5 +1,6 @@
 package com.minecolonies.api.equipment.registry;
 
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,7 @@ public final class EquipmentTypeEntry
     private final ResourceLocation registryName;
 
     /**
-     * The component for the human readable name.
+     * The component for the human-readable name.
      */
     private final Component displayName;
 
@@ -39,10 +40,10 @@ public final class EquipmentTypeEntry
     /**
      * Constructor.
      *
-     * @param displayName  The human readable name of the equipment type
-     * @param isEquipment  A predicate for determining if an itemstack is the equipment type
-     * @param itemLevel    A function to return the item level of an item stack
-     * @param registryName The forge registry location of the equipment type
+     * @param displayName  the human-readable name of the equipment type
+     * @param isEquipment  a predicate for determining if an itemstack is the equipment type
+     * @param itemLevel    a function to return the item level of an item stack
+     * @param registryName the forge registry location of the equipment type
      */
     private EquipmentTypeEntry(
       final Component displayName,
@@ -57,12 +58,12 @@ public final class EquipmentTypeEntry
     }
 
     /**
-     * Parse a resource location from a serialized version for equipmenttypes.
-     * This is to help migrate to the new equipmenttype serialization which originally
+     * Parse a resource location from a serialized version for EquipmentTypes.
+     * This is to help migrate to the new EquipmentType serialization which originally
      * used names and now uses resource locations.
      *
-     * @param serialized The string representation of the equipment type
-     * @return The correct resource location
+     * @param serialized the string representation of the equipment type
+     * @return the correct resource location
      */
     public static ResourceLocation parseResourceLocation(final String serialized)
     {
@@ -71,28 +72,24 @@ public final class EquipmentTypeEntry
     }
 
     /**
-     * Parse a resource location from a serialized version for equipmenttypes.
-     * This is to help migrate to the new equipmenttype serialization which originally
+     * Parse a resource location from a serialized version for EquipmentTypes.
+     * This is to help migrate to the new EquipmentType serialization which originally
      * used names and now uses resource locations.
      *
-     * @param serialized A resource location read from a buffer
-     * @return The correct resource location
+     * @param serialized A resource location read from nbt
+     * @return the correct resource location
      */
     public static ResourceLocation parseResourceLocation(final ResourceLocation serialized)
     {
-        // Minecraft will never register an equipment type with us so these are
-        // the old non-resource-location serialized equipment types.
-        if (serialized.getNamespace().equals("minecraft")) {
-            return new ResourceLocation(Constants.MOD_ID, serialized.getPath());
-        }
-
-        return serialized;
+        final String namespace = serialized.getNamespace().equals("minecraft") ? Constants.MOD_ID : serialized.getNamespace();
+        final String path = serialized.getPath().isEmpty() ? ModEquipmentTypes.none.get().registryName.getPath() : serialized.getPath();
+        return new ResourceLocation(namespace, path);
     }
 
     /**
      * Get the name of the forge registry location for the equipment type
      *
-     * @return The resource location
+     * @return the resource location
      */
     public ResourceLocation getRegistryName()
     {
@@ -102,7 +99,7 @@ public final class EquipmentTypeEntry
     /**
      * Get the display name of the equipment type
      *
-     * @return the component for the human readable name.
+     * @return the component for the human-readable name.
      */
     public Component getDisplayName()
     {
@@ -113,7 +110,7 @@ public final class EquipmentTypeEntry
      * Determine whether an item stack works as this equipment.
      *
      * @param itemStack to test
-     * @return Whether the item stack can act as the equipment.
+     * @return whether the item stack can act as the equipment.
      */
     public boolean checkIsEquipment(ItemStack itemStack)
     {
@@ -124,7 +121,7 @@ public final class EquipmentTypeEntry
      * Get the item level for this equipment type for a given item stack
      *
      * @param itemStack to test
-     * @return The item level
+     * @return the item level
      */
     public int getMiningLevel(ItemStack itemStack)
     {
@@ -142,7 +139,7 @@ public final class EquipmentTypeEntry
         private ResourceLocation registryName;
 
         /**
-         * The component for the human readable name.
+         * The component for the human-readable name.
          */
         private Component displayName;
 
@@ -173,7 +170,7 @@ public final class EquipmentTypeEntry
         /**
          * Set the display name for the new EquipmentTypeEntry
          *
-         * @param displayName the new human readable name
+         * @param displayName the new human-readable name
          * @return this
          */
         public Builder setDisplayName(final Component displayName)
@@ -185,7 +182,7 @@ public final class EquipmentTypeEntry
         /**
          * Set the predicate for determining whether an item stack is the equipment type
          *
-         * @param isEquipment The predicate
+         * @param isEquipment the predicate
          * @return this
          */
         public Builder setIsEquipment(final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment)
@@ -197,7 +194,7 @@ public final class EquipmentTypeEntry
         /**
          * Set the function for getting the item level of an item stack for this tool type
          *
-         * @param itemLevel The function
+         * @param itemLevel the function
          * @return this
          */
         public Builder setEquipmentLevel(final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel)
