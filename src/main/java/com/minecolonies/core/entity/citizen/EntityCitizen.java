@@ -596,7 +596,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+                new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
                 ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
             }
         }
@@ -627,7 +627,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
-            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+            new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
             ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
         }
 
