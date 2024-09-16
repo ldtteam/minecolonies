@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -970,7 +971,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has a block in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt; 0;
+     * Checks if a player has a block in the {@link ICapabilityProvider}.
      *
      * @param Provider {@link ICapabilityProvider} to scan
      * @param block    Block to count
@@ -982,7 +983,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Item)} &gt; 0;
+     * Checks if a player has an item in the {@link ICapabilityProvider}.
      *
      * @param Provider {@link ICapabilityProvider} to scan
      * @param item     Item to count
@@ -994,7 +995,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}. Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate)} &gt; 0;
+     * Checks if a player has an item in the {@link ICapabilityProvider}.
      *
      * @param Provider                    {@link ICapabilityProvider} to scan
      * @param itemStackSelectionPredicate The predicate to match the ItemStack to.
@@ -1036,20 +1037,6 @@ public class InventoryUtils
                  .filter(slotIndex -> slotIndex > -1)
                  .findFirst()
                  .orElse(-1);
-    }
-
-    /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level.
-     *
-     * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param toolType     The toolTypeName of the tool to find.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
-     */
-    public static boolean isToolInProvider(@NotNull final IItemHandlerCapProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1475,7 +1462,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has a block in the {@link ICapabilityProvider}, for a given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt;
+     * Checks if a player has a block in the {@link ICapabilityProvider}, for a given {@link Direction}.;
      * 0;
      *
      * @param provider {@link ICapabilityProvider} to scan
@@ -1489,7 +1476,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Item)} &gt;
+     * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link Direction}.
      * 0;
      *
      * @param provider {@link ICapabilityProvider} to scan
@@ -1503,7 +1490,7 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link Direction}. Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider,
+     * Checks if a player has an item in the {@link ICapabilityProvider}, for a given {@link Direction},
      * Predicate)} &gt; 0;
      *
      * @param provider                    {@link ICapabilityProvider} to scan
@@ -1556,41 +1543,21 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level, for a given {@link Direction}.
-     *
-     * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param facing       The side to check for.
-     * @param toolType     The tool type to find.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
-     */
-    public static boolean isToolInProviderForSide(
-      @NotNull final IItemHandlerCapProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
-      final int minimalLevel, final int maximumLevel)
-    {
-        final IItemHandler itemHandler = provider.getItemHandlerCap(facing);
-        if (itemHandler == null)
-        {
-            return false;
-        }
-
-        return isToolInItemHandler(itemHandler, toolType, minimalLevel, maximumLevel);
-    }
-
-    /**
-     * Checks if the {@link IItemHandler} contains the following toolName with the given minimal Level.
+     * Checks if the {@link IItemHandler} contains the following equipmentType with the given minimal Level.
      *
      * @param itemHandler  The {@link IItemHandler} to scan.
-     * @param toolType     The toolType of the tool to find.
+     * @param equipmentType     The equipmentType of the equipment to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link IItemHandler}, false when not.
+     * @return True if equipment with the given EquipmentType was found in the given {@link IItemHandler}, false when not.
      */
-    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isEquipmentInItemHandler(
+      @NotNull final IItemHandler itemHandler,
+      @NotNull final EquipmentTypeEntry equipmentType,
+      final int minimalLevel,
+      final int maximumLevel)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
-                                                   ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1607,36 +1574,39 @@ public class InventoryUtils
     }
 
     /**
-     * Returns a slot number if an {@link IItemHandler} contains given tool type.
+     * Returns a slot number if an {@link IItemHandler} contains given equipment type.
      *
      * @param itemHandler  the {@link IItemHandler} to get the slot from.
-     * @param toolType     the tool type to look for.
+     * @param equipmentType     the equipment type to look for.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotOfItemHandlerContainingTool(
-      @NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel,
+    public static int getFirstSlotOfItemHandlerContainingEquipment(
+      @NotNull final IItemHandler itemHandler, @NotNull final EquipmentTypeEntry equipmentType, final int minimalLevel,
       final int maximumLevel)
     {
-        return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level in a worker's inventory.
+     * Verifies if there is one equipment with an acceptable level in a worker's inventory.
      *
      * @param itemHandler   the worker's inventory
-     * @param toolType      the type of tool needed
-     * @param requiredLevel the minimum tool level
+     * @param equipmentType      the type of equipment needed
+     * @param requiredLevel the minimum equipment level
      * @param maximumLevel  the worker's hut level
-     * @return true if tool is acceptable
+     * @return true if equipment is acceptable
      */
-    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
+    public static boolean hasItemHandlerEquipmentWithLevel(
+      @NotNull final IItemHandler itemHandler,
+      final EquipmentTypeEntry equipmentType,
+      final int requiredLevel,
+      final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
-            ItemStackUtils.getMiningLevel(stack, toolType),
+          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (equipmentType.checkIsEquipment(stack) && ItemStackUtils.verifyEquipmentLevel(stack,
+            equipmentType.getMiningLevel(stack),
             requiredLevel, maximumLevel)))) > -1;
     }
 

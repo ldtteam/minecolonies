@@ -1,7 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.PercentageHarvestPlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,9 +60,9 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
-        return ToolType.SHEARS;
+        return ModEquipmentTypes.shears.get();
     }
 
     @Override

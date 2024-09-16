@@ -2,8 +2,8 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -91,7 +91,7 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
         recipe(MECHANIC, MODULE_CRAFTING, "deoxidize_" + BuiltInRegistries.ITEM.getKey(input).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
                 .result(new ItemStack(output))
-                .requiredTool(ToolType.AXE)
+                .requiredTool(ModEquipmentTypes.axe.get())
                 .build(consumer);
     }
 }

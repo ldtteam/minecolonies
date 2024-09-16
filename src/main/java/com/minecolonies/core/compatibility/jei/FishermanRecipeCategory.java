@@ -2,8 +2,8 @@ package com.minecolonies.core.compatibility.jei;
 
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootTables;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -54,7 +54,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
                           @NotNull final FishingRecipe recipe,
                           @NotNull final IFocusGroup focuses)
     {
-        addToolSlot(builder, ToolType.FISHINGROD, WIDTH - 18, CITIZEN_Y - 20, true);
+        addToolSlot(builder, ModEquipmentTypes.fishing_rod.get(), WIDTH - 18, CITIZEN_Y - 20, true);
 
         if (!recipe.getDrops().isEmpty())
         {

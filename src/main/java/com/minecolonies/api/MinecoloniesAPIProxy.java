@@ -24,6 +24,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
@@ -223,5 +224,11 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         apiInstance.onRegistryNewRegistry(event);
+    }
+
+    @Override
+    public Registry<EquipmentTypeEntry> getEquipmentTypeRegistry()
+    {
+        return apiInstance.getEquipmentTypeRegistry();
     }
 }

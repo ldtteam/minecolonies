@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -106,7 +106,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * The tool required to craft this recipe (in addition to any in the recipe itself)
      */
-    private final IToolType requiredTool;
+    private final EquipmentTypeEntry requiredTool;
 
     /**
      * The hash cache
@@ -145,7 +145,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param lootTable     Loot table to use for possible alternate outputs
      * @param requiredTool  the tool needed to craft (in addition to anything in the recipe itself)
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceKey<LootTable> lootTable, final IToolType requiredTool)
+    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceKey<LootTable> lootTable, final EquipmentTypeEntry requiredTool)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -721,7 +721,7 @@ public class RecipeStorage implements IRecipeStorage
 
     @NotNull
     @Override
-    public IToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
         return this.requiredTool;
     }

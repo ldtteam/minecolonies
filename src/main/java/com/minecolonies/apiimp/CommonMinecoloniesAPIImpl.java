@@ -26,6 +26,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
@@ -71,6 +72,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public static final ResourceKey<Registry<QuestRegistries.DialogueAnswerEntry>> QUEST_ANSWER_RESULTS = key("questanswerresults");
     public static final ResourceKey<Registry<HappinessRegistry.HappinessFactorTypeEntry>> HAPPINESS_FACTOR_TYPES = key("happinessfactortypes");
     public static final ResourceKey<Registry<HappinessRegistry.HappinessFunctionEntry>> HAPPINESS_FUNCTION = key("happinessfunction");
+    public static final ResourceKey<Registry<EquipmentTypeEntry>> EQUIPMENT_TYPES = key("equipmenttypes");
 
     private final IColonyManager                         colonyManager          = new ColonyManager();
     private final ICitizenDataManager                    citizenDataManager     = new CitizenDataManager();
@@ -99,6 +101,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private Registry<QuestRegistries.DialogueAnswerEntry>        questDialogueAnswerRegistry;
     private Registry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private Registry<HappinessRegistry.HappinessFunctionEntry>   happinessFunctionRegistry;
+    private Registry<EquipmentTypeEntry>                         equipmentTypeRegistry;
 
     @Override
     @NotNull
@@ -235,12 +238,14 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         questDialogueAnswerRegistry = event.create(syncedRegistry(QUEST_ANSWER_RESULTS));
         happinessFactorTypeRegistry = event.create(syncedRegistry(HAPPINESS_FACTOR_TYPES));
         happinessFunctionRegistry = event.create(syncedRegistry(HAPPINESS_FUNCTION));
+        equipmentTypeRegistry = event.create(syncedRegistry(EQUIPMENT_TYPES));
     }
 
     private static <T> ResourceKey<Registry<T>> key(final String registryName)
     {
         return ResourceKey.createRegistryKey(new ResourceLocation(Constants.MOD_ID, registryName));
     }
+
 
     private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey)
     {
@@ -310,6 +315,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public Registry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return happinessFunctionRegistry;
+    }
+
+    @Override
+    public Registry<EquipmentTypeEntry> getEquipmentTypeRegistry()
+    {
+        return equipmentTypeRegistry;
     }
 }
 

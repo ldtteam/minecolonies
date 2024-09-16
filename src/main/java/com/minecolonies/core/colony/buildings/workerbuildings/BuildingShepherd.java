@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
@@ -109,7 +109,7 @@ public class BuildingShepherd extends AbstractBuilding
             recipes.add(new GenericRecipe(null, ItemStack.EMPTY,
                     StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false).map(ItemStack::new).toList(),
                     Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal, Collections.emptyList(), 0));
 
             return recipes;
         }

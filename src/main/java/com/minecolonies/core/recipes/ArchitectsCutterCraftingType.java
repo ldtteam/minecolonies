@@ -11,7 +11,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -68,7 +68,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
             MaterialTextureData.EMPTY.writeToItemStack(output);
 
             recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ToolType.NONE, new ArrayList<>(), -1));
+                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1));
         }
 
         return recipes;
