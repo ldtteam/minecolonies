@@ -289,7 +289,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         }
 
         // Mark entities when spies exist
-        if (colony.getRaiderManager().areSpiesEnabled())
+        if (colony.getRaiderManager().areSpiesEnabled() || spawners.isEmpty())
         {
             for (final Entity entity : getEntities())
             {
