@@ -27,6 +27,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 
@@ -101,4 +102,6 @@ public interface IMinecoloniesAPI
     void onRegistryNewRegistry(NewRegistryEvent event);
 
     IForgeRegistry<EquipmentTypeEntry> getEquipmentTypeRegistry();
+
+    IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry();
 }

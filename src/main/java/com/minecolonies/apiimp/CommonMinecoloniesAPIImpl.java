@@ -29,6 +29,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.CitizenDataManager;
@@ -80,6 +81,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
+    private        IForgeRegistry<StorageBlockEntry>                        storageBlockRegistry;
 
     @Override
     @NotNull
@@ -326,6 +328,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
+
+        event.create(new RegistryBuilder<StorageBlockEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "storageblocks"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> storageBlockRegistry = b);
     }
 
     @Override
@@ -392,6 +400,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<EquipmentTypeEntry> getEquipmentTypeRegistry()
     {
         return equipmentTypeRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry()
+    {
+        return storageBlockRegistry;
     }
 }
 
