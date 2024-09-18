@@ -6,6 +6,8 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
@@ -750,10 +752,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
                 }
+
+                totalCount += storageInterface.get().getCount(entity, stack);
 
                 if (totalCount >= count)
                 {
@@ -782,10 +786,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
                 }
+
+                totalCount += storageInterface.get().getItemCount(entity, stack);
 
                 if (totalCount >= count)
                 {
@@ -833,10 +839,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
                 }
+
+                totalCount += storageInterface.get().getCount(entity, stack);
             }
         }
 
@@ -858,10 +866,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getFreeSlots();
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
                 }
+
+                totalCount += storageInterface.get().getFreeSlots(entity);
             }
         }
 
@@ -883,8 +893,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack rack && rack.getFreeSlots() > 0)
-                {
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
+                }
+
+                if (storageInterface.get().getFreeSlots(entity) > 0) {
                     return false;
                 }
             }
@@ -910,10 +924,12 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
                 }
+
+                totalCount += storageInterface.get().getItemCount(entity, predicate);
             }
         }
 
@@ -939,14 +955,16 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
+                }
+
+                for (final Map.Entry<ItemStorage, Integer> entry : storageInterface.get().getAllContent(entity).entrySet())
                 {
-                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
+                    if (predicate.test(entry.getKey().getItemStack()))
                     {
-                        if (predicate.test(entry.getKey().getItemStack()))
-                        {
-                            allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
-                        }
+                        allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
                     }
                 }
             }
@@ -3200,12 +3218,13 @@ public class InventoryUtils
         {
             return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(stack), stack.getCount()) >= count;
         }
-        else if (entity instanceof TileEntityRack)
-        {
-            return ((TileEntityRack) entity).getCount(stack, false, false) >= count;
+
+        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+        if (storageInterface.isPresent()) {
+            return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
         }
 
-        return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
+        return storageInterface.get().getCount(entity, stack, false, false) >= count;
     }
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)
@@ -3217,12 +3236,14 @@ public class InventoryUtils
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty()) {
+                    continue;
+                }
+
+                for (final ItemStorage storage : storageInterface.get().getAllContent(entity).keySet())
                 {
-                    for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
-                    {
-                        allInInv.add(storage.getItemStack());
-                    }
+                    allInInv.add(storage.getItemStack());
                 }
             }
         }

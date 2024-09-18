@@ -24,7 +24,7 @@ public final class ModStorageBlocks
     {
         rack = DEFERRED_REGISTER.register("rack",
           () -> new StorageBlockEntry.Builder()
-                  .setIsStorageBlock(blockEntity -> blockEntity instanceof AbstractTileEntityRack)
+                  .setIsStorageBlock(blockEntity -> blockEntity instanceof TileEntityRack)
                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, "rack"))
                   .setStorageInterface(new RackStorageBlockInterface())
                   .build());

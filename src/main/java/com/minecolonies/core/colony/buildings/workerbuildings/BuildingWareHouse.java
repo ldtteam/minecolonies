@@ -170,6 +170,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             for (final BlockPos pos : getContainers())
             {
                 BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityColonyBuilding) {
+                    continue;
+                }
                 Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
                 storageInterface.ifPresent(i -> i.increaseUpgradeLevel(entity));
             }
