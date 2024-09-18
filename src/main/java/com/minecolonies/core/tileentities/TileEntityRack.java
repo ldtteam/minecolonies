@@ -499,14 +499,16 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             {
                 lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
             }
-
-            if (type != RackType.EMPTY)
-            {
-                lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory(), other.getInventory());
-            }
             else
             {
-                lastItemHandlerCap = new CombinedItemHandler(RACK, other.getInventory(), getInventory());
+                if (type != RackType.EMPTY)
+                {
+                    lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                }
+                else
+                {
+                    lastItemHandlerCap = new CombinedItemHandler(RACK, other.getInventory(), getInventory());
+                }
             }
 
             return lastItemHandlerCap;
