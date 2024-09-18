@@ -1,14 +1,11 @@
 package com.minecolonies.api.tileentities.storageblocks;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.tileentities.storagecontainers.RackStorageBlockInterface;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
