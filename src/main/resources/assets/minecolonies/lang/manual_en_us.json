@@ -1632,6 +1632,7 @@
   "com.minecolonies.coremod.jei.farmer": "In addition to tending fields, the farmer can craft things with hay, seeds, or dirt.",
   "com.minecolonies.coremod.jei.fisherman": "Catches fish and other items as usual, plus some bonus items at higher levels.",
   "com.minecolonies.coremod.jei.fletcher": "Crafts arrows and leather armor. Also plain items made from wool and string.",
+  "com.minecolonies.coremod.jei.florist": "Grows flowers from compost and composted dirt.",
   "com.minecolonies.coremod.jei.glassblower": "Smelts glass itself, plus crafts things made from glass as well.",
   "com.minecolonies.coremod.jei.lumberjack": "While they mostly just chop trees, they will also strip and modify logs if required.",
   "com.minecolonies.coremod.jei.mechanic": "Crafts mechanisms or other things based on redstone, glowstone, pearls, blaze, etc.",
