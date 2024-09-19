@@ -114,7 +114,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                         }
                     }
                 }
-                return totalCount >= requestToCheck.getRequest().getCount();
+                return totalCount >= requestToCheck.getRequest().getMinimumCount();
             }
             catch (Exception e)
             {

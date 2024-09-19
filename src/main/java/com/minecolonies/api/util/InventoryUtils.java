@@ -766,7 +766,7 @@ public class InventoryUtils
 
                 if (totalCount >= count)
                 {
-                    return Integer.MAX_VALUE;
+                    return totalCount;
                 }
             }
         }
