@@ -114,7 +114,7 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
                 catch (final Exception e)
                 {
                     standardRequestIdentitiesDataStore.getIdentities().remove(entry.getKey());
-                    Log.getLogger().error(e);
+                    Log.getLogger().error("Error serializing request identity", e);
                 }
             }
             systemCompound.put(TAG_LIST, listTag);

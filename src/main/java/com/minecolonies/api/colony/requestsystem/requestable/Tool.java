@@ -75,7 +75,7 @@ public class Tool implements IDeliverable
         compound.putString(NBT_TYPE, equipment.getEquipmentType().getRegistryName().toString());
         compound.putInt(NBT_MIN_LEVEL, equipment.getMinLevel());
         compound.putInt(NBT_MAX_LEVEL, equipment.getMaxLevel());
-        compound.put(NBT_RESULT, equipment.getResult().save(provider));
+        compound.put(NBT_RESULT, equipment.getResult().saveOptional(provider));
 
         return compound;
     }
