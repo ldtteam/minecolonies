@@ -1617,6 +1617,7 @@
   "com.minecolonies.coremod.jei.conditions.tip": "§bSpecial conditions apply",
   "com.minecolonies.coremod.jei.biomerestriction": "Biomes",
   "com.minecolonies.coremod.jei.biomerestriction.tip": "Only available in one of the following biomes:\n%s",
+  "com.minecolonies.coremod.jei.crops": "Colony Crops",
   "com.minecolonies.coremod.jei.tools": "Citizen Tools and Armor",
   "com.minecolonies.coremod.jei.alchemist": "Brews potions; also gathers mistletoe and netherwart.",
   "com.minecolonies.coremod.jei.baker": "Bakes bread, and other things at higher levels. Can be taught extra recipes starting at level 3.",
