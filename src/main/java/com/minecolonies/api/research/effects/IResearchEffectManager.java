@@ -23,7 +23,7 @@ public interface IResearchEffectManager
      * or zero, if no matching effect is present.
      *
      * @param id   the id of the effect.
-     * @return the strength of the effect, or zero if it isn't present.
+     * @return the strength of the effect, 1 by default for researches effects which do not have values configured, or zero if it isn't present.
      */
      double getEffectStrength(final ResourceLocation id);
 

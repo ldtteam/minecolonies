@@ -2,7 +2,7 @@
   "branch": "minecolonies:combat",
   "effects": [
     {
-      "minecolonies:effects/sleeplessmultiplier": 1
+      "minecolonies:effects/guardcrit": 1
     }
   ],
   "exclusiveChildResearch": true,

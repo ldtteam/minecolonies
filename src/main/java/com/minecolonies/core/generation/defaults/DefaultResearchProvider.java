@@ -127,6 +127,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
+        effects.add(new ResearchEffect(GUARD_CRIT).setTranslatedName("Guards have a chance to score critical hits").setLevels(new double[] {0.2, 0.3, 0.4, 0.5}));
         effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
         effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability").setTranslatedSubtitle("Teach Undertaker the ability to run towards graves"));
@@ -772,10 +773,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         // Primary Research # 1
         final Research accuracy = new Research(new ResourceLocation(Constants.MOD_ID, "combat/accuracy"), COMBAT).setTranslatedName("Accuracy")
                                     .setOnlyChild()
-                                    .setIcon(Items.LIME_BED)
+                                    .setIcon(Items.IRON_SWORD)
                                     .addBuildingRequirement(ModBuildings.GUARD_TOWER_ID, 1)
                                     .addItemCost(Items.IRON_INGOT, 16)
-                                    .addEffect(SLEEP_LESS, 1)
+                                    .addEffect(GUARD_CRIT, 1)
                                     .addToList(r);
         final Research quickDraw = new Research(new ResourceLocation(Constants.MOD_ID, "combat/quickdraw"), COMBAT).setParentResearch(accuracy)
                                      .setTranslatedName("Quick Draw")
@@ -932,6 +933,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.BOW, 27)
           .addEffect(DOUBLE_ARROWS, 4)
           .addToList(r);
+
+        final Research coffee = new Research(new ResourceLocation(Constants.MOD_ID, "combat/coffee"), COMBAT).setParentResearch(tacticTraining)
+                                  .setTranslatedName("Coffee")
+                                  .setTranslatedSubtitle("Keeps guards awake")
+                                  .setIcon(Items.LIME_BED)
+                                  .addItemCost(Items.GOLDEN_CARROT, 4)
+                                  .addEffect(SLEEP_LESS, 1)
+                                  .addToList(r);
 
         // Primary Research #3
         final Research avoidance = new Research(new ResourceLocation(Constants.MOD_ID, "combat/avoidance"), COMBAT).setTranslatedName("Avoidance")
