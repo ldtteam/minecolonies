@@ -171,4 +171,13 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     {
         return preferredFarmland;
     }
+
+    /**
+     * Get the preferred biome for this crop.
+     * @return the preferred biome, or null if not picky.
+     */
+    public @Nullable TagKey<Biome> getPreferredBiome()
+    {
+        return preferredBiome;
+    }
 }
