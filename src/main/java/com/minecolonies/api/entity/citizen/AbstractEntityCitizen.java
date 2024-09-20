@@ -46,8 +46,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -231,6 +233,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isNoAi()
     {
         return false;
+    }
+
+    @Override
+    @Nullable
+    protected PlayerTeam getAssignedTeam()
+    {
+        final ICitizenColonyHandler citizenColonyHandler = getCitizenColonyHandler();
+        if (citizenColonyHandler == null || citizenColonyHandler.getColony() == null)
+        {
+            return null;
+        }
+        return citizenColonyHandler.getColony().getTeam();
     }
 
     /**

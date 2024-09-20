@@ -635,6 +635,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
+    @NotNull
     public String getScoreboardName()
     {
         return getName().getString() + " (" + getCivilianID() + ")";
@@ -1788,31 +1789,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         citizenColonyHandler.onCitizenRemoved();
         super.setRemoved(reason);
-    }
-
-    @Override
-    public Team getTeam()
-    {
-        if (level == null || (level.isClientSide && cachedTeamName == null))
-        {
-            return null;
-        }
-
-        if (cachedTeam != null)
-        {
-            return cachedTeam;
-        }
-
-        if (level.isClientSide)
-        {
-            cachedTeam = level.getScoreboard().getPlayerTeam(this.cachedTeamName);
-        }
-        else
-        {
-            cachedTeam = level.getScoreboard().getPlayerTeam(getScoreboardName());
-        }
-
-        return cachedTeam;
     }
 
     @Override

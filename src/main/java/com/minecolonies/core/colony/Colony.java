@@ -366,7 +366,7 @@ public class Colony implements IColony
         {
             this.dimensionId = world.dimension();
             onWorldLoad(world);
-            checkOrCreateTeam();
+            checkOrCreateTeam(world, getTeamName());
         }
         this.permissions = new Permissions(this);
         researchManager = new ResearchManager(this);
@@ -631,23 +631,33 @@ public class Colony implements IColony
     }
 
     @Override
+    @Nullable
     public PlayerTeam getTeam()
     {
         // This getter will create the team if it doesn't exist. Could do something different though in the future.
-        return checkOrCreateTeam();
+        return checkOrCreateTeam(world, getTeamName());
     }
 
     /**
-     * Check or create the team.
+     * Check or create a team.
+     *
+     * @param level the level to create the team in.
+     * @param name  the team name.
      */
-    private PlayerTeam checkOrCreateTeam()
+    @Nullable
+    public static PlayerTeam checkOrCreateTeam(@Nullable Level level, String name)
     {
-        if (this.world.getScoreboard().getPlayerTeam(getTeamName()) == null)
+        if (level == null)
         {
-            this.world.getScoreboard().addPlayerTeam(getTeamName());
-            this.world.getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
+            return null;
         }
-        return this.world.getScoreboard().getPlayerTeam(getTeamName());
+
+        PlayerTeam team = level.getScoreboard().getPlayerTeam(name);
+        if (team == null)
+        {
+            team = level.getScoreboard().addPlayerTeam(name);
+        }
+        return team;
     }
 
     /**
@@ -659,10 +669,13 @@ public class Colony implements IColony
     {
         if (this.world != null)
         {
-            checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
-            this.world.getScoreboard().getPlayerTeam(getTeamName()).setColor(colonyColor);
-            this.world.getScoreboard().getPlayerTeam(getTeamName()).setPlayerPrefix(Component.literal(colonyColor.toString()));
+            final PlayerTeam team = getTeam();
+            if (team != null)
+            {
+                team.setColor(colonyColor);
+                team.setPlayerPrefix(Component.literal(colonyColor.toString()));
+            }
         }
         this.markDirty();
     }

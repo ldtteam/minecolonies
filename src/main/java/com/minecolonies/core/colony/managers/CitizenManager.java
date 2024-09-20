@@ -138,10 +138,10 @@ public class CitizenManager implements ICitizenManager
 
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
-        if (!existingCitizen.isPresent())
+        if (existingCitizen.isEmpty())
         {
             data.setEntity(entity);
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.registerToTeam();
             return;
         }
 
@@ -158,18 +158,7 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            try
-            {
-                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
-                {
-                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
-                }
-            }
-            catch (Exception ignored)
-            {
-                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
-            }
-
+            entity.removeFromTeam();
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }
