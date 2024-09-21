@@ -84,6 +84,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.MineColonies.getConfig;
+import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -636,28 +637,6 @@ public class Colony implements IColony
     {
         // This getter will create the team if it doesn't exist. Could do something different though in the future.
         return checkOrCreateTeam(world, getTeamName());
-    }
-
-    /**
-     * Check or create a team.
-     *
-     * @param level the level to create the team in.
-     * @param name  the team name.
-     */
-    @Nullable
-    public static PlayerTeam checkOrCreateTeam(@Nullable Level level, String name)
-    {
-        if (level == null)
-        {
-            return null;
-        }
-
-        PlayerTeam team = level.getScoreboard().getPlayerTeam(name);
-        if (team == null)
-        {
-            team = level.getScoreboard().addPlayerTeam(name);
-        }
-        return team;
     }
 
     /**

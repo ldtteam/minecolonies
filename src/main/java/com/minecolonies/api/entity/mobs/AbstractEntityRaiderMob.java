@@ -21,7 +21,6 @@ import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -53,6 +52,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 
 /**
  * Abstract for all raider entities.
@@ -741,7 +741,7 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     @Nullable
     protected PlayerTeam getAssignedTeam()
     {
-        return Colony.checkOrCreateTeam(level, RAID_TEAM);
+        return checkOrCreateTeam(level, RAID_TEAM);
     }
 
     /**
