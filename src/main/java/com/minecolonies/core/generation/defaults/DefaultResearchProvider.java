@@ -145,31 +145,31 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(MIN_ORDER).setTranslatedName("Buildings wait a bit longer before placing orders"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
-        effects.add(new ResearchEffect(ModBuildings.archery.get().getBuildingBlock()).setTranslatedName("Unlocks Archery"));
-        effects.add(new ResearchEffect(ModBuildings.barracks.get().getBuildingBlock()).setTranslatedName("Unlocks Barracks"));
-        effects.add(new ResearchEffect(ModBuildings.blacksmith.get().getBuildingBlock()).setTranslatedName("Unlocks Blacksmith's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.combatAcademy.get().getBuildingBlock()).setTranslatedName("Unlocks Combat Academy"));
-        effects.add(new ResearchEffect(ModBuildings.composter.get().getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.concreteMixer.get().getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.crusher.get().getBuildingBlock()).setTranslatedName("Unlocks Crusher's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.dyer.get().getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.fletcher.get().getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.florist.get().getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
-        effects.add(new ResearchEffect(ModBuildings.graveyard.get().getBuildingBlock()).setTranslatedName("Unlocks Graveyard"));
-        effects.add(new ResearchEffect(ModBuildings.glassblower.get().getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.hospital.get().getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
-        effects.add(new ResearchEffect(ModBuildings.library.get().getBuildingBlock()).setTranslatedName("Unlocks Library"));
-        effects.add(new ResearchEffect(ModBuildings.mechanic.get().getBuildingBlock()).setTranslatedName("Unlocks Mechanic's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.mysticalSite.get().getBuildingBlock()).setTranslatedName("Unlocks Mystical Site"));
-        effects.add(new ResearchEffect(ModBuildings.plantation.get().getBuildingBlock()).setTranslatedName("Unlocks Plantation"));
-        effects.add(new ResearchEffect(ModBuildings.sawmill.get().getBuildingBlock()).setTranslatedName("Unlocks Sawmill"));
-        effects.add(new ResearchEffect(ModBuildings.school.get().getBuildingBlock()).setTranslatedName("Unlocks School"));
-        effects.add(new ResearchEffect(ModBuildings.sifter.get().getBuildingBlock()).setTranslatedName("Unlocks Sifter's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.smeltery.get().getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.stoneMason.get().getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.stoneSmelter.get().getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.netherWorker.get().getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
-        effects.add(new ResearchEffect(ModBuildings.alchemist.get().getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
+        effects.add(new ResearchEffect(ModBuildings.archery.get().getBuildingBlock()).setTranslatedName("Unlocks Archery").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.barracks.get().getBuildingBlock()).setTranslatedName("Unlocks Barracks").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.blacksmith.get().getBuildingBlock()).setTranslatedName("Unlocks Blacksmith's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.combatAcademy.get().getBuildingBlock()).setTranslatedName("Unlocks Combat Academy").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.composter.get().getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.concreteMixer.get().getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.crusher.get().getBuildingBlock()).setTranslatedName("Unlocks Crusher's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.dyer.get().getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.fletcher.get().getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.florist.get().getBuildingBlock()).setTranslatedName("Unlocks Flower Shop").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.graveyard.get().getBuildingBlock()).setTranslatedName("Unlocks Graveyard").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.glassblower.get().getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.hospital.get().getBuildingBlock()).setTranslatedName("Unlocks Hospital").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.library.get().getBuildingBlock()).setTranslatedName("Unlocks Library").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.mechanic.get().getBuildingBlock()).setTranslatedName("Unlocks Mechanic's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.mysticalSite.get().getBuildingBlock()).setTranslatedName("Unlocks Mystical Site").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.plantation.get().getBuildingBlock()).setTranslatedName("Unlocks Plantation").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.sawmill.get().getBuildingBlock()).setTranslatedName("Unlocks Sawmill").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.school.get().getBuildingBlock()).setTranslatedName("Unlocks School").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.sifter.get().getBuildingBlock()).setTranslatedName("Unlocks Sifter's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.smeltery.get().getBuildingBlock()).setTranslatedName("Unlocks Smeltery").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.stoneMason.get().getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.stoneSmelter.get().getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.netherWorker.get().getBuildingBlock()).setTranslatedName("Unlocks Nether Mine").setLevels(new double[] {5}));
+        effects.add(new ResearchEffect(ModBuildings.alchemist.get().getBuildingBlock()).setTranslatedName("Unlocks Alchemist").setLevels(new double[] {5}));
 
 
         // Crafter-recipe-only unlocks
