@@ -2220,6 +2220,7 @@
   "com.minecolonies.job.smelter": "Smelter",
   "com.minecolonies.job.druid": "Druid",
   "com.minecolonies.job.alchemist": "Alchemist",
+  "com.minecolonies.job.consensus": "Validator",
 
   "com.minecolonies.building.miner": "Mine",
   "com.minecolonies.building.farmer": "Farm",
@@ -2339,6 +2340,7 @@
   "minecolonies:druid.job.desc": "Support type unit. Buffs friendlies and nerfs enemies.",
   "minecolonies:netherworker.job.desc": "Wanders into the Nether to gather a wide range of materials. A very dangerous job!.",
   "minecolonies:alchemist.job.desc": "Brews Potions, plants Netherwart and harvests Mistletoes",
+  "minecolonies:consensus.job.desc": "Builds a Blockchain.",
 
   "minecolonies:builder.skills.desc": "Affects placement and breaking speed.",
   "minecolonies:deliveryman.skills.desc": "Affects walking speed and concurrent request fulfillment capacity.",
@@ -2385,6 +2387,7 @@
   "minecolonies:druid.skills.desc": "Affects accuracy and potion quality.",
   "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot.",
   "minecolonies:alchemist.skills.desc": "Affects recipe improvement chance and working speed.",
+  "minecolonies:consensus.skills.desc": "Nothing Special.",
 
   "com.minecolonies.coremod.grave.lava": "Could not spawn a grave because all remains already burned.",
   "com.minecolonies.coremod.grave.water": "The citizen drowned too deep or too far away from the shore to recover their remains.",

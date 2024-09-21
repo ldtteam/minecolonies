@@ -99,6 +99,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(BUILDER_SETTINGS)
           .addBuildingModuleProducer(WORKORDER_VIEW)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(CONSENSUS_WORK)
           .createBuildingEntry());
 
         ModBuildings.chickenHerder = DEFERRED_REGISTER.register(ModBuildings.CHICKENHERDER_ID, () -> new BuildingEntry.Builder()

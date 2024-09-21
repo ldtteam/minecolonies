@@ -649,7 +649,19 @@ public enum AIWorkerState implements IAIState
     /**
      * Harvest the netherwart.
      */
-    HARVEST_NETHERWART(true);
+    HARVEST_NETHERWART(true),
+
+            /*
+###Consensus users###
+     */
+    CONSENSUS_INIT(true),
+
+    LEADER_CREATE_PROPOSAL(true),
+    LEADER_BROADCAST_PROPOSAL(true),
+
+    FOLLOWER_GET_PROPOSAL(true),
+    FOLLOWER_VOTE_PROPOSAL(true),
+    FOLLOWER_PLACE_PROPOSAL(true);
 
     /**
      * Is it okay to eat.

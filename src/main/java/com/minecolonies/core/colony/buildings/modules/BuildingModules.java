@@ -566,4 +566,8 @@ public class BuildingModules
         , () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<ExpeditionLogModule,ExpeditionLogModuleView> NETHERWORKER_EXPEDITION =
       new BuildingEntry.ModuleProducer<>("netherworker_expedition", () -> new ExpeditionLogModule(ResearchConstants.NETHER_LOG), () -> ExpeditionLogModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<ConsensusBuildingModule, WorkerBuildingModuleView> CONSENSUS_WORK =
+      new BuildingEntry.ModuleProducer<>("consensus_work", () -> new ConsensusBuildingModule(ModJobs.consensus.get(), Skill.Adaptability, Skill.Strength, true, (b) -> 10),
+        () -> WorkerBuildingModuleView::new);
 }

@@ -56,6 +56,8 @@ public final class ModJobs
     public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
     public static final ResourceLocation CHEF_ID           = new ResourceLocation(Constants.MOD_ID, "chef");
 
+    public static final ResourceLocation CONSENSUS_ID      = new ResourceLocation(Constants.MOD_ID, "consensus");
+
     @Deprecated
     public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
 
@@ -105,6 +107,8 @@ public final class ModJobs
     public static DeferredHolder<JobEntry, JobEntry> druid;
     public static DeferredHolder<JobEntry, JobEntry> alchemist;
     public static DeferredHolder<JobEntry, JobEntry> chef;
+
+    public static DeferredHolder<JobEntry, JobEntry> consensus;
 
     @Deprecated
     public static DeferredHolder<JobEntry, JobEntry> cookassistant;

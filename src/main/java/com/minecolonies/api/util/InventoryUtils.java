@@ -2143,6 +2143,34 @@ public class InventoryUtils
     }
 
     /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
+     *
+     * @param handler The {@link IItemHandler} that works as Source.
+     * @param stackPredicate The type of stack to pickup.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static ItemStack transferProposal(
+      @NotNull final IItemHandler handler,
+      @NotNull final Predicate<ItemStack> stackPredicate,
+      @NotNull final IItemHandler targetHandler)
+    {
+        int index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+        if (index == -1)
+        {
+            return null;
+        }
+
+        final ItemStack stack = handler.getStackInSlot(index);
+        if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, 1, targetHandler))
+        {
+            return stack;
+        }
+
+        return null;
+    }
+
+    /**
      * Method to swap the ItemStacks from the given source {@link ICapabilityProvider} to the given target {@link IItemHandler}.
      *
      * @param sourceProvider The {@link ICapabilityProvider} that works as Source.
@@ -2807,6 +2835,24 @@ public class InventoryUtils
             {
                 invWrapper.getStackInSlot(i).shrink(quantity);
                 return;
+            }
+        }
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     * @param quantity   the quantity.
+     */
+    public static void reduceStackInItemHandler(final IItemHandler invWrapper, final Predicate<ItemStack> itemStack, final int quantity)
+    {
+        for (int i = 0; i < invWrapper.getSlots(); i++)
+        {
+            if (itemStack.test(invWrapper.getStackInSlot(i)))
+            {
+                invWrapper.getStackInSlot(i).shrink(quantity);
             }
         }
     }

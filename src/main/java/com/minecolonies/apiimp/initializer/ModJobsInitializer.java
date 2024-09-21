@@ -301,10 +301,17 @@ public final class ModJobsInitializer
           .createJobEntry());
 
         ModJobs.chef = register(DEFERRED_REGISTER, ModJobs.CHEF_ID.getPath(), () -> new JobEntry.Builder()
-                                                                                                        .setJobProducer(JobChef::new)
-                                                                                                        .setJobViewProducer(() -> CrafterJobView::new)
-                                                                                                        .setRegistryName(ModJobs.CHEF_ID)
-                                                                                                        .createJobEntry());
+                                                                                      .setJobProducer(JobChef::new)
+                                                                                      .setJobViewProducer(() -> CrafterJobView::new)
+                                                                                      .setRegistryName(ModJobs.CHEF_ID)
+                                                                                      .createJobEntry());
+
+
+        ModJobs.consensus = register(DEFERRED_REGISTER, ModJobs.CONSENSUS_ID.getPath(), () -> new JobEntry.Builder()
+                                                                                                .setJobProducer(JobConsensus::new)
+                                                                                                .setJobViewProducer(() -> DefaultJobView::new)
+                                                                                                .setRegistryName(ModJobs.CONSENSUS_ID)
+                                                                                                .createJobEntry());
     }
 
     /**

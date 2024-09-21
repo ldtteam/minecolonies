@@ -1,6 +1,7 @@
 package com.minecolonies.api.items.component;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.entity.ai.workers.education.EntityAIConsensus;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -44,6 +45,9 @@ public class ModDataComponents
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<PermissionMode>> PERMISSION_MODE =
       savedSynced("perm_mode", PermissionMode.CODEC, PermissionMode.STREAM_CODEC);
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EntityAIConsensus.ConsensusData>> CONSENSUS_DATA =
+      savedSynced("consensus_data", EntityAIConsensus.ConsensusData.CODEC, EntityAIConsensus.ConsensusData.STREAM_CODEC);
 
     private static <D> DeferredHolder<DataComponentType<?>, DataComponentType<D>> savedSynced(final String name,
       final Codec<D> codec,
