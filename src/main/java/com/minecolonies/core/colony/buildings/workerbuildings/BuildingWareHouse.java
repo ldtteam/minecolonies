@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -127,8 +126,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         if (blockInterface.isEmpty() || !blockInterface.get().shouldAutomaticallyAdd(this)) {
             return;
         }
-
-        Log.getLogger().atInfo().log("Adding new block to building: {}", block.getClass());
 
         blockInterface.get().setInWarehouse(true);
         int targetLevel = getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade();

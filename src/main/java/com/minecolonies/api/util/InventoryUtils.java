@@ -964,7 +964,7 @@ public class InventoryUtils
 
     /**
      * Check if there is enough of a given stack in the provider.
-     * 
+     *
      * @param entity the provider.
      * @param stack the stack to count.
      * @param count the count.
