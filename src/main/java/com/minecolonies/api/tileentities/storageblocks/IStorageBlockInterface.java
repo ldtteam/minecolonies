@@ -41,14 +41,14 @@ public interface IStorageBlockInterface
     /**
      * Gets the amount of a particular item contained in the storageblock
      *
-     * @param storage     The item to check for
+     * @param storage The item to check for
      */
     int getCount(final ItemStorage storage);
 
     /**
      * Gets the amount of a particular item contained in the storageblock
      *
-     * @param predicate   The predicate used to select items
+     * @param predicate The predicate used to select items
      */
     int getItemCount(final Predicate<ItemStack> predicate);
 
@@ -69,9 +69,9 @@ public interface IStorageBlockInterface
     /**
      * Gets the matching count for a specific item stack and can ignore NBT and damage as well.
      *
-     * @param stack The stack to check against
+     * @param stack             The stack to check against
      * @param ignoreDamageValue Whether to ignore damage
-     * @param ignoreNBT Whether to ignore nbt data
+     * @param ignoreNBT         Whether to ignore nbt data
      * @return The count of matching items in the storageblock
      */
     int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT);
@@ -93,8 +93,8 @@ public interface IStorageBlockInterface
     /**
      * Return whether the storageblock contains a matching item stack
      *
-     * @param stack The item type to compare
-     * @param count The amount that must be present
+     * @param stack        The item type to compare
+     * @param count        The amount that must be present
      * @param ignoreDamage Whether the items should have matching damage values
      * @return Whether the storageblock contains the match
      */

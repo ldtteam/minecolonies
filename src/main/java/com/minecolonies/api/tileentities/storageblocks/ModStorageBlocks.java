@@ -3,7 +3,6 @@ package com.minecolonies.api.tileentities.storageblocks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.tileentities.storageblocks.AbstractRackStorageBlockInterface;
@@ -21,7 +20,6 @@ public final class ModStorageBlocks
 
     public static final RegistryObject<StorageBlockEntry> storageBlockRack;
     public static final RegistryObject<StorageBlockEntry> storageBlockAbstractRack;
-
     static
     {
         storageBlockRack = DEFERRED_REGISTER.register("rack",
@@ -32,29 +30,40 @@ public final class ModStorageBlocks
                   .build());
 
         storageBlockAbstractRack = DEFERRED_REGISTER.register("abstract_rack",
-                () -> new StorageBlockEntry.Builder()
-                        .setIsStorageBlock(blockEntity -> blockEntity instanceof AbstractTileEntityRack && !(blockEntity instanceof TileEntityRack))
-                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, "abstract_rack"))
-                        .setStorageInterface(AbstractRackStorageBlockInterface::new)
-                        .build());
+          () -> new StorageBlockEntry.Builder()
+                  .setIsStorageBlock(blockEntity -> blockEntity instanceof AbstractTileEntityRack && !(blockEntity instanceof TileEntityRack))
+                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, "abstract_rack"))
+                  .setStorageInterface(AbstractRackStorageBlockInterface::new)
+                  .build());
+    }
+    /**
+     * Private constructor so this class can't be instantiated.
+     */
+    private ModStorageBlocks()
+    {
     }
 
-    public static Optional<IStorageBlockInterface> getStorageBlockInterface(BlockEntity blockEntity) {
-        if (blockEntity == null) {
+    /**
+     * Tries to find a matching BlockInterface for the given BlockEntity
+     *
+     * @param blockEntity The block entity to find a matching BlockInterface for.
+     * @return A StorageBlockInterface for the given BlockEntity if one exists.
+     */
+    public static Optional<IStorageBlockInterface> getStorageBlockInterface(BlockEntity blockEntity)
+    {
+        if (blockEntity == null)
+        {
             return Optional.empty();
         }
 
-        for (StorageBlockEntry entry : MinecoloniesAPIProxy.getInstance().getStorageBlockRegistry()) {
-            if (entry.matches(blockEntity)) {
+        for (StorageBlockEntry entry : MinecoloniesAPIProxy.getInstance().getStorageBlockRegistry())
+        {
+            if (entry.matches(blockEntity))
+            {
                 return Optional.of(entry.getStorageInterface().apply(blockEntity));
             }
         }
 
         return Optional.empty();
     }
-
-    /**
-     * Private constructor so this class can't be instantiated.
-     */
-    private ModStorageBlocks() {}
 }
