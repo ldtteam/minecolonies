@@ -25,6 +25,8 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
@@ -36,7 +38,6 @@ import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
@@ -63,6 +64,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
@@ -782,7 +784,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Check all racks in the workers hut for a required item.
+     * Check all storageblocks in the workers hut for a required item.
      * Transfer to worker if found.
      *
      * @param is the type of item requested (amount is ignored)
@@ -793,12 +795,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
+            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+            if (storageInterface.isEmpty()) {
+                continue;
+            }
+
+            if (storageInterface.get().hasItemStack(is, 1, false))
             {
-                entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
-                  .ifPresent((handler) -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler,
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
+                    storageInterface.get().getInventory(),
                     (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
-                    getInventory()));
+                    getInventory());
                 return true;
             }
         }
@@ -1029,16 +1036,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             for (final BlockPos pos : building.getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isPresent()) {
                     if (ModEquipmentTypes.none.get().equals(toolType))
                     {
                         return false;
                     }
 
-                    if (((TileEntityRack) entity).hasItemStack(toolPredicate))
+                    if (storageInterface.get().hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(storageInterface.get().getInventory(),
                           toolPredicate,
                           worker.getInventoryCitizen()))
                         {

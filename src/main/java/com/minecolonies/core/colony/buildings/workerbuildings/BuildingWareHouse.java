@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -74,7 +75,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
             final BlockEntity entity = getColony().getWorld().getBlockEntity(pos);
             Optional<IStorageBlockInterface> blockInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            blockInterface.ifPresent(i -> i.setInWarehouse(entity, true));
+            blockInterface.ifPresent(i -> i.setInWarehouse(true));
         }
 
         super.requestRepair(builder);
@@ -123,14 +124,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         BlockEntity entity = world.getBlockEntity(pos);
         Optional<IStorageBlockInterface> blockInterface = ModStorageBlocks.getStorageBlockInterface(entity);
 
-        if (blockInterface.isEmpty() || !blockInterface.get().automaticallyAddToBuilding()) {
+        if (blockInterface.isEmpty() || !blockInterface.get().shouldAutomaticallyAdd(this)) {
             return;
         }
 
-        blockInterface.get().setInWarehouse(entity, true);
+        Log.getLogger().atInfo().log("Adding new block to building: {}", block.getClass());
+
+        blockInterface.get().setInWarehouse(true);
         int targetLevel = getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade();
-        while (blockInterface.get().getUpgradeLevel(entity) < targetLevel) {
-            blockInterface.get().increaseUpgradeLevel(entity);
+        while (blockInterface.get().getUpgradeLevel() < targetLevel) {
+            blockInterface.get().increaseUpgradeLevel();
         }
 
         super.registerBlockPosition(block, pos, world);
@@ -174,7 +177,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                     continue;
                 }
                 Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                storageInterface.ifPresent(i -> i.increaseUpgradeLevel(entity));
+                storageInterface.ifPresent(IStorageBlockInterface::increaseUpgradeLevel);
             }
             getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();
         }

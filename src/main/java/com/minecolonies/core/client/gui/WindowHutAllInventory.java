@@ -6,7 +6,8 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.core.tileentities.TileEntityRack;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
@@ -125,23 +126,28 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (BlockPos blockPos : containerList)
         {
-            final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
-            {
-                int count = ((TileEntityRack) rack).getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
-                if (count > 0)
-                {
-                    // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
-                    // mixing equation: alpha | red part | green part 
-                    final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
-                        | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
-                    HighlightManager.addHighlight("inventoryHighlight" + blockPos,
-                      new TimedBoxRenderData(blockPos)
-                        .setDuration(Duration.ofSeconds(60))
-                        .addText("" + count)
-                        .setColor(color));
-                }
+            final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(blockPos);
+            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+            if (storageInterface.isEmpty()) {
+                continue;
             }
+
+            int count = storageInterface.get().getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
+            if (count <= 0)
+            {
+                continue;
+            }
+
+            // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
+            // mixing equation: alpha | red part | green part
+            final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
+                | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
+            HighlightManager.addHighlight("inventoryHighlight" + blockPos,
+              new TimedBoxRenderData(blockPos)
+                .setDuration(Duration.ofSeconds(60))
+                .addText("" + count)
+                .setColor(color));
+
         }
     }
 
@@ -201,21 +207,23 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (final BlockPos blockPos : containerList)
         {
-            final BlockEntity rack = world.getBlockEntity(blockPos);
-            if (rack instanceof TileEntityRack)
-            {
-                final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
+            final BlockEntity entity = world.getBlockEntity(blockPos);
+            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+            if (storageInterface.isEmpty()) {
+                continue;
+            }
 
-                for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
+            final Map<ItemStorage, Integer> storage = storageInterface.get().getAllContent();
+
+            for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
+            {
+                if (storedItems.containsKey(entry.getKey()))
                 {
-                    if (storedItems.containsKey(entry.getKey()))
-                    {
-                        storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
-                    }
-                    else
-                    {
-                        storedItems.put(entry.getKey(), entry.getValue());
-                    }
+                    storedItems.put(entry.getKey(), storedItems.get(entry.getKey()) + entry.getValue());
+                }
+                else
+                {
+                    storedItems.put(entry.getKey(), entry.getValue());
                 }
             }
         }

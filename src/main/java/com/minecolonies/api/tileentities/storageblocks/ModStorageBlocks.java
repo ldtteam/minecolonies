@@ -1,10 +1,13 @@
 package com.minecolonies.api.tileentities.storageblocks;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.core.tileentities.storagecontainers.RackStorageBlockInterface;
+import com.minecolonies.core.tileentities.storageblocks.AbstractRackStorageBlockInterface;
+import com.minecolonies.core.tileentities.storageblocks.RackStorageBlockInterface;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,21 +19,34 @@ public final class ModStorageBlocks
 {
     public static final DeferredRegister<StorageBlockEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "storageblocks"), Constants.MOD_ID);
 
-    public static final RegistryObject<StorageBlockEntry> rack;
+    public static final RegistryObject<StorageBlockEntry> storageBlockRack;
+    public static final RegistryObject<StorageBlockEntry> storageBlockAbstractRack;
+
     static
     {
-        rack = DEFERRED_REGISTER.register("rack",
+        storageBlockRack = DEFERRED_REGISTER.register("rack",
           () -> new StorageBlockEntry.Builder()
                   .setIsStorageBlock(blockEntity -> blockEntity instanceof TileEntityRack)
                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, "rack"))
-                  .setStorageInterface(new RackStorageBlockInterface())
+                  .setStorageInterface(RackStorageBlockInterface::new)
                   .build());
+
+        storageBlockAbstractRack = DEFERRED_REGISTER.register("abstract_rack",
+                () -> new StorageBlockEntry.Builder()
+                        .setIsStorageBlock(blockEntity -> blockEntity instanceof AbstractTileEntityRack && !(blockEntity instanceof TileEntityRack))
+                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, "abstract_rack"))
+                        .setStorageInterface(AbstractRackStorageBlockInterface::new)
+                        .build());
     }
 
     public static Optional<IStorageBlockInterface> getStorageBlockInterface(BlockEntity blockEntity) {
+        if (blockEntity == null) {
+            return Optional.empty();
+        }
+
         for (StorageBlockEntry entry : MinecoloniesAPIProxy.getInstance().getStorageBlockRegistry()) {
             if (entry.matches(blockEntity)) {
-                return Optional.of(entry.getStorageInterface());
+                return Optional.of(entry.getStorageInterface().apply(blockEntity));
             }
         }
 

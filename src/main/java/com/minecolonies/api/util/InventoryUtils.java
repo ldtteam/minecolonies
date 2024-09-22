@@ -755,7 +755,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                totalCount += storageInterface.get().getCount(entity, stack);
+                totalCount += storageInterface.get().getCount(stack);
 
                 if (totalCount >= count)
                 {
@@ -789,7 +789,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                totalCount += storageInterface.get().getItemCount(entity, stack);
+                totalCount += storageInterface.get().getItemCount(stack);
 
                 if (totalCount >= count)
                 {
@@ -842,7 +842,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                totalCount += storageInterface.get().getCount(entity, stack);
+                totalCount += storageInterface.get().getCount(stack);
             }
         }
 
@@ -869,7 +869,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                totalCount += storageInterface.get().getFreeSlots(entity);
+                totalCount += storageInterface.get().getFreeSlots();
             }
         }
 
@@ -896,7 +896,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                if (storageInterface.get().getFreeSlots(entity) > 0) {
+                if (storageInterface.get().getFreeSlots() > 0) {
                     return false;
                 }
             }
@@ -927,7 +927,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                totalCount += storageInterface.get().getItemCount(entity, predicate);
+                totalCount += storageInterface.get().getItemCount(predicate);
             }
         }
 
@@ -958,7 +958,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                for (final Map.Entry<ItemStorage, Integer> entry : storageInterface.get().getAllContent(entity).entrySet())
+                for (final Map.Entry<ItemStorage, Integer> entry : storageInterface.get().getAllContent().entrySet())
                 {
                     if (predicate.test(entry.getKey().getItemStack()))
                     {
@@ -3218,11 +3218,11 @@ public class InventoryUtils
         }
 
         Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-        if (storageInterface.isPresent()) {
+        if (storageInterface.isEmpty()) {
             return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
         }
 
-        return storageInterface.get().getCount(entity, stack, false, false) >= count;
+        return storageInterface.get().getCount(stack, false, false) >= count;
     }
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)
@@ -3239,7 +3239,7 @@ public class InventoryUtils
                     continue;
                 }
 
-                for (final ItemStorage storage : storageInterface.get().getAllContent(entity).keySet())
+                for (final ItemStorage storage : storageInterface.get().getAllContent().keySet())
                 {
                     allInInv.add(storage.getItemStack());
                 }

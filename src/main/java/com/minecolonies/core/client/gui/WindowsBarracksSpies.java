@@ -3,7 +3,8 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.tileentities.TileEntityRack;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
@@ -15,6 +16,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTION_BARRACKS_HIRE_SPIES;
 
@@ -68,10 +71,10 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
         findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText(Component.literal("x5"));
 
-        final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getBlockEntity(buildingPos)).getInventory();
+        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingView.getColony().getWorld().getBlockEntity(buildingPos));
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.getInventory());
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
-        goldCount += InventoryUtils.getItemCountInItemHandler(rackInv, Items.GOLD_INGOT);
+        goldCount += storageInterface.map(iStorageBlockInterface -> iStorageBlockInterface.getItemCount(stack -> stack.is(Items.GOLD_INGOT))).orElse(0);
 
         if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled())
         {

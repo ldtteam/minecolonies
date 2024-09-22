@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -169,14 +169,15 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
                 }
             }
         }
-        else if (block instanceof BlockMinecoloniesRack)
+        else
         {
-            addContainerPosition(pos);
-            final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof TileEntityRack rackEntity)
-            {
-                rackEntity.setBuildingPos(this.getID());
+            BlockEntity entity = world.getBlockEntity(pos);
+            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+            if (storageInterface.isEmpty()) {
+                return;
             }
+            addContainerPosition(pos);
+            storageInterface.get().setBuildingPos(this.getID());
         }
     }
 

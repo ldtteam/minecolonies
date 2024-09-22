@@ -16,9 +16,10 @@ import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -46,10 +47,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Predicate;
@@ -225,20 +223,21 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             for (final BlockPos pos : theBuilding.getContainers())
             {
-                if (WorldUtil.isBlockLoaded(level, pos))
+                if (!WorldUtil.isBlockLoaded(level, pos))
                 {
-                    final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    if (entity instanceof AbstractTileEntityRack)
-                    {
-                        if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                        {
-                            return pos;
-                        }
-                    }
-                    else if (isInTileEntity(entity, notEmptyPredicate))
-                    {
-                        return pos;
-                    }
+                    continue;
+                }
+
+                final BlockEntity entity = getLevel().getBlockEntity(pos);
+                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+                if (storageInterface.isEmpty())
+                {
+                    continue;
+                }
+
+                if (storageInterface.get().hasItemStack(notEmptyPredicate))
+                {
+                    return pos;
                 }
             }
         }
@@ -589,21 +588,21 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 {
                     for (final BlockPos pos : building.getContainers())
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
+                        if (!WorldUtil.isBlockLoaded(world, pos)  || pos.equals(this.worldPosition))
                         {
-                            final BlockEntity te = world.getBlockEntity(pos);
-                            if (te != null)
-                            {
-                                if (te instanceof AbstractTileEntityRack)
-                                {
-                                    handlers.add(((AbstractTileEntityRack) te).getInventory());
-                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
-                                }
-                                else
-                                {
-                                    building.removeContainerPosition(pos);
-                                }
-                            }
+                            continue;
+                        }
+
+                        final BlockEntity te = world.getBlockEntity(pos);
+                        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(te);
+                        if (storageInterface.isPresent())
+                        {
+                            handlers.add(storageInterface.get().getInventory());
+                            storageInterface.get().setBuildingPos(this.getBlockPos());
+                        }
+                        else
+                        {
+                            building.removeContainerPosition(pos);
                         }
                     }
                 }

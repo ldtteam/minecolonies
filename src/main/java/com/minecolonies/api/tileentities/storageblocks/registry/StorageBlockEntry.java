@@ -4,6 +4,7 @@ import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class StorageBlockEntry
@@ -22,7 +23,7 @@ public final class StorageBlockEntry
     /**
      * The interface that will be used to interact with the particular block.
      */
-    private final IStorageBlockInterface storageInterface;
+    private final Function<BlockEntity, IStorageBlockInterface> storageInterface;
 
     /**
      * Constructor
@@ -31,7 +32,7 @@ public final class StorageBlockEntry
      * @param isStorageBlock      The predicate to determine if a block is this storage block type
      * @param storageInterface    The interface used to interact with the particular block
      */
-    public StorageBlockEntry(ResourceLocation registryName, Predicate<BlockEntity> isStorageBlock, IStorageBlockInterface storageInterface)
+    public StorageBlockEntry(ResourceLocation registryName, Predicate<BlockEntity> isStorageBlock, Function<BlockEntity, IStorageBlockInterface> storageInterface)
     {
         this.registryName = registryName;
         this.isStorageBlock = isStorageBlock;
@@ -54,9 +55,18 @@ public final class StorageBlockEntry
      *
      * @return The interface.
      */
-    public IStorageBlockInterface getStorageInterface()
+    public Function<BlockEntity, IStorageBlockInterface> getStorageInterface()
     {
         return storageInterface;
+    }
+
+    /**
+     * Returns the registry name for this entry
+     *
+     * @return The registry name
+     */
+    public ResourceLocation getRegistryName() {
+        return registryName;
     }
 
     public static class Builder
@@ -75,7 +85,7 @@ public final class StorageBlockEntry
         /**
          * The interface that will be used to interact with the particular block.
          */
-        private IStorageBlockInterface storageInterface;
+        private Function<BlockEntity, IStorageBlockInterface> storageInterface;
 
         /**
          * Set the registry name for the StorageBlockEntry being built.
@@ -108,7 +118,7 @@ public final class StorageBlockEntry
          * @param storageInterface The interface
          * @return this
          */
-        public Builder setStorageInterface(IStorageBlockInterface storageInterface)
+        public Builder setStorageInterface(Function<BlockEntity, IStorageBlockInterface> storageInterface)
         {
             this.storageInterface = storageInterface;
             return this;

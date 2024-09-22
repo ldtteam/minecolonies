@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -14,7 +16,6 @@ import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModul
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -205,20 +206,21 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         for (final BlockPos container : warehouse.getContainerList())
         {
             final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
-            if (blockEntity instanceof TileEntityRack rack)
-            {
-                rack.getAllContent().forEach((item, amount) -> {
-                    final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
-                    final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
-                    if (!resourcesModule.getResources().containsKey(key))
-                    {
-                        return;
-                    }
-
-                    int oldAmount = items.getOrDefault(key, 0);
-                    items.put(key, oldAmount + amount);
-                });
+            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(blockEntity);
+            if (storageInterface.isEmpty()) {
+                continue;
             }
+            storageInterface.get().getAllContent().forEach((item, amount) -> {
+                final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
+                final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
+                if (!resourcesModule.getResources().containsKey(key))
+                {
+                    return;
+                }
+
+                int oldAmount = items.getOrDefault(key, 0);
+                items.put(key, oldAmount + amount);
+            });
         }
 
         return new WarehouseSnapshot(items, hash);
