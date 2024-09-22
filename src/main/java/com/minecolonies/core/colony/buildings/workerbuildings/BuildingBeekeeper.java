@@ -18,6 +18,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -106,16 +107,23 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        NBTUtils.streamCompound(compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_COMPOUND))
-          .map(NBTUtils::readBlockPos)
-          .forEach(this.hives::add);
+        final ListTag hiveTag = compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_INT_ARRAY);
+        for (Tag tag : hiveTag)
+        {
+            hives.add(NBTUtils.readBlockPos(tag));
+        }
     }
 
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag nbt = super.serializeNBT(provider);
-        nbt.put(NbtTagConstants.TAG_HIVES, this.hives.stream().map(NBTUtils::writeBlockPos).collect(NBTUtils.toListNBT()));
+        @NotNull final ListTag hivesTag = new ListTag();
+        for (@NotNull final BlockPos entry : hives)
+        {
+            hivesTag.add(NBTUtils.writeBlockPos(entry));
+        }
+        nbt.put(NbtTagConstants.TAG_HIVES, hivesTag);
         return nbt;
     }
 
