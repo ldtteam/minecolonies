@@ -17,6 +17,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.EntityInBiomeTag;
+import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
@@ -44,16 +45,12 @@ import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessag
 import com.minecolonies.core.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.core.util.ChunkClientDataHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -63,8 +60,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
@@ -80,7 +75,7 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.predicates.*;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -122,13 +117,6 @@ public class EventHandler
      * Cache of loot table -> crops.
      */
     private static Map<ResourceLocation, List<MinecoloniesCropBlock>> cropDrops;
-
-    // stolen from BlockLootSubProvider
-    private static final LootItemCondition.Builder HAS_SILK_TOUCH = MatchTool.toolMatches(ItemPredicate.Builder.item().hasEnchantment(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.Ints.atLeast(1))));
-    private static final LootItemCondition.Builder HAS_SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
-    private static final LootItemCondition.Builder HAS_SHEARS_OR_SILK_TOUCH = HAS_SHEARS.or(HAS_SILK_TOUCH);
-    private static final LootItemCondition.Builder HAS_NO_SHEARS_OR_SILK_TOUCH = HAS_SHEARS_OR_SILK_TOUCH.invert();
-    private static final LootItemCondition.Builder HAS_HOE = MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES));
 
     @SubscribeEvent
     public static void onCommandsRegister(final RegisterCommandsEvent event)
@@ -198,11 +186,11 @@ public class EventHandler
                 {
                     pool.when(EntityInBiomeTag.of(crop.getPreferredBiome()));
                 }
-                pool.when(HAS_NO_SHEARS_OR_SILK_TOUCH);
+                pool.when(ModLootConditions.HAS_NO_SHEARS_OR_SILK_TOUCH);
 
                 pool.add(AlternativesEntry.alternatives()
                     .otherwise(LootItem.lootTableItem(crop)
-                            .when(HAS_HOE)
+                            .when(ModLootConditions.HAS_HOE)
                             .when(LootItemRandomChanceCondition.randomChance(hoeChance)))
                     .otherwise(LootItem.lootTableItem(crop)
                             .when(LootItemRandomChanceCondition.randomChance(baseChance))));
