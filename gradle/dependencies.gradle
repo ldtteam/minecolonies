@@ -18,9 +18,6 @@ repositories {
 }
 
 dependencies {
-//    apiCompileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
-//        transitive = false
-//    }
     compileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
         transitive = false
     }
@@ -28,16 +25,10 @@ dependencies {
         transitive = false
     }
 
-//    apiImplementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
-//        transitive = false
-//    }
     implementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
         transitive = false
     }
 
-//    apiImplementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
-//        transitive = false
-//    }
     implementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
         transitive = false
     }
