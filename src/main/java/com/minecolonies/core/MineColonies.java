@@ -198,6 +198,8 @@ public class MineColonies
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.BUILDING.get(), IItemHandlerCapProvider::getItemHandlerCap);
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.RACK.get(), IItemHandlerCapProvider::getItemHandlerCap);
         event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.GRAVE.get(), IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.WAREHOUSE.get(), IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.STASH.get(), IItemHandlerCapProvider::getItemHandlerCap);
     }
 
     @SubscribeEvent
