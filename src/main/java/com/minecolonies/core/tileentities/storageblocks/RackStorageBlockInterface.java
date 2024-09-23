@@ -2,15 +2,21 @@ package com.minecolonies.core.tileentities.storageblocks;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -18,12 +24,22 @@ import java.util.function.Predicate;
  */
 public class RackStorageBlockInterface extends AbstractStorageBlockInterface
 {
-    public RackStorageBlockInterface(BlockEntity targetBlockEntity) {
-        super(targetBlockEntity);
+    public RackStorageBlockInterface(BlockPos pos, Level world)
+    {
+        super(pos, world);
 
-        if (!(targetBlockEntity instanceof TileEntityRack)) {
-            throw new IllegalArgumentException("targetBlockEntity must be an instance of TileEntityRack");
+        BlockEntity targetBlockEntity = world.getBlockEntity(pos);
+
+        if (!(targetBlockEntity instanceof TileEntityRack))
+        {
+            throw new IllegalArgumentException("The block at the target position must be an instance of TileEntityRack");
         }
+    }
+
+    @Override
+    public boolean isStillValid()
+    {
+        return getRack().isPresent();
     }
 
     @Override
@@ -35,37 +51,37 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     @Override
     public void setInWarehouse(final boolean inWarehouse)
     {
-        getRack().setInWarehouse(inWarehouse);
+        getRack().ifPresent(rack -> rack.setInWarehouse(inWarehouse));
     }
 
     @Override
     public int getUpgradeLevel()
     {
-        return getRack().getUpgradeSize();
+        return getRack().map(TileEntityRack::getUpgradeSize).orElse(0);
     }
 
     @Override
     public void increaseUpgradeLevel()
     {
-        getRack().upgradeRackSize();
+        getRack().ifPresent(TileEntityRack::upgradeRackSize);
     }
 
     @Override
     public int getCount(final ItemStorage storage)
     {
-        return getRack().getCount(storage);
+        return getRack().map(rack -> rack.getCount(storage)).orElse(0);
     }
 
     @Override
     public int getItemCount(final Predicate<ItemStack> predicate)
     {
-        return getRack().getItemCount(predicate);
+        return getRack().map(rack -> rack.getItemCount(predicate)).orElse(0);
     }
 
     @Override
     public int getFreeSlots()
     {
-        return getRack().getFreeSlots();
+        return getRack().map(TileEntityRack::getFreeSlots).orElse(0);
     }
 
     /**
@@ -76,7 +92,7 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     @Override
     public Map<ItemStorage, Integer> getAllContent()
     {
-        return getRack().getAllContent();
+        return getRack().map(TileEntityRack::getAllContent).orElse(new HashMap<>());
     }
 
     /**
@@ -90,7 +106,7 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     @Override
     public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
     {
-        return getRack().getCount(stack, ignoreDamageValue, ignoreNBT);
+        return getRack().map(rack -> rack.getCount(stack, ignoreDamageValue, ignoreNBT)).orElse(0);
     }
 
     /**
@@ -100,17 +116,7 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
      */
     @Override
     public boolean isEmpty() {
-        return getRack().isEmpty();
-    }
-
-    /**
-     * Get the modifiable ItemHandler for the given storageblock
-     *
-     * @return the itemhandler
-     */
-    @Override
-    public IItemHandlerModifiable getInventory() {
-        return getRack().getInventory();
+        return getRack().map(TileEntityRack::isEmpty).orElse(true);
     }
 
     /**
@@ -123,7 +129,7 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
      */
     @Override
     public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamage) {
-        return getRack().hasItemStack(stack, count, ignoreDamage);
+        return getRack().map(rack -> rack.hasItemStack(stack, count, ignoreDamage)).orElse(false);
     }
 
     /**
@@ -134,7 +140,7 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
      */
     @Override
     public boolean hasItemStack(Predicate<ItemStack> predicate) {
-        return getRack().hasItemStack(predicate);
+        return getRack().map(rack -> rack.hasItemStack(predicate)).orElse(false);
     }
 
     /**
@@ -144,10 +150,108 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
      */
     @Override
     public void setBuildingPos(BlockPos pos) {
-        getRack().setBuildingPos(pos);
+        getRack().ifPresent(rack -> rack.setBuildingPos(pos));
     }
 
-    private TileEntityRack getRack() {
-        return (TileEntityRack) targetBlockEntity;
+    /**
+     * Add an item stack to this storage block.
+     *
+     * @param stack The stack to add
+     * @return Whether the addition was successful
+     */
+    @Override
+    public boolean storeItemStack(final @NotNull ItemStack stack)
+    {
+        return getRack().map(rack -> InventoryUtils.addItemStackToItemHandler(rack.getInventory(), stack)).orElse(false);
+    }
+
+    /**
+     * Get any matching item stacks within the storage block.
+     *
+     * @param predicate The predicate to test against
+     * @return The list of matching item stacks
+     */
+    @Override
+    public List<ItemStack> getMatching(final @NotNull Predicate<ItemStack> predicate)
+    {
+        return getRack().map(rack -> InventoryUtils.filterItemHandler(rack.getInventory(), predicate)).orElse(new ArrayList<>());
+    }
+
+    /**
+     * Attempt to add an itemstack to the storage and return the remaining stack
+     *
+     * @param itemStack The stack to attempt to add
+     * @return The remaining stack after adding whatever can be added
+     */
+    @Override
+    public ItemStack addItemStackWithResult(@Nullable final ItemStack itemStack)
+    {
+        return getRack().map(rack -> InventoryUtils.addItemStackToItemHandlerWithResult(rack.getInventory(), itemStack)).orElse(itemStack);
+    }
+
+    /**
+     * Force stack to the storage block.
+     *
+     * @param itemStack                ItemStack to add.
+     * @param itemStackToKeepPredicate The {@link Predicate} that determines which ItemStacks to keep in the inventory. Return false to replace.
+     * @return itemStack which has been replaced, null if none has been replaced.
+     */
+    @Override
+    public @Nullable ItemStack forceAddItemStack(final @NotNull ItemStack itemStack, final @NotNull Predicate<ItemStack> itemStackToKeepPredicate)
+    {
+        return getRack().map(rack -> InventoryUtils.forceItemStackToItemHandler(rack.getInventory(), itemStack, itemStackToKeepPredicate)).orElse(null);
+    }
+
+    /**
+     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the Storage Block.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param predicate     the predicate for the stack.
+     * @return true when the swap was successful, false when not.
+     */
+    @Override
+    public boolean transferItemStackToStorageIntoNextBestSlot(final @NotNull IItemHandler sourceHandler, final Predicate<ItemStack> predicate)
+    {
+        return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(sourceHandler, predicate, rack.getInventory())).orElse(false);
+    }
+
+    /**
+     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the Storage Block.
+     *
+     * @param targetHandler The {@link IItemHandler} that works as receiver.
+     * @param predicate     the predicate for the stack.
+     * @return true when the swap was successful, false when not.
+     */
+    @Override
+    public boolean transferItemStackFromStorageIntoNextBestSlot(final @NotNull IItemHandler targetHandler, final Predicate<ItemStack> predicate)
+    {
+        return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(rack.getInventory(), predicate, targetHandler)).orElse(false);
+    }
+
+    /**
+     * Method to swap the ItemStacks from storage to the given target {@link IItemHandler}.
+     *
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @param stackPredicate The type of stack to pickup.
+     * @param count          how much to pick up.
+     * @return True when the swap was successful, false when not.
+     */
+    @Override
+    public boolean transferItemStackFromStorageIntoNextFreeSlot(final @NotNull IItemHandler targetHandler, final @NotNull Predicate<ItemStack> stackPredicate, final int count)
+    {
+        return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(rack.getInventory(), stackPredicate, count, targetHandler)).orElse(false);
+    }
+
+    /**
+     * Get the target tile entity as the TileEntityRack if it doesn't exist
+     *
+     * @return The target TileEntityRack if it exists
+     */
+    private Optional<TileEntityRack> getRack() {
+        BlockEntity targetBlockEntity = level.getBlockEntity(targetPos);
+        if (!(targetBlockEntity instanceof TileEntityRack)) {
+            return Optional.empty();
+        }
+        return Optional.of((TileEntityRack) targetBlockEntity);
     }
 }

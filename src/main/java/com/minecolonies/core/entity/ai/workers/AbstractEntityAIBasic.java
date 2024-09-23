@@ -25,7 +25,7 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -792,20 +792,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
-        for (final BlockPos pos : building.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
         {
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            if (storageInterface.get().hasItemStack(is, 1, false))
+            if (storageInterface.hasItemStack(is, 1, false))
             {
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(
-                    storageInterface.get().getInventory(),
-                    (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
-                    getInventory());
+                storageInterface.transferItemStackFromStorageIntoNextBestSlot(
+                    getInventory(),
+                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack));
                 return true;
             }
         }
@@ -1033,31 +1031,32 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (building != null)
         {
             final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasEquipmentLevel(stack, toolType, minimalLevel, building.getMaxEquipmentLevel());
-            for (final BlockPos pos : building.getContainers())
+            for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
             {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                if (storageInterface.isPresent()) {
+                if (storageInterface.isStillValid()) {
                     if (ModEquipmentTypes.none.get().equals(toolType))
                     {
                         return false;
                     }
 
-                    if (storageInterface.get().hasItemStack(toolPredicate))
+                    if (storageInterface.hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(storageInterface.get().getInventory(),
-                          toolPredicate,
-                          worker.getInventoryCitizen()))
+                        if (storageInterface.transferItemStackFromStorageIntoNextBestSlot(worker.getInventoryCitizen(),
+                          toolPredicate))
                         {
                             return true;
                         }
                     }
                 }
-                else if (entity instanceof ChestBlockEntity)
+                else
                 {
-                    if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, building.getMaxEquipmentLevel()))
+                    BlockEntity entity = world.getBlockEntity(storageInterface.getPosition());
+                    if (entity instanceof ChestBlockEntity)
                     {
-                        return true;
+                        if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, building.getMaxEquipmentLevel()))
+                        {
+                            return true;
+                        }
                     }
                 }
             }

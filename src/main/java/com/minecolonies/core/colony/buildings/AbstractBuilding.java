@@ -37,6 +37,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -710,9 +711,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeNbt(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeInt(containerList.size());
-        for (BlockPos blockPos : containerList)
+        for (final AbstractStorageBlockInterface storageInterface : containerList)
         {
-            buf.writeBlockPos(blockPos);
+            buf.writeBlockPos(storageInterface.getPosition());
         }
         buf.writeNbt(requestSystemCompound);
 
@@ -1237,12 +1238,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (getTileEntity() == null)
         {
-            for (final BlockPos pos : containerList)
+            for (final AbstractStorageBlockInterface storageInterface : containerList)
             {
-                final BlockEntity tempTileEntity = world.getBlockEntity(pos);
-                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(tempTileEntity))
-                {
-                    return forceItemStackToProvider(tempTileEntity, stack);
+                if (storageInterface.getFreeSlots() != 0) {
+                    return forceItemStackToStorageBlock(storageInterface, stack);
                 }
             }
         }
@@ -1259,6 +1258,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final List<ItemStorage> localAlreadyKept = new ArrayList<>();
         return InventoryUtils.forceItemStackToProvider(provider,
           itemStack,
+          (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
+    }
+
+    @Nullable
+    private ItemStack forceItemStackToStorageBlock(@NotNull final AbstractStorageBlockInterface storageInterface, @NotNull final ItemStack itemStack)
+    {
+        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+        return storageInterface.forceAddItemStack(itemStack,
           (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
     }
 

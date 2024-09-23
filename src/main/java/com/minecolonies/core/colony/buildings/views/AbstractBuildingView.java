@@ -15,6 +15,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.Network;
@@ -134,7 +136,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * The BlockPos list of all Containers
      */
 
-    private List<BlockPos> containerlist = new ArrayList<>();
+    private List<AbstractStorageBlockInterface> containerlist = new ArrayList<>();
 
     /**
      * If building is deconstructed.
@@ -343,7 +345,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<BlockPos> getContainerList()
+    public List<AbstractStorageBlockInterface> getContainerList()
     {
         return new ArrayList<>(containerlist);
     }
@@ -428,7 +430,11 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {
-            containerlist.add(buf.readBlockPos());
+            AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(buf.readBlockPos(), getColony().getWorld());
+            if (storageInterface != null)
+            {
+                containerlist.add(storageInterface);
+            }
         }
         loadRequestSystemFromNBT(buf.readNbt());
         isDeconstructed = buf.readBoolean();

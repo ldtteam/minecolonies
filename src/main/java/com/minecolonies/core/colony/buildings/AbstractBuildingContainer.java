@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -43,7 +43,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     /**
      * A list which contains the position of all containers which belong to the worker building.
      */
-    protected final Set<BlockPos> containerList = new HashSet<>();
+    protected final Set<AbstractStorageBlockInterface> containerList = new HashSet<>();
 
     /**
      * List of items the worker should keep. With the quantity and if he should keep it in the inventory as well.
@@ -80,7 +80,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         for (int i = 0; i < containerTagList.size(); ++i)
         {
             final CompoundTag containerCompound = containerTagList.getCompound(i);
-            containerList.add(NbtUtils.readBlockPos(containerCompound));
+            addContainerPosition(NbtUtils.readBlockPos(containerCompound));
         }
         if (compound.contains(TAG_PRIO))
         {
@@ -102,9 +102,9 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         final CompoundTag compound = super.serializeNBT();
 
         @NotNull final ListTag containerTagList = new ListTag();
-        for (@NotNull final BlockPos pos : containerList)
+        for (@NotNull final AbstractStorageBlockInterface storageInterface : containerList)
         {
-            containerTagList.add(NbtUtils.writeBlockPos(pos));
+            containerTagList.add(NbtUtils.writeBlockPos(storageInterface.getPosition()));
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.unscaledPickUpPriority);
@@ -127,20 +127,31 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
-        containerList.add(pos);
+        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+        if (storageInterface != null)
+        {
+            containerList.add(ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld()));
+        }
     }
 
     @Override
     public void removeContainerPosition(final BlockPos pos)
     {
-        containerList.remove(pos);
+        List<AbstractStorageBlockInterface> toRemove = new ArrayList<>();
+        for (final AbstractStorageBlockInterface storageInterface : containerList) {
+            if (storageInterface.getPosition().equals(pos)) {
+               toRemove.add(storageInterface);
+            }
+        }
+
+        toRemove.forEach(containerList::remove);
     }
 
     @Override
-    public List<BlockPos> getContainers()
+    public List<AbstractStorageBlockInterface> getContainers()
     {
-        final List<BlockPos> list = new ArrayList<>(containerList);;
-        list.add(this.getPosition());
+        final List<AbstractStorageBlockInterface> list = new ArrayList<>(containerList);;
+        list.add(ModStorageBlocks.getStorageBlockInterface(getPosition(), getColony().getWorld()));
         return list;
     }
 
@@ -171,13 +182,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         }
         else
         {
-            BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+            if (storageInterface == null) {
                 return;
             }
             addContainerPosition(pos);
-            storageInterface.get().setBuildingPos(this.getID());
+            storageInterface.setBuildingPos(this.getID());
         }
     }
 

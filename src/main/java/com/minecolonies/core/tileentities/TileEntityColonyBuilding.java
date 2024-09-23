@@ -18,7 +18,7 @@ import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -221,23 +221,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            for (final BlockPos pos : theBuilding.getContainers())
+            for (final AbstractStorageBlockInterface storageInterface : theBuilding.getContainers())
             {
-                if (!WorldUtil.isBlockLoaded(level, pos))
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
                 {
                     continue;
                 }
 
-                final BlockEntity entity = getLevel().getBlockEntity(pos);
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                if (storageInterface.isEmpty())
+                if (storageInterface.hasItemStack(notEmptyPredicate))
                 {
-                    continue;
-                }
-
-                if (storageInterface.get().hasItemStack(notEmptyPredicate))
-                {
-                    return pos;
+                    return storageInterface.getPosition();
                 }
             }
         }
@@ -571,48 +564,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public void updateBlockState()
     {
         // Do nothing
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
-    {
-        if (!remove && capability == ForgeCapabilities.ITEM_HANDLER && getBuilding() != null)
-        {
-            if (combinedInv == null)
-            {
-                //Add additional containers
-                final Set<IItemHandlerModifiable> handlers = new LinkedHashSet<>();
-                final Level world = colony.getWorld();
-                if (world != null)
-                {
-                    for (final BlockPos pos : building.getContainers())
-                    {
-                        if (!WorldUtil.isBlockLoaded(world, pos)  || pos.equals(this.worldPosition))
-                        {
-                            continue;
-                        }
-
-                        final BlockEntity te = world.getBlockEntity(pos);
-                        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(te);
-                        if (storageInterface.isPresent())
-                        {
-                            handlers.add(storageInterface.get().getInventory());
-                            storageInterface.get().setBuildingPos(this.getBlockPos());
-                        }
-                        else
-                        {
-                            building.removeContainerPosition(pos);
-                        }
-                    }
-                }
-                handlers.add(this.getInventory());
-
-                combinedInv = LazyOptional.of(() -> new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0])));
-            }
-            return (LazyOptional<T>) combinedInv;
-        }
-        return super.getCapability(capability, side);
     }
 
     @Nullable

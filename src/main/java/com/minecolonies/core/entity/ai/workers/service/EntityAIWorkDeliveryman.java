@@ -13,7 +13,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
@@ -567,17 +567,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-        if (storageInterface.isEmpty()) {
+        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(entity.getBlockPos(), entity.getLevel());
+        if (storageInterface == null)
+        {
             return false;
         }
 
-        if (storageInterface.get().getCount(new ItemStorage(is)) >= is.getCount())
+        if (storageInterface.getCount(new ItemStorage(is)) >= is.getCount())
         {
-            return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(storageInterface.get().getInventory(),
+            return storageInterface.transferItemStackFromStorageIntoNextFreeSlot(worker.getInventoryCitizen(),
               stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-              is.getCount(),
-              worker.getInventoryCitizen());
+              is.getCount());
         }
 
         return false;

@@ -6,7 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
@@ -117,22 +117,21 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
-        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
-        containerList.add(building.getID());
+        final Set<AbstractStorageBlockInterface> containerList = new HashSet<>(building.getContainerList());
+        containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getID(), building.getColony().getWorld()));
         HighlightManager.clearHighlightsForKey("inventoryHighlight");
 
         MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
         close();
 
-        for (BlockPos blockPos : containerList)
+        for (final AbstractStorageBlockInterface storageInterface : containerList)
         {
-            final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(blockPos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            int count = storageInterface.get().getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
+            int count = storageInterface.getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
             if (count <= 0)
             {
                 continue;
@@ -142,8 +141,8 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             // mixing equation: alpha | red part | green part
             final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
                 | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
-            HighlightManager.addHighlight("inventoryHighlight" + blockPos,
-              new TimedBoxRenderData(blockPos)
+            HighlightManager.addHighlight("inventoryHighlight" + storageInterface.getPosition(),
+              new TimedBoxRenderData(storageInterface.getPosition())
                 .setDuration(Duration.ofSeconds(60))
                 .addText("" + count)
                 .setColor(color));
@@ -199,21 +198,20 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
+        final Set<AbstractStorageBlockInterface> containerList = new HashSet<>(building.getContainerList());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final Level world = building.getColony().getWorld();
-        containerList.add(building.getPosition());
+        containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getPosition(), world));
 
-        for (final BlockPos blockPos : containerList)
+        for (final AbstractStorageBlockInterface storageInterface : containerList)
         {
-            final BlockEntity entity = world.getBlockEntity(blockPos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            final Map<ItemStorage, Integer> storage = storageInterface.get().getAllContent();
+            final Map<ItemStorage, Integer> storage = storageInterface.getAllContent();
 
             for (final Map.Entry<ItemStorage, Integer> entry : storage.entrySet())
             {

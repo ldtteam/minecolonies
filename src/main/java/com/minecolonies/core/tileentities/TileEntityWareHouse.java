@@ -3,12 +3,10 @@ package com.minecolonies.core.tileentities;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
-import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +14,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse.MAX_STORAGE_UPGRADE;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class which handles the tileEntity of our colony warehouse.
@@ -46,24 +42,18 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         int totalCount = 0;
         if (getBuilding() != null)
         {
-            for (@NotNull final BlockPos pos : getBuilding().getContainers())
+            for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
             {
-                if (!WorldUtil.isBlockLoaded(level, pos))
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
                 {
                     continue;
                 }
 
-                final BlockEntity entity = getLevel().getBlockEntity(pos);
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
                 if (storageInterface.isEmpty()) {
                     continue;
                 }
 
-                if (storageInterface.get().isEmpty()) {
-                    continue;
-                }
-
-                totalCount += storageInterface.get().getItemCount(itemStackSelectionPredicate);
+                totalCount += storageInterface.getItemCount(itemStackSelectionPredicate);
                 if (totalCount >= count)
                 {
                     return true;
@@ -84,27 +74,22 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final boolean ignoreDamage, final int leftOver)
     {
         int totalCountFound = 0 - leftOver;
-        for (@NotNull final BlockPos pos : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
         {
-            if (WorldUtil.isBlockLoaded(level, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
-                final BlockEntity entity = getLevel().getBlockEntity(pos);
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                if (storageInterface.isEmpty())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (storageInterface.get().isEmpty())
-                {
-                    continue;
-                }
+            if (storageInterface.isEmpty())
+            {
+                continue;
+            }
 
-                totalCountFound += storageInterface.get().getCount(itemStack, ignoreDamage, ignoreNBT);
-                if (totalCountFound >= count)
-                {
-                    return true;
-                }
+            totalCountFound += storageInterface.getCount(itemStack, ignoreDamage, ignoreNBT);
+            if (totalCountFound >= count)
+            {
+                return true;
             }
         }
         return false;
@@ -124,31 +109,26 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         
         if (getBuilding() != null)
         {
-            for (@NotNull final BlockPos pos : getBuilding().getContainers())
+            for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
             {
-                if (WorldUtil.isBlockLoaded(level, pos))
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
                 {
-                    final BlockEntity entity = getLevel().getBlockEntity(pos);
-                    Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                    if (storageInterface.isEmpty())
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (storageInterface.get().isEmpty())
-                    {
-                        continue;
-                    }
+                if (storageInterface.isEmpty())
+                {
+                    continue;
+                }
 
-                    if (storageInterface.get().getItemCount(itemStackSelectionPredicate) <= 0)
-                    {
-                        continue;
-                    }
+                if (storageInterface.getItemCount(itemStackSelectionPredicate) <= 0)
+                {
+                    continue;
+                }
 
-                    for (final ItemStack stack : (InventoryUtils.filterItemHandler(storageInterface.get().getInventory(), itemStackSelectionPredicate)))
-                    {
-                        found.add(new Tuple<>(stack, pos));
-                    }
+                for (final ItemStack stack : storageInterface.getMatching(itemStackSelectionPredicate))
+                {
+                    found.add(new Tuple<>(stack, storageInterface.getPosition()));
                 }
             }
         }
@@ -166,7 +146,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 continue;
             }
 
-            @Nullable final BlockEntity chest = getBlockStorageForStack(stack);
+            @Nullable final AbstractStorageBlockInterface chest = getBlockStorageForStack(stack);
             if (chest == null)
             {
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
@@ -192,52 +172,51 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
 
             final int index = i;
-            chest.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
+            InventoryUtils.transferIntoNextBestSlotInStorageBlock(inventoryCitizen, index, chest);
         }
     }
 
     /**
      * Get a blockstorage for a stack.
      * @param stack the stack to insert.
-     * @return the matching blockstorage.
+     * @return the matching blockstorage interface.
      */
-    public BlockEntity getBlockStorageForStack(final ItemStack stack)
+    public AbstractStorageBlockInterface getBlockStorageForStack(final ItemStack stack)
     {
-        BlockEntity storageBlock = getPositionOfStorageBlockWithItemStack(stack);
-        if (storageBlock == null)
+        AbstractStorageBlockInterface storageBlock = getPositionOfStorageBlockWithItemStack(stack);
+        if (storageBlock != null)
         {
-            storageBlock = getPositionOfStorageBlockWithSimilarItemStack(stack);
-            if (storageBlock == null)
-            {
-                storageBlock = searchMostEmptyStorageBlock();
-            }
+            return storageBlock;
         }
-        return storageBlock;
+
+        storageBlock = getPositionOfStorageBlockWithSimilarItemStack(stack);
+        if (storageBlock != null)
+        {
+            return storageBlock;
+        }
+
+        return searchMostEmptyStorageBlock();
     }
 
     /**
      * Search the right storageblock for an itemStack.
      *
      * @param stack the stack to dump.
-     * @return the tile entity of the storageblock
+     * @return the interface of the storageblock
      */
     @Nullable
-    private BlockEntity getPositionOfStorageBlockWithItemStack(@NotNull final ItemStack stack)
+    private AbstractStorageBlockInterface getPositionOfStorageBlockWithItemStack(@NotNull final ItemStack stack)
     {
-        for (@NotNull final BlockPos pos : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(level, pos)) {
-                continue;
-            }
-            final BlockEntity entity = getLevel().getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            if (storageInterface.get().getFreeSlots() > 0 && storageInterface.get().hasItemStack(stack, 1, true))
+            if (storageInterface.getFreeSlots() > 0 && storageInterface.hasItemStack(stack, 1, true))
             {
-                return entity;
+                return storageInterface;
             }
         }
 
@@ -248,29 +227,26 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * Searches a storageblock with a similar item as the incoming stack.
      *
      * @param stack the stack.
-     * @return the entity of the storageblock.
+     * @return the interface of the storageblock.
      */
     @Nullable
-    private BlockEntity getPositionOfStorageBlockWithSimilarItemStack(final ItemStack stack)
+    private AbstractStorageBlockInterface getPositionOfStorageBlockWithSimilarItemStack(final ItemStack stack)
     {
-        for (@NotNull final BlockPos pos : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(level, pos)) {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            final BlockEntity entity = getLevel().getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (storageInterface.getFreeSlots() <= 0)
+            {
                 continue;
             }
 
-            if (storageInterface.get().getFreeSlots() <= 0) {
-                continue;
-            }
-
-            if (storageInterface.get().hasItemStack(stack, 1, true)) {
-                return entity;
+            if (storageInterface.hasItemStack(stack, 1, true))
+            {
+                return storageInterface;
             }
         }
         return null;
@@ -279,30 +255,29 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     /**
      * Search for the chest with the least items in it.
      *
-     * @return the tileEntity of this chest.
+     * @return the interface of this chest.
      */
     @Nullable
-    private BlockEntity searchMostEmptyStorageBlock()
+    private AbstractStorageBlockInterface searchMostEmptyStorageBlock()
     {
         int freeSlots = 0;
-        BlockEntity emptiestChest = null;
-        for (@NotNull final BlockPos pos : getBuilding().getContainers())
+        AbstractStorageBlockInterface emptiestChest = null;
+        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
         {
-            final BlockEntity entity = getLevel().getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            if (storageInterface.get().isEmpty()) {
-                return entity;
+            if (storageInterface.isEmpty()) {
+                return storageInterface;
             }
 
-            final int tempFreeSlots = storageInterface.get().getFreeSlots();
+            final int tempFreeSlots = storageInterface.getFreeSlots();
             if (tempFreeSlots > freeSlots)
             {
                 freeSlots = tempFreeSlots;
-                emptiestChest = entity;
+                emptiestChest = storageInterface;
             }
         }
         return emptiestChest;

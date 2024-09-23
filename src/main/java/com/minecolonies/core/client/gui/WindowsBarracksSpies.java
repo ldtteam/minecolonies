@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -71,10 +71,15 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
         findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText(Component.literal("x5"));
 
-        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingView.getColony().getWorld().getBlockEntity(buildingPos));
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.getInventory());
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
-        goldCount += storageInterface.map(iStorageBlockInterface -> iStorageBlockInterface.getItemCount(stack -> stack.is(Items.GOLD_INGOT))).orElse(0);
+
+
+        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingPos, buildingView.getColony().getWorld());
+        if (storageInterface != null)
+        {
+            goldCount += storageInterface.getItemCount(stack -> stack.is(Items.GOLD_INGOT));
+        }
 
         if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled())
         {

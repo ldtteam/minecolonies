@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -743,23 +743,13 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
-            {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            totalCount += storageInterface.get().getItemCount(stack);
+            totalCount += storageInterface.getItemCount(stack);
 
             if (totalCount >= count)
             {
@@ -780,23 +770,14 @@ public class InventoryUtils
     public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
     {
         int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            totalCount += storageInterface.get().getCount(stack);
+            totalCount += storageInterface.getCount(stack);
         }
 
         return totalCount;
@@ -829,23 +810,15 @@ public class InventoryUtils
     public static int countEmptySlotsInBuilding(final IBuilding ownBuilding)
     {
         int totalCount = 0;
-        final Level world = ownBuilding.getColony().getWorld();
 
-        for (final BlockPos pos : ownBuilding.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : ownBuilding.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            totalCount += storageInterface.get().getFreeSlots();
+            totalCount += storageInterface.getFreeSlots();
         }
 
         return totalCount;
@@ -859,23 +832,14 @@ public class InventoryUtils
      */
     public static boolean isBuildingFull(final IBuilding ownBuilding)
     {
-        final Level world = ownBuilding.getColony().getWorld();
-
-        for (final BlockPos pos : ownBuilding.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : ownBuilding.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            if (storageInterface.get().getFreeSlots() > 0)
+            if (storageInterface.getFreeSlots() > 0)
             {
                 return false;
             }
@@ -896,21 +860,14 @@ public class InventoryUtils
         int totalCount = 0;
         final Level world = provider.getColony().getWorld();
 
-        for (final BlockPos pos : provider.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            totalCount += storageInterface.get().getItemCount(predicate);
+            totalCount += storageInterface.getItemCount(predicate);
         }
 
         return totalCount;
@@ -930,21 +887,14 @@ public class InventoryUtils
 
         final Map<ItemStorage, Integer> allMatching = new HashMap<>();
 
-        for (final BlockPos pos : provider.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            for (final Map.Entry<ItemStorage, Integer> entry : storageInterface.get().getAllContent().entrySet())
+            for (final Map.Entry<ItemStorage, Integer> entry : storageInterface.getAllContent().entrySet())
             {
                 if (predicate.test(entry.getKey().getItemStack()))
                 {
@@ -960,42 +910,6 @@ public class InventoryUtils
         }
 
         return totalCount;
-    }
-
-    /**
-     * Check if there is enough of a given stack in the provider.
-     *
-     * @param entity the provider.
-     * @param stack the stack to count.
-     * @param count the count.
-     * @return true if enough.
-     */
-    public static boolean hasEnoughInProvider(final BlockEntity entity, final ItemStack stack, final int count)
-    {
-        if (entity instanceof TileEntityColonyBuilding)
-        {
-            return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(stack), stack.getCount()) >= count;
-        }
-
-        Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-        if (storageInterface.isEmpty())
-        {
-            return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
-        }
-
-        return storageInterface.get().getCount(stack, false, false) >= count;
-    }
-
-    /**
-     * Checks if a player has a block in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt; 0;
-     *
-     * @param Provider {@link ICapabilityProvider} to scan
-     * @param block    Block to count
-     * @return True when in {@link ICapabilityProvider}, otherwise false
-     */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block)
-    {
-        return hasItemInProvider(Provider, getItemFromBlock(block));
     }
 
     /**
@@ -1857,6 +1771,35 @@ public class InventoryUtils
     {
         return transferItemStackIntoNextBestSlotInItemHandlerWithResult(stack, targetHandler).isEmpty();
     }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link AbstractStorageBlockInterface} to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param targetInterface The {@link AbstractStorageBlockInterface} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferIntoNextBestSlotInStorageBlock(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      @NotNull final AbstractStorageBlockInterface targetInterface)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if (ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        if (targetInterface.storeItemStack(sourceStack))
+        {
+            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
@@ -3224,21 +3167,14 @@ public class InventoryUtils
         int totalCount = 0;
         final Level world = provider.getColony().getWorld();
 
-        for (final BlockPos pos : provider.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!WorldUtil.isBlockLoaded(world, pos))
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
             {
                 continue;
             }
 
-            final BlockEntity entity = world.getBlockEntity(pos);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            if (storageInterface.isEmpty())
-            {
-                continue;
-            }
-
-            totalCount += storageInterface.get().getCount(stack);
+            totalCount += storageInterface.getCount(stack);
 
             if (totalCount >= count)
             {
@@ -3251,23 +3187,16 @@ public class InventoryUtils
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)
     {
-        final Level world = building.getColony().getWorld();
         final List<ItemStack> allInInv = new ArrayList<>();
-        for (final BlockPos pos : building.getContainers())
+        for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
         {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                if (storageInterface.isEmpty())
-                {
-                    continue;
-                }
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
+                continue;
+            }
 
-                for (final ItemStorage storage : storageInterface.get().getAllContent().keySet())
-                {
-                    allInInv.add(storage.getItemStack());
-                }
+            for (final ItemStorage storage : storageInterface.getAllContent().keySet())
+            {
+                allInInv.add(storage.getItemStack());
             }
         }
         return allInInv;

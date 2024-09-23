@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
@@ -203,14 +203,14 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
-        for (final BlockPos container : warehouse.getContainerList())
+        for (final AbstractStorageBlockInterface storageInterface : warehouse.getContainerList())
         {
-            final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
-            Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(blockEntity);
-            if (storageInterface.isEmpty()) {
+            if (!storageInterface.isStillValid())
+            {
                 continue;
             }
-            storageInterface.get().getAllContent().forEach((item, amount) -> {
+
+            storageInterface.getAllContent().forEach((item, amount) -> {
                 final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
                 final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
                 if (!resourcesModule.getResources().containsKey(key))

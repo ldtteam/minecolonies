@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
@@ -66,15 +66,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public void requestRepair(final BlockPos builder)
     {
         //To ensure that the storageblocks are all set to in the warehouse when repaired.
-        for (final BlockPos pos : containerList)
+        for (final AbstractStorageBlockInterface storageInterface : containerList)
         {
-            if (getColony().getWorld() == null) {
-                continue;
-            }
-
-            final BlockEntity entity = getColony().getWorld().getBlockEntity(pos);
-            Optional<IStorageBlockInterface> blockInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-            blockInterface.ifPresent(i -> i.setInWarehouse(true));
+            storageInterface.setInWarehouse(true);
         }
 
         super.requestRepair(builder);
@@ -120,17 +114,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
-        BlockEntity entity = world.getBlockEntity(pos);
-        Optional<IStorageBlockInterface> blockInterface = ModStorageBlocks.getStorageBlockInterface(entity);
+        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, world);
 
-        if (blockInterface.isEmpty() || !blockInterface.get().shouldAutomaticallyAdd(this)) {
+        if (storageInterface == null || !storageInterface.shouldAutomaticallyAdd(this)) {
             return;
         }
 
-        blockInterface.get().setInWarehouse(true);
+        storageInterface.setInWarehouse(true);
         int targetLevel = getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade();
-        while (blockInterface.get().getUpgradeLevel() < targetLevel) {
-            blockInterface.get().increaseUpgradeLevel();
+        while (storageInterface.getUpgradeLevel() < targetLevel) {
+            storageInterface.increaseUpgradeLevel();
         }
 
         super.registerBlockPosition(block, pos, world);
@@ -167,14 +160,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
         {
-            for (final BlockPos pos : getContainers())
+            for (final AbstractStorageBlockInterface storageInterface : getContainers())
             {
-                BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityColonyBuilding) {
-                    continue;
-                }
-                Optional<IStorageBlockInterface> storageInterface = ModStorageBlocks.getStorageBlockInterface(entity);
-                storageInterface.ifPresent(IStorageBlockInterface::increaseUpgradeLevel);
+                storageInterface.increaseUpgradeLevel();
             }
             getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();
         }
