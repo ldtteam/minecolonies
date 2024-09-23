@@ -17,8 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import java.util.Optional;
-
 import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTION_BARRACKS_HIRE_SPIES;
 
 /**
