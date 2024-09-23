@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -760,23 +761,27 @@ public class InventoryUtils
     }
 
     /**
-     * Count the number of items a building has.
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
      *
      * @param provider building to check in.
      * @param stack    the stack to check.
-     * @return Amount of occurrences of stacks that match the given stack.
+     * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
         for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
-            {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
                 continue;
             }
 
-            totalCount += storageInterface.getCount(stack);
+            totalCount += storageInterface.getItemCount(stack);
+
+            if (totalCount >= count)
+            {
+                return totalCount;
+            }
         }
 
         return totalCount;
@@ -796,6 +801,30 @@ public class InventoryUtils
         for (ItemStorage stack : stacks)
         {
             totalCount += getCountFromBuilding(provider, stack);
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
+    {
+        int totalCount = 0;
+
+        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            {
+                continue;
+            }
+
+            totalCount += storageInterface.getCount(stack);
         }
 
         return totalCount;
@@ -3164,33 +3193,6 @@ public class InventoryUtils
         {
             ((ServerPlayer) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
         }
-    }
-
-    /**
-     * Check if a building has more than a count in stack. Return the count it has if it has less.
-     *
-     * @param provider building to check in.
-     * @param stack    the stack to check.
-     * @return Amount of occurrences of stacks that match the given predicate.
-     */
-    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
-    {
-        int totalCount = 0;
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
-        {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
-                continue;
-            }
-
-            totalCount += storageInterface.getItemCount(stack);
-
-            if (totalCount >= count)
-            {
-                return totalCount;
-            }
-        }
-
-        return totalCount;
     }
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)
