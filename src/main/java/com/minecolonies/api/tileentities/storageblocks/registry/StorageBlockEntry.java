@@ -7,11 +7,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
-
-
+/**
+ * An entry for the StorageBlock registry that allows a way to register
+ * new storage block types to Minecolonies.
+ */
 public final class StorageBlockEntry {
     /**
      * The registry identifier for this storage block.
