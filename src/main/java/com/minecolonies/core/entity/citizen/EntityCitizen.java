@@ -97,6 +97,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -148,27 +150,27 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * It's citizen Id.
      */
-    private       int                       citizenId = 0;
+    private int                       citizenId = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
-    private       IWalkToProxy              proxy;
+    private IWalkToProxy              proxy;
     /**
      * Reference to the data representation inside the colony.
      */
-    private       ICitizenData              citizenData;
+    private ICitizenData              citizenData;
     /**
      * The citizen experience handler.
      */
-    private       ICitizenExperienceHandler citizenExperienceHandler;
+    private ICitizenExperienceHandler citizenExperienceHandler;
     /**
      * The citizen item handler.
      */
-    private       ICitizenItemHandler       citizenItemHandler;
+    private ICitizenItemHandler       citizenItemHandler;
     /**
      * The citizen inv handler.
      */
-    private       ICitizenInventoryHandler  citizenInventoryHandler;
+    private ICitizenInventoryHandler  citizenInventoryHandler;
 
     /**
      * The citizen colony handler.
@@ -593,7 +595,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 Network.getNetwork().sendToTrackingEntity(new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()), this);
                 ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
-
             }
         }
         else
@@ -1332,7 +1333,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (damageSource.typeHolder().is(DamageTypes.IN_WALL))
         {
-            TeleportHelper.teleportCitizen(this, level, blockPosition().offset(0, 1, 0));
+            TeleportHelper.teleportCitizen(this, level, blockPosition());
             return true;
         }
 
@@ -1558,7 +1559,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super.onPlayerCollide(player);
         if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic && !citizenJobHandler.getColonyJob()
-          .isGuard())
+                                                                                                                                              .isGuard())
         {
             ((AbstractEntityAIBasic) citizenJobHandler.getColonyJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
         }
@@ -1876,6 +1877,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         super.setTexture();
     }
 
+    // TODO: Vanilla super logic copy, recheck in different mc versions
     @Override
     public void refreshDimensions()
     {
@@ -1887,30 +1889,20 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         final EntityDimensions afterEventSize = newSize;
         this.dimensions = afterEventSize;
         this.eyeHeight = this.getEyeHeight(pose, newSize);
-        if (afterEventSize.width < oldSize.width)
+        this.reapplyPosition();
+        boolean flag = (double) afterEventSize.width <= 4.0D && (double) afterEventSize.height <= 4.0D;
+        if (!this.level().isClientSide && !this.firstTick && !this.noPhysics && flag && (afterEventSize.width > oldSize.width || afterEventSize.height > oldSize.height))
         {
-            double d0 = (double) afterEventSize.width / 2.0D;
-            this.setBoundingBox(new AABB(this.getX() - d0,
-              this.getY(),
-              this.getZ() - d0,
-              this.getX() + d0,
-              this.getY() + (double) afterEventSize.height,
-              this.getZ() + d0));
-        }
-        else
-        {
-            final AABB axisalignedbb = this.getBoundingBox();
-            this.setBoundingBox(new AABB(axisalignedbb.minX,
-              axisalignedbb.minY,
-              axisalignedbb.minZ,
-              axisalignedbb.minX + (double) afterEventSize.width,
-              axisalignedbb.minY + (double) afterEventSize.height,
-              axisalignedbb.minZ + (double) afterEventSize.width));
-            if (afterEventSize.width > oldSize.width && !this.firstTick && !this.level.isClientSide)
-            {
-                final float f = oldSize.width - afterEventSize.width;
-                this.move(MoverType.SELF, new Vec3((double) f, 0.0D, (double) f));
-            }
+            Vec3 vec3 = this.position().add(0.0D, (double) oldSize.height / 2.0D, 0.0D);
+            double d0 = (double) Math.max(0.0F, afterEventSize.width - oldSize.width) + 1.0E-6D;
+            double d1 = (double) Math.max(0.0F, afterEventSize.height - oldSize.height) + 1.0E-6D;
+            VoxelShape voxelshape = Shapes.create(AABB.ofSize(vec3, d0, d1, d0));
+            EntityDimensions finalEntitydimensions = afterEventSize;
+            this.level()
+              .findFreePosition(this, voxelshape, vec3, afterEventSize.width, afterEventSize.height, afterEventSize.width)
+              .ifPresent((p_185956_) -> {
+                  this.setPos(p_185956_.add(0.0D, (double) (-finalEntitydimensions.height) / 2.0D, 0.0D));
+              });
         }
     }
 
