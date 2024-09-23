@@ -16,6 +16,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
+/**
+ * Class that is used to manage StorageBlocks including registering them
+ * and creating new ones based off of block positions.
+ */
 public final class ModStorageBlocks
 {
     public static final DeferredRegister<StorageBlockEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "storageblocks"), Constants.MOD_ID);
@@ -39,6 +43,7 @@ public final class ModStorageBlocks
                   .setStorageInterface(ColonyBuildingStorageBlockInterface::new)
                   .build());
     }
+
     /**
      * Private constructor so this class can't be instantiated.
      */

@@ -237,5 +237,9 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
         return apiInstance.getEquipmentTypeRegistry();
     }
 
-    public IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry() { return apiInstance.getStorageBlockRegistry(); }
+    @Override
+    public IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry()
+    {
+        return apiInstance.getStorageBlockRegistry();
+    }
 }

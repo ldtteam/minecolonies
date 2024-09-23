@@ -6,7 +6,6 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -184,14 +183,6 @@ public abstract class AbstractStorageBlockInterface
     public abstract List<ItemStack> getMatching(@NotNull final Predicate<ItemStack> predicate);
 
     /**
-     * Attempt to add an itemstack to the storage and return the remaining stack
-     *
-     * @param itemStack The stack to attempt to add
-     * @return The remaining stack after adding whatever can be added
-     */
-    public abstract ItemStack addItemStackWithResult(@Nullable ItemStack itemStack);
-
-    /**
      * Force stack to the storage block.
      *
      * @param itemStack                ItemStack to add.
@@ -202,17 +193,6 @@ public abstract class AbstractStorageBlockInterface
     public abstract ItemStack forceAddItemStack(
       @NotNull final ItemStack itemStack,
       @NotNull final Predicate<ItemStack> itemStackToKeepPredicate);
-
-    /**
-     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the Storage Block.
-     *
-     * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param predicate     the predicate for the stack.
-     * @return true when the swap was successful, false when not.
-     */
-    public abstract boolean transferItemStackToStorageIntoNextBestSlot(
-      @NotNull final IItemHandler sourceHandler,
-      final Predicate<ItemStack> predicate);
 
     /**
      * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the Storage Block.
@@ -230,7 +210,7 @@ public abstract class AbstractStorageBlockInterface
      *
      * @param targetHandler  The {@link IItemHandler} that works as Target.
      * @param stackPredicate The type of stack to pickup.
-     * @param count how much to pick up.
+     * @param count          how much to pick up.
      * @return True when the swap was successful, false when not.
      */
     public abstract boolean transferItemStackFromStorageIntoNextFreeSlot(

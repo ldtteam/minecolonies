@@ -7,9 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
-import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,7 +17,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -740,20 +736,23 @@ public class InventoryUtils
      * @param stack    the stack to check.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
+        final Level world = provider.getColony().getWorld();
+
         for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            {
                 continue;
             }
 
-            totalCount += storageInterface.getItemCount(stack);
+            totalCount += storageInterface.getCount(stack);
 
             if (totalCount >= count)
             {
-                return totalCount;
+                return Integer.MAX_VALUE;
             }
         }
 
@@ -910,6 +909,18 @@ public class InventoryUtils
         }
 
         return totalCount;
+    }
+
+    /**
+     * Checks if a player has a block in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt; 0;
+     *
+     * @param Provider {@link ICapabilityProvider} to scan
+     * @param block    Block to count
+     * @return True when in {@link ICapabilityProvider}, otherwise false
+     */
+    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block)
+    {
+        return hasItemInProvider(Provider, getItemFromBlock(block));
     }
 
     /**
@@ -3162,23 +3173,20 @@ public class InventoryUtils
      * @param stack    the stack to check.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
         for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
-            {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
                 continue;
             }
 
-            totalCount += storageInterface.getCount(stack);
+            totalCount += storageInterface.getItemCount(stack);
 
             if (totalCount >= count)
             {
-                return Integer.MAX_VALUE;
+                return totalCount;
             }
         }
 
