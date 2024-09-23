@@ -70,6 +70,9 @@ public final class StorageBlockEntry {
         return registryName;
     }
 
+    /**
+     * A builder class used to construct StorageBlockEntry objects
+     */
     public static class Builder {
         /**
          * The registry identifier for this storage block.
