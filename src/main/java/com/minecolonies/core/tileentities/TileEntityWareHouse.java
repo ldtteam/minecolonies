@@ -171,8 +171,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 return;
             }
 
-            final int index = i;
-            InventoryUtils.transferIntoNextBestSlotInStorageBlock(inventoryCitizen, index, chest);
+            chest.transferFromIndexToStorageIntoNextBestSlot(inventoryCitizen, i);
         }
     }
 

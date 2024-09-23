@@ -217,4 +217,15 @@ public abstract class AbstractStorageBlockInterface
       @NotNull final IItemHandler targetHandler,
       @NotNull final Predicate<ItemStack> stackPredicate,
       final int count);
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to storage. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @return True when the swap was successful, false when not.
+     */
+    public abstract boolean transferFromIndexToStorageIntoNextBestSlot(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex);
 }

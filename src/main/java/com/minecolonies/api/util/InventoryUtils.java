@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -1813,35 +1815,6 @@ public class InventoryUtils
     }
 
     /**
-     * Method to swap the ItemStacks from the given source {@link AbstractStorageBlockInterface} to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
-     *
-     * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param sourceIndex   The index of the slot that is being extracted from.
-     * @param targetInterface The {@link AbstractStorageBlockInterface} that works as Target.
-     * @return True when the swap was successful, false when not.
-     */
-    public static boolean transferIntoNextBestSlotInStorageBlock(
-      @NotNull final IItemHandler sourceHandler,
-      final int sourceIndex,
-      @NotNull final AbstractStorageBlockInterface targetInterface)
-    {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
-
-        if (ItemStackUtils.isEmpty(sourceStack))
-        {
-            return true;
-        }
-
-        if (targetInterface.storeItemStack(sourceStack))
-        {
-            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-            return true;
-        }
-        return false;
-    }
-
-
-    /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param stack         the itemStack to transfer.
@@ -3193,6 +3166,27 @@ public class InventoryUtils
         {
             ((ServerPlayer) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
         }
+    }
+
+    /**
+     * Check if there is enough of a given stack in the provider.
+     * @param entity the provider.
+     * @param stack the stack to count.
+     * @param count the count.
+     * @return true if enough.
+     */
+    public static boolean hasEnoughInProvider(final BlockEntity entity, final ItemStack stack, final int count)
+    {
+        if (entity instanceof TileEntityColonyBuilding)
+        {
+            return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(stack), stack.getCount()) >= count;
+        }
+        else if (entity instanceof TileEntityRack)
+        {
+            return ((TileEntityRack) entity).getCount(stack, false, false) >= count;
+        }
+
+        return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
     }
 
     public static List<ItemStack> getBuildingInventory(final IBuilding building)

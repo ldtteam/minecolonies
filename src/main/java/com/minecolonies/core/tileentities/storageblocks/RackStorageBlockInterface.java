@@ -178,18 +178,6 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     }
 
     /**
-     * Attempt to add an itemstack to the storage and return the remaining stack
-     *
-     * @param itemStack The stack to attempt to add
-     * @return The remaining stack after adding whatever can be added
-     */
-    @Override
-    public ItemStack addItemStackWithResult(@Nullable final ItemStack itemStack)
-    {
-        return getRack().map(rack -> InventoryUtils.addItemStackToItemHandlerWithResult(rack.getInventory(), itemStack)).orElse(itemStack);
-    }
-
-    /**
      * Force stack to the storage block.
      *
      * @param itemStack                ItemStack to add.
@@ -200,19 +188,6 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     public @Nullable ItemStack forceAddItemStack(final @NotNull ItemStack itemStack, final @NotNull Predicate<ItemStack> itemStackToKeepPredicate)
     {
         return getRack().map(rack -> InventoryUtils.forceItemStackToItemHandler(rack.getInventory(), itemStack, itemStackToKeepPredicate)).orElse(null);
-    }
-
-    /**
-     * Method to transfer an ItemStacks from the given source {@link IItemHandler} to the Storage Block.
-     *
-     * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param predicate     the predicate for the stack.
-     * @return true when the swap was successful, false when not.
-     */
-    @Override
-    public boolean transferItemStackToStorageIntoNextBestSlot(final @NotNull IItemHandler sourceHandler, final Predicate<ItemStack> predicate)
-    {
-        return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(sourceHandler, predicate, rack.getInventory())).orElse(false);
     }
 
     /**
@@ -240,6 +215,19 @@ public class RackStorageBlockInterface extends AbstractStorageBlockInterface
     public boolean transferItemStackFromStorageIntoNextFreeSlot(final @NotNull IItemHandler targetHandler, final @NotNull Predicate<ItemStack> stackPredicate, final int count)
     {
         return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(rack.getInventory(), stackPredicate, count, targetHandler)).orElse(false);
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to storage. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @return True when the swap was successful, false when not.
+     */
+    @Override
+    public boolean transferFromIndexToStorageIntoNextBestSlot(final @NotNull IItemHandler sourceHandler, final int sourceIndex)
+    {
+        return getRack().map(rack -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(sourceHandler, sourceIndex, rack.getInventory())).orElse(false);
     }
 
     /**
