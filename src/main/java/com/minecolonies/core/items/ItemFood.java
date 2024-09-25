@@ -1,7 +1,5 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -15,7 +13,7 @@ import java.util.List;
 /**
  * A custom item class for food items.
  */
-public class ItemFood extends Item implements IMinecoloniesFoodItem
+public class ItemFood extends Item
 {
     /**
      * The job producing this.
@@ -38,19 +36,5 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable(TranslationConstants.FOOD_TOOLTIP + this.producer));
-        int tier = getTier(stack);
-        if (tier > 0)
-        {
-            tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + tier));
-        }
-    }
-
-    @Override
-    public int getTier(ItemStack stack)
-    {
-        if (stack.is(ModTags.tier3food)) return 3;
-        if (stack.is(ModTags.tier2food)) return 2;
-        if (stack.is(ModTags.tier1food)) return 1;
-        return 0;
     }
 }

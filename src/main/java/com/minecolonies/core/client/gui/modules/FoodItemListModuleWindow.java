@@ -7,7 +7,6 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.core.colony.buildings.moduleviews.ItemListModuleView;
@@ -46,8 +45,8 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
         displayedList.sort((o1, o2) -> {
             int score = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 500 : -500;
             int score2 = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 500 : -500;
-            score += o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier(o1.getItemStack())* -100 : -o1.getItemStack().getFoodProperties(null).nutrition();
-            score2 += o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier(o2.getItemStack())* -100 : -o2.getItemStack().getFoodProperties(null).nutrition();
+            score += FoodUtils.getFoodTier(o1.getItemStack()) > 0 ? FoodUtils.getFoodTier(o1.getItemStack()) * -100 : -o1.getItemStack().getFoodProperties(null).nutrition();
+            score2 += FoodUtils.getFoodTier(o2.getItemStack()) > 0 ? FoodUtils.getFoodTier(o2.getItemStack()) * -100 : -o2.getItemStack().getFoodProperties(null).nutrition();
             return score - score2;
         });
     }
@@ -88,23 +87,21 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
                 final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                 final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
-                if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)
+                int foodTier = FoodUtils.getFoodTier(resource);
+                if (foodTier == 3)
                 {
-                   if (foodItem.getTier(resource) == 3)
-                   {
-                       gradient.setGradientStart(255, 215, 0, 255);
-                       gradient.setGradientEnd(255, 215, 0, 255);
-                   }
-                   else if (foodItem.getTier(resource) == 2)
-                   {
-                       gradient.setGradientStart(211, 211, 211, 255);
-                       gradient.setGradientEnd(211, 211, 211, 255);
-                   }
-                   else if (foodItem.getTier(resource) == 1)
-                   {
-                       gradient.setGradientStart(205, 127, 50, 255);
-                       gradient.setGradientEnd(205, 127, 50, 255);
-                   }
+                    gradient.setGradientStart(255, 215, 0, 255);
+                    gradient.setGradientEnd(255, 215, 0, 255);
+                }
+                else if (foodTier == 2)
+                {
+                    gradient.setGradientStart(211, 211, 211, 255);
+                    gradient.setGradientEnd(211, 211, 211, 255);
+                }
+                else if (foodTier == 1)
+                {
+                    gradient.setGradientStart(205, 127, 50, 255);
+                    gradient.setGradientEnd(205, 127, 50, 255);
                 }
                 else
                 {
