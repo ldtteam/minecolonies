@@ -1,12 +1,12 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -23,34 +23,34 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     private final String producer;
 
     /**
-     * The food tier.
-     */
-    private final int tier;
-
-    /**
      * Creates a new food item.
      *
      * @param builder the item properties to use.
      * @param producer the key for the worker that produces it.
-     * @param tier the nutrition tier.
      */
-    public ItemFood(@NotNull final Properties builder, final String producer, final int tier)
+    public ItemFood(@NotNull final Properties builder, final String producer)
     {
         super(builder);
         this.producer = producer;
-        this.tier = tier;
     }
 
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable(TranslationConstants.FOOD_TOOLTIP + this.producer));
-        tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
+        int tier = getTier(stack);
+        if (tier > 0)
+        {
+            tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + tier));
+        }
     }
 
     @Override
-    public int getTier()
+    public int getTier(ItemStack stack)
     {
-        return this.tier;
+        if (stack.is(ModTags.tier3food)) return 3;
+        if (stack.is(ModTags.tier2food)) return 2;
+        if (stack.is(ModTags.tier1food)) return 1;
+        return 0;
     }
 }

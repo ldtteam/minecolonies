@@ -381,7 +381,7 @@ public class CraftingTagAuditor
             writer.write(',');
             if (item.getItem() instanceof final IMinecoloniesFoodItem mcolFood)
             {
-                writer.write(Integer.toString(mcolFood.getTier()));
+                writer.write(Integer.toString(mcolFood.getTier(item)));
             }
             for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
             {

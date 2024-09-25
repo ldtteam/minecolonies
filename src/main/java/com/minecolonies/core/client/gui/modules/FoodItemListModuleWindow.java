@@ -46,8 +46,8 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
         displayedList.sort((o1, o2) -> {
             int score = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 500 : -500;
             int score2 = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 500 : -500;
-            score += o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier()* -100 : -o1.getItemStack().getFoodProperties(null).nutrition();
-            score2 += o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier()* -100 : -o2.getItemStack().getFoodProperties(null).nutrition();
+            score += o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier(o1.getItemStack())* -100 : -o1.getItemStack().getFoodProperties(null).nutrition();
+            score2 += o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier(o2.getItemStack())* -100 : -o2.getItemStack().getFoodProperties(null).nutrition();
             return score - score2;
         });
     }
@@ -90,17 +90,17 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
                 final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
                 if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)
                 {
-                   if (foodItem.getTier() == 3)
+                   if (foodItem.getTier(resource) == 3)
                    {
                        gradient.setGradientStart(255, 215, 0, 255);
                        gradient.setGradientEnd(255, 215, 0, 255);
                    }
-                   else if (foodItem.getTier() == 2)
+                   else if (foodItem.getTier(resource) == 2)
                    {
                        gradient.setGradientStart(211, 211, 211, 255);
                        gradient.setGradientEnd(211, 211, 211, 255);
                    }
-                   else if (foodItem.getTier() == 1)
+                   else if (foodItem.getTier(resource) == 1)
                    {
                        gradient.setGradientStart(205, 127, 50, 255);
                        gradient.setGradientEnd(205, 127, 50, 255);

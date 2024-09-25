@@ -206,7 +206,7 @@ public class EntityAIEatTask implements IStateAI
         }
         if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem)
         {
-            if (foodItem.getTier() == 3)
+            if (foodItem.getTier(foodStack) == 3)
             {
                 citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
             }

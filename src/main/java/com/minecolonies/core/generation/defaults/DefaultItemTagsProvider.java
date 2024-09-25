@@ -498,6 +498,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.ignoreNBT)
           .addTag(ItemTags.BANNERS);
+        
+        tag(ModTags.tier1food)
+          .add(ModItems.cheddar_cheese, ModItems.cooked_rice, ModItems.feta_cheese, ModItems.flatbread, ModItems.tofu);
+        tag(ModTags.tier2food)
+          .add(ModItems.cabochis, ModItems.congee, ModItems.lembas_scone, ModItems.manchet_bread, ModItems.muffin, ModItems.pasta_plain, ModItems.pasta_tomato, ModItems.pepper_hummus, ModItems.pottage, ModItems.rice_ball);
+        tag(ModTags.tier3food)
+          .add(ModItems.eggplant_dolma, ModItems.hand_pie, ModItems.lamb_stew, ModItems.pita_hummus, ModItems.stew_trencher, ModItems.stuffed_pita, ModItems.stuffed_pepper, ModItems.sushi_roll);
     }
 
     @NotNull

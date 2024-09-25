@@ -75,6 +75,10 @@ public class ModTags
 
     public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
 
+    public static final TagKey<Item> tier1food = ItemTags.create(TagConstants.TIER1_FOOD);
+    public static final TagKey<Item> tier2food = ItemTags.create(TagConstants.TIER2_FOOD);
+    public static final TagKey<Item> tier3food = ItemTags.create(TagConstants.TIER3_FOOD);
+
     public static final TagKey<Biome> coldBiomes = TagKey.create(Registries.BIOME, TagConstants.COLD_BIOMES);
     public static final TagKey<Biome> temperateBiomes = TagKey.create(Registries.BIOME, TagConstants.TEMPERATE_BIOMES);
     public static final TagKey<Biome> humidBiomes = TagKey.create(Registries.BIOME, TagConstants.HUMID_BIOMES);

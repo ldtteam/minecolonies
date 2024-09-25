@@ -45,6 +45,9 @@ public final class TagConstants
     public static final ResourceLocation HOSTILE                   = new ResourceLocation(MOD_ID, "hostile");
     public static final ResourceLocation BREAKABLE_ORE             = new ResourceLocation(MOD_ID, "breakable_ore");
     public static final ResourceLocation RAW_ORE                   = new ResourceLocation(MOD_ID, "raw_ore");
+    public static final ResourceLocation TIER1_FOOD                = new ResourceLocation(MOD_ID, "tier1food");
+    public static final ResourceLocation TIER2_FOOD                = new ResourceLocation(MOD_ID, "tier2food");
+    public static final ResourceLocation TIER3_FOOD                = new ResourceLocation(MOD_ID, "tier3food");
     public static final ResourceLocation MOB_ATTACK_BLACKLIST      = new ResourceLocation(MOD_ID, "mob_attack_blacklist");
     public static final ResourceLocation RAIDERS                   = new ResourceLocation(MOD_ID, "raiders");
     public static final ResourceLocation IGNORE_NBT                = new ResourceLocation(MOD_ID, "ignore_nbt");
