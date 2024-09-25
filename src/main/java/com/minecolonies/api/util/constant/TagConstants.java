@@ -34,6 +34,10 @@ public final class TagConstants
     public static final ResourceLocation ORECHANCEBLOCKS           = new ResourceLocation(MOD_ID, "orechanceblocks");
     public static final ResourceLocation VALIDSPAWNBLOCKS          = new ResourceLocation(MOD_ID, "validspawnblocks");
     public static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
+    public static final ResourceLocation COLD_CROPS                = new ResourceLocation(MOD_ID, "cold_crops");
+    public static final ResourceLocation TEMPERATE_CROPS           = new ResourceLocation(MOD_ID, "temperate_crops");
+    public static final ResourceLocation HUMID_CROPS               = new ResourceLocation(MOD_ID, "humid_crops");
+    public static final ResourceLocation DRY_CROPS                 = new ResourceLocation(MOD_ID, "dry_crops");
     public static final ResourceLocation MUSHROOMS                 = new ResourceLocation(MOD_ID, "mushrooms");
     public static final ResourceLocation MUSHROOMS_HUGE            = new ResourceLocation(MOD_ID, "mushrooms_huge");
     public static final ResourceLocation FUNGI                     = new ResourceLocation(MOD_ID, "fungi");

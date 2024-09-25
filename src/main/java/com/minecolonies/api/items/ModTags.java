@@ -50,6 +50,11 @@ public class ModTags
 
     public static final TagKey<Block> validSpawn = BlockTags.create(TagConstants.VALIDSPAWNBLOCKS);
 
+    public static final TagKey<Block> coldCrops      = BlockTags.create(TagConstants.COLD_CROPS);
+    public static final TagKey<Block> temperateCrops = BlockTags.create(TagConstants.TEMPERATE_CROPS);
+    public static final TagKey<Block> humidCrops     = BlockTags.create(TagConstants.HUMID_CROPS);
+    public static final TagKey<Block> dryCrops       = BlockTags.create(TagConstants.DRY_CROPS);
+    
     public static final TagKey<Block> mushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS);
     public static final TagKey<Block> hugeMushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS_HUGE);
     public static final TagKey<Block> fungiBlocks      = BlockTags.create(TagConstants.FUNGI);

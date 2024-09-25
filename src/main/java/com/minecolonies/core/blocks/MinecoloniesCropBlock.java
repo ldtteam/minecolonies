@@ -1,6 +1,7 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
@@ -9,12 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -33,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
+ * Abstract Minecolonies crop type. We have our own to avoid cheesing the crops.
  */
 public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<MinecoloniesCropBlock>
 {
@@ -61,19 +57,17 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     private final Block preferredFarmland;
 
     private final ResourceLocation blockId;
-    private final TagKey<Biome>    preferredBiome;
 
     /**
      * Constructor to create a block of this type.
      * @param blockName the block id.
      */
-    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, @Nullable final TagKey<Biome> preferredBiome)
+    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
         this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
-        this.preferredBiome = preferredBiome;
     }
 
     @NotNull
@@ -126,7 +120,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     @Override
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, @NotNull BlockPos pos)
     {
-        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (preferredBiome == null || level.getBiome(pos).is(preferredBiome));
+        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (getPreferredBiome(state) == null || level.getBiome(pos).is(getPreferredBiome(state)));
     }
 
     @Override
@@ -163,7 +157,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     @Override
     public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
     {
-        Registry.register(registry, getRegistryName(), new ItemCrop(this, properties, preferredBiome));
+        Registry.register(registry, getRegistryName(), new ItemCrop(this, properties));
     }
 
     /**
@@ -173,5 +167,19 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public Block getPreferredFarmland()
     {
         return preferredFarmland;
+    }
+
+    /**
+     * Get the preferred biome tag for this crop.
+     * @param state The crop blockstate
+     * @return the preferred biome tag
+     */
+    @Nullable
+    public TagKey<Biome> getPreferredBiome(BlockState state) {
+        if (state.is(ModTags.coldCrops))      return ModTags.coldBiomes;
+        if (state.is(ModTags.temperateCrops)) return ModTags.temperateBiomes;
+        if (state.is(ModTags.humidCrops))     return ModTags.humidBiomes;
+        if (state.is(ModTags.dryCrops))       return ModTags.dryBiomes;
+        return null;
     }
 }
