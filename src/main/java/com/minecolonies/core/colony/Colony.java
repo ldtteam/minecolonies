@@ -40,6 +40,7 @@ import com.minecolonies.core.colony.workorders.WorkManager;
 import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
+import com.minecolonies.core.util.BackUpHelper;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
@@ -1028,6 +1029,13 @@ public class Colony implements IColony
                 eventHandler = new ColonyPermissionEventHandler(this);
                 questManager.onWorldLoad();
                 NeoForge.EVENT_BUS.register(eventHandler);
+
+                // Recovery for missing static colony claims
+                final IChunkClaimData data = claimData.get(ChunkPos.asLong(getCenter()));
+                if (data == null || !data.getStaticClaimColonies().contains(getID()))
+                {
+                    BackUpHelper.reclaimChunks(this);
+                }
             }
             setColonyColor(this.colonyTeamColor);
         }
