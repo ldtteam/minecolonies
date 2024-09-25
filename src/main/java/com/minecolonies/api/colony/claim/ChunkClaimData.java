@@ -297,8 +297,6 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty())
         {
             owningColony = getStaticClaimColonies().get(0);
-            // Error case, should not happen
-            Log.getLogger().warn("Correcting claim data, no owning colony, setting to id: " + owningColony + " from static claim list");
         }
     }
 }
