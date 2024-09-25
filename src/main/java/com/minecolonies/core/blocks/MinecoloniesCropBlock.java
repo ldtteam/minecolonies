@@ -3,6 +3,7 @@ package com.minecolonies.core.blocks;
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -120,7 +121,10 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     @Override
     public boolean canSurvive(@NotNull BlockState state, LevelReader level, @NotNull BlockPos pos)
     {
-        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) && super.canSurvive(state, level, pos) && level.getBlockState(pos.below()).getBlock() == preferredFarmland && (getPreferredBiome(state) == null || level.getBiome(pos).is(getPreferredBiome(state)));
+        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos)) 
+               && super.canSurvive(state, level, pos) 
+               && (!MineColonies.getConfig().getServer().limitCropsToFarmers.get() || level.getBlockState(pos.below()).getBlock() == preferredFarmland) 
+               && (getPreferredBiome(state) == null || level.getBiome(pos).is(getPreferredBiome(state)));
     }
 
     @Override

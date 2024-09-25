@@ -3,6 +3,7 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -41,7 +42,7 @@ public class ItemCrop extends BlockItem
     protected boolean canPlace(BlockPlaceContext ctx, @NotNull BlockState state)
     {
         Player player = ctx.getPlayer();
-        if (!player.isCreative())
+        if (!player.isCreative() && MineColonies.getConfig().getServer().limitCropsToFarmers.get())
         {
             if (ctx.getLevel().isClientSide)
             {
@@ -56,7 +57,10 @@ public class ItemCrop extends BlockItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        if (MineColonies.getConfig().getServer().limitCropsToFarmers.get())
+        {
+            tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        }
         TagKey<Biome> preferredBiome = getCropBlock().getPreferredBiome(getBlock().defaultBlockState());
         if (preferredBiome != null)
         {

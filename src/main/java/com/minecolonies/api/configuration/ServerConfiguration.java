@@ -43,6 +43,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final IntValue     maxTreeSize;
     public final BooleanValue noSupplyPlacementRestrictions;
     public final BooleanValue skyRaiders;
+    public final BooleanValue limitCropsToFarmers;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
@@ -157,6 +158,7 @@ public class ServerConfiguration extends AbstractConfiguration
         maxTreeSize = defineInteger("maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean("nosupplyplacementrestrictions", false);
         skyRaiders = defineBoolean("skyraiders", false);
+        limitCropsToFarmers = defineBoolean("limitcropstofarmers", true);
 
         swapToCategory("research");
         researchCreativeCompletion = defineBoolean("researchcreativecompletion", true);

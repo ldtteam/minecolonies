@@ -85,6 +85,8 @@
   "minecolonies.config.nosupplyplacementrestrictions.comment": "Disables supply camp placing restrictions, intended for skyworlds and similar",
   "minecolonies.config.skyraiders": "Enable raiders to spawn in the sky",
   "minecolonies.config.skyraiders.comment": "Raiders will spawn in the sky if this is enabled",
+  "minecolonies.config.limitcropstofarmers": "Limit Minecolonies crops to farmers",
+  "minecolonies.config.limitcropstofarmers.comment": "If enabled, Minecolonies crops will only be plantable by farmers. If disabled, players will be able to plant Minecolonies crops as well",
   "minecolonies.config.disableemptycolonies": "Disable Empty Colonies",
   "minecolonies.config.disableemptycolonies.comment": "Will stop empty colonies from being generated in the world - Needs world Reload",
   "minecolonies.config.averageemptycolonydistance": "Average Empty Colony Distance - Needs Complete Restart",
