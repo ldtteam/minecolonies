@@ -818,10 +818,10 @@ public class Colony implements IColony
             this.setColonyFlag(Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_FLAG_PATTERNS)));
         }
 
-        this.requestManager.reset();
+        getRequestManager().reset();
         if (compound.contains(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
+            getRequestManager().deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
         }
         this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         if (compound.contains(TAG_COL_TEXT))
