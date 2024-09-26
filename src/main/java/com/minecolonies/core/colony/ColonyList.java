@@ -8,10 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -40,7 +37,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
-    public Colony create(final ServerLevel world, final BlockPos position)
+    public Colony create(final ServerLevel world, final String name, final BlockPos position)
     {
         final int colonyID = getNextColonyID();
         if (colonyID >= list.length)
@@ -54,7 +51,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             return null;
         }
 
-        final Colony colony = new Colony(colonyID, world, position);
+        final Colony colony = new Colony(colonyID, name, world, position);
         size++;
         list[colony.getID()] = colony;
         return colony;
@@ -67,7 +64,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             return ++topID;
         }
 
-        return nullIndices.remove(0);
+        return nullIndices.removeFirst();
     }
 
     private void expandList()
@@ -166,10 +163,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      */
     public void clear()
     {
-        for (int i = 0; i < list.length; i++)
-        {
-            list[i] = null;
-        }
+        Arrays.fill(list, null);
 
         nullIndices.clear();
 
@@ -230,6 +224,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return an iterator for the colonies.
      */
     @Override
+    @NotNull
     public Iterator<T> iterator()
     {
         return new Iterator<T>()
