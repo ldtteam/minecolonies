@@ -23,7 +23,6 @@ import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,9 +57,7 @@ import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -697,8 +694,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         }
     }
 
+    /**
+     * Calculates the rotation from the given blueprint or defaults to none
+     *
+     * @param blueprint
+     */
     private void calcRotation(final Blueprint blueprint)
     {
+        if (blueprint == null)
+        {
+            rotationMirror = RotationMirror.NONE;
+            return;
+        }
+
         final BlockState structureState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (structureState == null || !(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
         {

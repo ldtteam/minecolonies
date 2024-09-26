@@ -274,7 +274,7 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         // Set owning
         owningColony = compound.getInt(TAG_ID);
 
-        final ListTag colonyClaim = compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND);
+        final ListTag colonyClaim = compound.getList(TAG_COLONIES, Tag.TAG_INT);
         for (int i = 0; i < colonyClaim.size(); i++)
         {
             colonies.add(colonyClaim.getInt(i));
