@@ -201,7 +201,7 @@ public class Colony implements IColony
     /**
      * The request manager assigned to the colony.
      */
-    private final IRequestManager requestManager;
+    private IRequestManager requestManager;
 
     /**
      * The request manager assigned to the colony.
@@ -352,6 +352,22 @@ public class Colony implements IColony
         this.id = id;
         this.name = name;
         this.center = center;
+
+        this.workManager = new WorkManager(this);
+        this.buildingManager = new RegisteredStructureManager(this);
+        this.graveManager = new GraveManager(this);
+        this.citizenManager = new CitizenManager(this);
+        this.visitorManager = new VisitorManager(this);
+        this.raidManager = new RaidManager(this);
+        this.eventManager = new EventManager(this);
+        this.reproductionManager = new ReproductionManager(this);
+        this.eventDescManager = new EventDescriptionManager(this);
+        this.packageManager = new ColonyPackageManager(this);
+        this.statisticManager = new StatisticsManager();
+        this.questManager = new QuestManager(this);
+        this.permissions = new Permissions(this);
+        this.researchManager = new ResearchManager(this);
+
         if (world != null)
         {
             this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, world), DyeColor.WHITE).build();
@@ -359,22 +375,6 @@ public class Colony implements IColony
             onWorldLoad(world);
             checkOrCreateTeam();
         }
-
-        workManager = new WorkManager(this);
-        buildingManager = new RegisteredStructureManager(this);
-        graveManager = new GraveManager(this);
-        citizenManager = new CitizenManager(this);
-        visitorManager = new VisitorManager(this);
-        raidManager = new RaidManager(this);
-        eventManager = new EventManager(this);
-        reproductionManager = new ReproductionManager(this);
-        eventDescManager = new EventDescriptionManager(this);
-        packageManager = new ColonyPackageManager(this);
-        statisticManager = new StatisticsManager();
-        questManager = new QuestManager(this);
-        permissions = new Permissions(this);
-        requestManager = new StandardRequestManager(this);
-        researchManager = new ResearchManager(this);
 
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
@@ -818,10 +818,10 @@ public class Colony implements IColony
             this.setColonyFlag(Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_FLAG_PATTERNS)));
         }
 
-        this.requestManager.reset();
+        getRequestManager().reset();
         if (compound.contains(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
+            getRequestManager().deserializeNBT(provider, compound.getCompound(TAG_REQUESTMANAGER));
         }
         this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
         if (compound.contains(TAG_COL_TEXT))
@@ -1349,6 +1349,10 @@ public class Colony implements IColony
     @Override
     public IRequestManager getRequestManager()
     {
+        if (requestManager == null)
+        {
+            requestManager = new StandardRequestManager(this);
+        }
         return requestManager;
     }
 
