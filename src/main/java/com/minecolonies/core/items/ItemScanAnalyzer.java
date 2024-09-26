@@ -135,7 +135,10 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         final PosSelection component = PosSelection.readFromItemStack(tool);
         final BlockPos start = component.startPos().orElse(null);
         final BlockPos end = component.endPos().orElse(null);
-        RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
+        if (start != null && end != null)
+        {
+            RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
+        }
     }
 
     /**
