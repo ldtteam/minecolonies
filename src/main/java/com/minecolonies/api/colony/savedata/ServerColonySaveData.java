@@ -67,9 +67,9 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     }
 
     @Override
-    public IColony createColony(@NotNull final ServerLevel w, @NotNull final BlockPos pos)
+    public IColony createColony(@NotNull final ServerLevel w, @NotNull final String name, @NotNull final BlockPos pos)
     {
-        return colonies.create(w, pos);
+        return colonies.create(w, name, pos);
     }
 
     @Override

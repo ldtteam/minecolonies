@@ -97,7 +97,7 @@ public class Colony implements IColony
     private String pack = DEFAULT_STYLE;
 
     /**
-     * Id of the colony.
+     * ID of the colony.
      */
     private final int id;
 
@@ -109,7 +109,7 @@ public class Colony implements IColony
     /**
      * List of loaded chunks for the colony.
      */
-    private ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
 
     /**
      * List of loaded chunks for the colony.
@@ -119,14 +119,14 @@ public class Colony implements IColony
     private boolean ticketedChunksDirty = true;
 
     /**
-     * List of chunks that have to be be force loaded.
+     * List of chunks that have to be force loaded.
      */
-    private Set<Long> pendingChunks = new HashSet<>();
+    private final Set<Long> pendingChunks = new HashSet<>();
 
     /**
      * List of chunks pending for unloading, which have their tickets removed
      */
-    private Set<Long> pendingToUnloadChunks = new HashSet<>();
+    private final Set<Long> pendingToUnloadChunks = new HashSet<>();
 
     /**
      * List of waypoints of the colony.
@@ -136,62 +136,77 @@ public class Colony implements IColony
     /**
      * Work Manager of the colony (Request System).
      */
-    private final WorkManager workManager = new WorkManager(this);
+    private final WorkManager workManager;
 
     /**
      * Building manager of the colony.
      */
-    private final IRegisteredStructureManager buildingManager = new RegisteredStructureManager(this);
+    private final IRegisteredStructureManager buildingManager;
 
     /**
      * Grave manager of the colony.
      */
-    private final IGraveManager graveManager = new GraveManager(this);
+    private final IGraveManager graveManager;
 
     /**
      * Citizen manager of the colony.
      */
-    private final ICitizenManager citizenManager = new CitizenManager(this);
+    private final ICitizenManager citizenManager;
 
     /**
      * Citizen manager of the colony.
      */
-    private final IVisitorManager visitorManager = new VisitorManager(this);
+    private final IVisitorManager visitorManager;
 
     /**
      * Barbarian manager of the colony.
      */
-    private final IRaiderManager raidManager = new RaidManager(this);
+    private final IRaiderManager raidManager;
 
     /**
      * Event manager of the colony.
      */
-    private final IEventManager eventManager = new EventManager(this);
+    private final IEventManager eventManager;
 
     /**
      * Reproduction manager of the colony.
      */
-    private final IReproductionManager reproductionManager = new ReproductionManager(this);
+    private final IReproductionManager reproductionManager;
 
     /**
      * Event description manager of the colony.
      */
-    private final IEventDescriptionManager eventDescManager = new EventDescriptionManager(this);
+    private final IEventDescriptionManager eventDescManager;
 
     /**
      * The colony package manager.
      */
-    private final IColonyPackageManager packageManager = new ColonyPackageManager(this);
+    private final IColonyPackageManager packageManager;
 
     /**
      * Event manager of the colony.
      */
-    private final IStatisticsManager statisticManager = new StatisticsManager();
+    private final IStatisticsManager statisticManager;
 
     /**
      * Quest manager for this colony
      */
-    private IQuestManager questManager;
+    private final IQuestManager questManager;
+
+    /**
+     * The colony permission object.
+     */
+    private final Permissions permissions;
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private final IRequestManager requestManager;
+
+    /**
+     * The request manager assigned to the colony.
+     */
+    private final IResearchManager researchManager;
 
     /**
      * The Positions which players can freely interact.
@@ -209,7 +224,7 @@ public class Colony implements IColony
     private ColonyPermissionEventHandler eventHandler;
 
     /**
-     * Whether or not this colony may be auto-deleted.
+     * Whether this colony may be auto-deleted.
      */
     private boolean canColonyBeAutoDeleted = true;
 
@@ -227,28 +242,12 @@ public class Colony implements IColony
     /**
      * The name of the colony.
      */
-    private String name = "ERROR(Wasn't placed by player)";
+    private String name;
 
     /**
      * The center of the colony.
      */
-    private BlockPos center;
-
-    /**
-     * The colony permission object.
-     */
-    @NotNull
-    private Permissions permissions;
-
-    /**
-     * The request manager assigned to the colony.
-     */
-    private IRequestManager requestManager;
-
-    /**
-     * The request manager assigned to the colony.
-     */
-    private IResearchManager researchManager;
+    private final BlockPos center;
 
     /**
      * The NBTTag compound of the colony itself.
@@ -333,7 +332,7 @@ public class Colony implements IColony
     /**
      * Colony claim data.
      */
-    private Long2ObjectMap<ChunkClaimData> claimData = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<ChunkClaimData> claimData = new Long2ObjectOpenHashMap<>();
 
     /**
      * Townhall settings module.
@@ -341,34 +340,18 @@ public class Colony implements IColony
     private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
-     * Constructor for a newly created Colony.
-     *
-     * @param id The id of the colony to create.
-     * @param w  The world the colony exists in.
-     * @param c  The center of the colony (location of Town Hall).
-     */
-    @SuppressWarnings("squid:S2637")
-    Colony(final int id, @Nullable final ServerLevel w, final BlockPos c)
-    {
-        this(id, w);
-        center = c;
-        this.permissions = new Permissions(this);
-        requestManager = new StandardRequestManager(this);
-        researchManager = new ResearchManager(this);
-        questManager = new QuestManager(this);
-        this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, w), DyeColor.WHITE).build();
-    }
-
-    /**
      * Base constructor.
      *
-     * @param id    The current id for the colony.
-     * @param world The world the colony exists in.
+     * @param id     The current id for the colony.
+     * @param name The name of the colony.
+     * @param world  The world the colony exists in.
+     * @param center The center of the colony (location of Town Hall).
      */
-    protected Colony(final int id, @Nullable final ServerLevel world)
+    Colony(final int id, final String name, @Nullable final ServerLevel world, final BlockPos center)
     {
-        questManager = new QuestManager(this);
         this.id = id;
+        this.name = name;
+        this.center = center;
         if (world != null)
         {
             this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, world), DyeColor.WHITE).build();
@@ -376,11 +359,26 @@ public class Colony implements IColony
             onWorldLoad(world);
             checkOrCreateTeam();
         }
-        this.permissions = new Permissions(this);
+
+        workManager = new WorkManager(this);
+        buildingManager = new RegisteredStructureManager(this);
+        graveManager = new GraveManager(this);
+        citizenManager = new CitizenManager(this);
+        visitorManager = new VisitorManager(this);
+        raidManager = new RaidManager(this);
+        eventManager = new EventManager(this);
+        reproductionManager = new ReproductionManager(this);
+        eventDescManager = new EventDescriptionManager(this);
+        packageManager = new ColonyPackageManager(this);
+        statisticManager = new StatisticsManager();
+        questManager = new QuestManager(this);
+        permissions = new Permissions(this);
+        requestManager = new StandardRequestManager(this);
         researchManager = new ResearchManager(this);
+
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
-            Log.getLogger().warn("Exception triggered in colony:"+getID()+" in dimension:"+getDimension().location(), e);
+            Log.getLogger().warn("Exception triggered in colony:{} in dimension:{}", getID(), getDimension().location(), e);
             colonyStateMachine.setCurrentDelay(20 * 60 * 5);
         });
 
@@ -443,10 +441,7 @@ public class Colony implements IColony
      */
     private boolean tickRequests()
     {
-        if (getRequestManager() != null)
-        {
-            getRequestManager().tick();
-        }
+        getRequestManager().tick();
         return false;
     }
 
@@ -701,12 +696,11 @@ public class Colony implements IColony
         try
         {
             final int id = compound.getInt(TAG_ID);
-            @NotNull final Colony c = new Colony(id, world);
-            c.name = compound.getString(TAG_NAME);
-            c.center = BlockPosUtil.read(compound, TAG_CENTER);
+            final String name = compound.getString(TAG_NAME);
+            final BlockPos center = BlockPosUtil.read(compound, TAG_CENTER);
+            @NotNull final Colony c = new Colony(id, name, world, center);
             c.dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(compound.getString(TAG_DIMENSION)));
 
-            c.setRequestManager();
             c.read(compound, provider);
 
             return c;
@@ -716,14 +710,6 @@ public class Colony implements IColony
             Log.getLogger().warn("Something went wrong loading a colony, please report this to the administrators", e);
         }
         return null;
-    }
-
-    /**
-     * Sets the request manager on colony load.
-     */
-    private void setRequestManager()
-    {
-        requestManager = new StandardRequestManager(this);
     }
 
     /**

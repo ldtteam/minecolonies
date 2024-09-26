@@ -17,11 +17,12 @@ public interface IServerColonySaveData
     /**
      * Create a colony and return it.
      *
-     * @param w   the world the colony is in.
-     * @param pos the position of the colony.
+     * @param w    the world the colony is in.
+     * @param name the name of the colony.
+     * @param pos  the position of the colony.
      * @return the created colony.
      */
-    IColony createColony(@NotNull final ServerLevel w, @NotNull final BlockPos pos);
+    IColony createColony(@NotNull final ServerLevel w, @NotNull final String name, @NotNull final BlockPos pos);
 
     /**
      * Delete a colony with a certain id.
