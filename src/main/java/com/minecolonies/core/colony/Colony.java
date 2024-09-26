@@ -201,7 +201,7 @@ public class Colony implements IColony
     /**
      * The request manager assigned to the colony.
      */
-    private final IRequestManager requestManager;
+    private IRequestManager requestManager;
 
     /**
      * The request manager assigned to the colony.
@@ -373,7 +373,6 @@ public class Colony implements IColony
         statisticManager = new StatisticsManager();
         questManager = new QuestManager(this);
         permissions = new Permissions(this);
-        requestManager = new StandardRequestManager(this);
         researchManager = new ResearchManager(this);
 
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
@@ -1349,6 +1348,10 @@ public class Colony implements IColony
     @Override
     public IRequestManager getRequestManager()
     {
+        if (requestManager == null)
+        {
+            requestManager = new StandardRequestManager(this);
+        }
         return requestManager;
     }
 
