@@ -101,7 +101,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -230,11 +229,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ILocation location = null;
 
     /**
-     * Cached team name the entity belongs to.
-     */
-    private String cachedTeamName;
-
-    /**
      * The current chunkpos.
      */
     private ChunkPos lastChunk;
@@ -244,11 +238,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private final ThreatTable threatTable         = new ThreatTable<>(this);
     private       int         interactionCooldown = 0;
-
-    /**
-     * Cache the entire team object.
-     */
-    private Team cachedTeam;
 
     /**
      * The citizen AI
@@ -339,7 +328,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
                 if (colonyView != null)
                 {
-                    this.cachedTeamName = colonyView.getTeamName();
                     this.citizenDataView = colonyView.getCitizen(citizenId);
                     if (citizenDataView != null)
                     {
@@ -635,6 +623,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
+    @NotNull
     public String getScoreboardName()
     {
         return getName().getString() + " (" + getCivilianID() + ")";
@@ -1788,31 +1777,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         citizenColonyHandler.onCitizenRemoved();
         super.setRemoved(reason);
-    }
-
-    @Override
-    public Team getTeam()
-    {
-        if (level == null || (level.isClientSide && cachedTeamName == null))
-        {
-            return null;
-        }
-
-        if (cachedTeam != null)
-        {
-            return cachedTeam;
-        }
-
-        if (level.isClientSide)
-        {
-            cachedTeam = level.getScoreboard().getPlayerTeam(this.cachedTeamName);
-        }
-        else
-        {
-            cachedTeam = level.getScoreboard().getPlayerTeam(getScoreboardName());
-        }
-
-        return cachedTeam;
     }
 
     @Override
