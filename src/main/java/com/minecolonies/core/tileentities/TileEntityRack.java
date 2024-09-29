@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.client.model.properties.ModProperties;
 import com.ldtteam.domumornamentum.entity.block.IMateriallyTexturedBlockEntity;
+import com.ldtteam.structurize.blueprints.v1.DataFixerUtils;
+import com.ldtteam.structurize.blueprints.v1.DataVersion;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
@@ -26,6 +28,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -399,7 +402,15 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             final CompoundTag compoundTag = inventoryTagList.getCompound(i);
             if (!compoundTag.contains(TAG_EMPTY))
             {
-                inventory.setStackInSlot(i, ItemStack.parseOptional(provider, compoundTag));
+                if (compoundTag.contains("Count"))
+                {
+                    CompoundTag fixedTag = DataFixerUtils.runDataFixer(compoundTag, References.ITEM_STACK, DataVersion.v1_20_1);
+                    inventory.setStackInSlot(i, ItemStack.parseOptional(provider, fixedTag));
+                }
+                else
+                {
+                    inventory.setStackInSlot(i, ItemStack.parseOptional(provider, compoundTag));
+                }
             }
         }
 
