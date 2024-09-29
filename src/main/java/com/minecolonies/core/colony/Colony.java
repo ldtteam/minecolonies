@@ -24,6 +24,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.core.MineColonies;
@@ -41,8 +42,8 @@ import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
 import com.minecolonies.core.util.BackUpHelper;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -2000,5 +2001,15 @@ public class Colony implements IColony
         IColonyManager.getInstance().addNewChunk(this, pos, chunkClaimData);
         this.markDirty();
         return chunkClaimData;
+    }
+
+    /**
+     * Sets the dimension ID, use with care!
+     *
+     * @param dimensionId
+     */
+    public void setDimensionId(final ResourceKey<Level> dimensionId)
+    {
+        this.dimensionId = dimensionId;
     }
 }

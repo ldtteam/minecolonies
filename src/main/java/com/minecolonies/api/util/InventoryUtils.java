@@ -3202,4 +3202,24 @@ public class InventoryUtils
         }
         return allInInv;
     }
+
+    /**
+     * Gets the first matching itemstack from a list
+     *
+     * @param stacks
+     * @param stackPredicate
+     * @return
+     */
+    public static ItemStack getFirstMatch(final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    {
+        for (final ItemStack stack : stacks)
+        {
+            if (stackPredicate.test(stack))
+            {
+                return stack;
+            }
+        }
+
+        return null;
+    }
 }

@@ -445,6 +445,7 @@ public final class BackUpHelper
                 return;
             }
 
+            loadedColony.setDimensionId(dimension);
             IColonyManager.getInstance().addColonyDirect(loadedColony, (ServerLevel) colonyWorld);
 
             if (claimChunks)
