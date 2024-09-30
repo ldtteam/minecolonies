@@ -29,6 +29,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
@@ -40,6 +41,7 @@ import com.minecolonies.core.colony.jobs.registry.JobDataManager;
 import com.minecolonies.core.entity.mobs.registry.MobAIRegistry;
 import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
+import com.minecolonies.core.tileentities.storageblocks.StorageBlockNotificationManager;
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -81,7 +83,8 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
-    private        IForgeRegistry<StorageBlockEntry>                        storageBlockRegistry;
+    private        IForgeRegistry<StorageBlockEntry>                       storageBlockRegistry;
+    private        IStorageBlockNotificationManager                        storageBlockNotificationManager = new StorageBlockNotificationManager();
 
     @Override
     @NotNull
@@ -406,6 +409,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry()
     {
         return storageBlockRegistry;
+    }
+
+    @Override
+    public IStorageBlockNotificationManager getStorageBlockNotificationManager()
+    {
+        return storageBlockNotificationManager;
     }
 }
 

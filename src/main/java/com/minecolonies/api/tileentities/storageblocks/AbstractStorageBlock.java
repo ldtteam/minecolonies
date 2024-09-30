@@ -72,6 +72,15 @@ public abstract class AbstractStorageBlock
     }
 
     /**
+     * Notify the storage block wrapper that the target entity
+     * has updated.
+     */
+    public void notifyUpdate()
+    {
+        insertNotifier.notifyUpdate(targetPos);
+    }
+
+    /**
      * Gets the current upgrade level of the storageblock
      *
      * @return The current level
@@ -152,6 +161,9 @@ public abstract class AbstractStorageBlock
 
         return result;
     }
+
+    
+    public abstract boolean supportsItemInsertNotification();
 
     /**
      * Gets the amount of a particular item contained in the storageblock

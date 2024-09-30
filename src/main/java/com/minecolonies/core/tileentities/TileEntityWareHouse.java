@@ -33,7 +33,6 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public TileEntityWareHouse(final BlockPos pos, final BlockState state)
     {
         super(MinecoloniesTileEntities.WAREHOUSE.get(), pos, state);
-        inWarehouse = true;
     }
 
     @Override

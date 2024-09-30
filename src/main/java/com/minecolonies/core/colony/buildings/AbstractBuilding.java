@@ -38,6 +38,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -99,7 +100,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * blocks.
  */
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
-public abstract class AbstractBuilding extends AbstractBuildingContainer
+public abstract class AbstractBuilding extends AbstractBuildingContainer implements InsertNotifier.IInsertListener
 {
     /**
      * Breeding setting.

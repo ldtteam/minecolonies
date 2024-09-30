@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -227,11 +228,11 @@ public class ContainerRack extends AbstractContainerMenu
     private void updateRacks(final ItemStack stack)
     {
         rack.updateItemStorage();
-        rack.updateWarehouseIfAvailable(stack);
+        IStorageBlockNotificationManager.getInstance().notifyInsert(rack.getBlockPos(), stack);
         if (neighborRack != null)
         {
             neighborRack.updateItemStorage();
-            neighborRack.updateWarehouseIfAvailable(stack);
+            IStorageBlockNotificationManager.getInstance().notifyInsert(neighborRack.getBlockPos(), stack);
         }
     }
 

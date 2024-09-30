@@ -1,11 +1,7 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
@@ -80,7 +76,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             {
                 onContentsChanged(slot);
             }
-            updateWarehouseIfAvailable(stack);
+            IStorageBlockNotificationManager.getInstance().notifyInsert(worldPosition, stack);
         }
 
         @Nonnull
@@ -90,7 +86,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             final ItemStack result = super.insertItem(slot, stack, simulate);
             if ((result.isEmpty() || result.getCount() < stack.getCount()) && !simulate)
             {
-                updateWarehouseIfAvailable(stack);
+                IStorageBlockNotificationManager.getInstance().notifyInsert(worldPosition, stack);
             }
             return result;
         }

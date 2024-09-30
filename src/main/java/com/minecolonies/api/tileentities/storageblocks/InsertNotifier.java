@@ -77,6 +77,23 @@ public class InsertNotifier
         }
     }
 
+    public void notifyUpdate(final BlockPos insertPos)
+    {
+        if (level == null)
+        {
+            return;
+        }
+
+        for (BlockPos pos : this.insertListeners)
+        {
+            BlockEntity entity = level.getBlockEntity(pos);
+            if (entity instanceof IInsertListener listener)
+            {
+                listener.onUpdate(insertPos);
+            }
+        }
+    }
+
     /**
      * Serialize the InsertNotifier to NBT data.
      *
@@ -117,5 +134,13 @@ public class InsertNotifier
          * @param itemStack The item stack that was inserted.
          */
         void onInsert(BlockPos insertPos, ItemStack itemStack);
+
+        /**
+         * The function that will be called to notify the listener
+         * that any block update has occurred.
+         *
+         * @param insertPos The location of the storage where the update occurred.
+         */
+        void onUpdate(BlockPos blockPos);
     }
 }

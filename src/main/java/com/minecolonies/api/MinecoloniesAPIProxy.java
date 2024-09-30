@@ -27,6 +27,7 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
@@ -241,5 +242,11 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<StorageBlockEntry> getStorageBlockRegistry()
     {
         return apiInstance.getStorageBlockRegistry();
+    }
+
+    @Override
+    public IStorageBlockNotificationManager getStorageBlockNotificationManager()
+    {
+        return apiInstance.getStorageBlockNotificationManager();
     }
 }

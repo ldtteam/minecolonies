@@ -1,6 +1,7 @@
 package com.minecolonies.core.tileentities.storageblocks;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.InventoryUtils;
@@ -153,5 +154,11 @@ public class RackStorageBlock extends AbstractStorageBlock
             return Optional.empty();
         }
         return Optional.of((TileEntityRack) targetBlockEntity);
+    }
+
+    @Override
+    public boolean supportsItemInsertNotification()
+    {
+        return true;
     }
 }
