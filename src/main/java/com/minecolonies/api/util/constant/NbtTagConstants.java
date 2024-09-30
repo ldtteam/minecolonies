@@ -736,6 +736,9 @@ public final class NbtTagConstants
     public static final String TAG_SAW_STORY     = "sawstory";
     public static final String TAG_RANDOM_KEY     = "randkey";
 
+    public static final String TAG_INPUT_LISTENER = "inputlistener";
+    public static final String TAG_LISTENER_LOC   = "listenerloc";
+
     /**
      * Private constructor to hide the implicit one.
      */

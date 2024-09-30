@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -57,7 +57,7 @@ public interface IBuildingContainer extends ISchematicProvider, ICapabilityProvi
      *
      * @return a copy of the list to avoid currentModification exception.
      */
-    List<AbstractStorageBlockInterface> getContainers();
+    List<AbstractStorageBlock> getContainers();
 
     /**
      * Register a blockState and position. We suppress this warning since this parameter will be used in child classes which override this method.

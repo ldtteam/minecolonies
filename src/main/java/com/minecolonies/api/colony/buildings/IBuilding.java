@@ -19,6 +19,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 
-public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider, InsertNotifier.IInsertListener
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -262,16 +263,6 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @return a list of objects which should be kept.
      */
     Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount();
-
-    /**
-     * Try to transfer a stack to one of the inventories of the building and force the transfer.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return the itemStack which has been replaced or the itemStack which could not be transfered
-     */
-    @Nullable
-    ItemStack forceTransferStack(ItemStack stack, Level world);
 
     /**
      * Create a request for a citizen.

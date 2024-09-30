@@ -25,7 +25,7 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
@@ -790,18 +790,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
-        for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
+        for (final AbstractStorageBlock storageInterface : building.getContainers())
         {
-            if (!storageInterface.isStillValid())
+            if (!storageInterface.isStillValid(building))
             {
                 continue;
             }
 
             if (storageInterface.hasItemStack(is, 1, false))
             {
-                storageInterface.transferItemStackFromStorageIntoNextBestSlot(
-                    getInventory(),
-                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(storageInterface,
+                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack),
+                  getInventory());
                 return true;
             }
         }
@@ -1029,9 +1029,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (building != null)
         {
             final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasEquipmentLevel(stack, toolType, minimalLevel, building.getMaxEquipmentLevel());
-            for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
+            for (final AbstractStorageBlock storageInterface : building.getContainers())
             {
-                if (storageInterface.isStillValid()) {
+                if (storageInterface.isStillValid(building)) {
                     if (ModEquipmentTypes.none.get().equals(toolType))
                     {
                         return false;
@@ -1039,8 +1039,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     if (storageInterface.hasItemStack(toolPredicate))
                     {
-                        if (storageInterface.transferItemStackFromStorageIntoNextBestSlot(worker.getInventoryCitizen(),
-                          toolPredicate))
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(storageInterface,
+                          toolPredicate,
+                          worker.getInventoryCitizen()))
                         {
                             return true;
                         }

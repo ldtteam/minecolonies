@@ -37,7 +37,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -72,7 +72,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -711,7 +710,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeNbt(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeInt(containerList.size());
-        for (final AbstractStorageBlockInterface storageInterface : containerList)
+        for (final AbstractStorageBlock storageInterface : containerList)
         {
             buf.writeBlockPos(storageInterface.getPosition());
         }
@@ -1223,50 +1222,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     protected boolean keepFood()
     {
         return true;
-    }
-
-    /**
-     * Try to transfer a stack to one of the inventories of the building and force the transfer.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return the itemStack which has been replaced or the itemStack which could not be transfered
-     */
-    @Override
-    @Nullable
-    public ItemStack forceTransferStack(final ItemStack stack, final Level world)
-    {
-        if (getTileEntity() == null)
-        {
-            for (final AbstractStorageBlockInterface storageInterface : containerList)
-            {
-                if (storageInterface.getFreeSlots() != 0) {
-                    return forceItemStackToStorageBlock(storageInterface, stack);
-                }
-            }
-        }
-        else
-        {
-            return forceItemStackToProvider(getTileEntity(), stack);
-        }
-        return stack;
-    }
-
-    @Nullable
-    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
-    {
-        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-        return InventoryUtils.forceItemStackToProvider(provider,
-          itemStack,
-          (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
-    }
-
-    @Nullable
-    private ItemStack forceItemStackToStorageBlock(@NotNull final AbstractStorageBlockInterface storageInterface, @NotNull final ItemStack itemStack)
-    {
-        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-        return storageInterface.forceAddItemStack(itemStack,
-          (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
@@ -2076,4 +2031,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
+
+    @Override
+    public void onInsert(final BlockPos insertPos, final ItemStack itemStack)
+    {
+        if (ItemStackUtils.isEmpty(itemStack) || colony.getWorld().isClientSide)
+        {
+            return;
+        }
+
+        if (!colony.isCoordInColony(colony.getWorld(), insertPos))
+        {
+            return;
+        }
+
+        overruleNextOpenRequestWithStack(itemStack);
+        markDirty();
+    }
 }

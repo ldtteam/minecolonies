@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -43,7 +43,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     /**
      * A list which contains the position of all containers which belong to the worker building.
      */
-    protected final Set<AbstractStorageBlockInterface> containerList = new HashSet<>();
+    protected final Set<AbstractStorageBlock> containerList = new HashSet<>();
 
     /**
      * List of items the worker should keep. With the quantity and if he should keep it in the inventory as well.
@@ -102,7 +102,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         final CompoundTag compound = super.serializeNBT();
 
         @NotNull final ListTag containerTagList = new ListTag();
-        for (@NotNull final AbstractStorageBlockInterface storageInterface : containerList)
+        for (@NotNull final AbstractStorageBlock storageInterface : containerList)
         {
             containerTagList.add(NbtUtils.writeBlockPos(storageInterface.getPosition()));
         }
@@ -127,7 +127,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
-        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
         if (storageInterface != null)
         {
             containerList.add(ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld()));
@@ -137,8 +137,8 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public void removeContainerPosition(final BlockPos pos)
     {
-        List<AbstractStorageBlockInterface> toRemove = new ArrayList<>();
-        for (final AbstractStorageBlockInterface storageInterface : containerList) {
+        List<AbstractStorageBlock> toRemove = new ArrayList<>();
+        for (final AbstractStorageBlock storageInterface : containerList) {
             if (storageInterface.getPosition().equals(pos)) {
                toRemove.add(storageInterface);
             }
@@ -148,9 +148,9 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     }
 
     @Override
-    public List<AbstractStorageBlockInterface> getContainers()
+    public List<AbstractStorageBlock> getContainers()
     {
-        final List<AbstractStorageBlockInterface> list = new ArrayList<>(containerList);;
+        final List<AbstractStorageBlock> list = new ArrayList<>(containerList);;
         list.add(ModStorageBlocks.getStorageBlockInterface(getPosition(), getColony().getWorld()));
         return list;
     }
@@ -182,12 +182,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         }
         else
         {
-            AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
             if (storageInterface == null) {
                 return;
             }
             addContainerPosition(pos);
-            storageInterface.setBuildingPos(this.getID());
+            storageInterface.addInsertListener(getID());
         }
     }
 

@@ -5,8 +5,8 @@ import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntr
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.core.tileentities.storageblocks.ColonyBuildingStorageBlockInterface;
-import com.minecolonies.core.tileentities.storageblocks.RackStorageBlockInterface;
+import com.minecolonies.core.tileentities.storageblocks.ColonyBuildingStorageBlock;
+import com.minecolonies.core.tileentities.storageblocks.RackStorageBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -33,14 +33,14 @@ public final class ModStorageBlocks
           () -> new StorageBlockEntry.Builder()
                   .setIsStorageBlock(blockEntity -> blockEntity instanceof TileEntityRack && !(blockEntity instanceof TileEntityColonyBuilding))
                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, "rack"))
-                  .setStorageInterface(RackStorageBlockInterface::new)
+                  .setStorageInterface(RackStorageBlock::new)
                   .build());
 
         storageBlockColonyBuilding = DEFERRED_REGISTER.register("colony_building",
           () -> new StorageBlockEntry.Builder()
                   .setIsStorageBlock(blockEntity -> blockEntity instanceof TileEntityColonyBuilding)
                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, "colony_building"))
-                  .setStorageInterface(ColonyBuildingStorageBlockInterface::new)
+                  .setStorageInterface(ColonyBuildingStorageBlock::new)
                   .build());
     }
 
@@ -59,7 +59,7 @@ public final class ModStorageBlocks
      * @return A StorageBlockInterface for the given BlockEntity if one exists.
      */
     @Nullable
-    public static AbstractStorageBlockInterface getStorageBlockInterface(BlockPos pos, Level world)
+    public static AbstractStorageBlock getStorageBlockInterface(BlockPos pos, Level world)
     {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity == null)

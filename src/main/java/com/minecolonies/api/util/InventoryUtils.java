@@ -6,7 +6,8 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlock;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.Direction;
@@ -742,16 +743,14 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
             {
                 continue;
             }
 
-            totalCount += storageInterface.getCount(stack);
+            totalCount += storageInterface.getItemCount(stack);
 
             if (totalCount >= count)
             {
@@ -772,9 +771,9 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider)) {
                 continue;
             }
 
@@ -819,14 +818,14 @@ public class InventoryUtils
     {
         int totalCount = 0;
 
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
             {
                 continue;
             }
 
-            totalCount += storageInterface.getCount(stack);
+            totalCount += storageInterface.getItemCount(stack);
         }
 
         return totalCount;
@@ -841,9 +840,9 @@ public class InventoryUtils
     {
         int totalCount = 0;
 
-        for (final AbstractStorageBlockInterface storageInterface : ownBuilding.getContainers())
+        for (final AbstractStorageBlock storageInterface : ownBuilding.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(ownBuilding))
             {
                 continue;
             }
@@ -862,14 +861,14 @@ public class InventoryUtils
      */
     public static boolean isBuildingFull(final IBuilding ownBuilding)
     {
-        for (final AbstractStorageBlockInterface storageInterface : ownBuilding.getContainers())
+        for (final AbstractStorageBlock storageInterface : ownBuilding.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(ownBuilding))
             {
                 continue;
             }
 
-            if (storageInterface.getFreeSlots() > 0)
+            if (!storageInterface.isFull())
             {
                 return false;
             }
@@ -888,11 +887,10 @@ public class InventoryUtils
     public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate)
     {
         int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
 
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
             {
                 continue;
             }
@@ -913,13 +911,11 @@ public class InventoryUtils
      */
     public static int getCountFromBuildingWithLimit(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate, final Function<ItemStack, Integer> limit)
     {
-        final Level world = provider.getColony().getWorld();
-
         final Map<ItemStorage, Integer> allMatching = new HashMap<>();
 
-        for (final AbstractStorageBlockInterface storageInterface : provider.getContainers())
+        for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
             {
                 continue;
             }
@@ -3192,9 +3188,9 @@ public class InventoryUtils
     public static List<ItemStack> getBuildingInventory(final IBuilding building)
     {
         final List<ItemStack> allInInv = new ArrayList<>();
-        for (final AbstractStorageBlockInterface storageInterface : building.getContainers())
+        for (final AbstractStorageBlock storageInterface : building.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid()) {
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(building)) {
                 continue;
             }
 
@@ -3204,5 +3200,90 @@ public class InventoryUtils
             }
         }
         return allInInv;
+    }
+
+    /**
+     * Method to transfer an ItemStacks from the storage block to an {@link IItemHandler}.
+     *
+     * @param sourceStorage The source of the item stack
+     * @param predicate     the predicate for the stack.
+     * @param targetHandler The {@link IItemHandler} that works as receiver.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final AbstractStorageBlock sourceStorage,
+      final Predicate<ItemStack> predicate,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack itemStack = sourceStorage.extractItem(predicate, true);
+
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        if (!InventoryUtils.addItemStackToItemHandler(targetHandler, itemStack)) {
+            return false;
+        }
+
+        sourceStorage.extractItem(predicate, false);
+        return true;
+    }
+
+    /**
+     * Method to swap the ItemStacks from storage to the given target {@link IItemHandler}.
+     *
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @param stackPredicate The type of stack to pickup.
+     * @param count          how much to pick up.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextFreeSlotInItemHandler(
+      @NotNull final AbstractStorageBlock sourceStorage,
+      @NotNull final Predicate<ItemStack> stackPredicate,
+      final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack itemStack = sourceStorage.extractItem(stackPredicate, count, true);
+
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        if (!InventoryUtils.addItemStackToItemHandler(targetHandler, itemStack))
+        {
+            return false;
+        }
+
+        sourceStorage.extractItem(stackPredicate, count, false);
+        return true;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to storage. Trying to merge existing itemStacks if possible.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInStorage(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      @NotNull final AbstractStorageBlock targetStorage)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
+
+        if (ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        if (targetStorage.insertFullStack(sourceStack, false))
+        {
+            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
+            return true;
+        }
+        return false;
     }
 }

@@ -3,7 +3,7 @@ package com.minecolonies.core.tileentities;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.world.item.ItemStack;
@@ -42,9 +42,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         int totalCount = 0;
         if (getBuilding() != null)
         {
-            for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+            for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
             {
-                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
                 {
                     continue;
                 }
@@ -74,9 +74,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final boolean ignoreDamage, final int leftOver)
     {
         int totalCountFound = 0 - leftOver;
-        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
             {
                 continue;
             }
@@ -86,7 +86,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 continue;
             }
 
-            totalCountFound += storageInterface.getCount(itemStack, ignoreDamage, ignoreNBT);
+            totalCountFound += storageInterface.getItemCount(itemStack, ignoreDamage, ignoreNBT);
             if (totalCountFound >= count)
             {
                 return true;
@@ -109,9 +109,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         
         if (getBuilding() != null)
         {
-            for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+            for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
             {
-                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
                 {
                     continue;
                 }
@@ -146,7 +146,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 continue;
             }
 
-            @Nullable final AbstractStorageBlockInterface chest = getBlockStorageForStack(stack);
+            @Nullable final AbstractStorageBlock chest = getBlockStorageForStack(stack);
             if (chest == null)
             {
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
@@ -171,7 +171,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 return;
             }
 
-            chest.transferFromIndexToStorageIntoNextBestSlot(inventoryCitizen, i);
+            InventoryUtils.transferItemStackIntoNextBestSlotInStorage(inventoryCitizen, i, chest);
         }
     }
 
@@ -180,9 +180,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @param stack the stack to insert.
      * @return the matching blockstorage interface.
      */
-    public AbstractStorageBlockInterface getBlockStorageForStack(final ItemStack stack)
+    public AbstractStorageBlock getBlockStorageForStack(final ItemStack stack)
     {
-        AbstractStorageBlockInterface storageBlock = getPositionOfStorageBlockWithItemStack(stack);
+        AbstractStorageBlock storageBlock = getPositionOfStorageBlockWithItemStack(stack);
         if (storageBlock != null)
         {
             return storageBlock;
@@ -204,16 +204,16 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the interface of the storageblock
      */
     @Nullable
-    private AbstractStorageBlockInterface getPositionOfStorageBlockWithItemStack(@NotNull final ItemStack stack)
+    private AbstractStorageBlock getPositionOfStorageBlockWithItemStack(@NotNull final ItemStack stack)
     {
-        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
             {
                 continue;
             }
 
-            if (storageInterface.getFreeSlots() > 0 && storageInterface.hasItemStack(stack, 1, true))
+            if (!storageInterface.isFull() && storageInterface.hasItemStack(stack, 1, true))
             {
                 return storageInterface;
             }
@@ -229,11 +229,11 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the interface of the storageblock.
      */
     @Nullable
-    private AbstractStorageBlockInterface getPositionOfStorageBlockWithSimilarItemStack(final ItemStack stack)
+    private AbstractStorageBlock getPositionOfStorageBlockWithSimilarItemStack(final ItemStack stack)
     {
-        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+        for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
             {
                 continue;
             }
@@ -257,13 +257,13 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the interface of this chest.
      */
     @Nullable
-    private AbstractStorageBlockInterface searchMostEmptyStorageBlock()
+    private AbstractStorageBlock searchMostEmptyStorageBlock()
     {
         int freeSlots = 0;
-        AbstractStorageBlockInterface emptiestChest = null;
-        for (@NotNull final AbstractStorageBlockInterface storageInterface : getBuilding().getContainers())
+        AbstractStorageBlock emptiestChest = null;
+        for (@NotNull final AbstractStorageBlock storageInterface : getBuilding().getContainers())
         {
-            if (!storageInterface.isStillValid())
+            if (!storageInterface.isStillValid(getBuilding()))
             {
                 continue;
             }

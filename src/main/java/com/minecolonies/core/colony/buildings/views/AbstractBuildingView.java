@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -26,7 +26,6 @@ import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleVi
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -136,7 +135,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * The BlockPos list of all Containers
      */
 
-    private List<AbstractStorageBlockInterface> containerlist = new ArrayList<>();
+    private List<AbstractStorageBlock> containerlist = new ArrayList<>();
 
     /**
      * If building is deconstructed.
@@ -345,7 +344,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<AbstractStorageBlockInterface> getContainerList()
+    public List<AbstractStorageBlock> getContainerList()
     {
         return new ArrayList<>(containerlist);
     }
@@ -430,7 +429,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {
-            AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(buf.readBlockPos(), getColony().getWorld());
+            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(buf.readBlockPos(), getColony().getWorld());
             if (storageInterface != null)
             {
                 containerlist.add(storageInterface);

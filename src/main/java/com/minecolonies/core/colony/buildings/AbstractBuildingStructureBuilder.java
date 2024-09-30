@@ -186,18 +186,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     @Override
-    public ItemStack forceTransferStack(final ItemStack stack, final Level world)
-    {
-        final ItemStack itemStack = super.forceTransferStack(stack, world);
-        if (ItemStackUtils.isEmpty(itemStack))
-        {
-            this.markDirty();
-        }
-
-        return itemStack;
-    }
-
-    @Override
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);

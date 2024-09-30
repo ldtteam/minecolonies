@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -73,7 +73,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
 
 
-        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingPos, buildingView.getColony().getWorld());
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingPos, buildingView.getColony().getWorld());
         if (storageInterface != null)
         {
             goldCount += storageInterface.getItemCount(stack -> stack.is(Items.GOLD_INGOT));

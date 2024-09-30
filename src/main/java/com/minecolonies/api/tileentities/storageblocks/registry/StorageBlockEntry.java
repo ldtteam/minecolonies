@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities.storageblocks.registry;
 
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -13,7 +13,8 @@ import java.util.function.Predicate;
  * An entry for the StorageBlock registry that allows a way to register
  * new storage block types to Minecolonies.
  */
-public final class StorageBlockEntry {
+public final class StorageBlockEntry
+{
     /**
      * The registry identifier for this storage block.
      */
@@ -28,7 +29,7 @@ public final class StorageBlockEntry {
     /**
      * The interface that will be used to interact with the particular block.
      */
-    private final BiFunction<BlockPos, Level, AbstractStorageBlockInterface> storageInterface;
+    private final BiFunction<BlockPos, Level, AbstractStorageBlock> storageInterface;
 
     /**
      * Constructor
@@ -37,7 +38,7 @@ public final class StorageBlockEntry {
      * @param isStorageBlock   The predicate to determine if a block is this storage block type
      * @param storageInterface The interface used to interact with the particular block
      */
-    public StorageBlockEntry(ResourceLocation registryName, Predicate<BlockEntity> isStorageBlock, BiFunction<BlockPos, Level, AbstractStorageBlockInterface> storageInterface) {
+    public StorageBlockEntry(ResourceLocation registryName, Predicate<BlockEntity> isStorageBlock, BiFunction<BlockPos, Level, AbstractStorageBlock> storageInterface) {
         this.registryName = registryName;
         this.isStorageBlock = isStorageBlock;
         this.storageInterface = storageInterface;
@@ -58,7 +59,7 @@ public final class StorageBlockEntry {
      *
      * @return The interface.
      */
-    public BiFunction<BlockPos, Level, AbstractStorageBlockInterface> getStorageInterface() {
+    public BiFunction<BlockPos, Level, AbstractStorageBlock> getStorageInterface() {
         return storageInterface;
     }
 
@@ -89,7 +90,7 @@ public final class StorageBlockEntry {
         /**
          * The interface that will be used to interact with the particular block.
          */
-        private BiFunction<BlockPos, Level, AbstractStorageBlockInterface> storageInterface;
+        private BiFunction<BlockPos, Level, AbstractStorageBlock> storageInterface;
 
         /**
          * Set the registry name for the StorageBlockEntry being built.
@@ -120,7 +121,7 @@ public final class StorageBlockEntry {
          * @param storageInterface The interface
          * @return this
          */
-        public Builder setStorageInterface(BiFunction<BlockPos, Level, AbstractStorageBlockInterface> storageInterface) {
+        public Builder setStorageInterface(BiFunction<BlockPos, Level, AbstractStorageBlock> storageInterface) {
             this.storageInterface = storageInterface;
             return this;
         }

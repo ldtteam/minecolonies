@@ -5,12 +5,17 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -24,6 +29,7 @@ import com.minecolonies.core.colony.requestsystem.resolvers.WarehouseRequestReso
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +69,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public void requestRepair(final BlockPos builder)
     {
         //To ensure that the storageblocks are all set to in the warehouse when repaired.
-        for (final AbstractStorageBlockInterface storageInterface : containerList)
+        for (final AbstractStorageBlock storageInterface : containerList)
         {
-            storageInterface.setInWarehouse(true);
+            storageInterface.addInsertListener(builder);
         }
 
         super.requestRepair(builder);
@@ -111,15 +117,17 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
-        AbstractStorageBlockInterface storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, world);
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, world);
 
-        if (storageInterface == null || !storageInterface.shouldAutomaticallyAdd(this)) {
+        if (storageInterface == null)
+        {
             return;
         }
 
-        storageInterface.setInWarehouse(true);
+        storageInterface.addInsertListener(pos);
         int targetLevel = getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade();
-        while (storageInterface.getUpgradeLevel() < targetLevel) {
+        while (storageInterface.getUpgradeLevel() < targetLevel)
+        {
             storageInterface.increaseUpgradeLevel();
         }
 
@@ -157,7 +165,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
         {
-            for (final AbstractStorageBlockInterface storageInterface : getContainers())
+            for (final AbstractStorageBlock storageInterface : getContainers())
             {
                 storageInterface.increaseUpgradeLevel();
             }
@@ -170,6 +178,29 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public boolean canBeGathered()
     {
         return false;
+    }
+
+    /**
+     * The function that will be called to notify the listener
+     * that a new item stack was inserted.
+     *
+     * @param itemStack The item stack that was inserted.
+     */
+    @Override
+    public void onInsert(final BlockPos insertPos, final ItemStack itemStack)
+    {
+        if (ItemStackUtils.isEmpty(itemStack) || colony.getWorld().isClientSide)
+        {
+            return;
+        }
+
+        if (!colony.isCoordInColony(colony.getWorld(), insertPos))
+        {
+            return;
+        }
+
+        colony.getRequestManager().onColonyUpdate(request ->
+                                                    request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(itemStack));
     }
 
     /**
@@ -195,4 +226,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             return new WindowHutMinPlaceholder<>(this);
         }
     }
+
+
 }

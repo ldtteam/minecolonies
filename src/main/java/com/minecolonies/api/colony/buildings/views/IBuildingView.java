@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,7 @@ public interface IBuildingView extends IRequester, IModuleContainerView
      *
      * @return containerList.
      */
-    List<AbstractStorageBlockInterface> getContainerList();
+    List<AbstractStorageBlock> getContainerList();
 
     /**
      * Get the max level of the building.

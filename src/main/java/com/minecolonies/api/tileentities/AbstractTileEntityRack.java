@@ -24,16 +24,6 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 public abstract class AbstractTileEntityRack extends BlockEntity implements MenuProvider
 {
     /**
-     * whether this rack is in a warehouse or not. defaults to not set by the warehouse building upon being built
-     */
-    protected boolean inWarehouse = false;
-
-    /**
-     * Pos of the owning building.
-     */
-    protected BlockPos buildingPos = BlockPos.ZERO;
-
-    /**
      * The inventory of the tileEntity.
      */
     protected ItemStackHandler inventory;
@@ -115,51 +105,6 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
     public abstract ItemStackHandler createInventory(final int slots);
 
     /**
-     * Update the warehouse if available with the updated stack.
-     *
-     * @param stack the incoming stack.
-     */
-    public void updateWarehouseIfAvailable(final ItemStack stack)
-    {
-        if (!ItemStackUtils.isEmpty(stack) && level != null && !level.isClientSide)
-        {
-            if (inWarehouse || !buildingPos.equals(BlockPos.ZERO))
-            {
-                if (IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
-                {
-                    final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
-                    if (colony == null)
-                    {
-                        return;
-                    }
-
-                    if (inWarehouse)
-                    {
-                        colony.getRequestManager().onColonyUpdate(request ->
-                                                                    request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
-                    }
-                    else
-                    {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
-                        if (building != null)
-                        {
-                            building.overruleNextOpenRequestWithStack(stack);
-                            building.markDirty();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Set the value for inWarehouse
-     *
-     * @param isInWarehouse is this rack in a warehouse?
-     */
-    public abstract void setInWarehouse(Boolean isInWarehouse);
-
-    /**
      * Get the amount of free slots in the inventory. This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
@@ -214,20 +159,6 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
      */
     public abstract void upgradeRackSize();
-
-    /**
-     * Set the building pos it belongs to.
-     *
-     * @param pos the pos of the building.
-     */
-    public void setBuildingPos(final BlockPos pos)
-    {
-        if (level != null && (buildingPos == null || !buildingPos.equals(pos)))
-        {
-            setChanged();
-        }
-        this.buildingPos = pos;
-    }
 
     /**
      * Get the upgrade size.

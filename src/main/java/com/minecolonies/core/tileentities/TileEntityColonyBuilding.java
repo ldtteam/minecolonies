@@ -18,14 +18,11 @@ import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
-import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -35,15 +32,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -221,9 +213,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (theBuilding != null)
         {
-            for (final AbstractStorageBlockInterface storageInterface : theBuilding.getContainers())
+            for (final AbstractStorageBlock storageInterface : theBuilding.getContainers())
             {
-                if (!storageInterface.isLoaded() || !storageInterface.isStillValid())
+                if (!storageInterface.isLoaded() || !storageInterface.isStillValid(getBuilding()))
                 {
                     continue;
                 }
@@ -412,7 +404,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         }
-        buildingPos = worldPosition;
     }
 
     @Override

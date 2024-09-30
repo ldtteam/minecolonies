@@ -14,7 +14,6 @@ import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -156,12 +155,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     public TileEntityRack(final BlockPos pos, final BlockState state)
     {
         super(MinecoloniesTileEntities.RACK.get(), pos, state);
-    }
-
-    @Override
-    public void setInWarehouse(final Boolean isInWarehouse)
-    {
-        this.inWarehouse = isInWarehouse;
     }
 
     @Override
@@ -409,11 +402,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
         updateContent();
 
-        this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
-        if (compound.contains(TAG_POS))
-        {
-            this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
-        }
         version = compound.getByte(TAG_VERSION);
 
         invalidateCap();
@@ -445,8 +433,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             inventoryTagList.add(inventoryCompound);
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
-        compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
-        BlockPosUtil.write(compound, TAG_POS, buildingPos);
         compound.putByte(TAG_VERSION, version);
     }
 

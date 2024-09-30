@@ -5,8 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
-import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -203,9 +202,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
-        for (final AbstractStorageBlockInterface storageInterface : warehouse.getContainerList())
+        for (final AbstractStorageBlock storageInterface : warehouse.getContainerList())
         {
-            if (!storageInterface.isStillValid())
+            if (!storageInterface.isStillValid(warehouse))
             {
                 continue;
             }

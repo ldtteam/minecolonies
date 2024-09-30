@@ -6,7 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlockInterface;
+import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
@@ -16,14 +16,12 @@ import com.minecolonies.core.client.render.worldevent.highlightmanager.TimedBoxR
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -117,21 +115,21 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
-        final Set<AbstractStorageBlockInterface> containerList = new HashSet<>(building.getContainerList());
+        final Set<AbstractStorageBlock> containerList = new HashSet<>(building.getContainerList());
         containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getID(), building.getColony().getWorld()));
         HighlightManager.clearHighlightsForKey("inventoryHighlight");
 
         MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
         close();
 
-        for (final AbstractStorageBlockInterface storageInterface : containerList)
+        for (final AbstractStorageBlock storageInterface : containerList)
         {
-            if (!storageInterface.isStillValid())
+            if (!storageInterface.isStillValid(building))
             {
                 continue;
             }
 
-            int count = storageInterface.getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
+            int count = storageInterface.getItemCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
             if (count <= 0)
             {
                 continue;
@@ -198,15 +196,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final Set<AbstractStorageBlockInterface> containerList = new HashSet<>(building.getContainerList());
+        final Set<AbstractStorageBlock> containerList = new HashSet<>(building.getContainerList());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final Level world = building.getColony().getWorld();
         containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getPosition(), world));
 
-        for (final AbstractStorageBlockInterface storageInterface : containerList)
+        for (final AbstractStorageBlock storageInterface : containerList)
         {
-            if (!storageInterface.isStillValid())
+            if (!storageInterface.isStillValid(building))
             {
                 continue;
             }
