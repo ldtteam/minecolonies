@@ -1,13 +1,17 @@
 package com.minecolonies.api.tileentities.storageblocks;
 
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,22 +29,6 @@ public class InsertNotifier
      * to be notified when items are inserted into this StorageBlock.
      */
     private final Set<BlockPos> insertListeners = new HashSet<>();
-    /**
-     * Level that the BlockEntity this InsertNotifier corresponds
-     * to is located in.
-     */
-    Level level;
-
-    /**
-     * Constructor
-     *
-     * @param level The level the block entity this insert notifier
-     *              is located in.
-     */
-    public InsertNotifier(Level level)
-    {
-        this.level = level;
-    }
 
     /**
      * Add a new listener to be notified on item inserts.
@@ -60,36 +48,18 @@ public class InsertNotifier
      *                  inserted.
      * @param itemStack The item stack that was inserted.
      */
-    public void notifyInsert(final BlockPos insertPos, final ItemStack itemStack)
+    public void notifyInsert(final ResourceKey<Level> dimension, final BlockPos insertPos, final ItemStack itemStack)
     {
-        if (level == null)
-        {
-            return;
-        }
-
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        Level level = server.getLevel(dimension);
+        Log.getLogger().info("Got a notifyInsert in InsertNotifier. Sharing event.");
         for (BlockPos pos : this.insertListeners)
         {
             BlockEntity entity = level.getBlockEntity(pos);
+            Log.getLogger().info("Sharing with {} which is {}", pos, entity);
             if (entity instanceof IInsertListener listener)
             {
                 listener.onInsert(insertPos, itemStack);
-            }
-        }
-    }
-
-    public void notifyUpdate(final BlockPos insertPos)
-    {
-        if (level == null)
-        {
-            return;
-        }
-
-        for (BlockPos pos : this.insertListeners)
-        {
-            BlockEntity entity = level.getBlockEntity(pos);
-            if (entity instanceof IInsertListener listener)
-            {
-                listener.onUpdate(insertPos);
             }
         }
     }
@@ -134,13 +104,5 @@ public class InsertNotifier
          * @param itemStack The item stack that was inserted.
          */
         void onInsert(BlockPos insertPos, ItemStack itemStack);
-
-        /**
-         * The function that will be called to notify the listener
-         * that any block update has occurred.
-         *
-         * @param insertPos The location of the storage where the update occurred.
-         */
-        void onUpdate(BlockPos blockPos);
     }
 }

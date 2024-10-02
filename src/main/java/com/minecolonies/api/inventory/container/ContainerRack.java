@@ -2,6 +2,7 @@ package com.minecolonies.api.inventory.container;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.colony.event.StorageBlockStackInsertEvent;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
@@ -15,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -228,11 +230,11 @@ public class ContainerRack extends AbstractContainerMenu
     private void updateRacks(final ItemStack stack)
     {
         rack.updateItemStorage();
-        IStorageBlockNotificationManager.getInstance().notifyInsert(rack.getBlockPos(), stack);
+        MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(rack.getLevel().dimension(), rack.getBlockPos(), stack));
         if (neighborRack != null)
         {
             neighborRack.updateItemStorage();
-            IStorageBlockNotificationManager.getInstance().notifyInsert(neighborRack.getBlockPos(), stack);
+            MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(rack.getLevel().dimension(), rack.getBlockPos(), stack));
         }
     }
 

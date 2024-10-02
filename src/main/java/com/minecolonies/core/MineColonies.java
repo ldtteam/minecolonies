@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.event.StorageBlockStackInsertEvent;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -19,7 +20,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -38,7 +39,6 @@ import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
-import com.minecolonies.core.tileentities.storageblocks.StorageBlockNotificationManager;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -49,7 +49,6 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -144,7 +143,7 @@ public class MineColonies
         SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
         SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
 
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, StorageBlockNotificationManager::handleNeighborUpdate);
+        MinecraftForge.EVENT_BUS.addListener(IStorageBlockNotificationManager.getInstance()::onInsert);
 
         logIncompatibilities();
     }

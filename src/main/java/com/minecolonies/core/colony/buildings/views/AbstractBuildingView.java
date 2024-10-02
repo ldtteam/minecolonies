@@ -429,7 +429,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {
-            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(buf.readBlockPos(), getColony().getWorld());
+            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(getColony().getWorld(), buf.readBlockPos());
             if (storageInterface != null)
             {
                 containerlist.add(storageInterface);

@@ -1,13 +1,14 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
+import com.minecolonies.api.colony.event.StorageBlockStackInsertEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,10 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             {
                 onContentsChanged(slot);
             }
-            IStorageBlockNotificationManager.getInstance().notifyInsert(worldPosition, stack);
+            if (level != null)
+            {
+                MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack));
+            }
         }
 
         @Nonnull
@@ -86,7 +90,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             final ItemStack result = super.insertItem(slot, stack, simulate);
             if ((result.isEmpty() || result.getCount() < stack.getCount()) && !simulate)
             {
-                IStorageBlockNotificationManager.getInstance().notifyInsert(worldPosition, stack);
+                MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack));
             }
             return result;
         }

@@ -2,6 +2,7 @@ package com.minecolonies.core.tileentities.storageblocks;
 
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -16,11 +17,11 @@ public class ColonyBuildingStorageBlock extends RackStorageBlock
      * @param pos The position of the target storage block
      * @param world The level the storage block is in
      */
-    public ColonyBuildingStorageBlock(BlockPos pos, Level world)
+    public ColonyBuildingStorageBlock(BlockPos pos, ResourceKey<Level> dimension)
     {
-        super(pos, world);
+        super(pos, dimension);
 
-        BlockEntity targetBlockEntity = world.getBlockEntity(pos);
+        BlockEntity targetBlockEntity = getLevel().getBlockEntity(pos);
 
         if (!(targetBlockEntity instanceof TileEntityColonyBuilding))
         {

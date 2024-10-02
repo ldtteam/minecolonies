@@ -739,6 +739,9 @@ public final class NbtTagConstants
     public static final String TAG_INPUT_LISTENER = "inputlistener";
     public static final String TAG_LISTENER_LOC   = "listenerloc";
 
+    public static final String TAG_STORAGE_BLOCK_TYPE = "storageblocktype";
+    public static final String TAG_STORAGE_BLOCKS = "storageblocks";
+
     /**
      * Private constructor to hide the implicit one.
      */

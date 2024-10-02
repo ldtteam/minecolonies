@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities.storageblocks;
 
+import com.ldtteam.blockui.mod.Log;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.tileentities.storageblocks.registry.StorageBlockEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -54,14 +55,19 @@ public final class ModStorageBlocks
     /**
      * Tries to find a matching BlockInterface for the given BlockEntity
      *
+     * @param level The level the block is located in
      * @param pos The location of the block in the level
-     * @param world The level the block is located in
      * @return A StorageBlockInterface for the given BlockEntity if one exists.
      */
     @Nullable
-    public static AbstractStorageBlock getStorageBlockInterface(BlockPos pos, Level world)
+    public static AbstractStorageBlock getStorageBlockInterface(Level level, BlockPos pos)
     {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (level.isClientSide)
+        {
+            return null;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity == null)
         {
             return null;
@@ -71,7 +77,7 @@ public final class ModStorageBlocks
         {
             if (entry.matches(blockEntity))
             {
-                return entry.getStorageInterface().apply(pos, world);
+                return entry.getStorageInterface().apply(pos, level.dimension());
             }
         }
 

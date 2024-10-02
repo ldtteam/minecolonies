@@ -1,20 +1,29 @@
 package com.minecolonies.api.tileentities.storageblocks;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.event.StorageBlockStackInsertEvent;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.tileentities.storageblocks.RackStorageBlock;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.server.ServerLifecycleHooks;
+
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -32,9 +41,9 @@ public abstract class AbstractStorageBlock
     protected BlockPos targetPos;
 
     /**
-     * The level that the block entity is located in.
+     * The dimension that the block entity is located in.
      */
-    protected final Level level;
+    protected ResourceKey<Level> dimension;
 
     /**
      * The level that the storage block has been upgraded to.
@@ -42,42 +51,15 @@ public abstract class AbstractStorageBlock
     protected int upgradeLevel = 0;
 
     /**
-     * The notifier used to let other blocks know when this
-     * storageblock has items inserted.
-     */
-    protected InsertNotifier insertNotifier;
-
-    /**
      * Constructor
      *
      * @param targetPos The location of the block
      * @param level     The world the block is in
      */
-    public AbstractStorageBlock(final BlockPos targetPos, Level level)
+    public AbstractStorageBlock(final BlockPos targetPos, ResourceKey<Level> dimension)
     {
         this.targetPos = targetPos;
-        this.level = level;
-        insertNotifier = new InsertNotifier(level);
-    }
-
-    /**
-     * Add a new listener for when items are inserted
-     * to this storage block.
-     *
-     * @param listenerPos The position of the listener entity
-     */
-    public void addInsertListener(BlockPos listenerPos)
-    {
-        insertNotifier.addInsertListener(listenerPos);
-    }
-
-    /**
-     * Notify the storage block wrapper that the target entity
-     * has updated.
-     */
-    public void notifyUpdate()
-    {
-        insertNotifier.notifyUpdate(targetPos);
+        this.dimension = dimension;
     }
 
     /**
@@ -108,6 +90,11 @@ public abstract class AbstractStorageBlock
         return targetPos;
     }
 
+    public final ResourceKey<Level> getDimension()
+    {
+        return dimension;
+    }
+
     /**
      * Whether the block is currently loaded.
      *
@@ -115,7 +102,8 @@ public abstract class AbstractStorageBlock
      */
     public final boolean isLoaded()
     {
-        return WorldUtil.isBlockLoaded(level, targetPos);
+
+        return WorldUtil.isBlockLoaded(getLevel(), targetPos);
     }
 
     /**
@@ -128,7 +116,8 @@ public abstract class AbstractStorageBlock
         CompoundTag result = new CompoundTag();
 
         BlockPosUtil.write(result, TAG_POS, targetPos);
-        result.put(TAG_INPUT_LISTENER, insertNotifier.serializeToNBT());
+        result.putString(TAG_DIMENSION, dimension.location().toString());
+        result.putString(TAG_STORAGE_BLOCK_TYPE, getStorageBlockClass().getName());
 
         return result;
     }
@@ -138,31 +127,77 @@ public abstract class AbstractStorageBlock
      *
      * @param nbt The NBT data for the block
      */
-    public void read(final CompoundTag nbt)
+    public static AbstractStorageBlock fromNBT(final CompoundTag nbt)
     {
-        targetPos = BlockPosUtil.read(nbt, TAG_POS);
-        insertNotifier.read(nbt.getCompound(TAG_INPUT_LISTENER));
+        BlockPos targetPos = BlockPosUtil.read(nbt, TAG_POS);
+        ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(nbt.getString(TAG_DIMENSION)));
+        String className = nbt.getString(TAG_STORAGE_BLOCK_TYPE);
+
+        Class<? extends AbstractStorageBlock> clazz = RackStorageBlock.class;
+        try {
+            clazz = Class.forName(className).asSubclass(AbstractStorageBlock.class);
+        } catch (ClassNotFoundException e) {
+            Log.getLogger().error("Could not find class {}, defaulting to AbstractStorageBlock", className);
+        }
+
+        try {
+            Constructor<? extends AbstractStorageBlock> constructor = clazz.getDeclaredConstructor(BlockPos.class, ResourceKey.class);
+            Log.getLogger().info(constructor);
+            return constructor.newInstance(targetPos, dimension);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException e) {
+            Log.getLogger().error("Failed to initialize StorageBlock at {}: {}", targetPos, e);
+
+            if (e instanceof InvocationTargetException invTargetException)
+            {
+                Log.getLogger().error("Underlying exception: {}", invTargetException.getTargetException());
+                invTargetException.getTargetException().printStackTrace();
+            }
+            // for (StackTraceElement line : e.getStackTrace())
+            // {
+            //     Log.getLogger().info(line.toString());
+            // }
+        }
+
+        return null;
     }
 
     /**
      * Adds the full item stack to the first available slot in
      * the storage block.
      *
+     * @param stack The ItemStack to insert
      * @return if the full transfer was successful
      */
-    public boolean insertFullStack(final ItemStack stack, final boolean simulate)
+    public boolean insertFullStack(final ItemStack stack)
     {
-        final boolean result = insertFullStackImpl(stack, simulate);
+        final boolean result = insertFullStackImpl(stack);
 
-        if (result && !simulate)
+        if (result)
         {
-            insertNotifier.notifyInsert(targetPos, stack);
+            MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(dimension, targetPos, stack));
         }
 
         return result;
     }
 
-    
+    /**
+     * Get the level from the storageblock's dimension
+     * 
+     * @return The level this storage block is in
+     */
+    protected Level getLevel()
+    {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        return server.levels.get(dimension);
+    }
+
+    /**
+     * Whether the storage block will notify on item inserts or
+     * whether we need to rely on block updates.
+     * 
+     * @return if the storage block notifies on item inserts
+     */
     public abstract boolean supportsItemInsertNotification();
 
     /**
@@ -272,20 +307,39 @@ public abstract class AbstractStorageBlock
 
     /**
      * Removes an item stack matching the given predicate from the storage block
-     * and returns it. Will only return if the stack has at least minCount stack size.
+     * and returns it.
      *
-     * @param predicate The predicate to match
-     * @param minCount The minimum count the stack size must be
-     * @param simulate If true, actually removes the item.
+     * @param itemStack The item stack to remove
+     * @param count The amount to remove
+     * @param simulate If true, actually remove the item.
      * @return The matching item stack, or ItemStack.EMPTY
      */
-    public abstract ItemStack extractItem(final Predicate<ItemStack> predicate, int minCount, boolean simulate);
+    public abstract ItemStack extractItem(final ItemStack itemStack, int count, boolean simulate);
+
+    /**
+     * Finds the first ItemStack that matches the given predicate and returns it. Return
+     * null if it doesn't exist.
+     * 
+     * @param predicate The predicate to test against
+     * @return The matching stack or else null
+     */
+    public abstract ItemStack findFirstMatch(final Predicate<ItemStack> predicate);
 
     /**
      * Adds the full item stack to the first available slot in
      * the storage block.
      *
+     * @param stack The ItemStack to insert
      * @return if the full transfer was successful
      */
-    protected abstract boolean insertFullStackImpl(final ItemStack stack, final boolean simulate);
+    protected abstract boolean insertFullStackImpl(final ItemStack stack);
+
+
+    /**
+     * Get the class type of this storage block. Used for serialization and
+     * deserialization.
+     * 
+     * @return The class type of this storage block.
+     */
+    public abstract Class<? extends AbstractStorageBlock> getStorageBlockClass();
 }

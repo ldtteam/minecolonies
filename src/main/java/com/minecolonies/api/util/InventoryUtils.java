@@ -1742,6 +1742,59 @@ public class InventoryUtils
     }
 
     /**
+     * Swap the ItemStack from the given source {@link AbstractStorageBlock} to the given target {@link IItemHandler}.
+     *
+     * @param sourceStorage The {@link AbstractStorageBlock} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param count         the quantity.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferXOfItemStackIntoNextFreeSlotInItemHandler(
+      @NotNull final AbstractStorageBlock sourceStorage,
+      final ItemStack itemStack,
+      final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = sourceStorage.extractItem(itemStack, count, true);
+
+        if (ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        boolean success = false;
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, true);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                success = true;
+                break;
+            }
+        }
+
+        if (!success)
+        {
+            return false;
+        }
+
+        sourceStack = sourceStorage.extractItem(itemStack, count, false);
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                return true;
+            }
+        }
+
+        sourceStorage.insertFullStack(sourceStack);
+        return false;
+    }
+
+    /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param sourceHandler The {@link IItemHandler} that works as Source.
@@ -3244,20 +3297,24 @@ public class InventoryUtils
       final int count,
       @NotNull final IItemHandler targetHandler)
     {
-        ItemStack itemStack = sourceStorage.extractItem(stackPredicate, count, true);
+        int totalCount = count;
 
-        if (itemStack.isEmpty())
+        ItemStack targetStack = sourceStorage.findFirstMatch(stackPredicate);
+        for (; targetStack != null; targetStack = sourceStorage.findFirstMatch(stackPredicate))
         {
-            return false;
+            final int localCount = Math.min(totalCount, targetStack.getCount());
+            if (transferXOfItemStackIntoNextFreeSlotInItemHandler(sourceStorage, targetStack, localCount, targetHandler))
+            {
+                totalCount -= localCount;
+            }
+
+            if (totalCount <= 0)
+            {
+                return true;
+            }
         }
 
-        if (!InventoryUtils.addItemStackToItemHandler(targetHandler, itemStack))
-        {
-            return false;
-        }
-
-        sourceStorage.extractItem(stackPredicate, count, false);
-        return true;
+        return false;
     }
 
     /**
@@ -3279,7 +3336,7 @@ public class InventoryUtils
             return true;
         }
 
-        if (targetStorage.insertFullStack(sourceStack, false))
+        if (targetStorage.insertFullStack(sourceStack))
         {
             sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
             return true;

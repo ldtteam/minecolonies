@@ -7,14 +7,17 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.tileentities.storageblocks.ModStorageBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.storageblocks.RackStorageBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -76,11 +79,33 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         super.deserializeNBT(compound);
 
-        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < containerTagList.size(); ++i)
+        // Legacy NBT of StorageBlocks
+        if (compound.contains(TAG_CONTAINERS))
         {
-            final CompoundTag containerCompound = containerTagList.getCompound(i);
-            addContainerPosition(NbtUtils.readBlockPos(containerCompound));
+            final ListTag containerPosList = compound.getList(TAG_CONTAINERS, Tag.TAG_COMPOUND);
+            for (int i = 0; i < containerPosList.size(); ++i)
+            {
+                final CompoundTag containerCompound = containerPosList.getCompound(i);
+                BlockPos pos = NbtUtils.readBlockPos(containerCompound);
+                ResourceKey<Level> dimension = getColony().getDimension();
+                containerList.add(new RackStorageBlock(pos, dimension));
+                IStorageBlockNotificationManager.getInstance().addListener(dimension, pos, getPosition());
+            }
+        }
+        // New NBT of StorageBlocks
+        else if (compound.contains(TAG_STORAGE_BLOCKS))
+        {
+            final ListTag storageBlockList = compound.getList(TAG_STORAGE_BLOCKS, Tag.TAG_COMPOUND);
+            for (int i = 0;i < storageBlockList.size(); ++i)
+            {
+                final CompoundTag storageBlockCompound = storageBlockList.getCompound(i);
+                AbstractStorageBlock storageBlock = AbstractStorageBlock.fromNBT(storageBlockCompound);
+                if (storageBlock != null)
+                {
+                    containerList.add(storageBlock);
+                    IStorageBlockNotificationManager.getInstance().addListener(storageBlock.getDimension(), storageBlock.getPosition(), getPosition());
+                }
+            }
         }
         if (compound.contains(TAG_PRIO))
         {
@@ -101,12 +126,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final ListTag containerTagList = new ListTag();
+        @NotNull final ListTag storageBlockList = new ListTag();
         for (@NotNull final AbstractStorageBlock storageInterface : containerList)
         {
-            containerTagList.add(NbtUtils.writeBlockPos(storageInterface.getPosition()));
+            storageBlockList.add(storageInterface.serializeNBT());
         }
-        compound.put(TAG_CONTAINERS, containerTagList);
+        compound.put(TAG_STORAGE_BLOCKS, storageBlockList);
         compound.putInt(TAG_PRIO, this.unscaledPickUpPriority);
 
         return compound;
@@ -127,10 +152,11 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
-        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(getColony().getWorld(), pos);
+        IStorageBlockNotificationManager.getInstance().addListener(getColony().getWorld().dimension(), pos, getPosition());
         if (storageInterface != null)
         {
-            containerList.add(ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld()));
+            containerList.add(storageInterface);
         }
     }
 
@@ -151,7 +177,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     public List<AbstractStorageBlock> getContainers()
     {
         final List<AbstractStorageBlock> list = new ArrayList<>(containerList);;
-        list.add(ModStorageBlocks.getStorageBlockInterface(getPosition(), getColony().getWorld()));
+        list.add(ModStorageBlocks.getStorageBlockInterface(getColony().getWorld(), getPosition()));
         return list;
     }
 
@@ -182,12 +208,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         }
         else
         {
-            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(pos, getColony().getWorld());
+            AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(getColony().getWorld(), pos);
             if (storageInterface == null) {
                 return;
             }
             addContainerPosition(pos);
-            storageInterface.addInsertListener(getID());
+            IStorageBlockNotificationManager.getInstance().addListener(getColony().getWorld().dimension(), pos, getPosition());
         }
     }
 

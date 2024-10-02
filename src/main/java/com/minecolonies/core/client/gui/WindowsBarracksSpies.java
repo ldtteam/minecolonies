@@ -73,7 +73,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
 
 
-        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingPos, buildingView.getColony().getWorld());
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(buildingView.getColony().getWorld(), buildingPos);
         if (storageInterface != null)
         {
             goldCount += storageInterface.getItemCount(stack -> stack.is(Items.GOLD_INGOT));

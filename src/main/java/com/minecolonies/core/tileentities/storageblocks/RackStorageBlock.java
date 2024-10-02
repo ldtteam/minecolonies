@@ -5,11 +5,18 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -20,20 +27,30 @@ import java.util.function.Predicate;
  */
 public class RackStorageBlock extends AbstractStorageBlock
 {
-    public RackStorageBlock(BlockPos pos, Level world)
+    public RackStorageBlock(BlockPos pos, ResourceKey<Level> dimension)
     {
-        super(pos, world);
+        super(pos, dimension);
 
-        BlockEntity targetBlockEntity = world.getBlockEntity(pos);
-
-        if (!(targetBlockEntity instanceof TileEntityRack))
+        Level level = getLevel();
+        // Check we're on the server side, otherwise we can't get the block entity
+        if (level != null)
         {
-            throw new IllegalArgumentException("The block at the target position must be an instance of TileEntityRack");
+            BlockEntity targetBlockEntity = getLevel().getBlockEntity(pos);
+            if (!(targetBlockEntity instanceof TileEntityRack))
+            {
+                Log.getLogger().error("The block at {} must be an instance of TileEntityRack, is {}", pos, targetBlockEntity);
+            }
         }
     }
 
     @Override
     public boolean isStillValid(final IBuilding building)
+    {
+        return getRack().isPresent();
+    }
+
+    @Override
+    public boolean isStillValid(final IBuildingView building)
     {
         return getRack().isPresent();
     }
@@ -104,6 +121,12 @@ public class RackStorageBlock extends AbstractStorageBlock
         return getRack().map(TileEntityRack::isEmpty).orElse(true);
     }
 
+    @Override
+    public boolean isFull()
+    {
+        return getRack().map(TileEntityRack::getFreeSlots).orElse(0) == 0;
+    }
+
     /**
      * Return whether the storageblock contains a matching item stack
      *
@@ -149,6 +172,8 @@ public class RackStorageBlock extends AbstractStorageBlock
      */
     private Optional<TileEntityRack> getRack()
     {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        Level level = server.levels.get(dimension);
         BlockEntity targetBlockEntity = level.getBlockEntity(targetPos);
         if (!(targetBlockEntity instanceof TileEntityRack)) {
             return Optional.empty();
@@ -160,5 +185,109 @@ public class RackStorageBlock extends AbstractStorageBlock
     public boolean supportsItemInsertNotification()
     {
         return true;
+    }
+
+    @Override
+    public ItemStack extractItem(Predicate<ItemStack> predicate, boolean simulate)
+    {
+        return getRack().map(rack -> {
+            Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
+            if (itemHandler.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+
+            for (int i = 0; i < itemHandler.get().getSlots(); ++i)
+            {
+                ItemStack stack = itemHandler.get().getStackInSlot(i);
+                if (stack.isEmpty())
+                {
+                    continue;
+                }
+
+                if (predicate.test(stack))
+                {
+                    return itemHandler.get().extractItem(i, stack.getCount(), simulate);
+                }
+            }
+
+            return ItemStack.EMPTY;
+        }).orElse(ItemStack.EMPTY);
+    }
+
+    @Override
+    protected boolean insertFullStackImpl(ItemStack stack)
+    {
+        return getRack().map(rack -> {
+            Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
+            if (itemHandler.isEmpty()) {
+                return false;
+            }
+
+            return InventoryUtils.addItemStackToItemHandler(itemHandler.get(), stack);
+        }).orElse(false);
+        
+    }
+
+    @Override
+    public ItemStack extractItem(ItemStack itemStack, int count, boolean simulate)
+    {
+        return getRack().map(rack -> {
+            Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
+            if (itemHandler.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+
+            final ItemStack workingStack = itemStack.copy();
+            int localCount = count;
+            int tries = 0;
+            while (tries < count)
+            {
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(itemHandler.get(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
+                if (slot == -1)
+                {
+                    return ItemStack.EMPTY;
+                }
+
+                final int removedSize = ItemStackUtils.getSize(itemHandler.get().extractItem(slot, localCount, false));
+
+                if (removedSize == count)
+                {
+                    return itemStack;
+                }
+                else
+                {
+                    localCount -= removedSize;
+                }
+                tries++;
+            }
+
+            ItemStack result = itemStack.copy();
+            result.setCount(count - localCount);
+            return result;
+        }).orElse(ItemStack.EMPTY);
+    }
+
+    @Override
+    public ItemStack findFirstMatch(Predicate<ItemStack> predicate)
+    {
+        return getRack().map(rack -> {
+            Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
+            if (itemHandler.isEmpty()) {
+                return null;
+            }
+
+            int slot = InventoryUtils.findFirstSlotInItemHandlerWith(itemHandler.get(), predicate);
+            if (slot == -1)
+            {
+                return null;
+            }
+
+            return itemHandler.get().getStackInSlot(slot);
+        }).orElse(null);
+    }
+
+    @Override
+    public Class<? extends AbstractStorageBlock> getStorageBlockClass() {
+        return getClass();
     }
 }

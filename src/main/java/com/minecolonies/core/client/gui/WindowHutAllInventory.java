@@ -116,7 +116,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
         final Set<AbstractStorageBlock> containerList = new HashSet<>(building.getContainerList());
-        containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getID(), building.getColony().getWorld()));
+        containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getColony().getWorld(), building.getID()));
         HighlightManager.clearHighlightsForKey("inventoryHighlight");
 
         MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
@@ -200,7 +200,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final Level world = building.getColony().getWorld();
-        containerList.add(ModStorageBlocks.getStorageBlockInterface(building.getPosition(), world));
+        containerList.add(ModStorageBlocks.getStorageBlockInterface(world, building.getPosition()));
 
         for (final AbstractStorageBlock storageInterface : containerList)
         {

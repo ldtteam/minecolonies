@@ -4,8 +4,11 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,7 +26,7 @@ import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingWar
 /**
  * Class which handles the tileEntity of our colony warehouse.
  */
-public class TileEntityWareHouse extends AbstractTileEntityWareHouse
+public class TileEntityWareHouse extends AbstractTileEntityWareHouse implements InsertNotifier.IInsertListener
 {
     /**
      * Time of last sent notifications.
@@ -279,5 +282,12 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
         }
         return emptiestChest;
+    }
+
+    @Override
+    public void onInsert(BlockPos insertPos, ItemStack itemStack)
+    {
+        BuildingWareHouse warehouse = (BuildingWareHouse)getBuilding();
+        warehouse.onInsert(insertPos, itemStack);
     }
 }

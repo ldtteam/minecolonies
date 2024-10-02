@@ -566,7 +566,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(entity.getBlockPos(), entity.getLevel());
+        AbstractStorageBlock storageInterface = ModStorageBlocks.getStorageBlockInterface(entity.getLevel(), entity.getBlockPos());
         if (storageInterface == null)
         {
             return false;
