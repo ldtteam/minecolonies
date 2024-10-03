@@ -10,7 +10,11 @@ import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class StorageBlockNotificationManager implements IStorageBlockNotificationManager
 {
@@ -35,20 +39,28 @@ public class StorageBlockNotificationManager implements IStorageBlockNotificatio
     @Override
     public void onInsert(StorageBlockStackInsertEvent event)
     {
-        Log.getLogger().info("Received notification: {}", event.getPosition());
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        Level level = server.levels.get(event.getDimension());
+        if (level.isClientSide)
+        {
+            return;
+        }
+
         if (!notifiers.containsKey(event.getDimension()))
         {
-            Log.getLogger().info("No dimension.");
             return;
         }
 
         if (!notifiers.get(event.getDimension()).containsKey(event.getPosition()))
         {
-            Log.getLogger().info("No listener list.");
             return;
         }
 
-        Log.getLogger().info("Notifying an insert at: {}", event.getPosition());
+        if (event.getInsertedStack().isEmpty())
+        {
+            return;
+        }
+
         notifiers.get(event.getDimension()).get(event.getPosition()).notifyInsert(event.getDimension(), event.getPosition(), event.getInsertedStack());
     }
 }

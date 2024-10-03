@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 
-public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider, InsertNotifier.IInsertListener
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -494,4 +494,17 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @return true if so.
      */
     boolean canEat(final ItemStack stack);
+
+    /**
+     * Handles when a new item is inserted into a block this building is
+     * listening to.
+     * 
+     * @param insertPos The position of the storageblock the item was inserted
+     * @param itemStack The item that was inserted.
+     */
+    @Override
+    default void onInsert(BlockPos insertPos, ItemStack itemStack) {
+        overruleNextOpenRequestWithStack(itemStack);
+        markDirty();
+    }
 }

@@ -38,6 +38,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
+import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.tileentities.storageblocks.InsertNotifier;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
@@ -167,6 +168,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         setupRsDataStore();
+        IStorageBlockNotificationManager.getInstance().addListener(colony.getDimension(), pos, pos);
     }
 
     @Override

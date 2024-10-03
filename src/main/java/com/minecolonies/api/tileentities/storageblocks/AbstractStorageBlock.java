@@ -102,7 +102,6 @@ public abstract class AbstractStorageBlock
      */
     public final boolean isLoaded()
     {
-
         return WorldUtil.isBlockLoaded(getLevel(), targetPos);
     }
 
@@ -142,21 +141,10 @@ public abstract class AbstractStorageBlock
 
         try {
             Constructor<? extends AbstractStorageBlock> constructor = clazz.getDeclaredConstructor(BlockPos.class, ResourceKey.class);
-            Log.getLogger().info(constructor);
             return constructor.newInstance(targetPos, dimension);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
             Log.getLogger().error("Failed to initialize StorageBlock at {}: {}", targetPos, e);
-
-            if (e instanceof InvocationTargetException invTargetException)
-            {
-                Log.getLogger().error("Underlying exception: {}", invTargetException.getTargetException());
-                invTargetException.getTargetException().printStackTrace();
-            }
-            // for (StackTraceElement line : e.getStackTrace())
-            // {
-            //     Log.getLogger().info(line.toString());
-            // }
         }
 
         return null;
@@ -175,7 +163,9 @@ public abstract class AbstractStorageBlock
 
         if (result)
         {
-            MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(dimension, targetPos, stack));
+            StorageBlockStackInsertEvent insertEvent = new StorageBlockStackInsertEvent(dimension, targetPos, stack);
+            Log.getLogger().info("AbstractStorageBlock: Sending insert event: {}", insertEvent);
+            MinecraftForge.EVENT_BUS.post(insertEvent);
         }
 
         return result;
@@ -191,14 +181,6 @@ public abstract class AbstractStorageBlock
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         return server.levels.get(dimension);
     }
-
-    /**
-     * Whether the storage block will notify on item inserts or
-     * whether we need to rely on block updates.
-     * 
-     * @return if the storage block notifies on item inserts
-     */
-    public abstract boolean supportsItemInsertNotification();
 
     /**
      * Gets the amount of a particular item contained in the storageblock

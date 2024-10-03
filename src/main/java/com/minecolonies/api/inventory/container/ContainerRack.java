@@ -7,6 +7,8 @@ import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.storageblocks.IStorageBlockNotificationManager;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -230,11 +232,13 @@ public class ContainerRack extends AbstractContainerMenu
     private void updateRacks(final ItemStack stack)
     {
         rack.updateItemStorage();
-        MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(rack.getLevel().dimension(), rack.getBlockPos(), stack));
+        StorageBlockStackInsertEvent insertEvent = new StorageBlockStackInsertEvent(rack.getLevel().dimension(), rack.getBlockPos(), stack);
+        MinecraftForge.EVENT_BUS.post(insertEvent);
         if (neighborRack != null)
         {
             neighborRack.updateItemStorage();
-            MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(rack.getLevel().dimension(), rack.getBlockPos(), stack));
+            insertEvent = new StorageBlockStackInsertEvent(neighborRack.getLevel().dimension(), neighborRack.getBlockPos(), stack);
+            MinecraftForge.EVENT_BUS.post(insertEvent);
         }
     }
 

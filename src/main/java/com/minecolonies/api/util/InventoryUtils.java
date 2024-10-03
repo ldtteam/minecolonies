@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.tileentities.storageblocks.AbstractStorageBlock;
-import com.minecolonies.api.tileentities.storageblocks.IStorageBlock;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.Direction;
@@ -745,7 +744,7 @@ public class InventoryUtils
         int totalCount = 0;
         for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
+            if (storageInterface == null || !storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
             {
                 continue;
             }
@@ -773,7 +772,8 @@ public class InventoryUtils
         int totalCount = 0;
         for (final AbstractStorageBlock storageInterface : provider.getContainers())
         {
-            if (!storageInterface.isLoaded() || !storageInterface.isStillValid(provider)) {
+            if (storageInterface == null || !storageInterface.isLoaded() || !storageInterface.isStillValid(provider))
+            {
                 continue;
             }
 
@@ -1780,6 +1780,7 @@ public class InventoryUtils
         }
 
         sourceStack = sourceStorage.extractItem(itemStack, count, false);
+        Log.getLogger().info("Extracted {} from target storage block.", sourceStack.getItem().getDescription().getString());
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {

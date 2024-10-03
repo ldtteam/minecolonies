@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.colony.event.StorageBlockStackInsertEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
@@ -77,9 +78,11 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             {
                 onContentsChanged(slot);
             }
+            
             if (level != null)
             {
-                MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack));
+                StorageBlockStackInsertEvent insertEvent = new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack);
+                MinecraftForge.EVENT_BUS.post(insertEvent);
             }
         }
 
@@ -90,7 +93,8 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             final ItemStack result = super.insertItem(slot, stack, simulate);
             if ((result.isEmpty() || result.getCount() < stack.getCount()) && !simulate)
             {
-                MinecraftForge.EVENT_BUS.post(new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack));
+                StorageBlockStackInsertEvent insertEvent = new StorageBlockStackInsertEvent(level.dimension(), worldPosition, stack);
+                MinecraftForge.EVENT_BUS.post(insertEvent);
             }
             return result;
         }

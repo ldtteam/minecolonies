@@ -182,14 +182,9 @@ public class RackStorageBlock extends AbstractStorageBlock
     }
 
     @Override
-    public boolean supportsItemInsertNotification()
-    {
-        return true;
-    }
-
-    @Override
     public ItemStack extractItem(Predicate<ItemStack> predicate, boolean simulate)
     {
+        Log.getLogger().info("RackStorageBlock#extractItem: Extracting predicate {}, simulate {}", predicate, simulate);
         return getRack().map(rack -> {
             Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
             if (itemHandler.isEmpty()) {
@@ -231,38 +226,42 @@ public class RackStorageBlock extends AbstractStorageBlock
     @Override
     public ItemStack extractItem(ItemStack itemStack, int count, boolean simulate)
     {
+        Log.getLogger().info("RackStorageBlock#extractItem: Extracting item stack {}, simulate {}", itemStack.getItem().getDescription().getString(), simulate);
         return getRack().map(rack -> {
             Optional<IItemHandler> itemHandler = rack.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve();
             if (itemHandler.isEmpty()) {
                 return ItemStack.EMPTY;
             }
 
-            final ItemStack workingStack = itemStack.copy();
-            int localCount = count;
-            int tries = 0;
-            while (tries < count)
+            int remainingCount = count;
+            for (int slot = 0; slot < itemHandler.get().getSlots(); ++slot)
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(itemHandler.get(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
-                if (slot == -1)
+                ItemStack slotStack = itemHandler.get().getStackInSlot(slot);
+                if (slotStack.isEmpty())
                 {
-                    return ItemStack.EMPTY;
+                    continue;
                 }
 
-                final int removedSize = ItemStackUtils.getSize(itemHandler.get().extractItem(slot, localCount, false));
+                if (!ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, slotStack))
+                {
+                    continue;
+                }
 
-                if (removedSize == count)
+                slotStack = itemHandler.get().extractItem(slot, Math.min(slotStack.getCount(), remainingCount), simulate);
+                if (slotStack.isEmpty())
                 {
-                    return itemStack;
+                    continue;
                 }
-                else
+
+                remainingCount -= slotStack.getCount();
+
+                if (remainingCount <= 0)
                 {
-                    localCount -= removedSize;
+                    break;
                 }
-                tries++;
             }
-
-            ItemStack result = itemStack.copy();
-            result.setCount(count - localCount);
+            
+            ItemStack result = itemStack.copyWithCount(count - remainingCount);
             return result;
         }).orElse(ItemStack.EMPTY);
     }

@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 /**
- * The manager for letting blocks (particularly the Warehouse) when
+ * The manager for letting blocks listen for when
  * storage blocks are updated or items are inserted into them.
  */
 public interface IStorageBlockNotificationManager

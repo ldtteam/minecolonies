@@ -191,20 +191,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public void onInsert(final BlockPos insertPos, final ItemStack itemStack)
     {
         Level level = colony.getWorld();
-        Log.getLogger().info("Received insert notification for {} at {}", itemStack.getItem().getDescription().getString(), insertPos);
         if (ItemStackUtils.isEmpty(itemStack) || level.isClientSide)
         {
-            Log.getLogger().info("Client side, ignoring");
             return;
         }
 
         if (!colony.isCoordInColony(colony.getWorld(), insertPos))
         {
-            Log.getLogger().info("Block is not in a colony");
             return;
         }
 
-        Log.getLogger().info("Updating requests with item.");
         colony.getRequestManager().onColonyUpdate(request ->
                                                     request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(itemStack));
     }
