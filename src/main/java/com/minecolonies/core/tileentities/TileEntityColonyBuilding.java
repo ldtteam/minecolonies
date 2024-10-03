@@ -21,7 +21,6 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -236,10 +235,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                         {
                             return pos;
                         }
-                    }
-                    else if (isInTileEntity(IItemHandlerCapProvider.wrap(entity), notEmptyPredicate))
-                    {
-                        return pos;
                     }
                 }
             }
