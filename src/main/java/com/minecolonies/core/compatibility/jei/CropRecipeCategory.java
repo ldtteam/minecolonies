@@ -103,7 +103,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
         final EquipmentTypeEntry requiredTool = ModEquipmentTypes.hoe.get();
         builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, 0)
                 .setSlotName("tool")
-                .setBackground(this.slot, -1, -1)
+                .setBackground(this.chanceSlot, -1, -1)
                 .addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
                         .filter(requiredTool::checkIsEquipment)
                         .sorted(Comparator.comparing(requiredTool::getMiningLevel))
