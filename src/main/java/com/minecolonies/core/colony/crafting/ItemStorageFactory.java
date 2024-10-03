@@ -91,6 +91,8 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public void serialize(IFactoryController controller, ItemStorage input, RegistryFriendlyByteBuf packetBuffer)
     {
+        // Some mods do weird things with banner patterns atm, so we add some special backup functionality here.
+        // We might have to extend this to other types of items in the future.
         if (input.getItemStack().has(DataComponents.BANNER_PATTERNS))
         {
             boolean success = false;
