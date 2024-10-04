@@ -67,7 +67,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         {
             final ItemStack scepter = player.getMainHandItem();
             MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_A_SET).sendTo(player);
-            PosSelection.updateItemStack(scepter, selection -> selection.setStartPos(pos));
+            PosSelection.updateItemStack(scepter, selection -> selection.setEndpos(pos));
             storeRestrictedArea(player, scepter, world);
         }
 
