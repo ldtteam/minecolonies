@@ -1,17 +1,24 @@
 package com.minecolonies.core.compatibility.jei;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.fakelevel.FakeLevel;
-import com.ldtteam.structurize.client.fakelevel.IFakeLevelLightProvider;
-import net.minecraft.world.scores.Scoreboard;
+import com.ldtteam.structurize.client.fakelevel.SingleBlockFakeLevel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class JeiFakeLevel extends FakeLevel
+@OnlyIn(Dist.CLIENT)
+public class JeiFakeLevel extends SingleBlockFakeLevel
 {
-    private static final Scoreboard SCOREBOARD = new Scoreboard();
-    private static final Blueprint FAKE_BLOCK = new Blueprint((short) 1, (short) 1, (short) 1);
-
     public JeiFakeLevel()
     {
-        super(FAKE_BLOCK, IFakeLevelLightProvider.USE_CLIENT_LEVEL, SCOREBOARD, false);
+        super(null);
+        prepare(Blocks.AIR.defaultBlockState(), null, null);
+    }
+
+    @Override
+    public Level realLevel()
+    {
+        return Minecraft.getInstance().level;
     }
 }
