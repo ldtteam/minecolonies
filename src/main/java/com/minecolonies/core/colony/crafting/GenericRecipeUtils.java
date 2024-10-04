@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -89,9 +90,7 @@ public final class GenericRecipeUtils
 
         for (final List<ItemStack> slot : recipe.getInputs())
         {
-            final List<ItemStack> newSlot = slot.stream()
-                    .filter(stack -> predicate.test(stack).orElse(fallbackAccept))
-                    .collect(Collectors.toList());
+            final List<ItemStack> newSlot = filterList(slot, predicate, fallbackAccept);
 
             if (newSlot.isEmpty() && !slot.isEmpty())
             {
@@ -120,6 +119,21 @@ public final class GenericRecipeUtils
                 recipe.getRequiredTool(),
                 recipe.getRestrictions(),
                 recipe.getLevelSort());
+    }
+
+    private static <T> List<T> filterList(@NotNull final List<T> input,
+                                          @NotNull final OptionalPredicate<T> predicate,
+                                          final boolean fallbackAccept)
+    {
+        final List<T> newList = new ArrayList<>();
+        for (T stack : input)
+        {
+            if (predicate.test(stack).orElse(fallbackAccept))
+            {
+                newList.add(stack);
+            }
+        }
+        return newList;
     }
 
     private static boolean isDomumRecipe(@NotNull final IGenericRecipe recipe)

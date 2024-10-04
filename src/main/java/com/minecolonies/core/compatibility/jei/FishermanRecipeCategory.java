@@ -9,7 +9,6 @@ import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
@@ -68,10 +67,10 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
-                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                builder.addOutputSlot(x, y)
                         .setBackground(this.chanceSlot, -1, -1)
                         .addItemStacks(drop.getItemStacks())
-                        .addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
+                        .addRichTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
                 if (++c >= columns)
                 {
                     c = 0;
