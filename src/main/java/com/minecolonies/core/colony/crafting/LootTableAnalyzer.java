@@ -71,7 +71,7 @@ public final class LootTableAnalyzer
         }
         catch (final IllegalStateException ex)
         {
-            Log.getLogger().error(String.format("Failed to parse loot table from %s", lootTableId), ex);
+            Log.getLogger().debug(String.format("Failed to parse loot table from %s", lootTableId), ex);
             return Collections.emptyList();
         }
     }

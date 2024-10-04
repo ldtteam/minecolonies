@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -84,7 +85,7 @@ public class DataPackSyncEventHandler
          *
          * @param event {@link net.neoforged.neoforge.event.OnDatapackSyncEvent}
          */
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onDataPackSync(final OnDatapackSyncEvent event)
         {
             final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
