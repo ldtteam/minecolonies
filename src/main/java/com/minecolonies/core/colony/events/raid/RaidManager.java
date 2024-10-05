@@ -10,30 +10,26 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.core.colony.events.raid.pirateEvent.*;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
 import com.minecolonies.core.colony.events.raid.amazonevent.AmazonRaidEvent;
 import com.minecolonies.core.colony.events.raid.barbarianEvent.BarbarianRaidEvent;
 import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
 import com.minecolonies.core.colony.events.raid.egyptianevent.EgyptianRaidEvent;
 import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenRaidEvent;
 import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenShipRaidEvent;
+import com.minecolonies.core.colony.events.raid.pirateEvent.*;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRaiderPathing;
-import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -46,13 +42,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.BlockPosUtil.*;
+import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
+import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
@@ -310,14 +308,20 @@ public class RaidManager implements IRaiderManager
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
+            final BlockState aboveState = colony.getWorld().getBlockState(targetSpawnPoint.above());
+            final BlockState spawnState = colony.getWorld().getBlockState(targetSpawnPoint);
+            final BlockState belowState = colony.getWorld().getBlockState(targetSpawnPoint.below());
+
             if (MineColonies.getConfig().getServer().skyRaiders.get() &&
-                  colony.getWorld().getBlockState(targetSpawnPoint).isAir()
-                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).isAir())
+                  spawnState.isAir()
+                  && belowState.isAir())
             {
                 raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
             }
-            else if (colony.getWorld().getBlockState(targetSpawnPoint).liquid() &&
-                        colony.getWorld().getBlockState(targetSpawnPoint.below()).liquid())
+            else if ((raidType.isEmpty() || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                       && (PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.above(), aboveState, null) || ColonyConstants.rand.nextInt(100) <= 20)
+                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint, spawnState, null)
+                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.below(), belowState, null))
             {
                 raidType = DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
                 for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)

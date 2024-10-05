@@ -21,10 +21,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
@@ -43,7 +40,6 @@ import com.minecolonies.core.colony.workorders.WorkManager;
 import com.minecolonies.core.datalistener.CitizenNameListener;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.core.quests.QuestManager;
-import com.minecolonies.api.util.ColonyUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -1958,5 +1954,15 @@ public class Colony implements IColony
     public ISettingsModule getSettings()
     {
         return settingsModule;
+    }
+
+    /**
+     * Sets the dimension ID, use with care!
+     *
+     * @param dimensionId
+     */
+    public void setDimensionId(final ResourceKey<Level> dimensionId)
+    {
+        this.dimensionId = dimensionId;
     }
 }
