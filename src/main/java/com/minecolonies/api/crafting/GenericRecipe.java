@@ -344,18 +344,22 @@ public class GenericRecipe implements IGenericRecipe
     private static class IngredientStacks implements Comparable<IngredientStacks>
     {
         private final List<ItemStack> stacks;
-        private final Set<Item> items;
+        private final List<Item> items;
 
         public IngredientStacks(final List<ItemStack> ingredient)
         {
-            this.stacks = ingredient.stream()
-                    .filter(stack -> !stack.isEmpty())
-                    .map(ItemStack::copy)
-                    .collect(Collectors.toList());
-
-            this.items = this.stacks.stream()
-                    .map(ItemStack::getItem)
-                    .collect(Collectors.toSet());
+            this.stacks = new ArrayList<>(ingredient.size());
+            this.items = new ArrayList<>(ingredient.size());
+            for (ItemStack stack : ingredient)
+            {
+                if (!stack.isEmpty())
+                {
+                    ItemStack copy = stack.copy();
+                    this.stacks.add(copy);
+                    Item item = copy.getItem();
+                    this.items.add(item);
+                }
+            }
         }
 
         @NotNull

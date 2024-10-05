@@ -5,20 +5,15 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.crafting.ToolUsage;
 import com.minecolonies.core.colony.crafting.ToolsAnalyzer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.placement.VerticalAlignment;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,24 +24,25 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 /**
  * JEI recipe category showing supported tool and armor levels.
  */
-public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
+public class ToolRecipeCategory extends AbstractRecipeCategory<ToolUsage>
 {
     private static final int WIDTH = 180;
     private static final int HEIGHT = 44;
     private static final int SLOT_X = WIDTH - 2 - ((MAX_BUILDING_LEVEL+1) * 18);
-
-    private final IDrawable background;
-    private final IDrawable icon;
-    private final IDrawable slot;
+    private static final int SLOT_Y = HEIGHT - 36;
 
     /**
      * Constructor
      */
     public ToolRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.plateArmorChest));
-        this.slot = guiHelper.getSlotDrawable();
+        super(
+                ModRecipeTypes.TOOLS,
+                Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "tools"),
+                guiHelper.createDrawableItemLike(ModItems.plateArmorChest),
+                WIDTH,
+                HEIGHT
+        );
     }
 
     /**
@@ -58,53 +54,25 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
         return ToolsAnalyzer.findTools(level);
     }
 
-    @NotNull
-    @Override
-    public RecipeType<ToolUsage> getRecipeType()
-    {
-        return ModRecipeTypes.TOOLS;
-    }
-
-    @NotNull
-    @Override
-    public Component getTitle()
-    {
-        return Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "tools");
-    }
-
-    @NotNull
-    @Override
-    public IDrawable getBackground()
-    {
-        return this.background;
-    }
-
-    @NotNull
-    @Override
-    public IDrawable getIcon()
-    {
-        return this.icon;
-    }
-
     @Override
     public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
                           @NotNull final ToolUsage recipe,
                           @NotNull final IFocusGroup focuses)
     {
         int x = SLOT_X;
-        int y = HEIGHT - 36;
+        int y = SLOT_Y;
 
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
-            builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+            builder.addInputSlot(x, y)
                     .setSlotName("L" + i)
                     .addItemStacks(recipe.toolLevels().get(i))
-                    .setBackground(this.slot, -1, -1);
+                    .setStandardSlotBackground();
 
-            builder.addSlot(RecipeIngredientRole.INPUT, x, y + 18)
+            builder.addInputSlot(x, y + 18)
                     .setSlotName("L" + i + "e")
                     .addItemStacks(recipe.enchantedToolLevels().get(i))
-                    .setBackground(this.slot, -1, -1);
+                    .setStandardSlotBackground();
 
             x += 18;
         }
@@ -118,13 +86,6 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
     {
         final Minecraft mc = Minecraft.getInstance();
 
-        final List<FormattedText> lines = mc.font.getSplitter().splitLines(recipe.tool().getDisplayName(), SLOT_X - 4, Style.EMPTY);
-        final int y = HEIGHT - (36 + (lines.size() * mc.font.lineHeight)) / 2 - 1;
-        for (int i = 0; i < lines.size(); ++i)
-        {
-            stack.drawString(mc.font, Language.getInstance().getVisualOrder(lines.get(i)), 2, y + (i * mc.font.lineHeight), 0, false);
-        }
-
         final int scale = 2;
         stack.pose().pushPose();
         stack.pose().scale(1F / scale, 1F / scale, 1.0F);
@@ -136,5 +97,15 @@ public class ToolRecipeCategory implements IRecipeCategory<ToolUsage>
             x += 18;
         }
         stack.pose().popPose();
+    }
+
+    @Override
+    public void createRecipeExtras(@NotNull final IRecipeExtrasBuilder builder,
+                                   @NotNull final ToolUsage recipe,
+                                   @NotNull final IFocusGroup focuses)
+    {
+        builder.addText(recipe.tool().getDisplayName(), SLOT_X - 6, getHeight() - SLOT_Y)
+                .setPosition(2, SLOT_Y - 1)
+                .setTextAlignment(VerticalAlignment.CENTER);
     }
 }
