@@ -128,10 +128,10 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
                         }
                     }
                 }
-                // If no levels are defined, assume will go from zero to max level as a single action, and store on/off.
                 else
                 {
-                    category.add(5f);
+                    // By default no levels defined = 1 enabled, 0 disabled
+                    category.add(1);
                 }
                 effectCategories.put(category.getId(), category);
             }

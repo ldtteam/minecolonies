@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_BUILDING_LEVEL_RANGE;
 import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_LEVEL_RANGE;
 
@@ -31,7 +33,12 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
         for (final List<GuardGear> list : itemsNeeded)
         {
-            list.add(new GuardGear(ModEquipmentTypes.shield.get(), EquipmentSlot.OFFHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
+            list.add(new GuardGear(ModEquipmentTypes.shield.get(),
+              EquipmentSlot.OFFHAND,
+              TOOL_LEVEL_WOOD_OR_GOLD,
+              TOOL_LEVEL_MAXIMUM,
+              SHIELD_LEVEL_RANGE,
+              SHIELD_BUILDING_LEVEL_RANGE));
         }
 
         new KnightCombatAI((EntityCitizen) worker, getStateAI(), this);
