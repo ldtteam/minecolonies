@@ -1070,6 +1070,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             pathResult = null;
         }
 
+        desiredPos = BlockPos.ZERO;
         destination = null;
         super.stop();
     }
@@ -1136,9 +1137,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         getPathingOptions().setCanSwim(canSwim);
     }
 
+    @Override
     public BlockPos getDesiredPos()
     {
         return desiredPos;
+    }
+
+    @Override
+    public void setDesiredPos(final BlockPos pos)
+    {
+        desiredPos = pos;
     }
 
     /**

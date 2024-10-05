@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -3227,5 +3226,25 @@ public class InventoryUtils
             }
         }
         return allInInv;
+    }
+
+    /**
+     * Gets the first matching itemstack from a list
+     *
+     * @param stacks
+     * @param stackPredicate
+     * @return
+     */
+    public static ItemStack getFirstMatch(final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    {
+        for (final ItemStack stack : stacks)
+        {
+            if (stackPredicate.test(stack))
+            {
+                return stack;
+            }
+        }
+
+        return null;
     }
 }
