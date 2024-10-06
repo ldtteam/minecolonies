@@ -26,8 +26,8 @@
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
+                "max": 4.0,
+                "min": 2.0
               },
               "function": "minecraft:set_count"
             }
@@ -73,7 +73,8 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -87,7 +88,8 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -114,7 +116,8 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -132,7 +135,8 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -157,7 +161,8 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -177,7 +182,8 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],

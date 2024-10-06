@@ -1,15 +1,12 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
 import com.minecolonies.core.generation.SimpleLootTableProvider;
-import com.minecolonies.core.loot.ExpeditionDifficultyCondition;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +15,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.loot.ModLootConditions.EXPEDITION_PARAMS;
-import static com.minecolonies.core.generation.ExpeditionResourceManager.createStructureLootReference;
+import static com.minecolonies.core.generation.ExpeditionResourceManager.*;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.*;
 
 /**
@@ -32,14 +29,6 @@ public class DefaultColonyExpeditionLootProvider extends SimpleLootTableProvider
     public static final ResourceLocation EXPEDITION_OVERWORLD_LOOT = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_overworld");
     public static final ResourceLocation EXPEDITION_NETHER_LOOT    = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_nether");
     public static final ResourceLocation EXPEDITION_END_LOOT       = new ResourceLocation(Constants.MOD_ID, "expeditions/expedition_end");
-
-    /**
-     * Expedition difficulties
-     */
-    private static final ColonyExpeditionTypeDifficulty DIFF_1 = ColonyExpeditionTypeDifficulty.EASY;
-    private static final ColonyExpeditionTypeDifficulty DIFF_2 = ColonyExpeditionTypeDifficulty.MEDIUM;
-    private static final ColonyExpeditionTypeDifficulty DIFF_3 = ColonyExpeditionTypeDifficulty.HARD;
-    private static final ColonyExpeditionTypeDifficulty DIFF_4 = ColonyExpeditionTypeDifficulty.NIGHTMARE;
 
     /**
      * Default constructor.
@@ -61,128 +50,109 @@ public class DefaultColonyExpeditionLootProvider extends SimpleLootTableProvider
     {
         createExpeditionLootTable(EXPEDITION_OVERWORLD_LOOT, registrar, builder -> builder.withPool(
           new LootPool.Builder()
-            .setRolls(UniformGenerator.between(8, 16))
-            .add(LootItem.lootTableItem(Items.OAK_LOG).setWeight(100))
-            .add(LootItem.lootTableItem(Items.BIRCH_LOG).setWeight(100))
-            .add(LootItem.lootTableItem(Items.SPRUCE_LOG).setWeight(100))
-            .add(LootItem.lootTableItem(Items.JUNGLE_LOG).setWeight(100))
-            .add(LootItem.lootTableItem(Items.DARK_OAK_LOG)
-                   .setWeight(100)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.ACACIA_LOG)
-                   .setWeight(100)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.CHERRY_LOG)
-                   .setWeight(100)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.MANGROVE_LOG)
-                   .setWeight(100)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.COAL_ORE).setWeight(100))
-            .add(LootItem.lootTableItem(Items.COPPER_ORE).setWeight(100))
-            .add(LootItem.lootTableItem(Items.IRON_ORE).setWeight(100))
-            .add(LootItem.lootTableItem(Items.GOLD_ORE)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.REDSTONE_ORE)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.LAPIS_ORE)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.POPPY).setWeight(100))
-            .add(LootItem.lootTableItem(Items.ROSE_BUSH).setWeight(100))
-            .add(LootItem.lootTableItem(Items.DANDELION).setWeight(100))
-            .add(LootItem.lootTableItem(Items.CORNFLOWER).setWeight(100))
-            .add(LootItem.lootTableItem(Items.AZURE_BLUET).setWeight(100))
-            .add(LootItem.lootTableItem(Items.OXEYE_DAISY).setWeight(100))
-            .add(LootItem.lootTableItem(Items.LILY_OF_THE_VALLEY).setWeight(100))
-            .add(LootItem.lootTableItem(Items.RED_TULIP)
-                   .setWeight(80)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.PINK_TULIP)
-                   .setWeight(80)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.ORANGE_TULIP)
-                   .setWeight(80)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.WHITE_TULIP)
-                   .setWeight(80)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.SUNFLOWER)
-                   .setWeight(80)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.TORCHFLOWER)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3)))
-            .add(LootItem.lootTableItem(Items.ALLIUM)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3)))
-            .add(LootItem.lootTableItem(Items.BLUE_ORCHID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3)))
-            .add(LootItem.lootTableItem(Items.PITCHER_PLANT)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3)))
-            .add(LootItem.lootTableItem(Items.BROWN_MUSHROOM)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(LootItem.lootTableItem(Items.RED_MUSHROOM)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3)))
-            .add(createStructureLootReference(VILLAGE_DESERT_ID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2)))
-            .add(createStructureLootReference(VILLAGE_PLAINS_ID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2)))
-            .add(createStructureLootReference(VILLAGE_SAVANNA_ID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2)))
-            .add(createStructureLootReference(VILLAGE_SNOWY_ID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2)))
-            .add(createStructureLootReference(VILLAGE_TAIGA_ID)
-                   .setWeight(50)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2)))
-            .add(createStructureLootReference(RUINED_PORTAL_ID).setWeight(30))
-            .add(createStructureLootReference(PILLAGER_OUTPOST_ID).setWeight(20))
-            .add(createStructureLootReference(DESERT_PYRAMID_ID).setWeight(20))
-            .add(createStructureLootReference(JUNGLE_TEMPLE_ID).setWeight(20))
-            .add(createStructureLootReference(IGLOO_ID)
-                   .setWeight(20)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2, DIFF_3)))
-            .add(createStructureLootReference(SWAMP_HUT_ID)
-                   .setWeight(20)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2, DIFF_3)))
-            .add(createStructureLootReference(MINESHAFT_ID).setWeight(20))
-            .add(createStructureLootReference(SHIPWRECK_ID)
-                   .setWeight(15)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2, DIFF_3)))
-            .add(createStructureLootReference(BURIED_TREASURE_ID)
-                   .setWeight(15)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_1, DIFF_2, DIFF_3)))
-            .add(createStructureLootReference(MONUMENT_ID)
-                   .setWeight(10)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3, DIFF_4)))
-            .add(createStructureLootReference(MANSION_ID)
-                   .setWeight(10)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_2, DIFF_3, DIFF_4)))
-            .add(createStructureLootReference(STRONGHOLD_ID)
-                   .setWeight(5)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3, DIFF_4)))
-            .add(createStructureLootReference(ANCIENT_CITY_ID)
-                   .setWeight(5)
-                   .when(ExpeditionDifficultyCondition.forDifficulty(DIFF_3, DIFF_4)))
+            .setRolls(UniformGenerator.between(10, 20))
+            // Logs
+            .add(createSimpleItem(Items.OAK_LOG, 100).common().build())
+            .add(createSimpleItem(Items.BIRCH_LOG, 100).common().build())
+            .add(createSimpleItem(Items.SPRUCE_LOG, 100).common().build())
+            .add(createSimpleItem(Items.DARK_OAK_LOG, 100).common().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.ACACIA_LOG, 100).common().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.CHERRY_LOG, 100).common().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.MANGROVE_LOG, 100).common().diffAfter(DIFF_2).build())
+            // Ores and gems
+            .add(createSimpleItem(Items.COAL, 100).common().build())
+            .add(createSimpleItem(Items.RAW_COPPER, 100).common().build())
+            .add(createSimpleItem(Items.RAW_IRON, 100).common().build())
+            .add(createSimpleItem(Items.RAW_GOLD, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.REDSTONE, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.LAPIS_LAZULI, 50).uncommon().diffAfter(DIFF_2).build())
+            // Flowers
+            .add(createSimpleItem(Items.POPPY, 100).common().build())
+            .add(createSimpleItem(Items.ROSE_BUSH, 100).common().build())
+            .add(createSimpleItem(Items.DANDELION, 100).common().build())
+            .add(createSimpleItem(Items.DANDELION, 100).common().build())
+            .add(createSimpleItem(Items.CORNFLOWER, 100).common().build())
+            .add(createSimpleItem(Items.AZURE_BLUET, 100).common().build())
+            .add(createSimpleItem(Items.OXEYE_DAISY, 100).common().build())
+            .add(createSimpleItem(Items.LILY_OF_THE_VALLEY, 100).common().build())
+            .add(createSimpleItem(Items.RED_TULIP, 80).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.PINK_TULIP, 80).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.ORANGE_TULIP, 80).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.WHITE_TULIP, 80).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.SUNFLOWER, 80).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.TORCHFLOWER, 50).rare().diffAfter(DIFF_3).build())
+            .add(createSimpleItem(Items.ALLIUM, 50).rare().diffAfter(DIFF_3).build())
+            .add(createSimpleItem(Items.BLUE_ORCHID, 50).rare().diffAfter(DIFF_3).build())
+            .add(createSimpleItem(Items.PITCHER_PLANT, 50).rare().diffAfter(DIFF_3).build())
+            // Mushrooms
+            .add(createSimpleItem(Items.BROWN_MUSHROOM, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.RED_MUSHROOM, 50).uncommon().diffAfter(DIFF_2).build())
+            // Structures - Friendly
+            .add(createStructureRef(VILLAGE_DESERT_ID, 50).diffBefore(DIFF_2).build())
+            .add(createStructureRef(VILLAGE_PLAINS_ID, 50).diffBefore(DIFF_2).build())
+            .add(createStructureRef(VILLAGE_SAVANNA_ID, 50).diffBefore(DIFF_2).build())
+            .add(createStructureRef(VILLAGE_SNOWY_ID, 50).diffBefore(DIFF_2).build())
+            .add(createStructureRef(VILLAGE_TAIGA_ID, 50).diffBefore(DIFF_2).build())
+            .add(createStructureRef(IGLOO_ID, 50).diffBefore(DIFF_2).build())
+            // Structures - Enemy - Simple - Overground
+            .add(createStructureRef(RUINED_PORTAL_ID, 25).diffBefore(DIFF_2).build())
+            .add(createStructureRef(PILLAGER_OUTPOST_ID, 25).diffBefore(DIFF_2).build())
+            .add(createStructureRef(DESERT_PYRAMID_ID, 25).diffBefore(DIFF_2).build())
+            .add(createStructureRef(JUNGLE_TEMPLE_ID, 25).diffBefore(DIFF_2).build())
+            .add(createStructureRef(SWAMP_HUT_ID, 25).diffBefore(DIFF_2).build())
+            // Structures - Enemy - Simple - Underground/water
+            .add(createStructureRef(MINESHAFT_ID, 25).diffAfter(DIFF_2).build())
+            .add(createStructureRef(SHIPWRECK_ID, 25).diffAfter(DIFF_2).build())
+            .add(createStructureRef(BURIED_TREASURE_ID, 25).diffAfter(DIFF_2).build())
+            // Structures - Enemy - Difficult
+            .add(createStructureRef(STRONGHOLD_ID, 25).diffAfter(DIFF_3).build())
+            .add(createStructureRef(MONUMENT_ID, 25).diffAfter(DIFF_3).build())
+            .add(createStructureRef(MANSION_ID, 25).diffAfter(DIFF_3).build())
+            .add(createStructureRef(ANCIENT_CITY_ID, 25).diffAfter(DIFF_3).build())
         ));
 
-        createExpeditionLootTable(EXPEDITION_NETHER_LOOT, registrar, builder -> builder.withPool(new LootPool.Builder()));
+        createExpeditionLootTable(EXPEDITION_NETHER_LOOT, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UniformGenerator.between(10, 20))
+            // Blocks
+            .add(createSimpleItem(Items.NETHERRACK, 100).common().build())
+            .add(createSimpleItem(Items.BLACKSTONE, 100).common().build())
+            .add(createSimpleItem(Items.BASALT, 100).common().build())
+            .add(createSimpleItem(Items.SOUL_SAND, 100).common().build())
+            .add(createSimpleItem(Items.SOUL_SOIL, 100).common().build())
+            .add(createSimpleItem(Items.GRAVEL, 100).common().build())
+            .add(createSimpleItem(Items.CRIMSON_NYLIUM, 100).common().build())
+            .add(createSimpleItem(Items.WARPED_NYLIUM, 100).common().build())
+            .add(createSimpleItem(Items.MAGMA_BLOCK, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.OBSIDIAN, 50).uncommon().diffAfter(DIFF_2).build())
+            // Ores and gems
+            .add(createSimpleItem(Items.GOLD_NUGGET, 100).common().build())
+            .add(createSimpleItem(Items.QUARTZ, 100).common().build())
+            .add(createSimpleItem(Items.GLOWSTONE, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.ANCIENT_DEBRIS, 25).rare().diffAfter(DIFF_3).build())
+            // Flowers
+            .add(createSimpleItem(Items.BROWN_MUSHROOM, 100).common().build())
+            .add(createSimpleItem(Items.RED_MUSHROOM, 100).common().build())
+            .add(createSimpleItem(Items.CRIMSON_FUNGUS, 100).common().build())
+            .add(createSimpleItem(Items.WARPED_FUNGUS, 100).common().build())
+            .add(createSimpleItem(Items.CRIMSON_STEM, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.WARPED_STEM, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.SHROOMLIGHT, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.TWISTING_VINES, 50).uncommon().diffAfter(DIFF_2).build())
+            .add(createSimpleItem(Items.WEEPING_VINES, 50).uncommon().diffAfter(DIFF_2).build())
+            // Structures - Friendly
+            .add(createStructureRef(NETHER_FOSSIL_ID, 50).diffBefore(DIFF_2).build())
+            // Structures - Enemy
+            .add(createStructureRef(FORTRESS_ID, 25).diffAfter(DIFF_2).build())
+            .add(createStructureRef(BASTION_REMNANT_ID, 25).diffAfter(DIFF_2).build())
+        ));
 
         createExpeditionLootTable(EXPEDITION_END_LOOT, registrar, builder -> builder.withPool(new LootPool.Builder()));
     }
 
     @Override
-    protected void validate(final @NotNull Map<ResourceLocation, LootTable> map, final @NotNull ValidationContext validationtracker)
+    @SuppressWarnings("unchecked")
+    protected void validate(final @NotNull Map<ResourceLocation, LootTable> map, final @NotNull ValidationContext validationTracker)
     {
         ValidationContext newTracker = new ValidationContext(EXPEDITION_PARAMS, new LootDataResolver()
         {

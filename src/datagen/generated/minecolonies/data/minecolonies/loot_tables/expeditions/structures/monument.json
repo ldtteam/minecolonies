@@ -41,7 +41,8 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
@@ -65,7 +66,8 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],

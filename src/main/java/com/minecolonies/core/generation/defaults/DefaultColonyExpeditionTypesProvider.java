@@ -31,6 +31,7 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
     public static final ResourceLocation OVERWORLD_EASY   = new ResourceLocation(Constants.MOD_ID, "overworld_easy");
     public static final ResourceLocation OVERWORLD_MEDIUM = new ResourceLocation(Constants.MOD_ID, "overworld_medium");
     public static final ResourceLocation OVERWORLD_HARD   = new ResourceLocation(Constants.MOD_ID, "overworld_hard");
+    public static final ResourceLocation NETHER_EASY      = new ResourceLocation(Constants.MOD_ID, "nether_easy");
     public static final ResourceLocation NETHER_MEDIUM    = new ResourceLocation(Constants.MOD_ID, "nether_medium");
     public static final ResourceLocation NETHER_HARD      = new ResourceLocation(Constants.MOD_ID, "nether_hard");
     public static final ResourceLocation END_MEDIUM       = new ResourceLocation(Constants.MOD_ID, "end_medium");
@@ -99,6 +100,20 @@ public class DefaultColonyExpeditionTypesProvider implements DataProvider
                     .addEquipmentRequirement(ModEquipmentTypes.boots.get())
                     .addFoodRequirement(128)
                     .setGuards(4));
+
+        types.add(new ColonyExpeditionTypeBuilder(NETHER_EASY, Level.NETHER, EXPEDITION_NETHER_LOOT)
+                    .setName("com.minecolonies.core.expedition_types.nether.name")
+                    .setToText("com.minecolonies.core.expedition_types.nether.to_text")
+                    .setDifficulty(ColonyExpeditionTypeDifficulty.EASY)
+                    .addEquipmentRequirement(ModEquipmentTypes.sword.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.pickaxe.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.shovel.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.helmet.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.chestplate.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.leggings.get())
+                    .addEquipmentRequirement(ModEquipmentTypes.boots.get())
+                    .addFoodRequirement(32)
+                    .setGuards(2));
 
         types.add(new ColonyExpeditionTypeBuilder(NETHER_MEDIUM, Level.NETHER, EXPEDITION_NETHER_LOOT)
                     .setName("com.minecolonies.core.expedition_types.nether.name")

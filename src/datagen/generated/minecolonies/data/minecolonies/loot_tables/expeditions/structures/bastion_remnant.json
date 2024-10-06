@@ -26,8 +26,8 @@
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "max": 5.0,
-                "min": 3.0
+                "max": 6.0,
+                "min": 4.0
               },
               "function": "minecraft:set_count"
             }
@@ -37,13 +37,37 @@
         },
         {
           "type": "minecraft:item",
+          "name": "minecraft:gold_block",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crying_obsidian",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:gilded_blackstone",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
           "functions": [
             {
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
+                "max": 4.0,
+                "min": 2.0
               },
               "function": "minecraft:set_count"
             }
@@ -58,14 +82,33 @@
               "add": false,
               "count": {
                 "type": "minecraft:uniform",
-                "max": 2.0,
-                "min": 1.0
+                "max": 4.0,
+                "min": 2.0
               },
               "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:gold_ingot",
           "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:spectral_arrow",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:netherite_upgrade_smithing_template",
+          "weight": 5
         },
         {
           "type": "minecraft:item",
@@ -82,47 +125,6 @@
           ],
           "name": "minecraft:crossbow",
           "weight": 100
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:gold_block",
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:spectral_arrow",
-          "weight": 50
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:crying_obsidian",
-          "weight": 25
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulties": [
-                "hard"
-              ]
-            }
-          ],
-          "name": "minecraft:gilded_blackstone",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulties": [
-                "hard"
-              ]
-            }
-          ],
-          "name": "minecraft:netherite_upgrade_smithing_template",
-          "weight": 5
         },
         {
           "type": "minecraft:item",
@@ -152,7 +154,8 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],

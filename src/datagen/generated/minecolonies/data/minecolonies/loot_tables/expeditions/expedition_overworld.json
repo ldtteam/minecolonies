@@ -5,22 +5,50 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:oak_log",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:birch_log",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:spruce_log",
-          "weight": 100
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:jungle_log",
           "weight": 100
         },
         {
@@ -30,8 +58,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:dark_oak_log",
@@ -44,8 +84,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:acacia_log",
@@ -58,8 +110,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:cherry_log",
@@ -72,8 +136,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:mangrove_log",
@@ -81,17 +157,50 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:coal_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:coal",
           "weight": 100
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:copper_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:raw_copper",
           "weight": 100
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:iron_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:raw_iron",
           "weight": 100
         },
         {
@@ -101,11 +210,23 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
-          "name": "minecraft:gold_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:raw_gold",
           "weight": 50
         },
         {
@@ -115,11 +236,23 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
-          "name": "minecraft:redstone_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:redstone",
           "weight": 50
         },
         {
@@ -129,45 +262,150 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
-          "name": "minecraft:lapis_ore",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:lapis_lazuli",
           "weight": 50
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:poppy",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:rose_bush",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:dandelion",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:dandelion",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:cornflower",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:azure_bluet",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:oxeye_daisy",
           "weight": 100
         },
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "minecraft:lily_of_the_valley",
           "weight": 100
         },
@@ -178,8 +416,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:red_tulip",
@@ -192,8 +442,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:pink_tulip",
@@ -206,8 +468,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:orange_tulip",
@@ -220,8 +494,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:white_tulip",
@@ -234,8 +520,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:sunflower",
@@ -247,8 +545,20 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:torchflower",
@@ -260,8 +570,20 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:allium",
@@ -273,8 +595,20 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:blue_orchid",
@@ -286,8 +620,20 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:pitcher_plant",
@@ -300,8 +646,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:brown_mushroom",
@@ -314,8 +672,20 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:red_mushroom",
@@ -393,38 +763,17 @@
         },
         {
           "type": "minecraft:loot_table",
-          "name": "minecolonies:expeditions/structures/ruined_portal",
-          "weight": 30
-        },
-        {
-          "type": "minecraft:loot_table",
-          "name": "minecolonies:expeditions/structures/pillager_outpost",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:loot_table",
-          "name": "minecolonies:expeditions/structures/desert_pyramid",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:loot_table",
-          "name": "minecolonies:expeditions/structures/jungle_temple",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:loot_table",
           "conditions": [
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "easy",
-                "medium",
-                "hard"
+                "medium"
               ]
             }
           ],
           "name": "minecolonies:expeditions/structures/igloo",
-          "weight": 20
+          "weight": 50
         },
         {
           "type": "minecraft:loot_table",
@@ -433,18 +782,68 @@
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
                 "easy",
-                "medium",
-                "hard"
+                "medium"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/ruined_portal",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/pillager_outpost",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/desert_pyramid",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/jungle_temple",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "easy",
+                "medium"
               ]
             }
           ],
           "name": "minecolonies:expeditions/structures/swamp_hut",
-          "weight": 20
-        },
-        {
-          "type": "minecraft:loot_table",
-          "name": "minecolonies:expeditions/structures/mineshaft",
-          "weight": 20
+          "weight": 25
         },
         {
           "type": "minecraft:loot_table",
@@ -452,14 +851,29 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "easy",
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/mineshaft",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard",
+                "nightmare"
               ]
             }
           ],
           "name": "minecolonies:expeditions/structures/shipwreck",
-          "weight": 15
+          "weight": 25
         },
         {
           "type": "minecraft:loot_table",
@@ -467,44 +881,14 @@
             {
               "condition": "minecolonies:expedition_difficulty",
               "difficulties": [
-                "easy",
                 "medium",
-                "hard"
+                "hard",
+                "nightmare"
               ]
             }
           ],
           "name": "minecolonies:expeditions/structures/buried_treasure",
-          "weight": 15
-        },
-        {
-          "type": "minecraft:loot_table",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulties": [
-                "medium",
-                "hard",
-                "nightmare"
-              ]
-            }
-          ],
-          "name": "minecolonies:expeditions/structures/monument",
-          "weight": 10
-        },
-        {
-          "type": "minecraft:loot_table",
-          "conditions": [
-            {
-              "condition": "minecolonies:expedition_difficulty",
-              "difficulties": [
-                "medium",
-                "hard",
-                "nightmare"
-              ]
-            }
-          ],
-          "name": "minecolonies:expeditions/structures/mansion",
-          "weight": 10
+          "weight": 25
         },
         {
           "type": "minecraft:loot_table",
@@ -518,7 +902,35 @@
             }
           ],
           "name": "minecolonies:expeditions/structures/stronghold",
-          "weight": 5
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/monument",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecolonies:expeditions/structures/mansion",
+          "weight": 25
         },
         {
           "type": "minecraft:loot_table",
@@ -532,13 +944,13 @@
             }
           ],
           "name": "minecolonies:expeditions/structures/ancient_city",
-          "weight": 5
+          "weight": 25
         }
       ],
       "rolls": {
         "type": "minecraft:uniform",
-        "max": 16.0,
-        "min": 8.0
+        "max": 20.0,
+        "min": 10.0
       }
     }
   ],
