@@ -9,13 +9,10 @@
   "parentResearch": "minecolonies:combat/tactictraining",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_carrot"
-        ]
-      },
-      "quantity": 4
+      "items": {
+        "count": 4,
+        "item": "minecraft:golden_carrot"
+      }
     }
   ],
   "researchLevel": 2,

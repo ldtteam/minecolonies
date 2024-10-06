@@ -239,7 +239,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     private void loadLadderPos()
     {
-        final Map<String, Set<BlockPos>> map = tileEntity.getWorldTagNamePosMap();
+        final Map<String, Set<BlockPos>> map = getTileEntity().getWorldTagNamePosMap();
         final Set<BlockPos> cobblePos = map.getOrDefault("cobble", new HashSet<>());
         final Set<BlockPos> ladderPos = map.getOrDefault("ladder", new HashSet<>());
         if (cobblePos.isEmpty() || ladderPos.isEmpty())
