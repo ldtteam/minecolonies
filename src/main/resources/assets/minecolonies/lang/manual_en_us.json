@@ -1789,6 +1789,7 @@
   "com.minecolonies.coremod.gui.back": "Back",
   "com.minecolonies.coremod.research.research.maxunlocked": "Max 1 Level 6 per branch",
   "com.minecolonies.coremod.research.research.or": "or",
+  "com.minecolonies.coremod.research.research.or.tooltip": "Choose wisely: Master one art, and forsake the other.",
   "com.minecolonies.coremod.job.glassblower": "Glassblower",
   "com.minecolonies.coremod.job.dyer": "Dyer",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
