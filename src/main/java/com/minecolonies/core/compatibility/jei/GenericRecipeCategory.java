@@ -286,9 +286,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             final float yaw = animalTimer.getValue();
             final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
             final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
+            animal.setLevel(FAKE_LEVEL);
             Lighting.setupForFlatItems();
             UiRenderMacros.drawEntity(stack.pose(), animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
             Lighting.setupFor3DItems();
+            animal.setLevel(null);
         }
     }
 
