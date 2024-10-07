@@ -120,7 +120,6 @@ public final class RecipeAnalyzer
                 final Entity entity = entityType.create(level);
                 if (entity instanceof Animal animal)
                 {
-                    animal.setLevel(null);
                     animals.add(animal);
                 }
             }
