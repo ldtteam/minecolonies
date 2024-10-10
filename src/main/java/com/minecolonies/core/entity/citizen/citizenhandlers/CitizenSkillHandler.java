@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.citizen.citizenhandlers;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -14,11 +13,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -36,7 +35,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     /**
      * Skill map.
      */
-    public Map<Skill, Tuple<Integer, Double>> skillMap = new HashMap<>();
+    public Map<Skill, SkillData> skillMap = new EnumMap<>(Skill.class);
 
     @Override
     public void init(final int levelCap)
@@ -45,7 +44,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             for (final Skill skill : Skill.values())
             {
-                skillMap.put(skill, new Tuple<>(1, 0.0D));
+                skillMap.put(skill, new SkillData(1, 0.0D));
             }
         }
         else
@@ -53,7 +52,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
             final Random random = new Random();
             for (final Skill skill : Skill.values())
             {
-                skillMap.put(skill, new Tuple<>(random.nextInt(levelCap - 1) + 1, 0.0D));
+                skillMap.put(skill, new SkillData(random.nextInt(levelCap - 1) + 1, 0.0D));
             }
         }
     }
@@ -90,19 +89,18 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         int totalPoints = 0;
         for (final Skill skill : Skill.values())
         {
-            final int firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).getA();
-            final int secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final int firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).level;
+            final int secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).level;
             totalPoints += firstRoleModelLevel + secondRoleModelLevel;
         }
 
         for (final Skill skill : Skill.values())
         {
-            final double firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).getA();
-            final double secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final double firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).level;
+            final double secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).level;
 
             int newPoints = (int) (((firstRoleModelLevel + secondRoleModelLevel) / totalPoints) * bonusPoints);
-
-            skillMap.put(skill, new Tuple<>(skillMap.get(skill).getA() + newPoints, 0.0D));
+            skillMap.get(skill).level += newPoints;
         }
     }
 
@@ -113,14 +111,14 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         final CompoundTag compoundNBT = new CompoundTag();
 
         @NotNull final ListTag levelTagList = new ListTag();
-        for (@NotNull final Map.Entry<Skill, Tuple<Integer, Double>> entry : skillMap.entrySet())
+        for (@NotNull final Map.Entry<Skill, SkillData> entry : skillMap.entrySet())
         {
             if (entry.getKey() != null && entry.getValue() != null)
             {
                 @NotNull final CompoundTag levelCompound = new CompoundTag();
                 levelCompound.putInt(TAG_SKILL, entry.getKey().ordinal());
-                levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
-                levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
+                levelCompound.putInt(TAG_LEVEL, entry.getValue().level);
+                levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().experience);
                 levelTagList.add(levelCompound);
             }
         }
@@ -137,7 +135,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);
             skillMap.put(Skill.values()[levelExperienceAtJob.getInt(TAG_SKILL)],
-              new Tuple<>(Math.max(1, Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL)), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+              new SkillData(Math.max(1, Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL)), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
         }
     }
 
@@ -150,7 +148,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         }
 
         final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen);
-        if (skillMap.get(Skill.Intelligence).getA() < levelCap * 9)
+        if (skillMap.get(Skill.Intelligence).level < levelCap * 9)
         {
             addXpToSkill(Skill.Intelligence, 10, citizen);
         }
@@ -160,50 +158,50 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public int getLevel(@NotNull final Skill skill)
     {
-        return skillMap.get(skill).getA();
+        return skillMap.get(skill).level;
     }
 
     @Override
     public void incrementLevel(@NotNull final Skill skill, final int level)
     {
-        final Tuple<Integer, Double> current = skillMap.get(skill);
-        skillMap.put(skill, new Tuple<>(Math.min(MAX_CITIZEN_LEVEL, Math.max(current.getA() + level, 1)), current.getB()));
+        final SkillData current = skillMap.get(skill);
+        current.level = Math.min(MAX_CITIZEN_LEVEL, Math.max(current.level + level, 1));
     }
 
     @Override
     public void addXpToSkill(final Skill skill, final double xp, final ICitizenData data)
     {
-        final Tuple<Integer, Double> tuple = skillMap.getOrDefault(skill, new Tuple<>(0, 0.0D));
-        int level = tuple.getA();
-        final double currentXp = tuple.getB();
+        final SkillData skillData = skillMap.getOrDefault(skill, new SkillData(0, 0.0D));
 
         final IBuilding home = data.getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? MAX_BUILDING_LEVEL : home.getMaxBuildingLevel();
 
-        if (((citizenHutLevel < citizenHutMaxLevel || citizenHutMaxLevel < MAX_BUILDING_LEVEL) && (citizenHutLevel + 1) * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
+        if (((citizenHutLevel < citizenHutMaxLevel || citizenHutMaxLevel < MAX_BUILDING_LEVEL) && (citizenHutLevel + 1) * 10 <= skillData.level)
+              || skillData.level >= MAX_CITIZEN_LEVEL)
         {
             return;
         }
 
-        double xpToLevelUp = Math.min(Double.MAX_VALUE, currentXp + xp);
+        final int orgLevel = skillData.level;
+        double xpToLevelUp = Math.min(Double.MAX_VALUE, skillData.experience + xp);
         while (xpToLevelUp > 0)
         {
-            final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(level);
+            final double nextLevel = ExperienceUtils.getXPNeededForNextLevel(skillData.level);
             if (nextLevel > xpToLevelUp)
             {
-                skillMap.put(skill, new Tuple<>(Math.min(MAX_CITIZEN_LEVEL, level), xpToLevelUp));
-                xpToLevelUp = 0;
+                skillData.experience = xpToLevelUp;
+                break;
             }
             else
             {
                 xpToLevelUp = xpToLevelUp - nextLevel;
-                level++;
+                skillData.level++;
             }
         }
 
-        if (level > tuple.getA())
+        if (skillData.level > orgLevel)
         {
             levelUp(data);
             data.markDirty(10);
@@ -213,29 +211,23 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public void removeXpFromSkill(@NotNull final Skill skill, final double xp, @NotNull final ICitizenData data)
     {
-        final Tuple<Integer, Double> tuple = skillMap.get(skill);
-        int level = tuple.getA();
-        double currentXp = tuple.getB();
+        final SkillData skillData = skillMap.get(skill);
 
-        double xpToDiscount = xp;
-        while (xpToDiscount > 0)
+        double xpToRemove = xp;
+        while (xpToRemove > 0)
         {
-            if (currentXp >= xpToDiscount || level <= 1)
+            if (skillData.experience >= xpToRemove || skillData.level <= 1)
             {
-                skillMap.put(skill, new Tuple<>(Math.max(1, level), Math.max(0, currentXp - xpToDiscount)));
+                skillData.experience = Math.max(0, skillData.experience - xpToRemove);
                 break;
             }
             else
             {
-                xpToDiscount -= currentXp;
-                currentXp = ExperienceUtils.getXPNeededForNextLevel(level - 1);
-                level--;
+                xpToRemove -= skillData.experience;
+                skillData.experience = ExperienceUtils.getXPNeededForNextLevel(skillData.level - 1);
+                skillData.level--;
+                data.markDirty(40);
             }
-        }
-
-        if (level < tuple.getA())
-        {
-            data.markDirty(10);
         }
     }
 
@@ -262,16 +254,48 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     public double getTotalXP()
     {
         double totalXp = 0;
-        for (final Tuple<Integer, Double> tuple : skillMap.values())
+        for (SkillData tuple : skillMap.values())
         {
-            totalXp += tuple.getB();
+            totalXp += tuple.experience;
         }
         return totalXp;
     }
 
     @Override
-    public Map<Skill, Tuple<Integer, Double>> getSkills()
+    public Map<Skill, SkillData> getSkills()
     {
-        return ImmutableMap.copyOf(skillMap);
+        return Collections.unmodifiableMap(skillMap);
+    }
+
+    public static class SkillData
+    {
+        private int    level;
+        private double experience;
+
+        private SkillData(final int level, final double experience)
+        {
+            this.level = level;
+            this.experience = experience;
+        }
+
+        public int getLevel()
+        {
+            return level;
+        }
+
+        public void setLevel(final int level)
+        {
+            this.level = level;
+        }
+
+        public double getExperience()
+        {
+            return experience;
+        }
+
+        public void setExperience(final double experience)
+        {
+            this.experience = experience;
+        }
     }
 }

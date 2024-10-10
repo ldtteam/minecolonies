@@ -529,7 +529,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getCurrentCitizenCount()
     {
-        return citizens.size() + colony.getGraveManager().getGraves().size();
+        return citizens.size();
     }
 
     @Override
