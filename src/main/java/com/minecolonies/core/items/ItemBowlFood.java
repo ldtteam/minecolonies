@@ -1,10 +1,14 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BowlFoodItem;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +19,7 @@ import java.util.List;
 /**
  * A custom item class for bowl food items.
  */
-public class ItemBowlFood extends BowlFoodItem implements IMinecoloniesFoodItem
+public class ItemBowlFood extends Item implements IMinecoloniesFoodItem
 {
     /**
      * The food tier.
@@ -32,6 +36,32 @@ public class ItemBowlFood extends BowlFoodItem implements IMinecoloniesFoodItem
     {
         super(builder);
         this.tier = tier;
+    }
+
+    @NotNull
+    @Override
+    public ItemStack finishUsingItem(@NotNull final ItemStack stack, @NotNull final Level level, @NotNull final LivingEntity entity)
+    {
+        // implementation of this is deliberately similar to HoneyBottleItem; in particular it only
+        // gives extra drops to Players because citizens eating food are dealt with by the caller.
+
+        final ItemStack bowl = new ItemStack(Items.BOWL);
+
+        final ItemStack remainder = super.finishUsingItem(stack, level, entity);
+        if (ItemStackUtils.isEmpty(remainder))
+        {
+            return bowl;
+        }
+
+        if (entity instanceof final Player player && !player.getAbilities().instabuild)
+        {
+            if (!player.getInventory().add(bowl))
+            {
+                player.drop(bowl, false);
+            }
+        }
+
+        return stack;
     }
 
     @Override
