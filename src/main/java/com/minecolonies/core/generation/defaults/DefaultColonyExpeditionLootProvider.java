@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 
 import static com.minecolonies.api.loot.ModLootConditions.EXPEDITION_PARAMS;
 import static com.minecolonies.core.generation.ExpeditionResourceManager.*;
+import static com.minecolonies.core.generation.defaults.DefaultExpeditionEncountersProvider.*;
 import static com.minecolonies.core.generation.defaults.DefaultExpeditionStructureLootProvider.*;
 
 /**
@@ -109,6 +110,13 @@ public class DefaultColonyExpeditionLootProvider extends SimpleLootTableProvider
             .add(createStructureRef(MONUMENT_ID, 25).diffAfter(DIFF_3).build())
             .add(createStructureRef(MANSION_ID, 25).diffAfter(DIFF_3).build())
             .add(createStructureRef(ANCIENT_CITY_ID, 25).diffAfter(DIFF_3).build())
+            // Encounters
+            .add(createEncounterLootItem(ZOMBIE, 100).build())
+            .add(createEncounterLootItem(SKELETON, 50).build())
+            .add(createEncounterLootItem(CREEPER, 30).build())
+            .add(createEncounterLootItem(SPIDER, 30).build())
+            .add(createEncounterLootItem(CAVE_SPIDER, 30).build())
+            .add(createEncounterLootItem(ENDERMAN, 15).build())
         ));
 
         createExpeditionLootTable(EXPEDITION_NETHER_LOOT, registrar, builder -> builder.withPool(
@@ -145,9 +153,29 @@ public class DefaultColonyExpeditionLootProvider extends SimpleLootTableProvider
             // Structures - Enemy
             .add(createStructureRef(FORTRESS_ID, 25).diffAfter(DIFF_2).build())
             .add(createStructureRef(BASTION_REMNANT_ID, 25).diffAfter(DIFF_2).build())
+            // Encounters
+            .add(createEncounterLootItem(ZOMBIFIED_PIGLIN, 100).build())
+            .add(createEncounterLootItem(PIGLIN, 50).build())
+            .add(createEncounterLootItem(HOGLIN, 30).build())
+            .add(createEncounterLootItem(WITHER_SKELETON, 30).build())
+            .add(createEncounterLootItem(BLAZE, 30).build())
         ));
 
-        createExpeditionLootTable(EXPEDITION_END_LOOT, registrar, builder -> builder.withPool(new LootPool.Builder()));
+        createExpeditionLootTable(EXPEDITION_END_LOOT, registrar, builder -> builder.withPool(
+          new LootPool.Builder()
+            .setRolls(UniformGenerator.between(10, 20))
+            // Blocks
+            .add(createSimpleItem(Items.END_STONE, 100).common().build())
+            .add(createSimpleItem(Items.OBSIDIAN, 50).uncommon().build())
+            // Plants
+            .add(createSimpleItem(Items.CHORUS_PLANT, 100).common().build())
+            .add(createSimpleItem(Items.CHORUS_FLOWER, 100).common().build())
+            // Structures - Enemy
+            .add(createStructureRef(END_CITY_ID, 25).diffAfter(DIFF_2).build())
+            .add(createStructureRef(BASTION_REMNANT_ID, 25).diffAfter(DIFF_2).build())
+            // Encounters
+            .add(createEncounterLootItem(ENDERMAN, 100).build())
+        ));
     }
 
     @Override
