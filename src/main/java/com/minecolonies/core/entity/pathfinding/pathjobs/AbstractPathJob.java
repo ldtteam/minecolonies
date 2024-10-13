@@ -1350,7 +1350,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         //  Check for headroom in the target space
-        if (!isPassable(x, y + 2, z, false, parent))
+        if (!isPassable(x, y + 2, z, true, parent))
         {
             final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y, z).getCollisionShape(world, tempWorldPos.set(x, y, z));
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 2, z).getCollisionShape(world, tempWorldPos.set(x, y + 2, z));
@@ -1366,7 +1366,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.x, parent.y + 2, parent.z, false, parent))
+        if (!isPassable(parent.x, parent.y + 2, parent.z, true, parent))
         {
             final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y, z).getCollisionShape(world, tempWorldPos.set(x, y, z));
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(parent.x, parent.y + 2, parent.z).getCollisionShape(world, tempWorldPos.set(parent.x, parent.y + 2, parent.z));
