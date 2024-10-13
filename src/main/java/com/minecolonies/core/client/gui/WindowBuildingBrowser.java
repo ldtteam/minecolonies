@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.ImageRepeatable;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.api.Log;
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,6 +61,8 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     private final Block block;
     private List<BuildingInfo> buildings;
     private Future<List<BuildingInfo>> futureBuildings;
+    private AtomicInteger currentProgress = new AtomicInteger();
+    private int totalProgress;
 
     /**
      * Construct the window
@@ -93,6 +97,8 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(block.getName());
         }
 
+        currentProgress.set(0);
+        totalProgress = 100;
         futureBuildings = IOPool.submit(this::discoverBuildings);
     }
 
@@ -125,11 +131,20 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             }
             futureBuildings = null;
         }
+        else if (futureBuildings != null)
+        {
+            final ImageRepeatable progress = findPaneOfTypeByID("progress", ImageRepeatable.class);
+            final int fullWidth = findPaneOfTypeByID("loading", Text.class).getWidth();
+            final double progressValue = currentProgress.doubleValue() / totalProgress;
+            final int progressWidth = (int) Math.round(progressValue * fullWidth);
+            progress.setSize(progressWidth, progress.getHeight());
+        }
     }
 
     private void displayBuildings()
     {
         findPaneOfTypeByID("loading", Text.class).hide();
+        findPaneOfTypeByID("progress", ImageRepeatable.class).hide();
 
         final List<BuildingInfo> visibleBuildings = mc.player.isCreative() ? buildings
                 : buildings.stream().filter(b -> !b.isInvisible()).toList();
@@ -210,7 +225,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
 
         rebuildCache();
 
-        return buildingCache.computeIfAbsent(block, k -> new ArrayList<>());
+        return buildingCache.getOrDefault(block, new ArrayList<>());
     }
 
     private void rebuildCache()
@@ -230,6 +245,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             thread.setUncaughtExceptionHandler((thread1, throwable) -> Log.getLogger().error("Minecolonies Building Browser errored! ", throwable));
             return thread;
         });
+        totalProgress = StructurePacks.getPackMetas().size();
         final Map<StructurePackMeta, Future<Map<Block, List<BuildingInfo>>>> packFutures = StructurePacks.getPackMetas().stream()
                 .collect(Collectors.toMap(pack -> pack, pack -> packPool.submit(() -> discoverBuildings(pack, browsableBlocks))));
         while (!futureBuildings.isCancelled() && packFutures.values().stream().anyMatch(f -> !f.isDone()))
@@ -304,6 +320,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
         }
 
         buildings.replaceAll((k, v) -> BuildingInfo.flattenLevels(v));
+        currentProgress.getAndIncrement();
         return buildings;
     }
 

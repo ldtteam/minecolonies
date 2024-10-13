@@ -10,6 +10,7 @@
 
     <text id="loading" size="90 11" pos="50 116" textalign="MIDDLE" color="green"
            label="$(com.minecolonies.command.gui.browsebuilding.loading)" />
+    <imagerepeat id="progress" size="0 16" pos="50 130" source="minecolonies:textures/gui/progress_block.png" repeatsize="11 16"/>
 
     <list id="buildings" size="162 80%" pos="15 30" visible="false">
         <box size="100% 32" linewidth="1">
