@@ -1,0 +1,17 @@
+{
+	"type": "recipe",
+	"count": 4,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:durum"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:beetroot"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:veggie_ravioli"
+}

@@ -1,0 +1,29 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:durum"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:manchet_bread"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:porkchop"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:egg"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:potato"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:schnitzel"
+}

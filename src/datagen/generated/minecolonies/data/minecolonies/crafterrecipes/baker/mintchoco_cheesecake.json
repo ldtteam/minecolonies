@@ -1,0 +1,20 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "baker_smelting_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecolonies:plain_cheesecake"
+		},
+		{
+			"item": "minecolonies:mint"
+		},
+		{
+			"count": 2,
+			"item": "minecraft:cocoa_beans"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:mintchoco_cheesecake"
+}

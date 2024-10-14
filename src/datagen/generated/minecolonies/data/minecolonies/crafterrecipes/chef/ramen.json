@@ -1,0 +1,25 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecolonies:garlic"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:raw_noodle"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:soysauce"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:ramen"
+}

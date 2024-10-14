@@ -1,0 +1,17 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:soybean"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:water"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:soysauce"
+}
