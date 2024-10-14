@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView.MapEntry;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
@@ -23,13 +24,14 @@ import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.NotNull;
 
@@ -173,15 +175,16 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         final Level level = colony.getWorld();
 
-        final List<MapItemSavedData> mapDataList = new ArrayList<>();
+        final List<MapEntry> mapDataList = new ArrayList<>();
         for (final ItemStack stack : maps)
         {
             try
             {
+                final MapId mapId = stack.get(DataComponents.MAP_ID);
                 final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
                 if (mapData != null)
                 {
-                    mapDataList.add(mapData);
+                    mapDataList.add(new MapEntry(mapId, mapData));
                 }
             }
             catch (final Exception ex)
@@ -191,9 +194,9 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         }
 
         buf.writeInt(mapDataList.size());
-        for (final MapItemSavedData mapData : mapDataList)
+        for (final MapEntry mapData : mapDataList)
         {
-            buf.writeNbt(mapData.save(new CompoundTag(), buf.registryAccess()));
+            MapEntry.STREAM_CODEC.encode(buf, mapData);
         }
     }
 
@@ -247,7 +250,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         /**
          * List of mapdata.
          */
-        private List<MapItemSavedData> mapDataList = new ArrayList<>();
+        private List<MapEntry> mapDataList = new ArrayList<>();
 
         /**
          * Instantiates the view of the building.
@@ -302,8 +305,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             mapDataList.clear();
             for (int i = 0; i < size; i++)
             {
-                final MapItemSavedData mapData = MapItemSavedData.load(buf.readNbt(), buf.registryAccess());
-                mapDataList.add(mapData);
+                mapDataList.add(MapEntry.STREAM_CODEC.decode(buf));
             }
         }
 
@@ -325,11 +327,8 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             return canPlayerUseTP;
         }
 
-        /**
-         * Getter for the mapdata.
-         * @return the original list.
-         */
-        public List<MapItemSavedData> getMapDataList()
+        @Override
+        public List<MapEntry> getMapDataList()
         {
             return mapDataList;
         }

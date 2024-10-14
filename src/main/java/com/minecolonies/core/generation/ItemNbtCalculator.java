@@ -23,6 +23,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -84,6 +85,7 @@ public class ItemNbtCalculator implements DataProvider
                 }
             });
 
+            listBuilder.add(Items.FILLED_MAP.getDefaultInstance());
             allStacks = listBuilder.build();
 
             final TreeMap<String, Set<String>> keyMapping = new TreeMap<>();
@@ -108,6 +110,10 @@ public class ItemNbtCalculator implements DataProvider
                 if (stack.getItem() instanceof ArmorItem)
                 {
                     keys.add(DataComponents.DYED_COLOR);
+                }
+                if (stack.is(Items.FILLED_MAP))
+                {
+                    keys.add(DataComponents.MAP_ID);
                 }
                 if (!stack.isEnchantable())
                 {
