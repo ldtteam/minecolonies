@@ -53,21 +53,27 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     @Override
     public void setPlacedBy(final Level worldIn, final @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack)
     {
-        if (worldIn.isClientSide) return;
+        if (worldIn.isClientSide)
+        {
+            return;
+        }
 
         BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
+        if (te instanceof TileEntityColonyFlag flagTileEntity)
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
 
             // Allow the player to place their own beyond the colony
             if (colony == null && placer instanceof Player)
+            {
                 colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (Player) placer);
+            }
 
             if (colony != null)
-                ((TileEntityColonyFlag) te).colonyId = colony.getID();
+            {
+                flagTileEntity.colonyId = colony.getID();
+            }
         }
-
     }
 
     @NotNull
