@@ -55,6 +55,7 @@ public class JEIPlugin implements IModPlugin
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
         registration.addRecipeCategories(new ToolRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new CropRecipeCategory(guiHelper));
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
         registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
 
@@ -125,6 +126,7 @@ public class JEIPlugin implements IModPlugin
                 Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
+        registration.addRecipes(ModRecipeTypes.CROPS, CropRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
