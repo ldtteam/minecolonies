@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.items.ModTags;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 
@@ -56,7 +56,7 @@ public class FoodUtils
             return 0;
         }
 
-        final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : (1.0 / (housingLevel + 1));
+        final double saturationNerf = getFoodTier(foodStack) > 0 ? 1.0 : (1.0 / (housingLevel + 1));
         return itemFood.nutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
     }
 
@@ -72,5 +72,17 @@ public class FoodUtils
         final int housingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 0 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
         final double researchBonus = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
         return getFoodValue(foodStack, itemFood, housingLevel, researchBonus);
+    }
+
+    /**
+     * @param stack The food item stack.
+     * @return The food tier, in the range [0, 3].
+     */
+    public static int getFoodTier(ItemStack stack)
+    {
+        if (stack.is(ModTags.tier3food)) return 3;
+        if (stack.is(ModTags.tier2food)) return 2;
+        if (stack.is(ModTags.tier1food)) return 1;
+        return 0;
     }
 }

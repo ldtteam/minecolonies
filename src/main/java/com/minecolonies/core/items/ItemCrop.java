@@ -3,6 +3,7 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -13,7 +14,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -28,28 +28,21 @@ import java.util.List;
 public class ItemCrop extends BlockItem
 {
     /**
-     * The preferred biome.
-     */
-    @Nullable
-    private final TagKey<Biome> preferredBiome;
-
-    /**
      * Creates a new Crop item.
      *
      * @param cropBlock   the {@link AbstractBlockHut} this item represents.
      * @param builder the item properties to use.
      */
-    public ItemCrop(@NotNull final MinecoloniesCropBlock cropBlock, @NotNull final Properties builder, @Nullable final TagKey<Biome> preferredBiome)
+    public ItemCrop(@NotNull final MinecoloniesCropBlock cropBlock, @NotNull final Properties builder)
     {
         super(cropBlock, builder.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.3F).build()));
-        this.preferredBiome = preferredBiome;
     }
 
     @Override
     protected boolean canPlace(BlockPlaceContext ctx, @NotNull BlockState state)
     {
         Player player = ctx.getPlayer();
-        if (!player.isCreative())
+        if (!player.isCreative() && MineColonies.getConfig().getServer().limitCropsToFarmers.get())
         {
             if (ctx.getLevel().isClientSide)
             {
@@ -64,7 +57,11 @@ public class ItemCrop extends BlockItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        if (MineColonies.getConfig().getServer().limitCropsToFarmers.get())
+        {
+            tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        }
+        TagKey<Biome> preferredBiome = getCropBlock().getPreferredBiome(getBlock().defaultBlockState());
         if (preferredBiome != null)
         {
             tooltip.add(Component.translatable(TranslationConstants.BIOME_TOOLTIP + "." + preferredBiome.location().getPath()));
@@ -78,6 +75,15 @@ public class ItemCrop extends BlockItem
      */
     public boolean canBePlantedIn(final Holder<Biome> biome)
     {
+        TagKey<Biome> preferredBiome = getCropBlock().getPreferredBiome(getBlock().defaultBlockState());
         return preferredBiome == null ||  biome.is(preferredBiome);
+    }
+
+    /**
+     * Used for accessing some methods on the MinecoloniesCropBlock class.
+     * @return The block of this item, cast to MinecoloniesCropBlock.
+     */
+    private MinecoloniesCropBlock getCropBlock() {
+        return (MinecoloniesCropBlock) getBlock();
     }
 }

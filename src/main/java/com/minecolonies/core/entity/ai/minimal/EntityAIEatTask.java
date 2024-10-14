@@ -12,7 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -204,14 +204,11 @@ public class EntityAIEatTask implements IStateAI
         {
             return EAT;
         }
-        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem)
+        if (FoodUtils.getFoodTier(foodStack) == 3)
         {
-            if (foodItem.getTier() == 3)
-            {
-                citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
-            }
-            citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
+            citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
         }
+        citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
         ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 

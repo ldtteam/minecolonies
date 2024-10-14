@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
@@ -133,9 +134,8 @@ public class ClientEventHandler
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level(), event.getEntity());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
-        if (event.getItemStack().getItem() instanceof BlockItem)
+        if (event.getItemStack().getItem() instanceof BlockItem blockItem)
         {
-            final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
             if (blockItem.getBlock() instanceof AbstractBlockHut)
             {
                 handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
@@ -155,6 +155,12 @@ public class ClientEventHandler
 
                 event.getToolTip().add(Component.translatableEscape("com.minecolonies.coremod.tooltip.schematic.tier", tier));
             }
+        }
+        // Food tooltips
+        int tier = FoodUtils.getFoodTier(event.getItemStack());
+        if (tier > 0)
+        {
+            event.getToolTip().add(Component.translatable(TranslationConstants.TIER_TOOLTIP + tier));
         }
     }
 

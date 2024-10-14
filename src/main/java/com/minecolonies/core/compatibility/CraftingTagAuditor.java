@@ -9,7 +9,6 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -379,9 +378,10 @@ public class CraftingTagAuditor
             writer.write(',');
             writer.write(Integer.toString(FoodUtils.getBuildingLevelForFood(item)));
             writer.write(',');
-            if (item.getItem() instanceof final IMinecoloniesFoodItem mcolFood)
+            int foodTier = FoodUtils.getFoodTier(item);
+            if (foodTier > 0)
             {
-                writer.write(Integer.toString(mcolFood.getTier()));
+                writer.write(Integer.toString(foodTier));
             }
             for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
             {

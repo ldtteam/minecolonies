@@ -50,6 +50,11 @@ public class ModTags
 
     public static final TagKey<Block> validSpawn = BlockTags.create(TagConstants.VALIDSPAWNBLOCKS);
 
+    public static final TagKey<Block> coldCrops      = BlockTags.create(TagConstants.COLD_CROPS);
+    public static final TagKey<Block> temperateCrops = BlockTags.create(TagConstants.TEMPERATE_CROPS);
+    public static final TagKey<Block> humidCrops     = BlockTags.create(TagConstants.HUMID_CROPS);
+    public static final TagKey<Block> dryCrops       = BlockTags.create(TagConstants.DRY_CROPS);
+    
     public static final TagKey<Block> mushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS);
     public static final TagKey<Block> hugeMushroomBlocks   = BlockTags.create(TagConstants.MUSHROOMS_HUGE);
     public static final TagKey<Block> fungiBlocks      = BlockTags.create(TagConstants.FUNGI);
@@ -74,6 +79,10 @@ public class ModTags
     public static final TagKey<EntityType<?>> freeToInteractWith = TagKey.create(Registries.ENTITY_TYPE, TagConstants.ALLOW_INTERACT);
 
     public static final TagKey<Item> ignoreNBT = ItemTags.create(TagConstants.IGNORE_NBT);
+
+    public static final TagKey<Item> tier1food = ItemTags.create(TagConstants.TIER1_FOOD);
+    public static final TagKey<Item> tier2food = ItemTags.create(TagConstants.TIER2_FOOD);
+    public static final TagKey<Item> tier3food = ItemTags.create(TagConstants.TIER3_FOOD);
 
     public static final TagKey<Biome> coldBiomes = TagKey.create(Registries.BIOME, TagConstants.COLD_BIOMES);
     public static final TagKey<Biome> temperateBiomes = TagKey.create(Registries.BIOME, TagConstants.TEMPERATE_BIOMES);

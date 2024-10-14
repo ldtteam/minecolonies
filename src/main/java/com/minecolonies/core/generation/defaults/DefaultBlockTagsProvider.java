@@ -195,6 +195,15 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addTags(Tags.Blocks.STONES)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
+        tag(ModTags.coldCrops)
+                .add(ModBlocks.blockCabbage);
+        tag(ModTags.temperateCrops)
+                .add(ModBlocks.blockBellPepper, ModBlocks.blockTomato);
+        tag(ModTags.humidCrops)
+                .add(ModBlocks.blockRice, ModBlocks.blockSoyBean);
+        tag(ModTags.dryCrops)
+                .add(ModBlocks.blockChickpea);
+
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.blockIronGate);
 
