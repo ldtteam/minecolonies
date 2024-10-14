@@ -1,0 +1,21 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "baker_smelting_crafting",
+	"inputs": [
+		{
+			"count": 3,
+			"item": "minecolonies:durum"
+		},
+		{
+			"count": 2,
+			"item": "minecraft:apple"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:sugar"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:apple_pie"
+}

@@ -1,0 +1,25 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:garlic"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:beef"
+		},
+		{
+			"count": 2,
+			"item": "minecraft:potato"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:steak_dinner"
+}

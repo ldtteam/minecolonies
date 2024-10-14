@@ -1,0 +1,13 @@
+{
+	"type": "recipe",
+	"count": 4,
+	"crafter": "baker_crafting",
+	"inputs": [
+		{
+			"count": 4,
+			"item": "minecolonies:corn"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:cornmeal"
+}

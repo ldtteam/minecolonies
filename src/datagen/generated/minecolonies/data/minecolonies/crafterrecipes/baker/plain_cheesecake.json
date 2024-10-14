@@ -1,0 +1,26 @@
+{
+	"type": "recipe",
+	"count": 4,
+	"crafter": "baker_smelting_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:creamcheese"
+		},
+		{
+			"item": "minecolonies:durum"
+		},
+		{
+			"item": "minecolonies:butter"
+		},
+		{
+			"item": "minecraft:sugar"
+		},
+		{
+			"count": 2,
+			"item": "minecraft:egg"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:plain_cheesecake"
+}

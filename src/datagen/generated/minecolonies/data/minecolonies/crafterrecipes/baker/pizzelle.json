@@ -1,0 +1,16 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "baker_smelting_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:durum"
+		},
+		{
+			"item": "minecolonies:licorice"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:pizzelle"
+}

@@ -1,0 +1,25 @@
+{
+	"type": "recipe",
+	"count": 4,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecraft:stick"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:beef"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:garlic"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:kebab"
+}

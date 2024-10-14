@@ -1,0 +1,21 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 3,
+			"item": "minecolonies:garlic"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:chicken"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:butter"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:grilled_chicken"
+}

@@ -1,0 +1,21 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 3,
+			"item": "minecolonies:mint"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:water"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:sugar"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:mint_jelly"
+}

@@ -1,0 +1,29 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecolonies:garlic"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:peas"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:milk_bucket"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:bowl"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:pea_soup"
+}

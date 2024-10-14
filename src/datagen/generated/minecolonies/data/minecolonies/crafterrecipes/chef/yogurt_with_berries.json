@@ -1,0 +1,17 @@
+{
+	"type": "recipe",
+	"count": 2,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecolonies:yogurt"
+		},
+		{
+			"count": 4,
+			"item": "minecraft:sweet_berries"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:yogurt_with_berries"
+}

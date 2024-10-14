@@ -1,0 +1,29 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:cabbage"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:nether_pepper"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:salmon"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:carrot"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:kimchi"
+}

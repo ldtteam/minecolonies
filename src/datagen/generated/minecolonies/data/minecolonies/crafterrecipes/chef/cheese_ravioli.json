@@ -1,0 +1,17 @@
+{
+	"type": "recipe",
+	"count": 4,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 2,
+			"item": "minecolonies:durum"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:feta_cheese"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:cheese_ravioli"
+}
