@@ -105,6 +105,12 @@ public final class ModBlocks
     public static MinecoloniesCropBlock blockTomato;
     public static MinecoloniesCropBlock blockRice;
 
+    public static MinecoloniesCropBlock blockButternutSquash;
+    public static MinecoloniesCropBlock blockCorn;
+    public static MinecoloniesCropBlock blockMint;
+    public static MinecoloniesCropBlock blockNetherPepper;
+    public static MinecoloniesCropBlock blockPeas;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -177,16 +183,20 @@ public final class ModBlocks
     public static MinecoloniesCropBlock[] getCrops()
     {
         return new MinecoloniesCropBlock[] {
-        blockBellPepper,
-        blockCabbage,
-        blockChickpea,
-        blockDurum,
-        blockEggplant,
-        blockGarlic,
-        blockOnion,
-        blockSoyBean,
-        blockTomato,
-        blockRice,
+            blockBellPepper,
+            blockCabbage,
+            blockChickpea,
+            blockDurum,
+            blockEggplant,
+            blockGarlic,
+            blockOnion,
+            blockSoyBean,
+            blockTomato,
+            blockRice,
+            blockCorn,
+            blockNetherPepper,
+                blockPeas,
+
         };
     }
 }
