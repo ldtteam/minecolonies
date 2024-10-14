@@ -146,7 +146,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private boolean hasSpaceForMoreRecipes()
     {
-        return getMaxRecipes() > recipes.size();
+        return getMaxRecipes() > getActiveRecipes();
+    }
+
+    /**
+     * Gets the number of currently enabled recipes.
+     */
+    private int getActiveRecipes()
+    {
+        return Math.max(0, recipes.size() - disabledRecipes.size());
     }
 
     /**

@@ -237,6 +237,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         }
     }
 
+    public int getActiveRecipes()
+    {
+        return Math.max(0, recipes.size() - disabledRecipes.size());
+    }
+
     public int getMaxRecipes()
     {
         return maxRecipes;
