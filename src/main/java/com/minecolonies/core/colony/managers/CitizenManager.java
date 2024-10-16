@@ -297,6 +297,7 @@ public class CitizenManager implements ICitizenManager
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
+
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
         entity.setUUID(citizenData.getUUID());

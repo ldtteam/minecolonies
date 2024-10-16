@@ -143,6 +143,11 @@ public class EventHandler
             {
                 event.setCanceled(true);
             }
+
+            if (event.getEntity() instanceof EntityCitizen citizen && citizen.getCitizenColonyHandler().getColonyId() == 0)
+            {
+                event.setCanceled(true);
+            }
         }
     }
 
