@@ -36,6 +36,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -296,6 +297,15 @@ public class CitizenManager implements ICitizenManager
             }
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
+        }
+
+        if (world instanceof ServerLevel serverLevel)
+        {
+            final Entity existing = serverLevel.getEntity(citizenData.getUUID());
+            if (existing != null)
+            {
+                existing.discard();
+            }
         }
 
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
