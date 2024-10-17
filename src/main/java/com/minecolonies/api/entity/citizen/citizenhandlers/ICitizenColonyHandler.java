@@ -71,4 +71,6 @@ public interface ICitizenColonyHandler
      * @param dataAccessor
      */
     void onSyncDataUpdate(EntityDataAccessor<?> dataAccessor);
+
+    boolean registered();
 }
