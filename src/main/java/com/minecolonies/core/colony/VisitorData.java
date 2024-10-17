@@ -1,18 +1,25 @@
 package com.minecolonies.core.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
+import com.minecolonies.api.entity.visitor.IVisitorExtraData;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import java.util.List;
+
+import static com.minecolonies.api.entity.visitor.ModVisitorTypes.VISITOR_TYPE_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_SITTING_POSITION;
 
 /**
  * Data for visitors
@@ -20,63 +27,35 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTI
 public class VisitorData extends CitizenData implements IVisitorData
 {
     /**
-     * Recruit nbt tag
+     * NBT tags.
      */
-    private static final String TAG_RECRUIT_COST = "rcost";
+    public static final  String TAG_VISITOR_TYPE     = "visitorType";
+    public static final  String TAG_EXTRA_DATA       = "extra";
+    private static final String TAG_RECRUIT_COST     = "rcost";
     private static final String TAG_RECRUIT_COST_QTY = "rcostqty";
 
     /**
-     * The position the citizen is sitting at
+     * The type of the visitor.
      */
-    private BlockPos sittingPosition = BlockPos.ZERO;
+    private final IVisitorType visitorType;
 
     /**
-     * The recruitment level, used for stats/equipment and costs
+     * The extra data instances.
      */
-    private ItemStack recruitCost = ItemStack.EMPTY;
+    private final List<IVisitorExtraData<?>> extraData;
 
     /**
-     * Create a CitizenData given an ID. Used as a super-constructor or during loading.
+     * Create a VisitorData given an ID. Used as a super-constructor or during loading.
      *
-     * @param id     ID of the Citizen.
-     * @param colony Colony the Citizen belongs to.
+     * @param id          ID of the visitor.
+     * @param colony      colony the visitor belongs to.
+     * @param visitorType the type of the visitor.
      */
-    public VisitorData(final int id, final IColony colony)
+    public VisitorData(final int id, final IColony colony, final IVisitorType visitorType)
     {
         super(id, colony);
-    }
-
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        CompoundTag compoundNBT = super.serializeNBT();
-        CompoundTag item = new CompoundTag();
-        recruitCost.save(item);
-        compoundNBT.put(TAG_RECRUIT_COST, item);
-        compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
-        BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
-        return compoundNBT;
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundTag nbtTagCompound)
-    {
-        super.deserializeNBT(nbtTagCompound);
-        sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
-        recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
-        recruitCost.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
-    }
-
-    @Override
-    public void setRecruitCosts(final ItemStack item)
-    {
-        this.recruitCost = item;
-    }
-
-    @Override
-    public ItemStack getRecruitCost()
-    {
-        return recruitCost;
+        this.visitorType = visitorType;
+        this.extraData = List.copyOf(visitorType.getExtraDataKeys());
     }
 
     /**
@@ -88,59 +67,99 @@ public class VisitorData extends CitizenData implements IVisitorData
      */
     public static IVisitorData loadVisitorFromNBT(final IColony colony, final CompoundTag nbt)
     {
-        final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony);
+        final ResourceLocation visitorTypeKey = nbt.contains(TAG_VISITOR_TYPE) ? new ResourceLocation(nbt.getString(TAG_VISITOR_TYPE)) : VISITOR_TYPE_ID;
+        final IVisitorType visitorType = IMinecoloniesAPI.getInstance().getVisitorTypeRegistry().getValue(visitorTypeKey);
+        final IVisitorData data = new VisitorData(nbt.getInt(TAG_ID), colony, visitorType);
         data.deserializeNBT(nbt);
         return data;
+    }
+
+    @Override
+    @NotNull
+    public IVisitorType getVisitorType()
+    {
+        return visitorType;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getExtraDataValue(final IVisitorExtraData<T> extraData)
+    {
+        return this.extraData.stream()
+                 .filter(f -> f.equals(extraData))
+                 .map(m -> (T) m.getValue())
+                 .findFirst()
+                 .orElseThrow();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> void setExtraDataValue(final IVisitorExtraData<T> extraData, final T value)
+    {
+        final IVisitorExtraData<T> foundExtraData = this.extraData.stream()
+                                                      .filter(f -> f.equals(extraData))
+                                                      .map(m -> (IVisitorExtraData<T>) m)
+                                                      .findFirst()
+                                                      .orElseThrow();
+        foundExtraData.setValue(value);
+    }
+
+    @Override
+    protected void respawnAfterUpdate(final BlockPos position)
+    {
+        getColony().getVisitorManager().spawnOrCreateVisitor(visitorType, this, getColony().getWorld(), position);
     }
 
     @Override
     public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeViewNetworkData(buf);
-        buf.writeItem(recruitCost);
-        buf.writeInt(recruitCost.getCount());
+        buf.writeNbt(serializeNBT());
     }
 
     @Override
-    public BlockPos getSittingPosition()
+    public CompoundTag serializeNBT()
     {
-        return sittingPosition;
-    }
+        final CompoundTag compound = super.serializeNBT();
+        compound.putString(TAG_VISITOR_TYPE, visitorType.getId().toString());
 
-    @Override
-    public void setSittingPosition(final BlockPos pos)
-    {
-        this.sittingPosition = pos;
-    }
-
-    @Override
-    public void updateEntityIfNecessary()
-    {
-        if (getEntity().isPresent())
+        final CompoundTag extraDataCompound = new CompoundTag();
+        for (final IVisitorExtraData<?> extraDataKey : extraData)
         {
-            final Entity entity = getEntity().get();
-            if (entity.isAlive() && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
+            extraDataCompound.put(extraDataKey.getKey(), extraDataKey.serializeNBT());
+        }
+        compound.put(TAG_EXTRA_DATA, extraDataCompound);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag nbtTagCompound)
+    {
+        super.deserializeNBT(nbtTagCompound);
+        final CompoundTag extraDataCompound = nbtTagCompound.getCompound(TAG_EXTRA_DATA);
+        for (final IVisitorExtraData<?> extraDataKey : extraData)
+        {
+            if (extraDataCompound.contains(extraDataKey.getKey()))
             {
-                return;
+                extraDataKey.deserializeNBT(extraDataCompound.getCompound(extraDataKey.getKey()));
             }
         }
 
-        if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0) && WorldUtil.isEntityBlockLoaded(getColony().getWorld(),
-          getLastPosition()))
+        // TODO: Next major release: Remove backwards compat for old visitor data
+        if (nbtTagCompound.contains(TAG_SITTING))
         {
-            getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
+            setExtraDataValue(EXTRA_DATA_SITTING_POSITION, BlockPosUtil.read(nbtTagCompound, TAG_SITTING));
+            final ItemStack itemStack = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
+            itemStack.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
+            setExtraDataValue(EXTRA_DATA_RECRUIT_COST, itemStack);
         }
-        else if (getHomeBuilding() != null)
-        {
-            if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getHomeBuilding().getID()))
-            {
-                final BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(getColony().getWorld(), getHomeBuilding().getID());
-                if (spawnPos != null)
-                {
-                    getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
-                }
-            }
-        }
+    }
+
+    @Override
+    public void update()
+    {
+        super.update();
+        visitorType.update(this);
     }
 
     @Override

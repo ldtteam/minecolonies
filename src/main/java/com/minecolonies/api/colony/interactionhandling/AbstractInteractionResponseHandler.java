@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -89,7 +90,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public List<Component> getPossibleResponses()
+    public List<Component> getPossibleResponses(final ICitizen data)
     {
         return ImmutableList.copyOf(responses.keySet());
     }

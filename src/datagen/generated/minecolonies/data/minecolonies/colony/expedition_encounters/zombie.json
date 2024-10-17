@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 2.5,
+  "entity-type": "minecraft:zombie",
+  "health": 20.0,
+  "loot-table": "minecraft:entities/zombie",
+  "reflect": 0.0,
+  "xp": 5.0
+}

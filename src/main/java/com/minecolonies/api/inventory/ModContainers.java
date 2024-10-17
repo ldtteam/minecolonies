@@ -19,4 +19,6 @@ public class ModContainers
     public static RegistryObject<MenuType<ContainerCrafting>> craftingGrid;
 
     public static RegistryObject<MenuType<ContainerCraftingBrewingstand>> craftingBrewingstand;
+
+    public static RegistryObject<MenuType<ContainerExpeditionSheet>> expeditionSheet;
 }

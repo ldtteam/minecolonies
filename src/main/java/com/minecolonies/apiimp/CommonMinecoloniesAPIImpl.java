@@ -22,6 +22,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
@@ -80,6 +81,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<QuestRegistries.DialogueAnswerEntry>     questDialogueAnswerRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry> happinessFactorTypeRegistry;
     private        IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> happinessFunctionRegistry;
+    private        IForgeRegistry<IVisitorType>                             visitorTypeRegistry;
 
     @Override
     @NotNull
@@ -200,6 +202,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
     {
         return researchCostRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<IVisitorType> getVisitorTypeRegistry()
+    {
+        return visitorTypeRegistry;
     }
 
     @Override
@@ -326,6 +334,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
+
+        event.create(new RegistryBuilder<IVisitorType>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "visitortypes"))
+                       .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                       .disableSaving().allowModification()
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> visitorTypeRegistry = b);
     }
 
     @Override

@@ -1,0 +1,49 @@
+{
+  "difficulty": "hard",
+  "dimension": "minecraft:overworld",
+  "guards": 4,
+  "loot-table": "minecolonies:expeditions/expedition_overworld",
+  "name": "com.minecolonies.core.expedition_types.overworld.name",
+  "requirements": [
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:sword"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:pickaxe"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:shovel"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:helmet"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:chestplate"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:leggings"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:boots"
+    },
+    {
+      "type": "food",
+      "amount": 128
+    }
+  ],
+  "to-text": "com.minecolonies.core.expedition_types.overworld.to_text"
+}

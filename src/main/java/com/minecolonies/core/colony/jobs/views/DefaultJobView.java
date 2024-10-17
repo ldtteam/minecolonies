@@ -32,6 +32,16 @@ public class DefaultJobView implements IJobView
     private JobEntry entry;
 
     /**
+     * Whether this job is a guard job.
+     */
+    private boolean isGuard;
+
+    /**
+     * Whether this job is a guard job that actively engages in combat.
+     */
+    private boolean isCombatGuard;
+
+    /**
      * Instantiate the default job view.
      * @param iColonyView the colony it belongs to.
      * @param iCitizenDataView the citizen it belongs to.
@@ -51,6 +61,8 @@ public class DefaultJobView implements IJobView
             asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
         entry = buffer.readRegistryId();
+        isGuard = buffer.readBoolean();
+        isCombatGuard = buffer.readBoolean();
     }
 
     @Override
@@ -63,6 +75,18 @@ public class DefaultJobView implements IJobView
     public JobEntry getEntry()
     {
         return entry;
+    }
+
+    @Override
+    public boolean isGuard()
+    {
+        return isGuard;
+    }
+
+    @Override
+    public boolean isCombatGuard()
+    {
+        return isCombatGuard;
     }
 
     /**

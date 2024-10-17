@@ -55,8 +55,13 @@ public class RotatingItemIcon extends ItemIcon
             throw new IllegalArgumentException("Items list must contain at least one item.");
         }
 
+        final boolean hasChanged = !this.items.equals(items);
         this.items = items;
-        resetState();
+
+        if (hasChanged)
+        {
+            resetState();
+        }
     }
 
     /**

@@ -1,0 +1,48 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="400 244" pause="false" lightbox="false"
+        xsi:noNamespaceSchemaLocation="file:../../../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide_structure.png" size="400 244" pos="0 0"/>
+
+    <view size="340 204" pos="30 20">
+        <text id="expedition_name" size="200 15" pos="0 0" color="black" textscale="1.2"/>
+        <view id="expedition_difficulty" size="64 16" pos="0 20">
+            <image id="diff_1" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="0 0" visible="false"/>
+            <image id="diff_2" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="16 0" visible="false"/>
+            <image id="diff_3" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="32 0" visible="false"/>
+            <image id="diff_4" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="48 0" visible="false"/>
+        </view>
+
+        <text id="expedition_items_header" size="134 15" pos="0 44" color="black"/>
+        <text id="expedition_items_subheader" size="134 15" pos="0 59" color="#505050" textscale="0.8"/>
+        <buttonimage id="expedition_inventory" size="25 25" pos="139 44" textcolor="black" source="minecolonies:textures/gui/chest.png"/>
+        <list id="expedition_items" size="164 125" pos="0 79">
+            <view size="156 30">
+                <layout source="minecolonies:gui/generic/resource.xml"/>
+            </view>
+        </list>
+
+        <text id="expedition_guards_header" size="164 15" pos="176 44" color="black"/>
+        <text id="expedition_guards_subheader" size="164 15" pos="176 59" color="#505050" textscale="0.8"/>
+        <list id="expedition_guards" size="164 125" pos="176 79">
+            <box size="156 35" linewidth="1">
+                <text id="citizen" size="134 12" pos="3 2" color="blue"/>
+                <image source="minecolonies:textures/gui/visitor/expeditionary/equipment_list.png" size="90 18" pos="3 15"/>
+                <itemicon id="weapon" size="16 16" pos="4 16"/>
+                <image id="weapon_back" source="minecraft:textures/item/empty_slot_sword.png" size="16 16" pos="4 16"/>
+                <itemicon id="helmet" size="16 16" pos="22 16"/>
+                <image id="helmet_back" source="minecraft:textures/item/empty_armor_slot_helmet.png" size="16 16" pos="22 16"/>
+                <itemicon id="chestplate" size="16 16" pos="40 16"/>
+                <image id="chestplate_back" source="minecraft:textures/item/empty_armor_slot_chestplate.png" size="16 16" pos="40 16"/>
+                <itemicon id="leggings" size="16 16" pos="58 16"/>
+                <image id="leggings_back" source="minecraft:textures/item/empty_armor_slot_leggings.png" size="16 16" pos="58 16"/>
+                <itemicon id="boots" size="16 16" pos="76 16"/>
+                <image id="boots_back" source="minecraft:textures/item/empty_armor_slot_boots.png" size="16 16" pos="76 16"/>
+
+                <checkbox id="guardAssign"
+                          source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                          checkmark="minecolonies:textures/gui/overlay_button_mini_check.png"
+                          size="16 15"
+                          pos="137 2"/>
+            </box>
+        </list>
+    </view>
+</window>

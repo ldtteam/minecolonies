@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -483,6 +484,21 @@ public interface IColony
      * @return the quest manager.
      */
     IQuestManager getQuestManager();
+
+    /**
+     * Get the expedition manager of the colony.
+     *
+     * @return the expedition manager.
+     */
+    @NotNull
+    IColonyExpeditionManager getExpeditionManager();
+
+    /**
+     * Get the traveling manager used for traveling large distances.
+     *
+     * @return the travelling manager.
+     */
+    ITravelingManager getTravelingManager();
 
     /**
      * Get citizen from colony.

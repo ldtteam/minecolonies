@@ -1,0 +1,49 @@
+{
+  "difficulty": "easy",
+  "dimension": "minecraft:the_nether",
+  "guards": 2,
+  "loot-table": "minecolonies:expeditions/expedition_nether",
+  "name": "com.minecolonies.core.expedition_types.nether.name",
+  "requirements": [
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:sword"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:pickaxe"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:shovel"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:helmet"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:chestplate"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:leggings"
+    },
+    {
+      "type": "tool",
+      "amount": 1,
+      "equipment": "minecolonies:boots"
+    },
+    {
+      "type": "food",
+      "amount": 32
+    }
+  ],
+  "to-text": "com.minecolonies.core.expedition_types.nether.to_text"
+}

@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 11.0,
+  "entity-type": "minecraft:zombified_piglin",
+  "health": 20.0,
+  "loot-table": "minecraft:entities/zombified_piglin",
+  "reflect": 0.0,
+  "xp": 10.0
+}

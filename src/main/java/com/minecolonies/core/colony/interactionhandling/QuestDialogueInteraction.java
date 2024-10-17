@@ -217,7 +217,7 @@ public class QuestDialogueInteraction extends StandardInteraction
     }
 
     @Override
-    public List<Component> getPossibleResponses()
+    public List<Component> getPossibleResponses(final ICitizen data)
     {
         return currentElement == null ? Collections.emptyList() : currentElement.getOptions().stream().map(this::processText).collect(Collectors.toList());
     }

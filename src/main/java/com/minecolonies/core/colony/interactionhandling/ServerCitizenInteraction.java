@@ -129,7 +129,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         tryHandleIgnoreResponse(response, player);
     }
 
@@ -164,9 +164,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         tryHandleIgnoreResponse(response, player);
-        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        if (((TranslatableContents) getPossibleResponses(data).get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();

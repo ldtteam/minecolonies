@@ -227,4 +227,12 @@ public interface ICitizenDataView extends ICitizen
      * @return the uuid.
      */
     UUID getCustomTextureUUID();
+
+    /**
+     * Get the colony this citizen belongs to.
+     *
+     * @return the colony view.
+     */
+    @Override
+    IColonyView getColony();
 }

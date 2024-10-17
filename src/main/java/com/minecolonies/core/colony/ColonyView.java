@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -29,8 +30,10 @@ import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.managers.ColonyExpeditionManager;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
+import com.minecolonies.core.colony.managers.TravelingManager;
 import com.minecolonies.core.colony.permissions.PermissionsView;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
@@ -242,6 +245,16 @@ public final class ColonyView implements IColonyView
     private IQuestManager questManager;
 
     /**
+     * Client side expedition manager.
+     */
+    private final IColonyExpeditionManager expeditionManager;
+
+    /**
+     * Client side traveling manager.
+     */
+    private final ITravelingManager travelingManager;
+
+    /**
      * Day in the colony.
      */
     private int day;
@@ -256,6 +269,8 @@ public final class ColonyView implements IColonyView
         this.id = id;
         this.researchManager = new ResearchManager(this);
         this.questManager = new QuestManager(this);
+        this.expeditionManager = new ColonyExpeditionManager(this);
+        this.travelingManager = new TravelingManager(this);
     }
 
     /**
@@ -427,6 +442,32 @@ public final class ColonyView implements IColonyView
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
+
+        // Write expedition manager
+        if (colony.getExpeditionManager().isDirty() || hasNewSubscribers)
+        {
+            buf.writeBoolean(true);
+            buf.writeNbt(colony.getExpeditionManager().serializeNBT());
+
+            colony.getExpeditionManager().setDirty(false);
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
+
+        // Write traveling manager
+        if (colony.getTravelingManager().isDirty() || hasNewSubscribers)
+        {
+            buf.writeBoolean(true);
+            buf.writeNbt(colony.getTravelingManager().serializeNBT());
+
+            colony.getTravelingManager().setDirty(false);
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
     }
 
     /**
@@ -887,6 +928,17 @@ public final class ColonyView implements IColonyView
         this.statisticManager.deserialize(buf);
         this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
+
+        if (buf.readBoolean())
+        {
+            this.expeditionManager.deserializeNBT(buf.readNbt());
+        }
+
+        if (buf.readBoolean())
+        {
+            this.travelingManager.deserializeNBT(buf.readNbt());
+        }
+
         return null;
     }
 
@@ -1544,7 +1596,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ICitizenDataView getVisitor(final int citizenId)
+    public IVisitorViewData getVisitor(final int citizenId)
     {
         return visitors.get(citizenId);
     }
@@ -1590,5 +1642,18 @@ public final class ColonyView implements IColonyView
     public IQuestManager getQuestManager()
     {
         return this.questManager;
+    }
+
+    @Override
+    @NotNull
+    public IColonyExpeditionManager getExpeditionManager()
+    {
+        return expeditionManager;
+    }
+
+    @Override
+    public ITravelingManager getTravelingManager()
+    {
+        return travelingManager;
     }
 }

@@ -1,0 +1,24 @@
+{
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "minecraft:cobblestone"
+        }
+      ]
+    },
+    {
+      "rolls": 2.0,
+      "entries" : [
+        {
+          "type": "loot_table",
+          "weight": 1,
+          "name": "minecolonies:expeditions/structures/stronghold"
+        }
+      ]
+    }
+  ]
+}

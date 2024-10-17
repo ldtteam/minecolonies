@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.managers;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEntitySpawnEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
@@ -188,18 +189,19 @@ public class EventManager implements IEventManager
         {
             final IColonyEvent event = iterator.next();
 
-            if (event.getStatus() == DONE)
+            final EventStatus status = event.getStatus();
+            if (status == DONE)
             {
                 event.onFinish();
                 structureManager.loadBackupForEvent(event.getID());
                 colony.markDirty();
                 iterator.remove();
             }
-            else if (event.getStatus() == STARTING)
+            else if (status == STARTING)
             {
                 event.onStart();
             }
-            else if (event.getStatus() == CANCELED)
+            else if (status == CANCELED)
             {
                 colony.markDirty();
                 iterator.remove();

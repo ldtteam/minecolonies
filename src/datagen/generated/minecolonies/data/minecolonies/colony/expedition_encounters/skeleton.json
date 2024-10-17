@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 3.0,
+  "entity-type": "minecraft:skeleton",
+  "health": 20.0,
+  "loot-table": "minecraft:entities/skeleton",
+  "reflect": 0.0,
+  "xp": 10.0
+}

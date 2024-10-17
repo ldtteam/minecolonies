@@ -154,7 +154,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (((TranslatableContents) getPossibleResponses().get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.fulfill"))
+        if (((TranslatableContents) getPossibleResponses(data).get(responseId).getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.fulfill"))
         {
             final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
 
@@ -185,7 +185,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         super.onServerResponseTriggered(responseId, player, data);
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         if (response.equals(Component.translatable("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);

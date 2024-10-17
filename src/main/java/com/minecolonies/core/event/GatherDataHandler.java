@@ -65,6 +65,10 @@ public class GatherDataHandler
         generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), lootTableManager));
         generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput()));
         generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultExpeditionStructureLootProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultExpeditionEncountersProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultColonyExpeditionLootProvider(generator.getPackOutput()));
+        generator.addProvider(event.includeServer(), new DefaultColonyExpeditionTypesProvider(generator.getPackOutput()));
 
         generator.addProvider(event.includeClient() && event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), event.getLookupProvider()));
     }

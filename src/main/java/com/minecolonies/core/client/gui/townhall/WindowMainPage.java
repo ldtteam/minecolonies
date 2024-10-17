@@ -99,13 +99,14 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
-        registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
+        registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
+        registerButton(BUTTON_EXPEDITIONS, this::expeditionsClicked);
+
         registerButton(BUTTON_PATREON, this::patreonClicked);
-
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
-
         findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(Component.literal(building.getColony().getStructurePack()));
+
         registerButton(BUTTON_BANNER_PICKER, this::openBannerPicker);
         registerButton(BUTTON_RESET_TEXTURE, this::resetTextureStyle);
 
@@ -390,6 +391,14 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mercenaryClicked()
     {
         new WindowTownHallMercenary(building.getColony()).open();
+    }
+
+    /**
+     * Action performed when expeditions button is clicked.
+     */
+    private void expeditionsClicked()
+    {
+        new WindowTownHallExpeditions(building.getColony()).open();
     }
 
     /**
