@@ -13,6 +13,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.items.ItemBowlFood;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
@@ -947,6 +948,10 @@ public final class ItemStackUtils
         if (foodStack.getItem() instanceof HoneyBottleItem)
         {
             itemUseReturn = new ItemStack(Items.GLASS_BOTTLE);
+        }
+        else if (foodStack.getItem() instanceof ItemBowlFood)
+        {
+            itemUseReturn = new ItemStack(Items.BOWL);
         }
 
         if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
