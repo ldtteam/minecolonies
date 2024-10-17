@@ -430,9 +430,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (citizenData.getJob() != null)
             {
                 ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
-                getNavigation().stop();
-                getLookControl().setLookAt(player);
             }
+
+            getNavigation().stop();
+            getLookControl().setLookAt(player);
         }
 
         return InteractionResult.SUCCESS;
@@ -1302,6 +1303,25 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
+        // TODO: temporary debug data
+        if (damageSource.getEntity() instanceof Player player && player.isCreative() && player.getMainHandItem().getItem() == ModItems.scanAnalyzer)
+        {
+            CompoundTag tag = new CompoundTag();
+            try
+            {
+                save(tag);
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().warn("Error while saving:", e);
+            }
+
+            Log.getLogger()
+              .warn("Entity:" + getName().toString() + " uuid:" + getUUID() + " id:" + getId() + " removed:" + isRemoved() + " colonyid:" + citizenColonyHandler.getColonyId()
+                      + " entitydata colony id:" + getEntityData().get(DATA_COLONY_ID) + " hascolony:" + (citizenColonyHandler.getColony() != null) +
+                      " registered:" + citizenColonyHandler.registered() + " world:" + level + " saved data:" + tag);
+        }
+
         if (handleInWallDamage(damageSource))
         {
             return false;

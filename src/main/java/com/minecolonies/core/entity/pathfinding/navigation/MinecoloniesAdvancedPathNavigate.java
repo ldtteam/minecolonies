@@ -107,6 +107,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private int pauseTicks = 0;
 
     /**
+     * Temporary block position
+     */
+    private BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos();
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -366,13 +371,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             if (!this.isDone())
             {
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
-                BlockPos blockpos = BlockPos.containing(vector3d2);
-
-                if (ChunkPos.asLong(blockpos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, blockpos))
+                tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y) - 1, Mth.floor(vector3d2.z));
+                if (ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
                 {
                     mob.getMoveControl()
                       .setWantedPosition(vector3d2.x,
-                        level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
+                        getSmartGroundY(this.level, tempPos, vector3d2.y),
                         vector3d2.z,
                         speedModifier);
                 }
@@ -394,18 +398,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      *
      * @param world the world.
      * @param pos   the position to check.
+     * @param y
      * @return the next y level to go to.
      */
-    public static double getSmartGroundY(final BlockGetter world, final BlockPos pos)
+    public static double getSmartGroundY(final BlockGetter world, final BlockPos pos, final double orgY)
     {
-        final BlockPos blockpos = pos.below();
-        final VoxelShape voxelshape = world.getBlockState(blockpos).getCollisionShape(world, blockpos);
+        final BlockState state = world.getBlockState(pos);
+        if (state.isAir())
+        {
+            return orgY;
+        }
+
+        final VoxelShape voxelshape = state.getCollisionShape(world, pos);
         final double maxY = ShapeUtil.max(voxelshape, Direction.Axis.Y);
         if (maxY < 1.0)
         {
             return pos.getY();
         }
-        return blockpos.getY() + maxY;
+        return pos.getY() + maxY;
     }
 
     @Nullable
@@ -974,6 +984,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // Look at multiple points, incase we're too fast
         for (int i = this.path.getNextNodeIndex(); i < Math.min(this.path.getNodeCount(), this.path.getNextNodeIndex() + 4); i++)
         {
+            // TODO: Only keep advancing if distance gets closer, instead of looping many points, check if entity pos at node is even needed, normal pos probably fine
             Vec3 next = this.path.getEntityPosAtNode(this.mob, i);
             if (Math.abs(this.mob.getX() - next.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.mob.getY() - (next.y)) * 0.1
                   && Math.abs(this.mob.getZ() - next.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.mob.getY() - (next.y)) * 0.1 &&
