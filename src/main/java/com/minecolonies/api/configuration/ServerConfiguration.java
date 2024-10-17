@@ -91,7 +91,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
     public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -192,11 +191,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
-          Arrays.asList
-                  ("dirt",
-                    "0 0 0"),
-          s -> s instanceof String);
 
         swapToCategory(builder, "compatibility");
 
