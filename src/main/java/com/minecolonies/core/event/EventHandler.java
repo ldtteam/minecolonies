@@ -146,6 +146,7 @@ public class EventHandler
 
             if (event.getEntity() instanceof EntityCitizen citizen && citizen.getCitizenColonyHandler().getColonyId() == 0)
             {
+                Log.getLogger().info("Prevented citizen with colony id 0 from joining world");
                 event.setCanceled(true);
             }
         }
