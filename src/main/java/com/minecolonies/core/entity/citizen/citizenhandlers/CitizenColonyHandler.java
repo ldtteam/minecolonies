@@ -134,6 +134,12 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 colonyId = citizen.getEntityData().get(DATA_COLONY_ID);
             }
 
+            if (colonyId == 0)
+            {
+                citizen.discard();
+                return;
+            }
+
             if (citizen.getCivilianID() == 0)
             {
                 citizen.setCitizenId(citizen.getEntityData().get(DATA_CITIZEN_ID));
@@ -159,6 +165,12 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         {
             needsClientUpdate = true;
         }
+    }
+
+    @Override
+    public boolean registered()
+    {
+        return registered;
     }
 
     /**
