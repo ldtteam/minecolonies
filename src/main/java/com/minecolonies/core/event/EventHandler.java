@@ -26,7 +26,6 @@ import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.client.render.RenderBipedCitizen;
 import com.minecolonies.core.colony.ColonyManager;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobFarmer;
@@ -58,7 +57,6 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.ZombieVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -112,7 +110,7 @@ public class EventHandler
     /**
      * Player position map for watching chunk entries
      */
-    private static Map<UUID, ChunkPos> playerPositions = new HashMap<>();
+    private static final Map<UUID, ChunkPos> playerPositions = new HashMap<>();
 
     @SubscribeEvent
     public static void onCommandsRegister(final RegisterCommandsEvent event)
@@ -872,44 +870,24 @@ public class EventHandler
                 event.setCanceled(true);
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
-                    IVisitorData visitorData = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
-                    BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
-                    IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
-
-                    visitorData.setHomeBuilding(tavern);
-                    visitorData.setBedPos(tavernPos);
-                    tavern.getModulesByType(TavernBuildingModule.class).forEach(mod -> mod.getExternalCitizens().add(visitorData.getId()));
-
-                    int recruitLevel = world.random.nextInt(10 * tavern.getBuildingLevel()) + 15;
-                    List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
-
-                    visitorData.getCitizenSkillHandler().init(recruitLevel);
-                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.blockPosition(), false);
-                    colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.blockPosition(), visitorData.getName()));
-
-                    if (visitorData.getEntity().isPresent())
+                    final BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
+                    if (tavernPos == null)
                     {
-                        AbstractEntityCitizen visitorEntity = visitorData.getEntity().get();
-                        for (EquipmentSlot slotType : EquipmentSlot.values())
-                        {
-                            ItemStack itemstack = entity.getItemBySlot(slotType);
-                            if (slotType.getType() == EquipmentSlot.Type.ARMOR && !itemstack.isEmpty())
-                            {
-                                visitorEntity.setItemSlot(slotType, itemstack);
-                            }
-                        }
+                        return;
                     }
+
+                    final IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
+                    final TavernBuildingModule module = tavern.getFirstModuleOccurance(TavernBuildingModule.class);
+                    final IVisitorData visitorData = module.spawnVisitor();
+                    visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
+                      "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
 
                     if (!entity.isSilent())
                     {
-                        world.levelEvent((Player) null, 1027, entity.blockPosition(), 0);
+                        world.levelEvent(null, 1027, entity.blockPosition(), 0);
                     }
 
                     entity.remove(Entity.RemovalReason.DISCARDED);
-                    Tuple<Item, Integer> cost = recruitCosts.get(world.random.nextInt(recruitCosts.size()));
-                    visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
-                    visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-                            "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
                 }
             }
         }
