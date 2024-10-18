@@ -59,7 +59,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
@@ -257,9 +257,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             setDelay(120);
             return IDLE;
         }
-
-        // Make sure we have a stash of some food 
-        checkIfRequestForItemExistOrCreate(new StackList(getEdiblesList(), "Edible Food", 16));
 
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
@@ -863,7 +860,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private List<ItemStack> getEdiblesList()
     {
-        final List<ItemStorage> allowedItems = building.getModule(ITEMLIST_FOODEXCLUSION).getList();
+        final Set<ItemStorage> allowedItems = building.getModule(RESTAURANT_MENU).getMenu();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
     }

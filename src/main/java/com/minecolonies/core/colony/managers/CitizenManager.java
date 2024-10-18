@@ -36,6 +36,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -237,6 +238,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
+            Log.getLogger().error("Can't respawn with townhall {}, moveIn {} or force {}", colony.getBuildingManager().hasTownHall(), colony.canMoveIn(), force);
             return (ICitizenData) data;
         }
 
@@ -297,11 +299,24 @@ public class CitizenManager implements ICitizenManager
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
+
+        if (world instanceof ServerLevel serverLevel)
+        {
+            final EntityCitizen watEntity = (EntityCitizen) serverLevel.getEntity(citizenData.getUUID());
+            if (watEntity != null)
+            {
+                Log.getLogger().error("Wat Entity found: {} {} {} {} {}", watEntity.isRemoved(), watEntity.isAlive(), watEntity.position());
+            }
+            // wat?
+        }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
         entity.setUUID(citizenData.getUUID());
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-        world.addFreshEntity(entity);
+        if (!world.addFreshEntity(entity))
+        {
+            Log.getLogger().warn("Adding fresh entity failed. What Minecraft?");
+        }
 
         entity.setCitizenId(citizenData.getId());
         entity.getCitizenColonyHandler().setColonyId(colony.getID());

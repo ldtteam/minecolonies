@@ -747,24 +747,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     /**
-     * If an incoming request is a minimum stock request.
-     *
-     * @param request the request to check.
-     * @return true if so.
-     */
-    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
-    {
-        for (final IMinimumStockModule module : getModulesByType(IMinimumStockModule.class))
-        {
-            if (module.isMinimumStockRequest(request))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.

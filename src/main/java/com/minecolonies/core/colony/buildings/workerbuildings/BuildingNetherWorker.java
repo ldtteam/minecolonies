@@ -10,7 +10,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
@@ -28,11 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 
 public class BuildingNetherWorker extends AbstractBuilding
 {
@@ -92,8 +89,6 @@ public class BuildingNetherWorker extends AbstractBuilding
     public BuildingNetherWorker(@NotNull IColony colony, BlockPos pos)
     {
         super(colony, pos);
-
-        keepX.put(this::isAllowedFood, new Tuple<>(STACKSIZE, true));
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.axe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.pickaxe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
@@ -211,18 +206,6 @@ public class BuildingNetherWorker extends AbstractBuilding
         }
 
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, jobEntry);
-    }
-
-
-    /**
-     * Return whether the given stack is allowed food
-     * @param stack the stack
-     * @return true if so
-     */
-    public boolean isAllowedFood(ItemStack stack)
-    {
-        ItemListModule listModule = this.getModule(ITEMLIST_FOODEXCLUSION);
-        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack)) && !ItemStackUtils.ISCOOKABLE.test(stack);
     }
 
     /**

@@ -257,7 +257,7 @@ public class EntityAIEatTask implements IStateAI
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
               stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
-                         && !(cookBuilding.getModule(BuildingModules.ITEMLIST_FOODEXCLUSION)
+                         && !(cookBuilding.getModule(BuildingModules.RESTAURANT_MENU)
                 .isItemInList(new ItemStorage(stack))));
         }
 

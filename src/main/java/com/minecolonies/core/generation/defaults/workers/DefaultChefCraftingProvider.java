@@ -45,6 +45,8 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
           .showTooltip(true)
           .build(consumer);
 
+
+
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "cabochis")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
