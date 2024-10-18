@@ -108,9 +108,9 @@ public class WindowInteraction extends AbstractWindowSkeleton
         final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
         chatText.setTextAlignment(Alignment.TOP_LEFT);
         chatText.setAlignment(Alignment.TOP_LEFT);
-        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry(Minecraft.getInstance().player).getString()));
+        chatText.setText(Component.literal(citizen.getName() + ": " + handler.getInquiry(Minecraft.getInstance().player, citizen).getString()));
         int responseIndex = 1;
-        for (final Component component : handler.getPossibleResponses())
+        for (final Component component : handler.getPossibleResponses(citizen))
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);

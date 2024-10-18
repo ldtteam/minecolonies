@@ -109,7 +109,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                     citizenData.getEntity().get().remove(Entity.RemovalReason.DISCARDED);
                 }
 
-                colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.blockPosition(), true);
+                colony.getCitizenManager().spawnOrCreateCitizen(citizenData, world, player.blockPosition(), true);
                 citizenData.setNextRespawnPosition(buildingPos);
 
                 building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);

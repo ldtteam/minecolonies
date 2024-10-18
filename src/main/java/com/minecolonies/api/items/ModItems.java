@@ -26,6 +26,8 @@ public final class ModItems
     public static Item mistletoe;
     public static Item spear;
 
+    public static AbstractItemExpeditionSheet expeditionSheet;
+
     public static Item clipboard;
     public static Item compost;
     public static Item resourceScroll;

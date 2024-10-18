@@ -115,7 +115,7 @@ public class ReproductionManager implements IReproductionManager
                 }
             }
 
-            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
+            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCitizenData();
             ICitizenData firstParent;
             ICitizenData secondParent;
             if (!assignedCitizens.isEmpty())

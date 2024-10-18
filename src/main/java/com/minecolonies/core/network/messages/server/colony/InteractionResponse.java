@@ -92,7 +92,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
         ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData == null)
         {
-            citizenData = colony.getVisitorManager().getVisitor(citizenId);
+            citizenData = colony.getVisitorManager().getCivilian(citizenId);
         }
 
         if (citizenData != null && ctxIn.getSender() != null)

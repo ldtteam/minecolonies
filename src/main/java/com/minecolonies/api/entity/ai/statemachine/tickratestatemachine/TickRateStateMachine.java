@@ -141,6 +141,9 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     @Override
     public void setCurrentDelay(final int ticksToNext)
     {
-        executedTransition.setTicksToUpdate(ticksToNext);
+        if (executedTransition != null)
+        {
+            executedTransition.setTicksToUpdate(ticksToNext);
+        }
     }
 }

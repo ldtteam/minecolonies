@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 22.0,
+  "entity-type": "minecraft:creeper",
+  "health": 20.0,
+  "loot-table": "minecraft:entities/creeper",
+  "reflect": 20.0,
+  "xp": 5.0
+}

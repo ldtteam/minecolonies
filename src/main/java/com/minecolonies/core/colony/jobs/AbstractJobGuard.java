@@ -55,6 +55,12 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
         return true;
     }
 
+    @Override
+    public boolean isCombatGuard()
+    {
+        return true;
+    }
+
     /**
      * Whether the guard is asleep.
      *

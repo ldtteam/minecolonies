@@ -1,38 +1,35 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.UUID;
+import com.minecolonies.api.entity.visitor.IVisitorExtraData;
+import com.minecolonies.api.entity.visitor.IVisitorType;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Data for colony visitors, based on citizendata
+ * Data for colony visitors, based on citizen data
  */
 public interface IVisitorData extends ICitizenData
 {
     /**
-     * Sets the recruitment cost stack
+     * Get the type of the visitor.
+     *
+     * @return the visitor type.
      */
-    void setRecruitCosts(final ItemStack cost);
+    @NotNull
+    IVisitorType getVisitorType();
 
     /**
-     * Returns the recruitment cost stack
+     * Get any bit of additional information for this visitor.
      *
-     * @return itemstack
+     * @param extraData the extra data key.
+     * @return the extra data container.
      */
-    ItemStack getRecruitCost();
+    <T> T getExtraDataValue(final IVisitorExtraData<T> extraData);
 
     /**
-     * The position the visitor is sitting on
+     * Set any bit of additional information for this visitor.
      *
-     * @return sitting pos
+     * @param extraData the extra data key.
+     * @param value     the new value for the extra data key.
      */
-    BlockPos getSittingPosition();
-
-    /**
-     * Sets the sitting position
-     *
-     * @param pos sitting pos
-     */
-    void setSittingPosition(final BlockPos pos);
+    <T> void setExtraDataValue(final IVisitorExtraData<T> extraData, final T value);
 }

@@ -57,7 +57,8 @@ public class QuestTranslationProvider implements DataProvider
         final PackOutput.PathProvider questProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, COLONY_QUESTS_DIR);
         final List<CompletableFuture<?>> quests = new ArrayList<>();
 
-        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", false, Path.of("..", "src", "main", "resources")))
+        final Path root = packOutput.getOutputFolder().resolve(Path.of("..", "..", "..", "main", "resources"));
+        try (final PackResources pack = new PathPackResources(MOD_ID + ".src", false, root))
         {
             pack.listResources(PackType.SERVER_DATA, MOD_ID, COLONY_QUESTS_DIR, (questId, stream) ->
             {

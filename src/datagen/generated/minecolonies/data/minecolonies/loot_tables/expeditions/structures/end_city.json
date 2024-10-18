@@ -1,0 +1,490 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:end_city\",type:\"structure_start\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:end_stone_bricks",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:purpur_block",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:iron_ingot",
+          "weight": 200
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_ingot",
+          "weight": 200
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:saddle",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:emerald",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_helmet",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_chestplate",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_leggings",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_boots",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_sword",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_pickaxe",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:iron_shovel",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_helmet",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_chestplate",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_leggings",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_boots",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_sword",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_pickaxe",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:enchant_randomly"
+            },
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.75,
+                "min": 0.5
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:diamond_shovel",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:elytra"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:enderman\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 200
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:shulker\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 300
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 5.0,
+        "min": 3.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:end_city\",type:\"structure_end\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:expeditions/structures/end_city"
+}

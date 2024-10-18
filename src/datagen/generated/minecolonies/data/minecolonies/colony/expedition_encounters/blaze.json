@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 6.0,
+  "entity-type": "minecraft:blaze",
+  "health": 20.0,
+  "loot-table": "minecraft:entities/blaze",
+  "reflect": 0.0,
+  "xp": 10.0
+}
