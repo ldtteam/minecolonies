@@ -255,6 +255,49 @@ public class EventHandler
                                                            .when(LootItemRandomChanceCondition.randomChance(0.10f)))
                                               .otherwise(LootItem.lootTableItem(ModBlocks.blockBellPepper)
                                                            .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.temperateBiomes))
+                    .add(AlternativesEntry.alternatives()
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockButternutSquash)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.10f)))
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockButternutSquash)
+                                    .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.temperateBiomes))
+                    .add(AlternativesEntry.alternatives()
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockCorn)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.10f)))
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockCorn)
+                                    .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+            event.getTable().addPool(LootPool.lootPool()
+                    .add(AlternativesEntry.alternatives()
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockMint)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.10f)))
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockMint)
+                                    .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.dryBiomes))
+                    .add(AlternativesEntry.alternatives()
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockNetherPepper)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.10f)))
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockNetherPepper)
+                                    .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.temperateBiomes))
+                    .add(AlternativesEntry.alternatives()
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockPeas)
+                                    .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.10f)))
+                            .otherwise(LootItem.lootTableItem(ModBlocks.blockPeas)
+                                    .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
+
+
+
         }
         else if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON))
         {
@@ -275,8 +318,19 @@ public class EventHandler
                                               .when(LootItemRandomChanceCondition.randomChance(0.005f)))
                                        .add(LootItem.lootTableItem(ModBlocks.blockBellPepper)
                                               .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockPeas)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockCorn)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                       .add(LootItem.lootTableItem(ModBlocks.blockButternutSquash)
+                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                        .add(LootItem.lootTableItem(ModBlocks.blockMint)
+                                                .when(LootItemRandomChanceCondition.randomChance(0.005f)))
+                                        .add(LootItem.lootTableItem(ModBlocks.blockNetherPepper)
+                                                .when(LootItemRandomChanceCondition.randomChance(0.005f)))
                                        .add(LootItem.lootTableItem(ModBlocks.blockDurum)
                                               .when(LootItemRandomChanceCondition.randomChance(0.005f))).build());
+
         }
     }
 

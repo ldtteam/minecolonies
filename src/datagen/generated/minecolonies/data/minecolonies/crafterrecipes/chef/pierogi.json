@@ -1,0 +1,29 @@
+{
+	"type": "recipe",
+	"count": 1,
+	"crafter": "chef_crafting",
+	"inputs": [
+		{
+			"count": 1,
+			"item": "minecolonies:garlic"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:onion"
+		},
+		{
+			"count": 1,
+			"item": "minecraft:potato"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:durum"
+		},
+		{
+			"count": 1,
+			"item": "minecolonies:cheddar_cheese"
+		}
+	],
+	"intermediate": "minecraft:air",
+	"result": "minecolonies:pierogi"
+}
