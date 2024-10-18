@@ -797,7 +797,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 return RECALC;
             }
         }
-
+        // TODO: Why predicate based search when we got our ItemStorages we look for already?
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
           itemStack -> requestedMap.keySet().stream().anyMatch(storage -> ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getItemStack(), itemStack)));
 
