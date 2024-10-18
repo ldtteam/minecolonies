@@ -51,7 +51,6 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_TAB_KEY;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -125,11 +124,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<String> diseaseList = new ArrayList<>();
 
     /**
-     * List of lucky oreBlocks which get dropped by the miner.
-     */
-    private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
-
-    /**
      * The items and weights of the recruitment.
      */
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
@@ -187,7 +181,6 @@ public class CompatibilityManager implements ICompatibilityManager
         fuel.clear();
         compostRecipes.clear();
 
-        luckyOres.clear();
         recruitmentCostsWeights.clear();
         diseases.clear();
         diseaseList.clear();
@@ -208,7 +201,6 @@ public class CompatibilityManager implements ICompatibilityManager
         clear();
         discoverAllItems(level);
 
-        discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
@@ -265,7 +257,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostRecipes(deserializeCompostRecipes(buf));
 
         // the below are loaded from config files, which have been synched already by this point
-        discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
@@ -569,24 +560,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel)
-    {
-        if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chanceBonus)
-        {
-            // fetch default config for all level
-            // override it if specific config for this level is available.
-            List<ItemStorage> luckyOresInLevel = luckyOres.get(0);
-            if (luckyOres.containsKey(buildingLevel))
-            {
-                luckyOresInLevel = luckyOres.get(buildingLevel);
-            }
-
-            return luckyOresInLevel.get(random.nextInt(luckyOresInLevel.size())).getItemStack().copy();
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
     public boolean isFreeBlock(final Block block)
     {
         return freeBlocks.contains(block);
@@ -818,74 +791,6 @@ public class CompatibilityManager implements ICompatibilityManager
                 edibles.add(new ItemStorage(stack));
             }
         }
-    }
-
-    /**
-     * Run through all blocks and check if they match one of our lucky oreBlocks.
-     */
-    private void discoverLuckyOres()
-    {
-        if (luckyOres.isEmpty())
-        {
-            for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyOres.get())
-            {
-                final String[] split = ore.split("!");
-                if (split.length < 2)
-                {
-                    Log.getLogger().warn("Wrong configured ore: " + ore);
-                    continue;
-                }
-
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR)
-                {
-                    Log.getLogger().warn("Invalid lucky block: " + ore);
-                    continue;
-                }
-
-                final int defaultMineLevel = 0;
-                int buildingLevel = defaultMineLevel;
-                final ItemStack stack = new ItemStack(item, 1);
-                try
-                {
-                    if (split.length == 3)
-                    {
-                        buildingLevel = Integer.parseInt(split[2]);
-                    }
-
-                    final int rarity = Integer.parseInt(split[1]);
-
-                    luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
-
-                    for (int i = 0; i < rarity; i++)
-                    {
-                        List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
-                        luckyOreOnLevel.add(new ItemStorage(stack));
-                    }
-                }
-                catch (final NumberFormatException ex)
-                {
-                    Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
-                }
-            }
-
-            List<ItemStorage> alternative = null;
-            int mineMaxLevel = 5;
-            for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++)
-            {
-                if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
-                {
-                    alternative = luckyOres.get(levelToTest);
-                    break;
-                }
-            }
-
-            for (int levelToReplace = 0; levelToReplace <= mineMaxLevel; levelToReplace++)
-            {
-                luckyOres.putIfAbsent(levelToReplace, alternative);
-            }
-        }
-        Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
     }
 
     /**
