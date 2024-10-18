@@ -130,11 +130,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
 
     /**
-     * The items and weights of the recruitment.
-     */
-    private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
-
-    /**
      * Random obj.
      */
     private static final Random random = new Random();
@@ -188,7 +183,6 @@ public class CompatibilityManager implements ICompatibilityManager
         compostRecipes.clear();
 
         luckyOres.clear();
-        recruitmentCostsWeights.clear();
         diseases.clear();
         diseaseList.clear();
         freeBlocks.clear();
@@ -209,7 +203,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverAllItems(level);
 
         discoverLuckyOres();
-        discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
         discoverModCompat();
@@ -266,7 +259,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
         // the below are loaded from config files, which have been synched already by this point
         discoverLuckyOres();
-        discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
         discoverModCompat();
@@ -501,12 +493,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<Disease> getDiseases()
     {
         return new ArrayList<>(diseases.values());
-    }
-
-    @Override
-    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights()
-    {
-        return Collections.unmodifiableList(recruitmentCostsWeights);
     }
 
     @Override
@@ -886,43 +872,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
-    }
-
-    /**
-     * Parses recruitment costs from config
-     */
-    private void discoverRecruitCosts()
-    {
-        if (recruitmentCostsWeights.isEmpty())
-        {
-            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getServer().configListRecruitmentItems.get())
-            {
-                final String[] split = itemString.split(";");
-                if (split.length < 2)
-                {
-                    Log.getLogger().warn("Wrong configured recruitment cost: " + itemString);
-                    continue;
-                }
-
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR)
-                {
-                    Log.getLogger().warn("Invalid recruitment item: " + item);
-                    continue;
-                }
-
-                try
-                {
-                    final int rarity = Integer.parseInt(split[split.length - 1]);
-                    recruitmentCostsWeights.add(new Tuple<>(item, rarity));
-                }
-                catch (final NumberFormatException ex)
-                {
-                    Log.getLogger().warn("Invalid recruitment weight for: " + item);
-                }
-            }
-        }
-        Log.getLogger().info("Finished discovering recruitment costs");
     }
 
     /**

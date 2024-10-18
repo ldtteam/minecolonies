@@ -8,18 +8,18 @@ import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
+import com.minecolonies.core.datalistener.RecruitmentItemsListener;
+import com.minecolonies.core.datalistener.RecruitmentItemsListener.RecruitCost;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
@@ -53,10 +53,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     /**
      * Skill levels
      */
-    private static final int LEATHER_SKILL_LEVEL = 20;
-    private static final int GOLD_SKILL_LEVEL    = 25;
-    private static final int IRON_SKILL_LEVEL    = 30;
-    private static final int DIAMOND_SKILL_LEVEL = 35;
+    public static final int LEATHER_SKILL_LEVEL = 20;
+    public static final int GOLD_SKILL_LEVEL    = 25;
+    public static final int IRON_SKILL_LEVEL    = 30;
+    public static final int DIAMOND_SKILL_LEVEL = 35;
 
     /**
      * Music interval
@@ -154,7 +154,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (building.getBuildingLevel() > 0 && externalCitizens.size() < 3 * building.getBuildingLevel() && noVisitorTime <= 0)
         {
-            spawnVisitor();
+            spawnVisitorInternal();
             noVisitorTime =
               colony.getWorld().getRandom().nextInt(3000) + (6000 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
                                                                                                                                                   .getMaxCitizens();
@@ -168,25 +168,33 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     /**
-     * Spawns a recruitable visitor citizen.
+     * Spawns a visitor specifically for the tavern logic.
      */
-    private void spawnVisitor()
+    private void spawnVisitorInternal()
     {
-        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
-        externalCitizens.add(newCitizen.getId());
+        final IVisitorData visitorData = spawnVisitor();
 
+        if (!CustomVisitorListener.chanceCustomVisitors(visitorData))
+        {
+            visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), visitorData.getName().split(" ")[0]),
+              ChatPriority.IMPORTANT));
+        }
+    }
+
+    /**
+     * Spawns a visitor citizen that can be recruited.
+     */
+    public IVisitorData spawnVisitor()
+    {
+        final int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
+        final RecruitCost cost = RecruitmentItemsListener.getRandomRecruitCost(building.getColony().getWorld().getRandom(), recruitLevel);
+
+        final IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
         newCitizen.setBedPos(building.getPosition());
         newCitizen.setHomeBuilding(building);
-
-        int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
-        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
-
-        if (newCitizen.getName().contains("Ray"))
-        {
-            newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
-        }
-
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
+        newCitizen.setRecruitCosts(cost.toItemStack(recruitLevel));
 
         BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
         if (spawnPos == null)
@@ -194,8 +202,25 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             spawnPos = building.getPosition();
         }
 
-        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
+        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        if (newCitizen.getEntity().isPresent())
+        {
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, getBoots(recruitLevel));
+        }
+        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
+        externalCitizens.add(newCitizen.getId());
+        return newCitizen;
+    }
+
+    /**
+     * Get the boots for the given recruit level.
+     *
+     * @param recruitLevel the input recruit level.
+     * @return the itemstack for the boots.
+     */
+    private ItemStack getBoots(final int recruitLevel)
+    {
         ItemStack boots = ItemStack.EMPTY;
         if (recruitLevel > LEATHER_SKILL_LEVEL)
         {
@@ -209,38 +234,15 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         }
         if (recruitLevel > IRON_SKILL_LEVEL)
         {
-            if (cost.getB() <= 2)
-            {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-            }
             // Iron
             boots = new ItemStack(Items.IRON_BOOTS);
         }
         if (recruitLevel > DIAMOND_SKILL_LEVEL)
         {
-            if (cost.getB() <= 3)
-            {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-            }
             // Diamond
             boots = new ItemStack(Items.DIAMOND_BOOTS);
         }
-
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
-
-        if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
-        {
-            newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
-              ChatPriority.IMPORTANT));
-        }
-
-        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
-        if (newCitizen.getEntity().isPresent())
-        {
-            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, boots);
-        }
-        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+        return boots;
     }
 
     @Override

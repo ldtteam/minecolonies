@@ -163,13 +163,6 @@ public interface ICompatibilityManager
     List<Disease> getDiseases();
 
     /**
-     * Gets the list of recruitment costs with weights
-     *
-     * @return list of costs
-     */
-    List<Tuple<Item, Integer>> getRecruitmentCostsWeights();
-
-    /**
      * Checks if a certain Block is an ore.
      *
      * @param block the block to check.
