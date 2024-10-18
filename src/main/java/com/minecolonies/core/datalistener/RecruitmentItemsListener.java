@@ -25,7 +25,7 @@ import static com.minecolonies.core.colony.buildings.modules.TavernBuildingModul
 import static com.minecolonies.core.colony.buildings.modules.TavernBuildingModule.IRON_SKILL_LEVEL;
 
 /**
- * Loads and listens to free block data.
+ * Loads and listens to recruitment costs data.
  */
 public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
 {
@@ -41,7 +41,7 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     private static final String KEY_RARITY = "rarity";
 
     /**
-     * The current list of free to interact blocks.
+     * The current list of recruitment costs.
      */
     private static List<RecruitCost> RECRUIT_COSTS = new ArrayList<>();
 
