@@ -18,7 +18,6 @@ import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.datalistener.FreeBlocksListener;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -418,7 +417,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return (block != null && (FreeBlocksListener.isFreeBlock(block) || colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos) || FreeBlocksListener.isFreePos(pos);
+        return (block != null && (colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos);
     }
 
     /**
