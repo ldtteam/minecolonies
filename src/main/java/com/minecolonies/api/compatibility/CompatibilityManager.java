@@ -16,7 +16,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -144,16 +143,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private static ImmutableList<ItemStack> allItems = ImmutableList.of();
 
     /**
-     * Free block positions everyone can interact with.
-     */
-    private final Set<Block> freeBlocks = new HashSet<>();
-
-    /**
-     * Free positions everyone can interact with.
-     */
-    private final Set<BlockPos> freePositions = new HashSet<>();
-
-    /**
      * Hashmap of mobs we may or may not attack.
      */
     private ImmutableSet<ResourceLocation> monsters = ImmutableSet.of();
@@ -190,8 +179,6 @@ public class CompatibilityManager implements ICompatibilityManager
         recruitmentCostsWeights.clear();
         diseases.clear();
         diseaseList.clear();
-        freeBlocks.clear();
-        freePositions.clear();
         monsters = ImmutableSet.of();
         creativeModeTabMap.clear();
     }
