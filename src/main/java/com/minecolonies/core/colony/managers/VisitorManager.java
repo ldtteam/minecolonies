@@ -15,8 +15,8 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.interactionhandling.ExpeditionInteraction;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
@@ -318,7 +318,7 @@ public class VisitorManager implements IVisitorManager
      */
     public void spawnExpeditionary()
     {
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getRandomExpeditionType(colony);
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getRandomExpeditionType(colony);
         if (expeditionType != null)
         {
             final IVisitorData newVisitor = createAndRegisterVisitorData(ModVisitorTypes.expeditionary.get());

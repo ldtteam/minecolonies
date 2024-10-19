@@ -18,9 +18,9 @@ import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.colony.expeditions.ExpeditionStage;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeDifficulty;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -127,7 +127,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
             {
                 final ColonyExpedition expedition = expeditionGetter.get().get(index);
 
-                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
+                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(expedition.getExpeditionTypeId());
                 if (expeditionType == null)
                 {
                     return;
@@ -196,7 +196,7 @@ public class WindowTownHallExpeditions extends AbstractWindowSkeleton implements
 
         if (openedExpedition != null)
         {
-            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(openedExpedition.getExpeditionTypeId());
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(openedExpedition.getExpeditionTypeId());
             if (expeditionType == null)
             {
                 return;

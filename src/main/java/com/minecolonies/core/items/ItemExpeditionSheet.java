@@ -10,7 +10,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.client.gui.expedition_sheet.WindowExpeditionSheet;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -112,7 +112,7 @@ public class ItemExpeditionSheet extends AbstractItemExpeditionSheet
         }
 
         // The expedition type this sheet was made for no longer exists, delete the sheet.
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(createdExpedition.expeditionTypeId());
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(createdExpedition.expeditionTypeId());
         if (expeditionType == null)
         {
             reduceAndDropContents(player, itemStack);

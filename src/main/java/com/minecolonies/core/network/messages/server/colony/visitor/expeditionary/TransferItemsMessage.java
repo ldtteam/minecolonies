@@ -7,7 +7,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -73,7 +73,7 @@ public class TransferItemsMessage extends AbstractColonyServerMessage
         final ItemStack itemInHand = ctxIn.getSender().getItemInHand(hand);
         final ExpeditionSheetContainerManager expeditionSheetContainerManager = new ExpeditionSheetContainerManager(itemInHand);
 
-        final ColonyExpeditionType colonyExpeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        final ColonyExpeditionType colonyExpeditionType = ColonyExpeditionTypeListener.getExpeditionType(expeditionTypeId);
         if (colonyExpeditionType == null)
         {
             Log.getLogger().warn("Transferring items for expedition failed, expedition type '{}' does not exist on the server side.", expeditionTypeId);

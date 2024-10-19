@@ -6,37 +6,37 @@
   "name": "com.minecolonies.core.expedition_types.nether.name",
   "requirements": [
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:sword"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:pickaxe"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:shovel"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:helmet"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:chestplate"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:leggings"
     },
     {
-      "type": "tool",
+      "type": "equipment",
       "amount": 1,
       "equipment": "minecolonies:boots"
     },

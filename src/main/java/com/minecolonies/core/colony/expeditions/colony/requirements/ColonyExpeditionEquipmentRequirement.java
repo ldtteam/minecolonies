@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.expeditions.colony.requirements;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
@@ -50,7 +49,7 @@ public class ColonyExpeditionEquipmentRequirement extends ColonyExpeditionRequir
     @NotNull
     public ResourceLocation getId()
     {
-        return new ResourceLocation(Constants.MOD_ID, "equipment/" + equipmentType.getRegistryName());
+        return equipmentType.getRegistryName().withPrefix("equipment");
     }
 
     @Override

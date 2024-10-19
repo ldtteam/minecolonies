@@ -26,7 +26,7 @@ import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement;
 import com.minecolonies.core.colony.expeditions.colony.requirements.ColonyExpeditionRequirement.RequirementHandler;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
@@ -145,8 +145,15 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
             case CREATED ->
             {
                 final ResourceLocation expeditionTypeId = data.getColony().getExpeditionManager().getCreatedExpedition(data.getId()).expeditionTypeId();
-                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
-                yield acceptInquiry.apply(expeditionType.toText());
+                final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(expeditionTypeId);
+                if (expeditionType != null)
+                {
+                    yield acceptInquiry.apply(expeditionType.toText());
+                }
+                else
+                {
+                    yield Component.empty();
+                }
             }
             case ACCEPTED -> prepareInquiry;
             case FINISHED -> finishedInquiry;
@@ -292,7 +299,7 @@ public class ExpeditionInteraction extends ServerCitizenInteraction
         }
 
         // Get the expedition type.
-        final ColonyExpeditionType colonyExpeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(createdExpedition.expeditionTypeId());
+        final ColonyExpeditionType colonyExpeditionType = ColonyExpeditionTypeListener.getExpeditionType(createdExpedition.expeditionTypeId());
         if (colonyExpeditionType == null)
         {
             Log.getLogger().warn("Starting expedition failed, expedition type '{}' does not exist on the server side.", createdExpedition.expeditionTypeId());

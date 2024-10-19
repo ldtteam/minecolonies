@@ -17,9 +17,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.expeditions.ExpeditionCitizenMember;
 import com.minecolonies.core.colony.expeditions.ExpeditionVisitorMember;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounter;
 import com.minecolonies.core.colony.expeditions.encounters.ExpeditionEncounterManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType.DespawnTimeData.DespawnTime;
 import com.minecolonies.core.items.ItemAdventureToken;
 import net.minecraft.nbt.CompoundTag;
@@ -228,7 +228,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
     private void processMobFight(final @NotNull ExpeditionEncounter encounter, final int encounterAmount, final boolean scaleEncounterSize)
     {
         final ColonyExpedition expedition = getExpedition();
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(expedition.getExpeditionTypeId());
         if (expeditionType == null)
         {
             return;
@@ -448,7 +448,7 @@ public class ColonyExpeditionEvent implements IColonyEvent
         if (!world.isClientSide)
         {
             final ColonyExpedition expedition = getExpedition();
-            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expedition.getExpeditionTypeId());
+            final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(expedition.getExpeditionTypeId());
             if (expeditionType == null)
             {
                 Log.getLogger().warn("Expedition cannot start because of a missing expedition type: '{}'", expedition.getExpeditionTypeId());

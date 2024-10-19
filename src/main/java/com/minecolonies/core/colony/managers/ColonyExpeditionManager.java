@@ -15,7 +15,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceAvailability;
 import com.minecolonies.core.colony.expeditions.colony.ColonyExpeditionBuilder;
 import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionType;
-import com.minecolonies.core.colony.expeditions.colony.types.ColonyExpeditionTypeManager;
+import com.minecolonies.core.datalistener.ColonyExpeditionTypeListener;
 import com.minecolonies.core.items.ItemExpeditionSheet.ExpeditionSheetContainerManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -323,7 +323,7 @@ public class ColonyExpeditionManager implements IColonyExpeditionManager
      */
     private <T, A> T parseExpeditionAndRunActual(final ResourceLocation expeditionTypeId, final A arg, final BiFunction<ColonyExpeditionType, A, T> func, final T def)
     {
-        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeManager.getInstance().getExpeditionType(expeditionTypeId);
+        final ColonyExpeditionType expeditionType = ColonyExpeditionTypeListener.getExpeditionType(expeditionTypeId);
         if (expeditionType == null)
         {
             Log.getLogger().warn("Expedition type with id {} does not exist", expeditionTypeId);
