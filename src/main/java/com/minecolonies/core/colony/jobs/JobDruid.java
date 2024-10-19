@@ -29,6 +29,12 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
     }
 
     @Override
+    public boolean isCombatGuard()
+    {
+        return false;
+    }
+
+    @Override
     public EntityAIDruid generateGuardAI()
     {
         return new EntityAIDruid(this);

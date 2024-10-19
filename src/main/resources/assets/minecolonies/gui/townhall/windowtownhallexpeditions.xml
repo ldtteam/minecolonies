@@ -1,0 +1,131 @@
+<window size="400 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockui/blockui.xsd">
+
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
+    <image source="minecolonies:textures/gui/bookmark_ribbon_01.png" pos="0 12" size="204 17"/>
+
+    <view pos="15 15" size="370 214">
+        <view size="180 100%">
+            <text size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header)" color="white"/>
+
+            <text pos="0 20" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_active)" color="black"/>
+            <box pos="0 35" size="100% 36" linewidth="1">
+                <list id="active_expeditions"
+                      size="100% 100%"
+                      emptytext="$(com.minecolonies.core.expedition.gui.townhall.empty_list_active)"
+                      emptyscale="0.8"
+                      emptycolor="black">
+                    <box size="172 36" linewidth="1">
+                        <text id="expedition_name" pos="3 3" size="149 15" color="black"/>
+                        <buttonimage id="expedition_open"
+                                     pos="155 3"
+                                     size="14 15"
+                                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                                     disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
+                        <image pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png" enabled="false"/>
+                        <image id="expedition_difficulty" size="16 16" pos="3 18"/>
+                        <text id="expedition_status" pos="22 18" size="169 15" color="black" textscale="0.8"/>
+                    </box>
+                </list>
+            </box>
+
+            <text pos="0 75" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_finished)" color="black"/>
+            <box pos="0 90" size="100% 124" linewidth="1">
+                <list id="finished_expeditions"
+                      size="100% 100%"
+                      emptytext="$(com.minecolonies.core.expedition.gui.townhall.empty_list_finished)"
+                      emptyscale="0.8"
+                      emptycolor="black">
+                    <box size="172 36" linewidth="1">
+                        <text id="expedition_name" pos="3 3" size="149 15" color="black"/>
+                        <buttonimage id="expedition_open"
+                                     pos="155 3"
+                                     size="14 15"
+                                     source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                                     disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
+                        <image pos="155 3" size="14 15" source="minecolonies:textures/gui/overlay_button_mini_arrow_right.png" enabled="false"/>
+                        <image id="expedition_difficulty" size="16 16" pos="3 18"/>
+                        <text id="expedition_status" pos="22 18" size="169 15" color="black" textscale="0.8"/>
+                    </box>
+                </list>
+            </box>
+        </view>
+
+        <box linewidth="1" pos="185 20" size="1 194" color="gray"/>
+
+        <view pos="190 0" size="180 100%">
+            <text id="empty_text"
+                  size="75% 100%"
+                  align="TOP_MIDDLE"
+                  text="$(com.minecolonies.core.expedition.gui.townhall.no_chosen)"
+                  color="black"
+                  textscale="0.8"
+                  textalign="MIDDLE"/>
+
+            <view id="expedition_details" size="100% 100%">
+                <text id="expedition_name" size="100% 15" color="black"/>
+                <image id="expedition_difficulty" size="16 15" pos="0 15"/>
+                <text id="expedition_status" pos="20 15" size="100% 15" color="black" textscale="0.8"/>
+
+                <text pos="0 40" size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_items)" color="black"/>
+                <box pos="0 55" size="100% 20" linewidth="1">
+                    <list id="expedition_items"
+                          size="100% 100%"
+                          emptyscale="0.8"
+                          emptycolor="black">
+                        <view size="100% 20">
+                            <itemicon id="item_0" pos="2 2" size="16 16"/>
+                            <itemicon id="item_1" pos="21 2" size="16 16"/>
+                            <itemicon id="item_2" pos="40 2" size="16 16"/>
+                            <itemicon id="item_3" pos="59 2" size="16 16"/>
+                            <itemicon id="item_4" pos="78 2" size="16 16"/>
+                            <itemicon id="item_5" pos="97 2" size="16 16"/>
+                            <itemicon id="item_6" pos="116 2" size="16 16"/>
+                            <itemicon id="item_7" pos="135 2" size="16 16"/>
+                            <itemicon id="item_8" pos="154 2" size="16 16"/>
+                        </view>
+                    </list>
+                </box>
+
+                <view id="expedition_results" pos="0 80" size="100% 134">
+                    <text size="100% 15" text="$(com.minecolonies.core.expedition.gui.townhall.header_results)" color="black"/>
+                    <box pos="0 15" size="100% 119" linewidth="1">
+                        <list id="expedition_results_list"
+                              size="100% 100%"
+                              emptyscale="0.8"
+                              emptycolor="black">
+                            <view size="100% 20">
+                                <view id="child_header" size="100% 100%" enabled="false" visible="false">
+                                    <text id="header" size="170 100%" pos="5 0" color="black"/>
+                                </view>
+                                <view id="child_rewards" size="100% 100%" enabled="false" visible="false">
+                                    <itemicon id="item_0" pos="2 2" size="16 16"/>
+                                    <itemicon id="item_1" pos="21 2" size="16 16"/>
+                                    <itemicon id="item_2" pos="40 2" size="16 16"/>
+                                    <itemicon id="item_3" pos="59 2" size="16 16"/>
+                                    <itemicon id="item_4" pos="78 2" size="16 16"/>
+                                    <itemicon id="item_5" pos="97 2" size="16 16"/>
+                                    <itemicon id="item_6" pos="116 2" size="16 16"/>
+                                    <itemicon id="item_7" pos="135 2" size="16 16"/>
+                                    <itemicon id="item_8" pos="154 2" size="16 16"/>
+                                </view>
+                                <view id="child_kills" size="100% 100%" enabled="false" visible="false">
+                                    <entityicon id="item_0" pos="2 2" size="16 16"/>
+                                    <entityicon id="item_1" pos="21 2" size="16 16"/>
+                                    <entityicon id="item_2" pos="40 2" size="16 16"/>
+                                    <entityicon id="item_3" pos="59 2" size="16 16"/>
+                                    <entityicon id="item_4" pos="78 2" size="16 16"/>
+                                    <entityicon id="item_5" pos="97 2" size="16 16"/>
+                                    <entityicon id="item_6" pos="116 2" size="16 16"/>
+                                    <entityicon id="item_7" pos="135 2" size="16 16"/>
+                                    <entityicon id="item_8" pos="154 2" size="16 16"/>
+                                </view>
+                            </view>
+                        </list>
+                    </box>
+                </view>
+            </view>
+        </view>
+    </view>
+</window>

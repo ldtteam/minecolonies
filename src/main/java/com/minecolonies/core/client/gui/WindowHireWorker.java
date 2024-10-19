@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.BLACK;
+import static com.minecolonies.core.client.gui.generic.ResourceItem.BLACK;
 
 /**
  * BOWindow for the hiring or firing of a worker.

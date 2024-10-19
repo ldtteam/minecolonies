@@ -20,6 +20,7 @@ public final class ModInteractionResponseHandlers
     public static final ResourceLocation RECRUITMENT         = new ResourceLocation(Constants.MOD_ID, "recruitment");
     public static final ResourceLocation QUEST               = new ResourceLocation(Constants.MOD_ID, "quest");
     public static final ResourceLocation QUEST_ACTION        = new ResourceLocation(Constants.MOD_ID, "questaction");
+    public static final ResourceLocation EXPEDITION          = new ResourceLocation(Constants.MOD_ID, "expedition");
 
     /**
      * List of entries.
@@ -31,9 +32,10 @@ public final class ModInteractionResponseHandlers
     public static RegistryObject<InteractionResponseHandlerEntry> recruitment;
     public static RegistryObject<InteractionResponseHandlerEntry> quest;
     public static RegistryObject<InteractionResponseHandlerEntry> questAction;
+    public static RegistryObject<InteractionResponseHandlerEntry> expedition;
 
     private ModInteractionResponseHandlers()
     {
-        throw new IllegalStateException("Tried to initialize: ModJobs but this is a Utility class.");
+        throw new IllegalStateException("Tried to initialize: ModInteractionResponseHandlers but this is a Utility class.");
     }
 }

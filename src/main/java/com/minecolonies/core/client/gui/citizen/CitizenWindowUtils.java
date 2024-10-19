@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.BLACK;
+import static com.minecolonies.core.client.gui.generic.ResourceItem.BLACK;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
 import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;

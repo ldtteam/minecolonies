@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -188,6 +189,16 @@ public class Colony implements IColony
      * Quest manager for this colony
      */
     private IQuestManager questManager;
+
+    /**
+     * Expedition manager for this colony
+     */
+    private final IColonyExpeditionManager expeditionManager = new ColonyExpeditionManager(this);
+
+    /**
+     * The traveling manager used for traveling large distances
+     */
+    private final TravelingManager travelingManager = new TravelingManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -376,6 +387,7 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, citizenManager::tickCitizenData, () -> ACTIVE, TICKS_SECOND * 3));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, visitorManager::tickVisitorData, () -> ACTIVE, TICKS_SECOND * 3));
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
@@ -455,6 +467,7 @@ public class Colony implements IColony
         workManager.onColonyTick(this);
         reproductionManager.onColonyTick(this);
         questManager.onColonyTick();
+        travelingManager.onTick();
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -743,6 +756,9 @@ public class Colony implements IColony
         questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
+        expeditionManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EXPEDITION_MANAGER));
+        travelingManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_TRAVELING_MANAGER));
+
         if (compound.contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
@@ -901,6 +917,9 @@ public class Colony implements IColony
 
         compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        compound.put(NbtTagConstants.TAG_EXPEDITION_MANAGER, expeditionManager.serializeNBT());
+        compound.put(NbtTagConstants.TAG_TRAVELING_MANAGER, travelingManager.serializeNBT());
+
         raidManager.write(compound);
 
         @NotNull final CompoundTag researchManagerCompound = new CompoundTag();
@@ -1939,6 +1958,19 @@ public class Colony implements IColony
     public IQuestManager getQuestManager()
     {
         return questManager;
+    }
+
+    @Override
+    @NotNull
+    public IColonyExpeditionManager getExpeditionManager()
+    {
+        return expeditionManager;
+    }
+
+    @Override
+    public ITravelingManager getTravelingManager()
+    {
+        return travelingManager;
     }
 
     @Override

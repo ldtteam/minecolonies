@@ -6,28 +6,24 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IVisitorData;
-import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 
 /**
  * Loads and listens to custom visitor data added
@@ -243,7 +239,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (recruitCost != null)
             {
-                visitorData.setRecruitCosts(recruitCost);
+                visitorData.setExtraDataValue(EXTRA_DATA_RECRUIT_COST, recruitCost);
             }
 
             if (storykey != null)

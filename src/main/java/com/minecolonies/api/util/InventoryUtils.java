@@ -2859,9 +2859,29 @@ public class InventoryUtils
      * @param ignoreNBT ignore NBT values.
      * @return true if successfully.
      */
-    public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity, final boolean ignoreDamage, final boolean ignoreNBT)
+    public static boolean attemptReduceStackInItemHandler(
+      final IItemHandler invWrapper,
+      final ItemStack itemStack,
+      final int quantity,
+      final boolean ignoreDamage,
+      final boolean ignoreNBT)
     {
-        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT)) < quantity)
+        return attemptReduceStackInItemHandler(invWrapper,
+          stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT),
+          quantity);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     *
+     * @param invWrapper                  the inventory item handler.
+     * @param itemStackSelectionPredicate the predicate to match.
+     * @param quantity                    the quantity.
+     * @return true if successfully.
+     */
+    public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final Predicate<ItemStack> itemStackSelectionPredicate, final int quantity)
+    {
+        if (getItemCountInItemHandler(invWrapper, itemStackSelectionPredicate) < quantity)
         {
             return false;
         }
@@ -2870,7 +2890,7 @@ public class InventoryUtils
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
             final ItemStack stack = invWrapper.getStackInSlot(i);
-            if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT))
+            if (itemStackSelectionPredicate.test(stack))
             {
                 if (stack.getCount() >= qty)
                 {

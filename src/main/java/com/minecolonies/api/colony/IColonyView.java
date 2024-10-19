@@ -425,7 +425,7 @@ public interface IColonyView extends IColony
      * @param citizenId id to query
      * @return citizen data for visitor
      */
-    ICitizenDataView getVisitor(int citizenId);
+    IVisitorViewData getVisitor(int citizenId);
 
     /**
      * Get a list of all available citizen name style options.

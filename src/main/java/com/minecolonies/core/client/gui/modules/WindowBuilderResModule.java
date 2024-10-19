@@ -1,10 +1,8 @@
 package com.minecolonies.core.client.gui.modules;
 
-import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -14,6 +12,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
+import com.minecolonies.core.client.gui.generic.ResourceItem;
+import com.minecolonies.core.client.gui.generic.ResourceItem.ResourceComparator;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
@@ -36,14 +36,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowBuilderResModule extends AbstractModuleWindow
 {
-    /**
-     * Color constants for builder list.
-     */
-    public static final int RED       = Color.getByName("red", 0);
-    public static final int DARKGREEN = Color.getByName("darkgreen", 0);
-    public static final int BLACK     = Color.getByName("black", 0);
-    public static final int ORANGE    = Color.getByName("orange", 0);
-
     /**
      * List of resources needed.
      */
@@ -103,7 +95,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
                     stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
             }
             resource.setPlayerAmount(amountToSet);
-            supplied += Math.min(resource.getAvailable(), resource.getAmount());
+            supplied += Math.min(resource.getAmountAvailable(), resource.getAmount());
 
             total += resource.getAmount();
         }
@@ -113,7 +105,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
         }
 
-        resources.sort(new BuildingBuilderResource.ResourceComparator());
+        resources.sort(new ResourceComparator());
     }
 
     @Override
@@ -134,7 +126,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                updateResourcePane(index, rowPane);
+                ResourceItem.updateResourcePane(resources.get(index), mc.player, index, rowPane);
             }
         });
 
@@ -153,74 +145,6 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             }
         }
         findPaneOfTypeByID(STEP_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.step", moduleView.getCurrentStage(), moduleView.getTotalStages()));
-    }
-
-    /**
-     * Update one row pad with its resource informations.
-     *
-     * @param index   index in the list of resources.
-     * @param rowPane The Pane to use to display the information.
-     */
-    private void updateResourcePane(final int index, @NotNull final Pane rowPane)
-    {
-        final BuildingBuilderResource resource = resources.get(index);
-        final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-        final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
-        final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
-        final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
-
-        switch (resource.getAvailabilityStatus())
-        {
-            case DONT_HAVE:
-                addButton.disable();
-                resourceLabel.setColors(RED);
-                resourceMissingLabel.setColors(RED);
-                neededLabel.setColors(RED);
-                break;
-            case NEED_MORE:
-                addButton.enable();
-                resourceLabel.setColors(ORANGE);
-                resourceMissingLabel.setColors(ORANGE);
-                neededLabel.setColors(ORANGE);
-                break;
-            case HAVE_ENOUGH:
-                addButton.enable();
-                resourceLabel.setColors(DARKGREEN);
-                resourceMissingLabel.setColors(DARKGREEN);
-                neededLabel.setColors(DARKGREEN);
-                break;
-            case NOT_NEEDED:
-            default:
-                addButton.disable();
-                resourceLabel.setColors(BLACK);
-                resourceMissingLabel.setColors(BLACK);
-                neededLabel.setColors(BLACK);
-                break;
-        }
-
-        //position the addResource Button to the right
-        final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
-        final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
-        addButton.setPosition(buttonX, buttonY);
-
-        resourceLabel.setText(Component.literal(resource.getName()));
-        final int missing = resource.getMissingFromPlayer();
-        if (missing < 0)
-        {
-            resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
-        }
-        else
-        {
-            resourceMissingLabel.clearText();
-        }
-
-        neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
-        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
-
-        final ItemStack stack = new ItemStack(resource.getItem(), 1);
-        stack.setTag(resource.getItemStack().getTag());
-        rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 
     @Override
@@ -262,10 +186,10 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             itemStack.setCount(1);
             final Text quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
             final int quantity = Integer.parseInt(quantityLabel.getTextAsString());
-            final int needed = res.getAmount() - res.getAvailable();
-            res.setAvailable(Math.min(res.getAmount(), res.getAvailable() + res.getPlayerAmount()));
-            res.setPlayerAmount(Math.max(0, res.getPlayerAmount() - needed));
-            resources.sort(new BuildingBuilderResource.ResourceComparator());
+            final int needed = res.getAmount() - res.getAmountAvailable();
+            res.setAvailable(Math.min(res.getAmount(), res.getAmountAvailable() + res.getAmountPlayer()));
+            res.setPlayerAmount(Math.max(0, res.getAmountPlayer() - needed));
+            resources.sort(new ResourceComparator());
             Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.buildingView, itemStack, quantity, true));
         }
     }

@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.interactionhandling;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
@@ -33,14 +34,14 @@ public class SimpleNotificationInteraction extends StandardInteraction
     public void onServerResponseTriggered(final int responseId, final Player player, final ICitizenData data)
     {
         super.onServerResponseTriggered(responseId, player, data);
-        onResponse(responseId);
+        onResponse(responseId, data);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final int responseId, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        onResponse(responseId);
+        onResponse(responseId, data);
         return super.onClientResponseTriggered(responseId, player, data, window);
     }
 
@@ -48,10 +49,11 @@ public class SimpleNotificationInteraction extends StandardInteraction
      * Removes the interaction after a response
      *
      * @param responseId response
+     * @param data the citizen related to it.
      */
-    private void onResponse(final int responseId)
+    private void onResponse(final int responseId, final ICitizen data)
     {
-        final Component response = getPossibleResponses().get(responseId);
+        final Component response = getPossibleResponses(data).get(responseId);
         if (response.getContents() instanceof TranslatableContents)
         {
             if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY)

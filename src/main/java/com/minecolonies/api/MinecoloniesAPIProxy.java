@@ -20,6 +20,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.quests.registries.QuestRegistries;
@@ -222,6 +223,12 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<HappinessRegistry.HappinessFunctionEntry> getHappinessFunctionRegistry()
     {
         return apiInstance.getHappinessFunctionRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<IVisitorType> getVisitorTypeRegistry()
+    {
+        return apiInstance.getVisitorTypeRegistry();
     }
 
     @Override

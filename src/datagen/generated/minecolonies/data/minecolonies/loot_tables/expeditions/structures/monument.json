@@ -1,0 +1,108 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:monument\",type:\"structure_start\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:prismarine_bricks",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:dark_prismarine",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:sea_lantern",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "medium",
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:wet_sponge",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:guardian\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:elder_guardian\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 5
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 5.0,
+        "min": 3.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:monument\",type:\"structure_end\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:expeditions/structures/monument"
+}

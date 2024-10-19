@@ -23,6 +23,7 @@ import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURR_STAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGES;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * The structureBuilder building.
@@ -81,7 +81,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             buf.writeItem(resource.getItemStack());
-            buf.writeInt(resource.getAvailable());
+            buf.writeInt(resource.getAmountAvailable());
             buf.writeInt(resource.getAmount());
             qty += resource.getAmount();
         }

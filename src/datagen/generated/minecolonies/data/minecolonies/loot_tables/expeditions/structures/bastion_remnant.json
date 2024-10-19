@@ -1,0 +1,196 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:bastion_remnant\",type:\"structure_start\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:polished_blackstone_bricks",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_block",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crying_obsidian",
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:gilded_blackstone",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:iron_ingot",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_ingot",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:spectral_arrow",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "name": "minecraft:netherite_upgrade_smithing_template",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.95,
+                "min": 0.75
+              },
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "minecraft:crossbow",
+          "weight": 100
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:piglin\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 150
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:piglin_brute\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 150
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecolonies:expedition_difficulty",
+              "difficulties": [
+                "hard",
+                "nightmare"
+              ]
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{amount:1,encounter:\"minecolonies:hoglin\",scale:1b,type:\"encounter\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token",
+          "weight": 100
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 5.0,
+        "min": 3.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{structure:\"minecraft:bastion_remnant\",type:\"structure_end\"}"
+            }
+          ],
+          "name": "minecolonies:adventure_token"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:expeditions/structures/bastion_remnant"
+}

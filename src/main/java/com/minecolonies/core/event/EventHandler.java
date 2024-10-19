@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
+import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.util.*;
@@ -101,6 +102,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_BED_OCCUPIED;
+import static com.minecolonies.core.entity.visitor.RegularVisitorType.EXTRA_DATA_RECRUIT_COST;
 import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
@@ -131,8 +133,8 @@ public class EventHandler
         if (!event.getLevel().isClientSide())
         {
             if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && event.getEntity() instanceof Mob && event.getEntity() instanceof Enemy && !(event.getEntity()
-              .getType()
-              .is(ModTags.mobAttackBlacklist)))
+                                                                                                                                                              .getType()
+                                                                                                                                                              .is(ModTags.mobAttackBlacklist)))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6,
                   new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true, citizen -> !citizen.isInvisible()));
@@ -300,7 +302,8 @@ public class EventHandler
     public static void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<Level> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkupdate"), new MinecoloniesWorldCapabilityProvider());
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonymanager"), new MinecoloniesWorldColonyManagerCapabilityProvider(event.getObject().dimension() == Level.OVERWORLD));
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonymanager"),
+          new MinecoloniesWorldColonyManagerCapabilityProvider(event.getObject().dimension() == Level.OVERWORLD));
     }
 
     /**
@@ -872,7 +875,7 @@ public class EventHandler
                 event.setCanceled(true);
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
-                    IVisitorData visitorData = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
+                    IVisitorData visitorData = colony.getVisitorManager().createAndRegisterVisitorData(ModVisitorTypes.visitor.get());
                     BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
                     IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
 
@@ -884,7 +887,7 @@ public class EventHandler
                     List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
                     visitorData.getCitizenSkillHandler().init(recruitLevel);
-                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.blockPosition(), false);
+                    colony.getVisitorManager().spawnOrCreateVisitor(ModVisitorTypes.visitor.get(), visitorData, world, entity.blockPosition());
                     colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.blockPosition(), visitorData.getName()));
 
                     if (visitorData.getEntity().isPresent())
@@ -907,9 +910,9 @@ public class EventHandler
 
                     entity.remove(Entity.RemovalReason.DISCARDED);
                     Tuple<Item, Integer> cost = recruitCosts.get(world.random.nextInt(recruitCosts.size()));
-                    visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
+                    visitorData.setExtraDataValue(EXTRA_DATA_RECRUIT_COST, new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
                     visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-                            "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                      "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
                 }
             }
         }
@@ -922,7 +925,8 @@ public class EventHandler
         if (lastTickMs > 50)
         {
             TickRateStateMachine.slownessFactor = Mth.clamp(lastTickMs / 50, 1.0D, 5.0D);
-        } else
+        }
+        else
         {
             TickRateStateMachine.slownessFactor = 1.0D;
         }

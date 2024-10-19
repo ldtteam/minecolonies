@@ -2,7 +2,6 @@ package com.minecolonies.core.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -212,7 +211,7 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public IColony getColony()
+    public IColonyView getColony()
     {
         return colonyView;
     }

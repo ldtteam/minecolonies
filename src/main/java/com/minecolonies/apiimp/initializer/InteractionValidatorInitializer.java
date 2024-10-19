@@ -3,12 +3,14 @@ package com.minecolonies.apiimp.initializer;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier;
+import com.minecolonies.api.entity.visitor.ModVisitorTypes;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -30,6 +32,7 @@ import java.util.List;
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
+import static com.minecolonies.api.util.constant.ExpeditionConstants.EXPEDITION_INTERACTION_VALIDATOR_ID;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
@@ -297,5 +300,8 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(QUARRY_MINER_FINISHED_QUARRY),
           citizen -> citizen.getJob() instanceof JobQuarrier &&  ((JobQuarrier) citizen.getJob()).findQuarry() != null && ((JobQuarrier) citizen.getJob()).findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished());
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(EXPEDITION_INTERACTION_VALIDATOR_ID),
+          data -> data instanceof IVisitorData visitorData && visitorData.getVisitorType().equals(ModVisitorTypes.expeditionary.get()));
     }
 }

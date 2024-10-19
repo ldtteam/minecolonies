@@ -3,10 +3,8 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -15,7 +13,7 @@ import java.util.Set;
 /**
  * Manager interface for managing entities for a colony
  */
-public interface IEntityManager
+public interface IEntityManager<T extends ICivilianData>
 {
     /**
      * Register a civilian entity with the colony
@@ -61,7 +59,7 @@ public interface IEntityManager
      * @return Map of civilian in the colony, with as key the civilian ID, and as value the civilian data.
      */
     @NotNull
-    Map<Integer, ICivilianData> getCivilianDataMap();
+    Map<Integer, T> getCivilianDataMap();
 
     /**
      * Get civilian by ID.
@@ -69,32 +67,14 @@ public interface IEntityManager
      * @param civilianId ID of the civilian.
      * @return ICivilianData associated with the ID, or null if it was not found.
      */
-    <T extends ICivilianData> T getCivilian(int civilianId);
-
-    /**
-     * Spawns a civilian with the specific civilian data.
-     *
-     * @param data     Data to use when spawn, null when new generation.
-     * @param world    THe world.
-     * @param spawnPos the pos to spawn it at.
-     * @param force    True to skip max civilian test, false when not.
-     * @return the new civilian.
-     */
-    <T extends ICivilianData> T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
-
-    /**
-     * Creates Civilian Data for a new civilian
-     *
-     * @return new ICivilianData
-     */
-    ICivilianData createAndRegisterCivilianData();
+    T getCivilian(int civilianId);
 
     /**
      * Removes a civilian from the colony.
      *
      * @param civilian data to remove.
      */
-    void removeCivilian(@NotNull ICivilianData civilian);
+    void removeCivilian(@NotNull T civilian);
 
     /**
      * Marks civilian data dirty.

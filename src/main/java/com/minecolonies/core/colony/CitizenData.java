@@ -899,15 +899,42 @@ public class CitizenData implements ICitizenData
             }
         }
 
+        // Check if we are traveling, we don't spawn an entity if we are traveling.
+        if (getColony().getTravelingManager().isTravelling(this))
+        {
+            return;
+        }
+
+        // Okay we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
+        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
+        if (travelingTargetCandidate.isPresent())
+        {
+            // We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            getColony().getTravelingManager().finishTravellingFor(this);
+            nextRespawnPos = travelingTargetCandidate.get();
+            lastPosition = nextRespawnPos;
+        }
+
         if (nextRespawnPos != null)
         {
-            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
+            respawnAfterUpdate(nextRespawnPos);
             nextRespawnPos = null;
         }
         else
         {
-            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
+            respawnAfterUpdate(lastPosition);
         }
+    }
+
+    /**
+     * Method called from {@link CitizenData#updateEntityIfNecessary()} to trigger a respawn of the entity
+     * at the given position.
+     *
+     * @param position the position to spawn at.
+     */
+    protected void respawnAfterUpdate(final BlockPos position)
+    {
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), position, true);
     }
 
     @Override
@@ -1569,7 +1596,7 @@ public class CitizenData implements ICitizenData
         for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getId());
-            for (final Component comp : handler.getPossibleResponses())
+            for (final Component comp : handler.getPossibleResponses(this))
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
@@ -1587,7 +1614,7 @@ public class CitizenData implements ICitizenData
             this.citizenChatOptions.put(handler.getId(), handler);
             for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())
             {
-                this.citizenChatOptions.put(childHandler.getId(), (ServerCitizenInteraction) childHandler);
+                this.citizenChatOptions.put(childHandler.getId(), childHandler);
             }
             markDirty(20 * 5);
         }
