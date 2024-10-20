@@ -1,11 +1,21 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.core.tileentities.TileEntityRack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
+
+import java.util.Set;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
@@ -72,5 +82,37 @@ public class FoodUtils
         final int housingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 0 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
         final double researchBonus = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
         return getFoodValue(foodStack, itemFood, housingLevel, researchBonus);
+    }
+
+    /**
+     * Get the best food for a given citizen from a given inventory and return the index where it is.
+     * @param inventoryCitizen the inventory to check.
+     * @param citizenData the citizen data the food is for.
+     * @param menu the menu that has to be matched.
+     * @return the matching inv slot, or -1.
+     */
+    public static int getBestFoodForCitizen(final InventoryCitizen inventoryCitizen, final ICitizenData citizenData, final Set<ItemStorage> menu)
+    {
+        // Smaller score is better.
+        int bestScore = Integer.MAX_VALUE;
+        int bestSlot = -1;
+        for (int i = 0; i < inventoryCitizen.getSlots(); i++)
+        {
+            final ItemStorage invStack = new ItemStorage(inventoryCitizen.getStackInSlot(i));
+            if (menu.contains(invStack) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
+            {
+                final int localScore = citizenData.checkLastEaten(invStack.getItem());
+                if (localScore < bestScore)
+                {
+                    if (localScore < 0)
+                    {
+                        return i;
+                    }
+                    bestScore = localScore;
+                    bestSlot = i;
+                }
+            }
+        }
+        return bestSlot;
     }
 }

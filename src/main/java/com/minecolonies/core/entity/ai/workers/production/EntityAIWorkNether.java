@@ -59,7 +59,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
@@ -229,6 +229,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         // Get Armor if available. 
         // This is async, so we could go to the nether without it. 
         checkAndRequestArmor();
+        // Get food if available.
+        final IAIState tempState = checkAndRequestFood();
+        if (tempState != getState())
+        {
+            return tempState;
+        }
 
         // Check for materials needed to go to the Nether: 
         IRecipeStorage rs = building.getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
@@ -257,9 +263,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             setDelay(120);
             return IDLE;
         }
-
-        // Make sure we have a stash of some food 
-        checkIfRequestForItemExistOrCreate(new StackList(getEdiblesList(), "Edible Food", 16));
 
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
@@ -863,7 +866,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private List<ItemStack> getEdiblesList()
     {
-        final List<ItemStorage> allowedItems = building.getModule(ITEMLIST_FOODEXCLUSION).getList();
+        final Set<ItemStorage> allowedItems = building.getModule(RESTAURANT_MENU).getMenu();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
     }
@@ -976,6 +979,22 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 }
             }
         }
+    }
+
+    protected IAIState checkAndRequestFood()
+    {
+        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack))) > 16)
+        {
+            // We have enough food.
+            return getState();
+        }
+
+        if (InventoryUtils.hasBuildingEnoughElseCount(building, stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
+        {
+            needsCurrently = new Tuple<>(stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack)), 16);
+            return PICK_UP;
+        }
+        return getState();
     }
 
     /**

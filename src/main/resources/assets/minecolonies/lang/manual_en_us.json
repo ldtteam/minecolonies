@@ -1380,7 +1380,8 @@
   "entity.fisherman.messagewatertoofar": "I can't find any suitable water for fishing! There should be an area of water at least 7 blocks long and wide, and 2 blocks deep nearby.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
-  "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
+  "com.minecolonies.coremod.furnaceuser.nofood": "Please configure the Menu you want me to hand out!",
+  "com.minecolonies.coremod.netherminer.nofood": "Please configure the menu of food items I should bring along for my trips to the Nether",
   "com.minecolonies.coremod.sifter.nomesh": "Please make sure I have at least a string mesh to sift with! You can either manually stock different meshes in my hut or setup a minimum stock to automate it.",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair my Flower Shop!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
@@ -2675,5 +2676,7 @@
   "item.minecolonies.large_water_bottle": "Large Water Bottle",
   "item.minecolonies.large_milk_bottle": "Large Milk Bottle",
   "item.minecolonies.large_soy_milk_bottle": "Large Soy Milk Bottle",
-  "com.minecolonies.coremod.setting.minecolonies:milk_item": "Milk Item:"
+  "com.minecolonies.coremod.setting.minecolonies:milk_item": "Milk Item:",
+  "com.minecolonies.core.menu.title": "Menu",
+  "com.minecolonies.core.food_list.title": "Food Options"
 }

@@ -15,6 +15,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -432,4 +433,24 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return true if so.
      */
     boolean hasQuestAssignment();
+
+    /**
+     * Add last eaten food item.
+     * @param item the last eaten food item.
+     */
+    void addLastEaten(Item item);
+
+    /**
+     * Get the last eaten food item.
+     * @return the last eaten item.
+     */
+    Item getLastEaten();
+
+    /**
+     * Check when we last ate a given food item.
+     * -1 if not eaten recently.
+     * @param item the food item we last ate.
+     * @return the index in the list or max int for not recently.
+     */
+    int checkLastEaten(Item item);
 }

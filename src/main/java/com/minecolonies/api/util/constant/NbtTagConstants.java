@@ -734,7 +734,9 @@ public final class NbtTagConstants
      * Supplycamp related things.
      */
     public static final String TAG_SAW_STORY     = "sawstory";
-    public static final String TAG_RANDOM_KEY     = "randkey";
+    public static final String TAG_RANDOM_KEY    = "randkey";
+
+    public static final String TAG_LAST_FOODS    = "lastfoods";
 
     /**
      * Private constructor to hide the implicit one.

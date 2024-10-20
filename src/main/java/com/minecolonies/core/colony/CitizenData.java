@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony;
 
+import com.google.common.collect.EvictingQueue;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CitizenNameFile;
@@ -38,6 +39,7 @@ import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -49,7 +51,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -326,6 +330,11 @@ public class CitizenData implements ICitizenData
      * Texture UUID.
      */
     private UUID textureUUID;
+
+    /**
+     * Collection of last food items a citizen has eaten.
+     */
+    private EvictingQueue<Item> lastEatenFoods = EvictingQueue.create(10);
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -1315,6 +1324,12 @@ public class CitizenData implements ICitizenData
             nbtTagCompound.putUUID(TAG_TEXTURE_UUID, textureUUID);
         }
 
+        @NotNull final ListTag lastEatenFoodsNBT = new ListTag();
+        for (final Item foodItem : lastEatenFoods)
+        {
+            lastEatenFoodsNBT.add(StringTag.valueOf(BuiltInRegistries.ITEM.getKey(foodItem).toString()));
+        }
+        nbtTagCompound.put(TAG_LAST_FOODS, lastEatenFoodsNBT);
         return nbtTagCompound;
     }
 
@@ -1474,6 +1489,16 @@ public class CitizenData implements ICitizenData
         for (int i = 0; i < finPartQuestsNbt.size(); i++)
         {
             finishedQuestParticipation.add(new ResourceLocation(finPartQuestsNbt.getString(i)));
+        }
+
+        @NotNull final ListTag lastFoodNbt = nbtTagCompound.getList(TAG_LAST_FOODS, TAG_STRING);
+        for (int i = 0; i < lastFoodNbt.size(); i++)
+        {
+            final Item lastFood = BuiltInRegistries.ITEM.get(new ResourceLocation(lastFoodNbt.getString(i)));
+            if (lastFood != Items.AIR)
+            {
+                lastEatenFoods.add(lastFood);
+            }
         }
 
         if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
@@ -1980,5 +2005,33 @@ public class CitizenData implements ICitizenData
     public UUID getCustomTexture()
     {
         return textureUUID;
+    }
+
+    @Override
+    public void addLastEaten(final Item item)
+    {
+        lastEatenFoods.add(item);
+        markDirty(TICKS_SECOND);
+    }
+
+    @Override
+    public Item getLastEaten()
+    {
+        return lastEatenFoods.peek();
+    }
+
+    @Override
+    public int checkLastEaten(final Item item)
+    {
+        int index = 0;
+        for (final Item foodItem : lastEatenFoods)
+        {
+            if (foodItem == item)
+            {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 }

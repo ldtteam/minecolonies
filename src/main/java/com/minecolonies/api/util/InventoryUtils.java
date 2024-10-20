@@ -3228,6 +3228,28 @@ public class InventoryUtils
         return allInInv;
     }
 
+    public static Map<ItemStorage, Integer> getBuildingInventoryStorages(final IBuilding building)
+    {
+        final Level world = building.getColony().getWorld();
+        final Map<ItemStorage, Integer> allInInv = new HashMap<>();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final Map.Entry<ItemStorage, Integer> storage : ((TileEntityRack) entity).getAllContent().entrySet())
+                    {
+                        int currentStock = allInInv.getOrDefault(storage.getKey(), 0);
+                        allInInv.put(storage.getKey(), currentStock + storage.getValue());
+                    }
+                }
+            }
+        }
+        return allInInv;
+    }
+
     /**
      * Gets the first matching itemstack from a list
      *

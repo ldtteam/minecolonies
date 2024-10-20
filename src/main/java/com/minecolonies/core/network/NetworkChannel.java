@@ -203,6 +203,8 @@ public class NetworkChannel
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
         registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(++idx, AddRestaurantMenuItemMessage.class, AddRestaurantMenuItemMessage::new);
+        registerMessage(++idx, RemoveRestaurantMenuItemMessage.class, RemoveRestaurantMenuItemMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

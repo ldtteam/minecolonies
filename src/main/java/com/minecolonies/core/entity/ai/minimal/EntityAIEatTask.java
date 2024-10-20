@@ -32,6 +32,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.*;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
@@ -121,6 +125,11 @@ public class EntityAIEatTask implements IStateAI
      * Timeout for walking
      */
     private int timeOutWalking = 0;
+
+    /**
+     * The food we've eaten in a meal.
+     */
+    private Set<Item> eatenFood = new LinkedHashSet<>();
 
     /**
      * Instantiates this task.
@@ -220,6 +229,12 @@ public class EntityAIEatTask implements IStateAI
             }
             citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
         }
+        if (eatenFood.isEmpty())
+        {
+            citizenData.addLastEaten(foodStack.getItem());
+        }
+        eatenFood.add(foodStack.getItem());
+
         ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
@@ -229,6 +244,14 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
+        for (final Item foodItem : eatenFood)
+        {
+            if (citizenData.getLastEaten() != foodItem)
+            {
+                citizenData.addLastEaten(foodItem);
+            }
+        }
+        eatenFood.clear();
         citizenData.setJustAte(true);
         return CitizenAIState.IDLE;
     }
@@ -257,8 +280,8 @@ public class EntityAIEatTask implements IStateAI
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
               stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
-                         && !(cookBuilding.getModule(BuildingModules.ITEMLIST_FOODEXCLUSION)
-                .isItemInList(new ItemStorage(stack))));
+                         && !(cookBuilding.getModule(BuildingModules.RESTAURANT_MENU)
+                .getMenu().contains(new ItemStorage(stack))));
         }
 
         return WAIT_FOR_FOOD;
@@ -505,5 +528,6 @@ public class EntityAIEatTask implements IStateAI
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         restaurantPos = null;
         eatPos = null;
+        eatenFood.clear();
     }
 }

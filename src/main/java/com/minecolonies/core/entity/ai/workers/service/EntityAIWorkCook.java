@@ -1,8 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.service;
 
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
@@ -13,19 +12,24 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
+import com.minecolonies.core.colony.buildings.modules.RestaurantMenuModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobCook;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIUsesFurnace;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.tileentities.TileEntityRack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -41,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.FOOD_SERVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FOOD;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_COOK_SERVE_PLAYER;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 
 /**
  * Cook AI class.
@@ -130,9 +134,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     protected boolean isSmeltable(final ItemStack stack)
     {
         //Only return true if the item isn't queued for a recipe.
-        return ItemStackUtils.ISCOOKABLE.test(stack)
-                 && !building.getModule(ITEMLIST_FOODEXCLUSION)
-                       .isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
+        return ItemStackUtils.ISCOOKABLE.test(stack) && building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
     @Override
@@ -151,12 +153,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     public void requestSmeltable()
     {
-        final IRequestable smeltable = getSmeltAbleClass();
-        if (smeltable != null
-              && !building.hasWorkerOpenRequestsOfType(-1, TypeToken.of(smeltable.getClass()))
-              && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(smeltable.getClass())))
+        final RestaurantMenuModule menuModule = building.getModule(RESTAURANT_MENU);
+        if (menuModule.getMenu().isEmpty() && worker.getCitizenData() != null)
         {
-            building.createRequest(smeltable, true);
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
         }
     }
 
@@ -248,8 +248,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean canEat(final ItemStack stack, final AbstractEntityCitizen citizen)
     {
-        final ItemListModule module = worker.getCitizenData().getWorkBuilding().getModule(ITEMLIST_FOODEXCLUSION);
-        if (module.isItemInList(new ItemStorage(stack)))
+        final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
+        if (!module.getMenu().contains(new ItemStorage(stack)))
         {
             return false;
         }
@@ -261,6 +261,83 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 return building.canEat(stack);
             }
         }
+        return true;
+    }
+
+
+    //todo adjust food handout at restaurant
+    //todo restaurant takes queue into account, but if it can't it will give the best it can (e.g. the one it had the least recently)
+
+    //todo adjust happiness to care about set diversity
+    //todo adjust happiness messaging around this
+
+    // Mininmal Happiness:
+    //1: 1 Different types of food, e.g. baked potato
+    //2: 2 Types of food baked potato + mushroom soup
+    //3: 3 Types food baked potato + mushroom soup + 1 Minecolonies food
+    //4: 4 Types food baked potato + mushroom soup + 2 Minecolonies food
+    //5: 5 Types food baked potato + mushroom soup + 3 Minecolonies food
+    //
+    //Optimal Happiness:
+    //1: 2 Different types of food, e.g. baked potato
+    //2: 4 Types of food baked potato + mushroom soup
+    //3: 6 Types food 4x whatever + 2 Minecolonies food
+    //4: 8 Types food 4x whatever + 4 Minecolonies food
+    //5: 10 Types food 4x whatever + 6 Minecolonies food
+
+    //todo temporary happiness bonus after eating a level 3 tier food.
+
+    /**
+     * Get the best food for a given citizen from a given inventory and return the index where it is.
+     * @param citizenData the citizen data the food is for.
+     * @param menu the menu that has to be matched.
+     * @return the matching inv slot, or -1.
+     */
+    public boolean checkForFood(final ICitizenData citizenData, final Set<ItemStorage> menu)
+    {
+        //todo first cook checks "do I have suitable food in inv"
+        //todo if not, ask this method. if true, go pickup, if false, can't serve this citizen right now.
+
+        // Smaller score is better.
+        int bestScore = Integer.MAX_VALUE;
+        ItemStorage bestStorage = null;
+
+        final Level world = building.getColony().getWorld();
+
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    for (final ItemStorage storage : rackEntity.getAllContent().keySet())
+                    {
+                        if (menu.contains(storage) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(storage.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
+                        {
+                            final int localScore = citizenData.checkLastEaten(storage.getItem());
+                            if (localScore < bestScore)
+                            {
+                                bestScore = localScore;
+                                bestStorage = storage;
+                                if (localScore < 0)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (bestStorage == null)
+        {
+            return false;
+        }
+
+        final ItemStorage resultStorage = new ItemStorage(bestStorage.getItemStack().copy());
+        needsCurrently = new Tuple<>(stack -> new ItemStorage(stack).equals(resultStorage), STACKSIZE);
         return true;
     }
 
@@ -373,29 +450,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> blockedItems = new ArrayList<>(building.getModule(ITEMLIST_FOODEXCLUSION).getList());
-        for (final Map.Entry<ItemStorage, Integer> content : building.getTileEntity().getAllContent().entrySet())
-        {
-            if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
-            {
-                blockedItems.add(content.getKey());
-            }
-        }
-
-        blockedItems.removeIf(item -> item.getItemStack().getFoodProperties(worker) == null || !FoodUtils.canEat(item.getItemStack(), building.getBuildingLevel() - 1));
-        if (!blockedItems.isEmpty())
-        {
-            if (IColonyManager.getInstance().getCompatibilityManager().getEdibles(building.getBuildingLevel() - 1).size() <= blockedItems.size())
-            {
-                if (worker.getCitizenData() != null)
-                {
-                    worker.getCitizenData()
-                      .triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
-                    return null;
-                }
-            }
-            return new Food(STACKSIZE, blockedItems, building.getBuildingLevel());
-        }
         return new Food(STACKSIZE, building.getBuildingLevel());
     }
 }
