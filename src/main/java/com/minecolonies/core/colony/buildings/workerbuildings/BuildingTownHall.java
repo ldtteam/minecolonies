@@ -182,7 +182,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             {
                 final MapId mapId = stack.get(DataComponents.MAP_ID);
                 final MapItemSavedData mapData = MapItem.getSavedData(stack, level);
-                if (mapData != null)
+                if (mapData != null && mapData.scale == 0)
                 {
                     mapDataList.add(new MapEntry(mapId, mapData));
                 }

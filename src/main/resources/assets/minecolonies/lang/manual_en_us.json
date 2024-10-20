@@ -2483,7 +2483,7 @@
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
   "com.minecolonies.coremod.gui.interval.alltime": "All Time",
   "com.minecolonies.coremod.gui.townHall.map": "Town Map",
-  "com.minecolonies.coremod.townhall.map.warning": "To unlock a map, place Minecraft maps into the Town Hall inventory. Normal scaled maps are recommended as they offer best visual quality and more detailed information, but all map scales are accepted.",
+  "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
   "com.minecolonies.gui.edit": "Edit",
   "com.minecolonies.gui.details": "More Details...",
 
