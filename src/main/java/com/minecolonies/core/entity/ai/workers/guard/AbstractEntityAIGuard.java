@@ -16,10 +16,11 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
 import com.minecolonies.core.colony.buildings.modules.MinerLevelManagementModule;
@@ -236,22 +237,23 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         wakeTimer++;
-        // Wait 1 sec
-        if (wakeTimer == 1)
+        if (wakeTimer > 30)
         {
-            return getState();
+            return CombatAIStates.NO_TARGET;
         }
 
+        final EntityCitizen sleepingCitizen = sleepingGuard.get();
+
         // Move into range
-        if (BlockPosUtil.getDistanceSquared(sleepingGuard.get().blockPosition(), worker.blockPosition()) > 4 && wakeTimer <= 10)
+        if (BlockPosUtil.getDistanceSquared(sleepingCitizen.blockPosition(), worker.blockPosition()) > 2.25)
         {
-            worker.getNavigation().moveToLivingEntity(sleepingGuard.get(), 1.0);
+            worker.getNavigation().moveToLivingEntity(sleepingCitizen, 1.0);
         }
         else
         {
             worker.swing(InteractionHand.OFF_HAND);
-            sleepingGuard.get().hurt(world.damageSources().source(DamageSourceKeys.WAKEY, this.worker), 1);
-            sleepingGuard.get().setLastHurtByMob(worker);
+            sleepingCitizen.hurt(world.damageSources().source(DamageSourceKeys.WAKEY, this.worker), 1);
+            sleepingCitizen.setLastHurtByMob(worker);
             return CombatAIStates.NO_TARGET;
         }
 
@@ -270,7 +272,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return false;
         }
 
-        final double chance = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS);
+        final double chance = 1 / (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS));
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
         if (worker.getRandom().nextInt((int) (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * 0.5) + 20) == 1
@@ -278,6 +280,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
+            worker.getNavigation().stop();
             SittingEntity.sitDown(worker.blockPosition(), worker, sleepTimer);
 
             return true;
@@ -324,6 +327,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             worker.getZ() + worker.getDirection().getStepZ(),
             0f,
             30f);
+        ((LookHandler) worker.getLookControl()).setLookAtCooldown(sleepTimer);
         return null;
     }
 
@@ -337,6 +341,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             worker.stopRiding();
             worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
             worker.getCitizenExperienceHandler().addExperience(1);
+            ((LookHandler) worker.getLookControl()).setLookAtCooldown(2);
         }
     }
 
@@ -596,9 +601,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean hasTool()
     {
-        for (final ToolType toolType : toolsNeeded)
+        for (final EquipmentTypeEntry toolType : toolsNeeded)
         {
-            if (!InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), toolType, 0, buildingGuards.getMaxToolLevel()))
+            if (!InventoryUtils.hasItemHandlerEquipmentWithLevel(getInventory(), toolType, 0, buildingGuards.getMaxEquipmentLevel()))
             {
                 return false;
             }

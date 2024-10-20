@@ -17,7 +17,6 @@ import com.minecolonies.core.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.core.compatibility.jei.transfer.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
@@ -28,7 +27,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,16 +52,18 @@ public class JEIPlugin implements IModPlugin
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
-        registration.addRecipeCategories(new ToolRecipeCategory(guiHelper));
-        registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
-        registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
+        registration.addRecipeCategories(
+            new ToolRecipeCategory(guiHelper),
+            new CompostRecipeCategory(guiHelper),
+            new FishermanRecipeCategory(guiHelper)
+        );
 
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
             final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
 
-            for (final BuildingEntry.ModuleProducer producer : building.getModuleProducers())
+            for (final BuildingEntry.ModuleProducer<?, ?> producer : building.getModuleProducers())
             {
                 if (!producer.hasServerModule())
                 {
@@ -121,7 +121,7 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
-        registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
+        registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes(Minecraft.getInstance().level));
@@ -157,9 +157,9 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipeCatalysts(@NotNull final IRecipeCatalystRegistration registration)
     {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockBarrel), ModRecipeTypes.COMPOSTING);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), ModRecipeTypes.COMPOSTING);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModRecipeTypes.FISHING);
+        registration.addRecipeCatalyst(ModBlocks.blockBarrel, ModRecipeTypes.COMPOSTING);
+        registration.addRecipeCatalyst(ModBlocks.blockHutComposter, ModRecipeTypes.COMPOSTING);
+        registration.addRecipeCatalyst(ModBlocks.blockHutFisherman, ModRecipeTypes.FISHING);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {

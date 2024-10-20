@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * Constants for tool levels.
  */
-public final class ToolLevelConstants
+public final class EquipmentLevelConstants
 {
     /**
      * Tool level for hand.
@@ -67,7 +67,7 @@ public final class ToolLevelConstants
     @NonNls
     public static final int TOOL_LEVEL_MAXIMUM = Integer.MAX_VALUE;
 
-    private ToolLevelConstants()
+    private EquipmentLevelConstants()
     {
         //empty default
     }

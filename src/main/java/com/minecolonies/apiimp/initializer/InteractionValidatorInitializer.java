@@ -119,7 +119,7 @@ public class InteractionValidatorInitializer
                       final Level world = colony.getWorld();
                       if (world != null)
                       {
-                          return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHarvestLevelForBlock(world.getBlockState(pos));
+                          return workBuilding.getMaxEquipmentLevel() < WorkerUtil.getCorrectHarvestLevelForBlock(world.getBlockState(pos));
                       }
                   }
               }

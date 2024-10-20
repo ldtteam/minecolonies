@@ -328,7 +328,7 @@ public class CraftingTagAuditor
         for (final ToolUsage tool : toolUsages)
         {
             writer.write(',');
-            writer.write(tool.tool().getName());
+            writer.write(tool.tool().getRegistryName().toString());
         }
         writer.newLine();
 

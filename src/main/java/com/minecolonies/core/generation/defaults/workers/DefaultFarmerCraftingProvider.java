@@ -2,8 +2,8 @@ package com.minecolonies.core.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -42,7 +42,7 @@ public class DefaultFarmerCraftingProvider extends CustomRecipeProvider
         recipe(FARMER, MODULE_CRAFTING, "carved_pumpkin")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.PUMPKIN))))
                 .result(new ItemStack(Items.CARVED_PUMPKIN))
-                .requiredTool(ToolType.SHEARS)
+                .requiredTool(ModEquipmentTypes.shears.get())
                 .build(consumer);
 
         recipe(FARMER, MODULE_CRAFTING, "mud")

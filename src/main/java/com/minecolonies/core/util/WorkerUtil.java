@@ -6,14 +6,14 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
@@ -69,7 +69,7 @@ public final class WorkerUtil
     /**
      * List of tools to test blocks against, used for finding right tool.
      */
-    public static List<Tuple<ToolType, ItemStack>> tools;
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> tools;
 
     private WorkerUtil()
     {
@@ -81,15 +81,15 @@ public final class WorkerUtil
      *
      * @return the list of possible tools.
      */
-    public static List<Tuple<ToolType, ItemStack>> getOrInitTestTools()
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> getOrInitTestTools()
     {
         if (tools == null)
         {
             tools = new ArrayList<>();
-            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.NETHERITE_HOE)));
-            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.NETHERITE_SHOVEL)));
-            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.NETHERITE_AXE)));
-            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.NETHERITE_PICKAXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
+            tools.add(new Tuple<>(ModEquipmentTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
         }
         return tools;
     }
@@ -173,16 +173,16 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
+    public static EquipmentTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
-            return ToolType.SHEARS;
+            return ModEquipmentTypes.shears.get();
         }
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            for (final Tuple<EquipmentTypeEntry, ItemStack> tool : getOrInitTestTools())
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
@@ -201,7 +201,7 @@ public final class WorkerUtil
             }
         }
 
-        return ToolType.NONE;
+        return ModEquipmentTypes.none.get();
     }
 
     /**
@@ -213,7 +213,8 @@ public final class WorkerUtil
     public static int getCorrectHarvestLevelForBlock(final BlockState target)
     {
         int required = 0;
-        for (final Tiers tier : Tiers.values()) {
+        for (final Tiers tier : Tiers.values())
+        {
             TagKey<Block> tag = tier.getIncorrectBlocksForDrops();
             if (target.is(tag))
             {

@@ -44,8 +44,8 @@ public class CitizenCombatTracker extends CombatTracker
         }
         else
         {
-            nameComponent = Component.translatableEscape(
-              TranslationConstants.COLONIST_DESC,
+            nameComponent = Component.translatable(
+              TranslationConstants.CITIZEN_DEATH_DESC,
               citizen.getCitizenData().getName());
         }
         //CombatTracker#getDeathMessage

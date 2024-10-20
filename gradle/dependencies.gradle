@@ -36,7 +36,6 @@ dependencies {
 
     // optional compat mods (not included in test environment by default)
 
-    compileOnly "mezz.jei:jei-${project.jei_mcversion}-common-api:${project.jei_version}"
     compileOnly "mezz.jei:jei-${project.jei_mcversion}-neoforge-api:${project.jei_version}"
     runtimeOnly "mezz.jei:jei-${project.jei_mcversion}-neoforge:${project.jei_version}"
 

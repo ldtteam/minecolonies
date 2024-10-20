@@ -337,10 +337,6 @@ public class PermissionsMessage
         protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             final Rank rank = colony.getPermissions().getRanks().get(rankId);
-            if (rank != colony.getPermissions().getRankOwner())
-            {
-                return;
-            }
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
             {
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());

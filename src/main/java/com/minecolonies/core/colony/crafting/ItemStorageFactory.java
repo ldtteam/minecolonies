@@ -9,6 +9,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -90,7 +91,18 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public void serialize(IFactoryController controller, ItemStorage input, RegistryFriendlyByteBuf packetBuffer)
     {
-        Utils.serializeCodecMess(packetBuffer, input.getItemStack());
+        // Backup functionality.
+        int writerIndex = packetBuffer.writerIndex();
+        try
+        {
+            Utils.serializeCodecMess(packetBuffer, input.getItemStack());
+        }
+        catch (final Exception ex)
+        {
+            packetBuffer.writerIndex(writerIndex);
+            Utils.serializeCodecMess(packetBuffer, ItemStack.EMPTY);
+        }
+
         packetBuffer.writeVarInt(input.getAmount());
         packetBuffer.writeBoolean(input.ignoreDamageValue());
         packetBuffer.writeBoolean(input.ignoreNBT());

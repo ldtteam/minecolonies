@@ -6,26 +6,25 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
-import net.minecraft.ChatFormatting;
 
 /**
  * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style
@@ -131,20 +130,12 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        MutableComponent colonyDesc = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
-        final Desc component = Desc.readFromItemStack(stack);
-        if (component.isEmpty())
+        MutableComponent colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
+
+        final IColony colony = getColonyView(stack);
+        if (colony != null)
         {
-            final IColony colony = getColonyView(stack);
-            if (colony != null)
-            {
-                colonyDesc = Component.literal(colony.getName());
-                new Desc(colonyDesc).writeToItemStack(stack);
-            }
-        }
-        else
-        {
-            colonyDesc = component.desc();
+            colonyDesc = Component.literal(colony.getName());
         }
 
         final MutableComponent guiHint2 = Component.translatableEscape(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);

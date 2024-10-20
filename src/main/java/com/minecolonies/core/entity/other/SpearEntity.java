@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.other;
 
-import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -102,20 +102,27 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
         if (targetEntity instanceof LivingEntity)
         {
-            damageAmount += EnchantmentHelper.modifyDamage((ServerLevel) targetEntity.level(), this.weapon, targetEntity, damageSource, damageAmount);
+            if (this.level() instanceof ServerLevel serverlevel)
+            {
+                damageAmount += EnchantmentHelper.modifyDamage(serverlevel, this.weapon, targetEntity, damageSource, damageAmount);
+            }
         }
 
         this.dealtDamage = true;
-        if (targetEntity.hurt(damageSource, damageAmount)) {
-            if (targetEntity.getType() == EntityType.ENDERMAN) {
+        if (targetEntity.hurt(damageSource, damageAmount))
+        {
+            if (targetEntity.getType() == EntityType.ENDERMAN)
+            {
                 return;
             }
 
-            if (this.level() instanceof ServerLevel serverlevel1) {
-                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel1, targetEntity, damageSource, this.getWeaponItem());
+            if (this.level() instanceof ServerLevel serverlevel)
+            {
+                EnchantmentHelper.doPostAttackEffectsWithItemSource(serverlevel, targetEntity, damageSource, this.getWeaponItem());
             }
 
-            if (targetEntity instanceof LivingEntity livingentity) {
+            if (targetEntity instanceof LivingEntity livingentity)
+            {
                 this.doKnockback(livingentity, damageSource);
                 this.doPostHurtEffects(livingentity);
             }
@@ -187,7 +194,6 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     {
         return true;
     }
-
 
     @Override
     public SoundEvent getAttackSound()

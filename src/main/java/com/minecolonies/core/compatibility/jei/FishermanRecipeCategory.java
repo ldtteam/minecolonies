@@ -2,14 +2,13 @@ package com.minecolonies.core.compatibility.jei;
 
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootTables;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
@@ -54,7 +53,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
                           @NotNull final FishingRecipe recipe,
                           @NotNull final IFocusGroup focuses)
     {
-        addToolSlot(builder, ToolType.FISHINGROD, WIDTH - 18, CITIZEN_Y - 20, true);
+        addToolSlot(builder, ModEquipmentTypes.fishing_rod.get(), WIDTH - 18, CITIZEN_Y - 20, true);
 
         if (!recipe.getDrops().isEmpty())
         {
@@ -68,10 +67,10 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
-                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                builder.addOutputSlot(x, y)
                         .setBackground(this.chanceSlot, -1, -1)
                         .addItemStacks(drop.getItemStacks())
-                        .addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
+                        .addRichTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
                 if (++c >= columns)
                 {
                     c = 0;

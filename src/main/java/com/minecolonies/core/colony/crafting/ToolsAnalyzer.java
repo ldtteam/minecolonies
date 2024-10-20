@@ -1,9 +1,10 @@
 package com.minecolonies.core.colony.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -29,31 +30,30 @@ public final class ToolsAnalyzer
     @NotNull
     public static List<ToolUsage> findTools(final Level level)
     {
-        final Map<ToolType, ToolUsage> toolItems = new HashMap<>();
+        final Map<EquipmentTypeEntry, ToolUsage> toolItems = new HashMap<>();
 
         for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
         {
-            for (final ToolType tool : ToolType.values())
-            {
-                if (tool == ToolType.NONE || !ItemStackUtils.isTool(stack, tool)) { continue; }
+            for (EquipmentTypeEntry toolType : ModEquipmentTypes.getRegistry()) {
+                if (toolType == ModEquipmentTypes.none.get() || !toolType.checkIsEquipment(stack)) { continue; }
 
-                tryAddingToolWithLevel(toolItems, tool, stack);
+                tryAddingToolWithLevel(toolItems, toolType, stack);
 
                 if (stack.isEnchantable())
                 {
                     for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel)
                     {
-                        tryAddingEnchantedTool(toolItems, tool, stack, enchantLevel, level);
+                        tryAddingEnchantedTool(toolItems, toolType, stack, enchantLevel, level);
                     }
                 }
             }
         }
 
-        return toolItems.values().stream().sorted(Comparator.comparing(ToolUsage::tool)).toList();
+        return toolItems.values().stream().sorted(Comparator.comparing(ToolUsage::tool, new EquipmentTypeEntry.Comparator())).toList();
     }
 
-    private static void tryAddingEnchantedTool(@NotNull final Map<ToolType, ToolUsage> toolItems,
-                                               @NotNull final ToolType tool,
+    private static void tryAddingEnchantedTool(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
+                                               @NotNull final EquipmentTypeEntry tool,
                                                @NotNull final ItemStack stack,
                                                final int enchantLevel, final Level level)
     {
@@ -80,11 +80,11 @@ public final class ToolsAnalyzer
         }
     }
 
-    private static void tryAddingToolWithLevel(@NotNull final Map<ToolType, ToolUsage> toolItems,
-                                               @NotNull final ToolType tool,
+    private static void tryAddingToolWithLevel(@NotNull final Map<EquipmentTypeEntry, ToolUsage> toolItems,
+                                               @NotNull final EquipmentTypeEntry tool,
                                                @NotNull final ItemStack stack)
     {
-        int level = ItemStackUtils.getMiningLevel(stack, tool);
+        int level = tool.getMiningLevel(stack);
         if (level < 0) {
             return;
         }

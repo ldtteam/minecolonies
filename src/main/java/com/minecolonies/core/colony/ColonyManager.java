@@ -109,7 +109,7 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
 
-        final IColony colony = cap.createColony(w, pos);
+        final IColony colony = cap.createColony(w, colonyName, pos);
         colony.setStructurePack(pack);
 
         colony.setName(colonyName);

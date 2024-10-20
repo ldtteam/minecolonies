@@ -47,10 +47,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.colony.jobs.JobRanger;
-import com.minecolonies.core.entity.ai.minimal.EntityAICitizenChild;
-import com.minecolonies.core.entity.ai.minimal.EntityAIFloat;
-import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
-import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
+import com.minecolonies.core.entity.ai.minimal.*;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
@@ -155,27 +152,27 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * It's citizen Id.
      */
-    private       int                       citizenId = 0;
+    private int                       citizenId = 0;
     /**
      * The Walk to proxy (Shortest path through intermediate blocks).
      */
-    private       IWalkToProxy              proxy;
+    private IWalkToProxy              proxy;
     /**
      * Reference to the data representation inside the colony.
      */
-    private       ICitizenData              citizenData;
+    private ICitizenData              citizenData;
     /**
      * The citizen experience handler.
      */
-    private       ICitizenExperienceHandler citizenExperienceHandler;
+    private ICitizenExperienceHandler citizenExperienceHandler;
     /**
      * The citizen item handler.
      */
-    private       ICitizenItemHandler       citizenItemHandler;
+    private ICitizenItemHandler       citizenItemHandler;
     /**
      * The citizen inv handler.
      */
-    private       ICitizenInventoryHandler  citizenInventoryHandler;
+    private ICitizenInventoryHandler  citizenInventoryHandler;
 
     /**
      * The citizen colony handler.
@@ -375,8 +372,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         int priority = 0;
         this.goalSelector.addGoal(priority, new EntityAIFloat(this));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
     }
 
@@ -596,7 +593,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
 
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+                new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
                 ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
             }
         }
@@ -627,7 +624,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
             // Position needs to be centered on citizen, Eat AI wrong too?
-            new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
+            new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
             ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
         }
 
@@ -892,15 +889,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
-
+            final double citizenSaturation = citizenData.getSaturation();
             final double healAmount;
-            if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
+            if (citizenSaturation >= FULL_SATURATION + limitDecrease)
             {
                 healAmount = 2 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
-            else if (citizenData.getSaturation() < LOW_SATURATION)
+            else if (citizenSaturation < LOW_SATURATION)
             {
-                return;
+                healAmount = 1 * (citizenSaturation / FULL_SATURATION) / 2.0;
             }
             else
             {
@@ -1336,7 +1333,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (damageSource.typeHolder().is(DamageTypes.IN_WALL))
         {
-            TeleportHelper.teleportCitizen(this, level(), blockPosition().offset(0, 1, 0));
+            TeleportHelper.teleportCitizen(this, level(), blockPosition());
             return true;
         }
 
@@ -1586,7 +1583,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super.onPlayerCollide(player);
         if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic && !citizenJobHandler.getColonyJob()
-          .isGuard())
+                                                                                                                                              .isGuard())
         {
             ((AbstractEntityAIBasic) citizenJobHandler.getColonyJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
         }

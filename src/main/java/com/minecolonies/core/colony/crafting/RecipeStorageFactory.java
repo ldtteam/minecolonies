@@ -8,8 +8,12 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.*;
+import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -110,7 +114,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       final List<ItemStack> altOutputs,
       final List<ItemStack> secOutputs,
       final ResourceKey<LootTable> lootTable,
-      @NotNull final IToolType requiredTool)
+      @NotNull final EquipmentTypeEntry requiredTool)
     {
         return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
     }
@@ -160,7 +164,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             compound.putString(LOOT_TAG, recipeStorage.getLootTable().location().toString());
         }
 
-        compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getName());
+        compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getRegistryName().toString());
 
         return compound;
     }
@@ -215,8 +219,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final ResourceKey<LootTable> lootTable = nbt.contains(LOOT_TAG) ? ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(nbt.getString(LOOT_TAG))) : null;
-
-        final IToolType requiredTool = nbt.contains(TOOL_TAG) ? ToolType.getToolType(nbt.getString(TOOL_TAG)) : ToolType.NONE;
+        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().get(EquipmentTypeEntry.parseResourceLocation(nbt.getString(TOOL_TAG)));
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
@@ -244,7 +247,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
         input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> Utils.serializeCodecMess(packetBuffer, stack));
 
-        packetBuffer.writeUtf(input.getRequiredTool().getName());
+        packetBuffer.writeResourceLocation(input.getRequiredTool().getRegistryName());
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)
@@ -291,7 +294,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
-        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+        final ResourceLocation resLoc = EquipmentTypeEntry.parseResourceLocation(buffer.readResourceLocation());
+        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().get(resLoc);
 
         ResourceKey<LootTable> lootTable = null;
         if(buffer.readBoolean())

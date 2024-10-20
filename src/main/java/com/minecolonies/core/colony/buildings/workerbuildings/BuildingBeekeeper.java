@@ -7,9 +7,9 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BeekeeperCollectionSetting;
@@ -18,6 +18,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -106,16 +107,23 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        NBTUtils.streamCompound(compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_COMPOUND))
-          .map(NBTUtils::readBlockPos)
-          .forEach(this.hives::add);
+        final ListTag hiveTag = compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_INT_ARRAY);
+        for (Tag tag : hiveTag)
+        {
+            hives.add(NBTUtils.readBlockPos(tag));
+        }
     }
 
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         final CompoundTag nbt = super.serializeNBT(provider);
-        nbt.put(NbtTagConstants.TAG_HIVES, this.hives.stream().map(NBTUtils::writeBlockPos).collect(NBTUtils.toListNBT()));
+        @NotNull final ListTag hivesTag = new ListTag();
+        for (@NotNull final BlockPos entry : hives)
+        {
+            hivesTag.add(NBTUtils.writeBlockPos(entry));
+        }
+        nbt.put(NbtTagConstants.TAG_HIVES, hivesTag);
         return nbt;
     }
 
@@ -266,12 +274,12 @@ public class BuildingBeekeeper extends AbstractBuilding
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal, Collections.emptyList(), 0));
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
                     Collections.emptyList(), Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
-                    0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
 
             return recipes;
         }
