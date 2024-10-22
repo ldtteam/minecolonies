@@ -186,6 +186,11 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
             return null;
         }
 
+        if (current instanceof IThreatTableEntity threatTableEntity && threatTableEntity.getThreatTable().threatList.isEmpty())
+        {
+            threatTableEntity.getThreatTable().addThreat(owner, 0);
+        }
+
         return current;
     }
 
