@@ -196,6 +196,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
         int x = LOOT_SLOTS_X;
         int y = CITIZEN_Y;
+        if (recipe.getIntermediate() != Blocks.AIR)
+        {
+            x += 30;
+        }
 
         final List<List<ItemStack>> inputs = recipe.getInputs();
         if (!inputs.isEmpty())

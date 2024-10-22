@@ -17,11 +17,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.EntityInBiomeTag;
+import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.client.render.RenderBipedCitizen;
 import com.minecolonies.core.colony.ColonyManager;
@@ -43,14 +45,12 @@ import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessag
 import com.minecolonies.core.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.core.util.ChunkClientDataHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -76,7 +76,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -113,6 +112,11 @@ public class EventHandler
      * Player position map for watching chunk entries
      */
     private static Map<UUID, ChunkPos> playerPositions = new HashMap<>();
+
+    /**
+     * Cache of loot table -> crops.
+     */
+    private static Map<ResourceLocation, List<MinecoloniesCropBlock>> cropDrops;
 
     @SubscribeEvent
     public static void onCommandsRegister(final RegisterCommandsEvent event)
@@ -152,131 +156,64 @@ public class EventHandler
         }
     }
 
+    private static void buildCropDrops()
+    {
+        cropDrops = new HashMap<>();
+
+        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        {
+            for (final Block source : crop.getDroppedFrom())
+            {
+                cropDrops.computeIfAbsent(source.getLootTable(), t -> new ArrayList<>()).add(crop);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onLootTableLoad(@NotNull final LootTableLoadEvent event)
     {
-        if (event.getName().equals(Blocks.FERN.getLootTable()))
+        if (cropDrops == null)
         {
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.coldBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockCabbage)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockCabbage)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.humidBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockSoyBean)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockSoyBean)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
+            buildCropDrops();
         }
-        else if (event.getName().equals(Blocks.SUGAR_CANE.getLootTable()))
+
+        final List<MinecoloniesCropBlock> crops = cropDrops.get(event.getName());
+        if (crops != null)
         {
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(LootItem.lootTableItem(ModBlocks.blockRice)
-                                              .when(EntityInBiomeTag.of(ModTags.humidBiomes))
-                                              .when(LootItemRandomChanceCondition.randomChance(0.01f))).build());
+            // grass blocks have a lot of crops (both MineColonies and vanilla) so the base drop chance is reduced
+            final float baseChance = event.getName().equals(Blocks.GRASS.getLootTable()) ? 0.001f : 0.01f;
+            // hoes have a boosted chance
+            final float hoeChance = 0.1f;
+
+            for (final MinecoloniesCropBlock crop : crops)
+            {
+                final LootPool.Builder pool = LootPool.lootPool();
+                if (crop.getPreferredBiome() != null)
+                {
+                    pool.when(EntityInBiomeTag.of(crop.getPreferredBiome()));
+                }
+                pool.when(ModLootConditions.HAS_NO_SHEARS_OR_SILK_TOUCH);
+
+                pool.add(AlternativesEntry.alternatives()
+                    .otherwise(LootItem.lootTableItem(crop)
+                            .when(ModLootConditions.HAS_HOE)
+                            .when(LootItemRandomChanceCondition.randomChance(hoeChance)))
+                    .otherwise(LootItem.lootTableItem(crop)
+                            .when(LootItemRandomChanceCondition.randomChance(baseChance))));
+
+                event.getTable().addPool(pool.build());
+            }
         }
-        else if (event.getName().equals(Blocks.DEAD_BUSH.getLootTable()))
+
+        if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON))
         {
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.dryBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.01f)))).build());
-        }
-        else if (event.getName().equals(Blocks.GRASS.getLootTable()))
-        {
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockGarlic)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockGarlic)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockOnion)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockOnion)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockEggplant)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockEggplant)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockDurum)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockDurum)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.dryBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.humidBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockSoyBean)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockSoyBean)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.temperateBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockTomato)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockTomato)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-
-            event.getTable().addPool(LootPool.lootPool().when(EntityInBiomeTag.of(ModTags.temperateBiomes))
-                                       .add(AlternativesEntry.alternatives()
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockBellPepper)
-                                                           .when(MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES)))
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.10f)))
-                                              .otherwise(LootItem.lootTableItem(ModBlocks.blockBellPepper)
-                                                           .when(LootItemRandomChanceCondition.randomChance(0.001f)))).build());
-        }
-        else if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON))
-        {
-            event.getTable().addPool(LootPool.lootPool()
-                                       .add(LootItem.lootTableItem(ModBlocks.blockGarlic)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockOnion)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockEggplant)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockTomato)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockSoyBean)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockRice)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockChickpea)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockBellPepper)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f)))
-                                       .add(LootItem.lootTableItem(ModBlocks.blockDurum)
-                                              .when(LootItemRandomChanceCondition.randomChance(0.005f))).build());
+            final LootPool.Builder pool = LootPool.lootPool();
+            for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+            {
+                pool.add(LootItem.lootTableItem(crop)
+                        .when(LootItemRandomChanceCondition.randomChance(0.005f)));
+            }
+            event.getTable().addPool(pool.build());
         }
     }
 

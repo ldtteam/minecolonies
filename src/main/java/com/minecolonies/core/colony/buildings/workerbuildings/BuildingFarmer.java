@@ -2,15 +2,18 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -19,25 +22,33 @@ import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.StemBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JEI_INFO;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_FARMER_NO_SEED;
 
 /**
@@ -253,6 +264,76 @@ public class BuildingFarmer extends AbstractBuilding
                 return false;
             }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_FARMER).orElse(false);
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull Level world)
+        {
+            List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
+            for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+            {
+                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof MinecoloniesCropBlock crop)
+                {
+                    // MineColonies crop
+                    final List<Component> restrictions = new ArrayList<>();
+                    if (crop.getPreferredBiome() != null)
+                    {
+                        final Registry<Biome> biomeRegistry = world.registryAccess().registryOrThrow(crop.getPreferredBiome().registry());
+                        final Object[] biomes = biomeRegistry.getTag(crop.getPreferredBiome()).get().stream()
+                                .map(b -> Component.translatable(biomeRegistry.getKey(b.get()).toLanguageKey("biome")))
+                                .toArray();
+
+                        restrictions.add(Component.translatable(PARTIAL_JEI_INFO + "biomerestriction",
+                                Component.translatable(String.join(", ", Collections.nCopies(biomes.length, "%s")), biomes)));
+                    }
+
+                    recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(),
+                            List.of(List.of(new ItemStack(cropItem))),
+                            1, crop.getPreferredFarmland(), crop.getLootTable(), ModEquipmentTypes.hoe.get(), restrictions, 0));
+                }
+                else if (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock crop)
+                {
+                    // regular crop
+                    recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(),
+                            List.of(List.of(crop.getCloneItemStack(world, BlockPos.ZERO, crop.defaultBlockState()))),
+                            1, Blocks.FARMLAND, crop.getLootTable(), ModEquipmentTypes.hoe.get(), List.of(), 0));
+                }
+                else if (stack.is(Tags.Items.SEEDS))
+                {
+                    // another kind of seed?
+                    if (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof StemBlock stem)
+                    {
+                        recipes.add(new GenericRecipe(null, new ItemStack(stem.getFruit()), List.of(), List.of(List.of(stack)),
+                                1, Blocks.FARMLAND, null, ModEquipmentTypes.hoe.get(), List.of(), 0));
+                    }
+                    else
+                    {
+                        recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(), List.of(List.of(stack)),
+                                1, Blocks.FARMLAND, null, ModEquipmentTypes.hoe.get(), List.of(), 0));
+                    }
+                }
+            }
+            return recipes;
+        }
+
+        @NotNull
+        @Override
+        public List<ResourceLocation> getAdditionalLootTables()
+        {
+            final List<ResourceLocation> tables = new ArrayList<>(super.getAdditionalLootTables());
+            for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+            {
+                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof MinecoloniesCropBlock crop)
+                {
+                    tables.add(crop.getLootTable());
+                }
+                else if (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock crop)
+                {
+                    tables.add(crop.getLootTable());
+                }
+            }
+            return tables;
         }
     }
 }

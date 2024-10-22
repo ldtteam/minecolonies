@@ -12,17 +12,20 @@ import com.minecolonies.core.blocks.huts.*;
 import com.minecolonies.core.blocks.schematic.BlockWaypoint;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
+import java.util.List;
+
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 import static com.minecolonies.core.blocks.MinecoloniesCropBlock.*;
-import static com.minecolonies.core.blocks.MinecoloniesFarmland.FLOODED_FARMLAND;
 import static com.minecolonies.core.blocks.MinecoloniesFarmland.FARMLAND;
+import static com.minecolonies.core.blocks.MinecoloniesFarmland.FLOODED_FARMLAND;
 
 /**
  * This class deals with the initialization of blocks and their items.
@@ -122,16 +125,16 @@ public final class ModBlocksInitializer
         ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true, 13.0).registerBlock(registry);
 
         // Could in the future add alternative versions of these crops that can be planted by the player and grow at a slower rate.
-        ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);
-        ModBlocks.blockCabbage = new MinecoloniesCropBlock(CABBAGE, ModBlocks.farmland, ModTags.coldBiomes).registerBlock(registry);
-        ModBlocks.blockChickpea = new MinecoloniesCropBlock(CHICKPEA, ModBlocks.farmland, ModTags.dryBiomes).registerBlock(registry);
-        ModBlocks.blockDurum = new MinecoloniesCropBlock(DURUM, ModBlocks.farmland, null).registerBlock(registry);
-        ModBlocks.blockEggplant = new MinecoloniesCropBlock(EGGPLANT, ModBlocks.farmland, null).registerBlock(registry);
-        ModBlocks.blockGarlic = new MinecoloniesCropBlock(GARLIC, ModBlocks.farmland, null).registerBlock(registry);
-        ModBlocks.blockOnion = new MinecoloniesCropBlock(ONION, ModBlocks.farmland, null).registerBlock(registry);
-        ModBlocks.blockSoyBean = new MinecoloniesCropBlock(SOYBEAN, ModBlocks.farmland, ModTags.humidBiomes).registerBlock(registry);
-        ModBlocks.blockTomato = new MinecoloniesCropBlock(TOMATO, ModBlocks.farmland, ModTags.temperateBiomes).registerBlock(registry);
-        ModBlocks.blockRice = new MinecoloniesCropBlock(RICE, ModBlocks.floodedFarmland, ModTags.humidBiomes).registerBlock(registry);
+        ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, List.of(Blocks.GRASS), ModTags.temperateBiomes).registerBlock(registry);
+        ModBlocks.blockCabbage = new MinecoloniesCropBlock(CABBAGE, ModBlocks.farmland, List.of(Blocks.FERN), ModTags.coldBiomes).registerBlock(registry);
+        ModBlocks.blockChickpea = new MinecoloniesCropBlock(CHICKPEA, ModBlocks.farmland, List.of(Blocks.GRASS, Blocks.DEAD_BUSH), ModTags.dryBiomes).registerBlock(registry);
+        ModBlocks.blockDurum = new MinecoloniesCropBlock(DURUM, ModBlocks.farmland, List.of(Blocks.GRASS), null).registerBlock(registry);
+        ModBlocks.blockEggplant = new MinecoloniesCropBlock(EGGPLANT, ModBlocks.farmland, List.of(Blocks.GRASS), null).registerBlock(registry);
+        ModBlocks.blockGarlic = new MinecoloniesCropBlock(GARLIC, ModBlocks.farmland, List.of(Blocks.GRASS), null).registerBlock(registry);
+        ModBlocks.blockOnion = new MinecoloniesCropBlock(ONION, ModBlocks.farmland, List.of(Blocks.GRASS), null).registerBlock(registry);
+        ModBlocks.blockSoyBean = new MinecoloniesCropBlock(SOYBEAN, ModBlocks.farmland, List.of(Blocks.GRASS, Blocks.FERN), ModTags.humidBiomes).registerBlock(registry);
+        ModBlocks.blockTomato = new MinecoloniesCropBlock(TOMATO, ModBlocks.farmland, List.of(Blocks.GRASS), ModTags.temperateBiomes).registerBlock(registry);
+        ModBlocks.blockRice = new MinecoloniesCropBlock(RICE, ModBlocks.floodedFarmland, List.of(Blocks.SEAGRASS, Blocks.SMALL_DRIPLEAF), ModTags.humidBiomes).registerBlock(registry);
 
         ModBlocks.blockSimpleQuarry = new SimpleQuarry().registerBlock(registry);
         ModBlocks.blockMediumQuarry = new MediumQuarry().registerBlock(registry);
