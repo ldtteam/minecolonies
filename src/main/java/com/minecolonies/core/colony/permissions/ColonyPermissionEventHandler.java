@@ -417,7 +417,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return (block != null && (IColonyManager.getInstance().getCompatibilityManager().isFreeBlock(block) || colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos) || IColonyManager.getInstance().getCompatibilityManager().isFreePos(pos);
+        return (block != null && (colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos);
     }
 
     /**
