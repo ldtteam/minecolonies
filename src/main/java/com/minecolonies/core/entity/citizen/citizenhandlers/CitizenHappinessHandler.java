@@ -141,11 +141,12 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             double totalWeight = 0.0;
             for (final IHappinessModifier happinessModifier : happinessFactors.values())
             {
-                final double factor = happinessModifier.getFactor(citizenData);
-                if (factor == 1.0)
+                final double weight = happinessModifier.getWeight();
+                if (weight == 0.0)
                     continue;
-                total += factor * happinessModifier.getWeight();
-                totalWeight += happinessModifier.getWeight();
+                final double factor = happinessModifier.getFactor(citizenData);
+                total += factor * weight;
+                totalWeight += weight;
             }
 
             final double happinessResult = (total / totalWeight) * (1 + colony.getResearchManager().getResearchEffects().getEffectStrength(HAPPINESS));
