@@ -226,5 +226,81 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
           .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_empty_bottle))))
           .result(ModItems.large_water_bottle.getDefaultInstance())
           .build(consumer);
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "apple_pie")
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(Items.APPLE)),
+                        new ItemStorage(new ItemStack(Items.APPLE)),
+                        new ItemStorage(new ItemStack(Items.SUGAR))
+                        ))
+                .result(new ItemStack(ModItems.apple_pie, 1))
+                .intermediate(Blocks.FURNACE)
+                .minBuildingLevel(1)
+                .build(consumer);
+
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "cheese_pizza")
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+                        new ItemStorage(new ItemStack(ModItems.feta_cheese))
+                        ))
+                .result(new ItemStack(ModItems.cheese_pizza, 1))
+                .intermediate(Blocks.FURNACE)
+                .minBuildingLevel(1)
+                .build(consumer);
+
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "plain_cheesecake")
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModItems.creamcheese)),
+                        new ItemStorage(new ItemStack(ModItems.creamcheese)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModItems.butter)),
+                        new ItemStorage(new ItemStack(Items.SUGAR)),
+                        new ItemStorage(new ItemStack(Items.EGG)),
+                        new ItemStorage(new ItemStack(Items.EGG))
+                        ))
+                .result(new ItemStack(ModItems.plain_cheesecake, 1))
+                .intermediate(Blocks.FURNACE)
+                .minBuildingLevel(1)
+                .build(consumer);
+
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "mintchoco_cheesecake")
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModItems.plain_cheesecake)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockMint)),
+                        new ItemStorage(new ItemStack(Items.COCOA_BEANS)),
+                        new ItemStorage(new ItemStack(Items.COCOA_BEANS))
+                        ))
+                .result(new ItemStack(ModItems.mintchoco_cheesecake, 1))
+                .intermediate(Blocks.FURNACE)
+                .minBuildingLevel(1)
+                .build(consumer);
+
+
+        CustomRecipeBuilder.create(BAKER, MODULE_SMELTING, "mushroom_pizza")
+                .inputs(List.of(
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+                        new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+                        new ItemStorage(new ItemStack(ModItems.feta_cheese)),
+                        new ItemStorage(new ItemStack(Items.BROWN_MUSHROOM))
+                        ))
+                .result(new ItemStack(ModItems.mushroom_pizza, 1))
+                .intermediate(Blocks.FURNACE)
+                .minBuildingLevel(1)
+                .build(consumer);
     }
 }
