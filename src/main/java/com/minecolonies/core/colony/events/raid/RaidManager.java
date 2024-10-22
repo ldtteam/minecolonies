@@ -861,7 +861,7 @@ public class RaidManager implements IRaiderManager
     public BlockPos getRandomBuilding()
     {
         buildingPosUsage++;
-        if (buildingPosUsage > getLastRaid().raiderAmount / 3 || lastBuilding == null)
+        if (buildingPosUsage > Math.max(6, getLastRaid().raiderAmount / 3) || lastBuilding == null)
         {
             buildingPosUsage = 0;
             final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
