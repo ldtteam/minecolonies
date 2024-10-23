@@ -371,7 +371,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             if (!this.isDone())
             {
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
-                tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y) - 1, Mth.floor(vector3d2.z));
+                tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
                 if (ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
                 {
                     mob.getMoveControl()
@@ -401,21 +401,32 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @param y
      * @return the next y level to go to.
      */
-    public static double getSmartGroundY(final BlockGetter world, final BlockPos pos, final double orgY)
+    public static double getSmartGroundY(final BlockGetter world, final BlockPos.MutableBlockPos pos, final double orgY)
     {
-        final BlockState state = world.getBlockState(pos);
-        if (state.isAir())
+        BlockState state = world.getBlockState(pos);
+
+        if (!state.isAir())
         {
-            return orgY;
+            final VoxelShape voxelshape = state.getCollisionShape(world, pos);
+            if (!ShapeUtil.isEmpty(voxelshape))
+            {
+                return pos.getY() + ShapeUtil.max(voxelshape, Direction.Axis.Y);
+            }
         }
 
-        final VoxelShape voxelshape = state.getCollisionShape(world, pos);
-        final double maxY = ShapeUtil.max(voxelshape, Direction.Axis.Y);
-        if (maxY < 1.0)
+        pos.set(pos.getX(), pos.getY() - 1, pos.getZ());
+
+        state = world.getBlockState(pos);
+        if (!state.isAir())
         {
-            return pos.getY();
+            final VoxelShape voxelshape = state.getCollisionShape(world, pos);
+            if (!ShapeUtil.isEmpty(voxelshape))
+            {
+                return pos.getY() + ShapeUtil.max(voxelshape, Direction.Axis.Y);
+            }
         }
-        return pos.getY() + maxY;
+
+        return orgY;
     }
 
     @Nullable
