@@ -1,17 +1,13 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
-import com.minecolonies.core.tileentities.TileEntityRack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -89,30 +85,77 @@ public class FoodUtils
      * @param inventoryCitizen the inventory to check.
      * @param citizenData the citizen data the food is for.
      * @param menu the menu that has to be matched.
+     * @param atRestaurant if we're at the restaurant.
      * @return the matching inv slot, or -1.
      */
-    public static int getBestFoodForCitizen(final InventoryCitizen inventoryCitizen, final ICitizenData citizenData, final Set<ItemStorage> menu)
+    public static int getBestFoodForCitizen(final InventoryCitizen inventoryCitizen, final ICitizenData citizenData, final Set<ItemStorage> menu, final boolean atRestaurant)
     {
         // Smaller score is better.
         int bestScore = Integer.MAX_VALUE;
         int bestSlot = -1;
+        Item bestItem = null;
+
+        final ICitizenData.CitizenFoodStats foodStats = citizenData.getFoodHappinessStats();
+        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
         for (int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStorage invStack = new ItemStorage(inventoryCitizen.getStackInSlot(i));
             if (menu.contains(invStack) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
             {
-                final int localScore = citizenData.checkLastEaten(invStack.getItem());
+                final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
+                final int localScore = citizenData.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
+                // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
+                if (!atRestaurant && citizenData.getLastEaten() == invStack.getItem())
+                {
+                    continue;
+                }
+
+                // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
+                if ((localScore < 0 && isMinecolfood)
+                || (localScore < 0 && foodStats.quality() > qualityRequirement * 2)
+                || (isMinecolfood && foodStats.diversity() > diversityRequirement * 2))
+                {
+                    return i;
+                }
+
                 if (localScore < bestScore)
                 {
-                    if (localScore < 0)
-                    {
-                        return i;
-                    }
                     bestScore = localScore;
                     bestSlot = i;
+                    bestItem = invStack.getItem();
                 }
             }
         }
+
+        // If we're not at the restaurant and are the brink of complaining about food, go to the restaurant instead of eating the food you got in the inventory.
+        if (!atRestaurant &&
+              (bestScore >= 0 && foodStats.diversity() <= diversityRequirement)
+              || (!(bestItem instanceof IMinecoloniesFoodItem) && foodStats.quality() <= qualityRequirement))
+        {
+            return -1;
+        }
+
         return bestSlot;
+    }
+
+    /**
+     * Get the min food quality requirement.
+     * @param buildingLevel the building level to take into account.
+     * @return the food quality requirement in number of items.
+     */
+    public static int getMinFoodQualityRequirement(final int buildingLevel)
+    {
+        return Math.max(0, buildingLevel - 2);
+    }
+
+    /**
+     * Get the min food diversity requirement.
+     * @param buildingLevel the building level to take into account.
+     * @return the food diversity requirement in number of items.
+     */
+    public static int getMinFoodDiversityRequirement(final int buildingLevel)
+    {
+        return buildingLevel;
     }
 }

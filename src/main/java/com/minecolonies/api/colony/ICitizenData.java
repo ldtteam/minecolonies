@@ -11,7 +11,6 @@ import com.minecolonies.api.quests.IQuestGiver;
 import com.minecolonies.api.quests.IQuestParticipant;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -450,7 +449,19 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * Check when we last ate a given food item.
      * -1 if not eaten recently.
      * @param item the food item we last ate.
-     * @return the index in the list or max int for not recently.
+     * @return the index in the list or -1 for not recently or oldest food in queue
      */
     int checkLastEaten(Item item);
+
+    /**
+     * Get the food happiness stats
+     */
+    CitizenFoodStats getFoodHappinessStats();
+
+    /**
+     * Food happiness stats.
+     * @param diversity number of diverse foods eaten.
+     * @param quality number of quality foods eaten.
+     */
+    record CitizenFoodStats(int diversity, int quality) {}
 }

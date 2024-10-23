@@ -20,6 +20,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.quests.IQuestDeliveryObjective;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestManager;
@@ -2023,7 +2024,7 @@ public class CitizenData implements ICitizenData
     @Override
     public int checkLastEaten(final Item item)
     {
-        int index = 0;
+        int index = -1;
         for (final Item foodItem : lastEatenFoods)
         {
             if (foodItem == item)
@@ -2033,5 +2034,21 @@ public class CitizenData implements ICitizenData
             index++;
         }
         return -1;
+    }
+
+    @Override
+    public CitizenFoodStats getFoodHappinessStats()
+    {
+        int qualityFoodCounter = 0;
+        Set<Item> uniqueFoods = new HashSet<>();
+        for (final Item foodItem : lastEatenFoods)
+        {
+            if (foodItem instanceof IMinecoloniesFoodItem)
+            {
+                qualityFoodCounter++;
+            }
+            uniqueFoods.add(foodItem);
+        }
+        return new CitizenFoodStats(qualityFoodCounter, uniqueFoods.size());
     }
 }
