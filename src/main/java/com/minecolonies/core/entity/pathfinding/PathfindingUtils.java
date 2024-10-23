@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -29,9 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PathfindingUtils
@@ -42,9 +39,14 @@ public class PathfindingUtils
     private static Object empty = Fluids.EMPTY.defaultFluidState();
 
     /**
-     * Which citizens are being tracked by which players.
+     * Which citizens are being tracked by which players. Player to entity uuid
      */
     public static final Map<UUID, UUID> trackingMap = new ConcurrentHashMap<>();
+
+    /**
+     * Map for tracking specific path types, type to player uuid
+     */
+    public static final Map<String, UUID> trackByType = new HashMap<>();
 
     /**
      * Set the set of reached blocks to the client.
@@ -52,23 +54,18 @@ public class PathfindingUtils
      * @param reached the reached blocks.
      * @param mob     the tracked mob.
      */
-    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final Mob mob)
+    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final List<ServerPlayer> players)
     {
-        if (reached.isEmpty())
+        if (reached.isEmpty() || players.isEmpty())
         {
             return;
         }
 
-        for (final Map.Entry<UUID, UUID> entry : trackingMap.entrySet())
+        final SyncPathReachedMessage message = new SyncPathReachedMessage(reached);
+
+        for (final ServerPlayer player : players)
         {
-            if (entry.getValue().equals(mob.getUUID()))
-            {
-                final ServerPlayer player = mob.level.getServer().getPlayerList().getPlayer(entry.getKey());
-                if (player != null)
-                {
-                    Network.getNetwork().sendToPlayer(new SyncPathReachedMessage(reached), player);
-                }
-            }
+            Network.getNetwork().sendToPlayer(message, player);
         }
     }
 
@@ -328,8 +325,8 @@ public class PathfindingUtils
             return true;
         }
         return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
-                blockState.getBlock() instanceof LadderBlock ||
-                blockState.is(ModTags.freeClimbBlocks));
+                                                        blockState.getBlock() instanceof LadderBlock ||
+                                                        blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**
