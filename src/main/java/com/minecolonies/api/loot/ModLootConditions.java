@@ -1,11 +1,22 @@
 package com.minecolonies.api.loot;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.advancements.critereon.EnchantmentPredicate;
+import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -19,6 +30,15 @@ public final class ModLootConditions
 
     public static final DeferredHolder<LootItemConditionType, LootItemConditionType> entityInBiomeTag;
     public static final DeferredHolder<LootItemConditionType, LootItemConditionType> researchUnlocked;
+
+    // also some convenience definitions for existing conditions; some stolen from BlockLootSubProvider
+    public static final LootItemCondition.Builder HAS_SILK_TOUCH = MatchTool.toolMatches(ItemEnchantmentsPredicate.enchantments(
+      List.of(new EnchantmentPredicate(Enchantments.SILK_TOUCH, MinMaxBounds.Ints.atLeast(1)))
+    ));
+    public static final LootItemCondition.Builder HAS_SHEARS = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS));
+    public static final LootItemCondition.Builder HAS_SHEARS_OR_SILK_TOUCH = HAS_SHEARS.or(HAS_SILK_TOUCH);
+    public static final LootItemCondition.Builder HAS_NO_SHEARS_OR_SILK_TOUCH = HAS_SHEARS_OR_SILK_TOUCH.invert();
+    public static final LootItemCondition.Builder HAS_HOE = MatchTool.toolMatches(ItemPredicate.Builder.item().of(ItemTags.HOES));
 
     public static void init()
     {

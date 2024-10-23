@@ -32,6 +32,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
@@ -59,6 +61,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
       Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)};
 
     private final Block preferredFarmland;
+    private final List<Block> droppedFrom;
 
     private final ResourceLocation blockId;
     private final TagKey<Biome>    preferredBiome;
@@ -67,12 +70,13 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
      * Constructor to create a block of this type.
      * @param blockName the block id.
      */
-    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, @Nullable final TagKey<Biome> preferredBiome)
+    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, final List<Block> droppedFrom, @Nullable final TagKey<Biome> preferredBiome)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
         this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
+        this.droppedFrom = droppedFrom;
         this.preferredBiome = preferredBiome;
     }
 
@@ -173,5 +177,23 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public Block getPreferredFarmland()
     {
         return preferredFarmland;
+    }
+
+    /**
+     * Get the blocks that this crop drops from.
+     */
+    public List<Block> getDroppedFrom()
+    {
+        return droppedFrom;
+    }
+
+    /**
+     * Get the preferred biome for this crop.
+     * @return the preferred biome, or null if not picky.
+     */
+    @Nullable
+    public TagKey<Biome> getPreferredBiome()
+    {
+        return preferredBiome;
     }
 }

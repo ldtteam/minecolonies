@@ -53,6 +53,7 @@ public class JEIPlugin implements IModPlugin
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
         registration.addRecipeCategories(
+          new CropRecipeCategory(guiHelper),
             new ToolRecipeCategory(guiHelper),
             new CompostRecipeCategory(guiHelper),
             new FishermanRecipeCategory(guiHelper)
@@ -125,6 +126,7 @@ public class JEIPlugin implements IModPlugin
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes(Minecraft.getInstance().level));
+        registration.addRecipes(ModRecipeTypes.CROPS, CropRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 

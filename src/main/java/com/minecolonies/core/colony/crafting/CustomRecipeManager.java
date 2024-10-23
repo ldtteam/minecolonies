@@ -1,11 +1,13 @@
 package com.minecolonies.core.colony.crafting;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
@@ -316,6 +319,14 @@ public class CustomRecipeManager
                 {
                     lootIds.add(lootTable);
                 }
+            }
+        }
+
+        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        {
+            for (final Block source : crop.getDroppedFrom())
+            {
+                lootIds.add(source.getLootTable());
             }
         }
 

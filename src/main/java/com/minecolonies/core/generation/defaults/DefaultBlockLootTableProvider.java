@@ -2,6 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
@@ -60,7 +61,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         saveBlock(ModBlocks.blockCompostedDirt,
           lootPool -> lootPool.add(AlternativesEntry.alternatives()
                                      .otherwise(LootItem.lootTableItem(ModBlocks.blockCompostedDirt)
-                                                  .when(this.hasSilkTouch()))
+                                                  .when(ModLootConditions.HAS_SILK_TOUCH))
                                      .otherwise(LootItem.lootTableItem(Blocks.DIRT)
                                                   .when(ExplosionCondition.survivesExplosion()))));
 

@@ -86,6 +86,7 @@ public class DefaultBiomeTagsProvider extends BiomeTagsProvider
           .addTags(Tags.Biomes.IS_WET_OVERWORLD)
           .add(Biomes.BAMBOO_JUNGLE,
             Biomes.BEACH,
+            Biomes.RIVER,
             Biomes.WARM_OCEAN,
             Biomes.DRIPSTONE_CAVES,
             Biomes.JUNGLE,
