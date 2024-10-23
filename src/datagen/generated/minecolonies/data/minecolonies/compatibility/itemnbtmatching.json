@@ -2609,6 +2609,14 @@
     "item": "minecraft:fern"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:map_color",
+      "minecraft:map_decorations",
+      "minecraft:map_id"
+    ],
+    "item": "minecraft:filled_map"
+  },
+  {
     "item": "minecraft:fire_charge"
   },
   {

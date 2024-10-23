@@ -2485,8 +2485,6 @@
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
   "com.minecolonies.coremod.gui.interval.alltime": "All Time",
-  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
-  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
   "com.minecolonies.coremod.gui.townHall.map": "Town Map",
   "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map.",
   "com.minecolonies.gui.edit": "Edit",
