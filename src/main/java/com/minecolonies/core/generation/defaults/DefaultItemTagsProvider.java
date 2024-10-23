@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
+import com.minecolonies.core.items.ItemFood;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -40,7 +41,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
     }
 
     @Override
-    protected void addTags(final HolderLookup.Provider p_256380_)
+    protected void addTags(final @NotNull HolderLookup.Provider provider)
     {
         ModTags.init();     // apparently runData doesn't run work queued in common setup
 
@@ -498,6 +499,23 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.ignoreNBT)
           .addTag(ItemTags.BANNERS);
+
+        tag(Tags.Items.FOODS)
+          .add(ModItems.milkyBread, ModItems.sugaryBread, ModItems.goldenBread, ModItems.chorusBread);
+
+        tag(Tags.Items.FOODS_BREAD)
+          .add(ModItems.milkyBread, ModItems.sugaryBread, ModItems.goldenBread, ModItems.chorusBread);
+
+        tag(Tags.Items.FOODS_GOLDEN)
+          .add(ModItems.goldenBread);
+
+        for (final ItemFood foodItem : ModItems.getFoodItems())
+        {
+            for (final TagKey<Item> tagKey : foodItem.getTags())
+            {
+                tag(tagKey).add(foodItem);
+            }
+        }
     }
 
     @NotNull

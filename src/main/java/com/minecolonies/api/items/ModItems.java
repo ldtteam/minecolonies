@@ -1,6 +1,9 @@
 package com.minecolonies.api.items;
 
+import com.minecolonies.core.items.ItemFood;
 import net.minecraft.world.item.Item;
+
+import java.util.List;
 
 /**
  * Class handling the registering of the mod items.
@@ -79,39 +82,71 @@ public final class ModItems
     public static Item buildGoggles;
     public static Item scanAnalyzer;
 
-    public static Item butter;
-    public static Item cabochis;
-    public static Item cheddar_cheese;
-    public static Item congee;
-    public static Item cooked_rice;
-    public static Item eggplant_dolma;
-    public static Item feta_cheese;
-    public static Item flatbread;
-    public static Item hand_pie;
-    public static Item lamb_stew;
-    public static Item lembas_scone;
-    public static Item manchet_bread;
-    public static Item manchet_dough;
-    public static Item muffin;
+    public static ItemFood cabochis;
+    public static ItemFood cheddar_cheese;
+    public static ItemFood congee;
+    public static ItemFood cooked_rice;
+    public static ItemFood eggplant_dolma;
+    public static ItemFood feta_cheese;
+    public static ItemFood flatbread;
+    public static ItemFood hand_pie;
+    public static ItemFood lamb_stew;
+    public static ItemFood lembas_scone;
+    public static ItemFood manchet_bread;
+    public static ItemFood muffin;
+    public static ItemFood pasta_plain;
+    public static ItemFood pasta_tomato;
+    public static ItemFood pepper_hummus;
+    public static ItemFood pita_hummus;
+    public static ItemFood pottage;
+    public static ItemFood rice_ball;
+    public static ItemFood stew_trencher;
+    public static ItemFood stuffed_pepper;
+    public static ItemFood stuffed_pita;
+    public static ItemFood sushi_roll;
+    public static ItemFood tofu;
+
     public static Item muffin_dough;
-    public static Item pasta_plain;
-    public static Item pasta_tomato;
-    public static Item pepper_hummus;
-    public static Item pita_hummus;
-    public static Item pottage;
+    public static Item manchet_dough;
     public static Item raw_noodle;
-    public static Item rice_ball;
-    public static Item stew_trencher;
-    public static Item stuffed_pepper;
-    public static Item stuffed_pita;
-    public static Item sushi_roll;
-    public static Item tofu;
+    public static Item butter;
 
     public static Item large_water_bottle;
     public static Item large_milk_bottle;
     public static Item large_soy_milk_bottle;
     public static Item large_empty_bottle;
 
+    /**
+     * Get a list of all possible food items.
+     *
+     * @return a list of food items.
+     */
+    public static List<ItemFood> getFoodItems()
+    {
+        return List.of(cabochis,
+          cheddar_cheese,
+          congee,
+          cooked_rice,
+          eggplant_dolma,
+          feta_cheese,
+          flatbread,
+          hand_pie,
+          lamb_stew,
+          lembas_scone,
+          manchet_bread,
+          muffin,
+          pasta_plain,
+          pasta_tomato,
+          pepper_hummus,
+          pita_hummus,
+          pottage,
+          rice_ball,
+          stew_trencher,
+          stuffed_pepper,
+          stuffed_pita,
+          sushi_roll,
+          tofu);
+    }
 
     /**
      * Private constructor to hide the implicit public one.
