@@ -89,12 +89,12 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HEALTH, entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
 
         Object[] skills =
-          new Object[] {citizenData.getCitizenSkillHandler().getSkills().get(Skill.Athletics).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Dexterity).getA(),
-            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Strength).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Agility).getA(),
-            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Stamina).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Mana).getA(),
-            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Adaptability).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Focus).getA(),
-            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Creativity).getA(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Knowledge).getA(),
-            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Intelligence).getA()};
+          new Object[] {citizenData.getCitizenSkillHandler().getSkills().get(Skill.Athletics).getLevel(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Dexterity).getLevel(),
+            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Strength).getLevel(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Agility).getLevel(),
+            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Stamina).getLevel(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Mana).getLevel(),
+            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Adaptability).getLevel(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Focus).getLevel(),
+            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Creativity).getLevel(), citizenData.getCitizenSkillHandler().getSkills().get(Skill.Knowledge).getLevel(),
+            citizenData.getCitizenSkillHandler().getSkills().get(Skill.Intelligence).getLevel()};
         context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_INFO_SKILLS, skills), true);
 
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)

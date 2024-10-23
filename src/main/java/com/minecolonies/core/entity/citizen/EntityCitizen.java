@@ -1319,7 +1319,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             Log.getLogger()
               .warn("Entity:" + getName().toString() + " uuid:" + getUUID() + " id:" + getId() + " removed:" + isRemoved() + " colonyid:" + citizenColonyHandler.getColonyId()
                       + " entitydata colony id:" + getEntityData().get(DATA_COLONY_ID) + " hascolony:" + (citizenColonyHandler.getColony() != null) +
-                      " registered:" + citizenColonyHandler.registered() + " world:" + level + " saved data:" + tag);
+                      " registered:" + citizenColonyHandler.registered() + " world:" + level() + " saved data:" + tag);
         }
 
         if (handleInWallDamage(damageSource))
