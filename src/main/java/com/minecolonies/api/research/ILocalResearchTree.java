@@ -95,6 +95,13 @@ public interface ILocalResearchTree
     void readFromNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound, final IResearchEffectManager effects);
 
     /**
+     * Get the list of all finished researches
+     *
+     * @return a copy of the completed list.
+     */
+    List<ResourceLocation> getCompletedList();
+
+    /**
      * Check if a given research is complete.
      * @param location the unique id.
      * @return true if so.
