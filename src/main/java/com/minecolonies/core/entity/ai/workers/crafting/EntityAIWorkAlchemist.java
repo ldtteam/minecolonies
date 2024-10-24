@@ -15,10 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -261,8 +258,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
               state.getSoundType(world, walkTo, worker).getVolume(),
               state.getSoundType(world, walkTo, worker).getPitch());
             Network.getNetwork().sendToTrackingEntity(new BlockParticleEffectMessage(walkTo, state, worker.getRandom().nextInt(7) - 1), worker);
-
-            if (worker.getRandom().nextInt(120) < 1)
+            if (worker.getRandom().nextInt(40) <= 0)
             {
                 worker.decreaseSaturationForContinuousAction();
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.mistletoe, 1));
@@ -288,12 +284,12 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             if (worker.getNavigation().isDone())
             {
-                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_NETHERWART) < 1)
+                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_NETHERWART) <= 1)
                 {
                     return HARVEST_NETHERWART;
                 }
 
-                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_MISTLETOE) < 1)
+                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_MISTLETOE) <= 1)
                 {
                     return HARVEST_MISTLETOE;
                 }
