@@ -2013,6 +2013,13 @@ public class CitizenData implements ICitizenData
     {
         lastEatenFoods.add(item);
         markDirty(TICKS_SECOND);
+        if (lastEatenFoods.size() >= 10)
+        {
+            this.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
+            this.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
+            this.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+            this.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+        }
     }
 
     @Override
@@ -2050,5 +2057,11 @@ public class CitizenData implements ICitizenData
             uniqueFoods.add(foodItem);
         }
         return new CitizenFoodStats(qualityFoodCounter, uniqueFoods.size());
+    }
+
+    @Override
+    public Queue<Item> getLastEatenQueue()
+    {
+        return lastEatenFoods;
     }
 }

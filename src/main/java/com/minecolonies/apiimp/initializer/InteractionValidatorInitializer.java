@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -263,11 +264,63 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + SLEPTTONIGHT),
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
 
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD),
-          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) != null);
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY + URGENT),
+          citizen -> {
+            if (citizen.getHomeBuilding() == null || citizen.getLastEatenQueue().isEmpty())
+            {
+                return false;
+            }
+            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+            if (homeBuildingLevel <= 2)
+            {
+                return false;
+            }
+            return citizen.getFoodHappinessStats().quality() < (homeBuildingLevel-2)-1;
+          });
 
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD + NOKITCHEN),
-          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) == null);
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY + URGENT),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || citizen.getLastEatenQueue().isEmpty())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 1)
+              {
+                  return false;
+              }
+              return citizen.getFoodHappinessStats().diversity() < homeBuildingLevel/2.0;
+          });
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || citizen.getLastEatenQueue().isEmpty())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 2)
+              {
+                  return false;
+              }
+              final ICitizenData.CitizenFoodStats happinessStats = citizen.getFoodHappinessStats();
+              return happinessStats.quality() < (homeBuildingLevel-2) && happinessStats.quality() >= (homeBuildingLevel-2-1);
+          });
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || citizen.getLastEatenQueue().isEmpty())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 1)
+              {
+                  return false;
+              }
+              final ICitizenData.CitizenFoodStats happinessStats = citizen.getFoodHappinessStats();
+              return happinessStats.diversity() < homeBuildingLevel && happinessStats.diversity() >= homeBuildingLevel/2.0;
+          });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper

@@ -1,13 +1,18 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.core.tileentities.TileEntityRack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -84,11 +89,10 @@ public class FoodUtils
      * Get the best food for a given citizen from a given inventory and return the index where it is.
      * @param inventoryCitizen the inventory to check.
      * @param citizenData the citizen data the food is for.
-     * @param menu the menu that has to be matched.
-     * @param atRestaurant if we're at the restaurant.
+     * @param menu the menu that has to be matched. or null
      * @return the matching inv slot, or -1.
      */
-    public static int getBestFoodForCitizen(final InventoryCitizen inventoryCitizen, final ICitizenData citizenData, final Set<ItemStorage> menu, final boolean atRestaurant)
+    public static int getBestFoodForCitizen(final InventoryCitizen inventoryCitizen, final ICitizenData citizenData, @Nullable final Set<ItemStorage> menu)
     {
         // Smaller score is better.
         int bestScore = Integer.MAX_VALUE;
@@ -101,12 +105,12 @@ public class FoodUtils
         for (int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStorage invStack = new ItemStorage(inventoryCitizen.getStackInSlot(i));
-            if (menu.contains(invStack) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
+            if ((menu == null || menu.contains(invStack)) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
             {
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = citizenData.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
                 // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
-                if (!atRestaurant && citizenData.getLastEaten() == invStack.getItem())
+                if (menu != null && citizenData.getLastEaten() == invStack.getItem())
                 {
                     continue;
                 }
@@ -129,7 +133,7 @@ public class FoodUtils
         }
 
         // If we're not at the restaurant and are the brink of complaining about food, go to the restaurant instead of eating the food you got in the inventory.
-        if (!atRestaurant &&
+        if (menu != null &&
               (bestScore >= 0 && foodStats.diversity() <= diversityRequirement)
               || (!(bestItem instanceof IMinecoloniesFoodItem) && foodStats.quality() <= qualityRequirement))
         {
@@ -137,6 +141,84 @@ public class FoodUtils
         }
 
         return bestSlot;
+    }
+
+    /**
+     * Get the best food for a given citizen from a given inventory and return the index where it is.
+     * @param citizenData the citizen data the food is for.
+     * @param menu the menu that has to be matched or null.
+     * @return the matching inv slot, or -1.
+     */
+    public static ItemStorage checkForFoodInBuilding(final ICitizenData citizenData, @Nullable final Set<ItemStorage> menu, final IBuilding building)
+    {
+        // Smaller score is better.
+        int bestScore = Integer.MAX_VALUE;
+        ItemStorage bestStorage = null;
+
+        final Level world = building.getColony().getWorld();
+        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
+
+        final ICitizenData.CitizenFoodStats foodStats = citizenData.getFoodHappinessStats();
+        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+
+        final boolean criticalDiversity = foodStats.diversity() <= diversityRequirement;
+        final boolean criticalQuality = foodStats.quality() <= qualityRequirement;
+
+        containerLoop: for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    for (final ItemStorage storage : rackEntity.getAllContent().keySet())
+                    {
+                        if ((menu == null || menu.contains(storage)) && FoodUtils.canEat(storage.getItemStack(), homeBuildingLevel))
+                        {
+                            final boolean isMinecolfood = storage.getItem() instanceof IMinecoloniesFoodItem;
+                            final int localScore = citizenData.checkLastEaten(storage.getItem());
+
+                            // If this is great food and we're at critical levels, go with it!
+                            if ((localScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
+                            {
+                                bestStorage = storage;
+                                break containerLoop;
+                            }
+
+                            if (localScore > bestScore)
+                            {
+                                continue;
+                            }
+
+                            if (isMinecolfood && !criticalQuality && MathUtils.RANDOM.nextInt(((IMinecoloniesFoodItem) storage.getItem()).getTier() + 2 - homeBuildingLevel) <= 0)
+                            {
+                                bestScore = localScore;
+                                bestStorage = storage;
+                                continue;
+                            }
+
+                            bestScore = localScore * (isMinecolfood ? 2 : 1);
+                            bestStorage = storage;
+
+                            // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
+                            if ((localScore < 0 && isMinecolfood)
+                                  || (localScore < 0 && foodStats.quality() > qualityRequirement * 2)
+                                  || (isMinecolfood && foodStats.diversity() > diversityRequirement * 2))
+                            {
+                                break containerLoop;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (bestStorage == null)
+        {
+            return null;
+        }
+        return new ItemStorage(bestStorage.getItemStack().copy());
     }
 
     /**

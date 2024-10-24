@@ -177,6 +177,15 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
     public abstract boolean hasItemStack(ItemStack stack, final int count, boolean ignoreDamageValue);
 
     /**
+     * Check if the itemStorage exists in the inventory. This method checks the content list, it is therefore extremely fast.
+     *
+     * @param storage           the storage to check.
+     * @param count             the min count it should have.
+     * @return true if so.
+     */
+    public abstract boolean hasItemStorage(final ItemStorage storage, final int count);
+
+    /**
      * Check if a similar/same item as the stack is in the inventory. And return the count if so.
      *
      * @param stack             the stack to check.

@@ -18,10 +18,7 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticipant
 {
@@ -464,4 +461,10 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @param quality number of quality foods eaten.
      */
     record CitizenFoodStats(int diversity, int quality) {}
+
+    /**
+     * Get access to the full queue.
+     * @return the full last eaten queue.
+     */
+    Queue<Item> getLastEatenQueue();
 }

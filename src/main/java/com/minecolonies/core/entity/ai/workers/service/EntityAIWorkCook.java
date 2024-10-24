@@ -198,7 +198,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             for (int feedingAttempts = 0; feedingAttempts < 10; feedingAttempts++)
             {
-                final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu(), true);
+                final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu());
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
@@ -223,7 +223,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu(), true);
+        final int foodSlot = FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizenData, module.getMenu());
         if (foodSlot == -1)
         {
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), canEatPredicate) <= 0)
@@ -321,28 +321,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
         return true;
     }
-
-    //todo adjust happiness to care about set diversity
-    //todo adjust happiness messaging around this
-
-    // Mininmal Happiness:
-    //1: 1 Different types of food, e.g. baked potato
-    //2: 2 Types of food baked potato + mushroom soup
-    //3: 3 Types food baked potato + mushroom soup + 1 Minecolonies food
-    //4: 4 Types food baked potato + mushroom soup + 2 Minecolonies food
-    //5: 5 Types food baked potato + mushroom soup + 3 Minecolonies food
-    //
-    //Optimal Happiness:
-    //1: 2 Different types of food, e.g. baked potato
-    //2: 4 Types of food baked potato + mushroom soup
-    //3: 6 Types food 4x whatever + 2 Minecolonies food
-    //4: 8 Types food 4x whatever + 4 Minecolonies food
-    //5: 10 Types food 4x whatever + 6 Minecolonies food
-
-    //todo temporary happiness bonus after eating a level 3 tier food.
-
-    //todo citizen when eating has to do more tests before eating any food! (If it would reach complaint status, then don't)
-
+    
     /**
      * Checks if the cook has anything important to do before going to the default furnace user jobs. First calculate the building range if not cached yet. Then check for citizens
      * around the building. If no citizen around switch to default jobs. If citizens around check if food in inventory, if not, switch to gather job. If food in inventory switch to
@@ -365,7 +344,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         playerToServe.addAll(playerList);
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
 
-        boolean hasFoodInBuilding = false;
         for (final EntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world, EntityCitizen.class, building, null))
         {
             if (citizen.getCitizenJobHandler().getColonyJob() instanceof JobCook
@@ -375,15 +353,17 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 continue;
             }
 
-            if (FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu(), true) >= 0)
+            if (FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu()) >= 0)
             {
                 citizenToServe.add(citizen);
             }
             else
             {
-                if (checkForFood(citizen.getCitizenData(), module.getMenu()))
+                final ItemStorage storage = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), module.getMenu(), building);
+                if (storage != null)
                 {
-                    hasFoodInBuilding = true;
+                    needsCurrently = new Tuple<>(stack -> new ItemStorage(stack).equals(storage), STACKSIZE);
+                    return GATHERING_REQUIRED_MATERIALS;
                 }
             }
         }
@@ -391,11 +371,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         if (!citizenToServe.isEmpty())
         {
             return COOK_SERVE_FOOD_TO_CITIZEN;
-        }
-
-        if (hasFoodInBuilding)
-        {
-            return GATHERING_REQUIRED_MATERIALS;
         }
 
         if (!playerToServe.isEmpty())
@@ -413,87 +388,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
 
         return START_WORKING;
-    }
-
-    /**
-     * Get the best food for a given citizen from a given inventory and return the index where it is.
-     * @param citizenData the citizen data the food is for.
-     * @param menu the menu that has to be matched.
-     * @return the matching inv slot, or -1.
-     */
-    public boolean checkForFood(final ICitizenData citizenData, final Set<ItemStorage> menu)
-    {
-        // Smaller score is better.
-        int bestScore = Integer.MAX_VALUE;
-        ItemStorage bestStorage = null;
-
-        final Level world = building.getColony().getWorld();
-        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
-
-        final ICitizenData.CitizenFoodStats foodStats = citizenData.getFoodHappinessStats();
-        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
-        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
-
-        final boolean criticalDiversity = foodStats.diversity() <= diversityRequirement;
-        final boolean criticalQuality = foodStats.quality() <= qualityRequirement;
-
-        containerloop: for (final BlockPos pos : building.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack rackEntity)
-                {
-                    for (final ItemStorage storage : rackEntity.getAllContent().keySet())
-                    {
-                        if (menu.contains(storage) && FoodUtils.canEat(storage.getItemStack(), homeBuildingLevel))
-                        {
-                            final boolean isMinecolfood = storage.getItem() instanceof IMinecoloniesFoodItem;
-                            final int localScore = citizenData.checkLastEaten(storage.getItem());
-
-                            // If this is great food and we're at critical levels, go with it!
-                           if ((localScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
-                           {
-                               bestStorage = storage;
-                               break containerloop;
-                           }
-
-                           if (localScore > bestScore)
-                           {
-                               continue;
-                           }
-
-                           if (isMinecolfood && !criticalQuality && MathUtils.RANDOM.nextInt(((IMinecoloniesFoodItem) storage.getItem()).getTier() + 2 - homeBuildingLevel) <= 0)
-                           {
-                               bestScore = localScore;
-                               bestStorage = storage;
-                               continue;
-                           }
-
-                            bestScore = localScore * (isMinecolfood ? 2 : 1);
-                            bestStorage = storage;
-
-                            // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
-                            if ((localScore < 0 && isMinecolfood)
-                                  || (localScore < 0 && foodStats.quality() > qualityRequirement * 2)
-                                  || (isMinecolfood && foodStats.diversity() > diversityRequirement * 2))
-                            {
-                                break containerloop;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (bestStorage == null)
-        {
-            return false;
-        }
-
-        final ItemStorage resultStorage = new ItemStorage(bestStorage.getItemStack().copy());
-        needsCurrently = new Tuple<>(stack -> new ItemStorage(stack).equals(resultStorage), STACKSIZE);
-        return true;
     }
 
     /**

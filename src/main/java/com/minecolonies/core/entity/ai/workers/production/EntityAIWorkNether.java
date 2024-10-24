@@ -59,7 +59,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
@@ -866,7 +867,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private List<ItemStack> getEdiblesList()
     {
-        final Set<ItemStorage> allowedItems = building.getModule(RESTAURANT_MENU).getMenu();
+        final Set<ItemStorage> allowedItems = building.getModule(NETHERMINER_MENU).getMenu();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
     }
@@ -983,15 +984,15 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     protected IAIState checkAndRequestFood()
     {
-        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack))) > 16)
+        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack))) > 16)
         {
             // We have enough food.
             return getState();
         }
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(building, stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
+        if (InventoryUtils.hasBuildingEnoughElseCount(building, stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
         {
-            needsCurrently = new Tuple<>(stack -> building.getModule(RESTAURANT_MENU).getMenu().contains(new ItemStorage(stack)), 16);
+            needsCurrently = new Tuple<>(stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 16);
             return PICK_UP;
         }
         return getState();

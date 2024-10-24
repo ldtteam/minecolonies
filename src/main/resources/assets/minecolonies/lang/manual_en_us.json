@@ -2656,8 +2656,13 @@
 
   "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
-  "com.minecolonies.coremod.entity.citizen.no.food": "I haven't had a decent meal in at least a week. If you're not sure what kind of food I'd like to eat, verify the food list in the restaurant for the appropriate food tiers!",
-  "com.minecolonies.coremod.entity.citizen.no.food.nokitchen": "I haven't had a decent meal in at least a week. If you're not sure what kind of food I'd like to eat, verify the food list in the restaurant for the appropriate food tiers! The assistant cook demanded their own kitchen, so you might need to build a Cookery to produce these sophisticated meals!",
+
+  "com.minecolonies.coremod.entity.citizen.no.foodquality": "I wish the restaurant menu would contain some better food options",
+  "com.minecolonies.coremod.entity.citizen.no.fooddiversity": "I wish the restaurant menu would contain a bit more variety",
+
+  "com.minecolonies.coremod.entity.citizen.no.foodquality.urgent": "I haven't had a decent meal in a while! The restaurant menu should have better options!",
+  "com.minecolonies.coremod.entity.citizen.no.fooddiversity.urgent": "I feel like I'm eating the same food everyday! The restaurant menu should contain more options.",
+
   "com.minecolonies.core.item.food.tooltip.tier.1": "This food is somewhat acceptable for your citizens.",
   "com.minecolonies.core.item.food.tooltip.tier.2": "This food will keep your citizens satisfied.",
   "com.minecolonies.core.item.food.tooltip.tier.3": "This food will make your citizens happy for sure!",
