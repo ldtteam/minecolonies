@@ -58,6 +58,7 @@ import java.util.stream.Collectors;
  */
 public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 {
+    protected static final JeiFakeLevel FAKE_LEVEL = new JeiFakeLevel();
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
     @NotNull private final RecipeType<T> type;
@@ -300,7 +301,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
-        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, Minecraft.getInstance().level);
+        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, FAKE_LEVEL);
         citizen.setFemale(citizen.getRandom().nextBoolean());
         citizen.setTextureId(citizen.getRandom().nextInt(255));
         citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));

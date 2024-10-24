@@ -4,7 +4,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -134,7 +134,7 @@ public interface IGenericRecipe
      * @return The required creature.
      */
     @Nullable
-    LivingEntity getRequiredEntity();
+    EntityType<?> getRequiredEntity();
 
     /**
      * Gets some human-readable restrictions on when this recipe is valid.

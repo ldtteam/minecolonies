@@ -108,7 +108,7 @@ public class BuildingShepherd extends AbstractBuilding
             recipes.add(new GenericRecipe(null, ItemStack.EMPTY,
                     ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList(),
                     Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal.getType(), Collections.emptyList(), 0));
 
             return recipes;
         }
