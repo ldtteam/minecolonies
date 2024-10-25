@@ -3,18 +3,20 @@ package com.minecolonies.core.client.gui.map;
 import com.ldtteam.blockui.BOGuiGraphics;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 /**
  * Simple minecraft map element.
  */
-public class MinecraftMap extends Pane implements AutoCloseable
+public class MinecraftMap extends Pane
 {
-    private DynamicTexture texture;
-    private ResourceLocation textureResLoc;
+    public static final int MAP_SIZE = 128;
+    public static final int MAP_CENTER = 64;
+
+    private MapItemSavedData mapData;
+    private MapId mapId;
 
     /**
      * Default Constructor.
@@ -38,25 +40,10 @@ public class MinecraftMap extends Pane implements AutoCloseable
      * Set the fitting map data.
      * @param mapData the mapData to set.
      */
-    public void setMapData(final MapItemSavedData mapData)
+    public void setMapData(final MapId mapId, final MapItemSavedData mapData)
     {
-        if (texture != null)
-        {
-            freeTexture();
-        }
-
-        texture = new DynamicTexture(128, 128, false);
-
-        for (int y = 0; y < 128; ++y)
-        {
-            for (int x = 0; x < 128; ++x)
-            {
-                texture.getPixels().setPixelRGBA(x, y, MapColor.getColorFromPackedId(mapData.colors[x + y * 128]));
-            }
-        }
-
-        texture.upload();
-        textureResLoc = mc.getTextureManager().register("minecolonies_map/" + id, texture);
+        this.mapId = mapId;
+        this.mapData = mapData;
     }
 
     /**
@@ -68,27 +55,17 @@ public class MinecraftMap extends Pane implements AutoCloseable
     @Override
     public void drawSelf(final BOGuiGraphics ms, final double mx, final double my)
     {
-        if (textureResLoc != null)
+        if (mapData != null)
         {
-            blit(ms.pose(), textureResLoc, x, y, width, height);
+            ms.pose().pushPose();
+            ms.pose().translate(x, y, 0.01f);
+            ms.pose().scale(getWidth() / MAP_SIZE, getHeight() / MAP_SIZE, 1);
+
+            // if fifth bool == false => enable all map decos
+            Minecraft.getInstance().gameRenderer.getMapRenderer().render(ms.pose(), ms.bufferSource(), mapId, mapData, true, 15728880);
+
+            ms.flush();
+            ms.pose().popPose();
         }
-    }
-
-    private void freeTexture()
-    {
-        if (textureResLoc != null)
-        {
-            texture.close();
-            mc.getTextureManager().release(textureResLoc);
-
-            texture = null;
-            textureResLoc = null;
-        }
-    }
-
-    @Override
-    public void close()
-    {
-        freeTexture();
     }
 }
