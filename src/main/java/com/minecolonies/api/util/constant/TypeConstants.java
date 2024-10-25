@@ -69,6 +69,6 @@ public class TypeConstants
     /////Implementations
     public static final TypeToken<StandardToken>   STANDARDTOKEN    = TypeToken.of(StandardToken.class);
     public static final TypeToken<Delivery>        DELIVERY         = TypeToken.of(Delivery.class);
-    public static final TypeToken<Pickup>          PICKUP           = TypeToken.of(Pickup.class);
-    public static final TypeToken<Tool>            TOOL             = TypeToken.of(Tool.class);
+    public static final TypeToken<Pickup> PICKUP = TypeToken.of(Pickup.class);
+    public static final TypeToken<Tool>   TOOL   = TypeToken.of(Tool.class);
 }

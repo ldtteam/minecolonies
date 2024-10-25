@@ -17,13 +17,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -118,15 +116,18 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
+            final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create();
 
-            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
-                final IToken<?> id = controller.deserialize(CompoundTag.getCompound(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserialize(CompoundTag.getCompound(TAG_RESOLVER));
-
-                return new Tuple<IToken<?>, IRequestResolver<?>>(id, resolver);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));
-
-            final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(map);
+            for (int i = 0; i < list.size(); i++)
+            {
+                final CompoundTag mapCompound = list.getCompound(i);
+                final IToken<?> id = controller.deserialize(mapCompound.getCompound(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserialize(mapCompound.getCompound(TAG_RESOLVER));
+                if (resolver.isValid())
+                {
+                    biMap.put(id, resolver);
+                }
+            }
 
             return new StandardRequestResolversIdentitiesDataStore(token, biMap);
         }

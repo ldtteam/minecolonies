@@ -2,12 +2,13 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -144,5 +145,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     protected double getEndNodeScore(@NotNull final MNode n)
     {
         return -BlockPosUtil.dist(avoid, n.x, n.y, n.z);
+    }
+
+    @Override
+    public void setPathingOptions(final PathingOptions pathingOptions)
+    {
+        super.setPathingOptions(pathingOptions);
+        pathingOptions.dropCost = 5;
     }
 }

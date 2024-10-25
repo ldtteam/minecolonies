@@ -53,7 +53,6 @@ public interface IDeliverable extends IRetryable
      */
     IDeliverable copyWithCount(final int newCount);
 
-
     /**
      * Can this type of request be resolved by the building, or only by external resolvers.
      * @return true if so.

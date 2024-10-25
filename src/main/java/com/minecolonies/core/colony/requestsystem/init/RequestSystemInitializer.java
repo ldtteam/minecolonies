@@ -27,5 +27,6 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(PublicCrafting.class, StandardRequests.PublicCraftingRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(PrivateCrafting.class, StandardRequests.PrivateCraftingRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(RequestTag.class, StandardRequests.ItemTagRequest.class);
+        RequestMappingHandler.registerRequestableTypeMapping(MinimumStack.class, StandardRequests.MinStackRequest.class);
     }
 }

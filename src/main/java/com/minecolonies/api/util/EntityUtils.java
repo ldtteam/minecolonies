@@ -3,10 +3,10 @@ package com.minecolonies.api.util;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 import static net.minecraft.world.entity.EntitySelector.NO_SPECTATORS;
 
 /**
@@ -173,7 +174,21 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final Level world, final BlockPos nearPoint)
     {
-        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2));
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> {
+            if (checkValidSpawn(w, p, 2))
+            {
+                // Also find a valid neighbouring space, to decrease stuck chance
+                for (final Direction dir : HORIZONTAL_DIRS)
+                {
+                    if (checkValidSpawn(w, p.relative(dir, 1), 2))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
     }
 
 
@@ -325,7 +340,7 @@ public final class EntityUtils
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         final BlockPos pos = BlockPos.containing(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
-        return pos.distSqr(new Vec3i(x, y, z)) < MathUtils.square(range);
+        return BlockPosUtil.distSqr(pos, x, y, z) < MathUtils.square(range);
     }
 
     /**

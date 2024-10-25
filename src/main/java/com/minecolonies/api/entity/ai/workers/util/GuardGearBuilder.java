@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.workers.util;
 
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 
@@ -35,10 +35,10 @@ public final class GuardGearBuilder
       final Tuple<Integer, Integer> buildingLevelRange)
     {
         final List<GuardGear> armorList = new ArrayList<>();
-        armorList.add(new GuardGear(ToolType.BOOTS, EquipmentSlot.FEET, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
-        armorList.add(new GuardGear(ToolType.CHESTPLATE, EquipmentSlot.CHEST, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
-        armorList.add(new GuardGear(ToolType.HELMET, EquipmentSlot.HEAD, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
-        armorList.add(new GuardGear(ToolType.LEGGINGS, EquipmentSlot.LEGS, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
+        armorList.add(new GuardGear(ModEquipmentTypes.boots.get(), EquipmentSlot.FEET, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
+        armorList.add(new GuardGear(ModEquipmentTypes.chestplate.get(), EquipmentSlot.CHEST, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
+        armorList.add(new GuardGear(ModEquipmentTypes.helmet.get(), EquipmentSlot.HEAD, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
+        armorList.add(new GuardGear(ModEquipmentTypes.leggings.get(), EquipmentSlot.LEGS, minArmorLevel, maxArmorLevel, levelRange, buildingLevelRange));
         return armorList;
     }
 }

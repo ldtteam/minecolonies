@@ -369,4 +369,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
+
+    @Override
+    public boolean isValid()
+    {
+        return jobEntry != null;
+    }
 }

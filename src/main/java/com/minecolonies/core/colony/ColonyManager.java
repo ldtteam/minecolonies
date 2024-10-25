@@ -611,7 +611,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            getColonies(event.level).forEach(c -> c.onWorldTick(event));
+            for (final IColony colony : getColonies(event.level))
+            {
+                try
+                {
+                    colony.onWorldTick(event);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error("Something went wrong ticking colony: " + colony.getID(), ex);
+                }
+            }
         }
     }
 
@@ -633,7 +643,14 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            try
+            {
+                MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyManagerLoadedEvent", e);
+            }
         }
     }
 
@@ -660,7 +677,14 @@ public final class ColonyManager implements IColonyManager
                 BackUpHelper.backupColonyData();
             }
 
-            MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            try
+            {
+                MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyManagerUnloadedEvent", e);
+            }
         }
     }
 
@@ -689,7 +713,14 @@ public final class ColonyManager implements IColonyManager
         }
         view.handleColonyViewMessage(colonyData, world, isNewSubscription);
 
-        MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        try
+        {
+            MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during ColonyViewUpdatedEvent", e);
+        }
     }
 
     @Override

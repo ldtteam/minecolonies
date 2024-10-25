@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,12 +83,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
                 itemStack -> ItemStackUtils.ISFOOD.test(itemStack) && !ItemStackUtils.ISCOOKABLE.test(itemStack);
     }
 
-    /**
-     * Get the smelting result for a certain itemStack.
-     *
-     * @param itemStack the itemStack to test.
-     * @return the result or empty if not existent.
-     */
+    @Override
     public ItemStack getSmeltingResult(final ItemStack itemStack)
     {
         final RecipeStorage storage = recipes.getOrDefault(new ItemStorage(itemStack), null);
@@ -98,19 +94,11 @@ public class FurnaceRecipes implements IFurnaceRecipes
         return ItemStack.EMPTY;
     }
 
-    /**
-     * Get the first smelting recipe by result for a certain itemStack predicate.
-     *
-     * @param stackPredicate the predicate to test.
-     * @return the result or null if not existent.
-     */
-    public RecipeStorage getFirstSmeltingRecipeByResult(final Predicate<ItemStack> stackPredicate)
+    @Nullable
+    @Override
+    public RecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage)
     {
-        Optional<ItemStorage> index = reverseRecipes.keySet().stream().filter(item -> stackPredicate.test(item.getItemStack())).findFirst();
-        if(index.isPresent()) {
-            return reverseRecipes.getOrDefault(index.get(), null);
-        }
-        return null;
+        return reverseRecipes.get(storage);
     }
 
     /**

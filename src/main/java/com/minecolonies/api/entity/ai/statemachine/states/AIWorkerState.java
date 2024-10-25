@@ -342,9 +342,13 @@ public enum AIWorkerState implements IAIState
      */
 
     /**
-     * Serve food to the citizen inside the building.
+     * Serve food to the citizens inside the building.
      */
     COOK_SERVE_FOOD_TO_CITIZEN(true),
+    /**
+     * Serve food to the players inside the building.
+     */
+    COOK_SERVE_FOOD_TO_PLAYER(true),
 
     /*
 ### Herders ###

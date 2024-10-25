@@ -9,12 +9,12 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.core.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -188,10 +188,10 @@ public class WindowCitizenPage extends AbstractWindowTownHall
                 button.setText(Component.literal(citizen.getName()));
 
                 final AbstractTextBuilder.TextBuilder textBuilder = PaneBuilders.textBuilder();
-                for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+                for (final Map.Entry<Skill, CitizenSkillHandler.SkillData> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
                 {
                     final String skillName = entry.getKey().name().toLowerCase(Locale.US);
-                    final int skillLevel = entry.getValue().getA();
+                    final int skillLevel = entry.getValue().getLevel();
 
                     textBuilder.append(Component.translatable("com.minecolonies.coremod.gui.citizen.skills." + skillName));
                     textBuilder.append(Component.literal(": " + skillLevel + " "));

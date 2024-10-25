@@ -5,26 +5,23 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Find and return a path to the nearest water. Created: March 25, 2016
@@ -80,7 +77,8 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (n.isSwimming() && Pond.checkWater(world, tempWorldPos.set(n.x, n.y - 1, n.z)))
+        final MutableBlockPos problemPos = debugDrawEnabled ? BlockPos.ZERO.mutable() : null;
+        if (n.isSwimming() && Pond.checkPond(world, tempWorldPos.set(n.x, n.y - 1, n.z), problemPos))
         {
             for (Tuple<BlockPos, BlockPos> existingPond : ponds)
             {
@@ -99,6 +97,12 @@ public class PathJobFindWater extends AbstractPathJob
                 getResult().parent = path.getTarget();
                 return true;
             }
+        }
+
+        // node is not pond -> debug
+        if (problemPos != null && !problemPos.equals(BlockPos.ZERO))
+        {
+            debugNodesExtra.add(new MNode(n, problemPos.getX(), problemPos.getY(), problemPos.getZ(), -1, -1));
         }
 
         return false;

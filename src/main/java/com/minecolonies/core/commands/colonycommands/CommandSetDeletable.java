@@ -15,6 +15,7 @@ import static com.minecolonies.api.util.constant.translation.CommandTranslationC
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
+// TODO: Unused, maybe drop or add an auto delete feature
 public class CommandSetDeletable implements IMCOPCommand
 {
 

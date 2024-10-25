@@ -113,7 +113,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * Additional nodes that get explored when reaching the target, useful when the destination is an area or not in a great spot.
      * Pathjobs may increase this value as they see fit
      */
-    protected int extraNodes = 0;
+    public int extraNodes = 0;
 
     /**
      * Debug settings
@@ -733,19 +733,22 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
         }
 
-        final boolean isSwimming = calculateSwimming(world, nextX, nextY, nextZ, nextNode);
+        final BlockState aboveState = cachedBlockLookup.getBlockState(nextX, nextY + 1, nextZ);
+        final BlockState state = cachedBlockLookup.getBlockState(nextX, nextY, nextZ);
+        final BlockState belowState = cachedBlockLookup.getBlockState(nextX, nextY - 1, nextZ);
+
+        final boolean isSwimming = calculateSwimming(belowState, state, aboveState, nextNode);
         if (isSwimming && !pathingOptions.canSwim())
         {
             return;
         }
 
         final boolean swimStart = isSwimming && !node.isSwimming();
-        final BlockState state = cachedBlockLookup.getBlockState(nextX, nextY, nextZ);
-        final BlockState belowState = cachedBlockLookup.getBlockState(nextX, nextY - 1, nextZ);
         final boolean onRoad = WorkerUtil.isPathBlock(belowState.getBlock());
         final boolean onRails = pathingOptions.canUseRails() && (corner ? belowState : state).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && node != null && node.isOnRails();
         final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions);
+        final boolean isDiving = isSwimming && PathfindingUtils.isWater(world, null, aboveState, null);
 
         double nextCost = 0;
         if (!corner)
@@ -760,7 +763,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 costFrom = node.parent;
             }
 
-            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
+            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, isDiving, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
             nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state, belowState);
 
             if (nextCost > maxCost)
@@ -884,6 +887,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final MNode parent, final int dX, final int dY, final int dZ,
       final boolean isSwimming,
       final boolean onPath,
+      final boolean isDiving,
       final boolean onRails,
       final boolean railsExit,
       final boolean swimStart,
@@ -893,18 +897,21 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         double cost = 1;
 
-        if (onPath)
-        {
-            cost *= pathingOptions.onPathCost;
-        }
-        if (onRails)
-        {
-            cost *= pathingOptions.onRailCost;
-        }
-
         if (pathingOptions.randomnessFactor > 0.0d)
         {
             cost += ColonyConstants.rand.nextDouble() * pathingOptions.randomnessFactor;
+        }
+
+        if (!isSwimming)
+        {
+            if (onPath)
+            {
+                cost *= pathingOptions.onPathCost;
+            }
+            if (onRails)
+            {
+                cost *= pathingOptions.onRailCost;
+            }
         }
 
         if (state.getBlock() == Blocks.CAVE_AIR)
@@ -912,15 +919,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost += pathingOptions.caveAirCost;
         }
 
-        if (dY != 0 && !(ladder && parent.isLadder()) && !(Math.abs(dY) == 1 && below.is(BlockTags.STAIRS)))
+        if (!isDiving)
         {
-            if (dY > 0)
+            if (dY != 0 && !(ladder && parent.isLadder()) && !(Math.abs(dY) == 1 && below.is(BlockTags.STAIRS)))
             {
-                cost += pathingOptions.jumpCost;
-            }
-            else if (pathingOptions.dropCost != 0)
-            {
-                cost += pathingOptions.dropCost * Math.abs(dY * dY * dY);
+                if (dY > 0)
+                {
+                    cost += pathingOptions.jumpCost;
+                }
+                else if (pathingOptions.dropCost != 0)
+                {
+                    cost += pathingOptions.dropCost * Math.abs(dY * dY * dY);
+                }
             }
         }
 
@@ -943,7 +953,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             cost += pathingOptions.railsExitCost;
         }
 
-        if (ladder && !parent.isLadder() && !(state.getBlock() instanceof LadderBlock))
+        if (!isDiving && ladder && !parent.isLadder() && !(state.getBlock() instanceof LadderBlock))
         {
             cost += pathingOptions.nonLadderClimbableCost;
         }
@@ -957,6 +967,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             else
             {
                 cost += pathingOptions.swimCost;
+            }
+            if (isDiving)
+            {
+                cost += pathingOptions.divingCost;
             }
         }
 
@@ -1531,9 +1545,16 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         return true;
     }
 
-    private boolean calculateSwimming(@NotNull final LevelReader world, final int x, final int y, final int z, @Nullable final MNode node)
+    private boolean calculateSwimming(final BlockState below, final BlockState state, final BlockState above, @Nullable final MNode node)
     {
-        return (node == null) ? PathfindingUtils.isWater(world, tempWorldPos.set(x, y - 1, z)) : node.isSwimming();
+        if (node != null)
+        {
+            return node.isSwimming();
+        }
+
+        return PathfindingUtils.isWater(cachedBlockLookup, null, below,null)
+                 ||  PathfindingUtils.isWater(cachedBlockLookup, null, state,null)
+                 ||  PathfindingUtils.isWater(cachedBlockLookup, null, above,null);
     }
 
     /**

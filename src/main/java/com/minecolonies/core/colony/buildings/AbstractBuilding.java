@@ -84,8 +84,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -749,24 +747,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     /**
-     * If an incoming request is a minimum stock request.
-     *
-     * @param request the request to check.
-     * @return true if so.
-     */
-    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
-    {
-        for (final IMinimumStockModule module : getModulesByType(IMinimumStockModule.class))
-        {
-            if (module.isMinimumStockRequest(request))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.
@@ -1068,7 +1048,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
-                    if (kept.getAmount() >= toKeep && !ItemStackUtils.isBetterTool(stack, kept.getItemStack()))
+                    if (kept.getAmount() >= toKeep && !ItemStackUtils.isBetterEquipment(stack, kept.getItemStack()))
                     {
                         return stack.getCount();
                     }
@@ -1897,10 +1877,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final IStandardRequestManager requestManager = (IStandardRequestManager) colony.getRequestManager();
         if (!requestManager.getProviderHandler().getRegisteredResolvers(this).isEmpty())
         {
-            return ImmutableList.copyOf(requestManager.getProviderHandler().getRegisteredResolvers(this)
-              .stream()
-              .map(token -> requestManager.getResolverHandler().getResolver(token))
-              .collect(Collectors.toList()));
+            List<IRequestResolver<? extends IRequestable>> list = new ArrayList<>();
+            for (Iterator<IToken<?>> iterator = requestManager.getProviderHandler().getRegisteredResolvers(this).iterator(); iterator.hasNext(); )
+            {
+                final IToken<?> token = iterator.next();
+                try
+                {
+                    IRequestResolver<? extends IRequestable> resolver = requestManager.getResolverHandler().getResolver(token);
+                    list.add(resolver);
+                }
+                catch (Exception e)
+                {
+                    iterator.remove();
+                }
+            }
+            return ImmutableList.copyOf(list);
         }
 
         return createResolvers();

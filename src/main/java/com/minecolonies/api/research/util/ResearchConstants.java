@@ -146,6 +146,7 @@ public final class ResearchConstants
     public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");
     public static final ResourceLocation ARCHER_USE_ARROWS = new ResourceLocation(Constants.MOD_ID, "effects/consumearrowsunlock");
     public static final ResourceLocation KNIGHT_TAUNT      = new ResourceLocation(Constants.MOD_ID, "effects/knighttauntmobsunlock");
+    public static final ResourceLocation GUARD_CRIT = new ResourceLocation(Constants.MOD_ID, "effects/guardcrit");
     public static final ResourceLocation FIRE_RES          = new ResourceLocation(Constants.MOD_ID, "effects/minerfireresunlock");
     public static final ResourceLocation ARROW_PIERCE      = new ResourceLocation(Constants.MOD_ID, "effects/piercingarrowsunlock");
     public static final ResourceLocation PLANTATION_LARGE  = new ResourceLocation(Constants.MOD_ID, "effects/plantationlarge");

@@ -7,12 +7,12 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
-import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * ----------------------- Not Documented Object ---------------------
@@ -27,46 +27,47 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
     }
 
     @Override
-    protected boolean internalCanResolve(final List<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck)
+    protected int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck)
     {
         final IDeliverable deliverable = requestToCheck.getRequest();
-
-        if(deliverable instanceof IConcreteDeliverable)
+        if (!(deliverable instanceof IConcreteDeliverable))
         {
-            boolean ignoreNBT = false;
-            boolean ignoreDamage = false;
-            if (deliverable instanceof Stack)
+            return 0;
+        }
+
+        boolean ignoreNBT = false;
+        boolean ignoreDamage = false;
+        if (deliverable instanceof Stack stack)
+        {
+            ignoreNBT = !stack.matchNBT();
+            ignoreDamage = !stack.matchDamage();
+        }
+        int totalCount = 0;
+        for (final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+        {
+            if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable neDeliverable)
             {
-                if (!((Stack) requestToCheck.getRequest()).matchNBT())
-                {
-                    ignoreNBT = true;
-                }
-                if (!((Stack) requestToCheck.getRequest()).matchDamage())
-                {
-                    ignoreDamage = true;
-                }
+                totalCount += Math.max(0, InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
+                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount() + neDeliverable.getLeftOver()) - neDeliverable.getLeftOver());
             }
-            for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
+            else
             {
-                for (final TileEntityWareHouse wareHouse : wareHouses)
-                {
-                    if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable)
-                    {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, 0))
-                        {
-                            return true;
-                        }
-                    }
-                }
+                totalCount += InventoryUtils.hasBuildingEnoughElseCount(wareHouse,
+                  new ItemStorage(possible, requestToCheck.getRequest().getMinimumCount(), ignoreDamage, ignoreNBT), requestToCheck.getRequest().getCount());
+            }
+
+            if (totalCount >= requestToCheck.getRequest().getCount())
+            {
+                return totalCount;
             }
         }
-        return false;
+        return totalCount;
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
     }
 }

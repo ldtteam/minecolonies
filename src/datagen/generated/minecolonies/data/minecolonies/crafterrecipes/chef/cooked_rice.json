@@ -10,6 +10,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:cooked_rice"
+  "result": "minecolonies:cooked_rice",
+  "show-tooltip": true
 }

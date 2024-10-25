@@ -212,10 +212,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 final PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(world,
                   currentBlock,
                   job.getWorkOrder().getLocation(),
-                  5,
+                  4,
                   worker);
                 gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
                 pathJob.getPathingOptions().dropCost = 200;
+                pathJob.extraNodes = 0;
             }
             else if (gotoPath.isDone())
             {

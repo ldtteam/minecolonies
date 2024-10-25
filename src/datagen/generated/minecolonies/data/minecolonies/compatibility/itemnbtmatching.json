@@ -1108,6 +1108,9 @@
     "item": "minecolonies:pasta_tomato"
   },
   {
+    "item": "minecolonies:pepper_hummus"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"

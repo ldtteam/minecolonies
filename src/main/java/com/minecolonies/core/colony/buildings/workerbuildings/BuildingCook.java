@@ -1,6 +1,5 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -17,12 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
 
 /**
  * Class of the cook building.
@@ -69,20 +66,7 @@ public class BuildingCook extends AbstractBuilding
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(this::isAllowedFood, new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getCraftingRemainingItem()) && !stack.getCraftingRemainingItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
-    }
-
-    /**
-     * Return whether the given stack is allowed food
-     * @param stack the stack
-     * @return true if so
-     */
-    public boolean isAllowedFood(ItemStack stack)
-    {
-        ItemListModule listModule = this.getModule(ITEMLIST_FOODEXCLUSION);
-        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
-          && !listModule.isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
     /**
@@ -154,19 +138,6 @@ public class BuildingCook extends AbstractBuilding
         if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
         {
             return stack.getCount();
-        }
-
-        // Make the assistant cook drop everything. We don't want them to keep food.
-        // Neither like the cook does here, nor how the average worker does in the super call.
-        if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
-        {
-            final ItemStorage kept = new ItemStorage(stack);
-            if (localAlreadyKept.contains(kept))
-            {
-                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
-            }
-            localAlreadyKept.add(kept);
-            return 0;
         }
 
         final Predicate<ItemStack> allowedFuel = theStack -> getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(theStack));

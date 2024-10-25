@@ -13,6 +13,7 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:lembas_scone"
+  "loot-table": "minecolonies:recipes/glass_bottle",
+  "result": "minecolonies:lembas_scone",
+  "show-tooltip": true
 }

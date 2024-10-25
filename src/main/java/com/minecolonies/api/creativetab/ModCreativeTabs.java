@@ -114,30 +114,44 @@ public final class ModCreativeTabs
               output.accept(crop);
           }
 
+          // bottles
+          output.accept(ModItems.large_empty_bottle);
+          output.accept(ModItems.large_water_bottle);
+          output.accept(ModItems.large_milk_bottle);
+          output.accept(ModItems.large_soy_milk_bottle);
+
+          // ingredients
           output.accept(ModItems.breadDough);
           output.accept(ModItems.cookieDough);
           output.accept(ModItems.cakeBatter);
           output.accept(ModItems.rawPumpkinPie);
+          output.accept(ModItems.muffin_dough);
+          output.accept(ModItems.manchet_dough);
+          output.accept(ModItems.raw_noodle);
+          output.accept(ModItems.butter);
 
+          // baker products
           output.accept(ModItems.milkyBread);
           output.accept(ModItems.sugaryBread);
           output.accept(ModItems.goldenBread);
           output.accept(ModItems.chorusBread);
+          output.accept(ModItems.flatbread);
+          output.accept(ModItems.lembas_scone);
+          output.accept(ModItems.manchet_bread);
+          output.accept(ModItems.muffin);
 
-          output.accept(ModItems.butter);
+          // chef products
           output.accept(ModItems.cabochis);
           output.accept(ModItems.cheddar_cheese);
           output.accept(ModItems.congee);
           output.accept(ModItems.cooked_rice);
           output.accept(ModItems.eggplant_dolma);
           output.accept(ModItems.feta_cheese);
-          output.accept(ModItems.flatbread);
           output.accept(ModItems.hand_pie);
           output.accept(ModItems.lamb_stew);
-          output.accept(ModItems.lembas_scone);
-          output.accept(ModItems.manchet_bread);
           output.accept(ModItems.pasta_plain);
           output.accept(ModItems.pasta_tomato);
+          output.accept(ModItems.pepper_hummus);
           output.accept(ModItems.pita_hummus);
           output.accept(ModItems.pottage);
           output.accept(ModItems.rice_ball);
@@ -146,16 +160,6 @@ public final class ModCreativeTabs
           output.accept(ModItems.stuffed_pita);
           output.accept(ModItems.sushi_roll);
           output.accept(ModItems.tofu);
-
-          output.accept(ModItems.large_water_bottle);
-          output.accept(ModItems.large_milk_bottle);
-          output.accept(ModItems.large_soy_milk_bottle);
-          output.accept(ModItems.large_empty_bottle);
-
-          output.accept(ModItems.muffin);
-          output.accept(ModItems.muffin_dough);
-          output.accept(ModItems.manchet_dough);
-          output.accept(ModItems.raw_noodle);
       }).build());
 
     /**

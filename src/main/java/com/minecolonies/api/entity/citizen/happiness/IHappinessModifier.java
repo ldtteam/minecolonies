@@ -34,13 +34,15 @@ public interface IHappinessModifier
      * Read the modifier from nbt.
      *
      * @param compoundNBT the compound to read it from.
+     * @param persist     whether we're reading from persisted data or from networking.
      */
-    void read(final CompoundTag compoundNBT);
+    void read(final CompoundTag compoundNBT, final boolean persist);
 
     /**
      * Write it to NBT.
      *
      * @param compoundNBT the compound to write it to.
+     * @param persist     whether we're reading from persisted data or from networking.
      */
-    void write(final CompoundTag compoundNBT);
+    void write(final CompoundTag compoundNBT, final boolean persist);
 }

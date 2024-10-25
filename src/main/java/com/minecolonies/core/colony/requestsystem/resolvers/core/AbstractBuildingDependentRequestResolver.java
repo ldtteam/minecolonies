@@ -64,4 +64,11 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     }
 
     public abstract void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid.
+        return true;
+    }
 }

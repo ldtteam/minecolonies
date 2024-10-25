@@ -36,6 +36,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -297,14 +298,25 @@ public class CitizenManager implements ICitizenManager
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
+
+        if (world instanceof ServerLevel serverLevel)
+        {
+            final Entity existing = serverLevel.getEntity(citizenData.getUUID());
+            if (existing != null)
+            {
+                existing.discard();
+            }
+        }
+
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
         entity.setUUID(citizenData.getUUID());
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-        world.addFreshEntity(entity);
 
         entity.setCitizenId(citizenData.getId());
         entity.getCitizenColonyHandler().setColonyId(colony.getID());
+
+        world.addFreshEntity(entity);
         if (entity.isAddedToWorld())
         {
             entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
@@ -359,8 +371,14 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
-
+        try
+        {
+            MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().error("Error during CitizenAddedEvent", e);
+        }
         return citizenData;
     }
 
@@ -523,7 +541,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getCurrentCitizenCount()
     {
-        return citizens.size() + colony.getGraveManager().getGraves().size();
+        return citizens.size();
     }
 
     @Override
@@ -618,8 +636,14 @@ public class CitizenManager implements ICitizenManager
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
 
-                MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
-
+                try
+                {
+                    MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
+                }
+                catch (final Exception e)
+                {
+                    Log.getLogger().error("Error during CitizenAddedEvent", e);
+                }
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
             }

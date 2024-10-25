@@ -3,24 +3,27 @@ package com.minecolonies.core.colony.requestsystem.resolvers.core;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -46,14 +49,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         super(location, token);
     }
 
-    /**
-     * Check to see if this object type is the same as the request
-     */
-    protected boolean isRequestFromSelf(final IRequest<?> requestToCheck)
-    {
-        return requestToCheck.getRequester().getClass().equals(this.getClass());
-    }
-
     @Override
     public TypeToken<? extends IDeliverable> getRequestType()
     {
@@ -61,38 +56,65 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     }
 
     /**
-     * Override to implement decendent specific checks during canResolveRequest
-     * @param wareHouses
-     * @param requestToCheck
-     * @return
+     * Override to implement specific warehouse counting rules.
+     * @param wareHouse the warehouse to check.
+     * @param requestToCheck the requested item.
+     * @return the available quantity.
      */
-    protected abstract boolean internalCanResolve(final List<TileEntityWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
+    protected abstract int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
-        if (requestToCheck.getRequester() instanceof BuildingBasedRequester)
+        if (requestToCheck.getRequester().getLocation().equals(getLocation()))
         {
-            final BuildingBasedRequester requester = ((BuildingBasedRequester) requestToCheck.getRequester());
-            final Optional<IRequester> building = requester.getBuilding(manager, requestToCheck.getRequester().getId());
-            if (building.isPresent() && building.get() instanceof BuildingWareHouse)
-            {
-                return false;
-            }
+            // Don't fulfill its own requests
+            return false;
         }
 
         if (!manager.getColony().getWorld().isClientSide)
         {
+            final Colony colony = (Colony) manager.getColony();
+            final IBuilding wareHouse = colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation());
+            if (wareHouse == null)
+            {
+                return false;
+            }
+
+            if (requestToCheck.getRequest() instanceof MinimumStack)
+            {
+                final IBuilding otherWarehouse = colony.getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation());
+                if (otherWarehouse.getBuildingType() == ModBuildings.wareHouse.get())
+                {
+                    return false;
+                }
+            }
+
             if (!isRequestChainValid(manager, requestToCheck))
             {
                 return false;
             }
 
-            final Colony colony = (Colony) manager.getColony();
+            int totalCount = getWarehouseInternalCount((BuildingWareHouse) wareHouse, requestToCheck);
+            if (totalCount <= 0)
+            {
+                return false;
+            }
 
             try
             {
-                return internalCanResolve(getWareHousesInColony(colony, requestToCheck.getRequester().getLocation().getInDimensionLocation()), requestToCheck);
+                for (final Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
+                {
+                    if (building.getValue().getBuildingType() == ModBuildings.wareHouse.get() && building.getValue() != wareHouse)
+                    {
+                        totalCount += getWarehouseInternalCount((BuildingWareHouse) building.getValue(), requestToCheck);
+                        if (totalCount >= requestToCheck.getRequest().getCount())
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return totalCount >= requestToCheck.getRequest().getMinimumCount();
             }
             catch (Exception e)
             {
@@ -110,11 +132,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
      */
     public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
-        if (isRequestFromSelf(requestToCheck))
-        {
-            return false;
-        }
-
         if (!requestToCheck.hasParent())
         {
             return true;
@@ -131,12 +148,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         return isRequestChainValid(manager, parentRequest);
     }
 
-    /*
-     * Moving the curly braces really makes the code hard to read.
-     */
     @Nullable
     @Override
-    @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isClientSide)
@@ -150,24 +163,24 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final Colony colony = (Colony) manager.getColony();
-
-        final List<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony, request.getRequester().getLocation().getInDimensionLocation());
-
+        final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
+        if (wareHouse == null)
+        {
+            return Lists.newArrayList();
+        }
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
         if (request.getRequest() instanceof INonExhaustiveDeliverable)
         {
             totalAvailable -= ((INonExhaustiveDeliverable) request.getRequest()).getLeftOver();
         }
-        for (final TileEntityWareHouse tile : wareHouses)
+
+        final List<Tuple<ItemStack, BlockPos>> inv = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+        for (final Tuple<ItemStack, BlockPos> stack : inv)
         {
-            final List<Tuple<ItemStack, BlockPos>> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
-            for (final Tuple<ItemStack, BlockPos> stack : inv)
+            if (!stack.getA().isEmpty())
             {
-                if (!stack.getA().isEmpty())
-                {
-                    totalAvailable += stack.getA().getCount();
-                }
+                totalAvailable += stack.getA().getCount();
             }
         }
 
@@ -182,8 +195,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
-        final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
-        return Lists.newArrayList(manager.createRequest(this, remainingRequest));
+        return Lists.newArrayList(manager.createRequest(this, request.getRequest().copyWithCount(totalRemainingRequired)));
     }
 
     @Override
@@ -202,7 +214,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final List<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony, completedRequest.getRequester().getLocation().getInDimensionLocation());
+        final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
 
         List<IRequest<?>> deliveries = Lists.newArrayList();
         int remainingCount = completedRequest.getRequest().getCount();
@@ -211,54 +223,49 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final int keep = completedRequest.getRequest() instanceof INonExhaustiveDeliverable ? ((INonExhaustiveDeliverable) completedRequest.getRequest()).getLeftOver() : 0;
 
-        tileentities:
-        for (final TileEntityWareHouse wareHouse : wareHouses)
+        final List<Tuple<ItemStack, BlockPos>> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
+        for (final Tuple<ItemStack, BlockPos> tuple : targetStacks)
         {
-            final List<Tuple<ItemStack, BlockPos>> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
-            for (final Tuple<ItemStack, BlockPos> tuple : targetStacks)
+            if (ItemStackUtils.isEmpty(tuple.getA()))
             {
-                if (ItemStackUtils.isEmpty(tuple.getA()))
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                int leftOver = tuple.getA().getCount();
-                if (keep > 0)
+            int leftOver = tuple.getA().getCount();
+            if (keep > 0)
+            {
+                int kept = storages.getOrDefault(new ItemStorage(tuple.getA()), 0);
+                if (kept < keep)
                 {
-                    int kept = storages.getOrDefault(new ItemStorage(tuple.getA()), 0);
-                    if (kept < keep)
+                    if (leftOver + kept <= keep)
                     {
-                        if (leftOver + kept <= keep)
-                        {
-                            storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + tuple.getA().getCount());
-                            continue;
-                        }
-                        int toKeep = (leftOver + kept) - keep;
-                        leftOver-=toKeep;
-                        storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + toKeep);
+                        storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + tuple.getA().getCount());
+                        continue;
                     }
+                    int toKeep = (leftOver + kept) - keep;
+                    leftOver -= toKeep;
+                    storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + toKeep);
                 }
+            }
 
-                int count = Math.min(remainingCount, leftOver);
-                final ItemStack matchingStack = tuple.getA().copy();
-                matchingStack.setCount(count);
+            int count = Math.min(remainingCount, leftOver);
+            final ItemStack matchingStack = tuple.getA().copy();
+            matchingStack.setCount(count);
 
-                completedRequest.addDelivery(matchingStack);
+            completedRequest.addDelivery(matchingStack);
 
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getLevel().dimension());
+            final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getLevel().dimension());
 
-                final Delivery delivery =
-                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
+            final Delivery delivery =
+              new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
 
 
-                final IToken<?> requestToken = manager.createRequest(this, delivery);
-                deliveries.add(manager.getRequestForToken(requestToken));
-                remainingCount -= count;
-
-                if (remainingCount <= 0)
-                {
-                    break tileentities;
-                }
+            final IToken<?> requestToken = manager.createRequest(this, delivery);
+            deliveries.add(manager.getRequestForToken(requestToken));
+            remainingCount -= count;
+            if (remainingCount <= 0)
+            {
+                break;
             }
         }
 
@@ -275,32 +282,6 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
-    }
-
-    /**
-     * Use to get the ordered list of all warehouses.
-     * @param colony the colony in question.
-     * @return the ordered list.
-     */
-    protected static List<TileEntityWareHouse> getWareHousesInColony(final Colony colony, final BlockPos requesterPosition)
-    {
-        final List<TileEntityWareHouse> wareHouses = new ArrayList<>();
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-        {
-            if (building instanceof BuildingWareHouse && building.getTileEntity() != null)
-            {
-                wareHouses.add((TileEntityWareHouse) building.getTileEntity());
-            }
-        }
-
-        wareHouses.sort((w1, w2) ->
-        {
-            final double dist1 = w1.getPosition().distSqr(requesterPosition);
-            final double dist2 = w2.getPosition().distSqr(requesterPosition);
-            return Double.compare(dist1, dist2);
-        });
-
-        return wareHouses;
     }
 
     @Override
@@ -324,5 +305,24 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     public int getPriority()
     {
         return CONST_WAREHOUSE_RESOLVER_PRIORITY;
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        // Always valid
+        return true;
+    }
+
+    @Override
+    public int getSuitabilityMetric(final @NotNull IRequestManager manager, final @NotNull IRequest<? extends IDeliverable> request)
+    {
+        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        final int distance = (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+        if (wareHouse == null)
+        {
+            return distance;
+        }
+        return Math.max(distance/10, 1) + wareHouse.getModule(BuildingModules.WAREHOUSE_REQUEST_QUEUE).getMutableRequestList().size();
     }
 }

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.event.ColonyCreatedEvent;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
@@ -189,9 +190,13 @@ public class CreateColonyMessage implements IMessage
 
             Network.getNetwork().sendToPlayer(new OpenBuildingUIMessage(building), sender);
 
-            if (isLogicalServer)
+            try
             {
                 MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Error during ColonyCreatedEvent", e);
             }
             return;
         }

@@ -4,12 +4,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
-import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -202,6 +200,13 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract BlockPos getDesiredPos();
 
     /**
+     * Sets the desired position to reach, used also for stuckhandling
+     *
+     * @param pos
+     */
+    public abstract void setDesiredPos(BlockPos pos);
+
+    /**
      * Sets the stuck handler for this navigator
      *
      * @param stuckHandler handler to use
@@ -216,4 +221,11 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      * @param pauseTicks
      */
     protected abstract void setPauseTicks(int pauseTicks);
+
+    /**
+     * Gets the current path result
+     *
+     * @return
+     */
+    public abstract PathResult getPathResult();
 }

@@ -10,13 +10,13 @@ import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessMod
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -474,7 +474,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
                 continue;
             }
 
-            if (colony.getRaiderManager().areSpiesEnabled())
+            if (colony.getRaiderManager().areSpiesEnabled() || horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.15))
             {
                 ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
             }

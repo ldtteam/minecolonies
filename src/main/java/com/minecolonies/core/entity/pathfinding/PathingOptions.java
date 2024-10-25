@@ -68,6 +68,11 @@ public class PathingOptions
     public double walkInShapesCost = 2D;
 
     /**
+     * Cost to dive (head underwater).
+     */
+    public double divingCost = 4D;
+
+    /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
      */
     public double randomnessFactor = 0.1;
@@ -234,6 +239,12 @@ public class PathingOptions
         return this;
     }
 
+    public PathingOptions withDivingCost(final double divingCost)
+    {
+        this.divingCost = divingCost;
+        return this;
+    }
+
     /**
      * Sets swimming ability
      *
@@ -284,6 +295,8 @@ public class PathingOptions
         swimCostEnter = pathingOptions.swimCostEnter;
         traverseToggleAbleCost = pathingOptions.traverseToggleAbleCost;
         nonLadderClimbableCost = pathingOptions.nonLadderClimbableCost;
+        divingCost = pathingOptions.divingCost;
+
         canUseRails = pathingOptions.canUseRails;
         canSwim = pathingOptions.canSwim;
         enterDoors = pathingOptions.enterDoors;
@@ -294,5 +307,4 @@ public class PathingOptions
         walkUnderWater = pathingOptions.walkUnderWater;
         canDrop = pathingOptions.canDrop;
     }
-
 }

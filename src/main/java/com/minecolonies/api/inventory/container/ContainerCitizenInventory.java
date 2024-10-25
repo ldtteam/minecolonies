@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 
 /**
  * Container for Mie

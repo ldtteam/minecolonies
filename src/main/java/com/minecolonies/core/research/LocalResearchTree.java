@@ -415,11 +415,7 @@ public class LocalResearchTree implements ILocalResearchTree
           });
     }
 
-    /**
-     * Get the list of all finished researches
-     *
-     * @return a copy of the completed list.
-     */
+    @Override
     public List<ResourceLocation> getCompletedList()
     {
         return new ArrayList<>(isComplete);

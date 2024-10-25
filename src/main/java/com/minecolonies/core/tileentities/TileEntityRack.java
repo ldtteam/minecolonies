@@ -179,6 +179,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
+    public boolean hasItemStorage(final ItemStorage storage, final int count)
+    {
+        return content.getOrDefault(storage, 0) >= count;
+    }
+
+    @Override
     public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);

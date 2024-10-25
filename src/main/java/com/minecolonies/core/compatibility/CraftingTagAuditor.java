@@ -17,12 +17,16 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.core.colony.crafting.*;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -60,6 +64,7 @@ public class CraftingTagAuditor
         createFile("item tag audit", server, "tag_item_audit.csv", writer -> doItemTagAudit(writer, server));
         createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
         createFile("path block audit", server, "path_block_audit.csv", writer -> doPathBlockTagAudit(writer, server));
+        createFile("biome tag audit", server, "biome_tag_audit.csv", writer -> doBiomeTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
         createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
@@ -203,6 +208,42 @@ public class CraftingTagAuditor
         }
     }
 
+    private static void doBiomeTagAudit(@NotNull final BufferedWriter writer,
+                                        @NotNull final MinecraftServer server) throws IOException
+    {
+        writer.write("biome,name,tags...");
+        writer.newLine();
+
+        final Registry<Biome> biomes = server.registryAccess().registry(Registries.BIOME).orElse(null);
+        if (biomes == null) { return; }
+
+        for (final ResourceLocation id : biomes.keySet().stream().sorted().toList())
+        {
+            writer.write(id.toString());
+            writer.write(',');
+            writer.write('"');
+            writer.write(Component.translatable(id.toLanguageKey("biome")).getString().replace("\"", "\"\""));
+            writer.write('"');
+            biomes.getHolder(ResourceKey.create(biomes.key(), id)).ifPresent(holder ->
+                    holder.tags()
+                        .map(t -> t.location().toString())
+                        .sorted()
+                        .forEach(t ->
+                        {
+                            try
+                            {
+                                writer.write(',');
+                                writer.write(t);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }));
+            writer.newLine();
+        }
+    }
+
     private static void doRecipeAudit(@NotNull final BufferedWriter writer,
                                       @NotNull final MinecraftServer server,
                                       @NotNull final CustomRecipeManager customRecipeManager) throws IOException
@@ -334,7 +375,7 @@ public class CraftingTagAuditor
         for (final ToolUsage tool : toolUsages)
         {
             writer.write(',');
-            writer.write(tool.tool().getName());
+            writer.write(tool.tool().getRegistryName().toString());
         }
         writer.newLine();
 

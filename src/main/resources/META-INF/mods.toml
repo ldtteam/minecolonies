@@ -80,12 +80,12 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="journeymap"
     mandatory=false
-    versionRange="[${project.jmapVersion},)"
+    versionRange="[${jmapVersion},)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="dynamictrees"
     mandatory=false
-    versionRange="[${project.dynamicTreesVersion},)"
+    versionRange="[${dynamicTreesVersion},)"
     ordering="NONE"
     side="BOTH"

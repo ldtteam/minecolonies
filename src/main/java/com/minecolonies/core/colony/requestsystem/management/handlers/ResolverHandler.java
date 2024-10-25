@@ -284,8 +284,6 @@ public class ResolverHandler implements IResolverHandler
             throw new IllegalArgumentException("The given token for a resolver is not known to this manager!");
         }
 
-        manager.log("Retrieving resolver for: " + token);
-
         return manager.getRequestResolverIdentitiesDataStore().getIdentities().get(token);
     }
 

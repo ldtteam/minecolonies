@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
@@ -754,14 +753,10 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
-                else if (entity instanceof ChestBlockEntity)
-                {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
-                }
 
-                if (totalCount > count)
+                if (totalCount >= count)
                 {
-                    return Integer.MAX_VALUE;
+                    return totalCount;
                 }
             }
         }
@@ -791,7 +786,7 @@ public class InventoryUtils
                     totalCount += ((TileEntityRack) entity).getItemCount(stack);
                 }
 
-                if (totalCount > count)
+                if (totalCount >= count)
                 {
                     return totalCount;
                 }
@@ -840,10 +835,6 @@ public class InventoryUtils
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
-                }
-                else if (entity instanceof ChestBlockEntity)
-                {
-                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack()));
                 }
             }
         }
@@ -1039,17 +1030,21 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level.
+     * Checks if the {@link ICapabilityProvider} contains the following equipmentType with the given minimal Level.
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param toolType     The toolTypeName of the tool to find.
+     * @param equipmentType     The EquipmentType of the equipment to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
+     * @return True if equipment with the given equipmentType was found in the given {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isEquipmentInProvider(
+      @NotNull final ICapabilityProvider provider,
+      @NotNull final EquipmentTypeEntry equipmentType,
+      final int minimalLevel,
+      final int maximumLevel)
     {
-        return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1551,17 +1546,17 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level, for a given {@link Direction}.
+     * Checks if the {@link ICapabilityProvider} contains the following EquipmentType with the given minimal Level, for a given {@link Direction}.
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
      * @param facing       The side to check for.
-     * @param toolType     The tool type to find.
+     * @param equipmentType     The equipment type to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
+     * @return True if equipment with the given equipmentType was found in the given {@link ICapabilityProvider}, false when not.
      */
-    public static boolean isToolInProviderForSide(
-      @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
+    public static boolean isEquipmentInProviderForSide(
+      @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final EquipmentTypeEntry equipmentType,
       final int minimalLevel, final int maximumLevel)
     {
         if (!provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).isPresent())
@@ -1569,22 +1564,25 @@ public class InventoryUtils
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), toolType, minimalLevel, maximumLevel);
+        return isEquipmentInItemHandler(provider.getCapability(ForgeCapabilities.ITEM_HANDLER, facing).orElse(null), equipmentType, minimalLevel, maximumLevel);
     }
 
     /**
-     * Checks if the {@link IItemHandler} contains the following toolName with the given minimal Level.
+     * Checks if the {@link IItemHandler} contains the following equipmentType with the given minimal Level.
      *
      * @param itemHandler  The {@link IItemHandler} to scan.
-     * @param toolType     The toolType of the tool to find.
+     * @param equipmentType     The equipmentType of the equipment to find.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link IItemHandler}, false when not.
+     * @return True if equipment with the given EquipmentType was found in the given {@link IItemHandler}, false when not.
      */
-    public static boolean isToolInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean isEquipmentInItemHandler(
+      @NotNull final IItemHandler itemHandler,
+      @NotNull final EquipmentTypeEntry equipmentType,
+      final int minimalLevel,
+      final int maximumLevel)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
-                                                   ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
     }
 
     /**
@@ -1601,36 +1599,39 @@ public class InventoryUtils
     }
 
     /**
-     * Returns a slot number if an {@link IItemHandler} contains given tool type.
+     * Returns a slot number if an {@link IItemHandler} contains given equipment type.
      *
      * @param itemHandler  the {@link IItemHandler} to get the slot from.
-     * @param toolType     the tool type to look for.
+     * @param equipmentType     the equipment type to look for.
      * @param minimalLevel The minimal level to find.
      * @param maximumLevel The maximum level to find.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotOfItemHandlerContainingTool(
-      @NotNull final IItemHandler itemHandler, @NotNull final IToolType toolType, final int minimalLevel,
+    public static int getFirstSlotOfItemHandlerContainingEquipment(
+      @NotNull final IItemHandler itemHandler, @NotNull final EquipmentTypeEntry equipmentType, final int minimalLevel,
       final int maximumLevel)
     {
-        return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
+        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level in a worker's inventory.
+     * Verifies if there is one equipment with an acceptable level in a worker's inventory.
      *
      * @param itemHandler   the worker's inventory
-     * @param toolType      the type of tool needed
-     * @param requiredLevel the minimum tool level
+     * @param equipmentType      the type of equipment needed
+     * @param requiredLevel the minimum equipment level
      * @param maximumLevel  the worker's hut level
-     * @return true if tool is acceptable
+     * @return true if equipment is acceptable
      */
-    public static boolean hasItemHandlerToolWithLevel(@NotNull final IItemHandler itemHandler, final IToolType toolType, final int requiredLevel, final int maximumLevel)
+    public static boolean hasItemHandlerEquipmentWithLevel(
+      @NotNull final IItemHandler itemHandler,
+      final EquipmentTypeEntry equipmentType,
+      final int requiredLevel,
+      final int maximumLevel)
     {
         return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (ItemStackUtils.isTool(stack, toolType) && ItemStackUtils.verifyToolLevel(stack,
-            ItemStackUtils.getMiningLevel(stack, toolType),
+          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (equipmentType.checkIsEquipment(stack) && ItemStackUtils.verifyEquipmentLevel(stack,
+            equipmentType.getMiningLevel(stack),
             requiredLevel, maximumLevel)))) > -1;
     }
 
@@ -1818,6 +1819,51 @@ public class InventoryUtils
 
         return false;
     }
+
+    /**
+     * Method to transfer an ItemStacks from the given source {@link IBuilding} to the given target {@link IItemHandler}.
+     *
+     * @param building      The {@link IBuilding} that works as Source.
+     * @param storage       the ItemStorage.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IBuilding building,
+      final ItemStorage storage,
+      @NotNull final IItemHandler targetHandler)
+    {
+        final Level level = building.getColony().getWorld();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(level, pos))
+            {
+                final BlockEntity entity = level.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack tileEntityRack)
+                {
+                    if (tileEntityRack.hasItemStorage(storage, 1))
+                    {
+                        final IItemHandler sourceHandler = tileEntityRack.getInventory();
+                        for (int i = 0; i < sourceHandler.getSlots(); i++)
+                        {
+                            if (storage.equals(new ItemStorage(sourceHandler.getStackInSlot(i))))
+                            {
+                                ItemStack sourceStack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+                                if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
+                                {
+                                    sourceHandler.extractItem(i, Integer.MAX_VALUE, false);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
@@ -3225,5 +3271,47 @@ public class InventoryUtils
             }
         }
         return allInInv;
+    }
+
+    public static Map<ItemStorage, Integer> getBuildingInventoryStorages(final IBuilding building)
+    {
+        final Level world = building.getColony().getWorld();
+        final Map<ItemStorage, Integer> allInInv = new HashMap<>();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final Map.Entry<ItemStorage, Integer> storage : ((TileEntityRack) entity).getAllContent().entrySet())
+                    {
+                        int currentStock = allInInv.getOrDefault(storage.getKey(), 0);
+                        allInInv.put(storage.getKey(), currentStock + storage.getValue());
+                    }
+                }
+            }
+        }
+        return allInInv;
+    }
+
+    /**
+     * Gets the first matching itemstack from a list
+     *
+     * @param stacks
+     * @param stackPredicate
+     * @return
+     */
+    public static ItemStack getFirstMatch(final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    {
+        for (final ItemStack stack : stacks)
+        {
+            if (stackPredicate.test(stack))
+            {
+                return stack;
+            }
+        }
+
+        return null;
     }
 }

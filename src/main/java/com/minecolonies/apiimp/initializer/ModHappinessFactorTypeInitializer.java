@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.happiness.TimeBasedHappinessModifier;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobPupil;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -45,7 +46,7 @@ public final class ModHappinessFactorTypeInitializer
         HappinessRegistry.healthFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HEALTH_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0));
         HappinessRegistry.idleatjobFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(IDLEATJOB_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isIdleAtJob() ? 0.5 : 1.0));
 
-        HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.0));
-        HappinessRegistry.foodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> (data.getHomeBuilding() == null || data.getHomeBuilding().getBuildingLevel() <= 2) ? 0.0 : data.getHomeBuilding().getBuildingLevel() - 2.0));
+        HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.5));
+        HappinessRegistry.foodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(CitizenHappinessHandler::getFoodFactor));
     }
 }

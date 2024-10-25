@@ -134,4 +134,10 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The priority of this resolver.
      */
     int getPriority();
+
+    /**
+     * If this resolver has valid data in it.
+     * @return true if so.
+     */
+    boolean isValid();
 }

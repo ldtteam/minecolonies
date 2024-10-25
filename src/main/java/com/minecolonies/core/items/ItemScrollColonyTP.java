@@ -6,30 +6,29 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
-
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
-import net.minecraft.ChatFormatting;
 
 /**
  * Teleport scroll to teleport you back to the set colony. Requires colony permissions
@@ -129,18 +128,10 @@ public class ItemScrollColonyTP extends AbstractItemScroll
 
         Component colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
-        if (stack.getOrCreateTag().contains(TAG_DESC))
+        final IColony colony = getColonyView(stack);
+        if (colony != null)
         {
-            colonyDesc = Component.literal(stack.getOrCreateTag().getString(TAG_DESC));
-        }
-        else
-        {
-            final IColony colony = getColonyView(stack);
-            if (colony != null)
-            {
-                colonyDesc = Component.literal(colony.getName());
-                stack.getOrCreateTag().putString(TAG_DESC, colony.getName());
-            }
+            colonyDesc = Component.literal(colony.getName());
         }
 
         final MutableComponent guiHint2 = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);

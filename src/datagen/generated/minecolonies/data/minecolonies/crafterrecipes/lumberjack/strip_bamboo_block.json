@@ -8,5 +8,5 @@
   ],
   "intermediate": "minecraft:air",
   "result": "minecraft:stripped_bamboo_block",
-  "tool": "axe"
+  "tool": "minecolonies:axe"
 }

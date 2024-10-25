@@ -290,6 +290,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
+    public static final String NETHERMINER_NO_FOOD                                                  = "com.minecolonies.coremod.netherminer.nofood";
+    @NonNls
     public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                  = "com.minecolonies.coremod.general.canttakeequipped";
@@ -408,8 +410,6 @@ public final class TranslationConstants
     @NonNls
     public static final String CROP_TOOLTIP                                                         = "com.minecolonies.core.item.crop.tooltip";
     @NonNls
-    public static final String FOOD_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.";
-    @NonNls
     public static final String TIER_TOOLTIP                                                         = "com.minecolonies.core.item.food.tooltip.tier.";
     @NonNls
     public static final String BIOME_TOOLTIP                                                        = "com.minecolonies.core.item.crop.tooltip.biome";
@@ -434,11 +434,11 @@ public final class TranslationConstants
     @NonNls
     public static final String BUILDER_BUILDING_TOO_HIGH                          = "entity.builder.messagebuildtoohigh";
     @NonNls
-    public static final String BUILDER_BUILDING_TOO_LOW                           = "entity.builder.messagebuildtoolow";
+    public static final String BUILDER_BUILDING_TOO_LOW = "entity.builder.messagebuildtoolow";
     @NonNls
-    public static final String COLONIST_DESC                                      = "block.blockhuttownhall.messagecolonistdesc";
+    public static final String CITIZEN_DEATH_DESC       = "block.blockhuttownhall.messagecitizendeathdesc";
     @NonNls
-    public static final String WORKER_DESC                                        = "block.blockhuttownhall.messageworkerdesc";
+    public static final String WORKER_DESC              = "block.blockhuttownhall.messageworkerdesc";
     @NonNls
     public static final String COLONIST_GRAVE_LOCATION                            = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
@@ -654,7 +654,11 @@ public final class TranslationConstants
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     @NonNls
-    public static final String NOKITCHEN                                          = ".nokitchen";
+    public static final String FOOD_QUALITY                                       = ".foodquality";
+    @NonNls
+    public static final String FOOD_DIVERSITY                                     = ".fooddiversity";
+    @NonNls
+    public static final String URGENT                                             = ".urgent";
 
     //<editor-fold desc="Partial keys">
 

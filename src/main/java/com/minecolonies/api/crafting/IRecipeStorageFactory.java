@@ -3,8 +3,8 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -76,7 +76,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
             throw new IllegalArgumentException("Ninth parameter is supposed to be a ResourceLocation or Null!");
         }
 
-        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 6 && context[9] != null && !(context[9] instanceof IToolType))
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 6 && context[9] != null && !(context[9] instanceof EquipmentTypeEntry))
         {
             throw new IllegalArgumentException("Ninth parameter is supposed to be a IToolType or Null!");
         }
@@ -90,7 +90,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
         final ResourceLocation lootTable = context.length < 9 ? null : (ResourceLocation) context[8];
-        final IToolType requiredTool = context.length < 10 || context[9] == null ? ToolType.NONE : (IToolType) context[9];
+        final EquipmentTypeEntry requiredTool = context.length < 10 || context[9] == null ? ModEquipmentTypes.none.get() : (EquipmentTypeEntry) context[9];
         return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
     }
 
@@ -122,7 +122,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
       @Nullable final List<ItemStack> altOutputs,
       @Nullable final List<ItemStack> secOutputs,
       @Nullable final ResourceLocation lootTable,
-      @NotNull final IToolType requiredTool
+      @NotNull final EquipmentTypeEntry requiredTool
       );
 }
 
