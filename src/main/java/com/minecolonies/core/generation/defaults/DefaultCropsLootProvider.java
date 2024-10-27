@@ -63,6 +63,7 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
             // hoes have a boosted chance
             final float hoeChance = 0.1f;
 
+            final LootTable.Builder table = LootTable.lootTable();
             for (final MinecoloniesCropBlock crop : entry.getValue())
             {
                 final LootPool.Builder pool = LootPool.lootPool();
@@ -78,9 +79,9 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
                                 .when(LootItemRandomChanceCondition.randomChance(hoeChance)))
                         .otherwise(LootItem.lootTableItem(crop)
                                 .when(LootItemRandomChanceCondition.randomChance(baseChance))));
-
-                generator.accept(getCropSourceLootTable(entry.getKey()), LootTable.lootTable().withPool(pool));
+                table.withPool(pool);
             }
+            generator.accept(getCropSourceLootTable(entry.getKey()), table);
         }
 
         final LootPool.Builder dungeonPool = LootPool.lootPool();
