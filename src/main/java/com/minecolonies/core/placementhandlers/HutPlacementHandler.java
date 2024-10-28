@@ -127,7 +127,7 @@ public class HutPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState, world.registryAccess()));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState, world));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
