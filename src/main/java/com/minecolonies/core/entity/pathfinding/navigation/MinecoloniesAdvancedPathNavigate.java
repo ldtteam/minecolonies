@@ -112,6 +112,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos();
 
     /**
+     * wanted position for movecontrol
+     */
+    private Vec3 wantedPosition = null;
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -368,19 +373,19 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
 
-            if (!this.isDone())
+            if ((wantedPosition == null || path != null && currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
             {
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
                 tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
-                if (ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                if (wantedPosition == null || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
                 {
-                    mob.getMoveControl()
-                      .setWantedPosition(vector3d2.x,
+                    wantedPosition = new Vec3(vector3d2.x,
                         getSmartGroundY(this.level, tempPos, vector3d2.y),
-                        vector3d2.z,
-                        speedModifier);
+                        vector3d2.z);
                 }
             }
+
+            mob.getMoveControl().setWantedPosition(wantedPosition.x, wantedPosition.y, wantedPosition.z, speedModifier);
         }
         // End of super.tick.
 
@@ -398,7 +403,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      *
      * @param world the world.
      * @param pos   the position to check.
-     * @param y
+     * @param orgY  original y level
      * @return the next y level to go to.
      */
     public static double getSmartGroundY(final BlockGetter world, final BlockPos.MutableBlockPos pos, final double orgY)
