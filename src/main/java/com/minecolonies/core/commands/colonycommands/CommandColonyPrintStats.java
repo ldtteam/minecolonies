@@ -84,7 +84,6 @@ public class CommandColonyPrintStats implements IMCOPCommand
             context.getSource().sendSuccess(() -> literalAndRemember(last.toString()), false);
         }
 
-        // TODO: Fix avg calculation, size has to exclude level 0 too
         if (!colony.getBuildingManager().getBuildings().isEmpty())
         {
             int count = 0;
