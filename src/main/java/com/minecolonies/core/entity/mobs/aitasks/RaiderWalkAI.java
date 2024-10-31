@@ -10,12 +10,12 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
@@ -156,7 +156,10 @@ public class RaiderWalkAI implements IStateAI
                   && !building.getCorners().getA().equals(building.getCorners().getB()))
             {
                 randomPathResult = raider.getNavigation().moveToRandomPos(10, 0.9, building.getCorners());
-                randomPathResult.getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
+                if (randomPathResult != null)
+                {
+                    randomPathResult.getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
+                }
             }
             else
             {

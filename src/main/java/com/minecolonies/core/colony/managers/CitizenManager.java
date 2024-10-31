@@ -301,10 +301,15 @@ public class CitizenManager implements ICitizenManager
 
         if (world instanceof ServerLevel serverLevel)
         {
-            final Entity existing = serverLevel.getEntity(citizenData.getUUID());
+            Entity existing = serverLevel.getEntity(citizenData.getUUID());
             if (existing != null)
             {
                 existing.discard();
+                existing = serverLevel.getEntity(citizenData.getUUID());
+                if (existing != null)
+                {
+                    serverLevel.entityManager.stopTracking(existing);
+                }
             }
         }
 

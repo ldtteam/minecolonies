@@ -57,6 +57,11 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     private long lastHorizontalCollision = 0;
 
     /**
+     * Last knockback time
+     */
+    protected long lastKnockBack = 0;
+
+    /**
      * Create a new instance.
      *
      * @param type    from type.
@@ -334,5 +339,15 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public boolean isShiftKeyDown()
     {
         return (this.entityData.get(DATA_SHARED_FLAGS_ID)).byteValue() == ENABLE.byteValue();
+    }
+
+    @Override
+    public void knockback(double power, double xRatio, double zRatio)
+    {
+        if (level.getGameTime() - lastKnockBack > 20 * 3)
+        {
+            lastKnockBack = level.getGameTime();
+            super.knockback(power, xRatio, zRatio);
+        }
     }
 }

@@ -25,8 +25,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseRailBlock;
-import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.pathfinder.Node;
@@ -383,7 +382,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                             vector3d2.z);
                     }
                 }
-
+            }
+            if (wantedPosition != null)
+            {
                 mob.getMoveControl().setWantedPosition(wantedPosition.x, wantedPosition.y, wantedPosition.z, speedModifier);
             }
         }
@@ -412,6 +413,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (!state.isAir())
         {
+            if (state.getBlock() instanceof FenceGateBlock || state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock)
+            {
+                return orgY;
+            }
+
             final VoxelShape voxelshape = state.getCollisionShape(world, pos);
             if (!ShapeUtil.isEmpty(voxelshape))
             {
