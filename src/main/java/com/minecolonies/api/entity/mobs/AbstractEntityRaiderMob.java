@@ -60,11 +60,6 @@ import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
     /**
-     * Difficulty at which raiders team up
-     */
-    private static final double TEAM_DIFFICULTY = 2.0d;
-
-    /**
      * The percent of life taken per damage modifier
      */
     private static final float HP_PERCENT_PER_DMG = 0.03f;

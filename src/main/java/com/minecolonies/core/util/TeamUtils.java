@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TeamUtils
 {
+
     /**
      * Check or create a team.
      *
@@ -16,7 +17,20 @@ public class TeamUtils
      * @param name  the team name.
      */
     @Nullable
-    public static PlayerTeam checkOrCreateTeam(@Nullable Level level, String name)
+    public static PlayerTeam checkOrCreateTeam(@Nullable final Level level, final String name)
+    {
+        return checkOrCreateTeam(level, name, true);
+    }
+
+    /**
+     * Check or create a team.
+     *
+     * @param level             the level to create the team in.
+     * @param name              the team name.
+     * @param allowFriendlyFire whether this team allows friendly fire or not.
+     */
+    @Nullable
+    public static PlayerTeam checkOrCreateTeam(@Nullable final Level level, final String name, boolean allowFriendlyFire)
     {
         if (level == null)
         {
@@ -28,6 +42,7 @@ public class TeamUtils
         {
             team = level.getScoreboard().addPlayerTeam(name);
         }
+        team.setAllowFriendlyFire(allowFriendlyFire);
         return team;
     }
 }

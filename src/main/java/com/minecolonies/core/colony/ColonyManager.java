@@ -1,13 +1,9 @@
 package com.minecolonies.core.colony;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.event.ColonyDeletedEvent;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
 import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;
@@ -15,6 +11,7 @@ import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.events.ColonyEvents;
 import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
@@ -36,7 +33,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -64,7 +60,7 @@ public final class ColonyManager implements IColonyManager
     private final Map<ResourceKey<Level>, ColonyList<IColonyView>> colonyViews = new HashMap<>();
 
     /**
-     * Recipe manager of this server.
+     * Recipemanager of this server.
      */
     private final IRecipeManager recipeManager = new StandardRecipeManager();
 
@@ -107,7 +103,7 @@ public final class ColonyManager implements IColonyManager
         colony.getPackageManager().addImportantColonyPlayer((ServerPlayer) player);
         colony.getPackageManager().addCloseSubscriber((ServerPlayer) player);
 
-        Log.getLogger().info("New Colony Id: {} by {}", colony.getID(), player.getName().getString());
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName().getString()));
 
         if (colony.getWorld() == null)
         {
@@ -139,46 +135,38 @@ public final class ColonyManager implements IColonyManager
      */
     private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
     {
-        if (!(iColony instanceof final Colony colony))
+        if (!(iColony instanceof Colony))
         {
             return;
         }
 
+        final Colony colony = (Colony) iColony;
         final int id = colony.getID();
         final Level world = colony.getWorld();
 
         if (world == null)
         {
-            Log.getLogger().warn("Deleting Colony {} errored: World is Null", id);
-            return;
-        }
-
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
-        if (cap == null)
-        {
-            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            Log.getLogger().warn("Deleting Colony " + id + " errored: World is Null");
             return;
         }
 
         try
         {
-            Log.getLogger().info("Removing claimed area for {}", id);
             ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
-
-            Log.getLogger().info("Removing citizens for {}", id);
+            Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
-                Log.getLogger().info("Kill Citizen {}", citizenData.getName());
+                Log.getLogger().info("Kill Citizen " + citizenData.getName());
                 citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(world.damageSources().source(DamageSourceKeys.CONSOLE)));
             }
 
-            Log.getLogger().info("Removing buildings for {}", id);
+            Log.getLogger().info("Removing buildings for " + id);
             for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
             {
                 try
                 {
                     final BlockPos location = building.getPosition();
-                    Log.getLogger().info("Delete Building at {}", location);
+                    Log.getLogger().info("Delete Building at " + location);
                     if (canDestroy)
                     {
                         building.deconstruct();
@@ -186,7 +174,7 @@ public final class ColonyManager implements IColonyManager
                     building.destroy();
                     if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
                     {
-                        Log.getLogger().info("Found Block, deleting {}", world.getBlockState(location).getBlock());
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
                         world.removeBlock(location, false);
                     }
                 }
@@ -198,7 +186,6 @@ public final class ColonyManager implements IColonyManager
 
             try
             {
-                Log.getLogger().info("Unregistering event handlers for {}", id);
                 MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             }
             catch (final NullPointerException e)
@@ -206,36 +193,25 @@ public final class ColonyManager implements IColonyManager
                 Log.getLogger().warn("Can't unregister the event handler twice");
             }
 
-            // Delete the colony
-            Log.getLogger().info("Deleting colony {}", colony.getID());
+            Log.getLogger().info("Deleting colony: " + colony.getID());
+
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            if (cap == null)
+            {
+                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+                return;
+            }
+
+            ColonyEvents.deleteColony(colony);
             cap.deleteColony(id);
-
-            // Delete the colony team
-            Log.getLogger().info("Deleting team for colony {}", id);
-            final PlayerTeam team = colony.getTeam();
-            if (team != null)
-            {
-                world.getScoreboard().removePlayerTeam(team);
-            }
-
-            // Send the deletion event
-            try
-            {
-                MinecraftForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyDeletedEvent", e);
-            }
-
             BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
             colony.getImportantMessageEntityPlayers()
               .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayer) player));
-            Log.getLogger().info("Successfully deleted colony {}", id);
+            Log.getLogger().info("Successfully deleted colony: " + id);
         }
         catch (final RuntimeException e)
         {
-            Log.getLogger().warn("Deleting Colony {} errored:", id, e);
+            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
     }
 

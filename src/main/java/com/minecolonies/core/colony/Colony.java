@@ -367,7 +367,7 @@ public class Colony implements IColony
         {
             this.dimensionId = world.dimension();
             onWorldLoad(world);
-            checkOrCreateTeam(world, getTeamName());
+            checkOrCreateTeam(world, getTeamName(), false);
         }
         this.permissions = new Permissions(this);
         researchManager = new ResearchManager(this);
@@ -636,7 +636,7 @@ public class Colony implements IColony
     public PlayerTeam getTeam()
     {
         // This getter will create the team if it doesn't exist. Could do something different though in the future.
-        return checkOrCreateTeam(world, getTeamName());
+        return checkOrCreateTeam(world, getTeamName(), false);
     }
 
     /**
