@@ -58,4 +58,9 @@ public class LookHandler extends LookControl
             this.mob.yHeadRot = Mth.rotateIfNecessary(this.mob.yHeadRot, this.mob.yBodyRot, (float) this.mob.getMaxHeadYRot());
         }
     }
+
+    public void setLookAtCooldown(final int cooldown)
+    {
+        lookAtCooldown = cooldown;
+    }
 }

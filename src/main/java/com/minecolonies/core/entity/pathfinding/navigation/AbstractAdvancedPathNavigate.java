@@ -200,6 +200,13 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract BlockPos getDesiredPos();
 
     /**
+     * Sets the desired position to reach, used also for stuckhandling
+     *
+     * @param pos
+     */
+    public abstract void setDesiredPos(BlockPos pos);
+
+    /**
      * Sets the stuck handler for this navigator
      *
      * @param stuckHandler handler to use

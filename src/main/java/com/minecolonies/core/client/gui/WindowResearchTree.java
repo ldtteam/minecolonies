@@ -1143,6 +1143,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                     orLabel.setText(Component.translatable("com.minecolonies.coremod.research.research.or"));
                     orLabel.setPosition(offsetX + INITIAL_X_OFFSET, offsetY + TEXT_Y_OFFSET);
                     view.addChild(orLabel);
+                    PaneBuilders.tooltipBuilder().hoverPane(orLabel).append(Component.translatable("com.minecolonies.coremod.research.research.or.tooltip")).build();
 
                     if (lastSibling)
                     {

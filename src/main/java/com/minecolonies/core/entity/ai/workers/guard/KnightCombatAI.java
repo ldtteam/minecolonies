@@ -1,28 +1,30 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
+import com.minecolonies.api.entity.ai.combat.CombatAIStates;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.ai.combat.CombatAIStates;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -128,7 +130,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     public boolean canAttack()
     {
         final int weaponSlot =
-          InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(), ModEquipmentTypes.sword.get(), 0, user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
+          InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(),
+            ModEquipmentTypes.sword.get(),
+            0,
+            user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
 
         if (weaponSlot != -1)
         {
@@ -243,9 +248,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      *
      * @return attack damage
      */
-    private int getAttackDamage()
+    private double getAttackDamage()
     {
-        int addDmg = 0;
+        double addDmg = 0;
 
         final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
 
@@ -269,7 +274,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             addDmg *= 2;
         }
 
-        return (int) ((addDmg) * MineColonies.getConfig().getServer().guardDamageMultiplier.get());
+        if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
+        {
+            addDmg *= 1.5;
+            ((ServerLevel) user.level).getChunkSource().broadcastAndSend(user, new ClientboundAnimatePacket(target, 4));
+        }
+
+        return addDmg * MineColonies.getConfig().getServer().guardDamageMultiplier.get();
     }
 
     @Override

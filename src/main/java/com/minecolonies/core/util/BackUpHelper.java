@@ -444,6 +444,7 @@ public final class BackUpHelper
                 return;
             }
 
+            loadedColony.setDimensionId(dimension);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).ifPresent(cap -> cap.addColony(loadedColony));
 
             if (claimChunks)

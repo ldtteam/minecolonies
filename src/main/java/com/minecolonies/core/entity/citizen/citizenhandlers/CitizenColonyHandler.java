@@ -85,7 +85,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
-        if (!citizen.isAddedToWorld())
+        if (citizen.level.getEntity(citizen.getId()) != citizen)
         {
             Log.getLogger().warn("Registering too early, entity not added to world!", new Exception());
             citizen.discard();
@@ -134,6 +134,12 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 colonyId = citizen.getEntityData().get(DATA_COLONY_ID);
             }
 
+            if (colonyId == 0)
+            {
+                citizen.discard();
+                return;
+            }
+
             if (citizen.getCivilianID() == 0)
             {
                 citizen.setCitizenId(citizen.getEntityData().get(DATA_CITIZEN_ID));
@@ -159,6 +165,12 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         {
             needsClientUpdate = true;
         }
+    }
+
+    @Override
+    public boolean registered()
+    {
+        return registered;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CitizenNameFile;
 import com.minecolonies.api.colony.ICitizenData;
@@ -63,9 +64,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -497,8 +498,12 @@ public class CitizenData implements ICitizenData
         textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
-        final int levelCap = (int) colony.getOverallHappiness();
 
+        int levelCap = (int) colony.getOverallHappiness() * 2;
+        if (colony.getCitizenManager().getCitizens().size() < IMinecoloniesAPI.getInstance().getConfig().getServer().initialCitizenAmount.get())
+        {
+            levelCap = Math.max(5, levelCap);
+        }
         citizenSkillHandler.init(levelCap);
 
         markDirty(0);
@@ -512,6 +517,7 @@ public class CitizenData implements ICitizenData
     {
         if (!getEntity().isPresent())
         {
+            Log.getLogger().warn("Missing entity upon adding data to that entity!" + this.toString(), new Exception());
             return;
         }
 

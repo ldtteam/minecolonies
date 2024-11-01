@@ -1,14 +1,16 @@
 package com.minecolonies.core.entity.ai.minimal;
 
-import java.util.EnumSet;
-import javax.annotation.Nullable;
-
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+
+import javax.annotation.Nullable;
+import java.util.EnumSet;
 
 public class LookAtEntityGoal extends Goal
 {
@@ -65,6 +67,11 @@ public class LookAtEntityGoal extends Goal
                 this.lookAt = WorldUtil.getNearestEntity(this.mob.level.getEntitiesOfClass(this.lookAtType,
                   this.mob.getBoundingBox().inflate(this.lookDistance, 3.0D, this.lookDistance),
                   (entity) -> true), this.mob, this.mob.getBlockX(), this.mob.getBlockY() + 1, this.mob.getBlockZ(), lookDistance);
+            }
+
+            if (mob instanceof EntityCitizen citizen && citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard<?> job && job.isAsleep())
+            {
+                return false;
             }
 
             return this.lookAt != null;

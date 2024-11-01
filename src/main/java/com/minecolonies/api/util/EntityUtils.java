@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 import static net.minecraft.world.entity.EntitySelector.NO_SPECTATORS;
 
 /**
@@ -172,7 +174,21 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final Level world, final BlockPos nearPoint)
     {
-        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2));
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> {
+            if (checkValidSpawn(w, p, 2))
+            {
+                // Also find a valid neighbouring space, to decrease stuck chance
+                for (final Direction dir : HORIZONTAL_DIRS)
+                {
+                    if (checkValidSpawn(w, p.relative(dir, 1), 2))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
     }
 
 

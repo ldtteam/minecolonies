@@ -104,9 +104,10 @@ public class CommandListColonies implements IMCCommand
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
-            final MutableComponent teleport = Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
-            teleport.setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-              new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
+            final MutableComponent teleport = Component.literal("Citizens:" + colony.getCitizenManager().getCurrentCitizenCount() + " ")
+                                                .append(Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
+                                                          .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
+                                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID()))));
 
             context.getSource().sendSuccess(() -> teleport, true);
         }

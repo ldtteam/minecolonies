@@ -91,7 +91,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
     public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -133,7 +132,7 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 30, CitizenConstants.CITIZEN_LIMIT_MAX);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
         workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
@@ -192,11 +191,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
-          Arrays.asList
-                  ("dirt",
-                    "0 0 0"),
-          s -> s instanceof String);
 
         swapToCategory(builder, "compatibility");
 
