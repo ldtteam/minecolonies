@@ -503,4 +503,10 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @return true if so.
      */
     boolean canEat(final ItemStack stack);
+
+    /**
+     * Get the standing position for a building.
+     * @return the standing pos.
+     */
+    BlockPos getStandingPosition();
 }

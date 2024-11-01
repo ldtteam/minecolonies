@@ -1864,28 +1864,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         return true;
     }
 
-    /**
-     * Returns the home position of each citizen (His house or town hall).
-     *
-     * @return location
-     */
-    @NotNull
-    @Override
-    public BlockPos getRestrictCenter()
-    {
-        @Nullable final IBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
-        if (homeBuilding != null)
-        {
-            return homeBuilding.getPosition();
-        }
-        else if (citizenColonyHandler.getColony() != null && citizenColonyHandler.getColony().getBuildingManager().getTownHall() != null)
-        {
-            return citizenColonyHandler.getColony().getBuildingManager().getTownHall().getPosition();
-        }
-
-        return super.getRestrictCenter();
-    }
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)

@@ -432,4 +432,11 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return true if so.
      */
     boolean hasQuestAssignment();
+
+    /**
+     * Get the home position of the citizen.
+     * @return the pos to go home to.
+     */
+    @Nullable
+    BlockPos getHomePosition();
 }

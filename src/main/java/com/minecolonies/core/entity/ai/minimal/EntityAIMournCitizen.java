@@ -112,7 +112,16 @@ public class EntityAIMournCitizen implements IStateAI
     private IState walkToTownHall()
     {
         final BlockPos pos = getMournLocation();
-        citizen.getNavigation().moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), this.speed);
+        if (pos == null)
+        {
+            return CitizenAIState.IDLE;
+        }
+
+        if (!citizen.isWorkerAtSiteWithMove(pos, 3))
+        {
+            return MourningState.WALKING_TO_TOWNHALL;
+        }
+
         return CitizenAIState.IDLE;
     }
 
@@ -287,9 +296,13 @@ public class EntityAIMournCitizen implements IStateAI
 
         if (this.graveyard == null)
         {
-            this.graveyard =
+            final IBuilding graveyardBuilding =
               citizen.getCitizenColonyHandler().getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
                 GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
+            if (graveyardBuilding != null)
+            {
+                this.graveyard = graveyardBuilding.getPosition();
+            }
         }
 
         if (graveyard != null)
@@ -323,11 +336,11 @@ public class EntityAIMournCitizen implements IStateAI
     protected BlockPos getMournLocation()
     {
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-        if (colony == null || !colony.getBuildingManager().hasTownHall())
+        if (colony != null && colony.getBuildingManager().hasTownHall())
         {
-            return citizen.getRestrictCenter();
+            return colony.getBuildingManager().getTownHall().getStandingPosition();
         }
 
-        return colony.getBuildingManager().getTownHall().getPosition();
+        return citizen.getCitizenData().getHomePosition();
     }
 }

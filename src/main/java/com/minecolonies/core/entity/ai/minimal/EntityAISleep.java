@@ -237,8 +237,8 @@ public class EntityAISleep implements IStateAI
      */
     private void goHome()
     {
-        final BlockPos pos = citizen.getCitizenSleepHandler().findHomePos();
-        if (!citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING)
+        final BlockPos pos = citizen.getCitizenData().getHomePosition();
+        if (pos != null && !citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING)
         {
             citizen.setPose(Pose.STANDING);
         }
