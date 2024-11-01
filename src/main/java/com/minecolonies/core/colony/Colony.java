@@ -1829,7 +1829,7 @@ public class Colony implements IColony
             {
                 checkChunkAndRegisterTicket(chunkPos, chunk);
             }
-            else
+            else if (buildingManager.keepChunkColonyLoaded(chunk))
             {
                 this.pendingChunks.add(chunkPos);
             }
