@@ -372,7 +372,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         int priority = 0;
         this.goalSelector.addGoal(priority, new EntityAIFloat(this));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 0.2F));
         this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
     }
@@ -1316,10 +1316,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 Log.getLogger().warn("Error while saving:", e);
             }
 
+            final RemovalReason removalReason = getRemovalReason();
+
             Log.getLogger()
-              .warn("Entity:" + getName().toString() + " uuid:" + getUUID() + " id:" + getId() + " removed:" + isRemoved() + " colonyid:" + citizenColonyHandler.getColonyId()
+              .warn("Entity:" + getName() + " uuid:" + getUUID() + " id:" + getId() + " removed:" + isRemoved() + " colonyid:" + citizenColonyHandler.getColonyId()
                       + " entitydata colony id:" + getEntityData().get(DATA_COLONY_ID) + " hascolony:" + (citizenColonyHandler.getColony() != null) +
-                      " registered:" + citizenColonyHandler.registered() + " world:" + level + " saved data:" + tag);
+                      " registered:" + citizenColonyHandler.registered() + " world:" + level + " saved data:" + tag + " removalReason: " + removalReason);
         }
 
         if (handleInWallDamage(damageSource))

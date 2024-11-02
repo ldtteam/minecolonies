@@ -1891,8 +1891,8 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         if (MineColonies.getConfig().getServer().holidayFeatures.get() &&
-              (LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
-                 || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
+              ((LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
+                 || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER)))
         {
             return "nether";
         }

@@ -21,6 +21,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
+import com.minecolonies.core.entity.ai.minimal.LookAtEntityInteractGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
@@ -153,8 +154,8 @@ VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(priority, new FloatGoal(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 0.2F));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
         new EntityAIVisitor(this);
     }

@@ -23,6 +23,7 @@ public class ShapeUtil
             return 1.0;
         }
 
+        // Note: in vanilla this is -infinity
         if (shape == Shapes.empty())
         {
             return 0;
@@ -45,6 +46,7 @@ public class ShapeUtil
             return 0.0;
         }
 
+        // Note: in vanilla this is +infinity
         if (shape == Shapes.empty())
         {
             return 0;

@@ -18,7 +18,6 @@ import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -110,6 +109,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Temporary block position
      */
     private BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos();
+
+    /**
+     * wanted position for movecontrol
+     */
+    private Vec3 wantedPosition = null;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -366,20 +370,21 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
-
-            if (!this.isDone())
+            if (this.path != null && !this.path.isDone())
             {
-                Vec3 vector3d2 = path.getNextEntityPos(mob);
-                tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y) - 1, Mth.floor(vector3d2.z));
-                if (ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                if ((wantedPosition == null || currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
                 {
-                    mob.getMoveControl()
-                      .setWantedPosition(vector3d2.x,
-                        getSmartGroundY(this.level, tempPos, vector3d2.y),
-                        vector3d2.z,
-                        speedModifier);
+                    Vec3 vector3d2 = path.getNextEntityPos(mob);
+                    tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
+                    if (wantedPosition == null || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                    {
+                        wantedPosition = new Vec3(vector3d2.x,
+                            getSmartGroundY(this.level, tempPos, vector3d2.y),
+                            vector3d2.z);
+                    }
                 }
+
+                mob.getMoveControl().setWantedPosition(wantedPosition.x, wantedPosition.y, wantedPosition.z, speedModifier);
             }
         }
         // End of super.tick.
@@ -398,24 +403,35 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      *
      * @param world the world.
      * @param pos   the position to check.
-     * @param y
+     * @param orgY  original y level
      * @return the next y level to go to.
      */
-    public static double getSmartGroundY(final BlockGetter world, final BlockPos pos, final double orgY)
+    public static double getSmartGroundY(final BlockGetter world, final BlockPos.MutableBlockPos pos, final double orgY)
     {
-        final BlockState state = world.getBlockState(pos);
-        if (state.isAir())
+        BlockState state = world.getBlockState(pos);
+
+        if (!state.isAir())
         {
-            return orgY;
+            final VoxelShape voxelshape = state.getCollisionShape(world, pos);
+            if (!ShapeUtil.isEmpty(voxelshape))
+            {
+                return pos.getY() + ShapeUtil.max(voxelshape, Direction.Axis.Y);
+            }
         }
 
-        final VoxelShape voxelshape = state.getCollisionShape(world, pos);
-        final double maxY = ShapeUtil.max(voxelshape, Direction.Axis.Y);
-        if (maxY < 1.0)
+        pos.set(pos.getX(), pos.getY() - 1, pos.getZ());
+
+        state = world.getBlockState(pos);
+        if (!state.isAir())
         {
-            return pos.getY();
+            final VoxelShape voxelshape = state.getCollisionShape(world, pos);
+            if (!ShapeUtil.isEmpty(voxelshape))
+            {
+                return pos.getY() + ShapeUtil.max(voxelshape, Direction.Axis.Y);
+            }
         }
-        return pos.getY() + maxY;
+
+        return orgY;
     }
 
     @Nullable
