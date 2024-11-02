@@ -53,7 +53,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
         super(world, start, targetSpawnPoint, new PathResult<PathJobRaiderPathing>(), null);
         this.buildings = buildings;
         direction = targetSpawnPoint;
-        maxNodes = 5000;
+        maxNodes = 10000;
         setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true));
     }
 

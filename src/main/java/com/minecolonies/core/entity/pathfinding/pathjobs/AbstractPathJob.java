@@ -68,6 +68,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     protected final LevelReader world;
 
     /**
+     * The original world, do not use offthread
+     */
+    private final Level actualWorld;
+
+    /**
      * The entity this job belongs to, can be none
      */
     @Nullable
@@ -106,8 +111,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Counts of nodes
      */
-    private int totalNodesAdded   = 0;
-    private int totalNodesVisited = 0;
+    private   int totalNodesAdded   = 0;
+    protected int totalNodesVisited = 0;
 
     /**
      * Additional nodes that get explored when reaching the target, useful when the destination is an area or not in a great spot.
@@ -175,6 +180,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final int maxX = (int) (start.getX() + range * 1.3);
         final int maxZ = (int) (start.getZ() + range * 1.3);
         this.world = new ChunkCache(world, new BlockPos(minX, 0, minZ), new BlockPos(maxX, 0, maxZ));
+        this.actualWorld = world;
 
         this.maxNodes = Math.min(MAX_NODES, range * range);
         nodesToVisit = new PriorityQueue<>(range * 2);
@@ -186,11 +192,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         result.setJob(this);
 
         this.entity = entity;
-
-        if (entity != null && PathfindingUtils.trackingMap.containsValue(entity.getUUID()))
-        {
-            initDebug();
-        }
     }
 
     /**
@@ -202,7 +203,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param result
      * @param entity
      */
-    protected AbstractPathJob(final LevelReader chunkCache, @NotNull final BlockPos start, int range, final PathResult result, @Nullable final Mob entity)
+    protected AbstractPathJob(final Level actualWorld, final LevelReader chunkCache, @NotNull final BlockPos start, int range, final PathResult result, @Nullable final Mob entity)
     {
         range = Math.max(10, range);
         this.maxNodes = Math.min(MAX_NODES, range * range);
@@ -211,6 +212,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         world = chunkCache;
         cachedBlockLookup = new CachingBlockLookup(start, this.world);
+        this.actualWorld = actualWorld;
 
         this.result = result;
         result.setJob(this);
@@ -249,14 +251,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         this.start = new BlockPos(start);
 
         cachedBlockLookup = new CachingBlockLookup(start, this.world);
+        actualWorld = world;
 
         this.result = result;
         result.setJob(this);
-
-        if (entity != null && PathfindingUtils.trackingMap.containsValue(entity.getUUID()))
-        {
-            initDebug();
-        }
         this.entity = entity;
     }
 
@@ -1552,23 +1550,26 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return node.isSwimming();
         }
 
-        return PathfindingUtils.isWater(cachedBlockLookup, null, below,null)
-                 ||  PathfindingUtils.isWater(cachedBlockLookup, null, state,null)
-                 ||  PathfindingUtils.isWater(cachedBlockLookup, null, above,null);
+        return PathfindingUtils.isWater(cachedBlockLookup, null, below, null)
+                 || PathfindingUtils.isWater(cachedBlockLookup, null, state, null)
+                 || PathfindingUtils.isWater(cachedBlockLookup, null, above, null);
     }
 
     /**
      * Initializes debug tracking
      */
-    private void initDebug()
+    public void initDebug()
     {
-        debugDrawEnabled = true;
-        debugNodesVisited = new HashSet<>();
-        debugNodesVisitedLater = new HashSet<>();
-        debugNodesNotVisited = new HashSet<>();
-        debugNodesPath = new HashSet<>();
-        debugNodesOrgPath = new HashSet<>();
-        debugNodesExtra = new HashSet<>();
+        if (!debugDrawEnabled)
+        {
+            debugDrawEnabled = true;
+            debugNodesVisited = new HashSet<>();
+            debugNodesVisitedLater = new HashSet<>();
+            debugNodesNotVisited = new HashSet<>();
+            debugNodesPath = new HashSet<>();
+            debugNodesOrgPath = new HashSet<>();
+            debugNodesExtra = new HashSet<>();
+        }
     }
 
     /**
@@ -1680,23 +1681,20 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Sync the path to the client.
      */
-    public void syncDebug()
+    public void syncDebug(final List<ServerPlayer> debugWatchers)
     {
-        if (debugDrawEnabled && entity != null)
+        if (debugDrawEnabled)
         {
-            for (final Iterator<Map.Entry<UUID, UUID>> iter = PathfindingUtils.trackingMap.entrySet().iterator(); iter.hasNext(); )
+            final SyncPathMessage message = new SyncPathMessage(debugNodesVisited,
+              debugNodesNotVisited,
+              debugNodesPath,
+              debugNodesVisitedLater,
+              debugNodesOrgPath,
+              debugNodesExtra);
+
+            for (final ServerPlayer player : debugWatchers)
             {
-                final Map.Entry<UUID, UUID> entry = iter.next();
-                if (entry.getValue().equals(entity.getUUID()))
-                {
-                    final ServerPlayer player = entity.level.getServer().getPlayerList().getPlayer(entry.getKey());
-                    if (player != null)
-                    {
-                        Network.getNetwork()
-                          .sendToPlayer(new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath, debugNodesVisitedLater, debugNodesOrgPath, debugNodesExtra),
-                            player);
-                    }
-                }
+                Network.getNetwork().sendToPlayer(message, player);
             }
         }
     }
@@ -1721,5 +1719,23 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     public PathingOptions getPathingOptions()
     {
         return pathingOptions;
+    }
+
+    @Override
+    public Mob getEntity()
+    {
+        return entity;
+    }
+
+    @Override
+    public Level getActualWorld()
+    {
+        return actualWorld;
+    }
+
+    @Override
+    public BlockPos getStart()
+    {
+        return start;
     }
 }
