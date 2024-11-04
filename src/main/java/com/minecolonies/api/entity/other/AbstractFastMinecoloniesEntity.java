@@ -384,8 +384,11 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public void remove(@NotNull final RemovalReason reason)
     {
         super.remove(reason);
-        // TODO: This causes a stackoverflow, how do we properly clean up team assignments?
-        //removeFromTeam();
+        final PlayerTeam playersTeam = level.getScoreboard().getPlayersTeam(getScoreboardName());
+        if (playersTeam != null)
+        {
+            level.getScoreboard().removePlayerFromTeam(getScoreboardName(), playersTeam);
+        }
     }
 
     /**
