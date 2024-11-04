@@ -240,6 +240,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Override
     public PlayerTeam getTeam(final Level level)
     {
-        return checkOrCreateTeam(level, IColony.getTeamName(level, colonyId));
+        return checkOrCreateTeam(level, IColony.getTeamName(level, colonyId), false);
     }
 }
