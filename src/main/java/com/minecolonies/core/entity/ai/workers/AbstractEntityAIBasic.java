@@ -777,7 +777,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected final boolean walkToBuilding()
     {
         @Nullable final IBuilding ownBuilding = building;
-        return ownBuilding == null || walkToBlock(ownBuilding.getStandingPosition(), 1);
+        if (ownBuilding == null)
+        {
+            return true;
+        }
+        final BlockPos standingPos = ownBuilding.getStandingPosition();
+        int range = 1;
+        if (standingPos.equals(ownBuilding.getPosition()))
+        {
+            range = 3;
+        }
+        return walkToBlock(ownBuilding.getStandingPosition(), range);
     }
 
     /**
