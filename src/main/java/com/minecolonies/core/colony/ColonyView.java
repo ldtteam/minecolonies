@@ -1253,7 +1253,7 @@ public final class ColonyView implements IColonyView
     @Override
     public PlayerTeam getTeam()
     {
-        return world.getScoreboard().getPlayerTeam(getTeamName());
+        return world.getScoreboard().getPlayerTeam(IColony.getTeamName(world, id));
     }
 
     @Override
