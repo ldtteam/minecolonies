@@ -240,11 +240,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     protected PlayerTeam getAssignedTeam()
     {
         final ICitizenColonyHandler citizenColonyHandler = getCitizenColonyHandler();
-        if (citizenColonyHandler == null || citizenColonyHandler.getColony() == null)
+        if (citizenColonyHandler == null)
         {
             return null;
         }
-        return citizenColonyHandler.getColony().getTeam();
+        return citizenColonyHandler.getTeam(level);
     }
 
     /**

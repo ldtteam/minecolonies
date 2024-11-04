@@ -3,6 +3,8 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICitizenColonyHandler
@@ -73,4 +75,10 @@ public interface ICitizenColonyHandler
     void onSyncDataUpdate(EntityDataAccessor<?> dataAccessor);
 
     boolean registered();
+
+    /**
+     * Get the citizen team.
+     * @return the team.
+     */
+    PlayerTeam getTeam(final Level level);
 }

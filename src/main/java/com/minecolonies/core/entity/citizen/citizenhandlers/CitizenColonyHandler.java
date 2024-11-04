@@ -9,10 +9,13 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
+import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 
 /**
  * Handles all colony related methods for the citizen.
@@ -232,5 +235,11 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             colony.getCitizenManager().unregisterCivilian(citizen);
             citizen.getCitizenData().setLastPosition(citizen.blockPosition());
         }
+    }
+
+    @Override
+    public PlayerTeam getTeam(final Level level)
+    {
+        return checkOrCreateTeam(level, IColony.getTeamName(level, colonyId));
     }
 }
