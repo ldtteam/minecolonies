@@ -71,7 +71,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         final BlockPos citizenPosition = entityCitizen.blockPosition();
         context.getSource()
           .sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
-        final BlockPos homePosition = entityCitizen.getRestrictCenter();
+        final BlockPos homePosition = citizenData.getHomePosition();
         context.getSource()
           .sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
 
