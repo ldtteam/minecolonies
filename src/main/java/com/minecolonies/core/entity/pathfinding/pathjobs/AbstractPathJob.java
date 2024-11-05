@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -733,6 +734,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final BlockState aboveState = cachedBlockLookup.getBlockState(nextX, nextY + 1, nextZ);
         final BlockState state = cachedBlockLookup.getBlockState(nextX, nextY, nextZ);
         final BlockState belowState = cachedBlockLookup.getBlockState(nextX, nextY - 1, nextZ);
+        final BlockState lastState = cachedBlockLookup.getBlockState(node.x, node.y, node.z);
 
         final boolean isSwimming = calculateSwimming(belowState, state, aboveState, nextNode);
         if (isSwimming && !pathingOptions.canSwim())
@@ -760,7 +762,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 costFrom = node.parent;
             }
 
-            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, isDiving, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
+            nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, isDiving, onRails, railsExit, swimStart, ladder, state, belowState, lastState, nextX, nextY, nextZ);
             nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state, belowState);
 
             if (nextCost > maxCost)
@@ -888,7 +890,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
       final boolean railsExit,
       final boolean swimStart,
       final boolean ladder,
-      final BlockState state, final BlockState below,
+      final BlockState state, final BlockState below, final BlockState last,
       final int x, final int y, final int z)
     {
         double cost = 1;
@@ -897,7 +899,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             cost += ColonyConstants.rand.nextDouble() * pathingOptions.randomnessFactor;
         }
-
+        // todo The speed of the citizen should be divided here, and distinguish costs that are related
+        // with speed and not related with speed (e.g. on rail is not related with speed)
         if (!isSwimming)
         {
             if (onPath)
@@ -917,15 +920,33 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (!isDiving)
         {
-            if (dY != 0 && !(ladder && parent.isLadder()) && !(Math.abs(dY) == 1 && below.is(BlockTags.STAIRS)))
+            boolean correctlyOnStairs = false;
+            if (Math.abs(dY) == 1 && below.getBlock() instanceof StairBlock && below.getValue(StairBlock.HALF) == Half.BOTTOM)
+            {
+                Direction facing = below.getValue(StairBlock.FACING);
+                StairsShape shape = below.getValue(StairBlock.SHAPE);
+                if (dX == dY) correctlyOnStairs = facing == Direction.EAST || (facing == Direction.NORTH && shape == StairsShape.OUTER_RIGHT) || (facing == Direction.SOUTH && shape == StairsShape.OUTER_LEFT);
+                else if (dX != 0) correctlyOnStairs = facing == Direction.WEST || (facing == Direction.SOUTH && shape == StairsShape.OUTER_RIGHT) || (facing == Direction.NORTH && shape == StairsShape.OUTER_LEFT);
+                else if (dZ == dY) correctlyOnStairs = facing == Direction.SOUTH || (facing == Direction.EAST && shape == StairsShape.OUTER_RIGHT) || (facing == Direction.WEST && shape == StairsShape.OUTER_LEFT);
+                else if (dZ != 0) correctlyOnStairs = facing == Direction.NORTH || (facing == Direction.WEST && shape == StairsShape.OUTER_RIGHT) || (facing == Direction.EAST && shape == StairsShape.OUTER_LEFT);
+            }
+            if (dY != 0 && !(ladder && parent.isLadder()) && !correctlyOnStairs)
             {
                 if (dY > 0)
                 {
                     cost += pathingOptions.jumpCost;
                 }
-                else if (pathingOptions.dropCost != 0)
+                //else if (pathingOptions.dropCost != 0)
+                //{
+                //    cost += pathingOptions.dropCost * Math.abs(dY * dY * dY);
+                //}
+                if (dY < -3.375 && pathingOptions.dropDamage != 0)
                 {
-                    cost += pathingOptions.dropCost * Math.abs(dY * dY * dY);
+                    //Avoid falling damage.
+                    if (!PathfindingUtils.isWater(world, null, below, null))
+                    {
+                        cost += pathingOptions.dropDamage * (-dY - 3.375);
+                    }
                 }
             }
         }
@@ -969,7 +990,23 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 cost += pathingOptions.divingCost;
             }
         }
-
+        if (state.getBlock() instanceof DoorBlock)
+        {
+            boolean open = state.getValue(DoorBlock.OPEN);
+            Direction facing = state.getValue(DoorBlock.FACING);
+            boolean targetState = (facing == Direction.EAST || facing == Direction.WEST);
+            boolean controlled = last.getBlock() instanceof BasePressurePlateBlock;
+            if (dZ != 0) targetState = !targetState;
+            if (controlled)
+            {
+                if (targetState) cost += pathingOptions.openDoorCost;
+                else cost += 100; //This is a trap!!!
+            }
+            else if (open != targetState)
+            {
+                cost += pathingOptions.openDoorCost;
+            }
+        }
         return cost;
     }
 

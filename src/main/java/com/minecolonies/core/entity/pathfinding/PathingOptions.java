@@ -10,7 +10,7 @@ public class PathingOptions
     /**
      * Maximum cost used
      */
-    public static final int MAX_COST = 25;
+    public static final int MAX_COST = 100;
 
     /**
      * Additional cost of jumping
@@ -23,6 +23,11 @@ public class PathingOptions
     public double dropCost = 1D;
 
     /**
+     * Additional cost of dropping damage
+     */
+    public double dropDamage = 25D;
+
+    /**
      * Cost improvement of paths - base 1.
      */
     public double onPathCost = 1 / 4d;
@@ -33,6 +38,11 @@ public class PathingOptions
     public double onRailCost = 1 / 10D;
 
     /**
+     * The cost to open a door.
+     */
+    public double openDoorCost = 4;
+
+    /**
      * The rails exit cost.
      */
     public double railsExitCost = 4;
@@ -40,7 +50,7 @@ public class PathingOptions
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 2D;
+    public double swimCost = 4D;
 
     /**
      * Additional cost of cave air.
@@ -50,7 +60,7 @@ public class PathingOptions
     /**
      * Additional cost enter entering water
      */
-    public double swimCostEnter = 24D;
+    public double swimCostEnter = 4D;
 
     /**
      * Cost to traverse trap doors
