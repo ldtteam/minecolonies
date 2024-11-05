@@ -13,6 +13,7 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
@@ -112,7 +113,7 @@ public class EntityAISleep implements IStateAI
         final IBuilding homeBuilding = citizen.getCitizenData().getHomeBuilding();
         if (homeBuilding == null)
         {
-            @Nullable final BlockPos homePosition = citizen.getRestrictCenter();
+            @Nullable final BlockPos homePosition = citizen.getCitizenData().getHomePosition();
             if (homePosition.distSqr(BlockPos.containing(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME)
             {
                 return FIND_BED;
@@ -164,11 +165,11 @@ public class EntityAISleep implements IStateAI
         }
 
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
-        if (colony != null && colony.getBuildingManager().getBuilding(citizen.getRestrictCenter()) != null)
+        if (colony != null && citizen.getCitizenData().getHomeBuilding() instanceof AbstractBuilding hut)
         {
+            final BlockPos homePos = citizen.getCitizenData().getHomePosition();
             if (usedBed == null)
             {
-                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getRestrictCenter());
                 List<BlockPos> bedList = new ArrayList<>();
 
                 if (hut.hasModule(BuildingModules.BED))
@@ -196,7 +197,7 @@ public class EntityAISleep implements IStateAI
                     }
                 }
 
-                usedBed = citizen.getRestrictCenter();
+                usedBed = homePos;
             }
 
             if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
