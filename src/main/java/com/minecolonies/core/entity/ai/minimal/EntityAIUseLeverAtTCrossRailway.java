@@ -64,7 +64,6 @@ public class EntityAIUseLeverAtTCrossRailway extends Goal
 
         Path path = entity.getNavigation().getPath();
 
-        // 如果路径为空或者已经完成，停止行为
         if (path == null || path.isDone())
         {
             return;
@@ -132,15 +131,10 @@ public class EntityAIUseLeverAtTCrossRailway extends Goal
         }
         return null;
     }
-    // 改变拉杆的状态
     private void toggleLever(BlockPos leverPos)
     {
         BlockState state = entity.level().getBlockState(leverPos);
         ((LeverBlock) state.getBlock()).pull(state, entity.level(), leverPos, null);
-        //boolean isPowered = state.getValue(BlockStateProperties.POWERED);
-        //WorldUtil.setBlockState(entity.level(), leverPos, state.setValue(BlockStateProperties.POWERED, !isPowered));
-        //((LeverBlock) state.getBlock()).sound;
-        //state.getBlock().playSound(entity, entity.level(), leverPos, state, 0, 1); // 播放拉杆声音
     }
     private boolean isRidingMinecart()
     {
