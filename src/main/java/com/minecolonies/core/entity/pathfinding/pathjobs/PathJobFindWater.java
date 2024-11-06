@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * Find and return a path to the nearest water. Created: March 25, 2016
  */
-public class PathJobFindWater extends AbstractPathJob
+public class PathJobFindWater extends AbstractPathJob implements ISearchPathJob
 {
     private static final int                             MAX_RANGE    = 100;
     private final        BlockPos                        hutLocation;
@@ -106,6 +107,25 @@ public class PathJobFindWater extends AbstractPathJob
         }
 
         return false;
+    }
+
+    @Override
+    protected double modifyCost(
+        final double cost,
+        final MNode parent,
+        final boolean swimstart,
+        final boolean swimming,
+        final int x,
+        final int y,
+        final int z,
+        final BlockState state, final BlockState below)
+    {
+        if (BlockPosUtil.distSqr(hutLocation, x, y, z) > MAX_RANGE * MAX_RANGE)
+        {
+            return cost * 10;
+        }
+
+        return cost;
     }
 
     @Override

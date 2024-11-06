@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving in a direction
  */
-public class PathJobMoveTowards extends AbstractPathJob
+public class PathJobMoveTowards extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Position to run to, in order to
@@ -69,5 +69,11 @@ public class PathJobMoveTowards extends AbstractPathJob
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z) > minDistance
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return target;
     }
 }

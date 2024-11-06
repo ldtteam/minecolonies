@@ -152,14 +152,14 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private double heuristicMod = 1;
 
     /**
-     * Previous Heuristic modifier
-     */
-    private double prevHeuristicMod = 1;
-
-    /**
      * First node
      */
     private MNode startNode = null;
+
+    /**
+     * Visited level
+     */
+    private int visitedLevel = 1;
 
     /**
      * AbstractPathJob constructor.
@@ -329,6 +329,14 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
             final MNode node = nodesToVisit.poll();
 
+            if (node.isVisited())
+            {
+                // Revisiting is used to update neighbours to an updated cost
+                visitNode(node);
+                node.increaseVisited();
+                continue;
+            }
+
             nodesSinceEndNode++;
             totalNodesVisited++;
 
@@ -360,7 +368,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             // Re-evaluate current heuristic when progress is going bad
-            if (nodesSinceEndNode >= 200 && nodesSinceEndNode % 200 == 0 && !reachesDestination && !node.isVisited())
+            if (((nodesSinceEndNode >= maxNodes / 2 && nodesSinceEndNode % 400 == 0)) && !reachesDestination)
             {
                 if (reevaluteHeuristic(bestNode, reachesDestination))
                 {
@@ -369,7 +377,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 }
             }
 
-            if (!node.isVisited() && !node.isCornerNode())
+            if (!node.isCornerNode())
             {
                 // Calculates a score for a possible end node, defaults to heuristic(closest)
                 final double nodeEndSCore = getEndNodeScore(node);
@@ -385,7 +393,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             // Don't keep searching more costly nodes when there is a destination
-            if (!node.isVisited() && reachesDestination && node.getScore() > bestNode.getScore())
+            if (reachesDestination && node.getScore() > bestNode.getScore())
             {
                 if (reevaluteHeuristic(bestNode, reachesDestination))
                 {
@@ -400,7 +408,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
             handleDebugOptions(node);
             visitNode(node);
-            node.setVisited();
+            node.increaseVisited();
         }
 
         // Explore additional possible endnodes after reaching, if we got extra nodes to search
@@ -490,50 +498,73 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private boolean reevaluteHeuristic(final MNode node, final boolean reaches)
     {
-        double costPerEstimation = node.getCost() / Math.max(1, startNode.getHeuristic());
+        if (startNode.getHeuristic() < 0.01)
+        {
+            return false;
+        }
+
+        double costPerEstimation = node.getCost() / startNode.getHeuristic();
 
         if (!reaches)
         {
-            int count = 0;
-            costPerEstimation = 0;
-            // Assume linearity
-            double lowestAroundStart = Double.MAX_VALUE;
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x + 1, startNode.y, startNode.z) * heuristicMod);
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x - 1, startNode.y, startNode.z) * heuristicMod);
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y, startNode.z + 1) * heuristicMod);
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y, startNode.z - 1) * heuristicMod);
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y + 1, startNode.z) * heuristicMod);
-            lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y - 1, startNode.z) * heuristicMod);
-
-            final double heuristicPerDist = startNode.getHeuristic() - lowestAroundStart;
-
-            if (heuristicPerDist <= 0)
+            if (node.parent != null && this instanceof IDestinationPathJob job)
             {
-                return false;
-            }
+                final double heuristicCostEstimationPerDist = startNode.getHeuristic() / Math.max(1, BlockPosUtil.dist(job.getDestination(), start));
 
-            for (final MNode cur : nodesToVisit)
-            {
-                if (cur.getHeuristic() >= startNode.getHeuristic() || cur.isVisited())
+                int dist = 0;
+                MNode currNode = node;
+                while (currNode.parent != null)
                 {
-                    continue;
+                    currNode = currNode.parent;
+                    dist++;
                 }
 
-                count++;
-                costPerEstimation += cur.getCost() / (BlockPosUtil.distManhattan(cur.x, cur.y, cur.z, startNode.x, startNode.y, startNode.z) * heuristicPerDist);
-
-                if (count == 20)
-                {
-                    break;
-                }
+                final double realCostPerDist = node.getCost() / dist;
+                costPerEstimation = realCostPerDist / heuristicCostEstimationPerDist;
             }
-
-            if (count == 0)
+            else
             {
-                return false;
-            }
+                int count = 0;
+                costPerEstimation = 0;
+                // Assume linearity
+                double lowestAroundStart = Double.MAX_VALUE;
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x + 1, startNode.y, startNode.z) * heuristicMod);
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x - 1, startNode.y, startNode.z) * heuristicMod);
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y, startNode.z + 1) * heuristicMod);
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y, startNode.z - 1) * heuristicMod);
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y + 1, startNode.z) * heuristicMod);
+                lowestAroundStart = Math.min(lowestAroundStart, computeHeuristic(startNode.x, startNode.y - 1, startNode.z) * heuristicMod);
 
-            costPerEstimation = costPerEstimation / count;
+                final double heuristicPerDist = startNode.getHeuristic() - lowestAroundStart;
+
+                if (heuristicPerDist <= 0)
+                {
+                    return false;
+                }
+
+                for (final MNode cur : nodesToVisit)
+                {
+                    if (cur.getHeuristic() >= startNode.getHeuristic() || cur.isVisited())
+                    {
+                        continue;
+                    }
+
+                    count++;
+                    costPerEstimation += cur.getCost() / (BlockPosUtil.distManhattan(cur.x, cur.y, cur.z, startNode.x, startNode.y, startNode.z) * heuristicPerDist);
+
+                    if (count == 20)
+                    {
+                        break;
+                    }
+                }
+
+                if (count == 0)
+                {
+                    return false;
+                }
+
+                costPerEstimation = costPerEstimation / count;
+            }
         }
 
         if (costPerEstimation <= 0.0)
@@ -542,7 +573,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         // Detect an overstimating heuristic(not guranteed, but can check the found path)
-        if (costPerEstimation < 1 || (costPerEstimation > 1.2 && !reaches))
+        if (costPerEstimation < 0.9 || (costPerEstimation > 1.2 && !reaches))
         {
             // Overshoot a bit
             costPerEstimation *= costPerEstimation < 1 ? 0.9 : 1.1;
@@ -559,20 +590,31 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 }
             }
 
+            // Set a future heuristic modification
+            if (reaches)
+            {
+                heuristicMod *= costPerEstimation;
+            }
+            else
+            {
+                // When not reaching slowly adjust to assist reaching
+                double currentMod = heuristicMod;
+                heuristicMod -= heuristicMod / 2;
+                heuristicMod += (currentMod * costPerEstimation) / 2;
+            }
+
             // Fix up existing heuristic values
             final List<MNode> nodes = new ArrayList<>(nodesToVisit);
             nodesToVisit.clear();
             for (final MNode recalc : nodes)
             {
-                recalc.setHeuristic(recalc.getHeuristic() * costPerEstimation);
+                recalcHeuristic(recalc);
                 nodesToVisit.offer(recalc);
             }
 
-            // Set a future heuristic modification
-            heuristicMod *= costPerEstimation;
-
             recalcHeuristic(startNode);
             recalcHeuristic(node);
+            visitedLevel++;
             return true;
         }
 
@@ -722,6 +764,17 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final int nodeKey = MNode.computeNodeKey(nextX, nextY, nextZ);
         MNode nextNode = nodes.get(nodeKey);
 
+        if (nextNode != null && nextNode.isCornerNode())
+        {
+            if (node.isCornerNode())
+            {
+                // Do not allow connecting corner nodes
+                return;
+            }
+
+            corner = true;
+        }
+
         // Current node is already visited, only update nearby costs do not create new nodes
         if (node.isVisited())
         {
@@ -824,7 +877,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private void updateNode(@NotNull final MNode node, @NotNull final MNode nextNode, final double heuristic, final double cost)
     {
         //  This node already exists
-        if (cost >= nextNode.getCost())
+        if (cost >= nextNode.getCost() || nextNode.getVisitedCount() > visitedLevel)
         {
             return;
         }
@@ -936,7 +989,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             cost += pathingOptions.traverseToggleAbleCost;
         }
-        else if (!ShapeUtil.isEmpty(state.getCollisionShape(cachedBlockLookup, tempWorldPos.set(x, y, z))))
+        else if (!onPath && !ShapeUtil.hasCollision(cachedBlockLookup, tempWorldPos.set(x, y, z), state))
         {
             cost += pathingOptions.walkInShapesCost;
         }
@@ -1582,12 +1635,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (debugDrawEnabled)
         {
             addNodeToDebug(node);
-        }
 
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
-        {
-            Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; c=%f ; h=%f",
-              node.x, node.y, node.z, node.getCost(), node.getHeuristic()));
+            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
+            {
+                Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; c=%f ; h=%f",
+                    node.x, node.y, node.z, node.getCost(), node.getHeuristic()));
+            }
         }
     }
 
@@ -1632,16 +1685,19 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private void doDebugPrinting(@NotNull final Node[] points)
     {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
+        if (debugDrawEnabled)
         {
-            Log.getLogger().info("Path found:");
-
-            for (@NotNull final Node p : points)
+            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
             {
-                Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.x, p.y, p.z));
-            }
+                Log.getLogger().info("Path found:");
 
-            Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+                for (@NotNull final Node p : points)
+                {
+                    Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.x, p.y, p.z));
+                }
+
+                Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            }
         }
     }
 
@@ -1737,5 +1793,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     public BlockPos getStart()
     {
         return start;
+    }
+
+    @Override
+    public String toString()
+    {
+        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " reaches:"
+            + reachesDestination;
     }
 }

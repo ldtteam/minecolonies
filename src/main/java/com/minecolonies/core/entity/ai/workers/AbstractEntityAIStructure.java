@@ -227,8 +227,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
-            building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
-            building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData(), false);
+            building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData());
+            building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData());
             pickUpCount = 0;
             return START_WORKING;
         }
@@ -448,7 +448,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL, () -> placer.getIterator().decrement(this::skipClearing), false);
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
+                    building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData());
                 }
                 break;
         }

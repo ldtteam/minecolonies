@@ -1,10 +1,10 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Walks to a random edge block nearby, a block next to air. Does not use ladders
  */
-public class PathJobWalkRandomEdge extends AbstractPathJob
+public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPathJob
 {
     /**
      * The chance to check if the node is an edge, determines the random edge behaviour

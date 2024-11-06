@@ -25,7 +25,7 @@ public class PathingOptions
     /**
      * Cost improvement of paths - base 1.
      */
-    public double onPathCost = 1 / 4d;
+    public double onPathCost = 1 / 6d;
 
     /**
      * Cost improvement of paths - base 1.
@@ -55,7 +55,7 @@ public class PathingOptions
     /**
      * Cost to traverse trap doors
      */
-    public double traverseToggleAbleCost = 5D;
+    public double traverseToggleAbleCost = 3D;
 
     /**
      * Cost to climb a non ladder.
