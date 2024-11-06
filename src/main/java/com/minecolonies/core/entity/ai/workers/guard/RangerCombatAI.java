@@ -71,7 +71,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * How many ticks we activate the bow before shooting
      */
-    private static final int BOW_HOLDING_DELAY = 10;
+    private static final int BOW_HOLDING_DELAY = 40;
 
     /**
      * Bonus range for shooting while guarding
@@ -111,7 +111,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (weaponSlot != -1)
         {
             user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
-            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime())
+            if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime() && !user.isUsingItem())
             {
                 user.startUsingItem(InteractionHand.MAIN_HAND);
             }
@@ -119,6 +119,19 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return false;
+    }
+
+    @Override
+    protected boolean checkForTarget()
+    {
+        final boolean validTarget = super.checkForTarget();
+
+        if (!validTarget && user.isUsingItem())
+        {
+            user.stopUsingItem();
+        }
+
+        return validTarget;
     }
 
     @Override
@@ -139,6 +152,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         user.getCitizenData().setVisibleStatus(ARCHER_COMBAT);
         user.swing(InteractionHand.MAIN_HAND);
+        user.stopUsingItem();
 
         int amountOfArrows = 1;
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS) > 0)
@@ -220,6 +234,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected int getAttackDelay()
     {
+        // TODO: Maybe better for balancing to not increase damage and speed, looks odd and drains arrows/bow durability
         final int attackDelay = RANGED_ATTACK_DELAY_BASE - (user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability));
         return Math.max(attackDelay, PHYSICAL_ATTACK_DELAY_MIN * 2);
     }

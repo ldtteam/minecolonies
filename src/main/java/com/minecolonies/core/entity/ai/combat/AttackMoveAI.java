@@ -14,7 +14,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
 import static com.minecolonies.api.util.constant.Constants.HALF_ROTATION;
-import static com.minecolonies.api.util.constant.GuardConstants.TURN_AROUND;
 
 /**
  * Moves the entity and triggers the attack
@@ -144,7 +143,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
         if (user.getSensing().hasLineOfSight(target))
         {
             pathAttempts = 0;
-            user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            user.getLookControl().setLookAt(target);
             doAttack(target);
             nextAttackTime = user.level.getGameTime() + getAttackDelay();
         }
