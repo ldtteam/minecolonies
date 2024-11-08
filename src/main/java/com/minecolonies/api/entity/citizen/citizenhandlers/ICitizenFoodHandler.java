@@ -43,12 +43,6 @@ public interface ICitizenFoodHandler
     CitizenFoodStats getFoodHappinessStats();
 
     /**
-     * Get current food queue size.
-     * @return the current food queue size.
-     */
-    int getLastEatenQueueSize();
-
-    /**
      * Read from nbt.
      * @param compound to read it from.
      */
@@ -66,4 +60,10 @@ public interface ICitizenFoodHandler
      * @return the modifier.
      */
     double getDiseaseModifier(double baseModifier);
+
+    /**
+     * If the citizen has a full food history to allow a good analysis.
+     * @return true if so.
+     */
+    boolean hasFullFoodHistory();
 }

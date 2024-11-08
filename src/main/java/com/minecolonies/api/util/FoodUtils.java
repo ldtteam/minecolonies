@@ -168,7 +168,7 @@ public class FoodUtils
         final boolean criticalQuality = foodStats.quality() <= qualityRequirement;
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
 
-        containerLoop: for (final BlockPos pos : building.getContainers())
+        for (final BlockPos pos : building.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -185,8 +185,7 @@ public class FoodUtils
                             // If this is great food and we're at critical levels, go with it!
                             if ((localScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
                             {
-                                bestStorage = storage;
-                                break containerLoop;
+                                return new ItemStorage(storage.getItemStack().copy());
                             }
 
                             if (localScore > bestScore)
@@ -209,7 +208,7 @@ public class FoodUtils
                                   || (localScore < 0 && foodStats.quality() > qualityRequirement * 2)
                                   || (isMinecolfood && foodStats.diversity() > diversityRequirement * 2))
                             {
-                                break containerLoop;
+                                return new ItemStorage(storage.getItemStack().copy());
                             }
                         }
                     }

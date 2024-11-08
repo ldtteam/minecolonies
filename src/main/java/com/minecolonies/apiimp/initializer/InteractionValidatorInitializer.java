@@ -264,7 +264,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY + URGENT),
           citizen -> {
-            if (citizen.getHomeBuilding() == null || citizen.getCitizenFoodHandler().getLastEatenQueueSize() < 10)
+            if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
             {
                 return false;
             }
@@ -278,7 +278,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY + URGENT),
           citizen -> {
-              if (citizen.getHomeBuilding() == null || citizen.getCitizenFoodHandler().getLastEatenQueueSize() < 10)
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
               {
                   return false;
               }
@@ -292,7 +292,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY),
           citizen -> {
-              if (citizen.getHomeBuilding() == null || citizen.getCitizenFoodHandler().getLastEatenQueueSize() < 10)
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
               {
                   return false;
               }
@@ -307,7 +307,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY),
           citizen -> {
-              if (citizen.getHomeBuilding() == null || citizen.getCitizenFoodHandler().getLastEatenQueueSize() < 10)
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
               {
                   return false;
               }

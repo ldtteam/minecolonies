@@ -31,6 +31,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class CitizenFoodHandler implements ICitizenFoodHandler
 {
     /**
+     * Food queue size.
+     */
+    private static final int FOOD_QUEUE_SIZE = 10;
+
+    /**
      * Assigned citizen data.
      */
     private final ICitizenData  citizenData;
@@ -38,7 +43,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     /**
      * Collection of last food items a citizen has eaten.
      */
-    private final EvictingQueue<Item> lastEatenFoods = EvictingQueue.create(10);
+    private final EvictingQueue<Item> lastEatenFoods = EvictingQueue.create(FOOD_QUEUE_SIZE);
 
     /**
      * Create the food handler.
@@ -102,9 +107,9 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
-    public int getLastEatenQueueSize()
+    public boolean hasFullFoodHistory()
     {
-        return lastEatenFoods.size();
+        return lastEatenFoods.size() >= FOOD_QUEUE_SIZE;
     }
 
     @Override
