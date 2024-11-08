@@ -1850,10 +1850,10 @@ public class InventoryUtils
                         {
                             if (storage.equals(new ItemStorage(sourceHandler.getStackInSlot(i))))
                             {
-                                ItemStack sourceStack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+                                ItemStack sourceStack = sourceHandler.extractItem(i, qty, true);
                                 if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
                                 {
-                                    sourceHandler.extractItem(i, Integer.MAX_VALUE, false);
+                                    sourceHandler.extractItem(i, qty, false);
                                     return true;
                                 }
                             }
@@ -3283,28 +3283,6 @@ public class InventoryUtils
                     for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
                     {
                         allInInv.add(storage.getItemStack());
-                    }
-                }
-            }
-        }
-        return allInInv;
-    }
-
-    public static Map<ItemStorage, Integer> getBuildingInventoryStorages(final IBuilding building)
-    {
-        final Level world = building.getColony().getWorld();
-        final Map<ItemStorage, Integer> allInInv = new HashMap<>();
-        for (final BlockPos pos : building.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    for (final Map.Entry<ItemStorage, Integer> storage : ((TileEntityRack) entity).getAllContent().entrySet())
-                    {
-                        int currentStock = allInInv.getOrDefault(storage.getKey(), 0);
-                        allInInv.put(storage.getKey(), currentStock + storage.getValue());
                     }
                 }
             }

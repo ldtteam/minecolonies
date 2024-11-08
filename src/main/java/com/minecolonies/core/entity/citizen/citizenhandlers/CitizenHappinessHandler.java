@@ -284,7 +284,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     {
         final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
-        if (homeBuildingLevel == 0 || foodHandler.getLastEatenQueue().isEmpty())
+        if (homeBuildingLevel == 0 || foodHandler.getLastEatenQueueSize() == 0)
         {
             return 1.0;
         }

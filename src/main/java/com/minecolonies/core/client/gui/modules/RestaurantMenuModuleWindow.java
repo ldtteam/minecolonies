@@ -255,6 +255,10 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
         updateResourceList();
     }
 
+    /**
+     * Apply sorting to display list based on the scores.
+     * @param displayedList list to apply sorting to.
+     */
     protected void applySorting(final List<ItemStorage> displayedList)
     {
         displayedList.sort((o1, o2) -> {
@@ -264,6 +268,9 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
         });
     }
 
+    /**
+     * Updates the resource list in the GUI with the info we need.
+     */
     protected void updateResourceList()
     {
         resourceList.enable();

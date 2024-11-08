@@ -43,10 +43,10 @@ public interface ICitizenFoodHandler
     CitizenFoodStats getFoodHappinessStats();
 
     /**
-     * Get access to the full queue.
-     * @return the full last eaten queue.
+     * Get current food queue size.
+     * @return the current food queue size.
      */
-    Queue<Item> getLastEatenQueue();
+    int getLastEatenQueueSize();
 
     /**
      * Read from nbt.

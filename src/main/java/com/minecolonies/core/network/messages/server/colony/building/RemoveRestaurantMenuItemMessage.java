@@ -21,6 +21,11 @@ public class RemoveRestaurantMenuItemMessage extends AbstractBuildingServerMessa
     private ItemStack itemStack;
 
     /**
+     * Type of the owning module.
+     */
+    private int id;
+
+    /**
      * Empty constructor used when registering the
      */
     public RemoveRestaurantMenuItemMessage()
@@ -34,30 +39,33 @@ public class RemoveRestaurantMenuItemMessage extends AbstractBuildingServerMessa
      * @param building  the building we're executing on.
      * @param itemStack to be take from the player for the building
      */
-    public RemoveRestaurantMenuItemMessage(final IBuildingView building, final ItemStack itemStack)
+    public RemoveRestaurantMenuItemMessage(final IBuildingView building, final ItemStack itemStack, final int runtimeID)
     {
         super(building);
         this.itemStack = itemStack;
+        this.id = runtimeID;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         itemStack = buf.readItem();
+        id = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(itemStack);
+        buf.writeInt(id);
     }
 
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.hasModule(RestaurantMenuModule.class))
+        if (building.getModule(id) instanceof RestaurantMenuModule restaurantMenuModule)
         {
-            building.getFirstModuleOccurance(RestaurantMenuModule.class).removeMenuItem(itemStack);
+            restaurantMenuModule.removeMenuItem(itemStack);
         }
     }
 }

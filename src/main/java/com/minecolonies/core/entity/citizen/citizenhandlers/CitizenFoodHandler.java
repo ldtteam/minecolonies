@@ -102,9 +102,9 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
-    public Queue<Item> getLastEatenQueue()
+    public int getLastEatenQueueSize()
     {
-        return lastEatenFoods;
+        return lastEatenFoods.size();
     }
 
     @Override
