@@ -17,7 +17,6 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
@@ -46,6 +45,16 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     private final EvictingQueue<Item> lastEatenFoods = EvictingQueue.create(FOOD_QUEUE_SIZE);
 
     /**
+     * Food stat cache to avoid recalculating constantly.
+     */
+    private CitizenFoodStats foodStatCache = null;
+
+    /**
+     * Dirty tracking if food stat cache has to be recalculated.
+     */
+    private boolean dirty = false;
+
+    /**
      * Create the food handler.
      * @param citizenData of it.
      */
@@ -60,6 +69,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     {
         lastEatenFoods.add(item);
         citizenData.markDirty(TICKS_SECOND);
+        dirty = true;
         if (lastEatenFoods.size() >= 10)
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
@@ -93,17 +103,21 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public CitizenFoodStats getFoodHappinessStats()
     {
-        int qualityFoodCounter = 0;
-        Set<Item> uniqueFoods = new HashSet<>();
-        for (final Item foodItem : lastEatenFoods)
+        if (foodStatCache == null || dirty)
         {
-            if (foodItem instanceof IMinecoloniesFoodItem)
+            int qualityFoodCounter = 0;
+            Set<Item> uniqueFoods = new HashSet<>();
+            for (final Item foodItem : lastEatenFoods)
             {
-                qualityFoodCounter++;
+                if (foodItem instanceof IMinecoloniesFoodItem)
+                {
+                    qualityFoodCounter++;
+                }
+                uniqueFoods.add(foodItem);
             }
-            uniqueFoods.add(foodItem);
+            foodStatCache = new CitizenFoodStats(qualityFoodCounter, Math.max(1, uniqueFoods.size()));
         }
-        return new CitizenFoodStats(qualityFoodCounter, Math.max(1, uniqueFoods.size()));
+        return foodStatCache;
     }
 
     @Override

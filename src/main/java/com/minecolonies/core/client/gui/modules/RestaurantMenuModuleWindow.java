@@ -13,8 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RestaurantMenuModuleView;
-import com.minecolonies.core.network.messages.server.colony.building.AddRestaurantMenuItemMessage;
-import com.minecolonies.core.network.messages.server.colony.building.RemoveRestaurantMenuItemMessage;
+import com.minecolonies.core.network.messages.server.colony.building.AlterRestaurantMenuItemMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +118,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
         final int row = menuList.getListElementIndexByPane(button);
         final ItemStorage item = moduleView.getMenu().get(row);
         moduleView.getMenu().remove(row);
-        Network.getNetwork().sendToServer(new RemoveRestaurantMenuItemMessage(buildingView, item.getItemStack()));
+        Network.getNetwork().sendToServer(AlterRestaurantMenuItemMessage.removeMenuItem(buildingView, item.getItemStack(), moduleView.getProducer().getRuntimeID()));
         updateStockList();
     }
 
@@ -153,7 +152,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
             final int row = resourceList.getListElementIndexByPane(button);
             final ItemStorage storage = currentDisplayedList.get(row);
 
-            Network.getNetwork().sendToServer(new AddRestaurantMenuItemMessage(buildingView, storage.getItemStack()));
+            Network.getNetwork().sendToServer(AlterRestaurantMenuItemMessage.addMenuItem(buildingView, storage.getItemStack(), moduleView.getProducer().getRuntimeID()));
             moduleView.getMenu().add(storage);
             updateStockList();
 
