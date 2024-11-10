@@ -74,6 +74,7 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
         super(building);
         this.itemStack = itemStack;
         this.id = runtimeID;
+        this.add = add;
     }
 
     @Override
@@ -100,7 +101,6 @@ public class AlterRestaurantMenuItemMessage extends AbstractBuildingServerMessag
             if (add)
             {
                 restaurantMenuModule.addMenuItem(itemStack);
-
             }
             else
             {

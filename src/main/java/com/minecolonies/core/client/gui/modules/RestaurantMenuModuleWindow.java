@@ -76,7 +76,12 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
     /**
      * Update delay.
      */
-    private int tick;
+    private int                    tick;
+
+    /**
+     * The currently selected menu.
+     */
+    private List<ItemStorage> menu;
 
     /**
      * Constructor for the minimum stock window view.
@@ -116,9 +121,9 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
     private void removeStock(final Button button)
     {
         final int row = menuList.getListElementIndexByPane(button);
-        final ItemStorage item = moduleView.getMenu().get(row);
-        moduleView.getMenu().remove(row);
-        Network.getNetwork().sendToServer(AlterRestaurantMenuItemMessage.removeMenuItem(buildingView, item.getItemStack(), moduleView.getProducer().getRuntimeID()));
+        final ItemStorage storage = menu.get(row);
+        moduleView.getMenu().remove(storage);
+        Network.getNetwork().sendToServer(AlterRestaurantMenuItemMessage.removeMenuItem(buildingView, storage.getItemStack(), moduleView.getProducer().getRuntimeID()));
         updateStockList();
     }
 
@@ -166,7 +171,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
      */
     private void updateStockList()
     {
-        final List<ItemStorage> menu = new ArrayList<>(moduleView.getMenu());
+        menu = new ArrayList<>(moduleView.getMenu());
         applySorting(menu);
 
         menuList.enable();

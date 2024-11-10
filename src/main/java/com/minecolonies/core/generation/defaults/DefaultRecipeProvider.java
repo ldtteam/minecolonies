@@ -914,6 +914,12 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+          .requires(ModItems.large_water_bottle)
+          .requires(ModBlocks.blockSoyBean)
+          .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
+          .save(consumer, new ResourceLocation(MOD_ID, "soy_milk"));
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.yogurt, 1)
           .requires(ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))

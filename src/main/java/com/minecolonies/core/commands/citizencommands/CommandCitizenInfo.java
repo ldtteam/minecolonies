@@ -64,12 +64,19 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
             final BlockPos citizenPosition = entityCitizen.blockPosition();
             context.getSource()
-              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION,
+                citizenPosition.getX(),
+                citizenPosition.getY(),
+                citizenPosition.getZ()), true);
             final BlockPos homePosition = citizenData.getHomePosition();
             context.getSource()
-              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION,
+                homePosition.getX(),
+                homePosition.getY(),
+                homePosition.getZ()), true);
 
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HEALTH, entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
+            context.getSource()
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HEALTH, entityCitizen.getHealth(), entityCitizen.getMaxHealth()), true);
         }
         else
         {
@@ -77,7 +84,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
               citizenData.getLastPosition().getX(),
               citizenData.getLastPosition().getY(),
               citizenData.getLastPosition().getZ()), true);
-            
+
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_NOT_LOADED), true);
         }
 
@@ -87,10 +94,14 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
         final BlockPos citizenPosition = entityCitizen.blockPosition();
         context.getSource()
-          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION,
+            citizenPosition.getX(),
+            citizenPosition.getY(),
+            citizenPosition.getZ()), true);
         final BlockPos homePosition = citizenData.getHomePosition();
         context.getSource()
-          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()),
+            true);
 
         if (citizenData.getWorkBuilding() == null)
         {
@@ -100,7 +111,10 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
         {
             final BlockPos workingPosition = citizenData.getWorkBuilding().getPosition();
             context.getSource()
-              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_WORKING_POSITION, workingPosition.getX(), workingPosition.getY(), workingPosition.getZ()), true);
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_WORKING_POSITION,
+                workingPosition.getX(),
+                workingPosition.getY(),
+                workingPosition.getZ()), true);
         }
 
 
@@ -129,16 +143,11 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
               .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_JOB,
                 citizenData.getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getJobEntry().getTranslationKey()), true);
 
-            if (optionalEntityCitizen.isPresent())
-            {
-                final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
-
-                context.getSource()
-                  .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
-                    ((EntityCitizen) entityCitizen).getCitizenAI().getState(),
-                    entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
-                    entityCitizen.getCitizenJobHandler().getWorkAI().getState()), true);
-            }
+            context.getSource()
+              .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
+                ((EntityCitizen) entityCitizen).getCitizenAI().getState(),
+                entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
+                entityCitizen.getCitizenJobHandler().getWorkAI().getState()), true);
         }
 
         return 1;

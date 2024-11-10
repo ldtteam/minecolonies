@@ -164,7 +164,6 @@ public class EntityAISleep implements IStateAI
                 this.usedBed = null;
             }
         }
-        final BlockPos homePos = citizen.getCitizenData().getHomePosition();
 
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
         if (colony != null && citizen.getCitizenData().getHomeBuilding() instanceof AbstractBuilding hut)
