@@ -23,19 +23,28 @@ public class PathfindingAIHelper
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
 
-        if (nav.isDone() || (nav.getPathResult() != null
-                               && !(nav.getPathResult().getJob() instanceof PathJobMoveCloseToXNearY job
-                                      && job.nearbyPosition.equals(nearbyPosition)
-                                      && job.desiredPosition.equals(desiredPosition)
-                                      && job.distToDesired == distToDesired)))
+        // Three cases
+        // 1. Navigation Finished
+        // 2. Navigation is progressing towards a previous task
+        // 3. Navigation did not try once
+        boolean isOnRightTask = (nav.getPathResult() != null
+            && nav.getPathResult().getJob() instanceof PathJobMoveCloseToXNearY job
+            && job.nearbyPosition.equals(nearbyPosition)
+            && job.desiredPosition.equals(desiredPosition));
+
+        if (nav.isDone() || !isOnRightTask)
         {
-            // Check distance once navigation is done, to let the entity walk
-            if (BlockPosUtil.dist(entity.blockPosition(), desiredPosition) < distToDesired)
+            if (isOnRightTask)
             {
-                return false;
+                // Check distance once navigation is done, to let the entity walk
+                if (BlockPosUtil.dist(entity.blockPosition(), desiredPosition) < distToDesired)
+                {
+                    nav.stop();
+                    return false;
+                }
             }
 
-            PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(entity.level, desiredPosition, nearbyPosition, distToDesired, entity);
+            PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(entity.level, desiredPosition, nearbyPosition, 1, entity);
             nav.setPathJob(pathJob, desiredPosition, 1.0, false);
         }
 

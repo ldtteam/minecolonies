@@ -1,13 +1,12 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.api.util.Log;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles random pathing.
  */
-public class PathJobRandomPos extends AbstractPathJob
+public class PathJobRandomPos extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Direction to walk to.
@@ -174,5 +173,11 @@ public class PathJobRandomPos extends AbstractPathJob
     public boolean posAndRangeMatch(final int range, final BlockPos pos)
     {
         return destination != null && pos != null && range == maxDistToDest && destination.equals(pos);
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return destination;
     }
 }

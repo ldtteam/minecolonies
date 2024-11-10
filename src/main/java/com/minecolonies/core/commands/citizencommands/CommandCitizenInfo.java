@@ -83,6 +83,15 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
 
         context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO, citizenData.getId(), citizenData.getName()), true);
 
+        final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
+
+        final BlockPos citizenPosition = entityCitizen.blockPosition();
+        context.getSource()
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_POSITION, citizenPosition.getX(), citizenPosition.getY(), citizenPosition.getZ()), true);
+        final BlockPos homePosition = citizenData.getHomePosition();
+        context.getSource()
+          .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_HOME_POSITION, homePosition.getX(), homePosition.getY(), homePosition.getZ()), true);
+
         if (citizenData.getWorkBuilding() == null)
         {
             context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_NO_WORKING_POSITION), true);

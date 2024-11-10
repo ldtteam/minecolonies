@@ -24,7 +24,7 @@ import static com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWit
 /**
  * Find and return a path to the nearest tree. Created: May 21, 2015
  */
-public class PathJobFindTree extends AbstractPathJob
+public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
 {
     /**
      * The list of trees the Lumberjack is not supposed to cut.

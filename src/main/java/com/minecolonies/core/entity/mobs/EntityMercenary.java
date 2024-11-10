@@ -568,6 +568,6 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     @Nullable
     protected PlayerTeam getAssignedTeam()
     {
-        return colony.getTeam();
+        return colony == null ? null : colony.getTeam();
     }
 }

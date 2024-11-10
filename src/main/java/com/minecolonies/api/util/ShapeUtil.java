@@ -1,6 +1,9 @@
 package com.minecolonies.api.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -98,5 +101,40 @@ public class ShapeUtil
     public static double getEndY(final VoxelShape bb, final double def)
     {
         return isEmpty(bb) ? def : max(bb, Direction.Axis.Y);
+    }
+
+    /**
+     * Check if the given block has a collision shape
+     *
+     * @param world
+     * @param pos
+     * @param state
+     * @return
+     */
+    public static boolean hasCollision(final BlockGetter world, final BlockPos pos, final BlockState state)
+    {
+        if (!state.getBlock().hasCollision)
+        {
+            return false;
+        }
+
+        return hasCollision(state, state.getCollisionShape(world, pos));
+    }
+
+    /**
+     * Check if the given block has a collision shape
+     *
+     * @param state
+     * @param collisionShape
+     * @return
+     */
+    public static boolean hasCollision(final BlockState state, final VoxelShape collisionShape)
+    {
+        if (!state.getBlock().hasCollision)
+        {
+            return false;
+        }
+
+        return !ShapeUtil.isEmpty(collisionShape);
     }
 }

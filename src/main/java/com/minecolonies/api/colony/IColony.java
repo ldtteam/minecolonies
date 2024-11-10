@@ -124,10 +124,10 @@ public interface IColony
      *
      * @return The team name
      */
-    default String getTeamName()
+    static String getTeamName(final Level level, final int id)
     {
-        final String dim = getDimension().location().getPath();
-        return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + getID();
+        final String dim = level.dimension().location().getPath();
+        return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + id;
     }
 
     /**

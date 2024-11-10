@@ -256,11 +256,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
-        if (PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID()))
-        {
-            Log.getLogger().info(ourEntity + " started pathjob to:" + dest + " job type:" + job.getClass().getSimpleName());
-        }
-
         stop();
 
         this.destination = dest;
@@ -319,6 +314,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             else if (pathResult.getStatus() == PathFindingStatus.CALCULATION_COMPLETE)
             {
                 processCompletedCalculationResult();
+                wantedPosition = null;
             }
         }
 
@@ -675,10 +671,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         // Calculate an overtime-heuristic adjustment for pathfinding to use which fits the terrain
-        if (pathResult.costPerDist != 1)
+        if (pathResult.getPathLength() > 2 && pathResult.costPerDist != 1)
         {
-            heuristicAvg -= heuristicAvg / 20;
-            heuristicAvg += pathResult.costPerDist / 20;
+            final double factor = 1 + pathResult.getPathLength() / 30.0;
+            heuristicAvg -= heuristicAvg / (50 / factor);
+            heuristicAvg += pathResult.costPerDist / (50 / factor);
         }
 
         if (pathResult.failedToReachDestination())

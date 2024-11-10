@@ -269,6 +269,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         addDmg += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
 
+        // TODO: Recheck balancing, do we need this
         if (user.getHealth() <= user.getMaxHealth() * 0.2D)
         {
             addDmg *= 2;
@@ -292,6 +293,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected int getAttackDelay()
     {
+        // TODO: Not sure if we should make knights attack faster, they are intended to not scale in dmg, but health
         final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
         return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
