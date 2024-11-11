@@ -694,7 +694,7 @@ public class RaidManager implements IRaiderManager
           (int) ((raidLevel / SPAWN_MODIFIER)
                    * getRaidDifficultyModifier()
                    * (1.0 + nearbyColonyPlayers * INCREASE_PER_PLAYER)
-                   * ((ColonyConstants.rand.nextDouble() * 0.5d) + 0.75)));
+              * ((ColonyConstants.rand.nextDouble() * 0.3) + 0.85)));
     }
 
     @Override

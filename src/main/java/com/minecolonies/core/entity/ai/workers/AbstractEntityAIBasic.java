@@ -3,7 +3,6 @@ package com.minecolonies.core.entity.ai.workers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -48,7 +47,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -216,7 +214,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             to resolve state.
            */
           new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL, 100),
-          new AITarget(INVENTORY_FULL, this::dumpInventory, 10),
+            new AITarget(INVENTORY_FULL, this::dumpInventory, 20),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.

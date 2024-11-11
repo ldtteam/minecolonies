@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -52,7 +53,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     /**
      * Entity push cache.
      */
-    private List<Entity> entityPushCache = new ArrayList<>();
+    private List<LivingEntity> entityPushCache = new ArrayList<>();
 
     /**
      * The timepoint at which the entity last collided
@@ -171,7 +172,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
         {
             if (this.tickCount % 10 == randomVariance % 10)
             {
-                entityPushCache = this.level.getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
+                entityPushCache = level.getEntitiesOfClass(LivingEntity.class, getBoundingBox());
             }
 
             if (!entityPushCache.isEmpty())

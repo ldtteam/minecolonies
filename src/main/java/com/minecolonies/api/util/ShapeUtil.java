@@ -124,6 +124,24 @@ public class ShapeUtil
     /**
      * Check if the given block has a collision shape
      *
+     * @param world
+     * @param pos
+     * @param state
+     * @return
+     */
+    public static boolean hasCollision(final BlockGetter world, final int x, final int y, final int z, final BlockState state)
+    {
+        if (!state.getBlock().hasCollision)
+        {
+            return false;
+        }
+
+        return hasCollision(state, state.getCollisionShape(world, new BlockPos(x, y, z)));
+    }
+
+    /**
+     * Check if the given block has a collision shape
+     *
      * @param state
      * @param collisionShape
      * @return

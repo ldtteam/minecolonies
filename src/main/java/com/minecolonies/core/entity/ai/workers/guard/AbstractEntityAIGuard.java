@@ -830,7 +830,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
+        if (entity instanceof EntityCitizen otherCitizen && otherCitizen.getCitizenColonyHandler().getColonyId() != colony.getID()
+            && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
         {
             return true;
         }
