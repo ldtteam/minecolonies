@@ -12,6 +12,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.containers.WindowCrafting;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.core.compatibility.jei.transfer.*;
@@ -21,8 +22,11 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -31,6 +35,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -38,6 +43,11 @@ import java.util.function.BiConsumer;
 @mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
+    public JEIPlugin()
+    {
+        WindowCrafting.JEI_REQUEST_HOOK = this::showOutputStack;
+    }
+
     @NotNull
     @Override
     public ResourceLocation getPluginUid()
@@ -46,6 +56,8 @@ public class JEIPlugin implements IModPlugin
     }
 
     private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
+    @Nullable
+    private IJeiRuntime jei;
 
     @Override
     public void registerCategories(@NotNull final IRecipeCategoryRegistration registration)
@@ -186,5 +198,26 @@ public class JEIPlugin implements IModPlugin
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);
+    }
+
+    @Override
+    public void onRuntimeAvailable(@NotNull final IJeiRuntime jeiRuntime)
+    {
+        this.jei = jeiRuntime;
+    }
+
+    @Override
+    public void onRuntimeUnavailable()
+    {
+        this.jei = null;
+    }
+
+    private void showOutputStack(@NotNull final ItemStack stack)
+    {
+        if (this.jei != null)
+        {
+            final IFocus<?> focus = this.jei.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack);
+            this.jei.getRecipesGui().show(focus);
+        }
     }
 }
