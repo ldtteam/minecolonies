@@ -13,15 +13,19 @@ import com.minecolonies.api.eventbus.events.CustomRecipesReloadedEvent;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.containers.WindowCrafting;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.core.compatibility.jei.transfer.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IRecipeManager;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -30,6 +34,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +47,11 @@ public class JEIPlugin implements IModPlugin
 {
     @Nullable IJeiRuntime jei;
     boolean recipesLoaded;
+
+    public JEIPlugin()
+    {
+        WindowCrafting.JEI_REQUEST_HOOK = this::showOutputStack;
+    }
 
     @NotNull
     @Override
@@ -225,5 +235,14 @@ public class JEIPlugin implements IModPlugin
     public void onRuntimeUnavailable()
     {
         this.jei = null;
+    }
+
+    private void showOutputStack(@NotNull final ItemStack stack)
+    {
+        if (this.jei != null)
+        {
+            final IFocus<?> focus = this.jei.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack);
+            this.jei.getRecipesGui().show(focus);
+        }
     }
 }

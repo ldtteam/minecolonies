@@ -1,5 +1,10 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.util.Size2i;
+
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -1139,6 +1144,25 @@ public final class WindowConstants
      * Title label.
      */
     public static final String TITLE_LABEL = "title";
+
+    /**
+     * Crafting switch-output button.
+     */
+    public static final WidgetSprites CRAFTING_SWITCH = new WidgetSprites(
+        new ResourceLocation(MOD_ID, "craftingswitch"),
+        new ResourceLocation(MOD_ID, "craftingswitch_hover"));
+
+    /**
+     * Crafting request-list button.
+     */
+    public static final WidgetSprites CRAFTING_LIST = new WidgetSprites(
+        new ResourceLocation(MOD_ID, "craftinglist"),
+        new ResourceLocation(MOD_ID, "craftinglist_hover"));
+
+    /**
+     * Switch button size.
+     */
+    public static final Size2i CRAFTING_SWITCH_SIZE = new Size2i(20, 18);
 
     /**
      * Private constructor to hide implicit public one.
