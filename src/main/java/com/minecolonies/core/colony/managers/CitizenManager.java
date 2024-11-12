@@ -142,7 +142,6 @@ public class CitizenManager implements ICitizenManager
         if (existingCitizen.isEmpty())
         {
             data.setEntity(entity);
-            entity.registerToTeam();
             return;
         }
 
@@ -159,7 +158,6 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            entity.removeFromTeam();
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }

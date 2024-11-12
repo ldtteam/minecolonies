@@ -54,7 +54,7 @@ public class AttackingPlayer
      */
     public static boolean isValidAttack(final AbstractEntityCitizen citizen, final Colony colony)
     {
-        final IColony guardColony = citizen.getCitizenColonyHandler().getColony();
+        final IColony guardColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (guardColony == null)
         {
             return false;

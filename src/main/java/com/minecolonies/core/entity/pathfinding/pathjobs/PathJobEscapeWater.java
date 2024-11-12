@@ -54,7 +54,7 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
         if (entity instanceof AbstractEntityCitizen)
         {
-            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColony();
+            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColonyOrRegister();
             if (colony != null)
             {
                 preferredDirection = colony.getCenter();

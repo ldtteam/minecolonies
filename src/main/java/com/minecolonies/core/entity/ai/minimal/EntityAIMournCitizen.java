@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
@@ -158,7 +157,7 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
-        final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(graveyard);
+        final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(graveyard);
         if (!(graveyardBuilding instanceof BuildingGraveyard))
         {
             graveyard = null;
@@ -297,7 +296,7 @@ public class EntityAIMournCitizen implements IStateAI
         if (this.graveyard == null)
         {
             final IBuilding graveyardBuilding =
-              citizen.getCitizenColonyHandler().getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
+              citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
                 GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
             if (graveyardBuilding != null)
             {
@@ -335,7 +334,7 @@ public class EntityAIMournCitizen implements IStateAI
      */
     protected BlockPos getMournLocation()
     {
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (colony != null && colony.getBuildingManager().hasTownHall())
         {
             return colony.getBuildingManager().getTownHall().getStandingPosition();

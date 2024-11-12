@@ -397,7 +397,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                                  building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
-                                 worker.getCitizenColonyHandler().getColony());
+                                 worker.getCitizenColonyHandler().getColonyOrRegister());
             }
             else
             {
@@ -406,7 +406,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                                  building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
-                                 worker.getCitizenColonyHandler().getColony());
+                                 worker.getCitizenColonyHandler().getColonyOrRegister());
             }
             return getState();
         }

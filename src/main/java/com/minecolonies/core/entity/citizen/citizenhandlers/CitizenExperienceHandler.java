@@ -93,7 +93,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        localXp *= (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
+        localXp *= (1 + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
 
         final WorkerBuildingModule module = workBuilding.getModuleMatching(WorkerBuildingModule.class, m -> m.getAssignedCitizen().contains(data));
         final Skill primary = module.getPrimarySkill();

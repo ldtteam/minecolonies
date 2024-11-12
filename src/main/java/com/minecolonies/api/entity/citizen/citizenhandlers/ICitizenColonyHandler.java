@@ -3,8 +3,6 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICitizenColonyHandler
@@ -46,7 +44,7 @@ public interface ICitizenColonyHandler
      * @return the colony of the citizen or null.
      */
     @Nullable
-    IColony getColony();
+    IColony getColonyOrRegister();
 
     /**
      * Getter for the colony id.
@@ -77,8 +75,8 @@ public interface ICitizenColonyHandler
     boolean registered();
 
     /**
-     * Get the citizen team.
-     * @return the team.
+     * Unsafe colony getter, doesn't run registration.
+     * @return the colony.
      */
-    PlayerTeam getTeam(final Level level);
+    IColony getColony();
 }

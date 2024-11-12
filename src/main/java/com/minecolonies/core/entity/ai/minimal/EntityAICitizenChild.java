@@ -213,7 +213,7 @@ public class EntityAICitizenChild implements IStateAI
     private IState visitHuts()
     {
         // Find a hut to visit
-        if (visitingPath == null && child.getCitizenColonyHandler().getColony() != null)
+        if (visitingPath == null && child.getCitizenColonyHandler().getColonyOrRegister() != null)
         {
             // Visiting huts for 3min.
             if (actionTimer <= 0 && visitHutPos == null)
@@ -221,11 +221,11 @@ public class EntityAICitizenChild implements IStateAI
                 actionTimer = 3 * 60 * 20;
             }
 
-            int index = child.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().size();
+            int index = child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().size();
 
             index = rand.nextInt(index);
 
-            final List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().keySet());
+            final List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().keySet());
             visitHutPos = buildings.get(index);
 
             visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
@@ -264,9 +264,9 @@ public class EntityAICitizenChild implements IStateAI
             return false;
         }
 
-        if (child.getCitizenColonyHandler().getColony() != null)
+        if (child.getCitizenColonyHandler().getColonyOrRegister() != null)
         {
-            if (child.getCitizenColonyHandler().getColony().useAdditionalChildTime(BONUS_TIME_COLONY))
+            if (child.getCitizenColonyHandler().getColonyOrRegister().useAdditionalChildTime(BONUS_TIME_COLONY))
             {
                 aiActiveTime += BONUS_TIME_COLONY;
             }
@@ -274,18 +274,18 @@ public class EntityAICitizenChild implements IStateAI
 
         if (aiActiveTime >= MIN_ACTIVE_TIME)
         {
-            final double growthModifier = (1 + child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
+            final double growthModifier = (1 + child.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
             {
                 child.getCitizenColonyHandler()
-                  .getColony()
+                  .getColonyOrRegister()
                   .getEventDescriptionManager()
                   .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
-                if (child.getCitizenColonyHandler().getColony().getCitizenManager().getCitizens().size() <= GROW_UP_NOTIFY_LIMIT)
+                if (child.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCitizens().size() <= GROW_UP_NOTIFY_LIMIT)
                 {
-                    MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColony()).forAllPlayers();
+                    MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColonyOrRegister()).forAllPlayers();
                 }
                 // Grow up
                 child.setIsChild(false);
