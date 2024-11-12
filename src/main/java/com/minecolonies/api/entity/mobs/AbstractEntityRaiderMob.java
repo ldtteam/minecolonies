@@ -767,9 +767,9 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     }
 
     @Override
-    public String getTeamName()
+    public int getTeamId()
     {
         // All raiders are in the same team. You're doomed!
-        return "raider";
+        return -1;
     }
 }

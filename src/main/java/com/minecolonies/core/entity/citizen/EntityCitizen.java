@@ -1984,8 +1984,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public String getTeamName()
+    public int getTeamId()
     {
-        return level().dimension().hashCode() + "_" + citizenColonyHandler.getColonyId();
+        return citizenColonyHandler.getColonyId();
     }
 }

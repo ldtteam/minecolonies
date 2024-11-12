@@ -569,8 +569,8 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     }
 
     @Override
-    public String getTeamName()
+    public int getTeamId()
     {
-        return level().dimension().hashCode() + "_" + colonyId;
+        return colonyId;
     }
 }

@@ -356,7 +356,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     @Override
     public boolean hurt(final DamageSource dmgSource, final float dmg)
     {
-        if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamName().equals(getTeamName()))
+        if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamId() == getTeamId())
         {
             return false;
         }
@@ -365,7 +365,8 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
 
     /**
      * Get the team name of this entity.
+     * todo sam make colony ids unique across dimensions.
      * @return the team name.
      */
-    public abstract String getTeamName();
+    public abstract int getTeamId();
 }
