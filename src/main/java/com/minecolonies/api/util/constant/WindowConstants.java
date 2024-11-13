@@ -1136,6 +1136,11 @@ public final class WindowConstants
     public static final String BUTTON_PLACE = "place";
 
     /**
+     * Title label.
+     */
+    public static final String TITLE_LABEL = "title";
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private WindowConstants()

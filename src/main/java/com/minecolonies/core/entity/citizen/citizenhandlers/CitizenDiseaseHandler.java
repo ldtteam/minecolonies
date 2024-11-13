@@ -33,7 +33,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Base likelihood of a citizen getting a disease.
      */
-    private static final int DISEASE_FACTOR = 10000;
+    private static final int DISEASE_FACTOR = 100000;
 
     /**
      * Number of seconds after recovering a citizen is immune against any illness.
@@ -90,10 +90,13 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     {
         if (canBecomeSick())
         {
-            final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
+            final double citizenModifier = citizen.getCitizenData().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
+
+            // normally it's one in 5 x 10.000
+
             if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
-                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
+                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }

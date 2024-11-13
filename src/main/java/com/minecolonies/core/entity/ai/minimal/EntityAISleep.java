@@ -171,7 +171,6 @@ public class EntityAISleep implements IStateAI
             if (usedBed == null)
             {
                 List<BlockPos> bedList = new ArrayList<>();
-
                 if (hut.hasModule(BuildingModules.BED))
                 {
                     bedList.addAll(hut.getModule(BuildingModules.BED).getRegisteredBlocks());

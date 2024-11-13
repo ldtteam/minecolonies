@@ -90,9 +90,9 @@ public final class ModBlocks
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyBanner;
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                                   blockColonyWallBanner;
     public static AbstractBlockGate                                                                                 blockIronGate;
-    public static AbstractBlockGate    blockWoodenGate;
-    public static MinecoloniesFarmland farmland;
-    public static MinecoloniesFarmland floodedFarmland;
+    public static AbstractBlockGate                                                                                 blockWoodenGate;
+    public static MinecoloniesFarmland                                                                              farmland;
+    public static MinecoloniesFarmland                                                                              floodedFarmland;
 
     public static MinecoloniesCropBlock blockBellPepper;
     public static MinecoloniesCropBlock blockCabbage;
@@ -104,6 +104,12 @@ public final class ModBlocks
     public static MinecoloniesCropBlock blockSoyBean;
     public static MinecoloniesCropBlock blockTomato;
     public static MinecoloniesCropBlock blockRice;
+
+    public static MinecoloniesCropBlock blockButternutSquash;
+    public static MinecoloniesCropBlock blockCorn;
+    public static MinecoloniesCropBlock blockMint;
+    public static MinecoloniesCropBlock blockNetherPepper;
+    public static MinecoloniesCropBlock blockPeas;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -177,16 +183,21 @@ public final class ModBlocks
     public static MinecoloniesCropBlock[] getCrops()
     {
         return new MinecoloniesCropBlock[] {
-        blockBellPepper,
-        blockCabbage,
-        blockChickpea,
-        blockDurum,
-        blockEggplant,
-        blockGarlic,
-        blockOnion,
-        blockSoyBean,
-        blockTomato,
-        blockRice,
+          blockBellPepper,
+          blockCabbage,
+          blockChickpea,
+          blockDurum,
+          blockEggplant,
+          blockGarlic,
+          blockOnion,
+          blockSoyBean,
+          blockTomato,
+          blockRice,
+          blockCorn,
+          blockNetherPepper,
+          blockPeas,
+          blockMint,
+          blockButternutSquash
         };
     }
 }

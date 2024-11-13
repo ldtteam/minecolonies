@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:durum"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecolonies:raw_noodle"
+  }
+}

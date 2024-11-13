@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobPupil;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.entity.citizen.happiness.HappinessRegistry.*;
@@ -20,7 +21,8 @@ import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappin
  */
 public final class ModHappinessFactorTypeInitializer
 {
-    public final static DeferredRegister<HappinessFactorTypeEntry> DEFERRED_REGISTER_HAPPINESS_FACTOR = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, Constants.MOD_ID);
+    public final static DeferredRegister<HappinessFactorTypeEntry>
+                                                                 DEFERRED_REGISTER_HAPPINESS_FACTOR   = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FACTOR_TYPES, Constants.MOD_ID);
     public final static DeferredRegister<HappinessFunctionEntry> DEFERRED_REGISTER_HAPPINESS_FUNCTION = DeferredRegister.create(CommonMinecoloniesAPIImpl.HAPPINESS_FUNCTION, Constants.MOD_ID);
 
     private ModHappinessFactorTypeInitializer()
@@ -48,6 +50,6 @@ public final class ModHappinessFactorTypeInitializer
         HappinessRegistry.idleatjobFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(IDLEATJOB_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isIdleAtJob() ? 0.5 : 1.0));
 
         HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.5));
-        HappinessRegistry.foodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> (data.getHomeBuilding() == null || data.getHomeBuilding().getBuildingLevel() <= 2) ? 1 : 0.5));
+        HappinessRegistry.foodFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(FOOD_FUNCTION.getPath(), () -> new HappinessFunctionEntry(CitizenHappinessHandler::getFoodFactor));
     }
 }

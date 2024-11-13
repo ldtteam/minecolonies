@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.List;
@@ -137,6 +136,12 @@ public final class ModBlocksInitializer
         ModBlocks.blockTomato = new MinecoloniesCropBlock(TOMATO, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), ModTags.temperateBiomes).registerBlock(registry);
         ModBlocks.blockRice = new MinecoloniesCropBlock(RICE, ModBlocks.floodedFarmland, List.of(Blocks.SEAGRASS, Blocks.SMALL_DRIPLEAF), ModTags.humidBiomes).registerBlock(registry);
 
+        ModBlocks.blockButternutSquash = new MinecoloniesCropBlock(BUTTERNUT_SQUASH, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), ModTags.coldBiomes).registerBlock(registry);
+        ModBlocks.blockCorn = new MinecoloniesCropBlock(CORN, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), ModTags.temperateBiomes).registerBlock(registry);
+        ModBlocks.blockMint = new MinecoloniesCropBlock(MINT, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), null).registerBlock(registry);
+        ModBlocks.blockNetherPepper = new MinecoloniesCropBlock(NETHER_PEPPER, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), ModTags.dryBiomes).registerBlock(registry);
+        ModBlocks.blockPeas = new MinecoloniesCropBlock(PEAS, ModBlocks.farmland, List.of(Blocks.SHORT_GRASS), ModTags.humidBiomes).registerBlock(registry);
+
         ModBlocks.blockSimpleQuarry = new SimpleQuarry().registerBlock(registry);
         ModBlocks.blockMediumQuarry = new MediumQuarry().registerBlock(registry);
         //ModBlocks.blockLargeQuarry = new LargeQuarry().registerBlock(registry);
@@ -232,6 +237,11 @@ public final class ModBlocksInitializer
         ModBlocks.blockSoyBean.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockTomato.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockRice.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockButternutSquash.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockCorn.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockMint.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockNetherPepper.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockPeas.registerBlockItem(registry, new Item.Properties());
 
         ModBlocks.blockSimpleQuarry.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockMediumQuarry.registerBlockItem(registry, new Item.Properties());

@@ -351,6 +351,7 @@ public class MineColonies
         ToggleRecipeMessage.TYPE.register(registry);
         ColonyNameStyleMessage.TYPE.register(registry);
         InteractionClose.TYPE.register(registry);
+        AlterRestaurantMenuItemMessage.TYPE.register(registry);
 
         //Client side only
         BlockParticleEffectMessage.TYPE.register(registry);

@@ -7,8 +7,8 @@
     }
   ],
   "intermediate": "minecraft:furnace",
-  "min-building-level": 1,
   "result": {
     "id": "minecolonies:manchet_bread"
-  }
+  },
+  "show-tooltip": true
 }

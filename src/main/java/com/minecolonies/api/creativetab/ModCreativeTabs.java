@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -99,6 +100,11 @@ public final class ModCreativeTabs
           output.accept(ModItems.sifterMeshFlint);
           output.accept(ModItems.sifterMeshIron);
           output.accept(ModItems.sifterMeshDiamond);
+
+          output.accept(ModItems.milkyBread);
+          output.accept(ModItems.sugaryBread);
+          output.accept(ModItems.goldenBread);
+          output.accept(ModItems.chorusBread);
       }).build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
@@ -112,48 +118,21 @@ public final class ModCreativeTabs
               output.accept(crop);
           }
 
-          output.accept(ModItems.breadDough);
-          output.accept(ModItems.cookieDough);
-          output.accept(ModItems.cakeBatter);
-          output.accept(ModItems.rawPumpkinPie);
-
-          output.accept(ModItems.milkyBread);
-          output.accept(ModItems.sugaryBread);
-          output.accept(ModItems.goldenBread);
-          output.accept(ModItems.chorusBread);
-
-          output.accept(ModItems.butter);
-          output.accept(ModItems.cabochis);
-          output.accept(ModItems.cheddar_cheese);
-          output.accept(ModItems.congee);
-          output.accept(ModItems.cooked_rice);
-          output.accept(ModItems.eggplant_dolma);
-          output.accept(ModItems.feta_cheese);
-          output.accept(ModItems.flatbread);
-          output.accept(ModItems.hand_pie);
-          output.accept(ModItems.lamb_stew);
-          output.accept(ModItems.lembas_scone);
-          output.accept(ModItems.manchet_bread);
-          output.accept(ModItems.pasta_plain);
-          output.accept(ModItems.pasta_tomato);
-          output.accept(ModItems.pita_hummus);
-          output.accept(ModItems.pottage);
-          output.accept(ModItems.rice_ball);
-          output.accept(ModItems.stew_trencher);
-          output.accept(ModItems.stuffed_pepper);
-          output.accept(ModItems.stuffed_pita);
-          output.accept(ModItems.sushi_roll);
-          output.accept(ModItems.tofu);
-
+          // bottles
+          output.accept(ModItems.large_empty_bottle);
           output.accept(ModItems.large_water_bottle);
           output.accept(ModItems.large_milk_bottle);
           output.accept(ModItems.large_soy_milk_bottle);
-          output.accept(ModItems.large_empty_bottle);
 
-          output.accept(ModItems.muffin);
-          output.accept(ModItems.muffin_dough);
-          output.accept(ModItems.manchet_dough);
-          output.accept(ModItems.raw_noodle);
+          for (final Item food : ModItems.getAllIngredients())
+          {
+              output.accept(food);
+          }
+
+          for (final Item food : ModItems.getAllFoods())
+          {
+              output.accept(food);
+          }
       }).build());
 
     /**
