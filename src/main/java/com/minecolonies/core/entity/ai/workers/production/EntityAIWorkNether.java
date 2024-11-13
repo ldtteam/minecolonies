@@ -980,11 +980,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         double healAmount = 0D;
         if (citizen.getHealth() < citizen.getMaxHealth())
         {
-            final double limitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
+            final double limitDecrease = citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
             if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
-                healAmount = 2 * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+                healAmount = 2 * (1.0 + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
             else if (citizenData.getSaturation() < LOW_SATURATION)
             {
@@ -992,7 +992,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
             else
             {
-                healAmount = 1 * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+                healAmount = 1 * (1.0 + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
 
             citizen.heal((float) healAmount);

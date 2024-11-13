@@ -59,7 +59,6 @@ import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -1253,12 +1252,6 @@ public final class ColonyView implements IColonyView
     public boolean isDay()
     {
         return false;
-    }
-
-    @Override
-    public PlayerTeam getTeam()
-    {
-        return getWorld().getScoreboard().getPlayerTeam(IColony.getTeamName(getWorld(), id));
     }
 
     @Override

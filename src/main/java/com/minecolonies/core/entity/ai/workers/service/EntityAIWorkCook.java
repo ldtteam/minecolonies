@@ -144,7 +144,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
         final int buildingLimit = Math.max(1, building.getBuildingLevel() * building.getBuildingLevel()) * SLOT_PER_LINE;
         return InventoryUtils.getCountFromBuildingWithLimit(building,
-          ItemStackUtils.CAN_EAT.and(stack -> FoodUtils.canEat(stack, building.getBuildingLevel() - 1)),
+          CAN_EAT.and(stack -> FoodUtils.canEat(stack, building.getBuildingLevel() - 1)),
           stack -> stack.getMaxStackSize() * 6) > buildingLimit;
     }
 
@@ -199,7 +199,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             if (!citizenToServe.isEmpty())
             {
                 final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(),
-                  stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0)));
+                  stack -> CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0)));
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
@@ -310,7 +310,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 continue;
             }
 
-            final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack, citizen);
+            final Predicate<ItemStack> foodPredicate = stack -> CAN_EAT.test(stack) && canEat(stack, citizen);
             if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
             {
                 citizenToServe.add(citizen);
@@ -327,7 +327,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         if (!playerToServe.isEmpty())
         {
-            final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack);
+            final Predicate<ItemStack> foodPredicate = stack -> CAN_EAT.test(stack);
             if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
             {
                 if (InventoryUtils.hasItemInProvider(building, foodPredicate))
@@ -376,7 +376,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final List<ItemStorage> blockedItems = new ArrayList<>(building.getModule(ITEMLIST_FOODEXCLUSION).getList());
         for (final Map.Entry<ItemStorage, Integer> content : building.getTileEntity().getAllContent().entrySet())
         {
-            if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
+            if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && CAN_EAT.test(content.getKey().getItemStack()))
             {
                 blockedItems.add(content.getKey());
             }

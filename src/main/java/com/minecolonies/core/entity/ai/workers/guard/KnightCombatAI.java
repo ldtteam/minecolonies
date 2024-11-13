@@ -172,7 +172,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         target.hurt(source, (float) damageToBeDealt);
         target.setLastHurtByMob(user);
 
-        if (target instanceof Mob && user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
+        if (target instanceof Mob && user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
         {
             ((Mob) target).setTarget(user);
             if (target instanceof IThreatTableEntity)
@@ -195,7 +195,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private void doAoeAttack(final DamageSource source, final double damageToBeDealt)
     {
-        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
+        if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
               && user.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
         {
             List<LivingEntity> entities = user.level().getEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
@@ -263,14 +263,15 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             addDmg += EnchantmentHelper.modifyDamage((ServerLevel) user.level(), heldItem, target, user.level().damageSources().mobAttack(user), 1) / 2.5;
         }
 
-        addDmg += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
+        addDmg += user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
 
+        // TODO: Recheck balancing, do we need this
         if (user.getHealth() <= user.getMaxHealth() * 0.2D)
         {
             addDmg *= 2;
         }
 
-        if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
+        if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
         {
             addDmg *= 1.5;
             ((ServerLevel) user.level()).getChunkSource().broadcastAndSend(user, new ClientboundAnimatePacket(target, 4));
@@ -288,6 +289,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected int getAttackDelay()
     {
+        // TODO: Not sure if we should make knights attack faster, they are intended to not scale in dmg, but health
         final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
         return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
@@ -359,7 +361,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     {
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-        user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
+        user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());

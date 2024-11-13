@@ -152,7 +152,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Raiding
-        if (citizen.getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getRaiderManager().isRaided())
         {
             citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             citizen.setVisibleStatusIfNone(RAIDED);
@@ -295,7 +295,7 @@ public class CitizenAI implements IStateAI
         }
 
         final ICitizenColonyHandler colonyHandler = citizen.getCitizenColonyHandler();
-        if (colonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0)
+        if (colonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0)
         {
             return true;
         }

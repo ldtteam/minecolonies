@@ -42,7 +42,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -66,8 +65,7 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble
 /**
  * Visitor citizen entity
  */
-public class
-VisitorCitizen extends AbstractEntityCitizen
+public class VisitorCitizen extends AbstractEntityCitizen
 {
     /**
      * The citizen experience handler
@@ -180,7 +178,7 @@ VisitorCitizen extends AbstractEntityCitizen
                     final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())
                     {
-                        ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
+                        ICitizenData data = citizenColonyHandler.getColonyOrRegister().getVisitorManager().getCivilian(id);
                         if (data != null && data.getEntity().isPresent() && data.getEntity().get().getLastHurtByMob() == null)
                         {
                             data.getEntity().get().setLastHurtByMob((LivingEntity) damageSource.getEntity());
@@ -193,7 +191,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 {
                     if (sourceEntity instanceof ServerPlayer)
                     {
-                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
+                        return damage <= 1 || getCitizenColonyHandler().getColonyOrRegister().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
                     }
                     else
                     {
@@ -626,7 +624,7 @@ VisitorCitizen extends AbstractEntityCitizen
         super.die(cause);
         if (!level().isClientSide())
         {
-            IColony colony = getCitizenColonyHandler().getColony();
+            IColony colony = getCitizenColonyHandler().getColonyOrRegister();
             if (colony != null && getCitizenData() != null)
             {
                 colony.getVisitorManager().removeCivilian(getCitizenData());
@@ -687,5 +685,11 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         citizenColonyHandler.onCitizenRemoved();
         super.setRemoved(reason);
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        return citizenColonyHandler.getColonyId();
     }
 }

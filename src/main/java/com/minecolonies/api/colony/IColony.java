@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -121,17 +120,6 @@ public interface IColony
     boolean hasBuilding(final String building, final int level, final boolean singleBuilding);
 
     /**
-     * Defines the team name for all colonies (both Colony and ColonyView)
-     *
-     * @return The team name
-     */
-    static String getTeamName(final Level level, final int id)
-    {
-        final String dim = level.dimension().location().getPath();
-        return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + id;
-    }
-
-    /**
      * Getter for the team colony color.
      *
      * @return the color.
@@ -151,13 +139,6 @@ public interface IColony
      * @return true if it is day
      */
     boolean isDay();
-
-    /**
-     * Retrieves the team of the colony
-     *
-     * @return Team of the colony
-     */
-    PlayerTeam getTeam();
 
     /**
      * Get the last contact of a player to the colony in hours.

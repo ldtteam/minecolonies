@@ -380,7 +380,9 @@ public final class ModItemsInitializer
       500,
       SoundEvents.ARMOR_EQUIP_LEATHER,
       () -> Ingredient.EMPTY,
-      List.of(),
+      List.of(
+        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"santa_hat"), "", true)
+      ),
       0,
       0
     ));
@@ -396,7 +398,9 @@ public final class ModItemsInitializer
       37,
       SoundEvents.ARMOR_EQUIP_IRON,
       () -> Ingredient.of(Items.IRON_INGOT),
-      List.of(),
+      List.of(
+        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"plate_armor"), "", true)
+      ),
       0,
       0
     ));
@@ -412,7 +416,9 @@ public final class ModItemsInitializer
       20,
       SoundEvents.ARMOR_EQUIP_LEATHER,
       () -> Ingredient.EMPTY,
-      List.of(),
+      List.of(
+        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"build_goggles"), "", true)
+      ),
       0,
       0
     ));
@@ -428,7 +434,9 @@ public final class ModItemsInitializer
       5,
       SoundEvents.ARMOR_EQUIP_LEATHER,
       () -> Ingredient.of(Items.DIAMOND),
-      List.of(),
+      List.of(
+        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID,"pirate"), "", true)
+      ),
       0,
       0
     ));
@@ -444,7 +452,9 @@ public final class ModItemsInitializer
       5,
       SoundEvents.ARMOR_EQUIP_LEATHER,
       () -> Ingredient.of(Items.DIAMOND),
-      List.of(),
+      List.of(
+        new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "pirate2"), "", true)
+      ),
       2,
       0
     ));

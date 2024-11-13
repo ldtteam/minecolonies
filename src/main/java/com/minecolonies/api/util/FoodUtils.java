@@ -70,7 +70,7 @@ public class FoodUtils
     {
         final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
         final int housingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 0 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
-        final double researchBonus = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
+        final double researchBonus = citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
         return getFoodValue(foodStack, itemFood, housingLevel, researchBonus);
     }
 }

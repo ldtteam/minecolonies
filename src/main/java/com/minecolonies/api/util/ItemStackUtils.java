@@ -919,7 +919,7 @@ public final class ItemStackUtils
             }
         }
 
-        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));

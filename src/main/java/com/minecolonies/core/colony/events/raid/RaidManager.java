@@ -41,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Mirror;
@@ -263,13 +264,13 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig, final boolean allowShips)
+    public RaidSpawnResult raiderEvent(String raidType, final boolean forced, final boolean allowShips)
     {
         if (colony.getWorld() == null || raidType == null)
         {
             return RaidSpawnResult.ERROR;
         }
-        else if (!canRaid(overrideConfig))
+        else if (!forced && !canRaid())
         {
             return RaidSpawnResult.CANNOT_RAID;
         }
@@ -683,11 +684,20 @@ public class RaidManager implements IRaiderManager
     @Override
     public int calculateRaiderAmount(final int raidLevel)
     {
+        int nearbyColonyPlayers = 0;
+        for (final Player player : colony.getMessagePlayerEntities())
+        {
+            if (!player.isSpectator())
+            {
+                nearbyColonyPlayers++;
+            }
+        }
+
         return 1 + Math.min(MineColonies.getConfig().getServer().maxRaiders.get(),
           (int) ((raidLevel / SPAWN_MODIFIER)
                    * getRaidDifficultyModifier()
-                   * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER)
-                   * ((ColonyConstants.rand.nextDouble() * 0.5d) + 0.75)));
+                   * (1.0 + nearbyColonyPlayers * INCREASE_PER_PLAYER)
+                   * ((ColonyConstants.rand.nextDouble() * 0.3) + 0.85)));
     }
 
     @Override
@@ -767,14 +777,8 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canRaid()
     {
-        return canRaid(false);
-    }
-
-    @Override
-    public boolean canRaid(final boolean override)
-    {
         return !WorldUtil.isPeaceful(colony.getWorld())
-                 && (MineColonies.getConfig().getServer().enableColonyRaids.get() || override)
+                 && (MineColonies.getConfig().getServer().enableColonyRaids.get())
                  && colony.getRaiderManager().canHaveRaiderEvents()
                  && !colony.getPackageManager().getImportantColonyPlayers().isEmpty();
     }
@@ -860,7 +864,7 @@ public class RaidManager implements IRaiderManager
     public BlockPos getRandomBuilding()
     {
         buildingPosUsage++;
-        if (buildingPosUsage > 6 || lastBuilding == null)
+        if (buildingPosUsage > Math.max(6, getLastRaid().raiderAmount / 3) || lastBuilding == null)
         {
             buildingPosUsage = 0;
             final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();

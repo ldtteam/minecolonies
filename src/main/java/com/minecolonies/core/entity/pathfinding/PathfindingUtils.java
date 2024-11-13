@@ -5,6 +5,8 @@ import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.core.entity.pathfinding.world.CachingBlockLookup;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -79,8 +81,8 @@ public class PathfindingUtils
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
-          Mth.floor(entity.getY()),
-          Mth.floor(entity.getZ()));
+            Mth.floor(entity.getY()),
+            Mth.floor(entity.getZ()));
         final Level level = entity.level();
         BlockState bs = level.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
@@ -94,8 +96,8 @@ public class PathfindingUtils
             for (final AABB box : collisionShape.toAabbs())
             {
                 if (relPosX >= box.minX && relPosX <= box.maxX
-                      && relPosZ >= box.minZ && relPosZ <= box.maxZ
-                      && box.maxY > 0)
+                    && relPosZ >= box.minZ && relPosZ <= box.maxZ
+                    && box.maxY > 0)
                 {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
                     bs = level.getBlockState(pos);
@@ -163,7 +165,7 @@ public class PathfindingUtils
     private static boolean canStandInSolidBlock(final BlockState state)
     {
         return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
-                 || !state.getBlock().properties().hasCollision;
+            || !state.getBlock().hasCollision;
     }
 
     /**
@@ -265,7 +267,7 @@ public class PathfindingUtils
         }
 
         if (state.getBlock() instanceof TrapdoorBlock
-              || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
+            || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
         {
             return false;
         }
@@ -324,8 +326,8 @@ public class PathfindingUtils
             return true;
         }
         return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
-                                                        blockState.getBlock() instanceof LadderBlock ||
-                                                        blockState.is(ModTags.freeClimbBlocks));
+            blockState.getBlock() instanceof LadderBlock ||
+            blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**
@@ -339,10 +341,80 @@ public class PathfindingUtils
         final Block block = blockState.getBlock();
 
         return blockState.is(ModTags.dangerousBlocks) ||
-                 block instanceof FireBlock ||
-                 block instanceof CampfireBlock ||
-                 block instanceof MagmaBlock ||
-                 block instanceof SweetBerryBushBlock ||
-                 block instanceof PowderSnowBlock;
+            block instanceof FireBlock ||
+            block instanceof CampfireBlock ||
+            block instanceof MagmaBlock ||
+            block instanceof SweetBerryBushBlock ||
+            block instanceof PowderSnowBlock;
+    }
+
+    /**
+     * Checks for collisions along a line between two given positions
+     *
+     * @param startX
+     * @param startY
+     * @param startZ
+     * @param endX
+     * @param endY
+     * @param endZ
+     * @param blockLookup
+     * @return
+     */
+    public static boolean hasAnyCollisionAlong(int startX, int startY, int startZ, int endX, int endY, int endZ, CachingBlockLookup blockLookup)
+    {
+        int x = startX, y = startY, z = startZ;
+
+        int dx = Math.abs(endX - startX);
+        int dy = Math.abs(endY - startY);
+        int dz = Math.abs(endZ - startZ);
+
+        int stepX = (endX > startX) ? 1 : -1;
+        int stepY = (endY > startY) ? 1 : -1;
+        int stepZ = (endZ > startZ) ? 1 : -1;
+
+        double tMaxX = (dx == 0) ? Double.POSITIVE_INFINITY : ((stepX > 0 ? 1.0 : 0.0) / dx);
+        double tMaxY = (dy == 0) ? Double.POSITIVE_INFINITY : ((stepY > 0 ? 1.0 : 0.0) / dy);
+        double tMaxZ = (dz == 0) ? Double.POSITIVE_INFINITY : ((stepZ > 0 ? 1.0 : 0.0) / dz);
+
+        double tDeltaX = (dx == 0) ? Double.POSITIVE_INFINITY : 1.0 / dx;
+        double tDeltaY = (dy == 0) ? Double.POSITIVE_INFINITY : 1.0 / dy;
+        double tDeltaZ = (dz == 0) ? Double.POSITIVE_INFINITY : 1.0 / dz;
+
+        while (x != endX || y != endY || z != endZ)
+        {
+            if (ShapeUtil.hasCollision(blockLookup, x, y, z, blockLookup.getBlockState(x, y, z)))
+            {
+                return true;
+            }
+
+            if (tMaxX < tMaxY)
+            {
+                if (tMaxX < tMaxZ)
+                {
+                    x += stepX;
+                    tMaxX += tDeltaX;
+                }
+                else
+                {
+                    z += stepZ;
+                    tMaxZ += tDeltaZ;
+                }
+            }
+            else
+            {
+                if (tMaxY < tMaxZ)
+                {
+                    y += stepY;
+                    tMaxY += tDeltaY;
+                }
+                else
+                {
+                    z += stepZ;
+                    tMaxZ += tDeltaZ;
+                }
+            }
+        }
+
+        return ShapeUtil.hasCollision(blockLookup, endX, endY, endZ, blockLookup.getBlockState(endX, endY, endZ));
     }
 }

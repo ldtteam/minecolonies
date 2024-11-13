@@ -328,9 +328,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      *
      * @param requiredResources the bucket to check and request.
      * @param worker            the worker.
-     * @param workerInv         if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker)
     {
         if (requiredResources == null)
         {
@@ -354,13 +353,10 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 continue;
             }
 
-            if (workerInv)
+            count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+            if (count >= entry.getValue())
             {
-                count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
-                if (count >= entry.getValue())
-                {
-                    continue;
-                }
+                continue;
             }
 
             int requestCount = entry.getValue() - count;

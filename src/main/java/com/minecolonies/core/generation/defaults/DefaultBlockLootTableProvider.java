@@ -76,23 +76,6 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
 
         // intentionally no drops -- creative only
         //saveBlock(ModBlocks.blockDecorationPlaceholder);
-
-        saveBannerBlock(Blocks.BLACK_BANNER);
-        saveBannerBlock(Blocks.BLUE_BANNER);
-        saveBannerBlock(Blocks.BROWN_BANNER);
-        saveBannerBlock(Blocks.WHITE_BANNER);
-        saveBannerBlock(Blocks.CYAN_BANNER);
-        saveBannerBlock(Blocks.GRAY_BANNER);
-        saveBannerBlock(Blocks.GREEN_BANNER);
-        saveBannerBlock(Blocks.LIGHT_BLUE_BANNER);
-        saveBannerBlock(Blocks.LIGHT_GRAY_BANNER);
-        saveBannerBlock(Blocks.LIME_BANNER);
-        saveBannerBlock(Blocks.MAGENTA_BANNER);
-        saveBannerBlock(Blocks.ORANGE_BANNER);
-        saveBannerBlock(Blocks.PINK_BANNER);
-        saveBannerBlock(Blocks.PURPLE_BANNER);
-        saveBannerBlock(Blocks.RED_BANNER);
-        saveBannerBlock(Blocks.YELLOW_BANNER);
     }
 
     private <T extends Block> void saveBlocks(@NotNull final List<T> blocks)
@@ -151,24 +134,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             ModBlocks.blockCompostedDirt,
             //ModBlocks.blockDecorationPlaceholder, // creative only
             ModBlocks.floodedFarmland,
-            ModBlocks.farmland,
-
-            Blocks.BLACK_BANNER,
-            Blocks.BLUE_BANNER,
-            Blocks.BROWN_BANNER,
-            Blocks.WHITE_BANNER,
-            Blocks.CYAN_BANNER,
-            Blocks.GRAY_BANNER,
-            Blocks.GREEN_BANNER,
-            Blocks.LIGHT_BLUE_BANNER,
-            Blocks.LIGHT_GRAY_BANNER,
-            Blocks.LIME_BANNER,
-            Blocks.MAGENTA_BANNER,
-            Blocks.ORANGE_BANNER,
-            Blocks.PINK_BANNER,
-            Blocks.PURPLE_BANNER,
-            Blocks.RED_BANNER,
-            Blocks.YELLOW_BANNER
+            ModBlocks.farmland
         )).map(Block.class::cast)).toList();
     }
 }

@@ -252,7 +252,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         pathfindingDebugVerbosity = defineInteger("pathfindingdebugverbosity", 0, 0, 10);
         minimumRailsToPath = defineInteger("minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger("pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingMaxThreadCount = defineInteger("pathfindingmaxthreadcount", 1, 1, 10);
 
         swapToCategory("requestSystem");
 

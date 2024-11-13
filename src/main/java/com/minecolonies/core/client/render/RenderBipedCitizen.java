@@ -7,25 +7,22 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import com.minecolonies.core.client.render.worldevent.RenderTypes;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.world.entity.EntityAttachment;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.resources.ResourceLocation;
-
-import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityAttachment;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 /**
  * Renderer for the citizens.
@@ -62,12 +59,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
         final CitizenModel<AbstractEntityCitizen> citizenModel = model;
 
-        final ItemStack mainHandStack = citizen.getMainHandItem();
-        final ItemStack offHandStack = citizen.getOffhandItem();
-        final HumanoidModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack);
-        final HumanoidModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack);
-
-        updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
+        citizenModel.rightArmPose = RenderUtils.getArmPose(citizen, InteractionHand.MAIN_HAND);
+        citizenModel.leftArmPose = RenderUtils.getArmPose(citizen, InteractionHand.OFF_HAND);
 
         if (isItGhostTime)
         {
@@ -139,47 +132,6 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.popPose();
             }
-        }
-    }
-
-    private HumanoidModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack)
-    {
-        final UseAnim enumActionMainHand;
-        HumanoidModel.ArmPose pose = HumanoidModel.ArmPose.EMPTY;
-        if (!mainHandStack.isEmpty())
-        {
-            pose = HumanoidModel.ArmPose.ITEM;
-            if (citizen.getUseItemRemainingTicks() > 0)
-            {
-                enumActionMainHand = mainHandStack.getUseAnimation();
-                if (enumActionMainHand == UseAnim.BLOCK)
-                {
-                    pose = HumanoidModel.ArmPose.BLOCK;
-                }
-                else if (enumActionMainHand == UseAnim.BOW)
-                {
-                    pose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-                }
-            }
-        }
-        return pose;
-    }
-
-    private void updateArmPose(
-      @NotNull final AbstractEntityCitizen citizen,
-      final HumanoidModel<AbstractEntityCitizen> citizenModel,
-      final HumanoidModel.ArmPose armPoseMainHand,
-      final HumanoidModel.ArmPose armPoseOffHand)
-    {
-        if (citizen.getMainArm() == HumanoidArm.RIGHT)
-        {
-            citizenModel.rightArmPose = armPoseMainHand;
-            citizenModel.leftArmPose = armPoseOffHand;
-        }
-        else
-        {
-            citizenModel.rightArmPose = armPoseOffHand;
-            citizenModel.leftArmPose = armPoseMainHand;
         }
     }
 

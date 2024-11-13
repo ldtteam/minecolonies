@@ -237,7 +237,7 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
@@ -398,7 +398,7 @@ public class EntityAIEatTask implements IStateAI
     {
         if (restaurantPos != null)
         {
-            final IBuilding building = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurantPos);
+            final IBuilding building = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(restaurantPos);
             if (building != null)
             {
                 if (building.isInBuilding(citizen.blockPosition()))

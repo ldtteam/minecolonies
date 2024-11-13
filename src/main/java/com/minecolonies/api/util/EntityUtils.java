@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -205,7 +206,7 @@ public final class EntityUtils
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(pos.above(dy));
-            if (!state.is(ModTags.validSpawn) && BlockUtils.isAnySolid(state))
+            if (!state.is(ModTags.validSpawn) && (PathfindingUtils.isLiquid(state) || ShapeUtil.hasCollision(world, pos.above(dy), state)))
             {
                 return false;
             }
