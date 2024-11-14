@@ -785,7 +785,7 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ISFOOD.test(stack) || ISCOOKABLE.test(stack))
         {
             food.add(new ItemStorage(stack));
-            if (CAN_EAT.test(stack))
+            if (FoodUtils.EDIBLE.test(stack))
             {
                 edibles.add(new ItemStorage(stack));
             }

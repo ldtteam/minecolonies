@@ -373,49 +373,100 @@ public class PathfindingUtils
         int stepY = (endY > startY) ? 1 : -1;
         int stepZ = (endZ > startZ) ? 1 : -1;
 
-        double tMaxX = (dx == 0) ? Double.POSITIVE_INFINITY : ((stepX > 0 ? 1.0 : 0.0) / dx);
-        double tMaxY = (dy == 0) ? Double.POSITIVE_INFINITY : ((stepY > 0 ? 1.0 : 0.0) / dy);
-        double tMaxZ = (dz == 0) ? Double.POSITIVE_INFINITY : ((stepZ > 0 ? 1.0 : 0.0) / dz);
+        double stepCostX = 1.0 / dx;
+        double stepCostY = 1.0 / dy;
+        double stepCostZ = 1.0 / dz;
 
-        double tDeltaX = (dx == 0) ? Double.POSITIVE_INFINITY : 1.0 / dx;
-        double tDeltaY = (dy == 0) ? Double.POSITIVE_INFINITY : 1.0 / dy;
-        double tDeltaZ = (dz == 0) ? Double.POSITIVE_INFINITY : 1.0 / dz;
+        // Init with step cost, to determine first step
+        double stepCostSumX = (dx == 0) ? Double.POSITIVE_INFINITY : 0.5 / dx;
+        double stepCostSumY = (dy == 0) ? Double.POSITIVE_INFINITY : 0.5 / dy;
+        double stepCostSumZ = (dz == 0) ? Double.POSITIVE_INFINITY : 0.5 / dz;
 
-        while (x != endX || y != endY || z != endZ)
+        for (int i = 0; i < (dx + dy + dz) && (x != endX || y != endY || z != endZ); i++)
         {
             if (ShapeUtil.hasCollision(blockLookup, x, y, z, blockLookup.getBlockState(x, y, z)))
             {
                 return true;
             }
 
-            if (tMaxX < tMaxY)
+            // Explore multiple possibilities if two options have the same cost, e.g. on quadratic distance to make sure all blocks around get checked:
+            if (doubleEquals(stepCostSumX, stepCostSumY))
             {
-                if (tMaxX < tMaxZ)
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y + stepY, z, blockLookup.getBlockState(x + stepX, y + stepY, z)))
+                {
+                    return true;
+                }
+            }
+
+            if (doubleEquals(stepCostSumX, stepCostSumZ))
+            {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z + stepZ, blockLookup.getBlockState(x + stepX, y, z + stepZ)))
+                {
+                    return true;
+                }
+            }
+
+            if (doubleEquals(stepCostSumY, stepCostSumZ))
+            {
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z, blockLookup.getBlockState(x, y + stepY, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z + stepZ, blockLookup.getBlockState(x, y + stepY, z + stepZ)))
+                {
+                    return true;
+                }
+            }
+
+            if (stepCostSumX < stepCostSumY)
+            {
+                if (stepCostSumX < stepCostSumZ)
                 {
                     x += stepX;
-                    tMaxX += tDeltaX;
+                    stepCostSumX += stepCostX;
                 }
                 else
                 {
                     z += stepZ;
-                    tMaxZ += tDeltaZ;
+                    stepCostSumZ += stepCostZ;
                 }
             }
             else
             {
-                if (tMaxY < tMaxZ)
+                if (stepCostSumY < stepCostSumZ)
                 {
                     y += stepY;
-                    tMaxY += tDeltaY;
+                    stepCostSumY += stepCostY;
                 }
                 else
                 {
                     z += stepZ;
-                    tMaxZ += tDeltaZ;
+                    stepCostSumZ += stepCostZ;
                 }
             }
         }
 
         return ShapeUtil.hasCollision(blockLookup, endX, endY, endZ, blockLookup.getBlockState(endX, endY, endZ));
+    }
+
+    private static boolean doubleEquals(final double a, final double b)
+    {
+        if (Double.isFinite(a) || Double.isFinite(b) || Double.isNaN(a) || Double.isNaN(b))
+        {
+            return false;
+        }
+
+        return Math.abs(a - b) < 0.000005;
     }
 }

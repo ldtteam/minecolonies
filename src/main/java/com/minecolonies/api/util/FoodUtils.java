@@ -16,8 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
-
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
@@ -28,12 +28,33 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 public class FoodUtils
 {
     /**
+     * Predicate describing food which can be eaten (is not raw).
+     */
+    public static Predicate<ItemStack> EDIBLE;
+
+    /**
+     * @param stack
+     * @param workBuilding
+     * @return
+     */
+    public static boolean canEat(final ItemStack stack, final IBuilding homeBuilding, final IBuilding workBuilding)
+    {
+        if (!EDIBLE.test(stack))
+        {
+            return false;
+        }
+
+        final int homeBuildingLevel = homeBuilding == null ? 0 : homeBuilding.getBuildingLevel();
+        return canEatLevel(stack, homeBuildingLevel) && (workBuilding == null || workBuilding.canEat(stack));
+    }
+
+    /**
      * Check if that food can be eaten at a given building level.
      * @param stack the stack to check.
      * @param buildingLevel the respective building level.
      * @return true if so.
      */
-    public static boolean canEat(final ItemStack stack, final int buildingLevel)
+    public static boolean canEatLevel(final ItemStack stack, final int buildingLevel)
     {
         if (buildingLevel < 3)
         {
@@ -107,7 +128,7 @@ public class FoodUtils
         for (int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStorage invStack = new ItemStorage(inventoryCitizen.getStackInSlot(i));
-            if ((menu == null || menu.contains(invStack)) && (citizenData.getHomeBuilding() == null || FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding().getBuildingLevel())))
+            if ((menu == null || menu.contains(invStack)) && FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
             {
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
@@ -177,7 +198,7 @@ public class FoodUtils
                 {
                     for (final ItemStorage storage : rackEntity.getAllContent().keySet())
                     {
-                        if ((menu == null || menu.contains(storage)) && FoodUtils.canEat(storage.getItemStack(), homeBuildingLevel))
+                        if ((menu == null || menu.contains(storage)) && FoodUtils.canEat(storage.getItemStack(), citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
                         {
                             final boolean isMinecolfood = storage.getItem() instanceof IMinecoloniesFoodItem;
                             final int localScore = foodHandler.checkLastEaten(storage.getItem());
