@@ -177,7 +177,7 @@ public final class ModItemsInitializer
         ModItems.apple_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.plain_cheesecake = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.baked_salmon = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
-        ModItems.eggdrop_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
+        ModItems.eggdrop_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).usingConvertsTo(Items.BOWL).saturationModifier(1.0F).build()), 2);
         ModItems.fish_n_chips = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.pierogi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.veggie_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
@@ -186,7 +186,7 @@ public final class ModItemsInitializer
         // Tier 3 Food items
         ModItems.hand_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
         ModItems.mintchoco_cheesecake = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
-        ModItems.borscht = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
+        ModItems.borscht = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(8).saturationModifier(1.2F).build()), 3);
         ModItems.schnitzel = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
         ModItems.steak_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
 
@@ -208,7 +208,7 @@ public final class ModItemsInitializer
         ModItems.mutton_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 3);
         // Tier 3
         ModItems.sushi_roll = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
-        ModItems.ramen = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
+        ModItems.ramen = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(8).saturationModifier(1.2F).build()), 3);
 
         // Temperate Biomes
         // Tier 1
@@ -230,12 +230,12 @@ public final class ModItemsInitializer
         ModItems.kebab = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 1);
         // Tier 3
         ModItems.pita_hummus = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
-        ModItems.spicy_eggplant = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
+        ModItems.spicy_eggplant = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(8).saturationModifier(1.2F).build()), 3);
 
         // Require trading
         // Tier 2
         ModItems.congee = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
-        ModItems.kimchi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
+        ModItems.kimchi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
         // Tier 3
         ModItems.stew_trencher = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
         ModItems.stuffed_pepper = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);

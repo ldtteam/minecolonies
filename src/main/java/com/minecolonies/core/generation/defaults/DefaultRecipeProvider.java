@@ -960,6 +960,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockNetherPepper)
           .requires(ModBlocks.blockOnion)
           .requires(Items.CARROT)
+          .requires(Items.BOWL)
           .unlockedBy("has_nether_pepper", has(ModBlocks.blockNetherPepper))
           .save(consumer, new ResourceLocation(MOD_ID, "kimchi"));
 

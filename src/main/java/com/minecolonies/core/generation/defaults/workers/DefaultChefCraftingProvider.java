@@ -135,7 +135,8 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(Items.POTATO)),
             new ItemStorage(new ItemStack(Items.BROWN_MUSHROOM)),
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
-            new ItemStorage(new ItemStack(Items.MUTTON))))
+            new ItemStorage(new ItemStack(Items.MUTTON)),
+            new ItemStorage(new ItemStack(Items.BOWL))))
           .result(new ItemStack(ModItems.lamb_stew))
           .showTooltip(true)
           .minBuildingLevel(4)
@@ -148,7 +149,8 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModItems.chicken_broth)),
             new ItemStorage(new ItemStack(Items.POTATO)),
             new ItemStorage(new ItemStack(Items.BEETROOT)),
-            new ItemStorage(new ItemStack(Items.BEETROOT))
+            new ItemStorage(new ItemStack(Items.BEETROOT)),
+            new ItemStorage(new ItemStack(Items.BOWL))
           ))
           .result(new ItemStack(ModItems.borscht, 2))
           .showTooltip(true)
@@ -173,7 +175,8 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
             new ItemStorage(new ItemStack(ModItems.raw_noodle)),
-            new ItemStorage(new ItemStack(ModItems.soysauce))
+            new ItemStorage(new ItemStack(ModItems.soysauce)),
+            new ItemStorage(new ItemStack(Items.BOWL))
           ))
           .result(new ItemStack(ModItems.ramen, 1))
           .showTooltip(true)
