@@ -36,7 +36,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -883,25 +882,24 @@ public final class ItemStackUtils
      *
      * @param foodStack   the itemstack of food.
      * @param citizen     the citizen entity.
-     * @param inventory optional inventory to insert stack into if not citizen.
+     * @param player      optional player providing the food.
      */
-    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
+    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, @Nullable final Player player)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
+        ItemStack itemUseReturn = FoodUtils.consumeFoodStack(foodStack, citizen);
+
+        if (player != null && player.hasInfiniteMaterials())
+        {
+            itemUseReturn = ItemStack.EMPTY;
+        }
 
         citizenData.increaseSaturation(satIncrease);
 
-        // Special handling for these as those are stackable + have a return per item.
-        if (foodStack.getItem() instanceof HoneyBottleItem)
+        if (!itemUseReturn.isEmpty())
         {
-            itemUseReturn = new ItemStack(Items.GLASS_BOTTLE);
-        }
-
-        if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
-        {
-            if (citizenData.getInventory().isFull() || (inventory != null && !inventory.add(itemUseReturn)))
+            if (citizenData.getInventory().isFull() || (player != null && !player.getInventory().add(itemUseReturn)))
             {
                 InventoryUtils.spawnItemStack(
                   citizen.level(),

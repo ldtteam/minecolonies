@@ -10,12 +10,15 @@ import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.HoneyBottleItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -262,5 +265,37 @@ public class FoodUtils
     public static int getMinFoodDiversityRequirement(final int buildingLevel)
     {
         return buildingLevel;
+    }
+
+    /**
+     * Update stacks for consuming a food (does not apply the actual nutrition).
+     * @param foodStack the food stack being eaten (will be modified!).
+     * @param citizen   the citizen doing the eating.
+     * @return          the leftover item (e.g. bottle, bowl), or an empty stack.
+     */
+    public static ItemStack consumeFoodStack(final ItemStack foodStack,
+                                             final AbstractEntityCitizen citizen)
+    {
+        final FoodProperties food = foodStack.getFoodProperties(citizen);
+        if (food != null)
+        {
+            final ItemStack consumedStack = foodStack.finishUsingItem(citizen.level(), citizen);
+            final Optional<ItemStack> returned = food.usingConvertsTo();
+            if (returned.isPresent())
+            {
+                return returned.get().copy();
+            }
+            else if (foodStack.getItem() instanceof HoneyBottleItem)
+            {
+                // Special handling because vanilla doesn't use usingConvertsTo since it's stackable
+                return new ItemStack(Items.GLASS_BOTTLE);
+            }
+            else if (consumedStack.getItem() != foodStack.getItem())
+            {
+                return consumedStack;
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 }

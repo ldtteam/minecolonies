@@ -514,7 +514,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
             {
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
+                ItemStackUtils.consumeFood(usedStack, this, player);
                 MessageUtils.forCitizen(this, MESSAGE_INTERACTION_VISITOR_FOOD).sendTo(player);
             }
             return InteractionResult.CONSUME;
