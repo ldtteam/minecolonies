@@ -159,12 +159,12 @@ public final class ModItemsInitializer
         ModItems.tofu = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.flatbread = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.cheese_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
-        ModItems.chicken_broth = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.chicken_broth = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.meat_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.mint_jelly = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.mint_tea = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
-        ModItems.polenta = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
-        ModItems.potato_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.polenta = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.potato_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.veggie_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.yogurt = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
 
@@ -180,8 +180,8 @@ public final class ModItemsInitializer
         ModItems.eggdrop_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.fish_n_chips = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.pierogi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
-        ModItems.veggie_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
-        ModItems.yogurt_with_berries = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
+        ModItems.veggie_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
+        ModItems.yogurt_with_berries = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
 
         // Tier 3 Food items
         ModItems.hand_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationModifier(1.2F).build()), 3);
@@ -192,7 +192,7 @@ public final class ModItemsInitializer
 
         // Cold Biomes
         // Tier 1
-        ModItems.squash_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.squash_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
         // Tier 2
         ModItems.cabochis = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.veggie_quiche = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
@@ -202,7 +202,7 @@ public final class ModItemsInitializer
 
         // Hot Humid Biomes
         // Tier 1
-        ModItems.pea_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.pea_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
         // Tier 2
         ModItems.rice_ball = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 2);
         ModItems.mutton_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.0F).build()), 3);
@@ -212,7 +212,7 @@ public final class ModItemsInitializer
 
         // Temperate Biomes
         // Tier 1
-        ModItems.corn_chowder = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
+        ModItems.corn_chowder = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(4).saturationModifier(0.6F).build()), 1);
         ModItems.tortillas = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationModifier(0.6F).build()), 1);
         // Tier 2
         ModItems.pasta_tomato = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().usingConvertsTo(Items.BOWL).nutrition(6).saturationModifier(1.0F).build()), 2);
