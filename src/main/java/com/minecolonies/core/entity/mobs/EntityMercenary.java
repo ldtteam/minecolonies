@@ -47,7 +47,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,6 +130,11 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
      * The entities name.
      */
     private static final String ENTITY_NAME = "Mercenary";
+
+    /**
+     * Colony id of the assigned colony.
+     */
+    private int colonyId;
 
     /**
      * Constructor method for Mercenaries.
@@ -336,7 +340,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         if (compound.contains(TAG_COLONY_ID))
         {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
+            colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level()));
@@ -563,9 +567,8 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     }
 
     @Override
-    @Nullable
-    protected PlayerTeam getAssignedTeam()
+    public int getTeamId()
     {
-        return colony == null ? null : colony.getTeam();
+        return colonyId;
     }
 }

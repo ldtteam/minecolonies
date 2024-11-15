@@ -767,24 +767,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     /**
-     * If an incoming request is a minimum stock request.
-     *
-     * @param request the request to check.
-     * @return true if so.
-     */
-    public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
-    {
-        for (final IMinimumStockModule module : getModulesByType(IMinimumStockModule.class))
-        {
-            if (module.isMinimumStockRequest(request))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Set the custom building name of the building.
      *
      * @param name the name to set.
@@ -1208,7 +1190,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (keepFood())
         {
-            toKeep.put(stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack), new Tuple<>(getBuildingLevel() * 2, true));
+            toKeep.put(stack -> FoodUtils.canEat(stack, null, this), new Tuple<>(getBuildingLevel() * 2, true));
         }
         for (final IHasRequiredItemsModule module : getModulesByType(IHasRequiredItemsModule.class))
         {
@@ -1217,12 +1199,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty, inv))));
         return toKeep;
-    }
-
-    @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        return FoodUtils.canEat(stack, this.getBuildingLevel());
     }
 
     @Override

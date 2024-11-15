@@ -39,7 +39,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -49,7 +48,6 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
-import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 
 /**
  * Abstract for all raider entities.
@@ -725,13 +723,6 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
         this.setHealth(this.getMaxHealth());
     }
 
-    @Override
-    @Nullable
-    protected PlayerTeam getAssignedTeam()
-    {
-        return checkOrCreateTeam(level(), RAID_TEAM);
-    }
-
     /**
      * Get the mobs difficulty
      *
@@ -766,5 +757,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     public ITickRateStateMachine<IState> getAI()
     {
         return ai;
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        // All raiders are in the same team. You're doomed!
+        return -1;
     }
 }

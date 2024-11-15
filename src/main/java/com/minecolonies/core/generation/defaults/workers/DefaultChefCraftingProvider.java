@@ -39,46 +39,41 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull final Consumer<CustomRecipeBuilder> consumer)
     {
-        recipe(CHEF, MODULE_CRAFTING, "butter")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
-          .result(new ItemStack(ModItems.butter))
-          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "cabochis")
+        recipe(CHEF, MODULE_CRAFTING, "stew_trencher")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
+            new ItemStorage(new ItemStack(ModItems.manchet_bread)),
+            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
-            new ItemStorage(new ItemStack(Items.BOWL)),
-            new ItemStorage(new ItemStack(ModItems.manchet_bread))))
-          .result(new ItemStack(ModItems.cabochis))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
+          .result(new ItemStack(ModItems.stew_trencher))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "cheddar_cheese")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
-          .result(new ItemStack(ModItems.cheddar_cheese))
-          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "congee")
+        recipe(CHEF, MODULE_CRAFTING, "stuffed_pepper")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModItems.cooked_rice)),
+            new ItemStorage(new ItemStack(ModBlocks.blockBellPepper)),
+            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+            new ItemStorage(new ItemStack(Items.CARROT)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
-            new ItemStorage(new ItemStack(Items.BOWL)),
-            new ItemStorage(new ItemStack(ModBlocks.blockCabbage))))
-          .result(new ItemStack(ModItems.congee))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModBlocks.blockEggplant))))
+          .result(new ItemStack(ModItems.stuffed_pepper))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "cooked_rice")
+        recipe(CHEF, MODULE_CRAFTING, "pita_hummus")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockRice)),
-            new ItemStorage(new ItemStack(Items.BOWL))))
-          .result(new ItemStack(ModItems.cooked_rice))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModItems.flatbread)),
+            new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
+            new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
+            new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
+            new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
+          .result(new ItemStack(ModItems.pita_hummus))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
         recipe(CHEF, MODULE_CRAFTING, "eggplant_dolma")
@@ -90,14 +85,32 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
           .result(new ItemStack(ModItems.eggplant_dolma))
-          .minBuildingLevel(1)
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "feta_cheese")
-          .inputs(List.of(new ItemStorage(new ItemStack(ModItems.large_milk_bottle))))
-          .result(new ItemStack(ModItems.feta_cheese))
-          .secondaryOutputs(List.of(new ItemStack(ModItems.large_empty_bottle)))
-          .minBuildingLevel(1)
+        recipe(CHEF, MODULE_CRAFTING, "stuffed_pita")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModItems.flatbread)),
+            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+            new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
+            new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
+          .result(new ItemStack(ModItems.stuffed_pita))
+          .showTooltip(true)
+          .minBuildingLevel(4)
+          .build(consumer);
+
+        recipe(CHEF, MODULE_CRAFTING, "sushi_roll")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModItems.cooked_rice)),
+            new ItemStorage(new ItemStack(Items.SALMON)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+            new ItemStorage(new ItemStack(Items.DRIED_KELP)),
+            new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
+          .result(new ItemStack(ModItems.sushi_roll, 2))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
         recipe(CHEF, MODULE_CRAFTING, "hand_pie")
@@ -108,7 +121,8 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
             new ItemStorage(new ItemStack(Items.MUTTON))))
           .result(new ItemStack(ModItems.hand_pie))
-          .minBuildingLevel(1)
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
         recipe(CHEF, MODULE_CRAFTING, "lamb_stew")
@@ -123,141 +137,103 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
             new ItemStorage(new ItemStack(Items.MUTTON))))
           .result(new ItemStack(ModItems.lamb_stew))
-          .minBuildingLevel(1)
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "pasta_plain")
+        recipe(CHEF, MODULE_CRAFTING, "borscht")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.raw_noodle)),
-            new ItemStorage(new ItemStack(ModItems.butter)),
-            new ItemStorage(new ItemStack(Items.BOWL)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
-          .result(new ItemStack(ModItems.pasta_plain))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "pasta_tomato")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.raw_noodle)),
-            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
-            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
-            new ItemStorage(new ItemStack(Items.BOWL)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
-          .result(new ItemStack(ModItems.pasta_tomato))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModItems.chicken_broth)),
+            new ItemStorage(new ItemStack(Items.POTATO)),
+            new ItemStorage(new ItemStack(Items.BEETROOT)),
+            new ItemStorage(new ItemStack(Items.BEETROOT))
+          ))
+          .result(new ItemStack(ModItems.borscht, 2))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "pita_hummus")
+        recipe(CHEF, MODULE_CRAFTING, "fish_dinner")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.flatbread)),
-            new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
-            new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
-            new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+            new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
+            new ItemStorage(new ItemStack(Items.COD)),
+            new ItemStorage(new ItemStack(Items.BROWN_MUSHROOM))
+          ))
+          .result(new ItemStack(ModItems.fish_dinner, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
+          .build(consumer);
+        
+        recipe(CHEF, MODULE_CRAFTING, "ramen")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
-          .result(new ItemStack(ModItems.pita_hummus))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModItems.raw_noodle)),
+            new ItemStorage(new ItemStack(ModItems.soysauce))
+          ))
+          .result(new ItemStack(ModItems.ramen, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "pottage")
+        recipe(CHEF, MODULE_CRAFTING, "schnitzel")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
-            new ItemStorage(new ItemStack(Items.BOWL)),
-            new ItemStorage(new ItemStack(Items.POTATO)),
-            new ItemStorage(new ItemStack(Items.CARROT)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
-          .result(new ItemStack(ModItems.pottage))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "raw_noodle")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum))))
-          .result(new ItemStack(ModItems.raw_noodle))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "rice_ball")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.tofu)),
-            new ItemStorage(new ItemStack(Items.DRIED_KELP)),
-            new ItemStorage(new ItemStack(ModItems.cooked_rice))))
-          .result(new ItemStack(ModItems.rice_ball, 2))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "stew_trencher")
-          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModItems.manchet_bread)),
-            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
-            new ItemStorage(new ItemStack(ModBlocks.blockCabbage)),
-            new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
-          .result(new ItemStack(ModItems.stew_trencher))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(Items.PORKCHOP)),
+            new ItemStorage(new ItemStack(Items.EGG)),
+            new ItemStorage(new ItemStack(Items.POTATO))
+          ))
+          .result(new ItemStack(ModItems.schnitzel, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
 
-        recipe(CHEF, MODULE_CRAFTING, "stuffed_pepper")
+        recipe(CHEF, MODULE_CRAFTING, "steak_dinner")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.cooked_rice)),
-            new ItemStorage(new ItemStack(ModBlocks.blockBellPepper)),
-            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
-            new ItemStorage(new ItemStack(Items.CARROT)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
-            new ItemStorage(new ItemStack(ModBlocks.blockEggplant))))
-          .result(new ItemStack(ModItems.stuffed_pepper))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "stuffed_pita")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.flatbread)),
-            new ItemStorage(new ItemStack(ModBlocks.blockTomato)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
+            new ItemStorage(new ItemStack(Items.BEEF)),
+            new ItemStorage(new ItemStack(Items.POTATO)),
+            new ItemStorage(new ItemStack(Items.POTATO))
+          ))
+          .result(new ItemStack(ModItems.steak_dinner, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
+          .build(consumer);
+
+        recipe(CHEF, MODULE_CRAFTING, "tacos")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockNetherPepper)),
+            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
+            new ItemStorage(new ItemStack(ModItems.tortillas)),
+            new ItemStorage(new ItemStack(Items.BEEF)),
+            new ItemStorage(new ItemStack(ModBlocks.blockTomato))
+          ))
+          .result(new ItemStack(ModItems.tacos, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
+          .build(consumer);
+
+        recipe(CHEF, MODULE_CRAFTING, "spicy_eggplant")
+          .inputs(List.of(
+            new ItemStorage(new ItemStack(ModBlocks.blockNetherPepper)),
+            new ItemStorage(new ItemStack(ModBlocks.blockNetherPepper)),
             new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic))))
-          .result(new ItemStack(ModItems.stuffed_pita))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "sushi_roll")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.cooked_rice)),
-            new ItemStorage(new ItemStack(Items.SALMON)),
+            new ItemStorage(new ItemStack(ModBlocks.blockEggplant)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
-            new ItemStorage(new ItemStack(Items.DRIED_KELP)),
-            new ItemStorage(new ItemStack(ModBlocks.blockOnion))))
-          .result(new ItemStack(ModItems.sushi_roll, 2))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "tofu")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)), new ItemStorage(new ItemStack(ModBlocks.blockSoyBean))))
-          .result(new ItemStack(ModItems.tofu))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "pepper_hummus")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockBellPepper)),
-            new ItemStorage(new ItemStack(ModBlocks.blockBellPepper)),
-            new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
-            new ItemStorage(new ItemStack(ModBlocks.blockChickpea)),
-            new ItemStorage(new ItemStack(ModBlocks.blockChickpea))))
-          .result(new ItemStack(ModItems.pepper_hummus, 2))
-          .minBuildingLevel(1)
-          .build(consumer);
-
-        recipe(CHEF, MODULE_CRAFTING, "soy_milk")
-          .inputs(List.of(
-            new ItemStorage(new ItemStack(ModItems.large_water_bottle)),
-            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)),
-            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean)),
-            new ItemStorage(new ItemStack(ModBlocks.blockSoyBean))))
-          .result(new ItemStack(ModItems.large_soy_milk_bottle))
-          .minBuildingLevel(1)
+            new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
+            new ItemStorage(new ItemStack(Items.BOWL))
+          ))
+          .result(new ItemStack(ModItems.spicy_eggplant, 1))
+          .showTooltip(true)
+          .minBuildingLevel(4)
           .build(consumer);
     }
 }

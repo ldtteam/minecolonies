@@ -406,6 +406,18 @@
   },
   {
     "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:apple_pie"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:baked_salmon"
+  },
+  {
+    "checkednbtkeys": [
       "minecraft:enchantments",
       "minecraft:max_damage",
       "minecraft:repair_cost"
@@ -596,7 +608,10 @@
     "item": "minecolonies:blockwaypoint"
   },
   {
-    "item": "minecolonies:bread_dough"
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:borscht"
   },
   {
     "checkednbtkeys": [
@@ -612,6 +627,12 @@
     "checkednbtkeys": [
       "minecraft:food"
     ],
+    "item": "minecolonies:butternut_squash"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cabbage"
   },
   {
@@ -621,13 +642,28 @@
     "item": "minecolonies:cabochis"
   },
   {
-    "item": "minecolonies:cake_batter"
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:cheddar_cheese"
   },
   {
     "checkednbtkeys": [
       "minecraft:food"
     ],
-    "item": "minecolonies:cheddar_cheese"
+    "item": "minecolonies:cheese_pizza"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:cheese_ravioli"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:chicken_broth"
   },
   {
     "checkednbtkeys": [
@@ -676,7 +712,22 @@
     "item": "minecolonies:cooked_rice"
   },
   {
-    "item": "minecolonies:cookie_dough"
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:corn"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:corn_chowder"
+  },
+  {
+    "item": "minecolonies:cornmeal"
+  },
+  {
+    "item": "minecolonies:creamcheese"
   },
   {
     "item": "minecolonies:decorationcontroller"
@@ -686,6 +737,12 @@
       "minecraft:food"
     ],
     "item": "minecolonies:durum"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:eggdrop_soup"
   },
   {
     "checkednbtkeys": [
@@ -710,6 +767,18 @@
   },
   {
     "item": "minecolonies:firearrow"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:fish_dinner"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:fish_n_chips"
   },
   {
     "checkednbtkeys": [
@@ -758,6 +827,18 @@
     "checkednbtkeys": [
       "minecraft:food"
     ],
+    "item": "minecolonies:kebab"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:kimchi"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:lamb_stew"
   },
   {
@@ -791,6 +872,12 @@
     "item": "minecolonies:manchet_dough"
   },
   {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:meat_ravioli"
+  },
+  {
     "item": "minecolonies:mediumquarry"
   },
   {
@@ -798,6 +885,30 @@
       "minecraft:food"
     ],
     "item": "minecolonies:milky_bread"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mint"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mint_jelly"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mint_tea"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mintchoco_cheesecake"
   },
   {
     "item": "minecolonies:mistletoe"
@@ -810,6 +921,24 @@
   },
   {
     "item": "minecolonies:muffin_dough"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mushroom_pizza"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mutton_dinner"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:nether_pepper"
   },
   {
     "checkednbtkeys": [
@@ -831,11 +960,35 @@
   },
   {
     "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:pea_soup"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:peas"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:pepper_hummus"
+  },
+  {
+    "checkednbtkeys": [
       "minecraft:enchantments",
       "minecraft:max_damage",
       "minecraft:repair_cost"
     ],
     "item": "minecolonies:pharaoscepter"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:pierogi"
   },
   {
     "checkednbtkeys": [
@@ -901,6 +1054,12 @@
   },
   {
     "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:plain_cheesecake"
+  },
+  {
+    "checkednbtkeys": [
       "minecraft:attribute_modifiers",
       "minecraft:dyed_color"
     ],
@@ -931,16 +1090,31 @@
     "checkednbtkeys": [
       "minecraft:food"
     ],
+    "item": "minecolonies:polenta"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:potato_soup"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:pottage"
   },
   {
     "item": "minecolonies:questlog"
   },
   {
-    "item": "minecolonies:raw_noodle"
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:ramen"
   },
   {
-    "item": "minecolonies:raw_pumpkin_pie"
+    "item": "minecolonies:raw_noodle"
   },
   {
     "item": "minecolonies:resourcescroll"
@@ -992,6 +1166,12 @@
       "minecraft:repair_cost"
     ],
     "item": "minecolonies:scepterpermission"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:schnitzel"
   },
   {
     "item": "minecolonies:scroll_area_tp"
@@ -1046,12 +1226,39 @@
     "item": "minecolonies:soybean"
   },
   {
+    "item": "minecolonies:soysauce"
+  },
+  {
     "checkednbtkeys": [
       "minecraft:enchantments",
       "minecraft:max_damage",
       "minecraft:repair_cost"
     ],
     "item": "minecolonies:spear"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:spicy_eggplant"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:spicy_grilled_chicken"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:squash_soup"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:steak_dinner"
   },
   {
     "checkednbtkeys": [
@@ -1093,6 +1300,12 @@
     "checkednbtkeys": [
       "minecraft:food"
     ],
+    "item": "minecolonies:tacos"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:tofu"
   },
   {
@@ -1100,6 +1313,42 @@
       "minecraft:food"
     ],
     "item": "minecolonies:tomato"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:tortillas"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:veggie_quiche"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:veggie_ravioli"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:veggie_soup"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:yogurt"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:yogurt_with_berries"
   },
   {
     "item": "minecraft:acacia_button"

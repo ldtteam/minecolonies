@@ -168,7 +168,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
-        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
@@ -225,7 +225,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
-        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
@@ -368,11 +368,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         double totemChance = getTotemResurrectChance();
         double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
                           worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURRECT_WORKER_MANA_LVL_WEIGHT +
-                          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
+                          worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
                           totemChance;
 
         final double cap =
-          MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS
+          MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS
             + totemChance;
         if (chance > cap)
         {
@@ -388,7 +388,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private double getTotemResurrectChance()
     {
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
         {
             final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
 
@@ -436,7 +436,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             // couldn't find a place to dig a grave
             MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()))
-              .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
+              .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
             return IDLE;
         }
 

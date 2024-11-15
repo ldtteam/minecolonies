@@ -156,9 +156,9 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         user.stopUsingItem();
 
         int amountOfArrows = 1;
-        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS) > 0)
+        if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS) > 0)
         {
-            if (user.getRandom().nextDouble() < user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS))
+            if (user.getRandom().nextDouble() < user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS))
             {
                 amountOfArrows++;
             }
@@ -168,7 +168,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         {
             final AbstractArrow arrow = CombatUtils.createArrowForShooter(user);
 
-            if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARROW_PIERCE) > 0)
+            if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARROW_PIERCE) > 0)
             {
                 arrow.setPierceLevel((byte) 2);
             }
@@ -248,7 +248,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         damage += heldItem.getEnchantmentLevel(Utils.getRegistryValue(Enchantments.POWER, user.level()));
         damage += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);
 
-        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
+        if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
             int slot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
             if (slot != -1)
@@ -278,7 +278,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             damage *= 2;
         }
 
-        if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
+        if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
         {
             damage *= 1.5;
         }
@@ -380,7 +380,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-        user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColony().getDay());
+        user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());

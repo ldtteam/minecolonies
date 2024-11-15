@@ -103,6 +103,56 @@
             }
           ],
           "name": "minecolonies:rice"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.005,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "name": "minecolonies:corn"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.005,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "name": "minecolonies:nether_pepper"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.005,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "name": "minecolonies:peas"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.005,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "name": "minecolonies:mint"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.005,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "name": "minecolonies:butternut_squash"
         }
       ],
       "rolls": 1.0

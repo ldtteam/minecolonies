@@ -26,8 +26,11 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -52,7 +55,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -238,18 +240,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isNoAi()
     {
         return false;
-    }
-
-    @Override
-    @Nullable
-    protected PlayerTeam getAssignedTeam()
-    {
-        final ICitizenColonyHandler citizenColonyHandler = getCitizenColonyHandler();
-        if (citizenColonyHandler == null)
-        {
-            return null;
-        }
-        return citizenColonyHandler.getTeam(level());
     }
 
     /**
@@ -812,5 +802,30 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     {
         final ICitizenData data = getCitizenData();
         return data == null ? null : data.getInventory();
+    }
+
+    @Override
+    public int getTeamColor()
+    {
+        if (getCitizenColonyHandler().getColony() == null)
+        {
+            return super.getTeamColor();
+        }
+        return getCitizenColonyHandler().getColony().getTeamColonyColor().getColor();
+    }
+
+    @Override
+    @NotNull
+    public Component getDisplayName()
+    {
+        if (getCitizenColonyHandler().getColony() == null)
+        {
+            return super.getDisplayName();
+        }
+        if (getName() instanceof MutableComponent mutableComponent)
+        {
+            return mutableComponent.withStyle(getCitizenColonyHandler().getColony().getTeamColonyColor()).withStyle((style) -> style.withHoverEvent(this.createHoverEvent()).withInsertion(this.getStringUUID()));
+        }
+        return super.getDisplayName();
     }
 }

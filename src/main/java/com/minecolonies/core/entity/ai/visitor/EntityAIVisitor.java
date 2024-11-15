@@ -96,7 +96,7 @@ public class EntityAIVisitor implements IState
         citizen.getCitizenData().markDirty(20 * 20);
         if (citizen.getCitizenData().getSaturation() <= 0)
         {
-            citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
+            citizen.getCitizenColonyHandler().getColonyOrRegister().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
                 tavern.getFirstModuleOccurance(TavernBuildingModule.class).removeCitizen(citizen.getCivilianID());
@@ -169,7 +169,7 @@ public class EntityAIVisitor implements IState
         }
 
         final int random = citizen.getRandom().nextInt(5);
-        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(BuildingModules.TAVERN_VISITOR))
+        if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColonyOrRegister().isDay()) && tavern.hasModule(BuildingModules.TAVERN_VISITOR))
         {
             final BlockPos pos = tavern.getModule(BuildingModules.TAVERN_VISITOR).getFreeSitPosition();
             if (pos != null)
@@ -183,7 +183,7 @@ public class EntityAIVisitor implements IState
         else if (random == 2)
         {
             citizen.getNavigation().moveToRandomPos(10, 0.6D);
-            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
+            actionTimeoutCounter = citizen.getCitizenColonyHandler().getColonyOrRegister().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
             return VisitorState.WANDERING;
         }
 
@@ -223,7 +223,7 @@ public class EntityAIVisitor implements IState
      */
     private boolean isEntityLoaded()
     {
-        if (citizen.getCitizenColonyHandler().getColony() == null || citizen.getCitizenData() == null || citizen.getCitizenData().getHomeBuilding() == null)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister() == null || citizen.getCitizenData() == null || citizen.getCitizenData().getHomeBuilding() == null)
         {
             return false;
         }

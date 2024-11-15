@@ -6,22 +6,21 @@ import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.scores.PlayerTeam;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Special abstract minecolonies mob that overrides laggy vanilla behaviour.
@@ -51,7 +50,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     /**
      * Entity push cache.
      */
-    private List<Entity> entityPushCache = new ArrayList<>();
+    private List<LivingEntity> entityPushCache = new ArrayList<>();
 
     /**
      * The timepoint at which the entity last collided
@@ -170,7 +169,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
         {
             if (this.tickCount % 10 == randomVariance % 10)
             {
-                entityPushCache = this.level().getEntities(this, this.getBoundingBox(), EntityUtils.pushableBy());
+                entityPushCache = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
             }
 
             if (!entityPushCache.isEmpty())
@@ -301,78 +300,6 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     /**
-     * Get the team this entity is assigned to.
-     *
-     * @return the team instance.
-     */
-    @Nullable
-    protected abstract PlayerTeam getAssignedTeam();
-
-    @Override
-    @Nullable
-    public final PlayerTeam getTeam()
-    {
-        final PlayerTeam assignedTeam = getAssignedTeam();
-        registerToTeamInternal(assignedTeam);
-        return assignedTeam;
-    }
-
-    /**
-     * Register this entity to its own assigned team.
-     */
-    public void registerToTeam()
-    {
-        registerToTeamInternal(getAssignedTeam());
-    }
-
-    /**
-     * Internal method for team registration.
-     *
-     * @param team the team to register to.
-     */
-    private void registerToTeamInternal(@Nullable final PlayerTeam team)
-    {
-        if (team != null && !isInTeam(team))
-        {
-            level().getScoreboard().addPlayerToTeam(getScoreboardName(), team);
-        }
-    }
-
-    /**
-     * Remove the entity from its own assigned team.
-     */
-    public void removeFromTeam()
-    {
-        final PlayerTeam team = getAssignedTeam();
-        if (team != null && isInTeam(team))
-        {
-            level().getScoreboard().removePlayerFromTeam(getScoreboardName(), team);
-        }
-    }
-
-    /**
-     * Check if the current entity is assigned to the provided team.
-     *
-     * @param team the input team.
-     * @return true if so.
-     */
-    private boolean isInTeam(@NotNull final PlayerTeam team)
-    {
-        return Objects.equals(level().getScoreboard().getPlayersTeam(getScoreboardName()), team);
-    }
-
-    @Override
-    public void remove(@NotNull final RemovalReason reason)
-    {
-        super.remove(reason);
-        final PlayerTeam playersTeam = level().getScoreboard().getPlayersTeam(getScoreboardName());
-        if (playersTeam != null)
-        {
-            level().getScoreboard().removePlayerFromTeam(getScoreboardName(), playersTeam);
-        }
-    }
-
-    /**
      * Static Byte values to avoid frequent autoboxing
      */
     final Byte ENABLE  = 2;
@@ -406,4 +333,21 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
             super.knockback(power, xRatio, zRatio);
         }
     }
+
+    @Override
+    public boolean hurt(final DamageSource dmgSource, final float dmg)
+    {
+        if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamId() == getTeamId())
+        {
+            return false;
+        }
+        return super.hurt(dmgSource, dmg);
+    }
+
+    /**
+     * Get the team name of this entity.
+     * todo sam make colony ids unique across dimensions.
+     * @return the team name.
+     */
+    public abstract int getTeamId();
 }

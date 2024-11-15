@@ -65,7 +65,6 @@ import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -85,7 +84,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.MineColonies.getConfig;
-import static com.minecolonies.core.util.TeamUtils.checkOrCreateTeam;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -375,7 +373,6 @@ public class Colony implements IColony
             this.colonyFlag = new BannerPatternLayers.Builder().add(Utils.getRegistryValue(BannerPatterns.BASE, world), DyeColor.WHITE).build();
             this.dimensionId = world.dimension();
             onWorldLoad(world);
-            checkOrCreateTeam(world, IColony.getTeamName(world, id), false);
         }
 
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
@@ -635,14 +632,6 @@ public class Colony implements IColony
         }
     }
 
-    @Override
-    @Nullable
-    public PlayerTeam getTeam()
-    {
-        // This getter will create the team if it doesn't exist. Could do something different though in the future.
-        return checkOrCreateTeam(world, IColony.getTeamName(world, id), false);
-    }
-
     /**
      * Set up the colony color for team handling for pvp.
      *
@@ -653,12 +642,6 @@ public class Colony implements IColony
         if (this.world != null)
         {
             this.colonyTeamColor = colonyColor;
-            final PlayerTeam team = getTeam();
-            if (team != null)
-            {
-                team.setColor(colonyColor);
-                team.setPlayerPrefix(Component.literal(colonyColor.toString()));
-            }
         }
         this.markDirty();
     }

@@ -164,14 +164,13 @@ public class EntityAISleep implements IStateAI
             }
         }
 
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (colony != null && citizen.getCitizenData().getHomeBuilding() instanceof AbstractBuilding hut)
         {
             final BlockPos homePos = citizen.getCitizenData().getHomePosition();
             if (usedBed == null)
             {
                 List<BlockPos> bedList = new ArrayList<>();
-
                 if (hut.hasModule(BuildingModules.BED))
                 {
                     bedList.addAll(hut.getModule(BuildingModules.BED).getRegisteredBlocks());

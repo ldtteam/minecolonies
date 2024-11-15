@@ -514,7 +514,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             blockToMine = null;
         }
 
-        final double decrease = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
+        final double decrease = 1 - worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
         setDelay((int) ((BUILD_BLOCK_DELAY * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER)) * decrease));
 
         return getState();
@@ -704,7 +704,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             final BuildingStructureHandler<J, B> structure;
-            IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
+            IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(position);
             final BlockEntity entity = world.getBlockEntity(position);
 
             if (removal)

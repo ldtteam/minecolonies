@@ -214,9 +214,9 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
                 structureAI.reduceNeededResources(stack);
                 structureAI.getWorker()
                   .getCitizenColonyHandler()
-                  .getColony()
+                  .getColonyOrRegister()
                   .getStatisticsManager()
-                  .increment(BLOCKS_PLACED, structureAI.getWorker().getCitizenColonyHandler().getColony().getDay());
+                  .increment(BLOCKS_PLACED, structureAI.getWorker().getCitizenColonyHandler().getColonyOrRegister().getDay());
             }
 
             structureAI.getWorker().queueSound(state.getSoundType().getPlaceSound(), worldPos, 10, 0);
@@ -224,7 +224,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
         if (state.getBlock() == ModBlocks.blockWayPoint)
         {
-            structureAI.getWorker().getCitizenColonyHandler().getColony().addWayPoint(worldPos, state);
+            structureAI.getWorker().getCitizenColonyHandler().getColonyOrRegister().addWayPoint(worldPos, state);
         }
     }
 

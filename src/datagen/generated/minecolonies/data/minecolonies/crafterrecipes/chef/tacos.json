@@ -1,0 +1,27 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "id": "minecolonies:nether_pepper"
+    },
+    {
+      "id": "minecolonies:garlic"
+    },
+    {
+      "id": "minecolonies:tortillas"
+    },
+    {
+      "id": "minecraft:beef"
+    },
+    {
+      "id": "minecolonies:tomato"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": {
+    "id": "minecolonies:tacos"
+  },
+  "show-tooltip": true
+}
