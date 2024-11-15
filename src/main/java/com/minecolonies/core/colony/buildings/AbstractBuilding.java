@@ -1187,7 +1187,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (keepFood())
         {
-            toKeep.put(stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack), new Tuple<>(getBuildingLevel() * 2, true));
+            toKeep.put(stack -> FoodUtils.canEat(stack, null, this), new Tuple<>(getBuildingLevel() * 2, true));
         }
         for (final IHasRequiredItemsModule module : getModulesByType(IHasRequiredItemsModule.class))
         {
@@ -1196,12 +1196,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty, inv))));
         return toKeep;
-    }
-
-    @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        return FoodUtils.canEat(stack, this.getBuildingLevel());
     }
 
     @Override

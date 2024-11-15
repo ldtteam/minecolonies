@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -342,9 +341,6 @@ public interface IColonyView extends IColony
 
     @Override
     boolean hasWarehouse();
-
-    @Override
-    PlayerTeam getTeam();
 
     @Override
     int getLastContactInHours();

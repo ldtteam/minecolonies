@@ -273,7 +273,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return false;
         }
 
-        final double chance = 1 / (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS));
+        final double chance = 1 / (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS));
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
         if (worker.getRandom().nextInt((int) (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * 0.5) + 20) == 1
@@ -355,7 +355,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D) && worker.distanceToSqr(building.getID().getCenter()) > 20)
         {
-            return worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0;
+            return worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0;
         }
 
         return false;
@@ -394,7 +394,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
         {
-            final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
+            final double effect = worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
             if (effect > 0)
             {
                 worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
@@ -816,7 +816,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return true;
         }
 
-        final IColony colony = user.getCitizenColonyHandler().getColony();
+        final IColony colony = user.getCitizenColonyHandler().getColonyOrRegister();
         if (colony == null)
         {
             return false;
@@ -830,7 +830,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
+        if (entity instanceof EntityCitizen otherCitizen && otherCitizen.getCitizenColonyHandler().getColonyId() != colony.getID()
+            && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
         {
             return true;
         }

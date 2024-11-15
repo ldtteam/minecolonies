@@ -260,8 +260,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final double timeNeeded = (Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) + additionalDist) * TIME_PER_BLOCK;
 
         // Estimated arrival is 1hour past night
-        final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
-                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
+        final double timeLeft = (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
+                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)

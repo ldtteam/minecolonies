@@ -67,7 +67,7 @@ public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
+    public double getEndNodeScore(@NotNull final MNode n)
     {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }

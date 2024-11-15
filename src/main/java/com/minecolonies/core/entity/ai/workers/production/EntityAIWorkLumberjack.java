@@ -397,7 +397,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                                  building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
-                                 worker.getCitizenColonyHandler().getColony());
+                                 worker.getCitizenColonyHandler().getColonyOrRegister());
             }
             else
             {
@@ -406,7 +406,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                                  building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
-                                 worker.getCitizenColonyHandler().getColony());
+                                 worker.getCitizenColonyHandler().getColonyOrRegister());
             }
             return getState();
         }
@@ -844,9 +844,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 world.playSound(null,
                   this.worker.blockPosition(),
                   soundType.getPlaceSound(),
-                  SoundSource.BLOCKS,
-                  soundType.getVolume(),
-                  soundType.getPitch());
+                  SoundSource.BLOCKS, 
+                  (soundType.getVolume() + 1.0F) * 0.5F,
+                  soundType.getPitch() * 0.8F);
             }
 
             worker.swing(worker.getUsedItemHand());

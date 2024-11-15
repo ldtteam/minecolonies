@@ -197,8 +197,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
               blockPos,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
               SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+              (block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume() + 1.0F) * 0.5F,
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch() * 0.8F);
             WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
             damageItemInHand(citizen.getUsedItemHand(), 1);
@@ -217,10 +217,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getHitSound(),
               SoundSource.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+              (block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume() + 1.0F) * 0.125F,
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch() * 0.5F);
         }
     }
 
@@ -240,10 +240,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
 
         //Check if the effect exists first, to avoid unnecessary calls to random number generator.
-        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColony()
+                                                               .getColonyOrRegister()
                                                                .getResearchManager()
                                                                .getResearchEffects()
                                                                .getEffectStrength(TOOL_DURABILITY))))
@@ -323,10 +323,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void updateArmorDamage(final double damage)
     {
-        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColony()
+                                                               .getColonyOrRegister()
                                                                .getResearchManager()
                                                                .getResearchEffects()
                                                                .getEffectStrength(ARMOR_DURABILITY))))

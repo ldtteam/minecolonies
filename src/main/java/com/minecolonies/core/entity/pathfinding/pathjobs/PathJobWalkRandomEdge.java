@@ -63,7 +63,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPat
     }
 
     @Override
-    protected double getEndNodeScore(final MNode n)
+    public double getEndNodeScore(final MNode n)
     {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }

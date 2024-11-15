@@ -180,7 +180,7 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
     }
 
     @Override
-    protected double getEndNodeScore(final MNode n)
+    public double getEndNodeScore(final MNode n)
     {
         return BlockPosUtil.distManhattan(searchTowards, n.x, n.y, n.z);
     }

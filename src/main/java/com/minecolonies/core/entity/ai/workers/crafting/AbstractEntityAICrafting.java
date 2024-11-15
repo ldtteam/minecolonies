@@ -538,9 +538,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 worker.getCitizenColonyHandler()
-                  .getColony()
+                  .getColonyOrRegister()
                   .getStatisticsManager()
-                  .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColony().getDay());
+                  .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }
