@@ -3,6 +3,9 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
+      "id": "minecraft:kelp"
+    },
+    {
       "id": "minecolonies:garlic"
     },
     {
