@@ -79,7 +79,7 @@ public class ItemNbtCalculator implements DataProvider
         // Force loading some tags, since the creative tabs don't enumerate properly without them
         return lookupProvider
             // Tag TagKey[minecraft:instrument / minecraft:goat_horns] can't be dereferenced during construction
-            .thenApply(provider -> loadRegistryTags(provider, serverResources, BuiltInRegistries.INSTRUMENT))
+            .thenApply(p -> loadRegistryTags(p, serverResources, BuiltInRegistries.INSTRUMENT))
             // Missing tag: 'minecraft:enchantable/fishing' in 'minecraft:item'
             .thenApply(p -> loadRegistryTags(p, serverResources, BuiltInRegistries.ITEM))
             // Missing tag: 'minecraft:blocks_wind_charge_explosions' in 'minecraft:block'
