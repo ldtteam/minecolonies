@@ -13,7 +13,6 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
@@ -117,7 +116,6 @@ public class MineColonies
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(modBus);
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
         SupplyLoot.GLM.register(modBus);
-        ModBannerPatterns.BANNER_PATTERNS.register(modBus);
         ModItemsInitializer.DEFERRED_REGISTER.register(modBus);
         ModEquipmentTypes.DEFERRED_REGISTER.register(modBus);
 
