@@ -2,14 +2,12 @@ package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -265,6 +263,7 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         if (isFeatureUnlocked.get())
         {
+            findPaneByID(BUTTON_PATREON).hide();
             textPane.enable();
             namePane.enable();
             textPane.show();
@@ -272,6 +271,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         }
         else
         {
+            findPaneByID(BUTTON_PATREON).show();
             textPane.disable();
             namePane.disable();
 
