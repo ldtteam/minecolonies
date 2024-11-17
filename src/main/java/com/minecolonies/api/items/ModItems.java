@@ -183,6 +183,12 @@ public final class ModItems
     public static Item[] getAllFoods()
     {
         return new Item[] {
+          // Breads
+          milkyBread,
+          sugaryBread,
+          goldenBread,
+          chorusBread,
+
           // Tier 1 Food
           cheddar_cheese,
           feta_cheese,
