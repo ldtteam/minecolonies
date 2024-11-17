@@ -8,12 +8,12 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.core.colony.jobs.JobConcreteMixer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ConcretePowderBlock;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +48,12 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
           new AITarget(CONCRETE_MIXER_PLACING, this::placePowder, TICKS_SECOND),
           new AITarget(CONCRETE_MIXER_HARVESTING, this::harvestConcrete, TICKS_SECOND)
         );
+    }
+
+    @Override
+    public Class<BuildingConcreteMixer> getExpectedBuildingClass()
+    {
+        return BuildingConcreteMixer.class;
     }
 
     /**
@@ -158,12 +164,6 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
-    public Class<BuildingConcreteMixer> getExpectedBuildingClass()
-    {
-        return BuildingConcreteMixer.class;
-    }
-
-    @Override
     protected IAIState decide()
     {
         if (job.getCurrentTask() == null)
@@ -231,12 +231,6 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         }
 
         return performMixingWork();
-    }
-
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return getState().equals(CONCRETE_MIXER_HARVESTING) ? building.getMaxConcretePlaced() : super.getActionsDoneUntilDumping();
     }
 
     /**
