@@ -160,7 +160,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (building.getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() != null && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
         {
             final BlockPos buildingPos = job.getWorkOrder().getLocation();
-            final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
+            final IBuilding building = worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
                 WorldUtil.getEntitiesWithinBuilding(world, Monster.class, building, null).forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
@@ -321,6 +321,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
-        MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers());
+        MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getImportantMessageEntityPlayers());
     }
 }

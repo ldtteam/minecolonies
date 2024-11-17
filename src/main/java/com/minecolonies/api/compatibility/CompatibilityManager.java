@@ -16,7 +16,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -31,7 +30,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -145,16 +143,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private static ImmutableList<ItemStack> allItems = ImmutableList.of();
 
     /**
-     * Free block positions everyone can interact with.
-     */
-    private final Set<Block> freeBlocks = new HashSet<>();
-
-    /**
-     * Free positions everyone can interact with.
-     */
-    private final Set<BlockPos> freePositions = new HashSet<>();
-
-    /**
      * Hashmap of mobs we may or may not attack.
      */
     private ImmutableSet<ResourceLocation> monsters = ImmutableSet.of();
@@ -191,8 +179,6 @@ public class CompatibilityManager implements ICompatibilityManager
         recruitmentCostsWeights.clear();
         diseases.clear();
         diseaseList.clear();
-        freeBlocks.clear();
-        freePositions.clear();
         monsters = ImmutableSet.of();
         creativeModeTabMap.clear();
     }
@@ -211,7 +197,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverFreeBlocksAndPos();
         discoverModCompat();
 
         discoverCompostRecipes(recipeManager);
@@ -268,7 +253,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverFreeBlocksAndPos();
         discoverModCompat();
     }
 
@@ -587,18 +571,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isFreeBlock(final Block block)
-    {
-        return freeBlocks.contains(block);
-    }
-
-    @Override
-    public boolean isFreePos(final BlockPos block)
-    {
-        return freePositions.contains(block);
-    }
-
-    @Override
     public CreativeModeTab getCreativeTab(final ItemStorage checkItem)
     {
         return creativeModeTabMap.get(checkItem);
@@ -813,7 +785,7 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ISFOOD.test(stack) || ISCOOKABLE.test(stack))
         {
             food.add(new ItemStorage(stack));
-            if (CAN_EAT.test(stack))
+            if (FoodUtils.EDIBLE.test(stack))
             {
                 edibles.add(new ItemStorage(stack));
             }
@@ -986,32 +958,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundTag compound)
     {
         return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.of(compound), false, true));
-    }
-
-    /**
-     * Load free blocks and pos from the config and add to colony.
-     */
-    private void discoverFreeBlocksAndPos()
-    {
-        for (final String s : MinecoloniesAPIProxy.getInstance().getConfig().getServer().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
     }
 
     /**

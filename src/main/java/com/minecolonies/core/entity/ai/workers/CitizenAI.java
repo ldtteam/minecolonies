@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.ITickingStateAI;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -11,6 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
@@ -152,7 +154,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Raiding
-        if (citizen.getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getRaiderManager().isRaided())
         {
             citizen.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             citizen.setVisibleStatusIfNone(RAIDED);
@@ -262,7 +264,7 @@ public class CitizenAI implements IStateAI
             return false;
         }
 
-        if (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
+        if (citizen.getCitizenData().getJob() != null && (!citizen.getCitizenData().getJob().canAIBeInterrupted()))
         {
             return false;
         }
@@ -270,6 +272,11 @@ public class CitizenAI implements IStateAI
         if (lastState == CitizenAIState.EATING)
         {
             return true;
+        }
+
+        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(20) > 0)
+        {
+            return false;
         }
 
         if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
@@ -295,7 +302,7 @@ public class CitizenAI implements IStateAI
         }
 
         final ICitizenColonyHandler colonyHandler = citizen.getCitizenColonyHandler();
-        if (colonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0)
+        if (colonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0)
         {
             return true;
         }

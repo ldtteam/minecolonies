@@ -25,7 +25,10 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -48,6 +51,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -767,5 +771,30 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isSleeping()
     {
         return getCitizenSleepHandler().isAsleep();
+    }
+
+    @Override
+    public int getTeamColor()
+    {
+        if (getCitizenColonyHandler().getColony() == null)
+        {
+            return super.getTeamColor();
+        }
+        return getCitizenColonyHandler().getColony().getTeamColonyColor().getColor();
+    }
+
+    @Override
+    @NotNull
+    public Component getDisplayName()
+    {
+        if (getCitizenColonyHandler().getColony() == null)
+        {
+            return super.getDisplayName();
+        }
+        if (getName() instanceof MutableComponent mutableComponent)
+        {
+            return mutableComponent.withStyle(getCitizenColonyHandler().getColony().getTeamColonyColor()).withStyle((style) -> style.withHoverEvent(this.createHoverEvent()).withInsertion(this.getStringUUID()));
+        }
+        return super.getDisplayName();
     }
 }

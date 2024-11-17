@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:garlic"
+    },
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecolonies:butternut_squash"
+    },
+    {
+      "item": "minecolonies:butternut_squash"
+    },
+    {
+      "item": "minecolonies:large_water_bottle"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "minecolonies:veggie_quiche"
+  }
+}

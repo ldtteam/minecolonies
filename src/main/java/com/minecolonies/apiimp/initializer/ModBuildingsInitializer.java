@@ -140,7 +140,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(COOK_WORK)
           .addBuildingModuleProducer(FURNACE)
           .addBuildingModuleProducer(ITEMLIST_FUEL)
-          .addBuildingModuleProducer(ITEMLIST_FOODEXCLUSION)
+          .addBuildingModuleProducer(RESTAURANT_MENU)
           .addBuildingModuleProducer(MIN_STOCK)
           .createBuildingEntry());
 
@@ -572,7 +572,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(NETHERWORKER_CRAFT)
           .addBuildingModuleProducer(NETHERWORKER_EXPEDITION)
           .addBuildingModuleProducer(NETHERWORKER_SETTINGS)
-          .addBuildingModuleProducer(ITEMLIST_FOODEXCLUSION)
+          .addBuildingModuleProducer(NETHERMINER_MENU)
           .addBuildingModuleProducer(CRAFT_TASK_VIEW)
           .addBuildingModuleProducer(MIN_STOCK)
           .createBuildingEntry());

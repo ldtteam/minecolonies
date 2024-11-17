@@ -37,6 +37,14 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
      */
     public Map<Skill, SkillData> skillMap = new EnumMap<>(Skill.class);
 
+    public CitizenSkillHandler()
+    {
+        for (final Skill skill : Skill.values())
+        {
+            skillMap.put(skill, new SkillData(1, 0.0D));
+        }
+    }
+
     @Override
     public void init(final int levelCap)
     {

@@ -290,6 +290,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
+    public static final String NETHERMINER_NO_FOOD                                                  = "com.minecolonies.coremod.netherminer.nofood";
+    @NonNls
     public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                  = "com.minecolonies.coremod.general.canttakeequipped";
@@ -652,7 +654,11 @@ public final class TranslationConstants
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     @NonNls
-    public static final String NOKITCHEN                                          = ".nokitchen";
+    public static final String FOOD_QUALITY                                       = ".foodquality";
+    @NonNls
+    public static final String FOOD_DIVERSITY                                     = ".fooddiversity";
+    @NonNls
+    public static final String URGENT                                             = ".urgent";
 
     //<editor-fold desc="Partial keys">
 

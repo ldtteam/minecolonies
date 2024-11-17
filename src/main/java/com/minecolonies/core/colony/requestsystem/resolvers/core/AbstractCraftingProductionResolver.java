@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -173,11 +172,8 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                 }
                 else if(!storage.getCraftingTools().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getCraftingTools(), craftingHelperStack, false, true))
                 {
-                    if(InventoryUtils.getItemCountInProvider(building, item -> ItemStackUtils.compareItemStacksIgnoreStackSize(item, craftingHelperStack, false, true)) <= ingredient.getAmount())
-                    {
-                        int requiredForDurability = (int) Math.ceil((double) count / ingredient.getRemainingDurablityValue());
-                        materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, requiredForDurability , requiredForDurability, false));
-                    }
+                    int requiredForDurability = craftingHelperStack.isDamageableItem() ? (int) Math.ceil((double) count / ingredient.getRemainingDurablityValue()) : ingredient.getAmount();
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, requiredForDurability, requiredForDurability, false));
                 }
                 else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
                 {

@@ -755,6 +755,12 @@
     "item": "minecolonies:ancienttome"
   },
   {
+    "item": "minecolonies:apple_pie"
+  },
+  {
+    "item": "minecolonies:baked_salmon"
+  },
+  {
     "item": "minecolonies:banner_rally_guards"
   },
   {
@@ -940,7 +946,7 @@
     "item": "minecolonies:blockwaypoint"
   },
   {
-    "item": "minecolonies:bread_dough"
+    "item": "minecolonies:borscht"
   },
   {
     "checkednbtkeys": [
@@ -954,16 +960,25 @@
     "item": "minecolonies:butter"
   },
   {
+    "item": "minecolonies:butternut_squash"
+  },
+  {
     "item": "minecolonies:cabbage"
   },
   {
     "item": "minecolonies:cabochis"
   },
   {
-    "item": "minecolonies:cake_batter"
+    "item": "minecolonies:cheddar_cheese"
   },
   {
-    "item": "minecolonies:cheddar_cheese"
+    "item": "minecolonies:cheese_pizza"
+  },
+  {
+    "item": "minecolonies:cheese_ravioli"
+  },
+  {
+    "item": "minecolonies:chicken_broth"
   },
   {
     "item": "minecolonies:chickpea"
@@ -1001,13 +1016,25 @@
     "item": "minecolonies:cooked_rice"
   },
   {
-    "item": "minecolonies:cookie_dough"
+    "item": "minecolonies:corn"
+  },
+  {
+    "item": "minecolonies:corn_chowder"
+  },
+  {
+    "item": "minecolonies:cornmeal"
+  },
+  {
+    "item": "minecolonies:creamcheese"
   },
   {
     "item": "minecolonies:decorationcontroller"
   },
   {
     "item": "minecolonies:durum"
+  },
+  {
+    "item": "minecolonies:eggdrop_soup"
   },
   {
     "item": "minecolonies:eggplant"
@@ -1023,6 +1050,12 @@
   },
   {
     "item": "minecolonies:firearrow"
+  },
+  {
+    "item": "minecolonies:fish_dinner"
+  },
+  {
+    "item": "minecolonies:fish_n_chips"
   },
   {
     "item": "minecolonies:flatbread"
@@ -1057,6 +1090,12 @@
     "item": "minecolonies:iron_scimitar"
   },
   {
+    "item": "minecolonies:kebab"
+  },
+  {
+    "item": "minecolonies:kimchi"
+  },
+  {
     "item": "minecolonies:lamb_stew"
   },
   {
@@ -1084,10 +1123,25 @@
     "item": "minecolonies:manchet_dough"
   },
   {
+    "item": "minecolonies:meat_ravioli"
+  },
+  {
     "item": "minecolonies:mediumquarry"
   },
   {
     "item": "minecolonies:milky_bread"
+  },
+  {
+    "item": "minecolonies:mint"
+  },
+  {
+    "item": "minecolonies:mint_jelly"
+  },
+  {
+    "item": "minecolonies:mint_tea"
+  },
+  {
+    "item": "minecolonies:mintchoco_cheesecake"
   },
   {
     "item": "minecolonies:mistletoe"
@@ -1099,6 +1153,15 @@
     "item": "minecolonies:muffin_dough"
   },
   {
+    "item": "minecolonies:mushroom_pizza"
+  },
+  {
+    "item": "minecolonies:mutton_dinner"
+  },
+  {
+    "item": "minecolonies:nether_pepper"
+  },
+  {
     "item": "minecolonies:onion"
   },
   {
@@ -1106,6 +1169,12 @@
   },
   {
     "item": "minecolonies:pasta_tomato"
+  },
+  {
+    "item": "minecolonies:pea_soup"
+  },
+  {
+    "item": "minecolonies:peas"
   },
   {
     "item": "minecolonies:pepper_hummus"
@@ -1120,6 +1189,9 @@
       }
     ],
     "item": "minecolonies:pharaoscepter"
+  },
+  {
+    "item": "minecolonies:pierogi"
   },
   {
     "checkednbtkeys": [
@@ -1213,6 +1285,9 @@
     "item": "minecolonies:pita_hummus"
   },
   {
+    "item": "minecolonies:plain_cheesecake"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1257,16 +1332,22 @@
     "item": "minecolonies:plate_armor_legs"
   },
   {
+    "item": "minecolonies:polenta"
+  },
+  {
+    "item": "minecolonies:potato_soup"
+  },
+  {
     "item": "minecolonies:pottage"
   },
   {
     "item": "minecolonies:questlog"
   },
   {
-    "item": "minecolonies:raw_noodle"
+    "item": "minecolonies:ramen"
   },
   {
-    "item": "minecolonies:raw_pumpkin_pie"
+    "item": "minecolonies:raw_noodle"
   },
   {
     "item": "minecolonies:resourcescroll"
@@ -1318,6 +1399,9 @@
       }
     ],
     "item": "minecolonies:scepterpermission"
+  },
+  {
+    "item": "minecolonies:schnitzel"
   },
   {
     "item": "minecolonies:scroll_area_tp"
@@ -1373,6 +1457,9 @@
     "item": "minecolonies:soybean"
   },
   {
+    "item": "minecolonies:soysauce"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -1382,6 +1469,18 @@
       }
     ],
     "item": "minecolonies:spear"
+  },
+  {
+    "item": "minecolonies:spicy_eggplant"
+  },
+  {
+    "item": "minecolonies:spicy_grilled_chicken"
+  },
+  {
+    "item": "minecolonies:squash_soup"
+  },
+  {
+    "item": "minecolonies:steak_dinner"
   },
   {
     "item": "minecolonies:stew_trencher"
@@ -1405,10 +1504,31 @@
     "item": "minecolonies:sushi_roll"
   },
   {
+    "item": "minecolonies:tacos"
+  },
+  {
     "item": "minecolonies:tofu"
   },
   {
     "item": "minecolonies:tomato"
+  },
+  {
+    "item": "minecolonies:tortillas"
+  },
+  {
+    "item": "minecolonies:veggie_quiche"
+  },
+  {
+    "item": "minecolonies:veggie_ravioli"
+  },
+  {
+    "item": "minecolonies:veggie_soup"
+  },
+  {
+    "item": "minecolonies:yogurt"
+  },
+  {
+    "item": "minecolonies:yogurt_with_berries"
   },
   {
     "item": "minecraft:acacia_boat"

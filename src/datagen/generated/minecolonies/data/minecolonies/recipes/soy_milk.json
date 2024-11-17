@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:large_water_bottle"
+    },
+    {
+      "item": "minecolonies:soybean"
+    }
+  ],
+  "result": {
+    "item": "minecolonies:large_soy_milk_bottle"
+  }
+}

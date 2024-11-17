@@ -1,15 +1,15 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -34,7 +34,7 @@ import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FOODEXCLUSION;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
@@ -56,7 +56,9 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(BuildingModules.FURNACE) && citizen.getWorkBuilding().getModule(BuildingModules.FURNACE).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) != -1
-                       && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1);
+              &&
+              InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> FoodUtils.canEat(stack, citizen.getHomeBuilding(), citizen.getWorkBuilding()))
+                  == -1);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(BETTER_FOOD),
           citizen -> citizen.getSaturation() == 0 && !citizen.isChild() && citizen.needsBetterFood());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(BETTER_FOOD_CHILDREN),
@@ -175,17 +177,19 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModule(ITEMLIST_FOODEXCLUSION).getList();
-            for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles(citizen.getWorkBuilding().getBuildingLevel() - 1))
-            {
-                if (!exclusionList.contains(storage))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return citizen.getWorkBuilding().getModule(RESTAURANT_MENU).getMenu().isEmpty();
           });
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NETHERMINER_NO_FOOD),
+          citizen -> {
+              if (!(citizen.getWorkBuilding() instanceof BuildingNetherWorker))
+              {
+                  return false;
+              }
+
+              return citizen.getWorkBuilding().getModule(RESTAURANT_MENU).getMenu().isEmpty();
+          });
+
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(SIFTER_NO_MESH),
           citizen -> {
             if (!(citizen.getWorkBuilding() instanceof BuildingSifter))
@@ -261,11 +265,63 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + SLEPTTONIGHT),
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT)).getDays() <= 0);
 
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD),
-          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) != null);
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY + URGENT),
+          citizen -> {
+            if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
+            {
+                return false;
+            }
+            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+            if (homeBuildingLevel <= 2)
+            {
+                return false;
+            }
+            return citizen.getCitizenFoodHandler().getFoodHappinessStats().quality() < (homeBuildingLevel-2)-1;
+          });
 
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + HADDECENTFOOD + NOKITCHEN),
-          citizen -> ((ITimeBasedHappinessModifier)citizen.getCitizenHappinessHandler().getModifier(HADDECENTFOOD)).getDays() <= 0 && citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() > 2 && citizen.getColony().getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.kitchen.get()) == null);
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY + URGENT),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 1)
+              {
+                  return false;
+              }
+              return citizen.getCitizenFoodHandler().getFoodHappinessStats().diversity() < homeBuildingLevel/2.0;
+          });
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_QUALITY),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 2)
+              {
+                  return false;
+              }
+              final ICitizenFoodHandler.CitizenFoodStats happinessStats = citizen.getCitizenFoodHandler().getFoodHappinessStats();
+              return happinessStats.quality() < (homeBuildingLevel-2) && happinessStats.quality() >= (homeBuildingLevel-2-1);
+          });
+
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO + FOOD_DIVERSITY),
+          citizen -> {
+              if (citizen.getHomeBuilding() == null || !citizen.getCitizenFoodHandler().hasFullFoodHistory())
+              {
+                  return false;
+              }
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              if (homeBuildingLevel <= 1)
+              {
+                  return false;
+              }
+              final ICitizenFoodHandler.CitizenFoodStats happinessStats = citizen.getCitizenFoodHandler().getFoodHappinessStats();
+              return happinessStats.diversity() < homeBuildingLevel && happinessStats.diversity() >= homeBuildingLevel/2.0;
+          });
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper

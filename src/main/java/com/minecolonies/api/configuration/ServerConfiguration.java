@@ -91,7 +91,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
     public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -192,11 +191,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
-          Arrays.asList
-                  ("dirt",
-                    "0 0 0"),
-          s -> s instanceof String);
 
         swapToCategory(builder, "compatibility");
 
@@ -247,7 +241,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
         minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 1, 1, 10);
 
         swapToCategory(builder, "requestSystem");
 

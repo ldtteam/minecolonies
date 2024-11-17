@@ -1,0 +1,25 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "id": "minecraft:kelp"
+    },
+    {
+      "id": "minecolonies:garlic"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecolonies:raw_noodle"
+    },
+    {
+      "item": "minecolonies:soysauce"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": "minecolonies:ramen",
+  "show-tooltip": true
+}

@@ -2,6 +2,7 @@ package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.events.raid.RaidManager;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
@@ -83,16 +84,24 @@ public class CommandColonyPrintStats implements IMCOPCommand
             context.getSource().sendSuccess(() -> literalAndRemember(last.toString()), false);
         }
 
-        if (colony.getBuildingManager().getBuildings().size() > 0)
+        if (!colony.getBuildingManager().getBuildings().isEmpty())
         {
+            int count = 0;
+            int levels = 0;
+
+            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            {
+                if (building.getBuildingLevel() != 0)
+                {
+                    count++;
+                    levels += building.getBuildingLevel();
+                }
+            }
+
+            final double average = (double) levels / count;
+
             context.getSource()
-              .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + colony.getBuildingManager()
-                .getBuildings()
-                .values()
-                .stream()
-                .filter(iBuilding -> iBuilding.getBuildingLevel() != 0)
-                .collect(
-                  Collectors.summingInt(ibuilding -> ibuilding.getBuildingLevel())) / colony.getBuildingManager().getBuildings().size()), false);
+                .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + average), false);
             context.getSource()
               .sendSuccess(() -> literalAndRemember(colony.getBuildingManager()
                 .getBuildings()

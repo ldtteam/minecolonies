@@ -7,13 +7,13 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.GameRules;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
@@ -93,19 +93,34 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        localXp *= (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
+        localXp *= (1 + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
 
         final WorkerBuildingModule module = workBuilding.getModuleMatching(WorkerBuildingModule.class, m -> m.getAssignedCitizen().contains(data));
         final Skill primary = module.getPrimarySkill();
         final Skill secondary = module.getSecondarySkill();
 
         data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
-        data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
-        data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        if (primary.getComplimentary() != null)
+        {
+            data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        }
+
+        if (primary.getAdverse() != null)
+        {
+            data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        }
 
         data.getCitizenSkillHandler().addXpToSkill(secondary, localXp / 2.0, data);
-        data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
-        data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+
+        if (secondary.getComplimentary() != null)
+        {
+            data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+        }
+
+        if (secondary.getAdverse() != null)
+        {
+            data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+        }
     }
 
     @Override
