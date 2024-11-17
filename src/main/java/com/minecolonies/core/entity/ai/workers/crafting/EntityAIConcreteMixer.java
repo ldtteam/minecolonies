@@ -233,6 +233,12 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         return performMixingWork();
     }
 
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return getState().equals(CONCRETE_MIXER_HARVESTING) ? building.getMaxConcretePlaced() : super.getActionsDoneUntilDumping();
+    }
+
     /**
      * Harvest and placement logic for concrete.
      *
