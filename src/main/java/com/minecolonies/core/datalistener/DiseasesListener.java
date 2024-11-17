@@ -6,14 +6,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.network.messages.client.colony.GlobalDiseaseSyncMessage;
 import com.minecolonies.core.util.RandomCollection;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -21,7 +20,6 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Loads and listens to diseases data.
@@ -54,37 +51,6 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     private static RandomCollection<ResourceLocation, Disease> DISEASES = new RandomCollection<>();
 
     /**
-     * A possible disease.
-     *
-     * @param id        the id of the disease.
-     * @param name      the name of the disease.
-     * @param rarity    the rarity of the disease.
-     * @param cureItems the list of items needed to heal.
-     */
-    public record Disease(ResourceLocation id, Component name, int rarity, List<ItemStorage> cureItems)
-    {
-        /**
-         * Get the cure string containing all items required for the cure.
-         *
-         * @return the cure string.
-         */
-        public Component getCureString()
-        {
-            final MutableComponent cureString = Component.literal("");
-            for (int i = 0; i < cureItems.size(); i++)
-            {
-                final ItemStorage cureStack = cureItems.get(i);
-                cureString.append(String.valueOf(cureStack.getItemStack().getCount())).append(" ").append(cureStack.getItemStack().getHoverName());
-                if (i != cureItems.size() - 1)
-                {
-                    cureString.append(" + ");
-                }
-            }
-            return cureString;
-        }
-    }
-
-    /**
      * Default constructor.
      */
     public DiseasesListener()
@@ -103,10 +69,10 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
         byteBuf.writeInt(DISEASES.getAll().size());
         for (final Disease disease : DISEASES.getAll())
         {
-            byteBuf.writeResourceLocation(disease.id);
-            byteBuf.writeComponent(disease.name);
-            byteBuf.writeInt(disease.rarity);
-            for (final ItemStorage cureItem : disease.cureItems)
+            byteBuf.writeResourceLocation(disease.id());
+            byteBuf.writeComponent(disease.name());
+            byteBuf.writeInt(disease.rarity());
+            for (final ItemStorage cureItem : disease.cureItems())
             {
                 StandardFactoryController.getInstance().serialize(byteBuf, cureItem);
             }
@@ -174,29 +140,6 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     public static Disease getRandomDisease(final RandomSource random)
     {
         return DISEASES.next(random);
-    }
-
-    /**
-     * Predicate for the different usages to check if inventory contains a cure.
-     *
-     * @param cure the expected cure item.
-     * @return the predicate for checking if the cure exists.
-     */
-    public static Predicate<ItemStack> hasCureItem(final ItemStorage cure)
-    {
-        return stack -> isCureItem(stack, cure);
-    }
-
-    /**
-     * Check if the given item is a cure item.
-     *
-     * @param stack the input stack.
-     * @param cure  the cure item.
-     * @return true if so.
-     */
-    public static boolean isCureItem(final ItemStack stack, final ItemStorage cure)
-    {
-        return ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cure.getItemStack(), !cure.ignoreDamageValue(), !cure.ignoreNBT());
     }
 
     @Override

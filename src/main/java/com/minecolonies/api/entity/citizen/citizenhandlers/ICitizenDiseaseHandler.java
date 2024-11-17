@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.datalistener.DiseasesListener;
+import com.minecolonies.core.datalistener.model.Disease;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +43,7 @@ public interface ICitizenDiseaseHandler
      * @return the disease instance.
      */
     @Nullable
-    DiseasesListener.Disease getDisease();
+    Disease getDisease();
 
     /**
      * Cure the citizen.

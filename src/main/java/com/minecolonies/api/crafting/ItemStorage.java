@@ -18,17 +18,20 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class ItemStorage
 {
     /**
+     * The stack to store.
+     */
+    private final ItemStack stack;
+
+    /**
      * Set this to ignore the damage value in comparisons.
      */
     protected final boolean shouldIgnoreDamageValue;
+
     /**
      * Set this to ignore the damage value in comparisons.
      */
     protected final boolean shouldIgnoreNBTValue;
-    /**
-     * The stack to store.
-     */
-    private final ItemStack stack;
+
     /**
      * Amount of the storage.
      */
@@ -119,7 +122,7 @@ public class ItemStorage
 
     /**
      * Creates an instance of the storage from JSON
-     *
+     * 
      * @param jObject the JSON Object to parse
      */
     public ItemStorage(@NotNull final JsonObject jObject)
@@ -127,7 +130,7 @@ public class ItemStorage
         if (jObject.has(ITEM_PROP))
         {
             final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
-            if (jObject.has(COUNT_PROP))
+            if(jObject.has(COUNT_PROP))
             {
                 parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());
                 this.amount = jObject.get(COUNT_PROP).getAsInt();
@@ -137,16 +140,23 @@ public class ItemStorage
                 this.amount = parsedStack.getCount();
             }
             this.stack = parsedStack;
-            if (jObject.has(MATCHTYPE_PROP))
+            if(jObject.has(MATCHTYPE_PROP))
             {
                 String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
-                this.shouldIgnoreNBTValue = matchType.equals(MATCH_NBTIGNORE);
+                if(matchType.equals(MATCH_NBTIGNORE))
+                {
+                    this.shouldIgnoreNBTValue = true;
+                }
+                else // includes "exact"
+                {
+                    this.shouldIgnoreNBTValue = false;
+                }
             }
             else
             {
                 this.shouldIgnoreNBTValue = false;
             }
-            this.shouldIgnoreDamageValue = true;
+            this.shouldIgnoreDamageValue= true;
         }
         else
         {
@@ -227,6 +237,14 @@ public class ItemStorage
     }
 
     @Override
+    public String toString()
+    {
+        final ItemStack stack = this.stack.copy();
+        stack.setCount(this.amount);
+        return stack.toString();
+    }
+
+    @Override
     public int hashCode()
     {
         //Only use the stack itself for the has, equals will handle the broader attributes
@@ -246,30 +264,18 @@ public class ItemStorage
         }
 
         final ItemStorage that = (ItemStorage) o;
-        return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(),
-          this.getItemStack(),
-          !(this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue),
-          !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue));
-    }
-
-    @Override
-    public String toString()
-    {
-        final ItemStack stack = this.stack.copy();
-        stack.setCount(this.amount);
-        return stack.toString();
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(that.getItemStack(), this.getItemStack(), !(this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue), !(this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue));
     }
 
     /**
      * Ensure that two ItemStorage have the same comparison defintion
-     *
      * @param that the item to compare to
      * @return true if the comparisons match
      */
     public boolean matchDefinitionEquals(ItemStorage that)
     {
-        return this.shouldIgnoreDamageValue == that.shouldIgnoreDamageValue
-                 && this.shouldIgnoreNBTValue == that.shouldIgnoreNBTValue;
+        return this.shouldIgnoreDamageValue == that.shouldIgnoreDamageValue 
+        && this.shouldIgnoreNBTValue == that.shouldIgnoreNBTValue;
     }
 
     /**
@@ -305,7 +311,7 @@ public class ItemStorage
 
     /**
      * Is this an empty ItemStorage
-     *
+     * 
      * @return true if empty
      */
     public boolean isEmpty()
@@ -315,7 +321,6 @@ public class ItemStorage
 
     /**
      * Make a copy of the ItemStorage
-     *
      * @return a copy
      */
     public ItemStorage copy()
@@ -323,11 +328,10 @@ public class ItemStorage
         ItemStorage newInstance = new ItemStorage(stack.copy(), shouldIgnoreDamageValue, shouldIgnoreNBTValue);
         newInstance.setAmount(amount);
         return newInstance;
-    }
+    }    
 
     /**
      * Get an immutable version of this item storage
-     *
      * @return immutable wrapper
      */
     public ImmutableItemStorage toImmutable()

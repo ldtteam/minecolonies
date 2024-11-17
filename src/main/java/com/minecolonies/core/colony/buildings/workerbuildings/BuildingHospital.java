@@ -3,10 +3,11 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.entity.ai.workers.util.Patient;
 import net.minecraft.core.BlockPos;
@@ -206,9 +207,14 @@ public class BuildingHospital extends AbstractBuilding
      */
     private static boolean isCureItem(final ItemStack stack)
     {
-        return DiseasesListener.getDiseases().stream()
-                 .flatMap(m -> m.cureItems().stream())
-                 .anyMatch(f -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, f.getItemStack(), !f.ignoreDamageValue(), !f.ignoreNBT()));
+        for (final Disease disease : DiseasesListener.getDiseases())
+        {
+            for (final ItemStorage cureItem : disease.cureItems())
+            {
+                return Disease.isCureItem(stack, cureItem);
+            }
+        }
+        return false;
     }
 
     /**

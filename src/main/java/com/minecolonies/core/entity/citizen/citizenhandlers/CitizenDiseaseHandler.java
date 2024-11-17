@@ -9,6 +9,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobHealer;
+import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +57,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * The disease the citizen has, empty if none.
      */
     @Nullable
-    private DiseasesListener.Disease disease;
+    private Disease disease;
 
     /**
      * Special immunity time after being cured.
@@ -174,7 +175,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
     @Override
     @Nullable
-    public DiseasesListener.Disease getDisease()
+    public Disease getDisease()
     {
         return this.disease;
     }
