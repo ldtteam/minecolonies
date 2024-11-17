@@ -13,7 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_DESTROY_SUCCESS;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_NOT_FOUND;
 
 /**
  * Message for deleting an owned colony
@@ -51,15 +52,6 @@ public class ColonyDeleteOwnMessage extends AbstractServerPlayMessage
         {
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
             MessageUtils.format(MESSAGE_INFO_COLONY_DESTROY_SUCCESS).sendTo(player);
-
-            try
-            {
-                NeoForge.EVENT_BUS.post(new ColonyDeletedEvent(colony));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyDeletedEvent", e);
-            }
         }
         else
         {

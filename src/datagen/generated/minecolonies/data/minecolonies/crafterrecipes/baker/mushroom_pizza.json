@@ -1,0 +1,38 @@
+{
+  "type": "recipe",
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "id": "minecolonies:durum"
+    },
+    {
+      "id": "minecolonies:durum"
+    },
+    {
+      "id": "minecolonies:durum"
+    },
+    {
+      "id": "minecolonies:tomato"
+    },
+    {
+      "id": "minecolonies:tomato"
+    },
+    {
+      "id": "minecolonies:garlic"
+    },
+    {
+      "id": "minecolonies:cheddar_cheese"
+    },
+    {
+      "id": "minecraft:brown_mushroom"
+    },
+    {
+      "id": "minecraft:brown_mushroom"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": {
+    "id": "minecolonies:mushroom_pizza"
+  }
+}

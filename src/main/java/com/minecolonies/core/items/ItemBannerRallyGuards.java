@@ -212,19 +212,20 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             return;
         }
 
-        boolean activeRaid = false;
         if (rallyData.towers().isEmpty())
         {
+            rallyData.withActive(false).writeToItemStack(banner);
             MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
         }
         else if (rallyData.active())
         {
+            rallyData.withActive(false).writeToItemStack(banner);
             broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), null);
             MessageUtils.format(TOOL_RALLY_BANNER_DEACTIVATED).sendTo(playerIn);
         }
         else
         {
-            activeRaid = true;
+           rallyData.withActive(true).writeToItemStack(banner);
            final IColony colony = getColony(banner, playerIn.level());
            if (colony != null && colony.getPermissions().hasPermission(playerIn, Action.RALLY_GUARDS))
            {
@@ -240,8 +241,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                }
            }
         }
-        rallyData.withActive(activeRaid).writeToItemStack(banner);
-
     }
 
     /**

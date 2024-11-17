@@ -236,10 +236,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
 
         //Check if the effect exists first, to avoid unnecessary calls to random number generator.
-        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColony()
+                                                               .getColonyOrRegister()
                                                                .getResearchManager()
                                                                .getResearchEffects()
                                                                .getEffectStrength(TOOL_DURABILITY))))
@@ -319,10 +319,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void updateArmorDamage(final double damage)
     {
-        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColony()
+                                                               .getColonyOrRegister()
                                                                .getResearchManager()
                                                                .getResearchEffects()
                                                                .getEffectStrength(ARMOR_DURABILITY))))

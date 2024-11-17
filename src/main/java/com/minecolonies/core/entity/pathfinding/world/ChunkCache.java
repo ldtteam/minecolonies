@@ -78,7 +78,7 @@ public class ChunkCache implements LevelReader
                     final ChunkHolder holder = serverChunkCache.chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(k, l));
                     if (holder != null)
                     {
-                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).orElse(null);
+                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = (LevelChunk) holder.getChunkIfPresent(ChunkStatus.FULL);
                     }
                 }
             }

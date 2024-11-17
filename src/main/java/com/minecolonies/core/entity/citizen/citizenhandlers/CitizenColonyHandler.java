@@ -9,6 +9,8 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
@@ -139,6 +141,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 citizen.discard();
                 return;
             }
+            colony = IColonyManager.getInstance().getColonyView(colonyId, citizen.level().dimension());
 
             if (citizen.getCivilianID() == 0)
             {
@@ -192,13 +195,19 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      */
     @Override
     @Nullable
-    public IColony getColony()
+    public IColony getColonyOrRegister()
     {
         if (colony == null && !citizen.level().isClientSide)
         {
             registerWithColony(getColonyId(), citizen.getCivilianID());
         }
 
+        return colony;
+    }
+
+    @Override
+    public @Nullable IColony getColony()
+    {
         return colony;
     }
 

@@ -28,11 +28,15 @@
     },
     {
       "id": "minecraft:mutton"
+    },
+    {
+      "id": "minecraft:bowl"
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
+  "min-building-level": 4,
   "result": {
     "id": "minecolonies:lamb_stew"
-  }
+  },
+  "show-tooltip": true
 }

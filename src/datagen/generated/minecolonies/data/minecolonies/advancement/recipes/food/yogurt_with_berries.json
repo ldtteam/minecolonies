@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecolonies:yogurt_with_berries"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_yogurt": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecolonies:yogurt"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_yogurt"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecolonies:yogurt_with_berries"
+    ]
+  }
+}

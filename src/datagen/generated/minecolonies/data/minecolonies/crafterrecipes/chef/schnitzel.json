@@ -1,0 +1,30 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "id": "minecolonies:durum"
+    },
+    {
+      "id": "minecolonies:durum"
+    },
+    {
+      "id": "minecolonies:manchet_bread"
+    },
+    {
+      "id": "minecraft:porkchop"
+    },
+    {
+      "id": "minecraft:egg"
+    },
+    {
+      "id": "minecraft:potato"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": {
+    "id": "minecolonies:schnitzel"
+  },
+  "show-tooltip": true
+}

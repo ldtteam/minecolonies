@@ -6,7 +6,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -248,20 +247,6 @@ public interface ICompatibilityManager
      * @return the lucky ore.
      */
     ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel);
-
-    /**
-     * Check if the block is configured to bypass the colony restrictions.
-     * @param block the block to check.
-     * @return true if so.
-     */
-    boolean isFreeBlock(Block block);
-
-    /**
-     * Check if the position is configured to bypass the colony restrictions.
-     * @param block the position to check.
-     * @return true if so.
-     */
-    boolean isFreePos(BlockPos block);
 
     /**
      * Get the creative tab for a stack.

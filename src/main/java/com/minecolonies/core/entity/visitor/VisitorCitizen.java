@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
+import com.minecolonies.core.entity.ai.minimal.LookAtEntityInteractGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
@@ -41,7 +42,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -65,8 +65,7 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble
 /**
  * Visitor citizen entity
  */
-public class
-VisitorCitizen extends AbstractEntityCitizen
+public class VisitorCitizen extends AbstractEntityCitizen
 {
     /**
      * The citizen experience handler
@@ -150,8 +149,8 @@ VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(priority, new FloatGoal(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 0.2F));
+        this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
         new EntityAIVisitor(this);
     }
@@ -179,7 +178,7 @@ VisitorCitizen extends AbstractEntityCitizen
                     final TavernBuildingModule module = home.getModule(BuildingModules.TAVERN_VISITOR);
                     for (final Integer id : module.getExternalCitizens())
                     {
-                        ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);
+                        ICitizenData data = citizenColonyHandler.getColonyOrRegister().getVisitorManager().getCivilian(id);
                         if (data != null && data.getEntity().isPresent() && data.getEntity().get().getLastHurtByMob() == null)
                         {
                             data.getEntity().get().setLastHurtByMob((LivingEntity) damageSource.getEntity());
@@ -192,7 +191,7 @@ VisitorCitizen extends AbstractEntityCitizen
                 {
                     if (sourceEntity instanceof ServerPlayer)
                     {
-                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
+                        return damage <= 1 || getCitizenColonyHandler().getColonyOrRegister().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
                     }
                     else
                     {
@@ -515,7 +514,7 @@ VisitorCitizen extends AbstractEntityCitizen
             {
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 new ItemParticleEffectMessage(usedStack.copy(), getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()).sendToTrackingEntity(this);
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
+                ItemStackUtils.consumeFood(usedStack, this, player);
                 MessageUtils.forCitizen(this, MESSAGE_INTERACTION_VISITOR_FOOD).sendTo(player);
             }
             return InteractionResult.CONSUME;
@@ -625,7 +624,7 @@ VisitorCitizen extends AbstractEntityCitizen
         super.die(cause);
         if (!level().isClientSide())
         {
-            IColony colony = getCitizenColonyHandler().getColony();
+            IColony colony = getCitizenColonyHandler().getColonyOrRegister();
             if (colony != null && getCitizenData() != null)
             {
                 colony.getVisitorManager().removeCivilian(getCitizenData());
@@ -686,5 +685,11 @@ VisitorCitizen extends AbstractEntityCitizen
     {
         citizenColonyHandler.onCitizenRemoved();
         super.setRemoved(reason);
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        return citizenColonyHandler.getColonyId();
     }
 }

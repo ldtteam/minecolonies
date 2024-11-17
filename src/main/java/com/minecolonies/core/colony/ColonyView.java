@@ -59,7 +59,6 @@ import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -328,13 +327,23 @@ public final class ColonyView implements IColonyView
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
-            final int preSize = buf.writerIndex();
-            buf.writeBoolean(true);
-            colony.getRequestManager().serialize(StandardFactoryController.getInstance(), buf);
-            final int postSize = buf.writerIndex();
-            if ((postSize - preSize) >= ColonyView.REQUEST_MANAGER_MAX_SIZE)
+            final int preIndex = buf.writerIndex();
+            try
             {
-                Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
+                buf.writeBoolean(true);
+                colony.getRequestManager().serialize(StandardFactoryController.getInstance(), buf);
+                final int postSize = buf.writerIndex();
+                if ((postSize - preIndex) >= ColonyView.REQUEST_MANAGER_MAX_SIZE)
+                {
+                    Log.getLogger().warn("Colony " + colony.getID() + " has a very big memory imprint, this could be a memory leak, please contact the mod author!");
+                }
+            }
+            catch (Exception e)
+            {
+                buf.writerIndex(preIndex);
+                Log.getLogger().warn("Error during request manager serialization for:" + colony.getID(), e);
+                colony.getRequestManager().reset();
+                buf.writeBoolean(false);
             }
         }
         else
@@ -1253,12 +1262,6 @@ public final class ColonyView implements IColonyView
     public boolean isDay()
     {
         return false;
-    }
-
-    @Override
-    public PlayerTeam getTeam()
-    {
-        return getWorld().getScoreboard().getPlayerTeam(getTeamName());
     }
 
     @Override

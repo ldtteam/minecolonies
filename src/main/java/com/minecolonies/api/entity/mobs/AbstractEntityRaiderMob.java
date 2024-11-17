@@ -39,7 +39,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -55,11 +54,6 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
  */
 public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {
-    /**
-     * Difficulty at which raiders team up
-     */
-    private static final double TEAM_DIFFICULTY = 2.0d;
-
     /**
      * The percent of life taken per damage modifier
      */
@@ -523,14 +517,14 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
       final ServerLevelAccessor worldIn,
       final DifficultyInstance difficultyIn,
       final MobSpawnType reason,
-      @Nullable final SpawnGroupData p_21437_)
+      @Nullable final SpawnGroupData spawnDataIn)
     {
         RaiderMobUtils.setEquipment(this);
-        return super.finalizeSpawn(worldIn, difficultyIn, reason, p_21437_);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn);
     }
 
     @Override
-    public void remove(RemovalReason reason)
+    public void remove(@NotNull final RemovalReason reason)
     {
         if (!level().isClientSide && colony != null && eventID > 0)
         {
@@ -725,38 +719,8 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
             this.setEnvDamageImmunity(true);
         }
 
-        if (difficulty >= TEAM_DIFFICULTY)
-        {
-            level().getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
-        }
-
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
-    }
-
-    /**
-     * Creates or gets the scoreboard team
-     *
-     * @return Scoreboard team
-     */
-    private PlayerTeam checkOrCreateTeam()
-    {
-        if (this.level().getScoreboard().getPlayerTeam(getTeamName()) == null)
-        {
-            this.level().getScoreboard().addPlayerTeam(getTeamName());
-            this.level().getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
-        }
-        return this.level().getScoreboard().getPlayerTeam(getTeamName());
-    }
-
-    /**
-     * Gets the scoreboard team name
-     *
-     * @return
-     */
-    protected String getTeamName()
-    {
-        return RAID_TEAM;
     }
 
     /**
@@ -793,5 +757,12 @@ public abstract class AbstractEntityRaiderMob extends AbstractFastMinecoloniesEn
     public ITickRateStateMachine<IState> getAI()
     {
         return ai;
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        // All raiders are in the same team. You're doomed!
+        return -1;
     }
 }

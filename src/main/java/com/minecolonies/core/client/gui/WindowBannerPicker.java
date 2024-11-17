@@ -505,10 +505,10 @@ public class WindowBannerPicker extends Screen
         @Override
         public void renderWidget(final GuiGraphics stack, int mx, int my, float p_renderButton_3_)
         {
-            this.visible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
+            boolean isVisible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
             this.active = activeLayer != 0;
 
-            if (!this.active || !this.visible) return;
+            if (!this.active || !this.visible || !isVisible) return;
 
             int position = Math.floorDiv(this.index - scrollRow*PATTERN_COLUMNS, PATTERN_COLUMNS);
             this.setY(center(WindowBannerPicker.this.height, PATTERN_ROWS, PATTERN_HEIGHT, position, PATTERN_MARGIN));
@@ -516,7 +516,7 @@ public class WindowBannerPicker extends Screen
 
             super.renderWidget(stack, mx, my, p_renderButton_3_);
 
-            if (this.visible)
+            if (isVisible)
             {
                 if (this.isHovered && this.active)
                     stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);

@@ -9,8 +9,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -24,7 +27,6 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +36,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -59,6 +60,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD;
 
 /**
  * Utility methods for the inventories.
@@ -107,11 +109,6 @@ public final class ItemStackUtils
      * Predicate describing things which work in the furnace.
      */
     public static Predicate<ItemStack> IS_SMELTABLE;
-
-    /**
-     * Predicate describing food which can be eaten (is not raw).
-     */
-    public static Predicate<ItemStack> CAN_EAT;
 
     /**
      * Predicate describing cookables.
@@ -885,25 +882,24 @@ public final class ItemStackUtils
      *
      * @param foodStack   the itemstack of food.
      * @param citizen     the citizen entity.
-     * @param inventory optional inventory to insert stack into if not citizen.
+     * @param player      optional player providing the food.
      */
-    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
+    public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, @Nullable final Player player)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
+        ItemStack itemUseReturn = FoodUtils.consumeFoodStack(foodStack, citizen);
+
+        if (player != null && player.hasInfiniteMaterials())
+        {
+            itemUseReturn = ItemStack.EMPTY;
+        }
 
         citizenData.increaseSaturation(satIncrease);
 
-        // Special handling for these as those are stackable + have a return per item.
-        if (foodStack.getItem() instanceof HoneyBottleItem)
+        if (!itemUseReturn.isEmpty())
         {
-            itemUseReturn = new ItemStack(Items.GLASS_BOTTLE);
-        }
-
-        if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
-        {
-            if (citizenData.getInventory().isFull() || (inventory != null && !inventory.add(itemUseReturn)))
+            if (citizenData.getInventory().isFull() || (player != null && !player.getInventory().add(itemUseReturn)))
             {
                 InventoryUtils.spawnItemStack(
                   citizen.level(),
@@ -919,7 +915,12 @@ public final class ItemStackUtils
             }
         }
 
-        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem && foodItem.getTier() >= 3)
+        {
+            citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
+        }
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.get().trigger(playerMP, foodStack));

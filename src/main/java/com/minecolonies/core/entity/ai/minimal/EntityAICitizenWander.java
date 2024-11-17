@@ -203,7 +203,7 @@ public class EntityAICitizenWander implements IStateAI
         final int randomBit = citizen.getRandom().nextInt(100);
         if (randomBit < LEISURE_CHANCE)
         {
-            leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite();
+            leisureSite = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getRandomLeisureSite();
             if (leisureSite == null)
             {
                 if (citizen.getCitizenData().getHomeBuilding() != null)
@@ -212,7 +212,7 @@ public class EntityAICitizenWander implements IStateAI
                 }
                 else
                 {
-                    leisureSite = citizen.getCitizenColonyHandler().getColony().getCenter();
+                    leisureSite = citizen.getCitizenColonyHandler().getColonyOrRegister().getCenter();
                 }
             }
 

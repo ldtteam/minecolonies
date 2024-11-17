@@ -56,7 +56,8 @@ public class JEIPlugin implements IModPlugin
           new CropRecipeCategory(guiHelper),
             new ToolRecipeCategory(guiHelper),
             new CompostRecipeCategory(guiHelper),
-            new FishermanRecipeCategory(guiHelper)
+            new FishermanRecipeCategory(guiHelper),
+            new FloristRecipeCategory(guiHelper)
         );
 
         categories.clear();
@@ -129,6 +130,7 @@ public class JEIPlugin implements IModPlugin
         registration.addRecipes(ModRecipeTypes.CROPS, CropRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
+        registration.addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
 
         final ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
@@ -162,6 +164,7 @@ public class JEIPlugin implements IModPlugin
         registration.addRecipeCatalyst(ModBlocks.blockBarrel, ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(ModBlocks.blockHutComposter, ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(ModBlocks.blockHutFisherman, ModRecipeTypes.FISHING);
+        registration.addRecipeCatalyst(ModBlocks.blockHutFlorist, ModRecipeTypes.FLOWERS);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {

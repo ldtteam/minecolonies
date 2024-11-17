@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cabbage": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecolonies:cabbage"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecolonies:congee"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cabbage"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecolonies:congee"
+    ]
+  }
+}

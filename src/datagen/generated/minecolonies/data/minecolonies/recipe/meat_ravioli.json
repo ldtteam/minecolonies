@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecolonies:durum"
+    },
+    {
+      "item": "minecraft:beef"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecolonies:meat_ravioli"
+  }
+}

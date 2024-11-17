@@ -20,6 +20,9 @@ public class ModRecipeTypes
     public static final RecipeType<ToolUsage> TOOLS =
             RecipeType.create(MOD_ID, "tools", ToolUsage.class);
 
+    public static final RecipeType<FloristRecipeCategory.FloristRecipe> FLOWERS =
+            RecipeType.create(MOD_ID, "flowers", FloristRecipeCategory.FloristRecipe.class);
+
     private ModRecipeTypes()
     {
         // purely static

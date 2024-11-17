@@ -1,0 +1,34 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "id": "minecolonies:garlic"
+    },
+    {
+      "id": "minecolonies:onion"
+    },
+    {
+      "id": "minecolonies:chicken_broth"
+    },
+    {
+      "id": "minecraft:potato"
+    },
+    {
+      "id": "minecraft:beetroot"
+    },
+    {
+      "id": "minecraft:beetroot"
+    },
+    {
+      "id": "minecraft:bowl"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": {
+    "count": 2,
+    "id": "minecolonies:borscht"
+  },
+  "show-tooltip": true
+}

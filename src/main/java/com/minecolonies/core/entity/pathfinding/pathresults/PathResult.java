@@ -2,10 +2,14 @@ package com.minecolonies.core.entity.pathfinding.pathresults;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.Callable;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -13,7 +17,7 @@ import java.util.concurrent.Future;
 /**
  * Creates a pathResult of a certain path.
  */
-public class PathResult<T extends Callable<Path>>
+public class PathResult<T extends AbstractPathJob>
 {
     /**
      * The pathfinding status
@@ -54,6 +58,11 @@ public class PathResult<T extends Callable<Path>>
      * Amount of searched nodes
      */
     public int searchedNodes = 0;
+
+    /**
+     * The players getting debug information
+     */
+    private List<UUID> debugWatchers = null;
 
     /**
      * Get Status of the Path.
@@ -170,6 +179,31 @@ public class PathResult<T extends Callable<Path>>
     }
 
     /**
+     * Adds another player to the debug tracking
+     *
+     * @param uuid player ID
+     */
+    public void addTrackingPlayer(final UUID uuid)
+    {
+        if (uuid == null)
+        {
+            Log.getLogger().warn("Trying to add null uuid as tracking player");
+        }
+
+        if (debugWatchers == null)
+        {
+            debugWatchers = new ArrayList<>();
+        }
+
+        debugWatchers.add(uuid);
+
+        if (job != null)
+        {
+            job.initDebug();
+        }
+    }
+
+    /**
      * Starts the job by queing it to an executor
      *
      * @param executorService executor
@@ -178,7 +212,55 @@ public class PathResult<T extends Callable<Path>>
     {
         if (job != null)
         {
+            checkDebugging();
             pathCalculation = executorService.submit(job);
+        }
+    }
+
+    /**
+     * Checks for debug tracking
+     */
+    private void checkDebugging()
+    {
+        if (!PathfindingUtils.trackByType.isEmpty())
+        {
+            for (Iterator<Map.Entry<String, UUID>> iterator = PathfindingUtils.trackByType.entrySet().iterator(); iterator.hasNext(); )
+            {
+                final Map.Entry<String, UUID> entry = iterator.next();
+                final Player player = job.getActualWorld().getPlayerByUUID(entry.getValue());
+                if (player == null)
+                {
+                    iterator.remove();
+                    continue;
+                }
+
+                // Exclude stuff thats not visible
+                if (player.blockPosition().distManhattan(job.getStart()) > 400)
+                {
+                    continue;
+                }
+
+                if (job.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase()))
+                {
+                    addTrackingPlayer(entry.getValue());
+                }
+            }
+        }
+
+        if (job.getEntity() != null && PathfindingUtils.trackingMap.containsValue(job.getEntity().getUUID()))
+        {
+            for (final Map.Entry<UUID, UUID> entry : PathfindingUtils.trackingMap.entrySet())
+            {
+                if (entry.getValue().equals(job.getEntity().getUUID()))
+                {
+                    addTrackingPlayer(entry.getKey());
+                }
+            }
+        }
+
+        if (debugWatchers != null)
+        {
+            job.initDebug();
         }
     }
 
@@ -197,6 +279,13 @@ public class PathResult<T extends Callable<Path>>
             path = pathCalculation.get();
             pathCalculation = null;
             setStatus(PathFindingStatus.CALCULATION_COMPLETE);
+            var watchers = getDebugWatchers();
+            job.syncDebug(watchers);
+
+            if (!watchers.isEmpty())
+            {
+                Log.getLogger().info(" Finished pathjob:" + job + " reaches: " + path.canReach() + " path target:" + path.getTarget());
+            }
         }
         catch (InterruptedException | ExecutionException e)
         {
@@ -245,5 +334,29 @@ public class PathResult<T extends Callable<Path>>
         }
 
         pathingDoneAndProcessed = true;
+    }
+
+    /**
+     * Gets the tracking players
+     *
+     * @return
+     */
+    public List<ServerPlayer> getDebugWatchers()
+    {
+        final List<ServerPlayer> newList = new ArrayList<>();
+
+        if (job != null && debugWatchers != null)
+        {
+            for (final UUID playerID : debugWatchers)
+            {
+                final Player player = job.getActualWorld().getPlayerByUUID(playerID);
+                if (player instanceof ServerPlayer serverPlayer)
+                {
+                    newList.add(serverPlayer);
+                }
+            }
+        }
+
+        return newList;
     }
 }
