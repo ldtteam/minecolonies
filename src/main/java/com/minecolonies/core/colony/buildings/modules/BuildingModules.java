@@ -70,7 +70,7 @@ public class BuildingModules
           (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()));
 
     public static final BuildingEntry.ModuleProducer<RestaurantMenuModule, RestaurantMenuModuleView> RESTAURANT_MENU =
-      new BuildingEntry.ModuleProducer<>("restaurant_menu", () -> new RestaurantMenuModule(true, building ->   2 * building.getBuildingLevel()), () -> RestaurantMenuModuleView::new);
+      new BuildingEntry.ModuleProducer<>("restaurant_menu", () -> new RestaurantMenuModule(true, ISchematicProvider::getBuildingLevel), () -> RestaurantMenuModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<RestaurantMenuModule, RestaurantMenuModuleView> NETHERMINER_MENU =
       new BuildingEntry.ModuleProducer<>("netherminer_menu", () -> new RestaurantMenuModule(false, building ->  16), () -> RestaurantMenuModuleView::new);
