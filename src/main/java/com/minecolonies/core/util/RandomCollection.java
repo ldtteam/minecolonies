@@ -1,6 +1,5 @@
 package com.minecolonies.core.util;
 
-import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +55,7 @@ public class RandomCollection<K, E>
      * @return the underlying random.
      */
     @Nullable
-    public E next(final RandomSource random)
+    public E next(final Random random)
     {
         final double value = random.nextDouble() * total;
         final Entry<Double, E> entry = map.higherEntry(value);

@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.network.messages.client.colony.GlobalDiseaseSyncMessage;
@@ -133,13 +134,12 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     /**
      * Get a random disease from the list of diseases.
      *
-     * @param random the random provider.
      * @return the random disease instance or null if no diseases exist.
      */
     @Nullable
-    public static Disease getRandomDisease(final RandomSource random)
+    public static Disease getRandomDisease()
     {
-        return DISEASES.next(random);
+        return DISEASES.next(MathUtils.RANDOM);
     }
 
     @Override
