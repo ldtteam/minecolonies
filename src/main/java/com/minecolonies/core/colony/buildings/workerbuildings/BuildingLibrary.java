@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.datalistener.StudyItemListener;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -40,11 +40,6 @@ public class BuildingLibrary extends AbstractBuilding
      * List of registered barrels.
      */
     private final List<BlockPos> bookCases = new ArrayList<>();
-
-    /**
-     * Random obj for random calc.
-     */
-    private final Random random = new Random();
 
     /**
      * Instantiates the building.
@@ -119,7 +114,7 @@ public class BuildingLibrary extends AbstractBuilding
         {
             return getPosition();
         }
-        final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
+        final BlockPos returnPos = bookCases.get(MathUtils.RANDOM.nextInt(bookCases.size()));
         if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
         {
             return returnPos;

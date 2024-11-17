@@ -14,17 +14,13 @@ import com.minecolonies.core.datalistener.StudyItemListener.StudyItem;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
 import com.minecolonies.core.entity.pathfinding.navigation.PathfindingAIHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -117,12 +113,12 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             return getState();
         }
 
-        final Map<ResourceLocation, StudyItem> studyItems = StudyItemListener.getAllStudyItems();
+        final Collection<StudyItem> studyItems = StudyItemListener.getAllStudyItems().values();
 
         // Search for Items to use to study
         final List<StudyItem> availableItemKeys = new ArrayList<>();
         final Map<StudyItem, Integer> availableItems = new HashMap<>();
-        for (final StudyItem curItem : studyItems.values())
+        for (final StudyItem curItem : studyItems)
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, (item) -> item.is(curItem.item()));
             if (slot != -1)
@@ -136,7 +132,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         if (availableItems.isEmpty())
         {
             final List<ItemStack> itemsToRequest = new ArrayList<>();
-            for (final StudyItem studyItem : studyItems.values())
+            for (final StudyItem studyItem : studyItems)
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.item());
                 if (bSlot > -1)
