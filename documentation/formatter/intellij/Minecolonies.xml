@@ -15,6 +15,8 @@
     <option name="WRAP_COMMENTS" value="true" />
     <JavaCodeStyleSettings>
         <option name="BLANK_LINES_AROUND_INITIALIZER" value="0" />
+        <option name="RECORD_COMPONENTS_WRAP" value="2"/>
+        <option name="NEW_LINE_AFTER_LPAREN_IN_RECORD_HEADER" value="true"/>
     </JavaCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
         <option name="RIGHT_MARGIN" value="72" />
@@ -66,8 +68,8 @@
         <option name="FOR_BRACE_FORCE" value="3" />
         <option name="ENUM_CONSTANTS_WRAP" value="2" />
         <indentOptions>
-            <option name="CONTINUATION_INDENT_SIZE" value="2" />
-            <option name="USE_RELATIVE_INDENTS" value="true" />
+            <option name="CONTINUATION_INDENT_SIZE" value="4"/>
+            <option name="USE_RELATIVE_INDENTS" value="false"/>
         </indentOptions>
         <arrangement>
             <groups>

@@ -19,6 +19,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "min-building-level": 4,
   "result": "minecolonies:stuffed_pita",
   "show-tooltip": true
 }

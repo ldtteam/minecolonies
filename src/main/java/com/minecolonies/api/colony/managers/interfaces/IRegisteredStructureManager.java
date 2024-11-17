@@ -90,10 +90,10 @@ public interface IRegisteredStructureManager
      * Get the first building matching the conditions.
      *
      * @param predicate the predicate matching the building.
-     * @return the position or null.
+     * @return the building or null.
      */
     @Nullable
-    BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate);
+    IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate);
 
     /**
      * Register a new leisure site.

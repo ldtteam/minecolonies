@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -120,17 +119,6 @@ public interface IColony
     boolean hasBuilding(final String building, final int level, final boolean singleBuilding);
 
     /**
-     * Defines the team name for all colonies (both Colony and ColonyView)
-     *
-     * @return The team name
-     */
-    default String getTeamName()
-    {
-        final String dim = getDimension().location().getPath();
-        return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + getID();
-    }
-
-    /**
      * Getter for the team colony color.
      *
      * @return the color.
@@ -150,13 +138,6 @@ public interface IColony
      * @return true if it is day
      */
     boolean isDay();
-
-    /**
-     * Retrieves the team of the colony
-     *
-     * @return Team of the colony
-     */
-    PlayerTeam getTeam();
 
     /**
      * Get the last contact of a player to the colony in hours.

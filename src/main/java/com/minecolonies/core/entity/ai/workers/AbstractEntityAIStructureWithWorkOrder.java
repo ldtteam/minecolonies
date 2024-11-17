@@ -118,7 +118,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 Log.getLogger().error(
                   String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
-                    worker.getCitizenColonyHandler().getColony().getID(),
+                    worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()), new Exception());
                 job.setWorkOrder(null);
                 return IDLE;
@@ -131,12 +131,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getLocation()), new Exception());
+                        worker.getCitizenColonyHandler().getColonyOrRegister().getID(), worker.getCitizenData().getId(), wo.getLocation()), new Exception());
                     return IDLE;
                 }
 
                 MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
-                  .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
+                  .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -147,7 +147,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             else if (!(wo instanceof WorkOrderMiner))
             {
                 MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
-                  .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
+                  .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
                 ;
             }
             return getState();
@@ -176,10 +176,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final BlockPos pos = workOrder.getLocation();
-        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
-            worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(workOrder);
+            worker.getCitizenColonyHandler().getColonyOrRegister().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
 
@@ -389,7 +389,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (wo == null)
         {
             Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order(%d)",
-              worker.getCitizenColonyHandler().getColony().getID(),
+              worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
               worker.getCitizenData().getId(),
               job.getWorkOrderId()));
         }
@@ -403,19 +403,19 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 case BUILD:
                     colony.getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_BUILT, colony.getDay());
+                    worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(BUILD_BUILT, colony.getDay());
                     break;
                 case UPGRADE:
                     colony.getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_UPGRADED, colony.getDay());
+                    worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(BUILD_UPGRADED, colony.getDay());
                     break;
                 case REPAIR:
                     colony.getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REPAIRED, colony.getDay());
+                    worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(BUILD_REPAIRED, colony.getDay());
                     break;
                 case REMOVE:
                     colony.getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
-                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(BUILD_REMOVED, colony.getDay());
+                    worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(BUILD_REMOVED, colony.getDay());
                     break;
             }
 
@@ -440,7 +440,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         if (building == null)
                         {
                             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                              worker.getCitizenColonyHandler().getColony().getID(),
+                              worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
                               worker.getCitizenData().getId(),
                               wo.getLocation()));
                         }
@@ -459,7 +459,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         if (building == null)
                         {
                             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                              worker.getCitizenColonyHandler().getColony().getID(),
+                              worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
                               worker.getCitizenData().getId(),
                               wo.getLocation()));
                         }

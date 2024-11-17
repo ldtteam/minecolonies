@@ -18,7 +18,6 @@ import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -26,8 +25,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseRailBlock;
-import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.pathfinder.Node;
@@ -258,11 +256,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
-        if (PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID()))
-        {
-            Log.getLogger().info(ourEntity + " started pathjob to:" + dest + " job type:" + job.getClass().getSimpleName());
-        }
-
         stop();
 
         this.destination = dest;
@@ -321,6 +314,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             else if (pathResult.getStatus() == PathFindingStatus.CALCULATION_COMPLETE)
             {
                 processCompletedCalculationResult();
+                wantedPosition = null;
             }
         }
 
@@ -371,21 +365,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
-
-            if ((wantedPosition == null || path != null && currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
+            if (this.path != null && !this.path.isDone())
             {
-                Vec3 vector3d2 = path.getNextEntityPos(mob);
-                tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
-                if (wantedPosition == null || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                if ((wantedPosition == null || currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
                 {
-                    wantedPosition = new Vec3(vector3d2.x,
-                        getSmartGroundY(this.level, tempPos, vector3d2.y),
-                        vector3d2.z);
+                    Vec3 vector3d2 = path.getNextEntityPos(mob);
+                    tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
+                    if (wantedPosition == null || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                    {
+                        wantedPosition = new Vec3(vector3d2.x,
+                            getSmartGroundY(this.level, tempPos, vector3d2.y),
+                            vector3d2.z);
+                    }
                 }
             }
-
-            mob.getMoveControl().setWantedPosition(wantedPosition.x, wantedPosition.y, wantedPosition.z, speedModifier);
+            if (wantedPosition != null)
+            {
+                mob.getMoveControl().setWantedPosition(wantedPosition.x, wantedPosition.y, wantedPosition.z, speedModifier);
+            }
         }
         // End of super.tick.
 
@@ -412,6 +409,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (!state.isAir())
         {
+            if (state.getBlock() instanceof FenceGateBlock || state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock)
+            {
+                return orgY;
+            }
+
             final VoxelShape voxelshape = state.getCollisionShape(world, pos);
             if (!ShapeUtil.isEmpty(voxelshape))
             {
@@ -662,18 +664,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return;
         }
 
-        pathResult.getJob().syncDebug();
-        moveTo(pathResult.getPath(), getSpeedFactor());
         if (pathResult != null)
         {
             pathResult.setStatus(IN_PROGRESS_FOLLOWING);
         }
 
         // Calculate an overtime-heuristic adjustment for pathfinding to use which fits the terrain
-        if (pathResult.costPerDist != 1)
+        if (pathResult.hasPath() && pathResult.getPathLength() > 2 && pathResult.costPerDist != 1)
         {
-            heuristicAvg -= heuristicAvg / 20;
-            heuristicAvg += pathResult.costPerDist / 20;
+            final double factor = 1 + pathResult.getPathLength() / 30.0;
+            heuristicAvg -= heuristicAvg / (50 / factor);
+            heuristicAvg += pathResult.costPerDist / (50 / factor);
         }
 
         if (pathResult.failedToReachDestination())
@@ -683,6 +684,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 pauseTicks = 50;
             }
         }
+
+        moveTo(pathResult.getPath(), getSpeedFactor());
     }
 
     private boolean handleLadders(int oldIndex)
@@ -906,7 +909,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()))
+                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()) || ourEntity.getY() > pEx.y)
                 {
                     this.ourEntity.setYya(-0.5f);
                 }
@@ -983,7 +986,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.path.setNextNodeIndex(curNodeNext);
                 }
-                return;
+                 return;
             }
         }
 
@@ -1019,7 +1022,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (isTracking)
         {
-            PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
+            PathfindingUtils.syncDebugReachedPositions(reached, pathResult.getDebugWatchers());
             reached.clear();
         }
 
@@ -1063,7 +1066,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (isTracking)
         {
-            PathfindingUtils.syncDebugReachedPositions(reached, ourEntity);
+            PathfindingUtils.syncDebugReachedPositions(reached, pathResult.getDebugWatchers());
             reached.clear();
         }
     }

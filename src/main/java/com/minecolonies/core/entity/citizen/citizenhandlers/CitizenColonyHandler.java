@@ -139,6 +139,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
                 citizen.discard();
                 return;
             }
+            colony = IColonyManager.getInstance().getColonyView(colonyId, citizen.level.dimension());
 
             if (citizen.getCivilianID() == 0)
             {
@@ -192,13 +193,19 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      */
     @Override
     @Nullable
-    public IColony getColony()
+    public IColony getColonyOrRegister()
     {
         if (colony == null && !citizen.level.isClientSide)
         {
             registerWithColony(getColonyId(), citizen.getCivilianID());
         }
 
+        return colony;
+    }
+
+    @Override
+    public @Nullable IColony getColony()
+    {
         return colony;
     }
 

@@ -315,7 +315,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  * Two researches to increase it to 10% and 15%, respectively.
                  */
                 if (((worker.getRandom().nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler()
-                                                                           .getColony()
+                                                                           .getColonyOrRegister()
                                                                            .getResearchManager()
                                                                            .getResearchEffects()
                                                                            .getEffectStrength(PODZOL_CHANCE))))

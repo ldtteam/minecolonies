@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:corn"
+    },
+    {
+      "item": "minecolonies:corn"
+    },
+    {
+      "item": "minecolonies:corn"
+    },
+    {
+      "item": "minecolonies:corn"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "item": "minecolonies:cornmeal"
+  }
+}

@@ -45,7 +45,7 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
     }
 
     @Override
-    public int getDiseaseModifier()
+    public double getDiseaseModifier()
     {
         return 2;
     }

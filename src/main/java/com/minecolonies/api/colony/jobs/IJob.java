@@ -198,7 +198,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      *
      * @return the modifier of the job.
      */
-    int getDiseaseModifier();
+    double getDiseaseModifier();
 
     /**
      * When job removed (death of citizen or job change).

@@ -20,6 +20,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "min-building-level": 4,
   "result": "minecolonies:sushi_roll",
   "show-tooltip": true
 }

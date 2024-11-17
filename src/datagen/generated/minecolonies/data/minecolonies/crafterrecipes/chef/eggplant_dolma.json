@@ -22,6 +22,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "min-building-level": 4,
   "result": "minecolonies:eggplant_dolma",
   "show-tooltip": true
 }

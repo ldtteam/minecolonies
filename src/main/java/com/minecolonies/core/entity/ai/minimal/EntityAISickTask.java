@@ -160,8 +160,8 @@ public class EntityAISickTask implements IStateAI
             }
         }
 
-        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
 
         if (hospital instanceof BuildingHospital)
@@ -277,8 +277,8 @@ public class EntityAISickTask implements IStateAI
 
         if (usedBed != null)
         {
-            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
-            final IColony colony = citizen.getCitizenColonyHandler().getColony();
+            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+            final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
             ((BuildingHospital) hospital).registerPatient(usedBed, 0);
             usedBed = null;
