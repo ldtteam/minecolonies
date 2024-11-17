@@ -1821,6 +1821,68 @@ public class InventoryUtils
     }
 
     /**
+     * Method to transfer an ItemStacks from the given source {@link IBuilding} to the given target {@link IItemHandler}.
+     *
+     * @param building      The {@link IBuilding} that works as Source.
+     * @param storage       the ItemStorage.
+     * @param qty           the qty.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IBuilding building,
+      final ItemStorage storage,
+      final int qty,
+      @NotNull final IItemHandler targetHandler)
+    {
+        final Level level = building.getColony().getWorld();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(level, pos))
+            {
+                final BlockEntity entity = level.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack tileEntityRack)
+                {
+                    if (tileEntityRack.hasItemStorage(storage, 1))
+                    {
+                        final IItemHandler sourceHandler = tileEntityRack.getInventory();
+                        for (int i = 0; i < sourceHandler.getSlots(); i++)
+                        {
+                            if (storage.equals(new ItemStorage(sourceHandler.getStackInSlot(i))))
+                            {
+                                ItemStack sourceStack = sourceHandler.extractItem(i, qty, true);
+                                if (!sourceStack.isEmpty() && addItemStackToItemHandler(targetHandler, sourceStack))
+                                {
+                                    sourceHandler.extractItem(i, qty, false);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to transfer an ItemStacks from the given source {@link IBuilding} to the given target {@link IItemHandler}.
+     *
+     * @param building      The {@link IBuilding} that works as Source.
+     * @param storage       the ItemStorage.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return true when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextBestSlotInItemHandler(
+      @NotNull final IBuilding building,
+      final ItemStorage storage,
+      @NotNull final IItemHandler targetHandler)
+    {
+        return transferItemStackIntoNextBestSlotInItemHandler(building, storage, Integer.MAX_VALUE, targetHandler);
+    }
+
+    /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param stack         the itemStack to transfer.

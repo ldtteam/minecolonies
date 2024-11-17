@@ -355,14 +355,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         final boolean isRaining = colony.getWorld().isRaining();
 
-        BlockPos pos = null;
+        IBuilding building = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
         {
-            pos = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
-            if (pos != null)
+            building = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            if (building != null)
             {
-                return pos;
+                return building.getPosition();
             }
         }
 
@@ -370,28 +370,28 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (!isRaining && RANDOM.nextBoolean())
             {
-                pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-                if (pos != null)
+                building = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+                if (building != null)
                 {
-                    return pos;
+                    return building.getPosition();
                 }
             }
             else
             {
-                pos = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
-                if (pos != null)
+                building = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
+                if (building != null)
                 {
-                    return pos;
+                    return building.getPosition();
                 }
             }
         }
 
         if (randomDist < 3)
         {
-            pos = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
-            if (pos != null)
+            building = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
+            if (building != null)
             {
-                return pos;
+                return building.getPosition();
             }
         }
 
@@ -405,13 +405,13 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @Nullable
     @Override
-    public BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate)
+    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate)
     {
         for (final IBuilding building : buildings.values())
         {
             if (predicate.test(building))
             {
-                return building.getPosition();
+                return building;
             }
         }
         return null;

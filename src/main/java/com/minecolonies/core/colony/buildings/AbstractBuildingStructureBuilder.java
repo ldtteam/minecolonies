@@ -404,11 +404,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      *
      * @param requiredResources the bucket to check and request.
      * @param worker            the worker.
-     * @param workerInv         if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker)
     {
-        getFirstModuleOccurance(BuildingResourcesModule.class).checkOrRequestBucket(requiredResources, worker, workerInv);
+        getFirstModuleOccurance(BuildingResourcesModule.class).checkOrRequestBucket(requiredResources, worker);
     }
 
     /**

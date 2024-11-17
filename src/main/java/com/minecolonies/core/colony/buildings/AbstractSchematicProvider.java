@@ -12,11 +12,8 @@ import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.FireworkUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
@@ -171,7 +168,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         compound.putInt(TAG_HEIGHT, this.height);
 
-        compound.putInt(TAG_ROTATION, getRotation());
+        compound.putInt(TAG_ROTATION, cachedRotation);
 
         compound.putBoolean(TAG_DECONSTRUCTED, isDeconstructed);
 
@@ -329,6 +326,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         if (cachedRotation != -1)
         {
             return cachedRotation;
+        }
+
+        if (!WorldUtil.isBlockLoaded(colony.getWorld(), getPosition()))
+        {
+            return -1;
         }
 
         try

@@ -10,35 +10,33 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
-import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.colony.jobs.JobCook;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.constant.CitizenConstants.FULL_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
-import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
 /**
@@ -54,7 +52,7 @@ public class EntityAIEatTask implements IStateAI
     /**
      * Min distance in blocks to placeToPath block.
      */
-    private static final int MIN_DISTANCE_TO_RESTAURANT = 3;
+    private static final int MIN_DISTANCE_TO_RESTAURANT = 2;
 
     /**
      * Time required to eat in seconds.
@@ -118,9 +116,19 @@ public class EntityAIEatTask implements IStateAI
     private BlockPos restaurantPos;
 
     /**
+     * The actual restaurant.
+     */
+    private IBuilding restaurant;
+
+    /**
      * Timeout for walking
      */
     private int timeOutWalking = 0;
+
+    /**
+     * The food we've eaten in a meal.
+     */
+    private Set<Item> eatenFood = new LinkedHashSet<>();
 
     /**
      * Instantiates this task.
@@ -164,18 +172,6 @@ public class EntityAIEatTask implements IStateAI
     }
 
     /**
-     * Check if a citizen can eat something.
-     *
-     * @param citizenData the citizen to check.
-     * @param stack       the stack to check.
-     * @return true if so.
-     */
-    private boolean canEat(final ICitizenData citizenData, final ItemStack stack)
-    {
-        return citizenData.getHomeBuilding() == null || citizenData.getHomeBuilding().canEat(stack);
-    }
-
-    /**
      * Actual action of eating.
      *
      * @return the next state to go to, if successful idle.
@@ -189,7 +185,7 @@ public class EntityAIEatTask implements IStateAI
 
         final ICitizenData citizenData = citizen.getCitizenData();
         final ItemStack foodStack = citizenData.getInventory().getStackInSlot(foodSlot);
-        if (!CAN_EAT.test(foodStack) || !canEat(citizenData, foodStack))
+        if (!FoodUtils.canEat(foodStack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
         {
             return CHECK_FOR_FOOD;
         }
@@ -212,23 +208,31 @@ public class EntityAIEatTask implements IStateAI
         {
             return EAT;
         }
-        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem)
+
+        final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
+        if (eatenFood.isEmpty())
         {
-            if (foodItem.getTier() == 3)
-            {
-                citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
-            }
-            citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(HADDECENTFOOD);
+            foodHandler.addLastEaten(foodStack.getItem());
         }
+        eatenFood.add(foodStack.getItem());
+
         ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-        if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
+        if (citizenData.getSaturation() < FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
         {
             waitingTicks = 0;
             return EAT;
         }
 
+        for (final Item foodItem : eatenFood)
+        {
+            if (foodHandler.getLastEaten() != foodItem)
+            {
+                foodHandler.addLastEaten(foodItem);
+            }
+        }
+        eatenFood.clear();
         citizenData.setJustAte(true);
         return CitizenAIState.IDLE;
     }
@@ -245,7 +249,7 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
@@ -253,12 +257,22 @@ public class EntityAIEatTask implements IStateAI
             {
                 return GET_FOOD_YOURSELF;
             }
-            InventoryUtils.transferFoodUpToSaturation(cookBuilding,
-              citizen.getInventoryCitizen(),
-              GET_YOURSELF_SATURATION,
-              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
-                         && !(cookBuilding.getModule(BuildingModules.ITEMLIST_FOODEXCLUSION)
-                .isItemInList(new ItemStorage(stack))));
+
+            final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), cookBuilding.getModule(RESTAURANT_MENU).getMenu(), cookBuilding);
+            if (storageToGet != null)
+            {
+                int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 1 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
+                int qty = (int) (Math.max(1.0,
+                    (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen) * homeBuildingLevel / 2.0));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
+                return EAT;
+            }
+
+            if (citizen.getCitizenData().getJob() instanceof JobCook jobCook && jobCook.getBuildingPos().equals(restaurantPos) && MathUtils.RANDOM.nextInt(TICKS_SECOND) <= 0)
+            {
+                reset();
+                return DONE;
+            }
         }
 
         return WAIT_FOR_FOOD;
@@ -345,11 +359,11 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        if (!colony.getBuildingManager().getBuilding(restaurantPos).isInBuilding(citizen.blockPosition()))
+        restaurant = colony.getBuildingManager().getBuilding(restaurantPos);
+        if (!restaurant.isInBuilding(citizen.blockPosition()))
         {
             return GO_TO_RESTAURANT;
         }
-
 
         eatPos = findPlaceToEat();
         if (eatPos != null)
@@ -380,13 +394,11 @@ public class EntityAIEatTask implements IStateAI
 
         if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
+            final int slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
             if (slot != -1)
             {
-                if (InventoryUtils.transferFoodUpToSaturation(buildingWorker,
-                  citizen.getInventoryCitizen(),
-                  GET_YOURSELF_SATURATION,
-                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)) > 0)
+                final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
+                if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
                 {
                     return EAT;
                 }
@@ -406,7 +418,7 @@ public class EntityAIEatTask implements IStateAI
     {
         if (restaurantPos != null)
         {
-            final IBuilding building = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurantPos);
+            final IBuilding building = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(restaurantPos);
             if (building != null)
             {
                 if (building.isInBuilding(citizen.blockPosition()))
@@ -465,7 +477,7 @@ public class EntityAIEatTask implements IStateAI
      */
     private boolean hasFood()
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
+        final int slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), restaurant == null ? null : restaurant.getModule(RESTAURANT_MENU).getMenu());
         if (slot != -1)
         {
             foodSlot = slot;
@@ -478,7 +490,7 @@ public class EntityAIEatTask implements IStateAI
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(RAW_FOOD), ChatPriority.PENDING));
         }
-        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
+        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> FoodUtils.canEat(stack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding())))
         {
             if (citizenData.isChild())
             {
@@ -505,5 +517,7 @@ public class EntityAIEatTask implements IStateAI
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         restaurantPos = null;
         eatPos = null;
+        eatenFood.clear();
+        restaurant = null;
     }
 }

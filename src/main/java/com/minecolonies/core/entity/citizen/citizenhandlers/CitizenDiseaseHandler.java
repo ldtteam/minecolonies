@@ -33,7 +33,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Base likelihood of a citizen getting a disease.
      */
-    private static final int DISEASE_FACTOR = 10000;
+    private static final int DISEASE_FACTOR = 100000;
 
     /**
      * Number of seconds after recovering a citizen is immune against any illness.
@@ -90,10 +90,13 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     {
         if (canBecomeSick())
         {
-            final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
+            final double citizenModifier = citizen.getCitizenData().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
+
+            // normally it's one in 5 x 10.000
+
             if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
-                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
+                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
@@ -113,11 +116,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private boolean canBecomeSick()
     {
         return !isSick()
-                 && citizen.getCitizenColonyHandler().getColony() != null
-                 && citizen.getCitizenColonyHandler().getColony().isActive()
+                 && citizen.getCitizenColonyHandler().getColonyOrRegister() != null
+                 && citizen.getCitizenColonyHandler().getColonyOrRegister().isActive()
                  && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
                  && immunityTicks <= 0
-                 && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
+                 && citizen.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
     @Override
@@ -127,8 +130,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            if (citizen.getCitizenColonyHandler().getColony() != null
-                  && (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean()))
+            if (citizen.getCitizenColonyHandler().getColonyOrRegister() != null
+                  && (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean()))
             {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
             }
@@ -179,15 +182,15 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
             citizen.stopSleeping();
-            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
-            final IColony colony = citizen.getCitizenColonyHandler().getColony();
+            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
+            final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
             if (hospital != null)
             {
                 hospital.onWakeUp();
             }
 
-            if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
+            if (citizen.getCitizenColonyHandler().getColonyOrRegister() != null && citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
             {
                 immunityTicks = IMMUNITY_TIME * VACCINE_MODIFIER;
             }
@@ -196,7 +199,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
                 immunityTicks = IMMUNITY_TIME;
             }
 
-            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColony().getDay());
+            citizen.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColonyOrRegister().getDay());
         }
 
         citizen.markDirty(0);

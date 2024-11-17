@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:large_milk_bottle"
+    },
+    {
+      "item": "minecolonies:large_milk_bottle"
+    }
+  ],
+  "result": {
+    "item": "minecolonies:feta_cheese"
+  }
+}

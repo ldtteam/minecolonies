@@ -152,8 +152,7 @@ public class ColonyBorderRenderer
                 final Color colour = colonyColours.computeIfAbsent(colonyId, id ->
                 {
                     final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, Minecraft.getInstance().level.dimension());
-                    final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
-                            : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
+                    final ChatFormatting team = colony != null ? colony.getTeamColonyColor() : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
                     return new Color(team.getColor());
                 });
 

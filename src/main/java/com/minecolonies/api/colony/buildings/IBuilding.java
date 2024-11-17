@@ -33,9 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
+import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
 {
@@ -502,5 +502,14 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @param stack the stack to test.
      * @return true if so.
      */
-    boolean canEat(final ItemStack stack);
+    default boolean canEat(final ItemStack stack)
+    {
+        return true;
+    }
+
+    /**
+     * Get the standing position for a building.
+     * @return the standing pos.
+     */
+    BlockPos getStandingPosition();
 }

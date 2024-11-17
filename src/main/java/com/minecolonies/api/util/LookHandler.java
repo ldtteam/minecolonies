@@ -1,12 +1,19 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.control.LookControl;
 
 public class LookHandler extends LookControl
 {
     private boolean doneNavigating = true;
+
+    /**
+     * Remembers the entity to look at for a short while
+     */
+    private Entity lookingAt   = null;
+    private int    lookAtTimer = 0;
 
     public LookHandler(final Mob entity)
     {
@@ -19,6 +26,15 @@ public class LookHandler extends LookControl
         if (mob.tickCount % 20 == 17)
         {
             doneNavigating = this.mob.getNavigation().isDone();
+        }
+
+        if (lookingAt != null && lookAtTimer-- > 0)
+        {
+            super.setLookAt(lookingAt);
+            if (lookAtTimer == 0)
+            {
+                lookingAt = null;
+            }
         }
 
         if (this.resetXRotOnTick())
@@ -62,5 +78,21 @@ public class LookHandler extends LookControl
     public void setLookAtCooldown(final int cooldown)
     {
         lookAtCooldown = cooldown;
+    }
+
+    @Override
+    public void setLookAt(Entity entity)
+    {
+        super.setLookAt(entity);
+        lookAtTimer = 20 * 5;
+        lookingAt = entity;
+    }
+
+    @Override
+    public void setLookAt(Entity entity, float turnY, float turnX)
+    {
+        super.setLookAt(entity, turnY, turnX);
+        lookAtTimer = 20 * 5;
+        lookingAt = entity;
     }
 }

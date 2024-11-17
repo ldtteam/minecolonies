@@ -19,6 +19,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "min-building-level": 4,
   "result": "minecolonies:hand_pie",
   "show-tooltip": true
 }

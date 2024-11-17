@@ -16,6 +16,7 @@
     }
   ],
   "intermediate": "minecraft:air",
+  "min-building-level": 4,
   "result": "minecolonies:stew_trencher",
   "show-tooltip": true
 }

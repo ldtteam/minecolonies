@@ -8,9 +8,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.CheckedNbtKey;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.items.ItemBowlFood;
@@ -47,6 +50,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD;
 
 /**
  * Utility methods for the inventories.
@@ -115,11 +119,6 @@ public final class ItemStackUtils
      * Predicate describing things which work in the furnace.
      */
     public static Predicate<ItemStack> IS_SMELTABLE;
-
-    /**
-     * Predicate describing food which can be eaten (is not raw).
-     */
-    public static Predicate<ItemStack> CAN_EAT;
 
     /**
      * Predicate describing cookables.
@@ -972,7 +971,12 @@ public final class ItemStackUtils
             }
         }
 
-        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem && foodItem.getTier() >= 3)
+        {
+            citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
+        }
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));

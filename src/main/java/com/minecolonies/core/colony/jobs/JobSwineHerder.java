@@ -51,7 +51,7 @@ public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwin
     }
 
     @Override
-    public int getDiseaseModifier()
+    public double getDiseaseModifier()
     {
         return 2;
     }

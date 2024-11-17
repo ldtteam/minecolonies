@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenShipRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.PirateGroundRaidEvent;
@@ -39,18 +40,28 @@ public class CommandRaid implements IMCOPCommand
 
     public int onSpecificExecute(final CommandContext<CommandSourceStack> context)
     {
-        if(!checkPreCondition(context))
+        try
         {
-            return 0;
+            if (!checkPreCondition(context))
+            {
+                return 0;
+            }
+            return raidExecute(context, StringArgumentType.getString(context, RAID_TYPE_ARG));
         }
-        return raidExecute(context, StringArgumentType.getString(context, RAID_TYPE_ARG));
+        catch (Throwable e)
+        {
+            Log.getLogger().warn("Error during running command:", e);
+        }
+
+        return 0;
     }
 
     /**
      * Actually find the colony and assign the raid event.
-     * @param context       command context from the user.
-     * @param raidType      type of raid, or "" if determining naturally.
-     * @return              zero if failed, one if successful.
+     *
+     * @param context  command context from the user.
+     * @param raidType type of raid, or "" if determining naturally.
+     * @return zero if failed, one if successful.
      */
     public int raidExecute(final CommandContext<CommandSourceStack> context, final String raidType)
     {
@@ -64,7 +75,7 @@ public class CommandRaid implements IMCOPCommand
         }
 
         final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
-        if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
+        if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
         {
             final IRaiderManager.RaidSpawnResult result = colony.getRaiderManager().raiderEvent(raidType, true, allowShips);
             if (result == IRaiderManager.RaidSpawnResult.SUCCESS)
@@ -74,11 +85,13 @@ public class CommandRaid implements IMCOPCommand
             }
             context.getSource().sendFailure(Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), result));
         }
-        else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
+        else if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
         {
-            if (!colony.getRaiderManager().canRaid(true))
+            if (!colony.getRaiderManager().canRaid())
             {
-                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), IRaiderManager.RaidSpawnResult.CANNOT_RAID), true);
+                context.getSource()
+                  .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_RAID_NOW_FAILURE, colony.getName(), IRaiderManager.RaidSpawnResult.CANNOT_RAID),
+                    true);
                 return 1;
             }
             colony.getRaiderManager().setRaidNextNight(true, raidType, allowShips);
@@ -100,10 +113,10 @@ public class CommandRaid implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         final List<String> raidTypes = new ArrayList<>();
-        for(final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValues())
+        for (final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValues())
         {
-            if(!type.getRegistryName().getPath().equals(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath())
-                 && !type.getRegistryName().getPath().equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+            if (!type.getRegistryName().getPath().equals(PirateGroundRaidEvent.PIRATE_GROUND_RAID_EVENT_TYPE_ID.getPath())
+                  && !type.getRegistryName().getPath().equals(NorsemenShipRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
             {
                 raidTypes.add(type.getRegistryName().getPath());
             }
@@ -116,11 +129,11 @@ public class CommandRaid implements IMCOPCommand
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
                          .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
-                         .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
-                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
-                                 .then(IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool())
-                                 .executes(this::onSpecificExecute)))
-                         .executes(this::checkPreConditionAndExecute)));
+                         .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                                 .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
+                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
+                                         .then(IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool())
+                                                 .executes(this::onSpecificExecute)))
+                                 .executes(this::checkPreConditionAndExecute)));
     }
 }

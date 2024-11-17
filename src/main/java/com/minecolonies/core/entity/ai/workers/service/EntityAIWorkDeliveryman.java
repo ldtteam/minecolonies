@@ -341,7 +341,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
         if (!targetBuildingLocation.isReachableFromLocation(worker.getLocation()))
         {
-            Log.getLogger().info(worker.getCitizenColonyHandler().getColony().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
+            Log.getLogger().info(worker.getCitizenColonyHandler().getColonyOrRegister().getName() + ": " + worker.getName() + ": Can't inter dimension yet: ");
             return START_WORKING;
         }
 
@@ -440,9 +440,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
             worker.getCitizenColonyHandler()
-              .getColony()
+              .getColonyOrRegister()
               .getStatisticsManager()
-              .incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount(), worker.getCitizenColonyHandler().getColony().getDay());
+              .incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
         }
 
         if (!extracted)

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
@@ -88,8 +88,8 @@ public class BuildingKitchen extends AbstractBuilding
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             final ItemStack output = recipe.getPrimaryOutput();
-            return ItemStackUtils.CAN_EAT.test(output)
-                    || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
+            return FoodUtils.EDIBLE.test(output)
+                || FoodUtils.EDIBLE.test(FurnaceRecipes.getInstance()
                     .getSmeltingResult(output));
         }
     }
@@ -118,7 +118,7 @@ public class BuildingKitchen extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput()));
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(FoodUtils.EDIBLE.test(recipe.getPrimaryOutput()));
         }
     }
 }

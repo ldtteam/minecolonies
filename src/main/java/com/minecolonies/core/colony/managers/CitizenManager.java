@@ -36,6 +36,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -138,10 +139,9 @@ public class CitizenManager implements ICitizenManager
 
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
-        if (!existingCitizen.isPresent())
+        if (existingCitizen.isEmpty())
         {
             data.setEntity(entity);
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -158,18 +158,6 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            try
-            {
-                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
-                {
-                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
-                }
-            }
-            catch (Exception ignored)
-            {
-                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
-            }
-
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }
@@ -297,14 +285,30 @@ public class CitizenManager implements ICitizenManager
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
+
+        if (world instanceof ServerLevel serverLevel)
+        {
+            Entity existing = serverLevel.getEntity(citizenData.getUUID());
+            if (existing != null)
+            {
+                existing.discard();
+                existing = serverLevel.getEntity(citizenData.getUUID());
+                if (existing != null)
+                {
+                    serverLevel.entityManager.stopTracking(existing);
+                }
+            }
+        }
+
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
         entity.setUUID(citizenData.getUUID());
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-        world.addFreshEntity(entity);
 
         entity.setCitizenId(citizenData.getId());
         entity.getCitizenColonyHandler().setColonyId(colony.getID());
+
+        world.addFreshEntity(entity);
         if (entity.isAddedToWorld())
         {
             entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());

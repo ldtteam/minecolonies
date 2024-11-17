@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 /**
  * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
  */
-public class PathJobRaiderPathing extends AbstractPathJob
+public class PathJobRaiderPathing extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Cost for moving through a block
@@ -53,7 +53,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
         super(world, start, targetSpawnPoint, new PathResult<PathJobRaiderPathing>(), null);
         this.buildings = buildings;
         direction = targetSpawnPoint;
-        maxNodes = 5000;
+        maxNodes = 10000;
         setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true));
     }
 
@@ -171,5 +171,11 @@ public class PathJobRaiderPathing extends AbstractPathJob
         }
 
         return cost * modifier;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return direction;
     }
 }
