@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.citizen;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.citizens.event.CitizenRemovedEvent;
@@ -338,7 +337,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         else
         {
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
-            if (citizenData != null && isAlive() && citizenColonyHandler.getColony() != null)
+            if (citizenData != null && isAlive() && citizenColonyHandler.getColonyOrRegister() != null)
             {
                 initTasks();
                 return EntityState.ACTIVE_SERVER;
@@ -786,9 +785,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
 
-        if (!citizenColonyHandler.getColony().getTextureStyleId().equals(getEntityData().get(DATA_STYLE)))
+        if (!citizenColonyHandler.getColonyOrRegister().getTextureStyleId().equals(getEntityData().get(DATA_STYLE)))
         {
-            getEntityData().set(DATA_STYLE, citizenColonyHandler.getColony().getTextureStyleId());
+            getEntityData().set(DATA_STYLE, citizenColonyHandler.getColonyOrRegister().getTextureStyleId());
         }
         if (!citizenData.getTextureSuffix().equals(getEntityData().get(DATA_TEXTURE_SUFFIX)))
         {
@@ -842,7 +841,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
             return false;
         }
-        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
+        return getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
     }
 
     /**
@@ -861,7 +860,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
             return false;
         }
-        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VINES) > 0;
+        return getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(VINES) > 0;
     }
 
     /**
@@ -883,12 +882,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
-            final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
+            final double limitDecrease = getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
             final double healAmount;
             if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
-                healAmount = 2 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+                healAmount = 2 * (1.0 + getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
             else if (citizenData.getSaturation() < LOW_SATURATION)
             {
@@ -896,7 +895,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
             else
             {
-                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
 
             heal((float) healAmount);
@@ -1314,7 +1313,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             Log.getLogger()
               .warn("Entity:" + getName() + " uuid:" + getUUID() + " id:" + getId() + " removed:" + isRemoved() + " colonyid:" + citizenColonyHandler.getColonyId()
-                      + " entitydata colony id:" + getEntityData().get(DATA_COLONY_ID) + " hascolony:" + (citizenColonyHandler.getColony() != null) +
+                      + " entitydata colony id:" + getEntityData().get(DATA_COLONY_ID) + " hascolony:" + (citizenColonyHandler.getColonyOrRegister() != null) +
                       " registered:" + citizenColonyHandler.registered() + " world:" + level + " saved data:" + tag + " removalReason: " + removalReason);
         }
 
@@ -1334,7 +1333,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return false;
         }
 
-        if (getCitizenColonyHandler().getColony() == null)
+        if (getCitizenColonyHandler().getColonyOrRegister() == null)
         {
             return super.hurt(damageSource, damage);
         }
@@ -1374,11 +1373,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 return false;
             }
 
-            final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
-            if (attackerColony != null && citizenColonyHandler.getColony() != null)
+            final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyOrRegister();
+            if (attackerColony != null && citizenColonyHandler.getColonyOrRegister() != null)
             {
                 final IPermissions permission = attackerColony.getPermissions();
-                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
+                citizenColonyHandler.getColonyOrRegister().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
             }
         }
 
@@ -1386,12 +1385,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (sourceEntity instanceof ServerPlayer)
             {
-                if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+                if (citizenColonyHandler.getColonyOrRegister().getRaiderManager().isRaided())
                 {
                     return false;
                 }
 
-                if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN))
+                if (damage > 1 && !getCitizenColonyHandler().getColonyOrRegister().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN))
                 {
                     return false;
                 }
@@ -1438,9 +1437,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    if (citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
+                    if (citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
                     {
-                        if (getRandom().nextDouble() < citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS))
+                        if (getRandom().nextDouble() < citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS))
                         {
                             return false;
                         }
@@ -1450,21 +1449,24 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
                       && getHealth() < ((int) getMaxHealth() * 0.2D))
                 {
-                    damageInc *= 1 - citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_DAMAGE);
+                    damageInc *= 1 - citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_DAMAGE);
                 }
             }
         }
 
-        final boolean result = super.hurt(damageSource, damageInc);
+        if (!super.hurt(damageSource, damageInc))
+        {
+            return false;
+        }
 
-        if (result && damageSource.getEntity() instanceof LivingEntity)
+        if (damageSource.getEntity() instanceof LivingEntity)
         {
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damageInc);
         }
 
         if (damageSource.is(DamageTypeTags.IS_FIRE) || damageSource.is(DamageTypeTags.IS_LIGHTNING))
         {
-            return result;
+            return true;
         }
 
         if (!level.isClientSide)
@@ -1476,7 +1478,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        return result;
+        return true;
     }
 
     /**
@@ -1530,7 +1532,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
-        for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+        for (final ICitizenData entry : getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCitizens())
         {
             if (entry.getEntity().isPresent())
             {
@@ -1589,15 +1591,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void die(@NotNull final DamageSource damageSource)
     {
-        if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
+        if (citizenColonyHandler.getColonyOrRegister() != null && getCitizenData() != null)
         {
-            citizenColonyHandler.getColony().getRaiderManager().onLostCitizen(getCitizenData());
+            citizenColonyHandler.getColonyOrRegister().getRaiderManager().onLostCitizen(getCitizenData());
 
             citizenExperienceHandler.dropExperience();
             this.remove(RemovalReason.KILLED);
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
-                citizenColonyHandler.getColony()
+                citizenColonyHandler.getColonyOrRegister()
                   .getCitizenManager()
                   .injectModifier(new ExpirationBasedHappinessModifier(HappinessConstants.DEATH, 3.0, new StaticHappinessSupplier(0.0), 3));
             }
@@ -1605,17 +1607,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
-                citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
+                citizenColonyHandler.getColonyOrRegister().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
-            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColony().getDay());
+            getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColonyOrRegister().getDay());
 
             boolean graveSpawned = false;
             if (!isInvisible())
             {
-                if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+                if (citizenColonyHandler.getColonyOrRegister().isCoordInColony(level, blockPosition()))
                 {
-                    graveSpawned = getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
+                    graveSpawned = getCitizenColonyHandler().getColonyOrRegister().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
                 }
                 else
                 {
@@ -1623,7 +1625,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 }
             }
 
-            if (getCitizenColonyHandler().getColony() != null && getCitizenData() != null)
+            if (getCitizenColonyHandler().getColonyOrRegister() != null && getCitizenData() != null)
             {
                 MessageUtils.format(getCombatTracker().getDeathMessage())
                   .append(Component.literal("! "))
@@ -1633,18 +1635,18 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                             : Component.empty())
                   .append(graveSpawned ? Component.translatable(WARNING_GRAVE_SPAWNED) : Component.empty())
                   .withPriority(MessagePriority.DANGER)
-                  .sendTo(getCitizenColonyHandler().getColony()).forManagers();
+                  .sendTo(getCitizenColonyHandler().getColonyOrRegister()).forManagers();
             }
 
             if (citizenData.getJob() != null)
             {
                 citizenData.getJob().onRemoval();
             }
-            citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
+            citizenColonyHandler.getColonyOrRegister().getCitizenManager().removeCivilian(getCitizenData());
 
             final String deathCause =
               Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
-            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
+            citizenColonyHandler.getColonyOrRegister().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
 
             try
             {
@@ -1730,11 +1732,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_ARMOR)));
+            return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MELEE_ARMOR)));
         }
         else if (citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_ARMOR)));
+            return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_ARMOR)));
         }
         return super.getArmorValue();
     }
@@ -1806,7 +1808,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void setCustomName(@Nullable final Component name)
     {
-        if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
+        if (citizenData != null && citizenColonyHandler.getColonyOrRegister() != null && name != null)
         {
             citizenData.setName(name.getString());
             super.setCustomName(name);
@@ -1979,5 +1981,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setMaxAir(final int maxAir)
     {
         this.maxAir = maxAir;
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        return citizenColonyHandler.getColonyId();
     }
 }

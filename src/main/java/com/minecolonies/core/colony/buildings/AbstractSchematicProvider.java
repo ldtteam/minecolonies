@@ -168,7 +168,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         compound.putInt(TAG_HEIGHT, this.height);
 
-        compound.putInt(TAG_ROTATION, getRotation());
+        compound.putInt(TAG_ROTATION, cachedRotation);
 
         compound.putBoolean(TAG_DECONSTRUCTED, isDeconstructed);
 

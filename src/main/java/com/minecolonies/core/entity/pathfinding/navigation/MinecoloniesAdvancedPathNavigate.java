@@ -664,14 +664,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return;
         }
 
-        moveTo(pathResult.getPath(), getSpeedFactor());
         if (pathResult != null)
         {
             pathResult.setStatus(IN_PROGRESS_FOLLOWING);
         }
 
         // Calculate an overtime-heuristic adjustment for pathfinding to use which fits the terrain
-        if (pathResult.getPathLength() > 2 && pathResult.costPerDist != 1)
+        if (pathResult.hasPath() && pathResult.getPathLength() > 2 && pathResult.costPerDist != 1)
         {
             final double factor = 1 + pathResult.getPathLength() / 30.0;
             heuristicAvg -= heuristicAvg / (50 / factor);
@@ -685,6 +684,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 pauseTicks = 50;
             }
         }
+
+        moveTo(pathResult.getPath(), getSpeedFactor());
     }
 
     private boolean handleLadders(int oldIndex)
@@ -908,7 +909,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()))
+                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()) || ourEntity.getY() > pEx.y)
                 {
                     this.ourEntity.setYya(-0.5f);
                 }
@@ -985,7 +986,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.path.setNextNodeIndex(curNodeNext);
                 }
-                return;
+                 return;
             }
         }
 

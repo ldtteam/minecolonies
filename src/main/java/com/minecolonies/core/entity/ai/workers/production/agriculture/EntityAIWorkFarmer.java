@@ -591,7 +591,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 createCorrectFarmlandForSeed(farmField.getSeed(), position);
                 worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(LAND_TILLED, worker.getCitizenColonyHandler().getColony().getDay());
+                worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(LAND_TILLED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
 
                 return true;
             }
@@ -650,14 +650,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
                 harvestCrop(position.above());
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColony().getDay());
+                worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
 
                 return true;
             }
 
             if (mineBlock(position.above()))
             {
-                worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColony().getDay());
+                worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             }
             else
@@ -851,7 +851,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @Override
     protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
     {
-        final double increaseCrops = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
+        final double increaseCrops = worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
         if (increaseCrops == 0)
         {
             return drops;
@@ -889,7 +889,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final BlockState state = world.getBlockState(pos);
 
-        final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
+        final double chance = worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
 
         final NonNullList<ItemStack> drops = NonNullList.create();
         state.getDrops(new LootParams.Builder((ServerLevel) world).withLuck(fortune)

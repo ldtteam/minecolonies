@@ -460,7 +460,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             playCaughtFishSound();
             this.incrementActionsDoneAndDecSaturation();
-            worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FISH_CAUGHT, worker.getCitizenColonyHandler().getColony().getDay());
+            worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(FISH_CAUGHT, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
             building.getModule(STATS_MODULE).increment(FISH_CAUGHT);
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)

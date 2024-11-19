@@ -61,7 +61,6 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
@@ -1794,9 +1793,9 @@ public class CitizenData implements ICitizenData
         else
         {
             int slotBadFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-              stack -> CAN_EAT.test(stack) && !this.getHomeBuilding().canEat(stack));
+                stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
             int slotGoodFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-              stack -> CAN_EAT.test(stack) && this.getHomeBuilding().canEat(stack));
+                stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
             return slotBadFood != -1 && slotGoodFood == -1;
         }
     }
