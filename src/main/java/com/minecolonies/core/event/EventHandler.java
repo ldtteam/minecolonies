@@ -801,7 +801,7 @@ public class EventHandler
     public static void onEntityConverted(@NotNull final LivingConversionEvent.Pre event)
     {
         LivingEntity entity = event.getEntity();
-        if (entity instanceof ZombieVillager && event.getOutcome() == EntityType.VILLAGER)
+        if (MineColonies.getConfig().getServer().convertZombieVillagerToVisitor.get() && entity instanceof ZombieVillager && event.getOutcome() == EntityType.VILLAGER)
         {
             final Level world = entity.getCommandSenderWorld();
             final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());

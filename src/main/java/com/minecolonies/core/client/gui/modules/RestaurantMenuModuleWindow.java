@@ -174,6 +174,15 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
         menu = new ArrayList<>(moduleView.getMenu());
         applySorting(menu);
 
+        if (menu.isEmpty())
+        {
+            findPaneByID("warning").show();
+        }
+        else
+        {
+            findPaneByID("warning").hide();
+        }
+
         menuList.enable();
         menuList.show();
 

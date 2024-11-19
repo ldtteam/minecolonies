@@ -3,10 +3,10 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
-      "id": "minecraft:kelp"
+      "item": "minecraft:kelp"
     },
     {
-      "id": "minecolonies:garlic"
+      "item": "minecolonies:garlic"
     },
     {
       "item": "minecolonies:onion"

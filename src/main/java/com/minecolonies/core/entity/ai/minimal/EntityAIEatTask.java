@@ -400,12 +400,14 @@ public class EntityAIEatTask implements IStateAI
                 final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
                 if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
                 {
+                    restaurant = null;
                     return EAT;
                 }
             }
             return SEARCH_RESTAURANT;
         }
 
+        restaurant = null;
         return GO_TO_HUT;
     }
 
