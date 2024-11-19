@@ -6,11 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.network.messages.client.colony.GlobalDiseaseSyncMessage;
-import com.minecolonies.core.util.RandomCollection;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -21,11 +19,11 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.util.random.WeightedRandomList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +47,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     /**
      * The map of diseases.
      */
-    private static RandomCollection<ResourceLocation, Disease> DISEASES = new RandomCollection<>();
+    private static WeightedRandomList<Disease> DISEASES = WeightedRandomList.create();
 
     /**
      * Default constructor.
@@ -67,8 +65,8 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     public static void sendGlobalDiseasesPackets(final ServerPlayer player)
     {
         final FriendlyByteBuf byteBuf = new FriendlyByteBuf(Unpooled.buffer());
-        byteBuf.writeInt(DISEASES.getAll().size());
-        for (final Disease disease : DISEASES.getAll())
+        byteBuf.writeInt(DISEASES.unwrap().size());
+        for (final Disease disease : DISEASES.unwrap())
         {
             byteBuf.writeResourceLocation(disease.id());
             byteBuf.writeComponent(disease.name());
@@ -88,7 +86,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
      */
     public static void readGlobalDiseasesPackets(final FriendlyByteBuf byteBuf)
     {
-        final RandomCollection<ResourceLocation, Disease> newDiseases = new RandomCollection<>();
+        final List<Disease> newDiseases = new ArrayList<>();
         final int size = byteBuf.readInt();
         for (int i = 0; i < size; i++)
         {
@@ -103,9 +101,9 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
                 cureItems.add(StandardFactoryController.getInstance().deserialize(byteBuf));
             }
 
-            newDiseases.add(rarity, id, new Disease(id, name, rarity, cureItems));
+            newDiseases.add(new Disease(id, name, rarity, cureItems));
         }
-        DISEASES = newDiseases;
+        DISEASES = WeightedRandomList.create(newDiseases);
     }
 
     /**
@@ -114,9 +112,9 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
      * @return the collection of diseases.
      */
     @NotNull
-    public static Collection<Disease> getDiseases()
+    public static List<Disease> getDiseases()
     {
-        return DISEASES.getAll();
+        return DISEASES.unwrap();
     }
 
     /**
@@ -128,18 +126,26 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     @Nullable
     public static Disease getDisease(final ResourceLocation id)
     {
-        return DISEASES.get(id);
+        for (final Disease disease : DISEASES.unwrap())
+        {
+            if (disease.id().equals(id))
+            {
+                return disease;
+            }
+        }
+        return null;
     }
 
     /**
      * Get a random disease from the list of diseases.
      *
+     * @param random the input random source.
      * @return the random disease instance or null if no diseases exist.
      */
     @Nullable
-    public static Disease getRandomDisease()
+    public static Disease getRandomDisease(final RandomSource random)
     {
-        return DISEASES.next(MathUtils.RANDOM);
+        return DISEASES.getRandom(random).orElse(null);
     }
 
     @Override
@@ -148,7 +154,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
       final @NotNull ResourceManager resourceManager,
       final @NotNull ProfilerFiller profiler)
     {
-        final RandomCollection<ResourceLocation, Disease> diseases = new RandomCollection<>();
+        final List<Disease> diseases = new ArrayList<>();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
         {
             if (!entry.getValue().isJsonObject())
@@ -170,8 +176,8 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
                 cureItems.add(new ItemStorage(jsonElement.getAsJsonObject()));
             }
 
-            diseases.add(rarity, entry.getKey(), new Disease(entry.getKey(), name, rarity, cureItems));
+            diseases.add(new Disease(entry.getKey(), name, rarity, cureItems));
         }
-        DISEASES = diseases;
+        DISEASES = WeightedRandomList.create(diseases);
     }
 }

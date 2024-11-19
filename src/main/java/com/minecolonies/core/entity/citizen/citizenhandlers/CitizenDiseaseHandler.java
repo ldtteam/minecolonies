@@ -101,7 +101,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
             if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
-                this.disease = DiseasesListener.getRandomDisease();
+                this.disease = DiseasesListener.getRandomDisease(citizen.getRandom());
             }
         }
 
