@@ -16,6 +16,7 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -210,7 +211,7 @@ public class RecipeStorage implements IRecipeStorage
 
             for (ItemStack result : this.secondaryOutputs)
             {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(inputItem.getItemStack(), result, false, true) && result.isDamageableItem())
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(inputItem.getItemStack(), result, false, true))
                 {
                     inputItem = new ItemStorage(inputItem.getItemStack(), inputItem.getAmount(), true, inputItem.shouldIgnoreNBTValue);
                     this.tools.add(result);
@@ -528,25 +529,31 @@ public class RecipeStorage implements IRecipeStorage
 
             for (final IItemHandler handler : handlers)
             {
+                boolean isTool = ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, !storage.ignoreNBT());
                 int slotOfStack =
-                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
+                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack ->
+                          ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()) &&
+                                  (!isTool || !stack.isDamageableItem() || ItemStackUtils.getDurability(itemStack) > 0));
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
-                    if(citizen != null && ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, !storage.ignoreNBT()) && ItemStackUtils.getDurability(handler.getStackInSlot(slotOfStack)) > 0 )
+                    if(citizen != null && isTool)
                     {
-                        ItemStack toDamage = handler.extractItem(slotOfStack,1, false);
-                        if (!ItemStackUtils.isEmpty(toDamage))
+                        if (stack.isDamageableItem())
                         {
-                            // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
-                            // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> {}), citizen, EquipmentSlot.MAINHAND);
+                            ItemStack toDamage = handler.extractItem(slotOfStack, 1, false);
+                            if (!ItemStackUtils.isEmpty(toDamage))
+                            {
+                                // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
+                                // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
+                                toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> {}), citizen, EquipmentSlot.MAINHAND);
+                            }
+                            if (!ItemStackUtils.isEmpty(toDamage))
+                            {
+                                handler.insertItem(slotOfStack, toDamage, false);
+                            }
                         }
-                        if (!ItemStackUtils.isEmpty(toDamage))
-                        {
-                            handler.insertItem(slotOfStack, toDamage, false);
-                        }
-                        amountNeeded -= stack.getCount();
+                        --amountNeeded;
                     }
                     else
                     {

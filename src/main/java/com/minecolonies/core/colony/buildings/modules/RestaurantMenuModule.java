@@ -15,6 +15,7 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -121,29 +122,29 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
 
             for (final ItemStorage menuItem : menu)
             {
-                ItemStack itemStack = menuItem.getItemStack().copy();
-                if (itemStack.isEmpty())
+                final ItemStack originalStack = menuItem.getItemStack().copy();
+                if (originalStack.isEmpty())
                 {
                     continue;
                 }
+                ItemStack requestStack = originalStack;
 
-                if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage)
+                if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage && MathUtils.RANDOM.nextBoolean())
                 {
-                    // Smelting Recipes only got 1 input. Request the input if this is a smeltable.
-
-                    itemStack = recipeStorage.getInput().get(0).getItemStack();
+                    // Smelting Recipes only got 1 input. Request sometimes the input if this is a smeltable.
+                    requestStack = recipeStorage.getInput().get(0).getItemStack().copy();
                 }
 
-                final int target = itemStack.getMaxStackSize() * getExpectedStock();
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), target);
+                final int target = originalStack.getMaxStackSize() * getExpectedStock();
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(originalStack, true), target);
                 final int delta = target - count;
-                final IToken<?> request = getMatchingRequest(itemStack, list);
+                final IToken<?> request = getMatchingRequest(requestStack, list);
                 if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))
                 {
                     if (request == null)
                     {
-                        itemStack.setCount(Math.min(16, Math.min(itemStack.getMaxStackSize(), delta)));
-                        final MinimumStack stack = new MinimumStack(itemStack, false);
+                        requestStack.setCount(Math.min(16, Math.min(requestStack.getMaxStackSize(), delta)));
+                        final MinimumStack stack = new MinimumStack(requestStack, false);
                         stack.setCanBeResolvedByBuilding(false);
                         building.createRequest(stack, false);
                     }

@@ -950,7 +950,6 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockDurum)
           .requires(Items.SALMON)
           .requires(Items.POTATO)
-          .requires(Items.CHICKEN)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "fish_n_chips"));
 

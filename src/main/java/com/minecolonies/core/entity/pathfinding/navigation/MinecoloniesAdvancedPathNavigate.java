@@ -909,7 +909,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()))
+                if (PathfindingUtils.isLadder(level.getBlockState(entityPos.below()), getPathingOptions()) || ourEntity.getY() > pEx.y)
                 {
                     this.ourEntity.setYya(-0.5f);
                 }
@@ -986,7 +986,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.path.setNextNodeIndex(curNodeNext);
                 }
-                return;
+                 return;
             }
         }
 

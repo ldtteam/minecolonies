@@ -614,6 +614,9 @@
     "item": "minecolonies:borscht"
   },
   {
+    "item": "minecolonies:bread_dough"
+  },
+  {
     "checkednbtkeys": [
       "minecraft:attribute_modifiers",
       "minecraft:dyed_color"
@@ -640,6 +643,9 @@
       "minecraft:food"
     ],
     "item": "minecolonies:cabochis"
+  },
+  {
+    "item": "minecolonies:cake_batter"
   },
   {
     "checkednbtkeys": [
@@ -710,6 +716,9 @@
       "minecraft:food"
     ],
     "item": "minecolonies:cooked_rice"
+  },
+  {
+    "item": "minecolonies:cookie_dough"
   },
   {
     "checkednbtkeys": [
@@ -1115,6 +1124,9 @@
   },
   {
     "item": "minecolonies:raw_noodle"
+  },
+  {
+    "item": "minecolonies:raw_pumpkin_pie"
   },
   {
     "item": "minecolonies:resourcescroll"
