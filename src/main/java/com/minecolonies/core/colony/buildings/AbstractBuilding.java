@@ -1522,7 +1522,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasWorkerOpenRequestsFiltered(final int citizenId, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
-        return getOpenRequests(citizenId).stream().anyMatch(selectionPredicate);
+        for (final IRequest<?> req : getOpenRequests(citizenId))
+        {
+            if (selectionPredicate.test(req))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -1535,7 +1542,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         for (final IToken<?> token : getOpenRequestsByCitizen().get(citizen.getId()))
         {
-            if (!citizen.isRequestAsync(token))
+            if (!citizen.isRequestAsync(token) && colony.getRequestManager().getRequestForToken(token) != null)
             {
                 return true;
             }

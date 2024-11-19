@@ -169,6 +169,7 @@ public class DefaultChefCraftingProvider extends CustomRecipeProvider
         
         CustomRecipeBuilder.create(CHEF, MODULE_CRAFTING, "ramen")
           .inputs(List.of(
+            new ItemStorage(new ItemStack(Items.KELP)),
             new ItemStorage(new ItemStack(ModBlocks.blockGarlic)),
             new ItemStorage(new ItemStack(ModBlocks.blockOnion)),
             new ItemStorage(new ItemStack(ModItems.raw_noodle)),
