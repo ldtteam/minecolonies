@@ -85,6 +85,8 @@
   "minecolonies.config.nosupplyplacementrestrictions.comment": "Disables supply camp placing restrictions, intended for skyworlds and similar",
   "minecolonies.config.skyraiders": "Enable raiders to spawn in the sky",
   "minecolonies.config.skyraiders.comment": "Raiders will spawn in the sky if this is enabled",
+  "minecolonies.config.convertzombievillagertovisitor": "Enable zombie villager convert to visitor",
+  "minecolonies.config.convertzombievillagertovisitor.comment": "Zombie villager when converted will be transformed into visitor if this is enabled",
   "minecolonies.config.disableemptycolonies": "Disable Empty Colonies",
   "minecolonies.config.disableemptycolonies.comment": "Will stop empty colonies from being generated in the world - Needs world Reload",
   "minecolonies.config.averageemptycolonydistance": "Average Empty Colony Distance - Needs Complete Restart",

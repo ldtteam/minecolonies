@@ -37,6 +37,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     maxTreeSize;
     public final ForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
     public final ForgeConfigSpec.BooleanValue skyRaiders;
+    public final ForgeConfigSpec.BooleanValue convertZombieVillagerToVisitor;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
@@ -147,6 +148,7 @@ public class ServerConfiguration extends AbstractConfiguration
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);
         skyRaiders = defineBoolean(builder, "skyraiders", false);
+        convertZombieVillagerToVisitor = defineBoolean(builder, "convertzombievillagertovisitor", true);
 
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
