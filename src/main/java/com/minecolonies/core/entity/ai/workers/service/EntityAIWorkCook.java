@@ -224,7 +224,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
 
         final int countInSlot = worker.getInventoryCitizen().getStackInSlot(foodSlot).getCount();
-        int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 0 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
+        int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 1 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
         int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)) * homeBuildingLevel/2.0);
 
         final int transferCount = Math.min(countInSlot, building.getBuildingLevel());

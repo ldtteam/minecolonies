@@ -246,7 +246,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 }
                 else
                 {
-                    for (int i = 0; i < recipe.getInput().size(); i++)
+                    for (int i = 0; i < Math.min(9, recipe.getInput().size()); i++)
                     {
                         rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(i)));
                     }

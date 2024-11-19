@@ -949,6 +949,9 @@
     "item": "minecolonies:borscht"
   },
   {
+    "item": "minecolonies:bread_dough"
+  },
+  {
     "checkednbtkeys": [
       {
         "key": "Enchantments"
@@ -967,6 +970,9 @@
   },
   {
     "item": "minecolonies:cabochis"
+  },
+  {
+    "item": "minecolonies:cake_batter"
   },
   {
     "item": "minecolonies:cheddar_cheese"
@@ -1014,6 +1020,9 @@
   },
   {
     "item": "minecolonies:cooked_rice"
+  },
+  {
+    "item": "minecolonies:cookie_dough"
   },
   {
     "item": "minecolonies:corn"
@@ -1348,6 +1357,9 @@
   },
   {
     "item": "minecolonies:raw_noodle"
+  },
+  {
+    "item": "minecolonies:raw_pumpkin_pie"
   },
   {
     "item": "minecolonies:resourcescroll"
