@@ -53,6 +53,7 @@ public final class TagConstants
     public static final ResourceLocation TEMPERATE_BIOMES          = new ResourceLocation(MOD_ID, "temperatebiomes");
     public static final ResourceLocation HUMID_BIOMES              = new ResourceLocation(MOD_ID, "humidbiomes");
     public static final ResourceLocation DRY_BIOMES                = new ResourceLocation(MOD_ID, "drybiomes");
+    public static final ResourceLocation POISONOUS_FOOD            = new ResourceLocation(MOD_ID, "poisonousfood");
 
     public static final String CRAFTING_BAKER                = ModJobs.BAKER_ID.getPath();
     public static final String CRAFTING_BLACKSMITH           = ModJobs.BLACKSMITH_ID.getPath();

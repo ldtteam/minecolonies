@@ -31,6 +31,7 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
@@ -497,7 +498,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return InteractionResult.CONSUME;
         }
 
-        if (usedStack.getItem() == Items.POISONOUS_POTATO)
+        if (usedStack.is(ModTags.poisonous_food))
         {
             usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
@@ -509,6 +510,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
                     playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                 }
+                MessageUtils.format(MESSAGE_INTERACTION_POISON, this.getCitizenData().getName())
+                  .withPriority(MessagePriority.DANGER)
+                  .sendTo(player);
             }
 
             interactionCooldown = 20 * 60 * 5;
@@ -589,7 +593,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean isInteractionItem(final ItemStack stack)
     {
         return ISFOOD.test(stack) || stack.getItem() == Items.BOOK || stack.getItem() == Items.GOLDEN_APPLE || stack.getItem() == Items.CACTUS
-                 || stack.getItem() == Items.GLOWSTONE_DUST || stack.getItem() == Items.POISONOUS_POTATO;
+                 || stack.getItem() == Items.GLOWSTONE_DUST || stack.is(ModTags.poisonous_food);
     }
 
     /**
