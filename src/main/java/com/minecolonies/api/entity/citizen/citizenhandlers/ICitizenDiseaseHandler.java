@@ -68,4 +68,10 @@ public interface ICitizenDiseaseHandler
      * Sets a flag that the citizen is now at the hospital.
      */
     void setSleepsAtHospital(final boolean isAtHospital);
+
+    /**
+     * Set a disease on the citizen.
+     * @param disease to set.
+     */
+    void setDisease(String disease);
 }

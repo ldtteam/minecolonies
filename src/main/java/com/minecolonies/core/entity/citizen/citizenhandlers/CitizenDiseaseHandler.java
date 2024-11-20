@@ -108,6 +108,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         }
     }
 
+    public void setDisease(final String disease)
+    {
+        this.disease = disease;
+    }
+
     /**
      * Check if the citizen may become sick.
      *
