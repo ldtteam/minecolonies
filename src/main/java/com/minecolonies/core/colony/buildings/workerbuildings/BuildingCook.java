@@ -66,7 +66,6 @@ public class BuildingCook extends AbstractBuilding
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getCraftingRemainingItem()) && !stack.getCraftingRemainingItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
     /**
@@ -88,6 +87,12 @@ public class BuildingCook extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
         initTags = false;
+    }
+
+    @Override
+    protected boolean keepFood()
+    {
+        return false;
     }
 
     /**
