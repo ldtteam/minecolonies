@@ -181,16 +181,13 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         this.switchButton.visible = false;
         this.addRenderableWidget(this.switchButton);
 
-        if (completeCrafting)
+        final ImageButton requestsButton = new ImageButton(leftPos + REQUEST_X_OFFSET, topPos + REQUEST_Y_OFFSET, CRAFTING_SWITCH_SIZE.width, CRAFTING_SWITCH_SIZE.height,
+                CRAFTING_SWITCH_SIZE.width + 1, 0, CRAFTING_SWITCH_SIZE.height + 1, CRAFTING_SWITCH_TEXTURE, btn ->
         {
-            final ImageButton requestsButton = new ImageButton(leftPos + REQUEST_X_OFFSET, topPos + REQUEST_Y_OFFSET, CRAFTING_SWITCH_SIZE.width, CRAFTING_SWITCH_SIZE.height,
-                    CRAFTING_SWITCH_SIZE.width + 1, 0, CRAFTING_SWITCH_SIZE.height + 1, CRAFTING_SWITCH_TEXTURE, btn ->
-            {
-                requestables.clear();
-                new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
-            });
-            this.addRenderableWidget(requestsButton);
-        }
+            requestables.clear();
+            new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
+        });
+        this.addRenderableWidget(requestsButton);
     }
 
     @Override
