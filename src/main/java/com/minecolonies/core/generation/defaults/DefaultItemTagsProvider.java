@@ -268,7 +268,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.yogurt_with_berries)
           .add(ModItems.mutton_dinner)
           .add(ModItems.tortillas)
-          .add(ModItems.apple_pie)
           .add(ModItems.spicy_eggplant);
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_COOK))
