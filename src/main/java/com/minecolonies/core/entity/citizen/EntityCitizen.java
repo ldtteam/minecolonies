@@ -505,11 +505,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                if (getRandom().nextInt(3) == 0)
-                {
-                    getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
-                    playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                }
+                getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
+                playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                getCitizenData().markDirty(20);
+
                 MessageUtils.format(MESSAGE_INTERACTION_POISON, this.getCitizenData().getName())
                   .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
