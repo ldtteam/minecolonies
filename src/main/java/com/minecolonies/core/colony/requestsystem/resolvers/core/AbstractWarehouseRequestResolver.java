@@ -25,14 +25,16 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 import static com.minecolonies.api.util.constant.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
@@ -215,6 +217,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final Colony colony = (Colony) manager.getColony();
         final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
+
+        if (wareHouse == null)
+        {
+            return null;
+        }
 
         List<IRequest<?>> deliveries = Lists.newArrayList();
         int remainingCount = completedRequest.getRequest().getCount();

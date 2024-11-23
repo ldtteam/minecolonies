@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
@@ -20,6 +21,7 @@ import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
 import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGLE;
 
 /**
@@ -88,37 +90,46 @@ public class WindowClipBoard extends AbstractWindowRequestTree
             return ImmutableList.of();
         }
 
-        final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
-        final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
-
-        final Set<IToken<?>> requestTokens = new HashSet<>();
-        requestTokens.addAll(resolver.getAllAssignedRequests());
-        requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
-
-        for (final IToken<?> token : requestTokens)
+        try
         {
-            IRequest<?> request = requestManager.getRequestForToken(token);
+            final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
+            final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
-            while (request != null && request.hasParent())
+            final Set<IToken<?>> requestTokens = new HashSet<>();
+            requestTokens.addAll(resolver.getAllAssignedRequests());
+            requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
+
+            for (final IToken<?> token : requestTokens)
             {
-                request = requestManager.getRequestForToken(request.getParent());
+                IRequest<?> request = requestManager.getRequestForToken(token);
+
+                while (request != null && request.hasParent())
+                {
+                    request = requestManager.getRequestForToken(request.getParent());
+                }
+
+                if (request != null && !requests.contains(request))
+                {
+                    requests.add(request);
+                }
             }
 
-            if (request != null && !requests.contains(request))
+            if (hide)
             {
-                requests.add(request);
+                requests.removeIf(req -> asyncRequest.contains(req.getId()));
             }
-        }
 
-        if (hide)
+            final BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
+            requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
+                    .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
+        }
+        catch (Exception e)
         {
-            requests.removeIf(req -> asyncRequest.contains(req.getId()));
+            Log.getLogger().warn("Exception trying to retreive requests:", e);
+            requestManager.reset();
+            return ImmutableList.of();
         }
-
-        final BlockPos playerPos = Minecraft.getInstance().player.blockPosition();
-        requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                                                                      .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
-                        .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
     }
