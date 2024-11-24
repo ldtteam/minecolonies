@@ -175,6 +175,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
           new AITarget(GUARD_FLEE, this::flee, 20),
           new AITarget(CombatAIStates.ATTACKING, this::shouldFlee, () -> GUARD_FLEE, GUARD_REGEN_INTERVAL),
+            new AITarget(CombatAIStates.NO_TARGET, this::shouldFlee, () -> GUARD_FLEE, GUARD_REGEN_INTERVAL),
           new AITarget(CombatAIStates.NO_TARGET, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
 
