@@ -174,6 +174,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
           new AITarget(GUARD_FLEE, this::flee, 20),
           new AITarget(CombatAIStates.ATTACKING, this::shouldFlee, () -> GUARD_FLEE, GUARD_REGEN_INTERVAL),
+            new AITarget(CombatAIStates.NO_TARGET, this::shouldFlee, () -> GUARD_FLEE, GUARD_REGEN_INTERVAL),
           new AITarget(CombatAIStates.NO_TARGET, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
 
@@ -519,7 +520,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
                 if (currentPatrolPoint != null)
                 {
-                    setNextPatrolTarget(currentPatrolPoint);
+                    setNextPatrolTargetAndMove(currentPatrolPoint);
                 }
             }
         }
@@ -560,11 +561,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                     final MinerLevel level = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel();
                     if (level == null)
                     {
-                        setNextPatrolTarget(buildingMiner.getPosition());
+                        setNextPatrolTargetAndMove(buildingMiner.getPosition());
                     }
                     else
                     {
-                        setNextPatrolTarget(level.getRandomCompletedNode(buildingMiner));
+                        setNextPatrolTargetAndMove(level.getRandomCompletedNode(buildingMiner));
                     }
                 }
                 else
@@ -585,13 +586,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @param target the next patrol target.
      */
-    public void setNextPatrolTarget(final BlockPos target)
+    public void setNextPatrolTargetAndMove(final BlockPos target)
     {
         currentPatrolPoint = target;
-        if (getState() == CombatAIStates.NO_TARGET)
+        registerTarget(new AIOneTimeEventTarget(() ->
         {
-            worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2);
-        }
+            if (getState() == CombatAIStates.NO_TARGET)
+            {
+                return decide();
+            }
+            return getState();
+        }));
     }
 
     /**

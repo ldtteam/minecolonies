@@ -66,6 +66,8 @@ public class ModTags
     public static final TagKey<Item> breakable_ore = ItemTags.create(TagConstants.BREAKABLE_ORE);
     public static final TagKey<Item> raw_ore = ItemTags.create(TagConstants.RAW_ORE);
 
+    public static final TagKey<Item> poisonous_food = ItemTags.create(TagConstants.POISONOUS_FOOD);
+
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
 

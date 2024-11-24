@@ -192,6 +192,11 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
         for (final ItemStorage menuItem : menu)
         {
             consumer.accept(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, menuItem.getItemStack(), false, true), menuItem.getItemStack().getMaxStackSize() * getExpectedStock(), false);
+            if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage)
+            {
+                final ItemStack smeltStack = recipeStorage.getInput().get(0).getItemStack();
+                consumer.accept(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, smeltStack, false, true), smeltStack.getMaxStackSize() * getExpectedStock(), false);
+            }
         }
     }
 

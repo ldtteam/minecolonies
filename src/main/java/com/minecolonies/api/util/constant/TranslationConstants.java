@@ -634,6 +634,8 @@ public final class TranslationConstants
     @NonNls
     public static final String MESSAGE_INTERACTION_COOKIE                         = "com.minecolonies.coremod.interaction.nocookie";
     @NonNls
+    public static final String MESSAGE_INTERACTION_POISON                         = "com.minecolonies.coremod.interaction.poison";
+    @NonNls
     public static final String MESSAGE_INTERACTION_VISITOR_FOOD                   = "com.minecolonies.coremod.interaction.visitor.food";
     @NonNls
     public static final String WARNING_UPGRADE_BARRACKS                           = "com.minecolonies.coremod.worker.needbarracks";

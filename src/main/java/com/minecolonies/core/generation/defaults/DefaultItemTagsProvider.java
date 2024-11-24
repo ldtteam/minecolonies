@@ -171,6 +171,12 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.RAW_COPPER)
           .add(Items.RAW_GOLD);
 
+        tag(ModTags.poisonous_food)
+          .add(Items.POISONOUS_POTATO)
+          .add(Items.CHICKEN)
+          .add(Items.SPIDER_EYE)
+          .add(Items.ROTTEN_FLESH);
+
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))
@@ -268,7 +274,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.yogurt_with_berries)
           .add(ModItems.mutton_dinner)
           .add(ModItems.tortillas)
-          .add(ModItems.apple_pie)
           .add(ModItems.spicy_eggplant);
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_COOK))

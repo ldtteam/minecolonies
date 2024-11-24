@@ -1757,6 +1757,7 @@
   "com.minecolonies.coremod.interaction.notnow": "%s: I can't do that right now",
   "com.minecolonies.coremod.interaction.ouch": "%s: Oh is that for me... Ouch!",
   "com.minecolonies.coremod.interaction.visitor.food": "Tasty food? I guess I'll stay a bit longer here",
+  "com.minecolonies.coremod.interaction.poison": "Ugh! What was that? I'm not feeling very well now.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Housing",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
