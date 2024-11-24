@@ -1,6 +1,7 @@
 package com.minecolonies.api.items;
 
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class handling the registering of the mod items.
@@ -107,11 +108,50 @@ public final class ModItems
     public static Item sushi_roll;
     public static Item tofu;
 
+    public static Item cornmeal;
+    public static Item creamcheese;
+    public static Item soysauce;
+    public static Item cheese_ravioli;
+    public static Item chicken_broth;
+    public static Item corn_chowder;
+    public static Item spicy_grilled_chicken;
+    public static Item kebab;
+    public static Item meat_ravioli;
+    public static Item mint_jelly;
+    public static Item mint_tea;
+    public static Item pea_soup;
+    public static Item polenta;
+    public static Item potato_soup;
+    public static Item squash_soup;
+    public static Item veggie_ravioli;
+    public static Item yogurt;
+    public static Item baked_salmon;
+    public static Item eggdrop_soup;
+    public static Item fish_n_chips;
+    public static Item kimchi;
+    public static Item pierogi;
+    public static Item veggie_quiche;
+    public static Item veggie_soup;
+    public static Item yogurt_with_berries;
+    public static Item borscht;
+    public static Item fish_dinner;
+    public static Item mutton_dinner;
+    public static Item ramen;
+    public static Item schnitzel;
+    public static Item steak_dinner;
+    public static Item tacos;
+    public static Item tortillas;
+    public static Item apple_pie;
+    public static Item cheese_pizza;
+    public static Item mushroom_pizza;
+    public static Item plain_cheesecake;
+    public static Item mintchoco_cheesecake;
+    public static Item spicy_eggplant;
+
     public static Item large_water_bottle;
     public static Item large_milk_bottle;
     public static Item large_soy_milk_bottle;
     public static Item large_empty_bottle;
-
 
     /**
      * Private constructor to hide the implicit public one.
@@ -121,5 +161,90 @@ public final class ModItems
         /*
          * Intentionally left empty.
          */
+    }
+
+    @NotNull
+    public static Item[] getAllIngredients()
+    {
+        return new Item[] {
+          muffin_dough,
+          manchet_dough,
+          raw_noodle,
+          butter,
+          cornmeal,
+          creamcheese,
+          soysauce,
+        };
+    }
+
+    @NotNull
+    public static Item[] getAllFoods()
+    {
+        return new Item[] {
+          // Tier 1 Food
+          cheddar_cheese,
+          feta_cheese,
+          cooked_rice,
+          tofu,
+          flatbread,
+          cheese_ravioli,
+          chicken_broth,
+          meat_ravioli,
+          mint_jelly,
+          mint_tea,
+          polenta,
+          potato_soup,
+          veggie_ravioli,
+          yogurt,
+          squash_soup,
+          pea_soup,
+          corn_chowder,
+          tortillas,
+          spicy_grilled_chicken,
+
+          // Tier 2 Food
+          manchet_bread,
+          lembas_scone,
+          muffin,
+          pottage,
+          pasta_plain,
+          apple_pie,
+          plain_cheesecake,
+          baked_salmon,
+          eggdrop_soup,
+          fish_n_chips,
+          pierogi,
+          veggie_soup,
+          yogurt_with_berries,
+          cabochis,
+          veggie_quiche,
+          rice_ball,
+          mutton_dinner,
+          pasta_tomato,
+          cheese_pizza,
+          pepper_hummus,
+          kebab,
+          congee,
+          kimchi,
+
+          // Tier 3 Food
+          hand_pie,
+          mintchoco_cheesecake,
+          borscht,
+          schnitzel,
+          steak_dinner,
+          lamb_stew,
+          fish_dinner,
+          sushi_roll,
+          ramen,
+          eggplant_dolma,
+          stuffed_pita,
+          mushroom_pizza,
+          pita_hummus,
+          spicy_eggplant,
+          stew_trencher,
+          stuffed_pepper,
+          tacos
+        };
     }
 }

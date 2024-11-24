@@ -89,7 +89,7 @@ public class ResearchUnlocked implements LootItemCondition
     {
         return Optional.ofNullable(entity)
                 .map(e -> e instanceof AbstractEntityCitizen citizen ? citizen : null)
-                .flatMap(c -> test(lootContext, c.getCitizenColonyHandler().getColony()));
+                .flatMap(c -> test(lootContext, c.getCitizenColonyHandler().getColonyOrRegister()));
     }
 
     private Optional<Boolean> test(@NotNull final LootContext lootContext, @Nullable Vec3 origin)

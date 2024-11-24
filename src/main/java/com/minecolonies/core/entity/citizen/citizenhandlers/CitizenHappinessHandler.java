@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.happiness.*;
 import com.minecolonies.api.util.Tuple;
@@ -53,6 +54,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         addModifier(new StaticHappinessModifier(SECURITY, 4.0, new DynamicHappinessSupplier(SECURITY_FUNCTION)));
         addModifier(new StaticHappinessModifier(SOCIAL, 2.0, new DynamicHappinessSupplier(SOCIAL_FUNCTION)));
         addModifier(new StaticHappinessModifier(MYSTICAL_SITE, 1.0, new DynamicHappinessSupplier(MYSTICAL_SITE_FUNCTION)));
+        addModifier(new StaticHappinessModifier(FOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION)));
 
         // Add time based modifiers. These modifiers change their value over time.
         addModifier(new TimeBasedHappinessModifier(HOMELESSNESS,
@@ -76,7 +78,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
           new Tuple<>(IDLE_AT_JOB_COMPLAINS_DAYS, 0.5), new Tuple<>(IDLE_AT_JOB_DEMANDS_DAYS, 0.1)));
 
         addModifier(new TimeBasedHappinessModifier(SLEPTTONIGHT, 1.5, new DynamicHappinessSupplier(SLEPTTONIGHT_FUNCTION), (modifier, d) -> true, new Tuple<>(0, 2d), new Tuple<>(2, 1.6d), new Tuple<>(3, 1d)));
-        addModifier(new TimeBasedHappinessModifier(HADDECENTFOOD, 3.0, new DynamicHappinessSupplier(FOOD_FUNCTION), (modifier, d) -> true, new Tuple<>(0, 2d), new Tuple<>(4, 1.6d), new Tuple<>(7, 1d)));
     }
 
     /**
@@ -208,7 +209,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * Get the social modifier for the colony.
      *
      * @param colony the colony.
-     * @return true if so.
+     * @return the factor.
      */
     public static double getSocialModifier(final IColony colony)
     {
@@ -248,7 +249,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * Get the guard security happiness modifier from the colony.
      *
      * @param colony the colony.
-     * @return true if so.
+     * @return the factor.
      */
     public static double getGuardFactor(final IColony colony)
     {
@@ -269,12 +270,40 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     /**
+     * Get the food happiness modifier from the citizen.
+     * Mininmal Happiness:
+     * 1: 1 Different types of food, e.g. baked potato
+     * 2: 2 Types of food baked potato + mushroom soup
+     * 3: 3 Types food baked potato + mushroom soup + 1 Minecolonies food
+     * 4: 4 Types food baked potato + mushroom soup + 2 Minecolonies food
+     * 5: 5 Types food baked potato + mushroom soup + 3 Minecolonies food
+     * @param citizenData the citizen.
+     * @return the factor.
+     */
+    public static double getFoodFactor(final ICitizenData citizenData)
+    {
+        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
+        final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
+        if (homeBuildingLevel == 0 || !foodHandler.hasFullFoodHistory())
+        {
+            return 1.0;
+        }
+
+        ICitizenFoodHandler.CitizenFoodStats happinessStats = foodHandler.getFoodHappinessStats();
+
+        final double diversityFactor = Math.min(5.0, (double) happinessStats.diversity() / homeBuildingLevel);
+        final double qualityFactor = Math.min(5.0, (double) happinessStats.quality() / (Math.max(1.0, homeBuildingLevel - 2.0)));
+
+        return (diversityFactor + qualityFactor) / 2.0;
+    }
+
+    /**
      *  Get the mystical site happiness modifier from the colony.
      *      Mystical site happiness is never negative :
      *      Supply vary from 1 to 3.5 max (1 + (Mystical site lvl 5 / 2))
      *
      * @param colony the colony.
-     * @return double supply factor.
+     * @return the factor.
      */
     public static double getMysticalSiteFactor(final IColony colony)
     {

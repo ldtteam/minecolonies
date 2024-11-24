@@ -152,7 +152,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 continue;
             }
             if (item.getItemNeeded() == ModEquipmentTypes.shield.get()
-                  && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
+                  && worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
             {
                 continue;
             }

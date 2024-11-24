@@ -227,8 +227,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
-            building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
-            building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData(), false);
+            building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData());
+            building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData());
             pickUpCount = 0;
             return START_WORKING;
         }
@@ -448,7 +448,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL, () -> placer.getIterator().decrement(this::skipClearing), false);
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
+                    building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData());
                 }
                 break;
         }
@@ -514,7 +514,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             blockToMine = null;
         }
 
-        final double decrease = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
+        final double decrease = 1 - worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
         setDelay((int) ((BUILD_BLOCK_DELAY * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER)) * decrease));
 
         return getState();
@@ -705,7 +705,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
 
             final BuildingStructureHandler<J, B> structure;
-            IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
+            IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(position);
             final BlockEntity entity = world.getBlockEntity(position);
 
             if (removal)

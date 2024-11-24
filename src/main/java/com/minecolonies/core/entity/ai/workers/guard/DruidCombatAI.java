@@ -132,7 +132,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
-        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
+        if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
               && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion))
         {
             gotMaterial = true;

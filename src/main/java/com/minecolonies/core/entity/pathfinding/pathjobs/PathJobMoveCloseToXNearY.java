@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving close to a position near another
  */
-public class PathJobMoveCloseToXNearY extends AbstractPathJob
+public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Position to go close to
@@ -44,13 +44,12 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
         this.nearbyPosition = nearbyPosition;
         this.distToDesired = distToDesired;
         extraNodes = 20;
-        maxNodes /= 2;
     }
 
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(desiredPosition, x, y, z) * 2 + BlockPosUtil.distManhattan(nearbyPosition, x, y, z);
+        return BlockPosUtil.distManhattan(desiredPosition, x, y, z) + BlockPosUtil.distManhattan(nearbyPosition, x, y, z) * 2;
     }
 
     @Override
@@ -99,5 +98,11 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
             maxNodes += 200;
             return false;
         }
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return desiredPosition;
     }
 }

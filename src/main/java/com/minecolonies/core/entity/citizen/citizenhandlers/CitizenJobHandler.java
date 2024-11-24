@@ -107,12 +107,12 @@ public class CitizenJobHandler implements ICitizenJobHandler
             // Calculate the number of guards for some advancements
             if (job instanceof AbstractJobGuard)
             {
-                IColony colony = citizen.getCitizenColonyHandler().getColony();
+                IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
                 int guards = ((int) colony.getCitizenManager().getCitizens()
                   .stream()
                   .filter(citizen -> citizen.getJob() instanceof AbstractJobGuard)
                   .count());
-                AdvancementUtils.TriggerAdvancementPlayersForColony(citizen.getCitizenColonyHandler().getColony(),
+                AdvancementUtils.TriggerAdvancementPlayersForColony(citizen.getCitizenColonyHandler().getColonyOrRegister(),
                   player -> AdvancementTriggers.ARMY_POPULATION.trigger(player, guards));
             }
 

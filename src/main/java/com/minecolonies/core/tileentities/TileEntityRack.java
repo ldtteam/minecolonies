@@ -17,6 +17,8 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -71,7 +73,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     /**
      * The content of the chest.
      */
-    private final Map<ItemStorage, Integer> content = new HashMap<>();
+    private final Object2IntMap<ItemStorage> content = new Object2IntOpenHashMap();
 
     /**
      * Size multiplier of the inventory. 0 = default value. 1 = 1*9 additional slots, and so on.
@@ -176,6 +178,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
 
         return content.getOrDefault(checkItem, 0) >= count;
+    }
+
+    @Override
+    public boolean hasItemStorage(final ItemStorage storage, final int count)
+    {
+        return content.getOrDefault(storage, 0) >= count;
     }
 
     @Override

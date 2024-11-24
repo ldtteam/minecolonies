@@ -90,7 +90,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             // Apply the colony Flag to the shield
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
+            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
 
             worker.decreaseSaturationForContinuousAction();
             return true;

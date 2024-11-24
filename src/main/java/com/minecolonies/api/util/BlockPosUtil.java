@@ -306,21 +306,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods before TP
-     *
-     * @param sender   uses the player to get the world
-     * @param blockPos for the current block LOC
-     * @return isSafe true=safe false=water or lava
-     */
-    public static boolean isPositionSafe(@NotNull final Level sender, final BlockPos blockPos)
-    {
-        return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
-                 && !sender.getBlockState(blockPos).liquid()
-                 && !sender.getBlockState(blockPos.below()).liquid()
-                 && sender.getWorldBorder().isWithinBounds(blockPos);
-    }
-
-    /**
      * this checks that you are not in the air or underground. If so it will look up and down for a good landing spot before TP.
      *
      * @param blockPos for the current block LOC.

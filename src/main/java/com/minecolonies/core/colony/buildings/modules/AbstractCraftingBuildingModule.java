@@ -612,7 +612,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                   newRecipe,
                   1,
                   recipe.getPrimaryOutput(),
-                  Blocks.AIR);
+                  recipe.getIntermediate(),
+                  null,     // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
+                  recipe.getRecipeType().getId(),
+                  recipe.getAlternateOutputs(),
+                  recipe.getSecondaryOutputs(),
+                  recipe.getLootTable(),
+                  recipe.getRequiredTool());
 
                 final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
                 if (isRecipeCompatibleWithCraftingModule(token))

@@ -70,6 +70,9 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     {
         super(building, res);
 
+        registerButton(BUTTON_SWITCH, this::switchClicked);
+        registerButton(BUTTON_RESET_DEFAULT, this::reset);
+
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
@@ -88,19 +91,6 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         });
     }
 
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        super.onButtonClicked(button);
-        if (Objects.equals(button.getID(), BUTTON_SWITCH))
-        {
-            switchClicked(button);
-        }
-        else if (Objects.equals(button.getID(), BUTTON_RESET_DEFAULT))
-        {
-            reset();
-        }
-    }
 
     @Override
     public void onOpened()
