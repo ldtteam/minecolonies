@@ -893,7 +893,7 @@ public class RaidManager implements IRaiderManager
 
                     for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
                     {
-                        ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTarget(lastBuilding);
+                        ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTargetAndMove(lastBuilding);
                     }
                 }
 

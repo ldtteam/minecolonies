@@ -9,10 +9,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.ai.workers.util.GuardGear;
-import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.workers.util.GuardGear;
+import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
@@ -54,11 +54,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.REGENERATION;
+import static com.minecolonies.api.research.util.ResearchConstants.SATLIMIT;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
@@ -992,7 +993,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (InventoryUtils.hasBuildingEnoughElseCount(building, stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
         {
             needsCurrently = new Tuple<>(stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 16);
-            return PICK_UP;
+            return GATHERING_REQUIRED_MATERIALS;
         }
         return getState();
     }

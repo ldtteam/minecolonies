@@ -394,9 +394,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             if (curguard.getEntity().isPresent())
             {
-                if (curguard.getEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardEntity)
+                if (curguard.getJob() instanceof AbstractJobGuard guardEntity)
                 {
-                    ((AbstractEntityAIGuard<?, ?>) guardEntity.getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
+                    ((AbstractEntityAIGuard<?, ?>) guardEntity.getWorkerAI()).setNextPatrolTargetAndMove(lastPatrolPoint);
                 }
             }
         }
