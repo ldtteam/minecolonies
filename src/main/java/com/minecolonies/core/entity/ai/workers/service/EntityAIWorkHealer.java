@@ -19,11 +19,11 @@ import com.minecolonies.core.entity.ai.workers.util.Patient;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,7 +108,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         for (final AbstractEntityCitizen citizen : WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
           building,
-          cit -> cit.getCitizenDiseaseHandler().isSick()))
+            cit -> cit.getCitizenData().getCitizenDiseaseHandler().isSick()))
         {
             hospital.checkOrCreatePatientFile(citizen.getCivilianID());
         }
@@ -116,13 +116,13 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         for (final Patient patient : hospital.getPatients())
         {
             final ICitizenData data = hospital.getColony().getCitizenManager().getCivilian(patient.getId());
-            if (data == null || !data.getEntity().isPresent() || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenDiseaseHandler().isSick()))
+            if (data == null || !data.getEntity().isPresent() || (data.getEntity().isPresent() && !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick()))
             {
                 hospital.removePatientFile(patient);
                 continue;
             }
             final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-            final String diseaseName = citizen.getCitizenDiseaseHandler().getDisease();
+            final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
             @Nullable final Disease disease = diseaseName.isEmpty() ? null : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
 
             if (patient.getState() == Patient.PatientState.NEW)
@@ -243,7 +243,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
@@ -255,7 +255,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return REQUEST_CURE;
         }
 
-        final String diseaseName = citizen.getCitizenDiseaseHandler().getDisease();
+        final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
         if (diseaseName.isEmpty())
         {
             currentPatient.setState(Patient.PatientState.REQUESTED);
@@ -313,7 +313,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
@@ -325,7 +325,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return CURE;
         }
 
-        final String diseaseName = citizen.getCitizenDiseaseHandler().getDisease();
+        final String diseaseName = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
         if (diseaseName.isEmpty())
         {
@@ -392,7 +392,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final ICitizenData data = building.getColony().getCitizenManager().getCivilian(currentPatient.getId());
-        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenDiseaseHandler().isSick())
+        if (data == null || !data.getEntity().isPresent() || !data.getEntity().get().getCitizenData().getCitizenDiseaseHandler().isSick())
         {
             currentPatient = null;
             return DECIDE;
@@ -419,7 +419,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
 
         progressTicks = 0;
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        citizen.getCitizenDiseaseHandler().cure();
+        citizen.getCitizenData().getCitizenDiseaseHandler().cure();
         currentPatient.setState(Patient.PatientState.TREATED);
         currentPatient = null;
         return DECIDE;

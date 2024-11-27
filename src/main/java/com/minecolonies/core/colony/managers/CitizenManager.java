@@ -562,11 +562,11 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public boolean tickCitizenData()
+    public boolean tickCitizenData(final int tickRate)
     {
         for (ICitizenData iCitizenData : this.getCitizens())
         {
-            iCitizenData.update();
+            iCitizenData.update(tickRate);
         }
         return false;
     }

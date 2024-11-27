@@ -104,7 +104,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
                 Blocks.AIR,
                 animal.getLootTable(),
                 ModEquipmentTypes.axe.get(),
-                animal,
+                animal.getType(),
                 Collections.emptyList(),
                 0));
     }

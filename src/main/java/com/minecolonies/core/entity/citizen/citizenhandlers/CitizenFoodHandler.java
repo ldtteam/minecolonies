@@ -158,6 +158,6 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         {
             return baseModifier;
         }
-        return baseModifier * 0.5 * Math.max(2.5, 5.0/getFoodHappinessStats().diversity());
+        return baseModifier * 0.5 * Math.min(2.5, 5.0/getFoodHappinessStats().diversity());
     }
 }

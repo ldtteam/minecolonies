@@ -178,11 +178,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private ICitizenSleepHandler citizenSleepHandler;
 
     /**
-     * The citizen sleep handler.
-     */
-    private ICitizenDiseaseHandler citizenDiseaseHandler;
-
-    /**
      * Our custom combat tracker.
      */
     private final CitizenCombatTracker combatTracker;
@@ -257,7 +252,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
-        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.combatTracker = new CitizenCombatTracker(this);
         this.moveControl = new MovementHandler(this);
@@ -398,7 +392,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level().isClientSide && getCitizenData() != null)
         {
-            citizenData.update();
+            citizenData.update(TICKS_SECOND * 3);
             citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             message.sendToPlayer((ServerPlayer) player);
@@ -453,10 +447,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
             }
-            return null;
+            return InteractionResult.PASS;
         }
 
-        if (usedStack.getItem() == Items.GOLDEN_APPLE && getCitizenDiseaseHandler().isSick())
+        final boolean isSick = (getCitizenData() != null && getCitizenData().getCitizenDiseaseHandler().isSick()) || (citizenDataView != null
+            && citizenDataView.getVisibleStatus() == VisibleCitizenStatus.SICK);
+        if (usedStack.getItem() == Items.GOLDEN_APPLE && isSick)
         {
             usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
@@ -465,7 +461,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 if (getRandom().nextInt(3) == 0)
                 {
-                    getCitizenDiseaseHandler().cure();
+                    getCitizenData().getCitizenDiseaseHandler().cure();
                     playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                     new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER).sendToTrackingEntity(this);
                 }
@@ -482,7 +478,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level().isClientSide())
             {
-                getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
+                getCitizenData().getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
                 playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                 getCitizenData().markDirty(20);
 
@@ -491,11 +487,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .sendTo(player);
             }
 
-            interactionCooldown = 20 * 60 * 5;
+            interactionCooldown = 20 * 20;
             return InteractionResult.CONSUME;
         }
 
-        if (getCitizenDiseaseHandler().isSick())
+        if (isSick)
         {
             return null;
         }
@@ -678,7 +674,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -694,7 +689,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenId = compound.getInt(TAG_CITIZEN);
             }
         }
-        citizenDiseaseHandler.read(compound);
         setPose(Pose.STANDING);
     }
 
@@ -753,7 +747,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         citizenExperienceHandler.gatherXp();
         CitizenItemUtils.pickupItems(this);
         citizenData.setLastPosition(blockPosition());
-        citizenDiseaseHandler.tick();
         onLivingSoundUpdate();
 
         final ChunkPos currentChunk = chunkPosition();
@@ -889,7 +882,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
+        if (getCitizenData() != null && getHealth() < (getCitizenData().getCitizenDiseaseHandler().isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
             final double citizenSaturation = citizenData.getSaturation();
@@ -1217,23 +1210,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public ICitizenSleepHandler getCitizenSleepHandler()
     {
         return citizenSleepHandler;
-    }
-
-    /**
-     * The Handler to check if a citizen is sick.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
-    {
-        return citizenDiseaseHandler;
-    }
-
-    @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
-    {
-        this.citizenDiseaseHandler = citizenDiseaseHandler;
     }
 
     /**
@@ -1582,9 +1558,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             super.doPush(entity);
         }
 
-        if (!level().isClientSide && entity instanceof AbstractEntityCitizen)
+        if (!level().isClientSide && getCitizenData() != null && entity instanceof AbstractEntityCitizen otherCitizen && otherCitizen.getCitizenData() != null)
         {
-            getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+            getCitizenData().getCitizenDiseaseHandler().onCollission(otherCitizen.getCitizenData());
         }
     }
 

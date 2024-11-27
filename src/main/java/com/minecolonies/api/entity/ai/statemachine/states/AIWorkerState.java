@@ -653,7 +653,21 @@ public enum AIWorkerState implements IAIState
     /**
      * Harvest the netherwart.
      */
-    HARVEST_NETHERWART(true);
+    HARVEST_NETHERWART(true),
+
+        /*
+###Concrete mixers###
+     */
+
+    /**
+     * Continues placing blocks until can't place anymore.
+     */
+    CONCRETE_MIXER_PLACING(true),
+
+    /**
+     * Harvest all blocks placed in the water.
+     */
+    CONCRETE_MIXER_HARVESTING(true);
 
     /**
      * Is it okay to eat.

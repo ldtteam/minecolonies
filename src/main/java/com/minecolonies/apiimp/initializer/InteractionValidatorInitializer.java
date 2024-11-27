@@ -65,11 +65,11 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingCook.class) == null
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == -1);
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(NO_HOSPITAL),
-          citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_HOSPITAL),
+            citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
                        && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingHospital.class) == null);
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(WAITING_FOR_CURE),
-          citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && !citizen.getEntity().get().getCitizenDiseaseHandler().getDisease().isEmpty());
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(WAITING_FOR_CURE),
+            citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && !citizen.getCitizenDiseaseHandler().getDisease().isEmpty());
 
         InteractionValidatorRegistry.registerPosBasedPredicate(Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
           (citizen, pos) ->
@@ -155,8 +155,8 @@ public class InteractionValidatorInitializer
 
           });
 
-        InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(PATIENT_FULL_INVENTORY),
-          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PATIENT_FULL_INVENTORY),
+            citizen -> citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
                        && InventoryUtils.isItemHandlerFull(citizen.getEntity().get().getInventoryCitizen()));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(PUPIL_NO_CARPET),

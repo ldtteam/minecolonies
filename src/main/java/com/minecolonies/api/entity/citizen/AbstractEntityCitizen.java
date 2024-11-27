@@ -655,15 +655,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
-    /**
-     * The Handler to check if the citizen is sick.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
-    public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
-
     public abstract float getRotationYaw();
 
     public abstract float getRotationPitch();

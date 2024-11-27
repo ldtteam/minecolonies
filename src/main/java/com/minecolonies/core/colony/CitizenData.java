@@ -18,6 +18,7 @@ import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -33,10 +34,7 @@ import com.minecolonies.core.colony.interactionhandling.QuestDialogueInteraction
 import com.minecolonies.core.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenFoodHandler;
-import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenMournHandler;
-import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
@@ -229,6 +227,11 @@ public class CitizenData implements ICitizenData
     private final ICitizenFoodHandler citizenFoodHandler;
 
     /**
+     * Disease handler
+     */
+    private final CitizenDiseaseHandler citizenDiseaseHandler;
+
+    /**
      * The citizen chat options on the server side.
      */
     protected final Map<Component, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
@@ -353,6 +356,7 @@ public class CitizenData implements ICitizenData
         this.citizenMournHandler = new CitizenMournHandler(this);
         this.citizenSkillHandler = new CitizenSkillHandler();
         this.citizenFoodHandler = new CitizenFoodHandler(this);
+        citizenDiseaseHandler = new CitizenDiseaseHandler(this);
     }
 
     @Override
@@ -1189,6 +1193,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
+    {
+        return citizenDiseaseHandler;
+    }
+
+    @Override
     public void scheduleRestart(final ServerPlayer player)
     {
         originPlayerRestart = player;
@@ -1271,6 +1281,7 @@ public class CitizenData implements ICitizenData
         citizenHappinessHandler.write(provider, nbtTagCompound, true);
         citizenMournHandler.write(nbtTagCompound);
         citizenFoodHandler.write(nbtTagCompound);
+        citizenDiseaseHandler.write(nbtTagCompound);
 
         inventory.write(provider, nbtTagCompound);
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.MAIN_HAND));
@@ -1436,6 +1447,7 @@ public class CitizenData implements ICitizenData
         this.citizenHappinessHandler.read(provider, nbtTagCompound, true);
         this.citizenMournHandler.read(nbtTagCompound);
         this.citizenFoodHandler.read(nbtTagCompound);
+        citizenDiseaseHandler.read(nbtTagCompound);
 
         if (nbtTagCompound.contains(TAG_LEVEL_MAP) && !nbtTagCompound.contains(TAG_NEW_SKILLS))
         {
@@ -1555,7 +1567,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void update()
+    public void update(final int tickRate)
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
@@ -1611,6 +1623,8 @@ public class CitizenData implements ICitizenData
                 }
             }
         }
+
+        citizenDiseaseHandler.update(tickRate);
     }
 
     @Override

@@ -104,7 +104,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ConfigValue<List<? extends String>> configListStudyItems;
     public final ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final ConfigValue<List<? extends String>> luckyOres;
     public final ConfigValue<List<? extends String>> diseases;
     public final BooleanValue                        auditCraftingTags;
     public final BooleanValue                        debugInventories;
@@ -225,17 +224,6 @@ public class ServerConfiguration extends AbstractConfiguration
             "minecraft:sunflower;5",
             "minecraft:honeycomb;6",
             "minecraft:quartz;3");
-        luckyOres = defineList("luckyores",
-            () -> "item ID!rarity!building level",
-            stringValidator,
-            "minecraft:coal_ore!64",
-            "minecraft:copper_ore!48",
-            "minecraft:iron_ore!32",
-            "minecraft:gold_ore!16",
-            "minecraft:redstone_ore!8",
-            "minecraft:lapis_ore!4",
-            "minecraft:diamond_ore!2",
-            "minecraft:emerald_ore!1");
 
         diseases = defineList("diseases",
             () -> "name,rarity,item IDs",

@@ -115,7 +115,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * The location used for requests
      */
     private ILocation              location = null;
-    private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -131,7 +130,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
@@ -378,18 +376,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
-    {
-        return citizenDiseaseHandler;
-    }
-
-    @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
-    {
-        this.citizenDiseaseHandler = citizenDiseaseHandler;
-    }
-
-    @Override
     public float getRotationYaw()
     {
         return getYRot();
@@ -581,8 +567,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-
-        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -598,8 +582,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 citizenId = compound.getInt(TAG_CITIZEN);
             }
         }
-
-        citizenDiseaseHandler.read(compound);
     }
 
     @Override

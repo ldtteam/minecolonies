@@ -1,8 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Citizen disease handler interface.
@@ -12,7 +11,7 @@ public interface ICitizenDiseaseHandler
     /**
      * To tick the handler.
      */
-    void tick();
+    void update(final int tickRate);
 
     /**
      * Check if the citizen is sick and must be healed..
@@ -50,7 +49,7 @@ public interface ICitizenDiseaseHandler
     /**
      * Called when two citizens collide.
      */
-    void onCollission(@NotNull final AbstractEntityCitizen citizen);
+    void onCollission(final ICitizenData citizen);
 
     /**
      * True when the citizen needs to go to a hospital because its hurt

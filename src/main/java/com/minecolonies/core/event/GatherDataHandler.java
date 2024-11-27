@@ -97,7 +97,8 @@ public class GatherDataHandler
                 new SubProviderEntry(DefaultSupplyLootProvider::new, LootContextParamSets.CHEST),
                 new SubProviderEntry(DefaultCropsLootProvider::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(DefaultEntityLootProvider::new, LootContextParamSets.ENTITY),
-                new SubProviderEntry(DefaultBlockLootTableProvider::new, LootContextParamSets.BLOCK)
+                new SubProviderEntry(DefaultBlockLootTableProvider::new, LootContextParamSets.BLOCK),
+                new SubProviderEntry(DefaultLuckyOreLootProvider::new, LootContextParamSets.BLOCK)
             ), provider);
         }
 

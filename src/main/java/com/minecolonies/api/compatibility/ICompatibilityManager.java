@@ -239,16 +239,6 @@ public interface ICompatibilityManager
     boolean isLuckyBlock(final Block block);
 
     /**
-     * Get a random lucky ore from a luckyblock.
-     * Loot may change depending on the mine level
-     *
-     * @param chanceBonus the chance bonus.
-     * @param buildingLevel level of the mine
-     * @return the lucky ore.
-     */
-    ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel);
-
-    /**
      * Get the creative tab for a stack.
      * @param checkItem the storage wrapper.
      */

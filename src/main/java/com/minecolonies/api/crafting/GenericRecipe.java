@@ -9,7 +9,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -97,8 +97,8 @@ public class GenericRecipe implements IGenericRecipe
     private final Block intermediate;
     private final @Nullable ResourceKey<LootTable> lootTable;
     private final EquipmentTypeEntry requiredTool;
-    private final LivingEntity requiredEntity;
-    private final List<Component> restrictions;
+    private final EntityType<?>       requiredEntity;
+    private final List<Component>    restrictions;
     private final int levelSort;
 
     public GenericRecipe(@Nullable final ResourceLocation id,
@@ -133,7 +133,7 @@ public class GenericRecipe implements IGenericRecipe
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceKey<LootTable> lootTable,
                          @NotNull final EquipmentTypeEntry requiredTool,
-                         @Nullable final LivingEntity requiredEntity,
+                         @Nullable final EntityType<?> requiredEntity,
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
@@ -250,8 +250,9 @@ public class GenericRecipe implements IGenericRecipe
         return this.requiredTool;
     }
 
+    @Nullable
     @Override
-    public @Nullable LivingEntity getRequiredEntity()
+    public EntityType<?> getRequiredEntity()
     {
         return this.requiredEntity;
     }

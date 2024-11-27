@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             onBlockDropReception(localItems);
         }
 
-        triggerMinedBlock(curBlockState);
+        triggerMinedBlock(blockToMine, curBlockState);
 
         if (blockBreakAction == null)
         {
@@ -269,9 +269,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Trigger for miners if they want to do something specific per mined block.
      *
+     * @param position    the position of the block.
      * @param blockToMine the mined block.
      */
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    protected void triggerMinedBlock(@NotNull final BlockPos position, @NotNull final BlockState blockToMine)
     {
 
     }

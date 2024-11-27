@@ -21,10 +21,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -210,9 +212,9 @@ public class BuildingHospital extends AbstractBuilding
         for (final Patient patient : patients.values())
         {
             final ICitizenData data = colony.getCitizenManager().getCivilian(patient.getId());
-            if (data != null && data.getEntity().isPresent() && data.getEntity().get().getCitizenDiseaseHandler().isSick())
+            if (data != null && data.getEntity().isPresent() && data.getCitizenDiseaseHandler().isSick())
             {
-                final String diseaseName = data.getEntity().get().getCitizenDiseaseHandler().getDisease();
+                final String diseaseName = data.getCitizenDiseaseHandler().getDisease();
                 if (!diseaseName.isEmpty())
                 {
                     final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
