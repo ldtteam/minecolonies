@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
@@ -18,11 +19,8 @@ import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.CustomArrowEntity;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -35,7 +33,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -111,7 +108,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (weaponSlot != -1)
         {
-            user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
+            CitizenItemUtils.setHeldItem(user, InteractionHand.MAIN_HAND, weaponSlot);
             if (nextAttackTime - BOW_HOLDING_DELAY >= user.level().getGameTime() && !user.isUsingItem())
             {
                 user.startUsingItem(InteractionHand.MAIN_HAND);
@@ -190,7 +187,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         target.setLastHurtByMob(user);
-        user.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+        CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
     }

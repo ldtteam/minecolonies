@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
@@ -28,7 +28,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -607,7 +606,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void equipRod()
     {
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, getRodSlot());
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getRodSlot());
     }
 
     /**
@@ -658,7 +657,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             worker.swing(worker.getUsedItemHand());
             final int i = entityFishHook.retrieve(worker.getMainHandItem());
             generateBonusLoot();
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, i);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
         }
     }

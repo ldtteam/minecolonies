@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModu
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.core.BlockPos;
@@ -34,7 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -449,7 +449,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 if (toolSlot != -1)
                 {
-                    worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                    CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
                 }
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())

@@ -11,6 +11,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.core.colony.jobs.JobArcherTraining;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.projectile.Arrow;
@@ -187,7 +188,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
             worker.stopUsingItem();
             this.incrementActionsDoneAndDecSaturation();
@@ -232,7 +233,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         }
 
         final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.bow.get(), 0, building.getMaxEquipmentLevel());
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bowSlot);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, bowSlot);
         return true;
     }
 

@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.items.ItemAdventureToken;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
@@ -60,8 +61,6 @@ import static com.minecolonies.api.research.util.ResearchConstants.SATLIMIT;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
@@ -551,7 +550,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         equipArmor(false);
                     }
 
-                    worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(component.xp()));
+                    worker.getCitizenExperienceHandler().addExperience(CitizenItemUtils.applyMending(worker, component.xp()));
                 }
             }
             else if (!currStack.isEmpty())
@@ -582,7 +581,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 tool = findTool(block.defaultBlockState(), worker.blockPosition());
                                 worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
                             }
-                            worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(xpOnDrop(block)));
+                            worker.getCitizenExperienceHandler().addExperience(CitizenItemUtils.applyMending(worker, xpOnDrop(block)));
 
                             itemDelay += TICK_DELAY;
                         }

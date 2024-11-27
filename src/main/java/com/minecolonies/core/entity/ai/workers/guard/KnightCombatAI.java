@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
@@ -108,7 +109,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level().getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
-            user.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
+            CitizenItemUtils.setHeldItem(user, InteractionHand.OFF_HAND, shieldSlot);
             user.startUsingItem(InteractionHand.OFF_HAND);
 
             // Apply the colony Flag to the shield
@@ -133,7 +134,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (weaponSlot != -1)
         {
-            user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
+            CitizenItemUtils.setHeldItem(user, InteractionHand.MAIN_HAND, weaponSlot);
             return true;
         }
 
@@ -184,7 +185,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
         user.getCitizenData().setVisibleStatus(KNIGHT_COMBAT);
-        user.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+        CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
     }
 
     /**

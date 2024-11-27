@@ -17,6 +17,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack
 import com.minecolonies.core.colony.jobs.JobLumberjack;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
@@ -39,7 +40,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.SpecialPlantable;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -823,7 +823,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (saplingSlot != -1)
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, saplingSlot);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, saplingSlot);
 
             if (job.getTree().isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
             {

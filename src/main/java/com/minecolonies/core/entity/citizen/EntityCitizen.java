@@ -62,6 +62,7 @@ import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -75,8 +76,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
@@ -86,10 +85,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -98,7 +94,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -161,10 +156,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * The citizen experience handler.
      */
     private ICitizenExperienceHandler citizenExperienceHandler;
-    /**
-     * The citizen item handler.
-     */
-    private ICitizenItemHandler       citizenItemHandler;
+
     /**
      * The citizen inv handler.
      */
@@ -261,7 +253,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super(type, world);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
@@ -760,7 +751,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         // Every 20 ticks
         citizenExperienceHandler.gatherXp();
-        citizenItemHandler.pickupItems();
+        CitizenItemUtils.pickupItems(this);
         citizenData.setLastPosition(blockPosition());
         citizenDiseaseHandler.tick();
         onLivingSoundUpdate();
@@ -1173,17 +1164,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * The Handler for all item related methods.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenItemHandler getCitizenItemHandler()
-    {
-        return citizenItemHandler;
-    }
-
-    /**
      * The Handler for all inventory related methods.
      *
      * @return the instance of the handler.
@@ -1297,12 +1277,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
     {
         this.citizenJobHandler = citizenJobHandler;
-    }
-
-    @Override
-    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
-    {
-        this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
@@ -1490,7 +1464,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                             setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
                             result = true;
                         }
-                        citizenItemHandler.damageItemInHand(this.getUsedItemHand(), (int) (blockedDamage * GUARD_BLOCK_DAMAGE));
+                        CitizenItemUtils.damageItemInHand(this, this.getUsedItemHand(), (int) (blockedDamage * GUARD_BLOCK_DAMAGE));
                     }
                 }
             }
@@ -1513,7 +1487,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level().isClientSide)
         {
-            citizenItemHandler.updateArmorDamage(damageInc);
+            CitizenItemUtils.updateArmorDamage(this, damageInc);
             if (citizenData != null)
             {
                 getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, new StaticHappinessSupplier(0.0), 1));
@@ -1726,7 +1700,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                citizenItemHandler.entityDropItem(itemstack);
+                CitizenItemUtils.entityDropItem(this, itemstack);
             }
         }
     }

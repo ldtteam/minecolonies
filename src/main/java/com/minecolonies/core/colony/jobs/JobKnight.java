@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
@@ -83,7 +84,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
                 return true;
             }
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
             worker.startUsingItem(InteractionHand.OFF_HAND);
 
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
