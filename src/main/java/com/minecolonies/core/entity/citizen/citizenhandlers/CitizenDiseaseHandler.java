@@ -35,7 +35,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private static final int DISEASE_FACTOR = 100000 / 3;
 
     /**
-     * Number of seconds after recovering a citizen is immune against any illness. 90 Minutes currently.
+     * Number of ticks after recovering a citizen is immune against any illness. 90 Minutes currently.
      */
     private static final int IMMUNITY_TIME = 20 * 60 * 90;
 
