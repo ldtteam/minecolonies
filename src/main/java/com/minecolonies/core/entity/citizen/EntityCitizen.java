@@ -435,7 +435,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
     {
-        if (player.isShiftKeyDown())
+        if (player.isShiftKeyDown() || getCitizenData() == null)
         {
             return null;
         }
@@ -494,7 +494,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
+                getCitizenData().getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
                 playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                 getCitizenData().markDirty(20);
 
