@@ -37,7 +37,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Number of seconds after recovering a citizen is immune against any illness. 90 Minutes currently.
      */
-    private static final int IMMUNITY_TIME = 60 * 90;
+    private static final int IMMUNITY_TIME = 20 * 60 * 90;
 
     /**
      * Additional immunity time through vaccines.
@@ -102,7 +102,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
         if (immunityTicks > 0)
         {
-            immunityTicks -= Math.min(1, tickRate / 20);
+            immunityTicks -= tickRate;
         }
     }
 
