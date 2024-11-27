@@ -36,9 +36,9 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private static final int DISEASE_FACTOR = 100000;
 
     /**
-     * Number of seconds after recovering a citizen is immune against any illness.
+     * Number of seconds after recovering a citizen is immune against any illness. 90 Minutes currently.
      */
-    private static final int IMMUNITY_TIME = 60 * 10 * 7;
+    private static final int IMMUNITY_TIME = 60 * 90;
 
     /**
      * Additional immunity time through vaccines.
@@ -64,6 +64,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Whether the citizen sleeps at the hostpital
      */
     private boolean sleepsAtHospital = false;
+
 
     /**
      * The initial citizen count
@@ -92,8 +93,6 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         {
             final double citizenModifier = citizen.getCitizenData().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
-
-            // normally it's one in 5 x 10.000
 
             if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
                   citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
@@ -203,10 +202,14 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 immunityTicks = IMMUNITY_TIME;
             }
-
-            citizen.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColonyOrRegister().getDay());
+        }
+        else
+        {
+            // Less immunity time if not cored in bed, but still have immunity time.
+            immunityTicks = IMMUNITY_TIME / 2;
         }
 
+        citizen.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColonyOrRegister().getDay());
         citizen.markDirty(0);
     }
 
