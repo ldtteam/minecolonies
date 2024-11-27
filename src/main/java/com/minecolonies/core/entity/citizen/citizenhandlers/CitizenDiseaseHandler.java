@@ -86,7 +86,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Called in the citizen every few ticks to check for illness. Called every 60 ticks
      */
     @Override
-    public void update()
+    public void update(final int tickRate)
     {
         if (canBecomeSick())
         {
@@ -102,7 +102,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
         if (immunityTicks > 0)
         {
-            immunityTicks--;
+            immunityTicks -= Math.min(1, tickRate / 20);
         }
     }
 

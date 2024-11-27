@@ -1553,7 +1553,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void update()
+    public void update(final int tickRate)
     {
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
@@ -1610,7 +1610,7 @@ public class CitizenData implements ICitizenData
             }
         }
 
-        citizenDiseaseHandler.update();
+        citizenDiseaseHandler.update(tickRate);
     }
 
     @Override

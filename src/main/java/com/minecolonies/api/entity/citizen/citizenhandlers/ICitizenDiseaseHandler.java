@@ -11,7 +11,7 @@ public interface ICitizenDiseaseHandler
     /**
      * To tick the handler.
      */
-    void update();
+    void update(final int tickRate);
 
     /**
      * Check if the citizen is sick and must be healed..

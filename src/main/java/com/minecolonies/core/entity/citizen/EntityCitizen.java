@@ -409,7 +409,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide && getCitizenData() != null)
         {
-            citizenData.update();
+            citizenData.update(TICKS_SECOND * 3);
             citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
@@ -435,7 +435,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
     {
-        if (player.isShiftKeyDown() || getCitizenData() == null)
+        if (player.isShiftKeyDown())
         {
             return null;
         }
@@ -464,10 +464,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
             }
-            return null;
+            return InteractionResult.PASS;
         }
 
-        final boolean isSick = getCitizenData() != null && getCitizenData().getCitizenDiseaseHandler().isSick();
+        final boolean isSick = (getCitizenData() != null && getCitizenData().getCitizenDiseaseHandler().isSick()) || (citizenDataView != null
+            && citizenDataView.getVisibleStatus() == VisibleCitizenStatus.SICK);
         if (usedStack.getItem() == Items.GOLDEN_APPLE && isSick)
         {
             usedStack.shrink(1);
@@ -503,7 +504,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .sendTo(player);
             }
 
-            interactionCooldown = 20 * 60 * 5;
+            interactionCooldown = 20 * 20;
             return InteractionResult.CONSUME;
         }
 
