@@ -31,6 +31,7 @@ import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
@@ -63,6 +64,7 @@ import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -161,10 +163,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * The citizen experience handler.
      */
     private ICitizenExperienceHandler citizenExperienceHandler;
-    /**
-     * The citizen item handler.
-     */
-    private ICitizenItemHandler       citizenItemHandler;
+
     /**
      * The citizen inv handler.
      */
@@ -184,11 +183,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * The citizen sleep handler.
      */
     private ICitizenSleepHandler citizenSleepHandler;
-
-    /**
-     * The citizen sleep handler.
-     */
-    private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
      * Our custom combat tracker.
@@ -263,12 +257,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
-        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.combatTracker = new CitizenCombatTracker(this);
         this.moveControl = new MovementHandler(this);
@@ -409,7 +401,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide && getCitizenData() != null)
         {
-            citizenData.update();
+            citizenData.update(TICKS_SECOND * 3);
             citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
@@ -464,10 +456,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   .withPriority(MessagePriority.DANGER)
                   .sendTo(player);
             }
-            return null;
+            return InteractionResult.PASS;
         }
 
-        if (usedStack.getItem() == Items.GOLDEN_APPLE && getCitizenDiseaseHandler().isSick())
+        final boolean isSick = (getCitizenData() != null && getCitizenData().getCitizenDiseaseHandler().isSick()) || (citizenDataView != null
+            && citizenDataView.getVisibleStatus() == VisibleCitizenStatus.SICK);
+        if (usedStack.getItem() == Items.GOLDEN_APPLE && isSick)
         {
             usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
@@ -476,7 +470,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 if (getRandom().nextInt(3) == 0)
                 {
-                    getCitizenDiseaseHandler().cure();
+                    getCitizenData().getCitizenDiseaseHandler().cure();
                     playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                     Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER), this);
                 }
@@ -486,7 +480,27 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return InteractionResult.CONSUME;
         }
 
-        if (getCitizenDiseaseHandler().isSick())
+        if (usedStack.is(ModTags.poisonous_food))
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                getCitizenData().getCitizenDiseaseHandler().setDisease(IColonyManager.getInstance().getCompatibilityManager().getRandomDisease());
+                playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                getCitizenData().markDirty(20);
+
+                MessageUtils.format(MESSAGE_INTERACTION_POISON, this.getCitizenData().getName())
+                  .withPriority(MessagePriority.DANGER)
+                  .sendTo(player);
+            }
+
+            interactionCooldown = 20 * 20;
+            return InteractionResult.CONSUME;
+        }
+
+        if (isSick)
         {
             return null;
         }
@@ -560,7 +574,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean isInteractionItem(final ItemStack stack)
     {
         return ISFOOD.test(stack) || stack.getItem() == Items.BOOK || stack.getItem() == Items.GOLDEN_APPLE || stack.getItem() == Items.CACTUS
-                 || stack.getItem() == Items.GLOWSTONE_DUST;
+                 || stack.getItem() == Items.GLOWSTONE_DUST || stack.is(ModTags.poisonous_food);
     }
 
     /**
@@ -669,7 +683,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -685,7 +698,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenId = compound.getInt(TAG_CITIZEN);
             }
         }
-        citizenDiseaseHandler.read(compound);
         setPose(Pose.STANDING);
     }
 
@@ -742,9 +754,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         // Every 20 ticks
         citizenExperienceHandler.gatherXp();
-        citizenItemHandler.pickupItems();
+        CitizenItemUtils.pickupItems(this);
         citizenData.setLastPosition(blockPosition());
-        citizenDiseaseHandler.tick();
         onLivingSoundUpdate();
 
         final ChunkPos currentChunk = chunkPosition();
@@ -880,7 +891,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void checkHeal()
     {
-        if (getHealth() < (citizenDiseaseHandler.isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
+        if (getCitizenData() != null && getHealth() < (getCitizenData().getCitizenDiseaseHandler().isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
@@ -1155,17 +1166,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * The Handler for all item related methods.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenItemHandler getCitizenItemHandler()
-    {
-        return citizenItemHandler;
-    }
-
-    /**
      * The Handler for all inventory related methods.
      *
      * @return the instance of the handler.
@@ -1222,23 +1222,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * The Handler to check if a citizen is sick.
-     *
-     * @return the instance of the handler.
-     */
-    @Override
-    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
-    {
-        return citizenDiseaseHandler;
-    }
-
-    @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
-    {
-        this.citizenDiseaseHandler = citizenDiseaseHandler;
-    }
-
-    /**
      * Sets the visible status if there is none
      *
      * @param status status to set
@@ -1279,12 +1262,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
     {
         this.citizenJobHandler = citizenJobHandler;
-    }
-
-    @Override
-    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
-    {
-        this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
@@ -1471,7 +1448,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide)
         {
-            citizenItemHandler.updateArmorDamage(damageInc);
+            CitizenItemUtils.updateArmorDamage(this, damageInc);
             if (citizenData != null)
             {
                 getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, new StaticHappinessSupplier(0.0), 1));
@@ -1566,9 +1543,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             super.doPush(entity);
         }
 
-        if (!level.isClientSide && entity instanceof AbstractEntityCitizen)
+        if (!level.isClientSide && getCitizenData() != null && entity instanceof AbstractEntityCitizen otherCitizen && otherCitizen.getCitizenData() != null)
         {
-            getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+            getCitizenData().getCitizenDiseaseHandler().onCollission(otherCitizen.getCitizenData());
         }
     }
 
@@ -1684,7 +1661,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                citizenItemHandler.entityDropItem(itemstack);
+                CitizenItemUtils.entityDropItem(this, itemstack);
             }
         }
     }
@@ -1753,7 +1730,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                   (float) this.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue());
                 setHealth(getHealth() - Math.max(GUARD_BLOCK_DAMAGE, blockDamage));
             }
-            citizenItemHandler.damageItemInHand(this.getUsedItemHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
+            CitizenItemUtils.damageItemInHand(this, this.getUsedItemHand(), (int) (damage * GUARD_BLOCK_DAMAGE));
         }
         super.hurtCurrentlyUsedShield(damage);
     }

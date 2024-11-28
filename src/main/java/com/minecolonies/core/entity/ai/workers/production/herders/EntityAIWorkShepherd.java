@@ -8,6 +8,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -149,7 +150,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()), worker);
             dyeSheepChance(sheep);
 
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
 
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();

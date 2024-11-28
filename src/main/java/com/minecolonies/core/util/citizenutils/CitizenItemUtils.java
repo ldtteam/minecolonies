@@ -1,7 +1,6 @@
-package com.minecolonies.core.entity.citizen.citizenhandlers;
+package com.minecolonies.core.util.citizenutils;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
@@ -33,30 +32,14 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
  * Handles the citizens interaction with an item with the world.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class CitizenItemHandler implements ICitizenItemHandler
+public class CitizenItemUtils
 {
-    /**
-     * The citizen assigned to this manager.
-     */
-    private final AbstractEntityCitizen citizen;
-
-    /**
-     * Constructor for the experience handler.
-     *
-     * @param citizen the citizen owning the handler.
-     */
-    public CitizenItemHandler(final AbstractEntityCitizen citizen)
-    {
-        this.citizen = citizen;
-    }
-
     /**
      * Citizen will try to pick up a certain item.
      *
      * @param itemEntity the item he wants to pickup.
      */
-    @Override
-    public void tryPickupItemEntity(@NotNull final ItemEntity itemEntity)
+    public static void tryPickupItemEntity(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemEntity itemEntity)
     {
         if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
         {
@@ -107,8 +90,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Removes the currently held item.
      */
-    @Override
-    public void removeHeldItem()
+    public static void removeHeldItem(AbstractEntityCitizen citizen)
     {
         citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
     }
@@ -119,8 +101,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param hand what hand we're setting
      * @param slot from the inventory slot.
      */
-    @Override
-    public void setHeldItem(final InteractionHand hand, final int slot)
+    public static void setHeldItem(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
         if (hand.equals(InteractionHand.MAIN_HAND))
@@ -138,8 +119,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      *
      * @param slot from the inventory slot.
      */
-    @Override
-    public void setMainHeldItem(final int slot)
+    public static void setMainHeldItem(@NotNull final AbstractEntityCitizen citizen, final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(InteractionHand.MAIN_HAND, slot);
         citizen.setItemSlot(EquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
@@ -152,14 +132,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
      *
      * @param blockPos Block position.
      */
-    @Override
-    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
+    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
         {
             return;
         }
-        hitBlockWithToolInHand(blockPos, false);
+        hitBlockWithToolInHand(citizen, blockPos, false);
     }
 
     /**
@@ -170,8 +149,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param blockPos   Block position.
      * @param breakBlock if we want to break this block.
      */
-    @Override
-    public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
+
+    public static void hitBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos, final boolean breakBlock)
     {
         if (blockPos == null)
         {
@@ -201,7 +180,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch() * 0.8F);
             WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
-            damageItemInHand(citizen.getUsedItemHand(), 1);
+            damageItemInHand(citizen, citizen.getUsedItemHand(), 1);
         }
         else
         {
@@ -229,8 +208,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      *
      * @param damage amount of damage.
      */
-    @Override
-    public void damageItemInHand(final InteractionHand hand, final int damage)
+    public static void damageItemInHand(@NotNull final AbstractEntityCitizen citizen, final InteractionHand hand, final int damage)
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
@@ -271,8 +249,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Pick up all items in a range around the citizen.
      */
-    @Override
-    public void pickupItems()
+    public static void pickupItems(AbstractEntityCitizen citizen)
     {
         for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesOfClass(ItemEntity.class,
           new AABB(citizen.blockPosition())
@@ -281,7 +258,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             if (item != null && item.isAlive())
             {
-                tryPickupItemEntity(item);
+                tryPickupItemEntity(citizen, item);
             }
         }
     }
@@ -293,14 +270,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
      *
      * @param blockPos Block position.
      */
-    @Override
-    public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
+    public static void breakBlockWithToolInHand(@NotNull final AbstractEntityCitizen citizen, @Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
         {
             return;
         }
-        hitBlockWithToolInHand(blockPos, true);
+        hitBlockWithToolInHand(citizen, blockPos, true);
     }
 
     /**
@@ -309,8 +285,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param itemstack to drop.
      * @return the dropped item.
      */
-    @Override
-    public ItemEntity entityDropItem(@NotNull final ItemStack itemstack)
+    public static ItemEntity entityDropItem(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemStack itemstack)
     {
         return citizen.spawnAtLocation(itemstack, 0.0F);
     }
@@ -320,8 +295,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      *
      * @param damage damage dealt.
      */
-    @Override
-    public void updateArmorDamage(final double damage)
+    public static void updateArmorDamage(@NotNull final AbstractEntityCitizen citizen, final double damage)
     {
         if (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
         {
@@ -348,8 +322,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
     }
 
-    @Override
-    public double applyMending(final double xp)
+    public static double applyMending(@NotNull final AbstractEntityCitizen citizen, final double xp)
     {
         double localXp = xp;
 

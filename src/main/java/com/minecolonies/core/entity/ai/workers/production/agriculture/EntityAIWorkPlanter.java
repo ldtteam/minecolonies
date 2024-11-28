@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.fields.PlantationField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPlanter;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -223,7 +224,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (handlerResult.equals(ActionHandlerResult.FINISHED))
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
 
             if (activeModuleResult.getAction().increasesActionCount())
             {
@@ -311,13 +312,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getItemHandlerCitizen(), currentStack.getItem());
-            worker.getCitizenItemHandler().setMainHeldItem(slot);
+            CitizenItemUtils.setMainHeldItem(worker, slot);
 
             BlockState blockState = planterModule.getPlantingBlockState(world, activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
             if (world.setBlockAndUpdate(activeModuleResult.getActionPosition(), blockState))
             {
                 InventoryUtils.reduceStackInItemHandler(worker.getItemHandlerCitizen(), currentStack);
-                worker.getCitizenItemHandler().removeHeldItem();
+                CitizenItemUtils.removeHeldItem(worker);
                 return ActionHandlerResult.FINISHED;
             }
 
@@ -371,7 +372,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             boolean mineResult = mineBlock(activeModuleResult.getActionPosition());
             if (mineResult)
             {
-                worker.getCitizenItemHandler().pickupItems();
+                CitizenItemUtils.pickupItems(worker);
 
                 if (isHarvest)
                 {

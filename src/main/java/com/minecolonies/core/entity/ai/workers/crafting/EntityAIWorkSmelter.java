@@ -16,6 +16,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSmeltery;
@@ -25,21 +26,20 @@ import com.minecolonies.core.colony.requestable.SmeltableOre;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIUsesFurnace;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_ORE;
 
 /**
  * Smelter AI class.
@@ -75,7 +75,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
      */
     private IAIState breakOres()
     {
-        final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
+        final BuildingSmeltery.OreBreakingModule module = building.getModule(BuildingModules.SMELTER_OREBREAK);
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
         if (currentRecipeStorage == null)

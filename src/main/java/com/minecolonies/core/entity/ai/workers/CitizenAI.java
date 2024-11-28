@@ -137,7 +137,7 @@ public class CitizenAI implements IStateAI
             }
 
             // Sick
-            if (citizen.getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
+            if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && guardJob.canAIBeInterrupted())
             {
                 citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
                 return CitizenAIState.SICK;
@@ -147,7 +147,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Sick at hospital
-        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenDiseaseHandler().sleepsAtHospital())
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenData().getCitizenDiseaseHandler().sleepsAtHospital())
         {
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
             return CitizenAIState.SICK;
@@ -181,7 +181,7 @@ public class CitizenAI implements IStateAI
         {
             if (citizen.getCitizenSleepHandler().isAsleep())
             {
-                if (citizen.getCitizenDiseaseHandler().isSick())
+                if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick())
                 {
                     final BlockPos bedPos = citizen.getCitizenSleepHandler().getBedLocation();
                     if (bedPos == null || bedPos.distSqr(citizen.blockPosition()) > 5)
@@ -197,7 +197,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Sick
-        if (citizen.getCitizenDiseaseHandler().isSick() || citizen.getCitizenDiseaseHandler().isHurt())
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() || citizen.getCitizenData().getCitizenDiseaseHandler().isHurt())
         {
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
             return CitizenAIState.SICK;
@@ -279,7 +279,7 @@ public class CitizenAI implements IStateAI
             return false;
         }
 
-        if (citizen.getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
+        if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick() && citizen.getCitizenSleepHandler().isAsleep())
         {
             return false;
         }

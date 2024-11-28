@@ -25,7 +25,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -51,7 +50,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -620,13 +618,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ICitizenExperienceHandler getCitizenExperienceHandler();
 
     /**
-     * The Handler for all item related methods.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenItemHandler getCitizenItemHandler();
-
-    /**
      * The Handler for all inventory related methods.
      *
      * @return the instance of the handler.
@@ -658,15 +649,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
-    /**
-     * The Handler to check if the citizen is sick.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
-    public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
-
     public abstract float getRotationYaw();
 
     public abstract float getRotationPitch();
@@ -676,8 +658,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 
     public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
-
-    public abstract void setCitizenItemHandler(ICitizenItemHandler citizenItemHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
 

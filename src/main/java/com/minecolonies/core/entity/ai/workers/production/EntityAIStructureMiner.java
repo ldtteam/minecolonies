@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -20,15 +21,22 @@ import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.minecolonies.core.util.WorkerUtil;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootParams.Builder;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +45,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
@@ -51,6 +60,20 @@ import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrder<JobMiner, BuildingMiner>
 {
+    /**
+     * The loot parameter set definition
+     */
+    public static final LootContextParamSet LUCKY_ORE_PARAM_SET = (new LootContextParamSet.Builder())
+                                                                    .required(LootContextParams.ORIGIN)
+                                                                    .required(LootContextParams.THIS_ENTITY)
+                                                                    .required(LootContextParams.TOOL)
+                                                                    .build();
+
+    /**
+     * Lucky ore loot table
+     */
+    public static final ResourceLocation LUCKY_ORE_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "loot_tables/miner/lucky_ore");
+
     /**
      * Lead the miner to the other side of the shaft.
      */
@@ -947,17 +970,32 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    protected void triggerMinedBlock(@NotNull final BlockPos position, @NotNull final BlockState blockToMine)
     {
-        super.triggerMinedBlock(blockToMine);
-
-        final double chance = 1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MORE_ORES);
+        super.triggerMinedBlock(position, blockToMine);
 
         if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {
-            final int level = building.getBuildingLevel();
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance, level),
-              worker.getInventoryCitizen());
+            final double chance = 1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MORE_ORES);
+            final boolean canGetLuckyBlock =
+              worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chance;
+
+            if (canGetLuckyBlock)
+            {
+                final LootDataManager manager = building.getColony().getWorld().getServer().getLootData();
+                final ResourceLocation lootTableId = LUCKY_ORE_LOOT_TABLE.withSuffix(String.valueOf(building.getBuildingLevel()));
+                final LootParams lootParams = new Builder((ServerLevel) this.world)
+                                                .withParameter(LootContextParams.ORIGIN, position.getCenter())
+                                                .withParameter(LootContextParams.THIS_ENTITY, worker)
+                                                .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
+                                                .create(LUCKY_ORE_PARAM_SET);
+
+                final ObjectArrayList<ItemStack> randomItems = manager.getLootTable(lootTableId).getRandomItems(lootParams);
+                for (final ItemStack stack : randomItems)
+                {
+                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stack, worker.getInventoryCitizen());
+                }
+            }
         }
 
         if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))

@@ -13,6 +13,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
@@ -253,7 +254,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         // The worker gets a little bit of exp for every itemstack he grabs.
         worker.getCitizenExperienceHandler().addExperience(0.01D);
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -304,7 +305,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         warehouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
 
         return START_WORKING;
     }
@@ -450,7 +451,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             // This can only happen if the dman's inventory was completely empty.
             // Let the retry-system handle this case.
             worker.decreaseSaturationForContinuousAction();
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
             job.finishRequest(false);
 
             // No need to go dumping in this case.
@@ -459,7 +460,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         worker.getCitizenExperienceHandler().addExperience(1.5D);
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
         return success ? START_WORKING : DUMPING;
     }

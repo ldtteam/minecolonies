@@ -29,6 +29,7 @@ import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -88,10 +89,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     private ICitizenData citizenData;
 
     /**
-     * The citizen item handler.
-     */
-    private ICitizenItemHandler      citizenItemHandler;
-    /**
      * The citizen inv handler.
      */
     private ICitizenInventoryHandler citizenInventoryHandler;
@@ -119,7 +116,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * The location used for requests
      */
     private ILocation              location = null;
-    private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -130,15 +126,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
-        this.goalSelector = new CustomGoalSelector(this.goalSelector);
-        this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new VisitorColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
@@ -349,12 +341,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenItemHandler getCitizenItemHandler()
-    {
-        return citizenItemHandler;
-    }
-
-    @Override
     public ICitizenInventoryHandler getCitizenInventoryHandler()
     {
         return citizenInventoryHandler;
@@ -391,18 +377,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
-    {
-        return citizenDiseaseHandler;
-    }
-
-    @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
-    {
-        this.citizenDiseaseHandler = citizenDiseaseHandler;
-    }
-
-    @Override
     public float getRotationYaw()
     {
         return getYRot();
@@ -430,12 +404,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
     {
         this.citizenJobHandler = citizenJobHandler;
-    }
-
-    @Override
-    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
-    {
-        this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
@@ -600,8 +568,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-
-        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -617,8 +583,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 citizenId = compound.getInt(TAG_CITIZEN);
             }
         }
-
-        citizenDiseaseHandler.read(compound);
     }
 
     @Override
@@ -656,7 +620,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                citizenItemHandler.entityDropItem(itemstack);
+                CitizenItemUtils.entityDropItem(this, itemstack);
             }
         }
     }

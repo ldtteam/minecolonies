@@ -24,6 +24,7 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -740,7 +741,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                         {
                             return getState();
                         }
-                        worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                        CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
                         InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
                           worker.getInventoryCitizen(),
                           smeltable,

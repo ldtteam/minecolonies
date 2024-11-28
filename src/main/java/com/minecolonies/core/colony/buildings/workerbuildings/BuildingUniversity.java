@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -49,11 +50,6 @@ public class BuildingUniversity extends AbstractBuilding
      * List of registered barrels.
      */
     private final List<BlockPos> bookCases = new ArrayList<>();
-
-    /**
-     * Random obj for random calc.
-     */
-    private final Random random = new Random();
 
     /**
      * Instantiates the building.
@@ -121,7 +117,7 @@ public class BuildingUniversity extends AbstractBuilding
         {
             return getPosition();
         }
-        final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
+        final BlockPos returnPos = bookCases.get(MathUtils.RANDOM.nextInt(bookCases.size()));
         if (colony.getWorld().getBlockState(returnPos).is(Tags.Blocks.BOOKSHELVES))
         {
             return returnPos;

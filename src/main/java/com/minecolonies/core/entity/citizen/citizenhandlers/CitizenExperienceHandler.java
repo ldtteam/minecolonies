@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -190,7 +191,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             if (d1 < 1.0D)
             {
                 double localXp = orb.getValue();
-                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
@@ -198,7 +199,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
                 double localXp = orb.getValue();
-                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;

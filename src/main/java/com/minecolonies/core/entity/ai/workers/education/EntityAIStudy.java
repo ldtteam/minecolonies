@@ -1,14 +1,16 @@
 package com.minecolonies.core.entity.ai.workers.education;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.ai.workers.util.StudyItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.JobStudent;
+import com.minecolonies.core.datalistener.StudyItemListener;
+import com.minecolonies.core.datalistener.StudyItemListener.StudyItem;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
 import com.minecolonies.core.entity.pathfinding.navigation.PathfindingAIHelper;
 import net.minecraft.core.BlockPos;
@@ -18,8 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -41,22 +42,19 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     /**
      * Render the book.
      */
-    public static final String RENDER_META_STUDYING = "study";
-
-    /**
-     * Delay for each subject study.
-     */
-    private static final int STUDY_DELAY = 20 * 60;
-
+    public static final  String   RENDER_META_STUDYING = "study";
     /**
      * One in X chance to gain experience
      */
-    public static final int ONE_IN_X_CHANCE = 8;
-
+    public static final  int      ONE_IN_X_CHANCE      = 8;
+    /**
+     * Delay for each subject study.
+     */
+    private static final int      STUDY_DELAY          = 20 * 60;
     /**
      * The current pos to study at.
      */
-    private BlockPos studyPos = null;
+    private              BlockPos studyPos             = null;
 
     /**
      * Constructor for the student. Defines the tasks the student executes.
@@ -75,6 +73,12 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     }
 
     @Override
+    public Class<BuildingLibrary> getExpectedBuildingClass()
+    {
+        return BuildingLibrary.class;
+    }
+
+    @Override
     protected void updateRenderMetaData()
     {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
@@ -87,12 +91,6 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             renderMeta += RENDER_META_STUDYING;
         }
         worker.setRenderMetadata(renderMeta);
-    }
-
-    @Override
-    public Class<BuildingLibrary> getExpectedBuildingClass()
-    {
-        return BuildingLibrary.class;
     }
 
     /**
@@ -115,36 +113,39 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             return getState();
         }
 
-        // Search for Items to use to study
-        final List<StudyItem> currentItems = new ArrayList<>();
-        for (final StudyItem curItem : building.getStudyItems())
-        {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
-              itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
+        final Collection<StudyItem> studyItems = StudyItemListener.getAllStudyItems().values();
 
+        // Search for Items to use to study
+        final List<StudyItem> availableItemKeys = new ArrayList<>();
+        final Map<StudyItem, Integer> availableItems = new HashMap<>();
+        for (final StudyItem curItem : studyItems)
+        {
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, (item) -> item.is(curItem.item()));
             if (slot != -1)
             {
-                curItem.setSlot(slot);
-                currentItems.add(curItem);
+                availableItemKeys.add(curItem);
+                availableItems.put(curItem, slot);
             }
         }
 
         // Create a new Request for items
-        if (currentItems.isEmpty())
+        if (availableItems.isEmpty())
         {
-            for (final StudyItem studyItem : building.getStudyItems())
+            final List<ItemStack> itemsToRequest = new ArrayList<>();
+            for (final StudyItem studyItem : studyItems)
             {
-                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.getItem());
+                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.item());
                 if (bSlot > -1)
                 {
-                    needsCurrently = new Tuple<>(itemStack -> studyItem.getItem() == itemStack.getItem(), 10);
+                    needsCurrently = new Tuple<>(itemStack -> studyItem.item() == itemStack.getItem(), 10);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
-                else
-                {
-                    checkIfRequestForItemExistOrCreateAsync(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
-                }
+
+                final ItemStack itemStack = new ItemStack(studyItem.item(), studyItem.item().getDefaultInstance().getMaxStackSize());
+                itemsToRequest.add(itemStack);
             }
+
+            checkIfRequestForItemExistOrCreate(new StackList(itemsToRequest, "Study Items", 64));
 
             // Default levelup
             data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE, data);
@@ -153,18 +154,19 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         // Use random item
         else
         {
-            final StudyItem chosenItem = currentItems.get(world.random.nextInt(currentItems.size()));
+            final StudyItem chosenItem = availableItemKeys.get(world.random.nextInt(availableItems.size()));
+            final int chosenSlot = availableItems.get(chosenItem);
 
-            worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data))
+            worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.item(), 1));
+            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (10D / chosenItem.skillIncreaseChance()), data))
             {
                 building.getModule(STATS_MODULE).increment(INT_LEVELED);
             }
             // Break item rand
-            if (world.random.nextInt(100) <= chosenItem.getBreakPct())
+            if (world.random.nextInt(100) <= chosenItem.breakChance())
             {
-                data.getInventory().extractItem(chosenItem.getSlot(), 1, false);
-                building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + chosenItem.getItem().getDescriptionId());
+                data.getInventory().extractItem(chosenSlot, 1, false);
+                building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + chosenItem.item().getDescriptionId());
             }
         }
 

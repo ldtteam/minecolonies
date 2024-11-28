@@ -708,9 +708,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
+    protected void triggerMinedBlock(@NotNull final BlockPos position, @NotNull final BlockState blockToMine)
     {
-        super.triggerMinedBlock(blockToMine);
+        super.triggerMinedBlock(position, blockToMine);
         if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
         {
             building.getColony().getStatisticsManager().increment(ORES_MINED, building.getColony().getDay());

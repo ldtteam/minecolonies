@@ -9,6 +9,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.core.colony.jobs.JobCowboy;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -170,7 +171,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), building.getMilkOutputItem()))
             {
                 building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onMilked();
-                worker.getCitizenItemHandler().removeHeldItem();
+                CitizenItemUtils.removeHeldItem(worker);
                 equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(building.getMilkOutputItem()));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), building.getMilkInputItem());
             }
@@ -224,7 +225,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
                 if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()))
                 {
                     building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
-                    worker.getCitizenItemHandler().removeHeldItem();
+                    CitizenItemUtils.removeHeldItem(worker);
                     equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(fakePlayer.getMainHandItem()));
                     InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
                 }

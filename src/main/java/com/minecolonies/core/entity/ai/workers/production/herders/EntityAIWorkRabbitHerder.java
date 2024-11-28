@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.ai.workers.production.herders;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingRabbitHutch;
 import com.minecolonies.core.colony.jobs.JobRabbitHerder;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.animal.Animal;
@@ -61,7 +62,7 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
             {
                 final DamageSource ds = animal.level.damageSources().playerAttack(getFakePlayer());
                 animal.hurt(ds, (float) getButcheringAttackDamage());
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
         }
     }

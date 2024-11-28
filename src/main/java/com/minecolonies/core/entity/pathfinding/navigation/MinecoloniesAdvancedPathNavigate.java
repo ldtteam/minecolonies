@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -499,6 +500,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected boolean canUpdatePath()
     {
+        if (ourEntity.getPose() != Pose.STANDING)
+        {
+            ourEntity.setPose(Pose.STANDING);
+        }
+
         // Auto dismount when trying to path.
         if (ourEntity.vehicle != null)
         {
@@ -873,16 +879,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                 case NORTH:
-                    vec3 = vec3.add(0, 0, 0.4);
+                    vec3 = vec3.add(0, 0, 0.8);
                     break;
                 case SOUTH:
-                    vec3 = vec3.add(0, 0, -0.4);
+                    vec3 = vec3.add(0, 0, -0.8);
                     break;
                 case WEST:
-                    vec3 = vec3.add(0.4, 0, 0);
+                    vec3 = vec3.add(0.8, 0.8, 0);
                     break;
                 case EAST:
-                    vec3 = vec3.add(-0.4, 0, 0);
+                    vec3 = vec3.add(-0.8, 0, 0);
                     break;
                 case UP:
                     vec3 = vec3.add(0, 1, 0);
@@ -896,6 +902,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                         isSneaking = true;
                     }
                     this.ourEntity.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 0.2);
+                    wantedPosition = vec3;
                     break;
             }
 
@@ -906,6 +913,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     this.ourEntity.setDeltaMovement(this.ourEntity.getDeltaMovement().add(0, 0.1D, 0));
                 }
                 this.ourEntity.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, newSpeed);
+                wantedPosition = vec3;
             }
             else
             {
@@ -957,6 +965,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         this.ourEntity.getMoveControl().setWantedPosition(Vector3d.x, Vector3d.y, Vector3d.z, getSpeedFactor());
+        wantedPosition = Vector3d;
         return false;
     }
 

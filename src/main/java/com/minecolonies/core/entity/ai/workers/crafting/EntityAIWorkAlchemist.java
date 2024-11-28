@@ -20,6 +20,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobAlchemist;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -248,7 +249,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
             final int slot =
               InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(worker.getInventoryCitizen(), ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, slot);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, slot);
 
             worker.swing(InteractionHand.MAIN_HAND);
             world.playSound(null,
@@ -263,7 +264,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 worker.decreaseSaturationForContinuousAction();
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.mistletoe, 1));
                 walkTo = null;
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
                 return INVENTORY_FULL;
             }
         }
@@ -930,7 +931,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                                 {
                                     return getState();
                                 }
-                                worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                                CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
                                 InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
                                   worker.getInventoryCitizen(),
                                   potion,
@@ -989,7 +990,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                             {
                                 return getState();
                             }
-                            worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                            CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
                             InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
                               worker.getInventoryCitizen(),
                               ingredient,

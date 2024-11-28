@@ -1,0 +1,21 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:coal_ore",
+          "weight": 64
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:copper_ore",
+          "weight": 48
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecolonies:loot_tables/miner/lucky_ore1"
+}

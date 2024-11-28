@@ -675,7 +675,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         BlockPos goodCook = null;
         for (final IBuilding building : buildings.values())
         {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0)
+            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 final double localDistance = building.getPosition().distSqr(citizen);
                 if (localDistance < distance)
@@ -724,7 +724,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            if (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks)
+            if (colonyBuilding.getBuildingLevel() > 0 && (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks))
             {
                 final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
                 if (guardedRegion.isInside(building.getPosition()))

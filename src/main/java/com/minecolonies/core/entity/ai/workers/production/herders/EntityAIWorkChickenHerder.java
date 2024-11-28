@@ -7,6 +7,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.core.colony.jobs.JobChickenHerder;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
@@ -66,7 +67,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
                 animal.hurt(world.damageSources().source(DamageSourceKeys.DEFAULT, worker), (float) getButcheringAttackDamage());
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
         }
     }

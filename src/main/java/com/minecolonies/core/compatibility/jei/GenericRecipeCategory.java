@@ -1,11 +1,14 @@
 package com.minecolonies.core.compatibility.jei;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
@@ -22,11 +25,13 @@ import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,6 +42,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,6 +72,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @NotNull private final IDrawableStatic arrow;
     @NotNull private final IModIdHelper modIdHelper;
     @NotNull private final ITickTimer animalTimer;
+
+    private static final Cache<EntityType<?>, Entity> entityCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(2))
+            .build();
 
     private static final int ANIMAL_W  = (WIDTH - CITIZEN_W) / 2;
     private static final int ANIMAL_H = CITIZEN_H - 10;
@@ -279,20 +289,29 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             RenderHelper.renderBlock(stack.pose(), block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
 
-        final LivingEntity animal = recipe.getRequiredEntity();
-        if (animal != null)
+        final EntityType<?> entityType = recipe.getRequiredEntity();
+        if (entityType != null)
         {
-            final float scale = ANIMAL_H / 2.4f;
-            final int animal_cx = ANIMAL_X + (ANIMAL_W / 2);
-            final int animal_cy = ANIMAL_Y + (ANIMAL_H / 2);
-            final int animal_by = ANIMAL_Y + ANIMAL_H;
-            final int offsetY = 16;
-            final float yaw = animalTimer.getValue();
-            final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
-            final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-            Lighting.setupForFlatItems();
-            UiRenderMacros.drawEntity(stack.pose(), animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
-            Lighting.setupFor3DItems();
+            try
+            {
+                final Entity entity = entityCache.get(entityType, () -> entityType.create(Minecraft.getInstance().level));
+
+                final float scale = ANIMAL_H / 2.4f;
+                final int animal_cx = ANIMAL_X + (ANIMAL_W / 2);
+                final int animal_cy = ANIMAL_Y + (ANIMAL_H / 2);
+                final int animal_by = ANIMAL_Y + ANIMAL_H;
+                final int offsetY = 16;
+                final float yaw = animalTimer.getValue();
+                final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
+                final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
+                Lighting.setupForFlatItems();
+                UiRenderMacros.drawEntity(stack.pose(), animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, entity);
+                Lighting.setupFor3DItems();
+            }
+            catch (final Throwable e)
+            {
+                Log.getLogger().error("Error drawing {}", entityType.getDescriptionId(), e);
+            }
         }
     }
 

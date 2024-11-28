@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -451,7 +452,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (effortCounter < EFFORT_BURY)
         {
             equipShovel();
-            worker.getCitizenItemHandler().hitBlockWithToolInHand(burialPos.getA(), false);
+            CitizenItemUtils.hitBlockWithToolInHand(worker, burialPos.getA(), false);
             effortCounter += getPrimarySkillLevel();
             return getState();
         }
@@ -490,7 +491,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private void equipShovel()
     {
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, getShovelSlot());
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getShovelSlot());
     }
 
     /**
@@ -498,7 +499,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private void unequip()
     {
-        worker.getCitizenItemHandler().removeHeldItem();
+        CitizenItemUtils.removeHeldItem(worker);
     }
 
     /**

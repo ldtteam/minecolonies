@@ -6,7 +6,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
@@ -221,7 +221,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         worker.setItemInHand(InteractionHand.MAIN_HAND,
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(building.getPosition());
+        CitizenItemUtils.hitBlockWithToolInHand(worker, building.getPosition());
 
         currentRequest = job.getCurrentTask();
 

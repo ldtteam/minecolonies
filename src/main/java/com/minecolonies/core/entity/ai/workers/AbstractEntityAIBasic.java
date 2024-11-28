@@ -35,6 +35,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
@@ -522,7 +523,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
               currentWorkingLocation.getZ(),
               DEFAULT_RANGE_FOR_DELAY))
             {
-                worker.getCitizenItemHandler().hitBlockWithToolInHand(currentWorkingLocation);
+                CitizenItemUtils.hitBlockWithToolInHand(worker, currentWorkingLocation);
             }
             delay -= getTickRate();
             if (delay <= 0)
@@ -1280,13 +1281,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (bestSlot >= 0)
         {
             worker.getCitizenData().setIdleAtJob(false);
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bestSlot);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, bestSlot);
             return true;
         }
         else if (bestSlot == NO_TOOL)
         {
             worker.getCitizenData().setIdleAtJob(false);
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             return true;
         }
         requestTool(target, pos);

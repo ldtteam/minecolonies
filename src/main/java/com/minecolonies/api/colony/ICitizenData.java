@@ -4,10 +4,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.quests.IQuestGiver;
 import com.minecolonies.api.quests.IQuestParticipant;
 import com.minecolonies.api.util.Tuple;
@@ -18,7 +15,10 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticipant
 {
@@ -150,6 +150,8 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return the handler.
      */
     ICitizenSkillHandler getCitizenSkillHandler();
+
+    ICitizenDiseaseHandler getCitizenDiseaseHandler();
 
     /**
      * Schedule restart and cleanup.
