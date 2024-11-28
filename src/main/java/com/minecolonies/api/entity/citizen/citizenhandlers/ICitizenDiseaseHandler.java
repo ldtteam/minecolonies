@@ -75,5 +75,5 @@ public interface ICitizenDiseaseHandler
      * Set a disease on the citizen.
      * @param disease to set.
      */
-    void setDisease(String disease);
+    void setDisease(Disease disease);
 }

@@ -4,6 +4,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
@@ -14,7 +15,7 @@ import com.minecolonies.core.datalistener.DiseasesListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MASKS;
@@ -102,7 +103,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
             if (citizenData.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
-                this.disease = DiseasesListener.getRandomDisease(citizen.getRandom());
+                this.disease = DiseasesListener.getRandomDisease(citizenData.getEntity().map(AbstractEntityCitizen::getRandom).orElse(RandomSource.create()));
             }
         }
 
