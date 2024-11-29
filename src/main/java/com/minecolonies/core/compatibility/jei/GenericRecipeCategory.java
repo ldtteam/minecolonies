@@ -323,6 +323,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                            @NotNull final IRecipeSlotsView recipeSlotsView,
                            final double mouseX, final double mouseY)
     {
+        super.getTooltip(tooltip, recipe, recipeSlotsView, mouseX, mouseY);
+
         if (recipe.getIntermediate() != Blocks.AIR)
         {
             if (new Rect2i(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
