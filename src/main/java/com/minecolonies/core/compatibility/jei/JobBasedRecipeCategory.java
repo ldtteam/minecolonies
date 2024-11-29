@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.ldtteam.blockui.UiRenderMacros;
+import com.ldtteam.common.fakelevel.FakeLevel;
+import com.ldtteam.common.fakelevel.SingleBlockFakeLevel;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -60,7 +62,6 @@ import java.util.stream.Collectors;
  */
 public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T>
 {
-    protected static final JeiFakeLevel FAKE_LEVEL = new JeiFakeLevel();
     private static final Map<EquipmentTypeEntry, List<ItemStack>> TOOL_CACHE = new HashMap<>();
 
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
@@ -285,7 +286,8 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
     @NotNull
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
-        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, FAKE_LEVEL);
+        final FakeLevel level = new SingleBlockFakeLevel(Minecraft.getInstance().level);
+        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, level);
         citizen.setFemale(citizen.getRandom().nextBoolean());
         citizen.setTextureId(citizen.getRandom().nextInt(255));
         citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
