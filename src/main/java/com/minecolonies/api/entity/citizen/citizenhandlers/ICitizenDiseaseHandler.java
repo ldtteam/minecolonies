@@ -73,7 +73,9 @@ public interface ICitizenDiseaseHandler
 
     /**
      * Set a disease on the citizen.
+     *
      * @param disease to set.
+     * @return true if they actually became sick.
      */
-    void setDisease(Disease disease);
+    boolean setDisease(Disease disease);
 }

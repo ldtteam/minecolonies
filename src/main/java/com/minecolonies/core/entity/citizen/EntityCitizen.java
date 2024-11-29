@@ -488,13 +488,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                getCitizenData().getCitizenDiseaseHandler().setDisease(DiseasesListener.getRandomDisease(getRandom()));
-                playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                getCitizenData().markDirty(20);
+                if (getCitizenData().getCitizenDiseaseHandler().setDisease(DiseasesListener.getRandomDisease(getRandom()))) {
+                    playSound(SoundEvents.VILLAGER_HURT, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                    getCitizenData().markDirty(20);
 
-                MessageUtils.format(MESSAGE_INTERACTION_POISON, this.getCitizenData().getName())
-                  .withPriority(MessagePriority.DANGER)
-                  .sendTo(player);
+                    MessageUtils.format(MESSAGE_INTERACTION_POISON, this.getCitizenData().getName())
+                            .withPriority(MessagePriority.DANGER)
+                            .sendTo(player);
+                }
             }
 
             interactionCooldown = 20 * 20;

@@ -113,9 +113,15 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         }
     }
 
-    public void setDisease(final @Nullable Disease disease)
+    @Override
+    public boolean setDisease(final @Nullable Disease disease)
     {
-        this.disease = disease;
+        if (canBecomeSick())
+        {
+            this.disease = disease;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -175,15 +181,12 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void read(final CompoundTag compound)
     {
-        if (compound.contains(TAG_DISEASE))
+        CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
+        if (diseaseTag.contains(TAG_DISEASE))
         {
-            CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
-            if (diseaseTag.contains(TAG_DISEASE))
-            {
-                this.disease = DiseasesListener.getDisease(new ResourceLocation(compound.getString(TAG_DISEASE)));
-            }
-            this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
+            this.disease = DiseasesListener.getDisease(new ResourceLocation(diseaseTag.getString(TAG_DISEASE)));
         }
+        this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
     }
 
     @Override
