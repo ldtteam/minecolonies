@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -178,7 +179,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return a list of items needed or empty.
      */
     @NotNull
-    public List<ItemStack> getExtraItemsNeeded()
+    public List<ItemStorage> getExtraItemsNeeded()
     {
         return new ArrayList<>();
     }
@@ -312,9 +313,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getCount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getCount());
         }
 
-        for (final ItemStack item : getExtraItemsNeeded())
+        for (final ItemStorage item : getExtraItemsNeeded())
         {
-            checkIfRequestForItemExistOrCreateAsync(item);
+            checkIfRequestForItemExistOrCreateAsync(item.getItemStack(), item.getAmount(), item.getAmount());
         }
 
         return DECIDE;
