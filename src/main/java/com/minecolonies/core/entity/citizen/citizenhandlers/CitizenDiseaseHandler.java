@@ -14,6 +14,7 @@ import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
@@ -172,7 +173,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         CompoundTag diseaseTag = new CompoundTag();
         if (disease != null)
         {
-            diseaseTag.putString(TAG_DISEASE, disease.id().toString());
+            diseaseTag.putString(TAG_DISEASE_ID, disease.id().toString());
         }
         diseaseTag.putInt(TAG_IMMUNITY, immunityTicks);
         compound.put(TAG_DISEASE, diseaseTag);
@@ -181,10 +182,15 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void read(final CompoundTag compound)
     {
-        CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
-        if (diseaseTag.contains(TAG_DISEASE))
+        if (!compound.contains(TAG_DISEASE, Tag.TAG_COMPOUND))
         {
-            this.disease = DiseasesListener.getDisease(new ResourceLocation(diseaseTag.getString(TAG_DISEASE)));
+            return;
+        }
+
+        CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
+        if (diseaseTag.contains(TAG_DISEASE_ID))
+        {
+            this.disease = DiseasesListener.getDisease(new ResourceLocation(diseaseTag.getString(TAG_DISEASE_ID)));
         }
         this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
     }
