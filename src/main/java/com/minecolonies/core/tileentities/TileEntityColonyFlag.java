@@ -82,11 +82,10 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     /**
-     * Retrieves the patterns for the renderer
+     * Retrieves the patterns, similar to {@link BannerBlockEntity#getPatterns()}
      * @return the list of pattern-color pairs
      */
-    @OnlyIn(Dist.CLIENT)
-    public List<Pair<Holder<BannerPattern>, DyeColor>> getPatternList()
+    public List<Pair<Holder<BannerPattern>, DyeColor>> getPatterns()
     {
         // Structurize will cause the second condition to be false
         if (level != null && level.dimension() != null)
@@ -113,7 +112,7 @@ public class TileEntityColonyFlag extends BlockEntity
     public ItemStack getItemClient()
     {
         ItemStack itemstack = new ItemStack(ModBlocks.blockColonyBanner);
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = getPatternList();
+        List<Pair<Holder<BannerPattern>, DyeColor>> list = getPatterns();
         ListTag nbt = new ListTag();
 
         for (Pair<Holder<BannerPattern>, DyeColor> pair : list)
