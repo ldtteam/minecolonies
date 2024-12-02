@@ -77,7 +77,7 @@ public class ItemColonyFlagBanner extends BannerItem
         if (tag != null && tag.contains(TAG_BANNER_PATTERNS)) {
             super.appendHoverText(stack, worldIn, tooltip, flagIn);
         } else {
-            tooltip.add(Component.translatable("com.mincolonies.coremod.item.colony_baner.tooltipempty"));
+            tooltip.add(Component.translatable("com.minecolonies.coremod.item.colony_banner.tooltipempty"));
         }
     }
 }
