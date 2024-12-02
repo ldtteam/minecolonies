@@ -4,10 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPatterns;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.BlockItem;
@@ -16,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -60,9 +56,9 @@ public class ItemColonyFlagBanner extends BannerItem
 	    List<Pair<Holder<BannerPattern>, DyeColor>> source;
 	    
 	    if (te instanceof BannerBlockEntity)
-		source = ((BannerBlockEntity) te).getPatterns();
+		    source = ((BannerBlockEntity) te).getPatterns();
 	    else
-		source = ((TileEntityColonyFlag) te).getPatterns();
+		    source = ((TileEntityColonyFlag) te).getPatterns();
 	    
 	    CompoundTag bannerPattern  = new CompoundTag();
 	    source.forEach((pattern) -> patternsBuilder.addPattern(pattern.getFirst(), pattern.getSecond()));
