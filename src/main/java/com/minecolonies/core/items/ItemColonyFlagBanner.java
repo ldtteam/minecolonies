@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -76,9 +77,10 @@ public class ItemColonyFlagBanner extends BannerItem
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
-
-        // Remove the base, as they have no translations (Mojang were lazy. Or maybe saving space?)
-        if (tooltip.size() > 1) tooltip.remove(1);
+	CompoundTag tag = BlockItem.getBlockEntityData(stack);
+	if (tag != null && tag.contains(TAG_BANNER_PATTERNS))
+	    super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	else
+	    tooltip.add(Component.translatable("com.mincolonies.coremod.item.colony_baner.tooltipempty"));
     }
 }
