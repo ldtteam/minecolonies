@@ -50,22 +50,23 @@ public class ItemColonyFlagBanner extends BannerItem
         BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
         ItemStack stack = context.getItemInHand();
 
-        if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag)
-        {
-	    BannerPattern.Builder patternsBuilder = new BannerPattern.Builder();
-	    List<Pair<Holder<BannerPattern>, DyeColor>> source;
-	    
-	    if (te instanceof BannerBlockEntity)
-		    source = ((BannerBlockEntity) te).getPatterns();
-	    else
-		    source = ((TileEntityColonyFlag) te).getPatterns();
-	    
-	    CompoundTag bannerPattern  = new CompoundTag();
-	    source.forEach((pattern) -> patternsBuilder.addPattern(pattern.getFirst(), pattern.getSecond()));
-	    bannerPattern.put(TAG_BANNER_PATTERNS, patternsBuilder.toListTag());
-            
-	    stack.addTagElement("BlockEntityTag", bannerPattern);
-	    return InteractionResult.SUCCESS;
+        if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag) {
+            BannerPattern.Builder patternsBuilder = new BannerPattern.Builder();
+            List<Pair<Holder<BannerPattern>, DyeColor>> source;
+
+            if (te instanceof BannerBlockEntity) {
+                source = ((BannerBlockEntity) te).getPatterns();
+            }
+            else {
+                source = ((TileEntityColonyFlag) te).getPatterns();
+            }
+
+            CompoundTag bannerPattern = new CompoundTag();
+            source.forEach((pattern) -> patternsBuilder.addPattern(pattern.getFirst(), pattern.getSecond()));
+            bannerPattern.put(TAG_BANNER_PATTERNS, patternsBuilder.toListTag());
+
+            stack.addTagElement("BlockEntityTag", bannerPattern);
+            return InteractionResult.SUCCESS;
         }
         return super.useOn(context);
     }
