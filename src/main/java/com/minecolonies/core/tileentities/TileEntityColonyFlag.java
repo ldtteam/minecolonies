@@ -99,7 +99,7 @@ public class TileEntityColonyFlag extends BlockEntity
         }
 
         List<Pair<Holder<BannerPattern>, DyeColor>> pattern = BannerBlockEntity.createPatterns(
-                DyeColor.WHITE, // <-- add a useless white base layer
+                DyeColor.WHITE,
                 this.patterns
         );
 	//remove the first base layer
