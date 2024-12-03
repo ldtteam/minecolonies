@@ -50,14 +50,17 @@ public class ItemColonyFlagBanner extends BannerItem
         BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
         ItemStack stack = context.getItemInHand();
 
-        if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag) {
+        if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag)
+        {
             BannerPattern.Builder patternsBuilder = new BannerPattern.Builder();
             List<Pair<Holder<BannerPattern>, DyeColor>> source;
 
-            if (te instanceof BannerBlockEntity) {
+            if (te instanceof BannerBlockEntity)
+            {
                 source = ((BannerBlockEntity) te).getPatterns();
             }
-            else {
+            else
+            {
                 source = ((TileEntityColonyFlag) te).getPatterns();
             }
 
@@ -74,9 +77,12 @@ public class ItemColonyFlagBanner extends BannerItem
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         CompoundTag tag = BlockItem.getBlockEntityData(stack);
-        if (tag != null && tag.contains(TAG_BANNER_PATTERNS)) {
+        if (tag != null && tag.contains(TAG_BANNER_PATTERNS))
+        {
             super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        } else {
+        }
+        else
+        {
             tooltip.add(Component.translatable("com.minecolonies.coremod.item.colony_banner.tooltipempty"));
         }
     }
