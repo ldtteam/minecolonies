@@ -985,7 +985,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     protected IAIState checkAndRequestFood()
     {
-        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack))) > 16)
+        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack))) >= 16)
         {
             // We have enough food.
             return getState();
