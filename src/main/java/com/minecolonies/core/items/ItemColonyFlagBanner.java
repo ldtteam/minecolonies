@@ -75,7 +75,8 @@ public class ItemColonyFlagBanner extends BannerItem
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
+    {
         CompoundTag tag = BlockItem.getBlockEntityData(stack);
         if (tag != null && tag.contains(TAG_BANNER_PATTERNS))
         {
