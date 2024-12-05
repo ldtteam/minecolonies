@@ -11,6 +11,7 @@
   "instant": true,
   "requirements": [
     {
+      "type": "minecolonies:mandatory-building",
       "level": 1,
       "mandatory-building": "sifter"
     }

@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/rainbowheaven",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "beekeeper",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:beehive"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:beehive",
       "quantity": 16
     }
   ],

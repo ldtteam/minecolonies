@@ -9,6 +9,7 @@
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 1
     },

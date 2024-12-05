@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/space",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:blockminecoloniesrack"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:blockminecoloniesrack",
       "quantity": 32
     }
   ],

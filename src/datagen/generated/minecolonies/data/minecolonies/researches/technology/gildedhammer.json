@@ -9,34 +9,23 @@
   "parentResearch": "minecolonies:technology/rockingroll",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "crusher",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:gravel"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:gravel",
       "quantity": 64
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:sand"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:sand",
       "quantity": 64
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:clay"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:clay",
       "quantity": 64
     }
   ],

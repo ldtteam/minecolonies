@@ -8,16 +8,13 @@
   "icon": "minecolonies:textures/icons/research/hp1.png",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:hay_block"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:hay_block",
       "quantity": 8
     }
   ],

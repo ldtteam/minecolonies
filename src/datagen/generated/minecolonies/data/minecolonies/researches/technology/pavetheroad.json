@@ -9,6 +9,7 @@
   "parentResearch": "minecolonies:technology/rockingroll",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "crusher",
       "level": 1
     },

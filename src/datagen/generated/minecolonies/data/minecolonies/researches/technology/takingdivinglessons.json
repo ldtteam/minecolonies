@@ -9,34 +9,23 @@
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:kelp"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:kelp",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:seagrass"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:seagrass",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:sea_pickle"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:sea_pickle",
       "quantity": 16
     }
   ],

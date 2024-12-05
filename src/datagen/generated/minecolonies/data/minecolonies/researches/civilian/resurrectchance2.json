@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/resurrectchance1",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "graveyard",
       "level": 5
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:chorus_fruit"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:chorus_fruit",
       "quantity": 16
     }
   ],

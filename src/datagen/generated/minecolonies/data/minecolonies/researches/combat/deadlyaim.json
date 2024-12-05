@@ -9,12 +9,8 @@
   "parentResearch": "minecolonies:combat/woundingshot",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:flint"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:flint",
       "quantity": 256
     }
   ],

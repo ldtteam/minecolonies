@@ -9,6 +9,7 @@
   "parentResearch": "minecolonies:technology/goodveins",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 4
     },

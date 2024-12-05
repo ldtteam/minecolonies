@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:combat/knighttraining",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "combatacademy",
       "level": 5
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:shield"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:shield",
       "quantity": 16
     }
   ],

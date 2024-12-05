@@ -9,12 +9,8 @@
   "parentResearch": "minecolonies:civilian/epicure",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cookie"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cookie",
       "quantity": 512
     }
   ],

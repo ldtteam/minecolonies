@@ -8,6 +8,7 @@
   "icon": "minecolonies:blockhutsawmill",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "lumberjack",
       "level": 3
     },
