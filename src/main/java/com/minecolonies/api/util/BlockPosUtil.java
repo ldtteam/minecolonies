@@ -141,10 +141,26 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
+        return getRandomPosition(world, currentPosition, def, minDist, maxDist, false);
+    }
+
+    /**
+     * Gets a random position within a certain range for wandering around.
+     *
+     * @param world           the world.
+     * @param currentPosition the current position.
+     * @param def             the default position if none was found.
+     * @param minDist         the minimum distance of the pos.
+     * @param maxDist         the maximum distance.
+     * @param load            whether chunks should get loaded if needed
+     * @return the BlockPos.
+     */
+    public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist, final boolean load)
+    {
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
-                 || !WorldUtil.isEntityBlockLoaded(world, pos)
+                 || !load && !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).liquid()
                  || !BlockUtils.isAnySolid(world.getBlockState(pos.below()))
                  || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
@@ -889,46 +905,59 @@ public final class BlockPosUtil
         {
             if (pos.getY() > building.getY())
             {
-                direction = DirectionResult.UP;
+                return DirectionResult.UP;
             }
             else if (pos.getY() < building.getY())
             {
-                direction = DirectionResult.DOWN;
+                return DirectionResult.DOWN;
+            }
+            else
+            {
+                return DirectionResult.SAME;
             }
         }
 
-        // If a building is greater or smaller in the Z direction, either return north or south
-        if (pos.getZ() > building.getZ())
+        final int xDiff = building.getX() - pos.getX();
+        final int zDiff = building.getZ() - pos.getZ();
+        int degree = (int) (Math.atan2(xDiff, zDiff) * 180 / Math.PI);
+        if (degree < 0)
         {
-            direction = DirectionResult.SOUTH;
+            degree += 360;
         }
-        else if (pos.getZ() < building.getZ())
+
+        if (degree <= 22 || degree >= 338)
         {
             direction = DirectionResult.NORTH;
         }
-
-        // If a building is greater or smaller in the X direction, either return west or east
-        // If previously already north or south was selected, create a compound direction (north/east etc)
-        if (pos.getX() > building.getX())
+        else if (degree > 22 && degree < 67)
         {
-            direction = switch (direction)
-                          {
-                              case NORTH -> DirectionResult.NORTH_EAST;
-                              case SOUTH -> DirectionResult.SOUTH_EAST;
-                              default -> DirectionResult.EAST;
-                          };
+            direction = DirectionResult.NORTH_WEST;
         }
-        else if (pos.getX() < building.getX())
+        else if (degree >= 67 && degree <= 112)
         {
-            direction = switch (direction)
-                          {
-                              case NORTH -> DirectionResult.NORTH_WEST;
-                              case SOUTH -> DirectionResult.SOUTH_WEST;
-                              default -> DirectionResult.WEST;
-                          };
+            direction = DirectionResult.WEST;
+        }
+        else if (degree > 112 && degree < 157)
+        {
+            direction = DirectionResult.SOUTH_WEST;
+        }
+        else if (degree >= 157 && degree <= 202)
+        {
+            direction = DirectionResult.SOUTH;
+        }
+        else if (degree > 202 && degree < 247)
+        {
+            direction = DirectionResult.SOUTH_EAST;
+        }
+        else if (degree >= 247 && degree <= 292)
+        {
+            direction = DirectionResult.EAST;
+        }
+        else
+        {
+            direction = DirectionResult.NORTH_EAST;
         }
 
-        // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
         return direction;
     }
 

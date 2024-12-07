@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -206,7 +207,7 @@ public interface IRaiderManager
     /**
      * Gets the amount of citizens lost in a raid.
      *
-     * @return weighted amount of list citizen
+     * @return amount
      */
     int getLostCitizen();
 
@@ -216,6 +217,8 @@ public interface IRaiderManager
      * @param entity
      */
     void onRaiderDeath(AbstractEntityRaiderMob entity);
+
+    void onRaidEventFinished(IColonyRaidEvent event);
 
     /**
      * Notify raid manager of a passing through raid.

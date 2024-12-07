@@ -206,13 +206,14 @@ public final class TranslationConstants
     @NonNls
     public static final String RAID_NORSEMEN                                                        = "com.minecolonies.coremod.raid.norsemen.name";
     @NonNls
-    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE                                       = "com.minecolonies.coremod.barbarians.left";
+    public static final String ONLY_X_BARBARIANS_LEFT_MESSAGE       = "com.minecolonies.coremod.barbarians.left";
     @NonNls
-    public static final String ALL_BARBARIANS_KILLED_MESSAGE                                        = "com.minecolonies.coremod.barbarians.killed";
+    public static final String INDIVIDUAL_RAID_FINISH               = "com.minecolonies.coremod.raid.end";
     @NonNls
-    public static final String ALL_BARBARIANS_MERCY_MESSAGE                                         = "com.minecolonies.core.barbarians.mercy";
+    public static final String RAID_END_MERCY                       = "com.minecolonies.core.barbarians.mercy";
+    public static final String RAID_END                             = "com.minecolonies.coremod.barbarians.killed";
     @NonNls
-    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN                                 = "com.minecolonies.core.founding.tooclosetospawn";
+    public static final String CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN = "com.minecolonies.core.founding.tooclosetospawn";
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.core.founding.toofarfromspawn";
     @NonNls
@@ -262,9 +263,7 @@ public final class TranslationConstants
     @NonNls
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                      = "com.minecolonies.coremod.gui.townhall.buildinglevel";
     @NonNls
-    public static final String PIRATES_SAILING_OFF_MESSAGE                                          = "com.minecolonies.coremod.pirates.sailing.away";
-    @NonNls
-    public static final String DROWNED_PIRATES_SAILING_OFF_MESSAGE                                  = "com.minecolonies.core.drowned_pirates.sailing.away";
+    public static final String PIRATES_SAILING_OFF_MESSAGE          = "com.minecolonies.coremod.raid.sailing.away";
     @NonNls
     public static final String STRUCTURE_SPAWNER_BREAKS                                             = "com.minecolonies.core.raidevent.spawnerbreaks";
     @NonNls

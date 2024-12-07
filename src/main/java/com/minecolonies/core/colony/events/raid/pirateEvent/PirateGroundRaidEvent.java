@@ -60,12 +60,6 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onFinish()
-    {
-        super.onFinish();
-    }
-
-    @Override
     public void registerEntity(final Entity entity)
     {
         if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())

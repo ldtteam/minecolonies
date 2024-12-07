@@ -56,7 +56,8 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         }
         prevDoorPos = doorPos;
         hardness = (int) (1 + mob.level.getBlockState(doorPos).getDestroySpeed(mob.level, doorPos));
-
+// Hardness is called destroy time now, obsidian has 50, iron gate had 5(now 25) door has 3.
+        //
         // No stuck during door break
         if (mob instanceof AbstractEntityRaiderMob)
         {
@@ -90,15 +91,17 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         }
         else
         {
-            int fasterBreakPerXNearby = 5;
+            double fasterBreakPerXNearby = 5;
 
-            if (mob instanceof AbstractEntityRaiderMob && !mob.level.isClientSide())
+            if (mob instanceof AbstractEntityRaiderMob && !mob.level.isClientSide() && mob.level.getBlockState(doorPos).getBlock() instanceof AbstractBlockGate)
             {
                 final IColony colony = ((AbstractEntityRaiderMob) mob).getColony();
 
                 fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
-            breakChance = Math.max(1,
+
+            fasterBreakPerXNearby /= 2;
+            breakChance = (int) Math.max(1,
               hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityRaiderMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
         }
 

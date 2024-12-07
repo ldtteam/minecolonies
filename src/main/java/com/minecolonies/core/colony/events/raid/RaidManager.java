@@ -9,7 +9,10 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.MineColonies;
@@ -31,6 +34,7 @@ import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -38,6 +42,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -54,10 +59,14 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
+import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.HappinessConstants.RAIDWITHOUTDEATH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_END;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_END_MERCY;
 
 /**
  * Handles spawning hostile raid events.
@@ -947,7 +956,6 @@ public class RaidManager implements IRaiderManager
                 if (event instanceof IColonyRaidEvent raidEvent)
                 {
                     raidEvent.setStatus(EventStatus.DONE);
-                    raidEvent.setMercyEnd();
                 }
             }
         }
@@ -1016,6 +1024,42 @@ public class RaidManager implements IRaiderManager
         if (last != null)
         {
             last.deadRaiders++;
+        }
+    }
+
+    @Override
+    public void onRaidEventFinished(final IColonyRaidEvent finishedRaid)
+    {
+        for (final IColonyEvent event : colony.getEventManager().getEvents().values())
+        {
+            if (event instanceof IColonyRaidEvent raidEvent && raidEvent.getStatus() == EventStatus.PROGRESSING)
+            {
+                return;
+            }
+        }
+
+        if (((double) raidHistories.get(0).lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
+        {
+            MessageUtils.format(RAID_END_MERCY, colony.getName()).sendTo(colony).forManagers();
+        }
+        else
+        {
+            String msgID = RAID_END;
+            int rng = ColonyConstants.rand.nextInt(3);
+            if (rng > 0)
+            {
+                msgID += rng;
+            }
+
+            MessageUtils.format(msgID, colony.getName()).sendTo(colony).forManagers();
+        }
+
+        PlayAudioMessage audio = new PlayAudioMessage(raidHistories.get(0).raiderAmount <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.RECORDS);
+        PlayAudioMessage.sendToAll(colony, false, true, audio);
+
+        if (colony.getRaiderManager().getLostCitizen() == 0)
+        {
+            colony.getCitizenManager().injectModifier(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, new StaticHappinessSupplier(2.0), 3));
         }
     }
 

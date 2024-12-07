@@ -6,13 +6,12 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
-import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
@@ -42,7 +41,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
-import static com.minecolonies.api.util.constant.HappinessConstants.RAIDWITHOUTDEATH;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.colony.events.raid.pirateEvent.PirateRaidEvent.TAG_DAYS_LEFT;
@@ -133,11 +131,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      * The path result towards the intended spawn point
      */
     private PathResult spawnPathResult;
-
-    /**
-     * If this was a mercy end.
-     */
-    private boolean mercyEnd = false;
 
     /**
      * Waypoints helping raiders travel
@@ -244,12 +237,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         RaiderMobUtils.spawn(getArcherRaiderType(), numberOfArchers, spawnPos, colony.getWorld(), colony, id);
     }
 
-    @Override
-    public void setMercyEnd()
-    {
-        this.mercyEnd = true;
-    }
-
     /**
      * Prepares the horde event, makes them wait at campfires for a while,deciding on their plans.
      */
@@ -274,7 +261,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             for (int tries = 0; tries < 3; tries++)
             {
-                BlockPos spawn = BlockPosUtil.getRandomPosition(colony.getWorld(), pos, BlockPos.ZERO, 3, 7);
+                BlockPos spawn = BlockPosUtil.getRandomPosition(colony.getWorld(), pos, BlockPos.ZERO, 3, 7, true);
                 if (spawn != BlockPos.ZERO)
                 {
                     colony.getWorld().setBlockAndUpdate(spawn, Blocks.CAMPFIRE.defaultBlockState());
@@ -288,6 +275,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     @Override
     public void onFinish()
     {
+        colony.getRaiderManager().onRaidEventFinished(this);
         for (final Entity entity : getEntities())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
@@ -300,18 +288,6 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         raidBar.setVisible(false);
         raidBar.removeAllPlayers();
-
-        if (horde.hordeSize > 0)
-        {
-            if (mercyEnd)
-            {
-                MessageUtils.format(ALL_BARBARIANS_MERCY_MESSAGE, colony.getName()).sendTo(colony).forManagers();
-            }
-            else
-            {
-                MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
-            }
-        }
     }
 
     @Override
@@ -435,6 +411,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         if (horde.hordeSize <= 0)
         {
             status = EventStatus.DONE;
+            return;
         }
 
         if (!respawns.isEmpty())
@@ -460,8 +437,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
             }
         }
 
-        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.round(horde.initialSize * 0.05))
+        if (horde.numberOfBosses + horde.numberOfRaiders + horde.numberOfArchers < Math.floor(horde.initialSize * 0.1))
         {
+            announceWin();
             status = EventStatus.DONE;
         }
 
@@ -482,6 +460,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     /**
+     * Sends the winning message
+     */
+    private void announceWin()
+    {
+        MessageUtils.format(INDIVIDUAL_RAID_FINISH + "." + this.getEventTypeID().getPath() + ColonyConstants.rand.nextInt(3),
+          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText()).sendTo(colony, true).forManagers();
+    }
+
+    /**
      * Sends the right horde message.
      */
     protected void sendHordeMessage()
@@ -499,15 +486,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
-
-            PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.RECORDS);
-            PlayAudioMessage.sendToAll(getColony(), false, true, audio);
-
-            if (colony.getRaiderManager().getLostCitizen() == 0)
-            {
-                colony.getCitizenManager().injectModifier(new ExpirationBasedHappinessModifier(RAIDWITHOUTDEATH, 1.0, new StaticHappinessSupplier(2.0), 3));
-            }
+            announceWin();
         }
         else if (total > 0 && total <= SMALL_HORDE_SIZE)
         {
