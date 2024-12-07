@@ -56,8 +56,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         }
         prevDoorPos = doorPos;
         hardness = (int) (1 + mob.level.getBlockState(doorPos).getDestroySpeed(mob.level, doorPos));
-// Hardness is called destroy time now, obsidian has 50, iron gate had 5(now 25) door has 3.
-        //
+
         // No stuck during door break
         if (mob instanceof AbstractEntityRaiderMob)
         {
