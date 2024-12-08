@@ -12,6 +12,7 @@
   "parentResearch": "minecolonies:unlockable/ironmesh",
   "requirements": [
     {
+      "type": "minecolonies:mandatory-building",
       "level": 5,
       "mandatory-building": "sifter"
     }

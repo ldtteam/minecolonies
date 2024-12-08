@@ -9,16 +9,13 @@
   "icon": "minecraft:iron_sword",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
       "quantity": 16
     }
   ],

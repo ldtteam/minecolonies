@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/memoryaid",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "sawmill",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:paper"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:paper",
       "quantity": 64
     }
   ],

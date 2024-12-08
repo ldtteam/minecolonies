@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/nurture",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "school",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cooked_chicken"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_chicken",
       "quantity": 64
     }
   ],

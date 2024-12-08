@@ -897,15 +897,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (getCitizenData() != null && getHealth() < (getCitizenData().getCitizenDiseaseHandler().isSick() ? getMaxHealth() / 3 : getMaxHealth()) && getLastHurtByMob() == null)
         {
             final double limitDecrease = getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
-
+            final double citizenSaturation = citizenData.getSaturation();
             final double healAmount;
-            if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
+            if (citizenSaturation >= FULL_SATURATION + limitDecrease)
             {
                 healAmount = 2 * (1.0 + getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
-            else if (citizenData.getSaturation() < LOW_SATURATION)
+            else if (citizenSaturation < LOW_SATURATION)
             {
-                return;
+                healAmount = 1 * (citizenSaturation / FULL_SATURATION) / 2.0;
             }
             else
             {

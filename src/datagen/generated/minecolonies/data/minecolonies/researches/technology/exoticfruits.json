@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:glow_berries"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:glow_berries",
       "quantity": 32
     }
   ],

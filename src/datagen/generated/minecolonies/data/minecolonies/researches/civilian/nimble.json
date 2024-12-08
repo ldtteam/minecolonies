@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/rails",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rabbit_foot"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rabbit_foot",
       "quantity": 1
     }
   ],

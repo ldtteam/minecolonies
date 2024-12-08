@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/podzolchance",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "composter",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:podzol"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:podzol",
       "quantity": 32
     }
   ],

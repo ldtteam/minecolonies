@@ -8,16 +8,13 @@
   "icon": "minecolonies:blockhutstonemason",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:chiseled_stone_bricks"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:chiseled_stone_bricks",
       "quantity": 64
     }
   ],

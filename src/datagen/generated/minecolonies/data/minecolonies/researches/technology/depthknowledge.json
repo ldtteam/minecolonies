@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/rockingroll",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "crusher",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:deepslate"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:deepslate",
       "quantity": 64
     }
   ],

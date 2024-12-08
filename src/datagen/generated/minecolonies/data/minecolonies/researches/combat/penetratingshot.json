@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:combat/preciseshot",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "archery",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:flint"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:flint",
       "quantity": 32
     }
   ],

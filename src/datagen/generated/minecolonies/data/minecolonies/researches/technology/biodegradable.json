@@ -8,16 +8,13 @@
   "icon": "minecolonies:blockhutcomposter",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "farmer",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bone_meal"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bone_meal",
       "quantity": 64
     }
   ],

@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/healingcream",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "library",
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_carrot"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_carrot",
       "quantity": 16
     }
   ],

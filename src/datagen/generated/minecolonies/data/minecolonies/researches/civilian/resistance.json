@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/stamina",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "cook",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_apple"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_apple",
       "quantity": 1
     }
   ],

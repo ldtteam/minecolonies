@@ -8,34 +8,23 @@
   "icon": "minecraft:chain",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rotten_flesh"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rotten_flesh",
       "quantity": 8
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bone"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bone",
       "quantity": 8
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:spider_eye"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:spider_eye",
       "quantity": 8
     }
   ],

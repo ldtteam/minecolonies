@@ -9,34 +9,23 @@
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bamboo"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bamboo",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cocoa_beans"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cocoa_beans",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:vine"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:vine",
       "quantity": 16
     }
   ],
