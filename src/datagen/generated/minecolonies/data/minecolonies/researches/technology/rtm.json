@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/recipebook",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "sawmill",
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:paper"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:paper",
       "quantity": 256
     }
   ],

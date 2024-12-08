@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:combat/piercingshot",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "barracks",
       "level": 5
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:flint"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:flint",
       "quantity": 128
     }
   ],

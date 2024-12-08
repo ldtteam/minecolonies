@@ -8,16 +8,13 @@
   "icon": "minecolonies:blockhutgraveyard",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bone"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bone",
       "quantity": 8
     }
   ],

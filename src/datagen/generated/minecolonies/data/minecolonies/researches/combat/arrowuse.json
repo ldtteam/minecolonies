@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:combat/taunt",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:arrow"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:arrow",
       "quantity": 64
     }
   ],

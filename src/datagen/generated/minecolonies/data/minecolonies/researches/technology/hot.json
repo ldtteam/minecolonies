@@ -8,16 +8,13 @@
   "icon": "minecolonies:blockhutsmeltery",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:lava_bucket"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:lava_bucket",
       "quantity": 4
     }
   ],

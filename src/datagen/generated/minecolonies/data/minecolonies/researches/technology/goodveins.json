@@ -9,6 +9,7 @@
   "parentResearch": "minecolonies:technology/veinminer",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 2
     },

@@ -8,16 +8,13 @@
   "icon": "minecraft:leather_helmet",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:leather"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:leather",
       "quantity": 32
     }
   ],

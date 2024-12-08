@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/stonecake",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "stonemason",
       "level": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:brick"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:brick",
       "quantity": 64
     }
   ],

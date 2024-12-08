@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/sieving",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:blockminecoloniesrack"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:blockminecoloniesrack",
       "quantity": 16
     }
   ],

@@ -9,25 +9,18 @@
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:sugar_cane"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:sugar_cane",
       "quantity": 32
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cactus"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cactus",
       "quantity": 32
     }
   ],
