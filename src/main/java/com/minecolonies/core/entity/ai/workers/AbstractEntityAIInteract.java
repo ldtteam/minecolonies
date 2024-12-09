@@ -140,7 +140,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    protected boolean mineBlock(@NotNull final BlockPos blockToMine, @Nullable final BlockPos safeStand)
     {
         return mineBlock(blockToMine, safeStand, true, true, null);
     }
@@ -158,7 +158,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     protected final boolean mineBlock(
       @NotNull final BlockPos blockToMine,
-      @NotNull final BlockPos safeStand,
+      @Nullable final BlockPos safeStand,
       final boolean damageTool,
       final boolean getDrops,
       final Runnable blockBreakAction)
@@ -287,7 +287,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * @param safeStand   a safe stand to mine from (empty Block!)
      * @return true if you should wait
      */
-    private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @Nullable final BlockPos safeStand)
     {
         final BlockState curBlock = world.getBlockState(blockToMine);
 
@@ -297,7 +297,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             return true;
         }
 
-        if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.blockPosition(), safeStand) > MIN_WORKING_RANGE)
+        if (safeStand != null && walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.blockPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
         }

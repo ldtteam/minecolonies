@@ -460,7 +460,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
-
             building.nextStage();
             if (!goToNextStage(result))
             {
@@ -671,7 +670,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return getState();
         }
 
-        if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
+        if (!mineBlock(blockToMine, null))
         {
             worker.swing(InteractionHand.MAIN_HAND);
             return getState();
