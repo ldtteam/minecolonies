@@ -728,13 +728,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
               node.y + newY - nextY,
               node.z)))
             {
-                dX = 0;
-                dY = newY - nextY;
-                dZ = 0;
-
-                nextX = node.x + dX;
-                nextY = node.y + dY;
-                nextZ = node.z + dZ;
+                nextX = node.x;
+                nextY = node.y + (newY - nextY);
+                nextZ = node.z;
                 corner = true;
             }
             // If we're going down, take the air-corner before going to the lower node
@@ -742,10 +738,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                        (node.parent == null || (node.x != node.parent.x || node.y - 1 != node.parent.y
                                                   || node.z != node.parent.z)))
             {
-                dY = 0;
-
                 nextX = node.x + dX;
-                nextY = node.y + dY;
+                nextY = node.y;
                 nextZ = node.z + dZ;
 
                 corner = true;
@@ -772,7 +766,19 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 return;
             }
 
-            corner = true;
+            if (corner && nextNode.parent != null && (nextNode.parent.x != nextX || nextNode.parent.z != nextZ))
+            {
+                // Corner node from different direction already created, skip to using the actual next pos
+                nextX = node.x + dX;
+                nextY = newY;
+                nextZ = node.z + dZ;
+                nextNode = nodes.get(MNode.computeNodeKey(nextX, nextY, nextZ));
+                corner = false;
+            }
+            else
+            {
+                corner = true;
+            }
         }
 
         // Current node is already visited, only update nearby costs do not create new nodes
@@ -877,7 +883,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private void updateNode(@NotNull final MNode node, @NotNull final MNode nextNode, final double heuristic, final double cost)
     {
         //  This node already exists
-        if (cost >= nextNode.getCost() || nextNode.getVisitedCount() > visitedLevel)
+        if (cost >= nextNode.getCost() || (nextNode.getVisitedCount() > visitedLevel && !nextNode.isCornerNode()))
         {
             return;
         }
@@ -989,7 +995,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             cost += pathingOptions.traverseToggleAbleCost;
         }
-        else if (!onPath && !ShapeUtil.hasCollision(cachedBlockLookup, tempWorldPos.set(x, y, z), state))
+        else if (!onPath && ShapeUtil.hasCollision(cachedBlockLookup, tempWorldPos.set(x, y, z), state))
         {
             cost += pathingOptions.walkInShapesCost;
         }
