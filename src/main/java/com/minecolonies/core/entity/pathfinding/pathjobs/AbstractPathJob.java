@@ -883,7 +883,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private void updateNode(@NotNull final MNode node, @NotNull final MNode nextNode, final double heuristic, final double cost)
     {
         //  This node already exists
-        if (cost >= nextNode.getCost() || (nextNode.getVisitedCount() > visitedLevel && !nextNode.isCornerNode()))
+        if (cost >= nextNode.getCost() || nextNode.getVisitedCount() > visitedLevel)
         {
             return;
         }
