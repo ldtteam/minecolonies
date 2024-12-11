@@ -5,6 +5,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
@@ -221,6 +222,11 @@ public class Stack implements IConcreteDeliverable
             minCount = compound.getInt(NBT_MINCOUNT);
         }
 
+        if (stack.isEmpty())
+        {
+            Log.getLogger().error("Deserialized bad stack", compound.toString());
+        }
+
         return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
     }
 
@@ -265,6 +271,12 @@ public class Stack implements IConcreteDeliverable
 
         int count = buffer.readInt();
         int minCount = buffer.readInt();
+
+        if (stack.isEmpty())
+        {
+            Log.getLogger().error("Deserialized bad stack", stack.toString());
+        }
+
         return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
     }
 
