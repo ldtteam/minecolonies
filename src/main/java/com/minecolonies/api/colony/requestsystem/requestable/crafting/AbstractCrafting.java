@@ -58,12 +58,14 @@ public abstract class AbstractCrafting implements IRequestable
         this.minCount = minCount;
         this.recipeToken = recipeToken;
 
-        if (ItemStackUtils.isEmpty(stack))
+        if (stack.isEmpty())
         {
             Log.getLogger().error("Created Empty Stack", new Exception());
         }
-
-        this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        else
+        {
+            this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        }
     }
 
     @NotNull
