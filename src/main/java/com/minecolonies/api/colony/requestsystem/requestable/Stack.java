@@ -160,7 +160,7 @@ public class Stack implements IConcreteDeliverable
     {
         if (ItemStackUtils.isEmpty(stack))
         {
-            throw new IllegalArgumentException("Cannot deliver Empty Stack.");
+            Log.getLogger().error("Created Empty Stack", new Exception());
         }
 
         this.theStack = stack.copy();

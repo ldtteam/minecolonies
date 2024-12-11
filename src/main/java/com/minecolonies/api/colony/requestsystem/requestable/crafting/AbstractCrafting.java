@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +60,7 @@ public abstract class AbstractCrafting implements IRequestable
 
         if (ItemStackUtils.isEmpty(stack))
         {
-            throw new IllegalArgumentException("Cannot deliver Empty Stack.");
+            Log.getLogger().error("Created Empty Stack", new Exception());
         }
 
         this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
