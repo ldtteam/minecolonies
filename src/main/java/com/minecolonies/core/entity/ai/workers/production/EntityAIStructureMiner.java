@@ -72,7 +72,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Lucky ore loot table
      */
-    public static final ResourceLocation LUCKY_ORE_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "loot_tables/miner/lucky_ore");
+    public static final ResourceLocation LUCKY_ORE_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "miner/lucky_ore");
 
     /**
      * Lead the miner to the other side of the shaft.
