@@ -71,6 +71,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
             byteBuf.writeResourceLocation(disease.id());
             byteBuf.writeComponent(disease.name());
             byteBuf.writeInt(disease.rarity());
+            byteBuf.writeInt(disease.cureItems().size());
             for (final ItemStorage cureItem : disease.cureItems())
             {
                 StandardFactoryController.getInstance().serialize(byteBuf, cureItem);
