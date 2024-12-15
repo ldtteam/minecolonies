@@ -45,13 +45,14 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptianRaider>
 
         PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
           CubeListBuilder.create()
-            .texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F).mirror()
+            .texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
             .texOffs(44, 0).addBox(-5.5F, -0.2F, -2.5F, 11.0F, 5.0F, 5.0F, new CubeDeformation( 0.15F)).mirror()
-            .texOffs(0, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation( 0.3F)).mirror()
+            .texOffs(0, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation( 0.3F))
             .texOffs(52, 11).addBox(-4.5F, 8.5F, -2.5F, 9.0F, 4.0F, 5.0F).mirror()
             .texOffs(0, 0).addBox(-1.5F, -1.5F, -1.0F, 3.0F, 3.0F, 1.0F, new CubeDeformation( -0.3F)).mirror()
             .texOffs(38, 12).addBox(-1.5F, 0.0F, 0.0F, 3.0F, 8.0F, 0.0F).mirror()
-          , PartPose.offset(0.0F, 10.0F, -2.6F));
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
+
 
         PartDefinition bodyJewelDefinition = bodyDefinition.addOrReplaceChild("bodyJewel",
           CubeListBuilder.create()
