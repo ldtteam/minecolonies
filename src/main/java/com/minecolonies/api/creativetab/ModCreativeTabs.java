@@ -137,6 +137,10 @@ public final class ModCreativeTabs
           output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_AMAZONSPEARMAN));
           output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_AMAZONCHIEF));
 
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_PIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_ARCHERPIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_CHIEFPIRATE));
+
       }).build());
 
     public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)

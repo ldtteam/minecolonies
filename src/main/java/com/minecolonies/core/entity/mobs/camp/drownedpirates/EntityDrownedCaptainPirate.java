@@ -1,5 +1,6 @@
-package com.minecolonies.core.entity.mobs.raider.drownedpirates;
+package com.minecolonies.core.entity.mobs.camp.drownedpirates;
 
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.util.MathUtils;
@@ -14,7 +15,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE
 /**
  * Class for the Chief Pirate entity.
  */
-public class EntityDrownedCaptainPirateRaider extends AbstractDrownedEntityPirateRaider implements ICaptainPirateEntity
+public class EntityDrownedCaptainPirate extends AbstractDrownedEntityPirate implements ICaptainPirateEntity
 {
     /**
      * Constructor of the entity.
@@ -22,7 +23,7 @@ public class EntityDrownedCaptainPirateRaider extends AbstractDrownedEntityPirat
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityDrownedCaptainPirateRaider(final EntityType<? extends EntityDrownedCaptainPirateRaider> type, final Level worldIn)
+    public EntityDrownedCaptainPirate(final EntityType<? extends EntityDrownedCaptainPirate> type, final Level worldIn)
     {
         super(type, worldIn);
     }
@@ -33,7 +34,6 @@ public class EntityDrownedCaptainPirateRaider extends AbstractDrownedEntityPirat
         super.initStatsFor(baseHealth, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(-1);
         this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage);
-        this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * 2 * difficulty));
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 2.0);
         this.setHealth(this.getMaxHealth());
         if (MathUtils.RANDOM.nextInt(100) < 2)

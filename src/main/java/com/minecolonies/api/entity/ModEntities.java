@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazonRaider;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarianRaider;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptianRaider;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
@@ -73,11 +74,11 @@ public class ModEntities
 
     public static EntityType<? extends ThrownTrident> SPEAR;
 
-    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_PIRATE;
+    public static EntityType<? extends AbstractDrownedEntityPirateRaider> DROWNED_PIRATE;
 
-    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_CHIEFPIRATE;
+    public static EntityType<? extends AbstractDrownedEntityPirateRaider> DROWNED_CHIEFPIRATE;
 
-    public static EntityType<? extends AbstractDrownedEntityPirate> DROWNED_ARCHERPIRATE;
+    public static EntityType<? extends AbstractDrownedEntityPirateRaider> DROWNED_ARCHERPIRATE;
 
     // Camp Raiders
 
@@ -110,6 +111,12 @@ public class ModEntities
     public static EntityType<? extends AbstractEntityNorsemen> CAMP_SHIELDMAIDEN;
 
     public static EntityType<? extends AbstractEntityNorsemen> CAMP_NORSEMEN_CHIEF;
+
+    public static EntityType<? extends AbstractDrownedEntityPirate> CAMP_DROWNED_PIRATE;
+
+    public static EntityType<? extends AbstractDrownedEntityPirate> CAMP_DROWNED_CHIEFPIRATE;
+
+    public static EntityType<? extends AbstractDrownedEntityPirate> CAMP_DROWNED_ARCHERPIRATE;
 
     public static List<EntityType<? extends AbstractEntityRaiderMob>> getRaiders()
     {

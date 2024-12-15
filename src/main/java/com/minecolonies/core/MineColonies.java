@@ -213,6 +213,9 @@ public class MineColonies
         event.put(ModEntities.CAMP_NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
     }
 
     @SubscribeEvent

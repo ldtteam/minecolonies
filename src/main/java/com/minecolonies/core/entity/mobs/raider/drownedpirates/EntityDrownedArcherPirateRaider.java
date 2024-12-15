@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.mobs.raider.drownedpirates;
 
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.entity.mobs.pirates.IArcherPirateEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Archer drowned Pirate entity.
  */
-public class EntityDrownedArcherPirateRaider extends AbstractDrownedEntityPirate implements IArcherPirateEntity
+public class EntityDrownedArcherPirateRaider extends AbstractDrownedEntityPirateRaider implements IArcherPirateEntity
 {
     /**
      * Constructor of the entity.

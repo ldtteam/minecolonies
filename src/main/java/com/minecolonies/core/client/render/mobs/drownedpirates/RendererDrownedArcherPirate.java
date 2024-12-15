@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.render.mobs.drownedpirates;
 
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Barbarians And Archer Barbarians.
  */
-public class RendererDrownedArcherPirate extends AbstractRendererDrownedPirate<AbstractDrownedEntityPirate, HumanoidModel<AbstractDrownedEntityPirate>>
+public class RendererDrownedArcherPirate extends AbstractRendererDrownedPirate<AbstractEntityMinecoloniesMob, HumanoidModel<AbstractEntityMinecoloniesMob>>
 {
     /**
      * Texture of the entity.
@@ -32,7 +33,7 @@ public class RendererDrownedArcherPirate extends AbstractRendererDrownedPirate<A
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractDrownedEntityPirate entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMob entity)
     {
         switch (entity.getTextureId())
         {

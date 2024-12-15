@@ -1119,6 +1119,9 @@
   "item.minecolonies.pirateegg": "Pirate Spawn Egg",
   "item.minecolonies.piratearcheregg": "Archer Pirate Spawn Egg",
   "item.minecolonies.piratecaptainegg": "Pirate Captain Spawn Egg",
+  "item.minecolonies.drownedpirateegg": "Drowned Pirate Spawn Egg",
+  "item.minecolonies.drownedpiratearcheregg": "Drowned Archer Pirate Spawn Egg",
+  "item.minecolonies.drownedpiratecaptainegg": "Drowned Pirate Captain Spawn Egg",
   "item.minecolonies.mercegg": "Mercenary Spawn Egg",
 
   "com.minecolonies.coremod.cook.serve.player": "%s: Here Governor, take this food!",

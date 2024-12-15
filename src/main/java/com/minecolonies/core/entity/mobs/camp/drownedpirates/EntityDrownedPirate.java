@@ -1,6 +1,6 @@
-package com.minecolonies.core.entity.mobs.raider.drownedpirates;
+package com.minecolonies.core.entity.mobs.camp.drownedpirates;
 
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import net.minecraft.world.entity.EntityType;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 /**
  * Class for the Pirate entity.
  */
-public class EntityDrownedPirateRaider extends AbstractDrownedEntityPirateRaider implements IMeleePirateEntity
+public class EntityDrownedPirate extends AbstractDrownedEntityPirate implements IMeleePirateEntity
 {
 
     /**
@@ -19,7 +19,7 @@ public class EntityDrownedPirateRaider extends AbstractDrownedEntityPirateRaider
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityDrownedPirateRaider(final EntityType<? extends EntityDrownedPirateRaider> type, final Level worldIn)
+    public EntityDrownedPirate(final EntityType<? extends EntityDrownedPirate> type, final Level worldIn)
     {
         super(type, worldIn);
         this.moveControl = new MovementHandler(this);

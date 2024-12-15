@@ -1,28 +1,31 @@
-package com.minecolonies.core.entity.mobs.raider.drownedpirates;
+package com.minecolonies.core.entity.mobs.camp.drownedpirates;
 
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
-import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
-import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.pirates.IArcherPirateEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 /**
- * Class for the Pirate entity.
+ * Class for the Archer drowned Pirate entity.
  */
-public class EntityDrownedPirateRaider extends AbstractDrownedEntityPirateRaider implements IMeleePirateEntity
+public class EntityDrownedArcherPirate extends AbstractDrownedEntityPirate implements IArcherPirateEntity
 {
-
     /**
      * Constructor of the entity.
      *
-     * @param type    the entity type.
      * @param worldIn world to construct it in.
+     * @param type    the entity type.
      */
-    public EntityDrownedPirateRaider(final EntityType<? extends EntityDrownedPirateRaider> type, final Level worldIn)
+    public EntityDrownedArcherPirate(final EntityType<? extends EntityDrownedArcherPirate> type, final Level worldIn)
     {
         super(type, worldIn);
-        this.moveControl = new MovementHandler(this);
+    }
+
+    @Override
+    public boolean penetrateFluids()
+    {
+        return true;
     }
 
     @Override

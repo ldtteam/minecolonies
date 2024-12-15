@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
@@ -49,7 +49,7 @@ public class MobAIRegistry implements IMobAIRegistry
     private static void setupMobAiTasks(final IMobAIRegistry registry)
     {
         registry
-          .registerNewAiTaskForMobs(PRIORITY_ZERO, FloatGoal::new, mob -> !(mob instanceof AbstractDrownedEntityPirate))
+          .registerNewAiTaskForMobs(PRIORITY_ZERO, FloatGoal::new, mob -> !(mob instanceof AbstractDrownedEntityPirateRaider))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIInteractToggleAble(mob, FENCE_TOGGLE))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtPlayerGoal(mob, Player.class, MAX_WATCH_DISTANCE))

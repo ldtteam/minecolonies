@@ -441,5 +441,18 @@ public final class ModItemsInitializer
                 Color.getByName("green"),
                 Color.getByName("yellow"),
                 (new Item.Properties())));
+
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpirateegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_PIRATE,
+                Color.getByName("blue"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_ARCHERPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("green"),
+                new Item.Properties()));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_CHIEFPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
     }
 }

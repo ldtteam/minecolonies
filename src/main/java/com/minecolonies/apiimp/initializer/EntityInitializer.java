@@ -10,6 +10,9 @@ import com.minecolonies.core.entity.mobs.camp.amazons.EntityArcherAmazon;
 import com.minecolonies.core.entity.mobs.camp.barbarians.EntityArcherBarbarian;
 import com.minecolonies.core.entity.mobs.camp.barbarians.EntityBarbarian;
 import com.minecolonies.core.entity.mobs.camp.barbarians.EntityChiefBarbarian;
+import com.minecolonies.core.entity.mobs.camp.drownedpirates.EntityDrownedArcherPirate;
+import com.minecolonies.core.entity.mobs.camp.drownedpirates.EntityDrownedCaptainPirate;
+import com.minecolonies.core.entity.mobs.camp.drownedpirates.EntityDrownedPirate;
 import com.minecolonies.core.entity.mobs.camp.egyptians.EntityArcherMummy;
 import com.minecolonies.core.entity.mobs.camp.egyptians.EntityMummy;
 import com.minecolonies.core.entity.mobs.camp.egyptians.EntityPharao;
@@ -327,6 +330,24 @@ public class EntityInitializer
 
             ModEntities.CAMP_NORSEMEN_CHIEF = build(registry, "campnorsemenchief",
                     EntityType.Builder.of(EntityNorsemenChief::new, MobCategory.MONSTER)
+                            .setTrackingRange(ENTITY_TRACKING_RANGE)
+                            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                            .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+            ModEntities.CAMP_DROWNED_PIRATE = build(registry, "campdrownedpirate",
+                    EntityType.Builder.of(EntityDrownedPirate::new, MobCategory.MONSTER)
+                            .setTrackingRange(ENTITY_TRACKING_RANGE)
+                            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                            .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+            ModEntities.CAMP_DROWNED_ARCHERPIRATE = build(registry, "campdrownedarcherpirate",
+                    EntityType.Builder.of(EntityDrownedArcherPirate::new, MobCategory.MONSTER)
+                            .setTrackingRange(ENTITY_TRACKING_RANGE)
+                            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                            .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+            ModEntities.CAMP_DROWNED_CHIEFPIRATE = build(registry, "campdrownedchiefpirate",
+                    EntityType.Builder.of(EntityDrownedCaptainPirate::new, MobCategory.MONSTER)
                             .setTrackingRange(ENTITY_TRACKING_RANGE)
                             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
                             .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));

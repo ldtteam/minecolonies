@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.mobs.drownedpirate;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all drowned pirate entities.
  */
-public abstract class AbstractDrownedEntityPirate extends AbstractEntityMinecoloniesMob
+public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityRaiderMob
 {
     /**
      * Swim speed for pirates
@@ -45,7 +45,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityMinecolo
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world)
+    public AbstractDrownedEntityPirateRaider(final EntityType<? extends AbstractDrownedEntityPirateRaider> type, final Level world)
     {
         super(type, world);
         this.textureId = new Random().nextInt(PIRATE_TEXTURES);
