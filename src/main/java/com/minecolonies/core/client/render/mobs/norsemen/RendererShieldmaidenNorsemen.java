@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.render.mobs.norsemen;
 
-import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
 import com.minecolonies.core.client.model.raiders.ModelShieldmaiden;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for the shieldmaiden.
  */
-public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<AbstractEntityNorsemen, ModelShieldmaiden>
+public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<AbstractEntityMinecoloniesMob, ModelShieldmaiden>
 {
     /**
      * Texture of the entity.
@@ -30,7 +31,7 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<Abstr
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMob entity)
     {
         if (entity.getTextureId() == 1)
         {

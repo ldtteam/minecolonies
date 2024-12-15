@@ -197,6 +197,22 @@ public class MineColonies
         event.put(ModEntities.DROWNED_PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.DROWNED_ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
         event.put(ModEntities.DROWNED_CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+
+        event.put(ModEntities.CAMP_BARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERBARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_CHIEFBARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_PHARAO, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_MUMMY, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERMUMMY, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZON, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZONSPEARMAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZONCHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
     }
 
     @SubscribeEvent

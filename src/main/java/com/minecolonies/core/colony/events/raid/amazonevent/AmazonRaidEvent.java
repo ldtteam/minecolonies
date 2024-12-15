@@ -6,9 +6,9 @@ import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
-import com.minecolonies.core.entity.mobs.amazons.EntityAmazonChief;
-import com.minecolonies.core.entity.mobs.amazons.EntityAmazonSpearman;
-import com.minecolonies.core.entity.mobs.amazons.EntityArcherAmazon;
+import com.minecolonies.core.entity.mobs.raider.amazons.EntityAmazonChiefRaider;
+import com.minecolonies.core.entity.mobs.raider.amazons.EntityAmazonSpearmanRaider;
+import com.minecolonies.core.entity.mobs.raider.amazons.EntityArcherAmazonRaider;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -56,19 +56,19 @@ public class AmazonRaidEvent extends HordeRaidEvent
             return;
         }
 
-        if (entity instanceof EntityAmazonChief && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityAmazonChiefRaider && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherAmazon && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityArcherAmazonRaider && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityAmazonSpearman && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityAmazonSpearmanRaider && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUUID());
             return;
@@ -110,19 +110,19 @@ public class AmazonRaidEvent extends HordeRaidEvent
             return;
         }
 
-        if (entity instanceof EntityAmazonChief)
+        if (entity instanceof EntityAmazonChiefRaider)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherAmazon)
+        if (entity instanceof EntityArcherAmazonRaider)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityAmazonSpearman)
+        if (entity instanceof EntityAmazonSpearmanRaider)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;

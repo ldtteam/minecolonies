@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.mobs.pirates;
 
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
@@ -18,7 +19,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all pirate entities.
  */
-public abstract class AbstractEntityPirate extends AbstractEntityRaiderMob
+public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
     /**
      * Swim speed for pirates

@@ -40,4 +40,20 @@ public class DamageSourceKeys
     public static ResourceKey<DamageType> DROWNED_CHIEFPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "drownedchiefpirate"));
     public static ResourceKey<DamageType> DROWNED_ARCHERPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "drownedarcherpirate"));
 
+    public static ResourceKey<DamageType> CAMP_AMAZON = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campamazon"));
+    public static ResourceKey<DamageType> CAMP_AMAZONSPEARMAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campamazonspearman"));
+    public static ResourceKey<DamageType> CAMP_AMAZONCHIEF = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campamazonchief"));
+    public static ResourceKey<DamageType> CAMP_MUMMY = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campmummy"));
+    public static ResourceKey<DamageType> CAMP_PHARAO = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camppharao"));
+    public static ResourceKey<DamageType> CAMP_ARCHERMUMMY = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camparchermummy"));
+    public static ResourceKey<DamageType> CAMP_NORSEMENCHIEF = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campnorsemenchief"));
+    public static ResourceKey<DamageType> CAMP_NORSEMENARCHER = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campnorsemenarcher"));
+    public static ResourceKey<DamageType> CAMP_SHIELDMAIDEN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campshieldmaiden"));
+    public static ResourceKey<DamageType> CAMP_BARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campbarbarian"));
+    public static ResourceKey<DamageType> CAMP_CHIEFBARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "ccamphiefbarbarian"));
+    public static ResourceKey<DamageType> CAMP_ARCHERBARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camparcherbarbarian"));
+    public static ResourceKey<DamageType> CAMP_PIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camppirate"));
+    public static ResourceKey<DamageType> CAMP_CHIEFPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campchiefpirate"));
+    public static ResourceKey<DamageType> CAMP_ARCHERPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camparcherpirate"));
+
 }

@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
@@ -24,7 +25,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
+public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
 {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
@@ -111,10 +112,14 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
             arrowEntity.setBaseDamage(10);
         }
 
-        if (user.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
+        if (user instanceof AbstractEntityRaiderMob raiderMob)
         {
-            arrowEntity.setPierceLevel((byte) 2);
+            if (raiderMob.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
+            {
+                arrowEntity.setPierceLevel((byte) 2);
+            }
         }
+
 
         // Shoot arrow
         CombatUtils.shootArrow(arrowEntity, target, 10.0f);
@@ -143,7 +148,14 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     @Override
     protected double getAttackDistance()
     {
-        return MAX_ATTACK_DISTANCE * Math.max(user.getDifficulty(), 2.0d);
+        if (user instanceof AbstractEntityRaiderMob raiderMob)
+        {
+            return MAX_ATTACK_DISTANCE * Math.max(raiderMob.getDifficulty(), 2.0d);
+        }
+        else
+        {
+            return MAX_ATTACK_DISTANCE * 2;
+        }
     }
 
     @Override

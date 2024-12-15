@@ -1872,6 +1872,11 @@
   "item.minecolonies.amazonegg": "Amazon Spawn Egg",
   "item.minecolonies.amazonspearmanegg": "Amazon Spearman Spawn Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Leader Spawn Egg",
+
+  "item.minecolonies.mummyegg": "Mummy Spawn Egg",
+  "item.minecolonies.mummyarcheregg": "Archer Mummy Spawn Egg",
+  "item.minecolonies.pharaoegg": "Pharao Spawn Egg",
+
   "com.minecolonies.coremod.playerinvfull": "You can't pick up this item, as your inventory is full!",
   "com.minecolonies.coremod.playerinvfull.hotbarinsert": " was dropped in front of you, as your inventory is full!",
 

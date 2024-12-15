@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.render.mobs.barbarians;
 
-import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarianRaider;
 import com.minecolonies.core.client.render.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -15,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 /**
  * Abstract for rendering Barbarians.
  */
-public abstract class AbstractRendererBarbarian<T extends AbstractEntityBarbarian, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
+public abstract class AbstractRendererBarbarian<T extends AbstractEntityMinecoloniesMob, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
 {
     public AbstractRendererBarbarian(final EntityRendererProvider.Context context, final M modelBipedIn, final float shadowSize)
     {

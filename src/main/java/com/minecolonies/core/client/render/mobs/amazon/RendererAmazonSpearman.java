@@ -1,6 +1,8 @@
 package com.minecolonies.core.client.render.mobs.amazon;
 
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
+import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazonRaider;
 import com.minecolonies.core.client.model.raiders.ModelAmazonSpearman;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for spearman amazons.
  */
-public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonSpearman>
+public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntityMinecoloniesMob, ModelAmazonSpearman>
 {
     /**
      * Texture of the entity.
@@ -29,7 +31,7 @@ public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntit
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity)
+    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityMinecoloniesMob entity)
     {
         return TEXTURE;
     }

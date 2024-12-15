@@ -152,7 +152,7 @@ public final class RaiderMobUtils
      *
      * @param mob the equipment to set up.
      */
-    public static void setEquipment(final AbstractEntityRaiderMob mob)
+    public static void setEquipment(final AbstractEntityMinecoloniesMob mob)
     {
         if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
         {

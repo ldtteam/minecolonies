@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -23,7 +24,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for melee attacking a target
  */
-public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T>
+public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
 {
     /**
      * Extended reach based on difficulty
@@ -71,7 +72,14 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     @Override
     protected double getAttackDistance()
     {
-        return user.getDifficulty() < EXTENDED_REACH_DIFFICULTY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH;
+        if (user instanceof AbstractEntityRaiderMob raiderMob)
+        {
+            return raiderMob.getDifficulty() < EXTENDED_REACH_DIFFICULTY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH;
+        }
+        else
+        {
+            return MIN_DISTANCE_FOR_ATTACK;
+        }
     }
 
     @Override
@@ -83,8 +91,18 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation()
-                 .moveToXYZ(target.getX(), target.getY(), target.getZ(), user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
+        if (user instanceof AbstractEntityRaiderMob raiderMob)
+        {
+            return user.getNavigation()
+                    .moveToXYZ(target.getX(), target.getY(), target.getZ(), raiderMob.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
+
+        }
+        else
+        {
+            return user.getNavigation()
+                    .moveToXYZ(target.getX(), target.getY(), target.getZ(), BASE_COMBAT_SPEED);
+
+        }
     }
 
     @Override

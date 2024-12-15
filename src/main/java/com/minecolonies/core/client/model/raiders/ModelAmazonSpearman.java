@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.AmazonModel;
-import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
+import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazonRaider;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.builders.*;
 /**
  * General amazon model.
  */
-public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
+public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazonRaider>
 {
     /**
      * Create an instance of it.
