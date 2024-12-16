@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all raider entities.
  */
-public abstract class AbstractEntityRaiderMob extends AbstractEntityMinecoloniesMob implements IThreatTableEntity, Enemy
+public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMinecoloniesMonster implements IThreatTableEntity, Enemy
 {
     /**
      * The percent of life taken per damage modifier
@@ -158,9 +158,21 @@ public abstract class AbstractEntityRaiderMob extends AbstractEntityMinecolonies
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityRaiderMob(final EntityType<? extends AbstractEntityRaiderMob> type, final Level world)
+    public AbstractEntityMinecoloniesRaider(final EntityType<? extends AbstractEntityMinecoloniesRaider> type, final Level world)
     {
-        super(type, world);
+        this(type, world, 0);
+    }
+
+    /**
+     * Constructor method for Abstract Barbarians.
+     *
+     * @param world the world.
+     * @param type  the entity type.
+     * @param textureCount texture count.
+     */
+    public AbstractEntityMinecoloniesRaider(final EntityType<? extends AbstractEntityMinecoloniesRaider> type, final Level world, final int textureCount)
+    {
+        super(type, world, textureCount);
         this.setPersistenceRequired();
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);

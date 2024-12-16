@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.render.mobs.norsemen;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.render.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -16,7 +15,7 @@ import net.minecraft.world.InteractionHand;
 /**
  * Abstract for rendering amazons.
  */
-public abstract class AbstractRendererNorsemen<T extends AbstractEntityMinecoloniesMob, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
+public abstract class AbstractRendererNorsemen<T extends AbstractEntityMinecoloniesMonster, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
 {
     public AbstractRendererNorsemen(final EntityRendererProvider.Context context, final M modelBipedIn, final float shadowSize)
     {

@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptianRaider;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -45,10 +45,10 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptianRaider>
 
         PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
           CubeListBuilder.create()
-            .texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
-            .texOffs(44, 0).addBox(-5.5F, -0.2F, -2.5F, 11.0F, 5.0F, 5.0F, new CubeDeformation( 0.15F))
-            .texOffs(0, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation( 0.3F))
-            .texOffs(52, 11).addBox(-4.5F, 8.5F, -2.5F, 9.0F, 4.0F, 5.0F, new CubeDeformation(0.0F))
+            .texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror()
+            .texOffs(44, 0).addBox(-5.5F, -0.2F, -2.5F, 11.0F, 5.0F, 5.0F, new CubeDeformation( 0.15F)).mirror()
+            .texOffs(0, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation( 0.3F)).mirror()
+            .texOffs(52, 11).addBox(-4.5F, 8.5F, -2.5F, 9.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)).mirror()
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition bodyJewelDefinition = bodyDefinition.addOrReplaceChild("bodyJewel",
@@ -157,7 +157,7 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptianRaider>
     }
 
     @Override
-    public void setupAnim(AbstractEntityMinecoloniesMob entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(AbstractEntityMinecoloniesMonster entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         this.bodyGoldenStrip.xRot = -Math.max(this.rightLeg.xRot, this.leftLeg.xRot);

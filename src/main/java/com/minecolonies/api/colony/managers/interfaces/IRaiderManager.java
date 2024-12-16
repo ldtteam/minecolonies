@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
@@ -216,7 +216,7 @@ public interface IRaiderManager
      *
      * @param entity
      */
-    void onRaiderDeath(AbstractEntityRaiderMob entity);
+    void onRaiderDeath(AbstractEntityMinecoloniesRaider entity);
 
     void onRaidEventFinished(IColonyRaidEvent event);
 

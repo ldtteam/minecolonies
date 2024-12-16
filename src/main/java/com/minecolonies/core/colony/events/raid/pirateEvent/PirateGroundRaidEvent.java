@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.events.raid.pirateEvent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
 import com.minecolonies.core.entity.mobs.raider.pirates.EntityArcherPirateRaider;
@@ -62,7 +62,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
@@ -93,7 +93,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider))
         {
             return;
         }

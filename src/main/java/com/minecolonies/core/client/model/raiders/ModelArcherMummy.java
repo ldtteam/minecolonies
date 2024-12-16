@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptianRaider;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -107,7 +107,7 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptianRaider
     }
 
     @Override
-    public void setupAnim(AbstractEntityMinecoloniesMob entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(AbstractEntityMinecoloniesMonster entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         float f = 0.05F * Mth.sin((float) Math.PI * ageInTicks / 30.0F) % 2.0F;

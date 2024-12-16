@@ -1,7 +1,6 @@
 package com.minecolonies.core.client.render.mobs.norsemen;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelArcherNorsemen;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for archer amazons.
  */
-public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEntityMinecoloniesMob, ModelArcherNorsemen>
+public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEntityMinecoloniesMonster, ModelArcherNorsemen>
 {
     /**
      * Texture of the entity.
@@ -31,7 +30,7 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMob entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMonster entity)
     {
         if (entity.getTextureId() == 1)
         {

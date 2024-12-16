@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.amazons;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +14,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all egyptian entities.
  */
-public abstract class AbstractEntityAmazonRaider extends AbstractEntityRaiderMob
+public abstract class AbstractEntityAmazonRaider extends AbstractEntityMinecoloniesRaider
 {
     /**
      * Swim speed for amazons

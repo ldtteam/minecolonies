@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
@@ -1018,7 +1018,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void onRaiderDeath(final AbstractEntityRaiderMob entity)
+    public void onRaiderDeath(final AbstractEntityMinecoloniesRaider entity)
     {
         final RaidHistory last = getLastRaid();
         if (last != null)

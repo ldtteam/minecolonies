@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.mobs.drownedpirate;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
@@ -14,15 +14,13 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all drowned pirate entities.
  */
-public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityRaiderMob
+public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityMinecoloniesRaider
 {
     /**
      * Swim speed for pirates
@@ -47,8 +45,7 @@ public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityRa
      */
     public AbstractDrownedEntityPirateRaider(final EntityType<? extends AbstractDrownedEntityPirateRaider> type, final Level world)
     {
-        super(type, world);
-        this.textureId = new Random().nextInt(PIRATE_TEXTURES);
+        super(type, world, PIRATE_TEXTURES);
     }
 
     @Override
@@ -70,16 +67,6 @@ public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityRa
     public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
     {
         return true;
-    }
-
-    /**
-     * Get the unique texture id.
-     *
-     * @return the texture id.
-     */
-    public int getTextureId()
-    {
-        return this.textureId;
     }
 
     @NotNull

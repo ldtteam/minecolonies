@@ -3,8 +3,8 @@ package com.minecolonies.core.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.util.EntityUtils;
@@ -25,7 +25,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
+public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
 {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
@@ -112,7 +112,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
             arrowEntity.setBaseDamage(10);
         }
 
-        if (user instanceof AbstractEntityRaiderMob raiderMob)
+        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
         {
             if (raiderMob.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
             {
@@ -148,7 +148,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
     @Override
     protected double getAttackDistance()
     {
-        if (user instanceof AbstractEntityRaiderMob raiderMob)
+        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
         {
             return MAX_ATTACK_DISTANCE * Math.max(raiderMob.getDifficulty(), 2.0d);
         }

@@ -106,7 +106,7 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
             }
         }
 
-        return 0;
+        return -1;
     }
 
     /**
