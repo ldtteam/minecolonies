@@ -8,15 +8,10 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.ai.statemachine.states.IState;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -37,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
@@ -148,11 +142,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     private ChunkPos lastChunkPos = null;
 
     /**
-     * Raiders AI statemachine
-     */
-    private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e), ENTITY_AI_TICKRATE);
-
-    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
@@ -160,7 +149,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
      */
     public AbstractEntityMinecoloniesRaider(final EntityType<? extends AbstractEntityMinecoloniesRaider> type, final Level world)
     {
-        this(type, world, 0);
+        this(type, world, 1);
     }
 
     /**
@@ -324,12 +313,10 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
         }
         currentTick++;
 
-        if (isRegistered && tickCount % ENTITY_AI_TICKRATE == 0)
+        if (isRegistered)
         {
-            ai.tick();
+            super.aiStep();
         }
-
-        super.aiStep();
     }
 
     /**
@@ -536,16 +523,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     public double getDifficulty()
     {
         return difficulty;
-    }
-
-    /**
-     * Get the AI machine
-     *
-     * @return ai statemachine
-     */
-    public ITickRateStateMachine<IState> getAI()
-    {
-        return ai;
     }
 
     @Override
