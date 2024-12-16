@@ -298,7 +298,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
         {
             if (threatTable.getThreatFor(attacker) == -1)
             {
-                for (final AbstractEntityMinecoloniesMonster monster : level.getEntitiesOfClass(AbstractEntityMinecoloniesMonster.class, AABB.ofSize(position(), 10,10,10)))
+                for (final AbstractEntityMinecoloniesMonster monster : level.getEntitiesOfClass(AbstractEntityMinecoloniesMonster.class, AABB.ofSize(position(), 20,5,20)))
                 {
                     monster.threatTable.addThreat(attacker, 0);
                 }
