@@ -167,6 +167,12 @@ public class RaiderWalkAI implements IStateAI
             }
         }
 
+        if (randomPathResult == null)
+        {
+            return null;
+        }
+
+
         if (randomPathResult.isPathReachingDestination())
         {
             return randomPathResult.getPath().getEndNode().asBlockPos();
