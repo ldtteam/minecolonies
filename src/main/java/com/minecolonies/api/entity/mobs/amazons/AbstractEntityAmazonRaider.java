@@ -12,7 +12,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
- * Abstract for all egyptian entities.
+ * Abstract for all amazon entities.
  */
 public abstract class AbstractEntityAmazonRaider extends AbstractEntityMinecoloniesRaider
 {
@@ -22,7 +22,7 @@ public abstract class AbstractEntityAmazonRaider extends AbstractEntityMinecolon
     private static final double AMAZON_SWIM_BONUS = 1.9;
 
     /**
-     * Constructor method for Abstract egyptian.
+     * Constructor method for Abstract amazon.
      *
      * @param type  the type.
      * @param world the world.

@@ -40,7 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
- * Abstract for all raider entities.
+ * Abstract for all villain entities.
  */
 public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMinecoloniesEntity implements IThreatTableEntity, Enemy
 {

@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityNorsemenRaider extends AbstractEntityMinecoloniesRaider
 {
     /**
-     * Swim speed for pirates
+     * Swim speed for norsemen
      */
     private static final double PIRATE_SWIM_BONUS = 2.3;
 
@@ -29,7 +29,7 @@ public abstract class AbstractEntityNorsemenRaider extends AbstractEntityMinecol
     private static final int NORSEMEN_TEXTURES = 3;
 
     /**
-     * Constructor method for Abstract norsemen..
+     * Constructor method for Abstract norsemen.
      *
      * @param type  the type.
      * @param world the world.
