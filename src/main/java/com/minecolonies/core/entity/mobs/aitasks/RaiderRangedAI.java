@@ -112,14 +112,10 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThrea
             arrowEntity.setBaseDamage(10);
         }
 
-        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
+        if (user.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
         {
-            if (raiderMob.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
-            {
-                arrowEntity.setPierceLevel((byte) 2);
-            }
+            arrowEntity.setPierceLevel((byte) 2);
         }
-
 
         // Shoot arrow
         CombatUtils.shootArrow(arrowEntity, target, 10.0f);
@@ -148,14 +144,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThrea
     @Override
     protected double getAttackDistance()
     {
-        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
-        {
-            return MAX_ATTACK_DISTANCE * Math.max(raiderMob.getDifficulty(), 2.0d);
-        }
-        else
-        {
-            return MAX_ATTACK_DISTANCE * 2;
-        }
+        return MAX_ATTACK_DISTANCE * Math.max(user.getDifficulty(), 2.0d);
     }
 
     @Override

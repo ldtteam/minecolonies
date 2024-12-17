@@ -515,11 +515,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
         }
     }
 
-    /**
-     * Get the mobs difficulty
-     *
-     * @return difficulty
-     */
+    @Override
     public double getDifficulty()
     {
         return difficulty;

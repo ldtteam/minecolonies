@@ -400,4 +400,14 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
     {
         return this.spawnPos;
     }
+
+    /**
+     * Get the mobs difficulty
+     *
+     * @return difficulty
+     */
+    public double getDifficulty()
+    {
+        return 1;
+    }
 }

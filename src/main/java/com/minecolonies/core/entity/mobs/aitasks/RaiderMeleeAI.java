@@ -72,14 +72,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreat
     @Override
     protected double getAttackDistance()
     {
-        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
-        {
-            return raiderMob.getDifficulty() < EXTENDED_REACH_DIFFICULTY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH;
-        }
-        else
-        {
-            return MIN_DISTANCE_FOR_ATTACK;
-        }
+        return user.getDifficulty() < EXTENDED_REACH_DIFFICULTY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH;
     }
 
     @Override
@@ -91,18 +84,8 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreat
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        if (user instanceof AbstractEntityMinecoloniesRaider raiderMob)
-        {
-            return user.getNavigation()
-                    .moveToXYZ(target.getX(), target.getY(), target.getZ(), raiderMob.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
-
-        }
-        else
-        {
-            return user.getNavigation()
-                    .moveToXYZ(target.getX(), target.getY(), target.getZ(), BASE_COMBAT_SPEED);
-
-        }
+        return user.getNavigation()
+            .moveToXYZ(target.getX(), target.getY(), target.getZ(), user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
     }
 
     @Override
