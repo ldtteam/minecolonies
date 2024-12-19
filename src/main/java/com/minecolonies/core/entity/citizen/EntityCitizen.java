@@ -783,19 +783,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean updateVisualData()
     {
-        final ItemStack hat = getItemBySlot(EquipmentSlot.HEAD);
-        if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
-              && MineColonies.getConfig().getServer().holidayFeatures.get())
-        {
-            if (hat.isEmpty())
-            {
-                this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.santaHat));
-            }
-        }
-        else if (!hat.isEmpty() && hat.getItem() == ModItems.santaHat)
-        {
-            this.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-        }
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
 
         if (!citizenColonyHandler.getColonyOrRegister().getTextureStyleId().equals(getEntityData().get(DATA_STYLE)))

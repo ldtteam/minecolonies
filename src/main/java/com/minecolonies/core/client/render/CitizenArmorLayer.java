@@ -2,8 +2,9 @@ package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.core.MineColonies;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -20,35 +21,30 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.WalkAnimationState;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.level.block.AbstractSkullBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends HumanoidArmorLayer<T, M, A>
 {
     private final Map<SkullBlock.Type, SkullModelBase> skullModels;
     private final Map<UUID, GameProfile> gameProfileMap = new HashMap<>();
+    public static ItemStack christmasStack = null;
 
     public CitizenArmorLayer(RenderLayerParent<T, M> parentLayer, A innerModel, A outerModel, ModelManager modelManager, final EntityModelSet modelSet)
     {
@@ -133,7 +129,26 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
         ItemStack itemstack = citizenDataView.getInventory().getArmorInSlot(equipmentSlot);
         if (itemstack.isEmpty())
         {
-            itemstack = citizen.getItemBySlot(equipmentSlot);
+            if (christmasStack == null)
+            {
+                if (MineColonies.getConfig().getServer().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
+                {
+                    christmasStack = new ItemStack(ModItems.santaHat);
+                }
+                else
+                {
+                    christmasStack = ItemStack.EMPTY;
+                }
+            }
+
+            if (christmasStack != ItemStack.EMPTY && equipmentSlot == EquipmentSlot.HEAD)
+            {
+                itemstack = christmasStack;
+            }
+            else
+            {
+                itemstack = citizen.getItemBySlot(equipmentSlot);
+            }
         }
         Item armorItem = itemstack.getItem();
 

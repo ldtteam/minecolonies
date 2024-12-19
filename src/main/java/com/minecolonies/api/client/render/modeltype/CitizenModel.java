@@ -9,7 +9,10 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.core.client.render.CitizenArmorLayer.christmasStack;
 
 /**
  * Citizen model.
@@ -86,6 +89,10 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
     public boolean displayHat(final AbstractEntityCitizen citizen)
     {
         if (citizen.getPose() == Pose.SLEEPING || !citizen.getItemBySlot(EquipmentSlot.HEAD).isEmpty())
+        {
+            return false;
+        }
+        if (christmasStack != ItemStack.EMPTY && christmasStack != null)
         {
             return false;
         }
