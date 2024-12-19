@@ -53,7 +53,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * Santa Hat.
      */
-    private static ItemStack displaySantaHat = null;
+    private static ItemStack cachedDisplaySantaHat = null;
 
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
 
@@ -630,27 +630,24 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public ItemStack getDisplayArmor(final EquipmentSlot equipmentSlot)
     {
-        if (displaySantaHat == null)
+        if (cachedDisplaySantaHat == null)
         {
             if (MineColonies.getConfig().getServer().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
             {
-                displaySantaHat = new ItemStack(ModItems.santaHat);
+                cachedDisplaySantaHat = new ItemStack(ModItems.santaHat);
             }
             else
             {
-                displaySantaHat = ItemStack.EMPTY;
+                cachedDisplaySantaHat = ItemStack.EMPTY;
             }
         }
 
         final ItemStack currentHat = getInventory().getArmorInSlot(equipmentSlot);
-        if (!currentHat.isEmpty())
+        if (currentHat.isEmpty() && cachedDisplaySantaHat != null && cachedDisplaySantaHat != ItemStack.EMPTY && equipmentSlot == EquipmentSlot.HEAD)
         {
-            return currentHat;
+            return cachedDisplaySantaHat;
         }
-        if (displaySantaHat != ItemStack.EMPTY && equipmentSlot == EquipmentSlot.HEAD)
-        {
-            return displaySantaHat;
-        }
-        return getInventory().getArmorInSlot(equipmentSlot);
+
+        return currentHat;
     }
 }
