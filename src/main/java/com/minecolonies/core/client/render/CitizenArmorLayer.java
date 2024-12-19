@@ -2,8 +2,6 @@ package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.ModItems;
-import com.minecolonies.core.MineColonies;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -32,9 +30,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -44,7 +39,6 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
 {
     private final Map<SkullBlock.Type, SkullModelBase> skullModels;
     private final Map<UUID, GameProfile> gameProfileMap = new HashMap<>();
-    public static ItemStack christmasStack = null;
 
     public CitizenArmorLayer(RenderLayerParent<T, M> parentLayer, A innerModel, A outerModel, ModelManager modelManager, final EntityModelSet modelSet)
     {
@@ -126,29 +120,10 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
 
     private void renderArmorPiece(PoseStack poseStack, MultiBufferSource bufferSource, T citizen, EquipmentSlot equipmentSlot, int light, A armor, final ICitizenDataView citizenDataView)
     {
-        ItemStack itemstack = citizenDataView.getInventory().getArmorInSlot(equipmentSlot);
+        ItemStack itemstack = citizenDataView.getDisplayArmor(equipmentSlot);
         if (itemstack.isEmpty())
         {
-            if (christmasStack == null)
-            {
-                if (MineColonies.getConfig().getServer().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
-                {
-                    christmasStack = new ItemStack(ModItems.santaHat);
-                }
-                else
-                {
-                    christmasStack = ItemStack.EMPTY;
-                }
-            }
-
-            if (christmasStack != ItemStack.EMPTY && equipmentSlot == EquipmentSlot.HEAD)
-            {
-                itemstack = christmasStack;
-            }
-            else
-            {
-                itemstack = citizen.getItemBySlot(equipmentSlot);
-            }
+            itemstack = citizen.getItemBySlot(equipmentSlot);
         }
         Item armorItem = itemstack.getItem();
 

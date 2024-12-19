@@ -12,8 +12,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.client.render.CitizenArmorLayer.christmasStack;
-
 /**
  * Citizen model.
  */
@@ -92,10 +90,7 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             return false;
         }
-        if (christmasStack != ItemStack.EMPTY && christmasStack != null)
-        {
-            return false;
-        }
-        return citizen.getCitizenDataView() == null || (citizen.getCitizenDataView().getInventory().getArmorInSlot(EquipmentSlot.HEAD).isEmpty() && citizen.getCitizenDataView().getCustomTextureUUID() == null);
+
+        return citizen.getCitizenDataView() == null || (citizen.getCitizenDataView().getDisplayArmor(EquipmentSlot.HEAD).isEmpty() && citizen.getCitizenDataView().getCustomTextureUUID() == null);
     }
 }
