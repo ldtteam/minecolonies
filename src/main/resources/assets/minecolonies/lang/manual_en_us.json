@@ -1842,11 +1842,13 @@
   "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow",
   "entity.amazonspearman": "Amazon Spearman",
   "entity.minecolonies.amazonspearman": "Amazon Spearman",
-  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear",
-  "death.attack.entity.minecolonies.spear": "%s was perforated by a spear",
+
   "entity.amazonchief": "Amazon Leader",
   "entity.minecolonies.amazonchief": "Amazon Leader",
   "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader",
+  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear",
+  "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow",
+  "death.attack.entity.minecolonies.spear": "%s was perforated by a spear",
 
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
@@ -2770,5 +2772,72 @@
 
   "com.minecolonies.coremod.diseases.influenza": "Influenza",
   "com.minecolonies.coremod.diseases.measles": "Measles",
-  "com.minecolonies.coremod.diseases.smallpox": "Smallpox"
+  "com.minecolonies.coremod.diseases.smallpox": "Smallpox",
+
+  "entity.campamazon": "Amazon",
+  "entity.acampmazonspearman": "Amazon Spearman",
+  "entity.campamazonchief": "Amazon Leader",
+
+  "entity.minecolonies.campamazon": "Amazon",
+  "entity.minecolonies.campamazonspearman": "Amazon Spearman",
+  "entity.minecolonies.campamazonchief": "Amazon Leader",
+
+  "entity.minecolonies.campnorsemenchief": "Chief Norseman",
+  "entity.minecolonies.campnorsemenarcher": "Archer Norseman",
+  "entity.minecolonies.campshieldmaiden": "Shieldmaiden",
+
+  "entity.campnorsemenchief": "Chief Norseman",
+  "entity.campnorsemenarcher": "Archer Norseman",
+  "entity.campshieldmaiden": "Shieldmaiden",
+
+  "entity.campbarbarian": "Barbarian",
+  "entity.camparcherbarbarian": "Archer Barbarian",
+  "entity.campchiefbarbarian": "Chief Barbarian",
+
+  "entity.minecolonies.campbarbarian": "Barbarian",
+  "entity.minecolonies.camparcherbarbarian": "Archer Barbarian",
+  "entity.minecolonies.campchiefbarbarian": "Chief Barbarian",
+
+  "entity.camppirate": "Pirate",
+  "entity.camparcherpirate": "Archer Pirate",
+  "entity.campchiefpirate": "Pirate Captain",
+
+  "entity.minecolonies.camppirate": "Pirate",
+  "entity.minecolonies.camparcherpirate": "Archer Pirate",
+  "entity.minecolonies.campchiefpirate": "Pirate Captain",
+
+  "entity.campmummy": "Mummy",
+  "entity.camparchermummy": "Archer Mummy",
+  "entity.camppharao": "Pharaoh",
+
+  "entity.minecolonies.campmummy": "Mummy",
+  "entity.minecolonies.camparchermummy": "Archer Mummy",
+  "entity.minecolonies.camppharao": "Pharaoh",
+
+  "entity.minecolonies.campdrownedpirate": "Drowned Pirate",
+  "entity.minecolonies.campdrownedarcherpirate": "Drowned Pirate Archer",
+  "entity.minecolonies.campdrownedchiefpirate": "Drowned Pirate Chief",
+
+  "entity.campdrownedpirate": "Drowned Pirate",
+  "entity.campdrownedarcherpirate": "Drowned Pirate Archer",
+  "entity.campdrownedchiefpirate": "Drowned Pirate Chief",
+
+  "death.attack.entity.minecolonies.campbarbarian": "%s was sliced and diced by a Barbarian",
+  "death.attack.entity.minecolonies.campchiefbarbarian": "%s was macerated by a Great Chief",
+  "death.attack.entity.minecolonies.camparcherbarbarian": "%s was ravaged by an Archer Barbarian",
+  "death.attack.entity.minecolonies.camppirate": "%s was sliced and diced by a Pirate",
+  "death.attack.entity.minecolonies.campchiefpirate": "%s was macerated by a Pirate Captain",
+  "death.attack.entity.minecolonies.camparcherpirate": "%s was ravaged by an Archer Pirate",
+  "death.attack.entity.minecolonies.campmummy": "%s was scared to death by a Mummy",
+  "death.attack.entity.minecolonies.camppharao": "%s was put to sleep by a Pharaoh",
+  "death.attack.entity.minecolonies.camparchermummy": "%s was pierced by a Mummy's deadly glare",
+  "death.attack.entity.minecolonies.campamazonchief": "%s was expelled by the great Amazon Leader",
+  "death.attack.entity.minecolonies.campamazonspearman": "%s was pierced by an Amazon's spear",
+  "death.attack.entity.minecolonies.campamazon": "%s was pierced by an Amazon's arrow",
+  "death.attack.entity.minecolonies.campnorsemenchief": "%s was grounded by the great Viking Chief",
+  "death.attack.entity.minecolonies.campnorsemenarcher": "%s was hit by an Archer Viking",
+  "death.attack.entity.minecolonies.campshieldmaiden": "%s was crushed by a Shieldmaiden",
+  "death.attack.entity.minecolonies.campdrownedpirate": "%s was taken to the depths by a drowned Pirate",
+  "death.attack.entity.minecolonies.campdrownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
+  "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief"
 }

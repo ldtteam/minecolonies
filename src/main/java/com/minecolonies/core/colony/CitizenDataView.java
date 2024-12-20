@@ -632,7 +632,7 @@ public class CitizenDataView implements ICitizenDataView
     {
         if (cachedDisplaySantaHat == null)
         {
-            if (MineColonies.getConfig().getServer().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
+            if (MineColonies.getConfig().getClient().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
             {
                 cachedDisplaySantaHat = new ItemStack(ModItems.santaHat);
             }

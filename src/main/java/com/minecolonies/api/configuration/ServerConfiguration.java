@@ -26,7 +26,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
-    public final ForgeConfigSpec.BooleanValue holidayFeatures;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -132,7 +131,6 @@ public class ServerConfiguration extends AbstractConfiguration
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
         workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
-        holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);

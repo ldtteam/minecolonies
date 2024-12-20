@@ -20,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
@@ -178,15 +177,12 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
             this.navigation = newNavigator;
             this.newNavigator.setCanFloat(true);
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
-            this.newNavigator.getPathingOptions().setEnterDoors(true);
+            newNavigator.getPathingOptions().setEnterDoors(true);
+            newNavigator.getPathingOptions().setCanOpenDoors(true);
             newNavigator.getPathingOptions().withDropCost(1D);
             newNavigator.getPathingOptions().withJumpCost(1D);
             newNavigator.getPathingOptions().setPassDanger(true);
-            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
-              .withTakeDamageOnStuck(0.4f)
-              .withBuildLeafBridges()
-              .withChanceToByPassMovingAway(0.20)
-              .withPlaceLadders();
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler();
 
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
             {

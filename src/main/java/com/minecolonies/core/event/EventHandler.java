@@ -745,7 +745,7 @@ public class EventHandler
 
         // Global events
         // Halloween ghost mode
-        if (event.getLevel().isClientSide() && MineColonies.getConfig().getServer().holidayFeatures.get() &&
+        if (event.getLevel().isClientSide() && MineColonies.getConfig().getClient().holidayFeatures.get() &&
               (LocalDateTime.now().getDayOfMonth() == 31 && LocalDateTime.now().getMonth() == Month.OCTOBER
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
