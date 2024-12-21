@@ -29,10 +29,10 @@ import com.minecolonies.core.colony.fields.FarmField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFarmer;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.network.messages.client.CompostParticleMessage;
 import com.minecolonies.core.util.AdvancementUtils;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -66,8 +66,8 @@ import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
@@ -338,7 +338,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return FARMER_PLANT;
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return PREPARING;
         }
@@ -520,7 +520,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 final BlockPos position = farmField.getPosition().below().south(workingOffset.getZ()).east(workingOffset.getX());
 
                 // Still moving to the block
-                if (walkToBlock(position.above()))
+                if (!walkToSafePos(position.above()))
                 {
                     return getState();
                 }

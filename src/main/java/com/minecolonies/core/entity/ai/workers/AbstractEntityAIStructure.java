@@ -323,16 +323,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param currentBlock the current block it is working on.
      * @return true while walking to the site.
      */
-    public boolean walkToConstructionSite(final BlockPos currentBlock)
-    {
-        if (workFrom == null)
-        {
-            workFrom = getWorkingPosition(currentBlock);
-        }
-
-        //The miner shouldn't search for a save position. Just let him build from where he currently is.
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.blockPosition(), workFrom) < MIN_WORKING_RANGE;
-    }
+    public abstract boolean walkToConstructionSite(final BlockPos currentBlock);
 
     /**
      * Checks for blocks that need to be treated as deco

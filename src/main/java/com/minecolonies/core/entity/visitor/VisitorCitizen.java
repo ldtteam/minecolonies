@@ -5,10 +5,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.*;
@@ -24,9 +22,11 @@ import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityInteractGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenInventoryHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenJobHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSleepHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
-import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
@@ -78,10 +78,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * It's citizen Id.
      */
     private int          citizenId = 0;
-    /**
-     * The Walk to proxy (Shortest path through intermediate blocks).
-     */
-    private IWalkToProxy proxy;
     /**
      * Reference to the data representation inside the colony.
      */
@@ -200,23 +196,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         return false;
     }
 
-    /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    @Override
-    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
-    {
-        if (proxy == null)
-        {
-            proxy = new EntityCitizenWalkToProxy(this);
-        }
-        return proxy.walkToBlock(site, range, true);
-    }
-
     @Nullable
     @Override
     public ICitizenData getCitizenData()
@@ -281,12 +260,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void playMoveAwaySound()
     {
 
-    }
-
-    @Override
-    public IWalkToProxy getProxy()
-    {
-        return proxy;
     }
 
     @Override

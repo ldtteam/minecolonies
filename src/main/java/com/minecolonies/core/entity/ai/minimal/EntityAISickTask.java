@@ -16,9 +16,9 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
-import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -113,7 +113,7 @@ public class EntityAISickTask implements IStateAI
     /**
      * Restaurant to which the citizen should path.
      */
-    private BlockPos placeToPath;
+    private BlockPos bestHospital;
 
     /**
      * Instantiates this task.
@@ -158,7 +158,7 @@ public class EntityAISickTask implements IStateAI
      */
     public DiseaseState wander()
     {
-        citizen.getNavigation().moveToRandomPos(10, 0.6D);
+        EntityNavigationUtils.walkToRandomPos(citizen, 10, 0.6D);
         return CHECK_FOR_CURE;
     }
 
@@ -214,7 +214,7 @@ public class EntityAISickTask implements IStateAI
                 }
             }
 
-            if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
+            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, hospital, 3))
             {
                 waitingTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
@@ -318,9 +318,9 @@ public class EntityAISickTask implements IStateAI
     private IState waitForCure()
     {
         final IColony colony = citizenData.getColony();
-        placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        bestHospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
-        if (placeToPath == null)
+        if (bestHospital == null)
         {
             return SEARCH_HOSPITAL;
         }
@@ -355,7 +355,7 @@ public class EntityAISickTask implements IStateAI
             }
         }
 
-        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.blockPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
+        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(bestHospital, citizen.blockPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
         {
             return GO_TO_HOSPITAL;
         }
@@ -383,7 +383,7 @@ public class EntityAISickTask implements IStateAI
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DIST_TO_HUT))
+        if (citizen.getCitizenSleepHandler().isAsleep() || EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
         {
             return SEARCH_HOSPITAL;
         }
@@ -398,12 +398,12 @@ public class EntityAISickTask implements IStateAI
     private IState goToHospital()
     {
         citizen.getCitizenData().getCitizenDiseaseHandler().setSleepsAtHospital(false);
-        if (placeToPath == null)
+        if (bestHospital == null)
         {
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigation().isDone() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
+        if (citizen.getCitizenSleepHandler().isAsleep() || EntityNavigationUtils.walkToPos(citizen, bestHospital, MIN_DIST_TO_HOSPITAL, true))
         {
             return WAIT_FOR_CURE;
         }
@@ -419,9 +419,9 @@ public class EntityAISickTask implements IStateAI
     {
         final IColony colony = citizenData.getColony();
         final Disease disease = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
-        placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        bestHospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
-        if (placeToPath == null)
+        if (bestHospital == null)
         {
             if (disease == null)
             {
@@ -485,7 +485,7 @@ public class EntityAISickTask implements IStateAI
         citizen.releaseUsingItem();
         citizen.stopUsingItem();
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        placeToPath = null;
+        bestHospital = null;
         citizen.getCitizenData().getCitizenDiseaseHandler().setSleepsAtHospital(false);
     }
 

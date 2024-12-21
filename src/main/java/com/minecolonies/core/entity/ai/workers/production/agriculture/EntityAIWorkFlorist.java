@@ -153,7 +153,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), building.getPosition());
-        if (distance > MAX_DISTANCE && walkToBuilding())
+        if (distance > MAX_DISTANCE && !walkToBuilding())
         {
             return DECIDE;
         }
@@ -209,7 +209,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
 
         worker.getCitizenData().setVisibleStatus(GARDENING);
 
-        if (walkToBlock(compostPosition))
+        if (!walkToWorkPos(compostPosition))
         {
             return getState();
         }
@@ -251,7 +251,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
 
         worker.getCitizenData().setVisibleStatus(GARDENING);
 
-        if (walkToBlock(harvestPosition))
+        if (!walkToWorkPos(harvestPosition))
         {
             return getState();
         }

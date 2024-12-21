@@ -17,8 +17,8 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.core.colony.jobs.JobComposter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.tileentities.TileEntityBarrel;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -135,7 +135,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState getMaterials()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(2);
             return getState();
@@ -201,7 +201,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(2);
             return getState();
@@ -264,7 +264,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                 return GET_MATERIALS;
             }
         }
-        if (walkToBlock(currentTarget))
+        if (!walkToWorkPos(currentTarget))
         {
             setDelay(2);
             return getState();
@@ -295,7 +295,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private IAIState harvestBarrels()
     {
 
-        if (walkToBlock(currentTarget))
+        if (!walkToWorkPos(currentTarget))
         {
             setDelay(2);
             return getState();

@@ -14,7 +14,6 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
@@ -555,15 +554,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ILocation getLocation();
 
     /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    public abstract boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range);
-
-    /**
      * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
@@ -592,13 +582,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Play move away sound when running from an entity.
      */
     public abstract void playMoveAwaySound();
-
-    /**
-     * Get the path proxy of the citizen.
-     *
-     * @return the proxy.
-     */
-    public abstract IWalkToProxy getProxy();
 
     /**
      * Decrease the saturation of the citizen for 1 action.

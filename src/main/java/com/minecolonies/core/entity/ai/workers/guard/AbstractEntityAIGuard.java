@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -23,14 +22,15 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
-import com.minecolonies.core.colony.buildings.modules.MinerLevelManagementModule;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
@@ -49,7 +49,8 @@ import java.util.Random;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.GuardConstants.GUARD_FOLLOW_LOSE_RANGE;
+import static com.minecolonies.api.util.constant.GuardConstants.GUARD_FOLLOW_TIGHT_RANGE;
 import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 
 /**
@@ -249,7 +250,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         // Move into range
         if (BlockPosUtil.getDistanceSquared(sleepingCitizen.blockPosition(), worker.blockPosition()) > 2.25)
         {
-            worker.getNavigation().moveToLivingEntity(sleepingCitizen, 1.0);
+            walkToUnSafePos(sleepingCitizen.blockPosition());
         }
         else
         {
@@ -402,7 +403,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return GUARD_FLEE;
         }
@@ -426,7 +427,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public void guardMovement()
     {
-        worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
+        walkToSafePos(buildingGuards.getGuardPos());
     }
 
     /**
@@ -442,14 +443,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return null;
         }
 
-        if (buildingGuards.isTightGrouping())
-        {
-            worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_TIGHT_RANGE);
-        }
-        else
-        {
-            worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
-        }
+        walkToUnSafePos(buildingGuards.getPositionToFollow(), buildingGuards.isTightGrouping() ? GUARD_FOLLOW_TIGHT_RANGE : GUARD_FOLLOW_LOSE_RANGE);
         return null;
     }
 
@@ -467,7 +461,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private IAIState rally(final ILocation location)
     {
         final ICitizenData citizenData = worker.getCitizenData();
-        if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
+        if (!walkToUnSafePos(location.getInDimensionLocation()
                                              .offset(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                                0,
                                                randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
@@ -508,20 +502,21 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (buildingGuards.requiresManualTarget())
         {
-            if (currentPatrolPoint == null || worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3))
+            if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
             {
+                currentPatrolPoint = null;
+                if (!EntityNavigationUtils.walkToRandomPos(worker, 20, 1.0))
+                {
+                    return getState();
+                }
+
                 if (worker.getRandom().nextInt(5) <= 1)
                 {
                     currentPatrolPoint = buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
-                }
-                else
-                {
-                    currentPatrolPoint = findRandomPositionToWalkTo(20);
-                }
-
-                if (currentPatrolPoint != null)
-                {
-                    setNextPatrolTarget(currentPatrolPoint);
+                    if (currentPatrolPoint != null)
+                    {
+                        walkToSafePos(currentPatrolPoint);
+                    }
                 }
             }
         }
@@ -532,7 +527,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
             }
 
-            if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
+            if (currentPatrolPoint != null && (walkToSafePos(currentPatrolPoint)))
             {
                 buildingGuards.arrivedAtPatrolPoint(worker);
             }
@@ -551,7 +546,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             return PREPARING;
         }
-        if (currentPatrolPoint == null || worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
+        if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
         {
             final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
             if (building != null)
@@ -559,7 +554,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 if (building instanceof BuildingMiner)
                 {
                     final BuildingMiner buildingMiner = (BuildingMiner) building;
-                    final MinerLevel level = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel();
+                    final MinerLevel level = buildingMiner.getModule(BuildingModules.MINER_LEVELS).getCurrentLevel();
                     if (level == null)
                     {
                         setNextPatrolTarget(buildingMiner.getPosition());
@@ -571,12 +566,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
                 else
                 {
-                    buildingGuards.getFirstModuleOccurance(ISettingsModule.class).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
+                    buildingGuards.getModule(BuildingModules.GUARD_SETTINGS).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
                 }
             }
             else
             {
-                buildingGuards.getFirstModuleOccurance(ISettingsModule.class).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
+                buildingGuards.getModule(BuildingModules.GUARD_SETTINGS).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
             }
         }
         return null;

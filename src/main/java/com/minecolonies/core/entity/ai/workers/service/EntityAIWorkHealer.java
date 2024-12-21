@@ -10,7 +10,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -21,9 +24,9 @@ import com.minecolonies.core.entity.ai.workers.util.Patient;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +103,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      */
     private IAIState decide()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return DECIDE;
         }
@@ -252,7 +255,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(citizen.blockPosition()))
+        if (!walkToSafePos(citizen.blockPosition()))
         {
             return REQUEST_CURE;
         }
@@ -322,7 +325,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(data.getEntity().get().blockPosition()))
+        if (!walkToSafePos(data.getEntity().get().blockPosition()))
         {
             return CURE;
         }
@@ -400,7 +403,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final EntityCitizen citizen = (EntityCitizen) data.getEntity().get();
-        if (walkToBlock(citizen.blockPosition()))
+        if (!walkToSafePos(citizen.blockPosition()))
         {
             progressTicks = 0;
             return FREE_CURE;
@@ -446,7 +449,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        if (walkToBlock(playerToHeal.blockPosition()))
+        if (!walkToUnSafePos(playerToHeal.blockPosition()))
         {
             return getState();
         }
@@ -476,7 +479,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         final EntityCitizen citizen = (EntityCitizen) remotePatient.getEntity().get();
-        if (walkToBlock(remotePatient.getEntity().get().blockPosition()))
+        if (!walkToUnSafePos(remotePatient.getEntity().get().blockPosition()))
         {
             return getState();
         }

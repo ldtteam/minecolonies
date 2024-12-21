@@ -180,7 +180,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     public IAIState startWorking()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -393,7 +393,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -426,7 +426,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -468,7 +468,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }

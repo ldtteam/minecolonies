@@ -4,7 +4,6 @@ import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.util.EntityUtils;
@@ -12,6 +11,7 @@ import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.CustomArrowEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -185,7 +185,8 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThrea
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation().moveToXYZ(target.getX(), target.getY(), target.getZ(), COMBAT_MOVEMENT_SPEED);
+        EntityNavigationUtils.walkToPos(user, target.blockPosition(), (int) getAttackDistance(), false, COMBAT_MOVEMENT_SPEED);
+        return user.getNavigation().getPathResult();
     }
 
     @Override

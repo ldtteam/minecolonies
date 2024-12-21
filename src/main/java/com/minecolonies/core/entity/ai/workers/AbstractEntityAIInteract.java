@@ -8,8 +8,8 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.jobs.AbstractJob;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -91,16 +91,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     @Nullable
     private List<BlockPos> items;
-
-    /**
-     * The current path to the random position
-     */
-    private PathResult pathResult;
-
-    /**
-     * The backup factor of the path.
-     */
-    protected int pathBackupFactor = 1;
 
     /**
      * Block mining delay base
@@ -297,7 +287,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             return true;
         }
 
-        if (safeStand != null && walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.blockPosition(), safeStand) > MIN_WORKING_RANGE)
+        if (safeStand != null && walkWithProxy(safeStand) && MathUtils.twoDimDistance(worker.blockPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
         }
@@ -400,7 +390,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         if (worker.getNavigation().isDone() || worker.getNavigation().getPath() == null)
         {
             final BlockPos pos = getAndRemoveClosestItemPosition();
-            worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
+            EntityNavigationUtils.walkToPos(worker, pos, 2, false);
             return;
         }
 
@@ -447,83 +437,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
 
         return items.remove(index);
-    }
-
-    /**
-     * Search for a random position to go to, anchored around the citizen.
-     *
-     * @param range the max range
-     * @return null until position was found.
-     */
-    protected BlockPos findRandomPositionToWalkTo(final int range)
-    {
-        return findRandomPositionToWalkTo(range, worker.blockPosition());
-    }
-
-    /**
-     * Search for a random position to go to.
-     *
-     * @param range the max range
-     * @param pos   position we want to find a random position around in the given range
-     * @return null until position was found.
-     */
-    protected BlockPos findRandomPositionToWalkTo(final int range, final BlockPos pos)
-    {
-        if (pathResult == null)
-        {
-            pathBackupFactor = 1;
-            pathResult = getRandomNavigationPath(range, pos);
-        }
-        else if (pathResult.failedToReachDestination())
-        {
-            pathBackupFactor++;
-            pathResult = getRandomNavigationPath(range * pathBackupFactor, pos);
-        }
-
-        if (pathResult == null)
-        {
-            return null;
-        }
-
-        if (pathResult.isPathReachingDestination())
-        {
-            final BlockPos resultPos = pathResult.getPath().getEndNode().asBlockPos();
-            pathResult = null;
-            return resultPos;
-        }
-
-        if (pathResult.isCancelled())
-        {
-            pathResult = null;
-            return null;
-        }
-
-        if (pathBackupFactor > 10)
-        {
-            pathResult = null;
-            return null;
-        }
-
-        return null;
-    }
-
-    /**
-     * Get a navigator to find a certain position.
-     *
-     * @param range the max range.
-     * @param pos   the position to
-     * @return the navigator.
-     */
-    protected PathResult getRandomNavigationPath(final int range, final BlockPos pos)
-    {
-        if (pos == null || pos == worker.blockPosition())
-        {
-            return worker.getNavigation().moveToRandomPos(range, 1.0D);
-        }
-        else
-        {
-            return worker.getNavigation().moveToRandomPosAroundX(range, 1.0D, pos);
-        }
     }
 
     /**

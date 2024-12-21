@@ -14,7 +14,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.FieldsModule;
@@ -166,7 +165,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PLANTATION_PICK_FIELD;
         }
 
-        if (walkToBlock(currentPlantationField.getPosition(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY))
+        if (!walkToSafePos(currentPlantationField.getPosition()))
         {
             return getState();
         }
@@ -208,7 +207,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private IAIState workField()
     {
         IPlantationModule planterModule = activeModuleResult.getModule();
-        if (!Objects.isNull(activeModuleResult.getActionPosition()) && walkToBlock(planterModule.getPositionToWalkTo(world, activeModuleResult.getActionPosition())))
+        if (!Objects.isNull(activeModuleResult.getActionPosition()) && !walkToSafePos(planterModule.getPositionToWalkTo(world, activeModuleResult.getActionPosition())))
         {
             return PLANTATION_WORK_FIELD;
         }
@@ -263,7 +262,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IAIState returnToBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

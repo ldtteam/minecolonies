@@ -2,12 +2,9 @@ package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,11 +12,17 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobDruid;
-import com.minecolonies.core.entity.other.DruidPotionEntity;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.DruidPotionEntity;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.pathjobs.*;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -114,7 +117,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             if (user.getRandom().nextInt(FLEE_CHANCE) == 0 &&
                   !((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
             {
-                user.getNavigation().moveAwayFromLivingEntity(target, getAttackDistance() / 2.0, getCombatMovementSpeed());
+                EntityNavigationUtils.walkAwayFrom(user, target.blockPosition(), (int) (getAttackDistance() / 2.0), getCombatMovementSpeed());
             }
         }
         else

@@ -6,13 +6,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.MessageUtils;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.TicketType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
@@ -51,6 +51,7 @@ public final class TeleportHelper
             citizen.getCitizenSleepHandler().onWakeUp();
         }
 
+        citizen.getNavigation().stop();
         citizen.stopRiding();
         citizen.moveTo(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
@@ -58,16 +59,6 @@ public final class TeleportHelper
           spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
           citizen.getRotationYaw(),
           citizen.getRotationPitch());
-        if (citizen.getProxy() != null)
-        {
-            citizen.getProxy().reset();
-        }
-        citizen.getNavigation().stop();
-        if (citizen.getProxy() != null)
-        {
-            citizen.getProxy().reset();
-        }
-
         return true;
     }
 

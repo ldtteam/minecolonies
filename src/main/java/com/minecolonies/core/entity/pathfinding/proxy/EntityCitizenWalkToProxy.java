@@ -11,16 +11,16 @@ import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobMiner;
-import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
-import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.core.Direction;
+import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+// TODO: Rework
 public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 {
     /**
@@ -269,9 +269,33 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public boolean isLivingAtSiteWithMove(final Mob entity, final int x, final int y, final int z, final int range)
     {
-        if (!WorkerUtil.isWorkerAtSiteWithMove((AbstractEntityCitizen) entity, x, y, z, range))
+        if (!isWorkerAtSiteWithMove((AbstractEntityCitizen) entity, x, y, z, range))
         {
             EntityUtils.tryMoveLivingToXYZ(entity, x, y, z);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if a worker is at his working site. If he isn't, sets it's path to the location.
+     *
+     * @param worker Worker to check
+     * @param x      X-coordinate
+     * @param y      Y-coordinate
+     * @param z      Z-coordinate
+     * @param range  Range to check in
+     * @return True if worker is at site, otherwise false.
+     */
+    public static boolean isWorkerAtSiteWithMove(@NotNull final AbstractEntityCitizen worker, final int x, final int y, final int z, final int range)
+    {
+        if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
+        {
+            //If not moving the try setting the point where the entity should move to
+            if (worker.getNavigation().isDone())
+            {
+                EntityUtils.tryMoveLivingToXYZ(worker, x, y, z);
+            }
             return false;
         }
         return true;

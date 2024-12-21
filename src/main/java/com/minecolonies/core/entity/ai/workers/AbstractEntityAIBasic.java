@@ -35,6 +35,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.tileentities.TileEntityRack;
@@ -73,6 +74,7 @@ import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LE
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.WORKER_AI_EXCEPTION;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract.RENDER_META_WORKING;
+import static com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils.WOKR_IN_BUILDING_DIST;
 
 /**
  * This class provides basic ai functionality.
@@ -278,13 +280,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Special walk state..
+     * Only used for command-triggered walking
      *
      * @return IDLE once arrived.
      */
     private IAIState walkToState()
     {
-        if (walkToBlock(walkTo, DEFAULT_RANGE_FOR_DELAY))
+        if (!walkWithProxy(walkTo, DEFAULT_RANGE_FOR_DELAY))
         {
             return getState();
         }
@@ -317,7 +319,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 walkTo = pos;
             }
 
-            if (walkToBlock(walkTo) && pickUpCounter++ < PICKUP_ATTEMPTS)
+            if (!walkToWorkPos(walkTo) && pickUpCounter++ < PICKUP_ATTEMPTS)
             {
                 return getState();
             }
@@ -599,7 +601,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
                 final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
-                if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
+                if (!walkToWorkPos(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
                 {
                     return NEEDS_ITEM;
                 }
@@ -769,9 +771,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Walk the worker to it's building chest. Please return immediately if this returns true.
+     * Walk the worker to it's work building.
      *
-     * @return false if the worker is at his building
+     * @return true on arrival
      */
     protected final boolean walkToBuilding()
     {
@@ -780,13 +782,68 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return true;
         }
-        final BlockPos standingPos = ownBuilding.getStandingPosition();
-        int range = 2;
-        if (standingPos.equals(ownBuilding.getPosition()))
+
+        return EntityNavigationUtils.walkToBuilding(worker, ownBuilding);
+    }
+
+    /**
+     * Walk the worker to the given building.
+     *
+     * @return true while walking
+     */
+    protected final boolean walkToWorkPos(final BlockPos pos)
+    {
+        if (pos == null)
         {
-            range = 3;
+            return true;
         }
-        return walkToBlock(ownBuilding.getStandingPosition(), range);
+
+        return EntityNavigationUtils.walkToPosInBuilding(worker, pos, building, WOKR_IN_BUILDING_DIST);
+    }
+
+    /**
+     * Walk the worker to the given building.
+     *
+     * @return true while walking
+     */
+    protected final boolean walkToBuilding(final IBuilding building)
+    {
+        if (building == null)
+        {
+            return true;
+        }
+
+        return EntityNavigationUtils.walkToBuilding(worker, building);
+    }
+
+    /**
+     * Walk the worker to the safe position
+     *
+     * @return false while walking
+     */
+    protected final boolean walkToSafePos(final BlockPos pos)
+    {
+        return EntityNavigationUtils.walkToPos(worker, pos, 4, true);
+    }
+
+    /**
+     * Walk the worker to the unsafe position
+     *
+     * @return false while walking
+     */
+    protected final boolean walkToUnSafePos(final BlockPos pos)
+    {
+        return EntityNavigationUtils.walkToPos(worker, pos, 4, false);
+    }
+
+    /**
+     * Walk the worker to the unsafe position
+     *
+     * @return false while walking
+     */
+    protected final boolean walkToUnSafePos(final BlockPos pos, final int distance)
+    {
+        return EntityNavigationUtils.walkToPos(worker, pos, distance, false);
     }
 
     /**
@@ -820,9 +877,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param stand where to walk to
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@NotNull final BlockPos stand)
+    protected final boolean walkWithProxy(@NotNull final BlockPos stand)
     {
-        return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
+        return walkWithProxy(stand, DEFAULT_RANGE_FOR_DELAY);
     }
 
     /**
@@ -832,7 +889,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param range how close we need to be
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
+    protected final boolean walkWithProxy(@NotNull final BlockPos stand, final int range)
     {
         if (proxy == null)
         {
@@ -1019,7 +1076,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         delay += DELAY_RECHECK;
-        return walkToBuilding() || !retrieveToolInHut(toolType, minimalLevel);
+        return !walkToBuilding() || !retrieveToolInHut(toolType, minimalLevel);
     }
 
     /**
@@ -1092,7 +1149,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return afterDump();
         }
 
-        if (!worker.isWorkerAtSiteWithMove(building.getPosition(), DEFAULT_RANGE_FOR_DELAY))
+        if (!walkToBuilding())
         {
             setDelay(WALK_DELAY);
             return INVENTORY_FULL;
@@ -1171,7 +1228,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @SuppressWarnings("PMD.PrematureDeclaration")
     private boolean dumpOneMoreSlot()
     {
-        if (walkToBlock(getBuildingToDump().getPosition()))
+        if (!walkToWorkPos(getBuildingToDump().getPosition()))
         {
             return true;
         }
@@ -1790,11 +1847,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int percent = worker.getRandom().nextInt(ONE_HUNDRED_PERCENT);
         if (percent < VISIT_BUILDING_CHANCE)
         {
-            worker.getNavigation().tryMoveToBlockPos(building.getPosition(), worker.getRandom().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
+            walkToBuilding();
         }
         else if (percent < WANDER_CHANCE)
         {
-            worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED);
+            EntityNavigationUtils.walkToRandomPos(worker, 10, DEFAULT_SPEED);
         }
 
         return null;

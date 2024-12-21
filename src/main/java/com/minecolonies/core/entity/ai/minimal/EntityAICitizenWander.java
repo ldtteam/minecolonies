@@ -10,6 +10,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.education.EntityAIStudy;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -92,7 +93,7 @@ public class EntityAICitizenWander implements IStateAI
 
         if (walkTo != null)
         {
-            if (!citizen.isWorkerAtSiteWithMove(walkTo, 3))
+            if (!EntityNavigationUtils.walkToPos(citizen, walkTo, 3, true))
             {
                 return READ_A_BOOK;
             }
@@ -129,7 +130,7 @@ public class EntityAICitizenWander implements IStateAI
             return CitizenAIState.IDLE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(leisureSite, 3))
+        if (!EntityNavigationUtils.walkToPos(citizen, leisureSite, 3, true))
         {
             return GO_TO_LEISURE_SITE;
         }
@@ -146,7 +147,7 @@ public class EntityAICitizenWander implements IStateAI
             return CitizenAIState.IDLE;
         }
 
-        if (walkTo != null && !citizen.isWorkerAtSiteWithMove(walkTo, 3))
+        if (walkTo != null && !EntityNavigationUtils.walkToPos(citizen, walkTo, 3, true))
         {
             return WANDER_AT_LEISURE_SITE;
         }
@@ -161,8 +162,7 @@ public class EntityAICitizenWander implements IStateAI
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
-                citizen.getNavigation()
-                  .moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
+                EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)
@@ -223,7 +223,7 @@ public class EntityAICitizenWander implements IStateAI
             }
         }
 
-        citizen.getNavigation().moveToRandomPos(10, this.speed);
+        EntityNavigationUtils.walkToRandomPos(citizen, 10, this.speed);
         return CitizenAIState.IDLE;
     }
 

@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
@@ -24,16 +25,6 @@ public class CampWalkAI implements IStateAI
     private final AbstractEntityMinecoloniesMonster entity;
 
     /**
-     * Target block we're walking to
-     */
-    private BlockPos targetBlock = null;
-
-    /**
-     * Walk timer
-     */
-    private long walkTimer = 0;
-
-    /**
      * Random path result.
      */
     private PathResult<? extends IPathJob> randomPathResult;
@@ -46,57 +37,21 @@ public class CampWalkAI implements IStateAI
     public CampWalkAI(final AbstractEntityMinecoloniesMonster raider, final ITickRateStateMachine<IState> stateMachine)
     {
         this.entity = raider;
-        stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::walk, () -> null, 80));
+        stateMachine.addTransition(new TickingTransition<>(CombatAIStates.NO_TARGET, this::walk, () -> null, TICKS_SECOND * 30));
     }
 
     /**
-     * Walk raider towards the colony or campfires
-     *
+     * Walk camp mob randomly
      */
     private boolean walk()
     {
-        if (targetBlock == null || entity.level.getGameTime() > walkTimer)
+        if (spawnCenterBoxCache == null)
         {
-            targetBlock = findRandomPositionToWalkTo();
-            walkTimer = entity.level.getGameTime() + TICKS_SECOND * 30;
-        }
-        else
-        {
-            entity.getNavigation().moveToXYZ(targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(),1.1);
-            randomPathResult = null;
+            final BlockPos startPos = entity.getSpawnPos() == null ? entity.blockPosition() : entity.getSpawnPos();
+            spawnCenterBoxCache = new Tuple<>(startPos.offset(-10, -5, -10), startPos.offset(10, 5, 10));
         }
 
+        EntityNavigationUtils.walkToRandomPosWithin(entity, 10, 0.6, spawnCenterBoxCache);
         return false;
-    }
-
-    protected BlockPos findRandomPositionToWalkTo()
-    {
-        if (randomPathResult == null || randomPathResult.failedToReachDestination())
-        {
-            if (spawnCenterBoxCache == null)
-            {
-                final BlockPos startPos = entity.getSpawnPos() == null ? entity.blockPosition() : entity.getSpawnPos();
-                spawnCenterBoxCache = new Tuple<>(startPos.offset(-10,-5,-10), startPos.offset(10,5,10));
-            }
-
-            randomPathResult = entity.getNavigation().moveToRandomPos(10, 0.9, spawnCenterBoxCache);
-            if (randomPathResult != null)
-            {
-                randomPathResult.getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
-            }
-        }
-
-        if (randomPathResult.isPathReachingDestination())
-        {
-            return randomPathResult.getPath().getEndNode().asBlockPos();
-        }
-
-        if (randomPathResult.isCancelled())
-        {
-            randomPathResult = null;
-            return null;
-        }
-
-        return null;
     }
 }

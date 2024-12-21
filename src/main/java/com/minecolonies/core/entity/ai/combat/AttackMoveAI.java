@@ -6,8 +6,10 @@ import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -211,6 +213,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      */
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return ((AbstractAdvancedPathNavigate) user.getNavigation()).moveToLivingEntity(target, 1d);
+        EntityNavigationUtils.walkToPos((AbstractFastMinecoloniesEntity) user, target.blockPosition(), 1, false);
+        return ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).getPathResult();
     }
 }

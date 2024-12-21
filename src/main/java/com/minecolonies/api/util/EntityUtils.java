@@ -1,11 +1,11 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -17,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -216,6 +215,7 @@ public final class EntityUtils
          || SurfaceType.getSurfaceType(world, world.getBlockState(pos.below(2)), pos.below(2)) == SurfaceType.WALKABLE;
     }
 
+    // TODO: Move out movement stuff
 
     /**
      * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false.
@@ -239,27 +239,15 @@ public final class EntityUtils
      * @param y      y-coordinate
      * @param z      z-coordinate
      * @param speedFactor  Speedfactor to modify base speed with
-     * @return True if the path is set to destination, otherwise false
+     * @return true if arrived
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, final int x, final int y, final int z, final double speedFactor)
     {
-        return living.getNavigation().moveTo(x, y, z, speedFactor);
-    }
-
-    /**
-     * {@link #isLivingAtSiteWithMove(LivingEntity, int, int, int)}
-     *
-     * @param entity entity to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @return True if entity is at site, otherwise false
-     */
-    public static boolean isLivingAtSiteWithMove(@NotNull final LivingEntity entity, final int x, final int y, final int z)
-    {
-        //Default range of 3 works better
-        //Range of 2 get some entitys stuck
-        return isLivingAtSiteWithMove(entity, x, y, z, DEFAULT_MOVE_RANGE);
+        if (living instanceof AbstractFastMinecoloniesEntity entity)
+        {
+            return EntityNavigationUtils.walkToPos(entity, new BlockPos(x, y, z), 4, true, speedFactor);
+        }
+        return true;
     }
 
     /**
@@ -298,34 +286,6 @@ public final class EntityUtils
         }
 
         return EntityUtils.isLivingAtSite(entity, x, y, z, range);
-    }
-
-    /**
-     * Checks if a certain entity is in the world at a certain position already.
-     *
-     * @param entity the entity.
-     * @param world  the world.
-     * @param placer the entity to get the itemstacks from to check.
-     * @return true if there.
-     */
-    public static boolean isEntityAtPosition(final Entity entity, final Level world, final Entity placer)
-    {
-        final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
-        final BlockPos pos = BlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
-        return world.getEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
-                 .stream()
-                 .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
-                                                                                                                     .equals(existingReq));
-    }
-
-    public static boolean isEntityAtPosition(final Entity entity, final Level world, final AbstractEntityCitizen entityCitizen)
-    {
-        if (entity != null)
-        {
-            return EntityUtils.isEntityAtPosition(entity, world, (Entity) entityCitizen);
-        }
-
-        return false;
     }
 
     /**

@@ -11,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Job that handles moving close to a position near another
  */
@@ -60,7 +62,7 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
             return false;
         }
 
-        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) < distToDesired
+        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) <= distToDesired
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
     }
@@ -104,5 +106,20 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     public BlockPos getDestination()
     {
         return desiredPosition;
+    }
+
+    @Override
+    public boolean equals(final Object other)
+    {
+        if (this == other)
+        {
+            return true;
+        }
+        if (!(other instanceof final PathJobMoveCloseToXNearY otherPathjob))
+        {
+            return false;
+        }
+        return distToDesired == otherPathjob.distToDesired && Objects.equals(desiredPosition, otherPathjob.desiredPosition) && Objects.equals(nearbyPosition,
+            otherPathjob.nearbyPosition);
     }
 }

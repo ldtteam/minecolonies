@@ -90,7 +90,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

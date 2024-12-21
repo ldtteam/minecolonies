@@ -13,6 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Job that handles moving away from something.
  */
@@ -134,5 +136,15 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDes
     public BlockPos getDestination()
     {
         return preferredDirection;
+    }
+
+    public static boolean isJobFor(final AbstractPathJob job, final int avoidDistance, final BlockPos toAvoid)
+    {
+        if (job instanceof PathJobMoveAwayFromLocation pathJob)
+        {
+            return pathJob.avoidDistance == avoidDistance && Objects.equals(pathJob.avoid, toAvoid);
+        }
+
+        return false;
     }
 }

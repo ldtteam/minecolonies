@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -665,31 +663,6 @@ public final class BlockPosUtil
     public static boolean setBlock(@NotNull final Level worldIn, @NotNull final BlockPos coords, final BlockState state, final int flag)
     {
         return worldIn.setBlock(coords, state, flag);
-    }
-
-    /**
-     * @param living      A living entity.
-     * @param destination chunk coordinates to check moving to.
-     * @return True when XYZ is found, an set moving to, otherwise false.
-     */
-    public static boolean tryMoveBaseCitizenEntityToXYZ(@NotNull final AbstractEntityCitizen living, @NotNull final BlockPos destination)
-    {
-        if (!(living instanceof LivingEntity))
-        {
-            return false;
-        }
-
-        return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
-    }
-
-    /**
-     * @param living      A living entity.
-     * @param destination chunk coordinates to check moving to.
-     * @return True when XYZ is found, an set moving to, otherwise false.
-     */
-    public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, @NotNull final BlockPos destination)
-    {
-        return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }
 
     /**

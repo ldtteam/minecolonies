@@ -181,7 +181,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(2);
             return getState();
@@ -349,7 +349,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             building.removeHive(hive);
             return PREPARING;
         }
-        if (walkToBlock(hive))
+        if (!walkToWorkPos(hive))
         {
             return getState();
         }
@@ -404,17 +404,17 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * Lets the herder walk to the animal.
      *
      * @param animal the animal to walk to.
-     * @return true if the herder is walking to the animal.
+     * @return false if the herder is walking to the animal.
      */
     public boolean walkingToAnimal(final Animal animal)
     {
         if (animal != null)
         {
-            return walkToBlock(animal.blockPosition());
+            return walkToWorkPos(animal.blockPosition());
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -473,7 +473,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         for (final Animal animal : animalsToBreed)
         {
-            if (!animal.isInLove() && !walkingToAnimal(animal))
+            if (!animal.isInLove() && walkingToAnimal(animal))
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);

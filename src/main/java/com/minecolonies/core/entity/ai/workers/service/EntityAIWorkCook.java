@@ -172,7 +172,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (walkToBlock(citizenToServe.peek().blockPosition()))
+        if (!walkToWorkPos(citizenToServe.peek().blockPosition()))
         {
             return getState();
         }
@@ -257,7 +257,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return START_WORKING;
         }
 
-        if (walkToBlock(playerToServe.peek().blockPosition()))
+        if (!walkToWorkPos(playerToServe.peek().blockPosition()))
         {
             return getState();
         }

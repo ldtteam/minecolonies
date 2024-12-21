@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.google.common.collect.Lists;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -27,14 +26,12 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
@@ -138,80 +135,6 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityData the input.
-     * @param world      the world.
-     * @return the output object or null.
-     */
-    @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final CompoundTag entityData, final Level world)
-    {
-        try
-        {
-            final Optional<EntityType<?>> type = EntityType.by(entityData);
-            if (type.isPresent())
-            {
-                final Entity entity = type.get().create(world);
-                if (entity != null)
-                {
-                    entity.load(entityData);
-                    return entity;
-                }
-            }
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Adds entities to the builder building if he needs it.
-     *
-     * @param entityData the entity info object.
-     * @param world      the world.
-     * @param placer     the entity placer.
-     * @return a list of stacks.
-     */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final Entity placer)
-    {
-        if (entityData != null)
-        {
-            final Entity entity = getEntityFromEntityInfoOrNull(entityData, world);
-            if (entity != null)
-            {
-                if (EntityUtils.isEntityAtPosition(entity, world, placer))
-                {
-                    return Collections.emptyList();
-                }
-                return getListOfStackForEntity(entity, placer);
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Adds entities to the builder building if he needs it.
-     *
-     * @param entityData the entity info object.
-     * @param world      the world.
-     * @param placer     the entity placer.
-     * @return a list of stacks.
-     */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final AbstractEntityCitizen placer)
-    {
-        if (placer != null)
-        {
-            return getListOfStackForEntityInfo(entityData, world, (Entity) placer);
-        }
-
-        return Lists.newArrayList();
     }
 
     /**

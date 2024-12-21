@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
@@ -58,12 +57,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public static final  double MIN_SPEED_ALLOWED        = 0.1;
 
     @Nullable
-    private PathResult<AbstractPathJob> pathResult;
-
-    /**
-     * The world time when a path was added.
-     */
-    private long pathStartTime = 0;
+    private PathResult<? extends AbstractPathJob> pathResult;
 
     /**
      * Spawn pos of minecart.
@@ -144,7 +138,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult<AbstractPathJob> moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor, final boolean safeDestination)
+    protected PathResult<PathJobMoveAwayFromLocation> walkAwayFrom(final BlockPos avoid, final double range, final double speedFactor, final boolean safeDestination)
     {
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
 
@@ -158,7 +152,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     @Nullable
     @Override
-    public PathResult<AbstractPathJob> moveTowards(final BlockPos towards, final double range, final double speedFactor)
+    protected PathResult<AbstractPathJob> walkTowards(final BlockPos towards, final double range, final double speedFactor)
     {
         return setPathJob(new PathJobMoveTowards(CompatibilityUtils.getWorldFromEntity(ourEntity),
           PathfindingUtils.prepareStart(ourEntity),
@@ -168,37 +162,29 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult<AbstractPathJob> moveToRandomPos(final double range, final double speedFactor)
+    protected PathResult<PathJobRandomPos> walkToRandomPos(final int range, final double speedFactor)
     {
-        if (pathResult != null && pathResult.isInProgress() && pathResult.getJob() instanceof PathJobRandomPos)
+        @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
+        final PathResult<PathJobRandomPos> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+          start,
+            range,
+          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
+
+          ourEntity), null, speedFactor, true);
+
+        if (result == null)
         {
-            return pathResult;
+            return null;
         }
 
-        desiredPos = BlockPos.ZERO;
-        final int theRange = (int) (mob.getRandom().nextInt((int) range) + range / 2);
-        @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
-
-        return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
-          start,
-          theRange,
-          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity), null, speedFactor, true);
+        result.getJob().getPathingOptions().withToggleCost(1).withJumpCost(1).withDropCost(1).canDrop = false;
+        return result;
     }
 
     @Nullable
-    public PathResult<AbstractPathJob> moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
+    protected PathResult<PathJobRandomPos> walkToRandomPosAround(final int range, final double speedFactor, final BlockPos pos)
     {
-        if (pathResult != null
-              && pathResult.isInProgress()
-              && pathResult.getJob() instanceof PathJobRandomPos
-              && ((((PathJobRandomPos) pathResult.getJob()).posAndRangeMatch(range, pos))))
-        {
-            return pathResult;
-        }
-
-        desiredPos = BlockPos.ZERO;
-        final PathResult<AbstractPathJob> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        final PathResult<PathJobRandomPos> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           PathfindingUtils.prepareStart(ourEntity),
           3,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -210,28 +196,21 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
-        result.getJob().getPathingOptions().withToggleCost(1).withJumpCost(1).withDropCost(1);
+        result.getJob().getPathingOptions().withToggleCost(1).withJumpCost(1).withDropCost(1).canDrop = false;
         return result;
     }
 
     @Override
-    public PathResult<AbstractPathJob> moveToRandomPos(
+    protected PathResult<PathJobRandomPos> walkToRandomPos(
       final int range,
       final double speedFactor,
       final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
     {
-        if (pathResult != null && pathResult.isInProgress() && pathResult.getJob() instanceof PathJobRandomPos)
-        {
-            return pathResult;
-        }
-
-        desiredPos = BlockPos.ZERO;
-        final int theRange = (mob.getRandom().nextInt(range) + range / 2);
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
 
-        final PathResult<AbstractPathJob> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        final PathResult<PathJobRandomPos> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           start,
-          theRange,
+            range,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           ourEntity,
           corners.getA(),
@@ -242,12 +221,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
-        result.getJob().getPathingOptions().withJumpCost(1).withDropCost(1);
+        result.getJob().getPathingOptions().withJumpCost(1).withDropCost(1).canDrop = false;
         return result;
     }
 
+    @Override
+    protected PathResult<PathJobMoveCloseToXNearY> walkCloseToXNearY(
+        final BlockPos desiredPosition,
+        final BlockPos nearbyPosition,
+        final int distToDesired,
+        final double speedFactor,
+        final boolean safeDestination)
+    {
+        PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(ourEntity.level, desiredPosition, nearbyPosition, 1, ourEntity);
+        return setPathJob(pathJob, desiredPosition, speedFactor, safeDestination);
+    }
+
     @Nullable
-    public PathResult<AbstractPathJob> setPathJob(
+    public <T extends AbstractPathJob> PathResult<T> setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
       final double speedFactor, final boolean safeDestination)
@@ -258,6 +249,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         stop();
+        if (dest != null && !dest.equals(BlockPos.ZERO))
+        {
+            if (job.getStart().distSqr(dest) > 500 * 500)
+            {
+                Log.getLogger()
+                    .error(
+                        "Entity: " + ourEntity.getDisplayName().getString() + " is trying to walk too far! distance:" + Math.sqrt(job.getStart().distSqr(dest)) + " from:"
+                            + job.getStart() + " to:"
+                            + dest, new Exception());
+                return null;
+            }
+        }
 
         this.destination = dest;
         this.originalDestination = dest;
@@ -281,7 +284,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         job.setPathingOptions(getPathingOptions());
         pathResult = job.getResult();
         pathResult.startJob(Pathfinding.getExecutor());
-        return pathResult;
+        return (PathResult<T>) pathResult;
     }
 
     @Override
@@ -438,56 +441,23 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult<AbstractPathJob> moveToXYZ(final double x, final double y, final double z, final double speedFactor)
+    protected PathResult<PathJobMoveToLocation> walkTo(final BlockPos desiredPos, final double speedFactor, final boolean safeDestination)
     {
-        final int newX = Mth.floor(x);
-        final int newY = (int) y;
-        final int newZ = Mth.floor(z);
-
-        if (pathResult != null && pathResult.getJob() instanceof PathJobMoveToLocation)
-        {
-            if (pathResult.isComputing())
-            {
-                return pathResult;
-            }
-
-            if (((destination != null && BlockPosUtil.equals(destination, newX, newY, newZ)) || (originalDestination != null && BlockPosUtil.equals(originalDestination,
-              newX,
-              newY,
-              newZ))))
-            {
-                if (pathResult.getStatus() == IN_PROGRESS_FOLLOWING || ColonyConstants.rand.nextInt(20) != 0)
-                {
-                    return pathResult;
-                }
-            }
-        }
-
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
-        desiredPos = new BlockPos(newX, newY, newZ);
-
-        if (start.distSqr(desiredPos) > 500 * 500)
-        {
-            Log.getLogger()
-              .error(
-                "Entity: " + ourEntity.getDisplayName().getString() + " is trying to walk too far! distance:" + Math.sqrt(start.distSqr(desiredPos)) + " from:" + start + " to:"
-                  + desiredPos, new Exception());
-            return null;
-        }
-
         return setPathJob(
           new PathJobMoveToLocation(CompatibilityUtils.getWorldFromEntity(ourEntity),
             start,
             desiredPos,
             (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
             ourEntity),
-          desiredPos, speedFactor, true);
+            desiredPos, speedFactor, safeDestination);
     }
 
+    @Deprecated(since = "Do not use, always returns true, vanilla override")
     @Override
-    public boolean tryMoveToBlockPos(final BlockPos pos, final double speedFactor)
+    public boolean walkTo(final BlockPos pos, final double speedFactor)
     {
-        moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), speedFactor);
+        walkTo(pos, speedFactor, false);
         return true;
     }
 
@@ -586,31 +556,25 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         walkSpeedFactor = speedFactor;
     }
 
-    /**
-     * Deprecated - try to use BlockPos instead
-     */
+    @Deprecated(since = "Do not use, always returns true, vanilla override")
     @Override
     public boolean moveTo(final double x, final double y, final double z, final double speedFactor)
     {
-        if (x == 0 && y == 0 && z == 0)
-        {
-            return false;
-        }
-
-        moveToXYZ(x, y, z, speedFactor);
+        walkTo(BlockPos.containing(x, y, z), speedFactor, false);
         return true;
     }
 
     @Override
     public boolean moveTo(final Entity entityIn, final double speedFactor)
     {
-        return tryMoveToBlockPos(entityIn.blockPosition(), speedFactor);
+        return walkTo(entityIn.blockPosition(), speedFactor);
     }
 
     // Removes stupid vanilla stuff, causing our pathpoints to occasionally be replaced by vanilla ones.
     @Override
     protected void trimPath() {}
 
+    @Deprecated(since = "Do not use, always returns true, vanilla override")
     @Override
     public boolean moveTo(@Nullable final Path path, final double speedFactor)
     {
@@ -619,7 +583,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             super.stop();
             return false;
         }
-        pathStartTime = level.getGameTime();
         return super.moveTo(convertPath(path), speedFactor);
     }
 
@@ -1115,7 +1078,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public TreePathResult moveToTree(
+    public TreePathResult walkToTree(
       final BlockPos startRestriction,
       final BlockPos endRestriction,
       final double speed,
@@ -1141,7 +1104,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
+    public TreePathResult walkToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
     {
         @NotNull BlockPos start = PathfindingUtils.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) mob).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -1157,16 +1120,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     @Nullable
     @Override
-    public PathResult<AbstractPathJob> moveToLivingEntity(@NotNull final Entity e, final double speed)
+    public PathResult<PathJobMoveToLocation> walkToEntity(@NotNull final Entity e, final double speed)
     {
-        return moveToXYZ(e.getX(), e.getY(), e.getZ(), speed);
+        return walkTo(e.blockPosition(), speed, false);
     }
 
     @Nullable
     @Override
-    public PathResult<AbstractPathJob> moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
+    public PathResult<PathJobMoveAwayFromLocation> moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
-        return moveAwayFromXYZ(e.blockPosition(), distance, speed, true);
+        return walkAwayFrom(e.blockPosition(), distance, speed, true);
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.core.colony.jobs.JobResearch;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
-import com.minecolonies.core.entity.pathfinding.navigation.PathfindingAIHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +67,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
             studyPos = building.getRandomBookShelf();
         }
 
-        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7))
+        if (!walkToWorkPos(studyPos))
         {
             return getState();
         }
@@ -104,7 +103,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

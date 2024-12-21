@@ -9,8 +9,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
@@ -19,8 +17,11 @@ import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.util.AdvancementUtils;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -115,7 +116,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {
-            if (walkToBuilding())
+            if (!walkToBuilding())
             {
                 return getState();
             }
@@ -143,7 +144,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             if (building.isInBuilding(worker.blockPosition()))
             {
-                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
+                EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
             }
             else
             {
@@ -176,7 +177,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -237,7 +238,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -311,7 +312,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -444,7 +445,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
 
-        if (walkToBlock(burialPos.getA(), 4))
+        if (walkWithProxy(burialPos.getA(), 4))
         {
             return getState();
         }

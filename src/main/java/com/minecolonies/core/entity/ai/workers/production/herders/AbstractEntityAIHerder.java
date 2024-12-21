@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
@@ -280,7 +280,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -567,7 +567,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         final List<? extends ItemEntity> items = searchForItemsInArea();
 
-        if (!items.isEmpty() && walkToBlock(items.get(0).blockPosition(), 1))
+        if (!items.isEmpty() && walkWithProxy(items.get(0).blockPosition(), 1))
         {
             return getState();
         }
@@ -613,11 +613,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null)
         {
-            return walkToBlock(animal.blockPosition());
+            return walkToWorkPos(animal.blockPosition());
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -635,7 +635,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 it.remove();
             }
-            else if (walkingToAnimal(animal))
+            else if (!walkingToAnimal(animal))
             {
                 break;
             }

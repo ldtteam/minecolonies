@@ -378,7 +378,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (fuelPos == null || walkToBlock(fuelPos))
+        if (fuelPos == null || !walkToWorkPos(fuelPos))
         {
             return getState();
         }
@@ -533,7 +533,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -585,7 +585,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -737,7 +737,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     }
                     if (toTransfer > 0)
                     {
-                        if (walkToBlock(walkTo))
+                        if (!walkToWorkPos(walkTo))
                         {
                             return getState();
                         }
@@ -813,7 +813,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(AbstractEntityAIBasic.STANDARD_DELAY);
             return getState();

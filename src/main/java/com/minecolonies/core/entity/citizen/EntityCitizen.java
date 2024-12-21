@@ -27,7 +27,6 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
 import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
@@ -55,9 +54,8 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.event.EventHandler;
 import com.minecolonies.core.event.TextureReloadListener;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
@@ -65,8 +63,8 @@ import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.TeleportHelper;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -111,9 +109,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -152,10 +147,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * It's citizen Id.
      */
     private int                       citizenId = 0;
-    /**
-     * The Walk to proxy (Shortest path through intermediate blocks).
-     */
-    private IWalkToProxy              proxy;
+
     /**
      * Reference to the data representation inside the colony.
      */
@@ -189,11 +181,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * Our custom combat tracker.
      */
     private final CitizenCombatTracker combatTracker;
-
-    /**
-     * The path-result of trying to move away
-     */
-    private PathResult moveAwayPath;
 
     /**
      * IsChild flag
@@ -542,7 +529,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (!level.isClientSide())
             {
                 MessageUtils.format(MESSAGE_INTERACTION_OUCH, getCitizenData().getName()).sendTo(player);
-                getNavigation().moveAwayFromLivingEntity(player, 5, 1);
+                EntityNavigationUtils.walkAwayFrom(this, player.blockPosition(), 5, 1);
                 setJumping(true);
             }
 
@@ -962,23 +949,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    @Override
-    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
-    {
-        if (proxy == null)
-        {
-            proxy = new EntityCitizenWalkToProxy(this);
-        }
-        return proxy.walkToBlock(site, range, true);
-    }
-
-    /**
      * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
@@ -1082,17 +1052,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             SoundUtils.playSoundAtCitizenWith(level, blockPosition(), EventType.DANGER, getCitizenData());
         }
-    }
-
-    /**
-     * Get the path proxy of the citizen.
-     *
-     * @return the proxy.
-     */
-    @Override
-    public IWalkToProxy getProxy()
-    {
-        return proxy;
     }
 
     /**
@@ -1458,10 +1417,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (!(attacker instanceof LivingEntity) &&
               (!(getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard) || getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
         {
-            if (moveAwayPath == null || !moveAwayPath.isInProgress())
-            {
-                moveAwayPath = this.getNavigation().moveAwayFromLivingEntity(this, 5, INITIAL_RUN_SPEED_AVOID);
-            }
+            EntityNavigationUtils.walkAwayFrom(this, blockPosition(), 5, INITIAL_RUN_SPEED_AVOID);
+            return;
+        }
+
+        if (attacker == null)
+        {
             return;
         }
 
@@ -1474,10 +1435,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         citizenAI.addTransition(new AIOneTimeEventTarget<>(CitizenAIState.FLEE));
         callForHelp(attacker, MAX_GUARD_CALL_RANGE);
-        if (moveAwayPath == null || !moveAwayPath.isInProgress())
-        {
-            moveAwayPath = this.getNavigation().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
-        }
+        EntityNavigationUtils.walkAwayFrom(this, attacker.blockPosition(), 15, INITIAL_RUN_SPEED_AVOID);
     }
 
     @Override

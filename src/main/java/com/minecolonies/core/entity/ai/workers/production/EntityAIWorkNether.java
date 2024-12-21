@@ -22,9 +22,9 @@ import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.items.ItemAdventureToken;
 import com.minecolonies.core.util.TeleportHelper;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -308,7 +308,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 setDelay(120);
                 return IDLE;
             }
-            if (walkTo != null || walkToBuilding())
+            if (walkTo != null || !walkToBuilding())
             {
                 return getState();
             }
@@ -381,7 +381,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             final BlockState block = world.getBlockState(portal);
             if (block.is(Blocks.NETHER_PORTAL))
             {
-                if (walkToBlock(portal, 1))
+                if (!walkToWorkPos(portal))
                 {
                     return getState();
                 }
@@ -419,7 +419,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             //Ensure we stay put in the portal
             final BlockPos portal = building.getPortalLocation();
-            if (portal != null && walkToBlock(portal, 1))
+            if (portal != null && !walkToWorkPos(portal))
             {
                 return getState();
             }
@@ -689,7 +689,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return NETHER_CLOSEPORTAL;
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -710,7 +710,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         final BlockPos portal = building.getPortalLocation();
         if (portal != null && currentRecipeStorage != null)
         {
-            if (walkToBlock(portal, 1))
+            if (!walkToWorkPos(portal))
             {
                 return getState();
             }
@@ -744,7 +744,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if (block.is(Blocks.NETHER_PORTAL))
         {
-            if (walkToBlock(portal, 1))
+            if (!walkToWorkPos(portal))
             {
                 return getState();
             }

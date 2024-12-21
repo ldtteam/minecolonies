@@ -12,7 +12,6 @@ import com.minecolonies.core.colony.jobs.JobStudent;
 import com.minecolonies.core.datalistener.StudyItemListener;
 import com.minecolonies.core.datalistener.StudyItemListener.StudyItem;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
-import com.minecolonies.core.entity.pathfinding.navigation.PathfindingAIHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -107,7 +106,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             studyPos = building.getRandomBookShelf();
         }
 
-        if (PathfindingAIHelper.walkCloseToXNearY(worker, studyPos, building.getPosition(), 7))
+        if (!walkToWorkPos(studyPos))
         {
             setDelay(WALK_DELAY);
             return getState();
@@ -185,7 +184,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

@@ -149,6 +149,7 @@ public class PathingStuckHandler implements IStuckHandler
     @Override
     public void checkStuck(final AbstractAdvancedPathNavigate navigator)
     {
+        // TODO: rework to allow paths to nonsafe locations still benefit from non-teleport options(skip ahead, reset path etc)
         if (navigator.getDesiredPos() == null || navigator.getDesiredPos().equals(BlockPos.ZERO))
         {
             resetGlobalStuckTimers();
@@ -338,7 +339,7 @@ public class PathingStuckHandler implements IStuckHandler
 
             navigator.stop();
             final int range = ColonyConstants.rand.nextInt(20) + Math.min(100, Math.max(20, BlockPosUtil.distManhattan(navigator.ourEntity.blockPosition(), prevDestination)));
-            navigator.moveTowards(navigator.getOurEntity().blockPosition().relative(movingAwayDir, 40), range, 1.0f);
+            navigator.walkTowards(navigator.getOurEntity().blockPosition().relative(movingAwayDir, 40), range, 1.0f);
             movingAwayDir = movingAwayDir.getClockWise();
             navigator.setPauseTicks(range * TICKS_PER_BLOCK);
             return;

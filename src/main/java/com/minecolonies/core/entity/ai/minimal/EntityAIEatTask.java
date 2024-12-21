@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobCook;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -48,11 +49,6 @@ public class EntityAIEatTask implements IStateAI
      * Max waiting time for food in minutes..
      */
     private static final int MINUTES_WAITING_TIME = 2;
-
-    /**
-     * Min distance in blocks to placeToPath block.
-     */
-    private static final int MIN_DISTANCE_TO_RESTAURANT = 2;
 
     /**
      * Time required to eat in seconds.
@@ -253,7 +249,7 @@ public class EntityAIEatTask implements IStateAI
         final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
-            if (!citizen.isWorkerAtSiteWithMove(cookBuilding.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
+            if (!EntityNavigationUtils.walkToBuilding(citizen, cookBuilding))
             {
                 return GET_FOOD_YOURSELF;
             }
@@ -304,7 +300,7 @@ public class EntityAIEatTask implements IStateAI
             }
         }
 
-        if (citizen.isWorkerAtSiteWithMove(eatPos, 2))
+        if (EntityNavigationUtils.walkToPos(citizen, eatPos, 2, true))
         {
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating
@@ -392,7 +388,7 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
+        if (EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
         {
             final int slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
             if (slot != -1)
@@ -427,7 +423,7 @@ public class EntityAIEatTask implements IStateAI
                 {
                     return WAIT_FOR_FOOD;
                 }
-                else if (!citizen.isWorkerAtSiteWithMove(restaurantPos, MIN_DISTANCE_TO_RESTAURANT))
+                else if (!EntityNavigationUtils.walkToBuilding(citizen, building))
                 {
                     return GO_TO_RESTAURANT;
                 }

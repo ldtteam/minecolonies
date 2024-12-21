@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.Tuple;
@@ -14,6 +13,8 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -71,7 +72,7 @@ public class EntityAIMournCitizen implements IStateAI
     /**
      * The position of the graveyard.
      */
-    private BlockPos graveyard;
+    private IBuilding graveyard;
 
     /**
      * Position of the grave to walk to.
@@ -110,13 +111,13 @@ public class EntityAIMournCitizen implements IStateAI
      */
     private IState walkToTownHall()
     {
-        final BlockPos pos = getMournLocation();
-        if (pos == null)
+        final IBuilding building = getMournLocation();
+        if (building == null)
         {
             return CitizenAIState.IDLE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(pos, 3))
+        if (!EntityNavigationUtils.walkToBuilding(citizen, building))
         {
             return MourningState.WALKING_TO_TOWNHALL;
         }
@@ -136,7 +137,7 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(graveyard, 3))
+        if (!EntityNavigationUtils.walkToBuilding(citizen, graveyard))
         {
             return MourningState.WALKING_TO_GRAVEYARD;
         }
@@ -157,13 +158,6 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
-        final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(graveyard);
-        if (!(graveyardBuilding instanceof BuildingGraveyard))
-        {
-            graveyard = null;
-            return MourningState.DECIDE;
-        }
-
         if (!citizen.getNavigation().isDone())
         {
             return MourningState.WANDER_AT_GRAVEYARD;
@@ -172,12 +166,12 @@ public class EntityAIMournCitizen implements IStateAI
         // Wander around randomly.
         if (MathUtils.RANDOM.nextInt(100) < 90)
         {
-            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners());
+            EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, graveyard.getCorners());
             return MourningState.WANDER_AT_GRAVEYARD;
         }
 
         // Try find the grave of one of the diseased.
-        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
+        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyard).getGravePositions();
         for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
         {
             if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
@@ -219,7 +213,7 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
-        if (!citizen.isWorkerAtSiteWithMove(gravePos, 3))
+        if (!EntityNavigationUtils.walkToPosInBuilding(citizen, gravePos, graveyard, 3))
         {
             return MourningState.WALK_TO_GRAVE;
         }
@@ -234,7 +228,7 @@ public class EntityAIMournCitizen implements IStateAI
      */
     private IState wander()
     {
-        citizen.getNavigation().moveToRandomPos(10, this.speed);
+        EntityNavigationUtils.walkToRandomPos(citizen, 10, this.speed);
         return CitizenAIState.IDLE;
     }
 
@@ -300,7 +294,7 @@ public class EntityAIMournCitizen implements IStateAI
                 GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
             if (graveyardBuilding != null)
             {
-                this.graveyard = graveyardBuilding.getPosition();
+                this.graveyard = graveyardBuilding;
             }
         }
 
@@ -312,7 +306,7 @@ public class EntityAIMournCitizen implements IStateAI
         citizen.getLookControl().setLookAt(citizen.getX(), citizen.getY() - 10, citizen.getZ(), (float) citizen.getMaxHeadYRot(),
           (float) citizen.getMaxHeadXRot());
 
-        if (BlockPosUtil.getDistance2D(this.citizen.blockPosition(), getMournLocation()) > MIN_DESTINATION_TO_LOCATION)
+        if (getMournLocation() != null && BlockPosUtil.getDistance2D(this.citizen.blockPosition(), getMournLocation().getPosition()) > MIN_DESTINATION_TO_LOCATION)
         {
             return MourningState.WALKING_TO_TOWNHALL;
         }
@@ -332,14 +326,14 @@ public class EntityAIMournCitizen implements IStateAI
      *
      * @return blockPos of the location to mourn at
      */
-    protected BlockPos getMournLocation()
+    protected IBuilding getMournLocation()
     {
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (colony != null && colony.getBuildingManager().hasTownHall())
         {
-            return colony.getBuildingManager().getTownHall().getStandingPosition();
+            return colony.getBuildingManager().getTownHall();
         }
 
-        return citizen.getCitizenData().getHomePosition();
+        return citizen.getCitizenData().getHomeBuilding();
     }
 }

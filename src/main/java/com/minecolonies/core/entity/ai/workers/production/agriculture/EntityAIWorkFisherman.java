@@ -15,13 +15,13 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobFindWater;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.core.util.WorkerUtil;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -182,7 +182,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -274,7 +274,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             return FISHERMAN_SEARCHING_WATER;
         }
 
-        if (walkToWater())
+        if (!walkToWater())
         {
             return getState();
         }
@@ -288,7 +288,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean walkToWater()
     {
-        return job.getWater() != null && walkToBlock(job.getWater().getB());
+        return job.getWater() != null && walkToSafePos(job.getWater().getB());
     }
 
     /**

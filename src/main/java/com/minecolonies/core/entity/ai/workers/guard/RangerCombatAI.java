@@ -20,6 +20,7 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.CustomArrowEntity;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
@@ -143,7 +144,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             if (user.getRandom().nextInt(FLEE_CHANCE) == 0 &&
                   !((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
             {
-                user.getNavigation().moveAwayFromLivingEntity(target, getAttackDistance() / 2.0, getCombatMovementSpeed());
+                EntityNavigationUtils.walkAwayFrom(user, target.blockPosition(), (int) (getAttackDistance() / 2.0), getCombatMovementSpeed());
             }
         }
         else

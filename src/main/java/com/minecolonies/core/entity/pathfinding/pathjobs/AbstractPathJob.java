@@ -149,7 +149,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Heuristic modifier
      */
-    private double heuristicMod = 1;
+    private double heuristicMod = 2;
 
     /**
      * First node
@@ -192,6 +192,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         result.setJob(this);
 
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -218,6 +222,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         result.setJob(this);
 
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -256,6 +264,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         this.result = result;
         result.setJob(this);
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -285,7 +297,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private MNode getAndSetupStartNode()
     {
-        final MNode startNode = new MNode(null, start.getX(), start.getY(), start.getZ(), 0, computeHeuristic(start.getX(), start.getY(), start.getZ()));
+        final MNode startNode = new MNode(null, start.getX(), start.getY(), start.getZ(), 0, computeHeuristic(start.getX(), start.getY(), start.getZ()) * heuristicMod);
 
         if (PathfindingUtils.isLadder(cachedBlockLookup.getBlockState(start.getX(), start.getY(), start.getZ()), pathingOptions))
         {

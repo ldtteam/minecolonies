@@ -9,9 +9,10 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPupil;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,6 +27,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
 
@@ -57,11 +59,6 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     private BlockPos studyPos;
 
     /**
-     * Next recess pos to run to.
-     */
-    private BlockPos recessPos;
-
-    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -88,7 +85,6 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = building.getPosition();
             return RECESS;
         }
 
@@ -111,21 +107,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
      */
     private IAIState recess()
     {
-        if (recessPos == null || worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
+        if (worker.getNavigation().isDone() && worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
             return START_WORKING;
         }
 
-        if (walkToBlock(recessPos))
-        {
-            return getState();
-        }
-
-        final BlockPos newRecessPos = findRandomPositionToWalkTo(10);
-        if (newRecessPos != null)
-        {
-            recessPos = newRecessPos;
-        }
+        EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
         return getState();
     }
 
@@ -141,7 +128,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return DECIDE;
         }
 
-        if (walkToBlock(studyPos, 1))
+        if (!walkToWorkPos(studyPos))
         {
             return getState();
         }
@@ -214,7 +201,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

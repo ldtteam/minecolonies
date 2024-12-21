@@ -416,7 +416,7 @@ public final class ShipBasedRaiderUtils
         {
             final BlockPos point = path.getNode(i).asBlockPos();
             if (lastPoint.distManhattan(point) > spacing
-                  && world.getBlockState(point).isAir())
+                && world.getBlockState(point).isAir() && world.getBlockState(point.above()).isAir())
             {
                 wayPoints.add(point);
                 lastPoint = point;

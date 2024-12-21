@@ -5,8 +5,8 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,13 +17,13 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack
 import com.minecolonies.core.colony.jobs.JobLumberjack;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.entity.ai.workers.util.Tree;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import com.minecolonies.core.util.WorkerUtil;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -223,7 +223,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return getState();
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return START_WORKING;
         }
@@ -268,7 +268,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -393,7 +393,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 final BlockPos endPos = building.getEndRestriction();
 
                 pathResult = worker.getNavigation()
-                               .moveToTree(startPos,
+                    .walkToTree(startPos,
                                  endPos,
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
@@ -403,7 +403,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             else
             {
                 pathResult = worker.getNavigation()
-                               .moveToTree(SEARCH_RANGE + searchIncrement,
+                    .walkToTree(SEARCH_RANGE + searchIncrement,
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                                  building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
@@ -853,7 +853,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             worker.swing(worker.getUsedItemHand());
         }
 
-        if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
+        if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && walkToBuilding())
         {
             checkAndTransferFromHut(job.getTree().getSapling());
             checkedInHut = true;
