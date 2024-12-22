@@ -61,9 +61,7 @@ public class EntityNavigationUtils
         // 2. Navigation is progressing towards a previous task
         // 3. Navigation did not try once
         boolean isOnRightTask = (nav.getPathResult() != null
-            && nav.getPathResult().getJob() instanceof PathJobMoveCloseToXNearY job
-            && job.nearbyPosition.equals(nearbyPosition)
-            && job.desiredPosition.equals(desiredPosition));
+            && PathJobMoveCloseToXNearY.isJobFor(nav.getPathResult().getJob(), desiredPosition, nearbyPosition, distToDesired));
 
         if (nav.isDone() || !isOnRightTask)
         {
@@ -159,8 +157,7 @@ public class EntityNavigationUtils
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
 
         boolean isOnRightTask = (nav.getPathResult() != null
-            && nav.getPathResult().getJob() instanceof PathJobMoveToLocation job
-            && job.getDestination().equals(desiredPosition));
+            && PathJobMoveToLocation.isJobFor(nav.getPathResult().getJob(), desiredPosition));
 
         if (nav.isDone() || !isOnRightTask)
         {
@@ -274,8 +271,7 @@ public class EntityNavigationUtils
     public static boolean walkToRandomPosAround(final AbstractFastMinecoloniesEntity entity, final BlockPos center, final int range, final double speedFactor)
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
-        boolean isOnRightTask = (nav.getPathResult() != null && nav.getPathResult().getJob() instanceof PathJobRandomPos pathJobRandomPos
-            && pathJobRandomPos.posAndRangeMatch(range, center));
+        boolean isOnRightTask = (nav.getPathResult() != null && PathJobRandomPos.isJobFor(nav.getPathResult().getJob(), center, range));
 
         if (nav.isDone() || !isOnRightTask)
         {

@@ -167,12 +167,27 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      */
     public boolean posAndRangeMatch(final int range, final BlockPos pos)
     {
-        return destination != null && pos != null && range == maxDistToDest && destination.equals(pos);
+        return;
     }
 
     @Override
     public BlockPos getDestination()
     {
         return destination;
+    }
+
+    /**
+     * Helper to compare if the given random pos job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos center, final int range)
+    {
+        if (job instanceof PathJobRandomPos pathJob)
+        {
+            return pathJob.destination != null && pathJob.destination.equals(center) && pathJob.maxDistToDest == range;
+        }
+
+        return false;
     }
 }

@@ -670,7 +670,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     {
         if (workFrom == null)
         {
-            if (EntityNavigationUtils.walkToRandomPosWithin(worker, 5, 1.0, job.findQuarry().getCorners()))
+            if (EntityNavigationUtils.walkToRandomPosAround(worker, currentBlock, 5, 1.0))
             {
                 workFrom = worker.blockPosition();
             }

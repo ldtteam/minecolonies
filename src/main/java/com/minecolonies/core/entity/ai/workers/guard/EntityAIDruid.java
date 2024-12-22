@@ -75,7 +75,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         if ((BlockPosUtil.dist(buildingGuards.getGuardPos(), worker.blockPosition()) <= 10 || walkToSafePos(buildingGuards.getGuardPos()))
             || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
         {
-            // Moves the ranger randomly to close edges, for better vision to mobs
+            // Moves the druid randomly to close edges, for better vision to mobs
             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
                 null,
                 1.0, true);

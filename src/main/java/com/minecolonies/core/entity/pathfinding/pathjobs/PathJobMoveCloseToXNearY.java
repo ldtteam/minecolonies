@@ -11,8 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * Job that handles moving close to a position near another
  */
@@ -108,18 +106,18 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
         return desiredPosition;
     }
 
-    @Override
-    public boolean equals(final Object other)
+    /**
+     * Helper to compare if the given move close to X near Y job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos desiredPosition, final BlockPos nearbyPosition, final int distance)
     {
-        if (this == other)
+        if (job instanceof PathJobMoveCloseToXNearY pathJob)
         {
-            return true;
+            return pathJob.nearbyPosition.equals(desiredPosition) && pathJob.nearbyPosition.equals(nearbyPosition) && pathJob.distToDesired == distance;
         }
-        if (!(other instanceof final PathJobMoveCloseToXNearY otherPathjob))
-        {
-            return false;
-        }
-        return distToDesired == otherPathjob.distToDesired && Objects.equals(desiredPosition, otherPathjob.desiredPosition) && Objects.equals(nearbyPosition,
-            otherPathjob.nearbyPosition);
+
+        return false;
     }
 }

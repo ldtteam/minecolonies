@@ -10,12 +10,10 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
-import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
@@ -41,11 +39,6 @@ public class RaiderWalkAI implements IStateAI
      * Campfire walk timer
      */
     private long walkTimer = 0;
-
-    /**
-     * Random path result.
-     */
-    private PathResult<? extends IPathJob> randomPathResult;
 
     /**
      * Building the raider is checking out
@@ -89,7 +82,6 @@ public class RaiderWalkAI implements IStateAI
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
                 EntityNavigationUtils.walkToPos(raider, moveToPos, 4, false, !moveToPos.equals(targetBlock) && moveToPos.distManhattan(wayPoints.get(0)) > 50 ? 1.8 : 1.1);
                 walkInBuilding = null;
-                randomPathResult = null;
             }
             else if (walkInBuilding != null)
             {
@@ -98,6 +90,11 @@ public class RaiderWalkAI implements IStateAI
                 {
                     walkInBuilding = null;
                     targetBlock = null;
+                }
+
+                if (raider.getNavigation().getPathResult() != null)
+                {
+                    raider.getNavigation().getPathResult().getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
                 }
             }
             else if (raider.blockPosition().distSqr(targetBlock) < 25)
