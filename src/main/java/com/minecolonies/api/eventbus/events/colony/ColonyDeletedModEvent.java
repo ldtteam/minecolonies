@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.event;
+package com.minecolonies.api.eventbus.events.colony;
 
 import com.minecolonies.api.colony.IColony;
 import org.jetbrains.annotations.NotNull;
@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Colony deleted event.
  */
-public class ColonyDeletedEvent extends AbstractColonyEvent
+public final class ColonyDeletedModEvent extends AbstractColonyModEvent
 {
     /**
      * Constructs a colony deleted event.
      *
      * @param colony The colony related to the event.
      */
-    public ColonyDeletedEvent(final @NotNull IColony colony)
+    public ColonyDeletedModEvent(final @NotNull IColony colony)
     {
         super(colony);
     }

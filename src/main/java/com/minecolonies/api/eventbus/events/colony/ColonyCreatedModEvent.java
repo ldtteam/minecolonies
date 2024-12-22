@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.event;
+package com.minecolonies.api.eventbus.events.colony;
 
 import com.minecolonies.api.colony.IColony;
 import org.jetbrains.annotations.NotNull;
@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Colony created event.
  */
-public class ColonyCreatedEvent extends AbstractColonyEvent
+public final class ColonyCreatedModEvent extends AbstractColonyModEvent
 {
     /**
      * Constructs a colony created event.
      *
      * @param colony The colony related to the event.
      */
-    public ColonyCreatedEvent(final @NotNull IColony colony)
+    public ColonyCreatedModEvent(final @NotNull IColony colony)
     {
         super(colony);
     }

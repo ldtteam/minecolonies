@@ -51,7 +51,7 @@ public interface ISimpleModelType extends IModelType
     {
         if (cachedHalloweenStyle == null)
         {
-            if (MineColonies.getConfig().getServer().holidayFeatures.get() &&
+            if (MineColonies.getConfig().getClient().holidayFeatures.get() &&
                 ((LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
                     || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER)))
             {

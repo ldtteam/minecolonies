@@ -9,10 +9,12 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
@@ -169,6 +171,37 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
         IMinecoloniesAPI.getInstance().getMobAIRegistry().applyToMob(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
+    }
+
+    @NotNull
+    @Override
+    public AbstractAdvancedPathNavigate getNavigation()
+    {
+        if (this.newNavigator == null)
+        {
+            this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
+            this.navigation = newNavigator;
+            this.newNavigator.setCanFloat(true);
+            newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
+            newNavigator.getPathingOptions().setEnterDoors(true);
+            newNavigator.getPathingOptions().withDropCost(1D);
+            newNavigator.getPathingOptions().withJumpCost(1D);
+            newNavigator.getPathingOptions().setPassDanger(true);
+            PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
+                .withTakeDamageOnStuck(0.4f)
+                .withBuildLeafBridges()
+                .withChanceToByPassMovingAway(0.20)
+                .withPlaceLadders();
+
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())
+            {
+                stuckHandler.withBlockBreaks();
+                stuckHandler.withCompleteStuckBlockBreak(6);
+            }
+
+            newNavigator.setStuckHandler(stuckHandler);
+        }
+        return newNavigator;
     }
 
     @Override

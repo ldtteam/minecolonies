@@ -1,18 +1,16 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.core.Network;
+import com.minecolonies.api.eventbus.events.colony.ColonyNameChangedModEvent;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Message to execute the renaiming of the townHall.
+ * Message to execute the renaming of the townHall.
  */
 public class TownHallRenameMessage extends AbstractColonyServerMessage
 {
@@ -57,13 +55,6 @@ public class TownHallRenameMessage extends AbstractColonyServerMessage
     {
         name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
         colony.setName(name);
-        try
-        {
-            MinecraftForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.NAME));
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
-        }
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyNameChangedModEvent(colony));
     }
 }

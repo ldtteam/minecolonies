@@ -1,12 +1,12 @@
 package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.event.ColonyCreatedEvent;
+import com.minecolonies.api.eventbus.events.colony.ColonyCreatedModEvent;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
@@ -20,7 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -188,16 +187,8 @@ public class CreateColonyMessage implements IMessage
                   .sendTo(sender);
             }
 
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyCreatedModEvent(createdColony));
             Network.getNetwork().sendToPlayer(new OpenBuildingUIMessage(building), sender);
-
-            try
-            {
-                MinecraftForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyCreatedEvent", e);
-            }
             return;
         }
 

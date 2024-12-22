@@ -22,6 +22,7 @@ import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
@@ -32,7 +33,7 @@ import net.minecraftforge.registries.NewRegistryEvent;
 
 public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
 {
-    private static MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
+    private static final MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
 
     private IMinecoloniesAPI apiInstance;
 
@@ -234,5 +235,11 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<EquipmentTypeEntry> getEquipmentTypeRegistry()
     {
         return apiInstance.getEquipmentTypeRegistry();
+    }
+
+    @Override
+    public EventBus getEventBus()
+    {
+        return apiInstance.getEventBus();
     }
 }

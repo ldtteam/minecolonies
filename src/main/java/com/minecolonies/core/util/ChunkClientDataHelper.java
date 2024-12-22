@@ -1,7 +1,7 @@
 package com.minecolonies.core.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
+import com.minecolonies.core.event.ClientChunkUpdatedEvent;
 import com.minecolonies.api.util.ChunkCapData;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
