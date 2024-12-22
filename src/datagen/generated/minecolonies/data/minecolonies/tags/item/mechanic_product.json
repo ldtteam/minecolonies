@@ -30,9 +30,18 @@
     "minecraft:fire_charge",
     "minecraft:conduit",
     "minecraft:respawn_anchor",
+    "minecraft:recovery_compass",
     "minecraft:shulker_box",
     "minecraft:slime_ball",
     "minecraft:glow_item_frame",
-    "minecraft:spyglass"
+    "minecraft:spyglass",
+    "minecraft:waxed_copper_door",
+    "minecraft:waxed_copper_trapdoor",
+    "minecraft:waxed_exposed_copper_door",
+    "minecraft:waxed_exposed_copper_trapdoor",
+    "minecraft:waxed_oxidized_copper_door",
+    "minecraft:waxed_oxidized_copper_trapdoor",
+    "minecraft:waxed_weathered_copper_door",
+    "minecraft:waxed_weathered_copper_trapdoor"
   ]
 }

@@ -1,0 +1,22 @@
+{
+  "values": [
+    "minecraft:azalea_leaves",
+    "minecraft:flowering_azalea_leaves",
+    "minecraft:coarse_dirt",
+    "minecraft:rooted_dirt",
+    "minecraft:grass_block",
+    "minecraft:hay_block",
+    "minecraft:moss_block",
+    "minecraft:dried_kelp_block",
+    "minecraft:mud",
+    "minecraft:packed_mud",
+    "minecraft:mud_bricks",
+    "minecraft:muddy_mangrove_roots",
+    "minecraft:podzol",
+    "minecraft:mycelium",
+    "minecraft:brown_mushroom_block",
+    "minecraft:red_mushroom_block",
+    "minecraft:nether_wart_block",
+    "minecraft:warped_wart_block"
+  ]
+}

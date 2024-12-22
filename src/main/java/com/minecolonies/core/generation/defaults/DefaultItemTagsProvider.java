@@ -201,7 +201,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.BRICK, Items.NETHER_BRICK);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BLACKSMITH))
-          .add(Items.SHEARS, Items.LIGHTNING_ROD)
+          .add(Items.SHEARS, Items.LIGHTNING_ROD, Items.MACE)
           .addTags(Tags.Items.NUGGETS, Tags.Items.INGOTS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BLACKSMITH))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
@@ -325,6 +325,11 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FLETCHER))
           .add(Items.BOOK)
           .add(Items.ITEM_FRAME);
+        tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_FLETCHER))
+          .add(Items.AZALEA_LEAVES, Items.FLOWERING_AZALEA_LEAVES)
+          .add(Items.COARSE_DIRT, Items.ROOTED_DIRT, Items.GRASS_BLOCK, Items.HAY_BLOCK, Items.MOSS_BLOCK, Items.DRIED_KELP_BLOCK)
+          .add(Items.MUD, Items.PACKED_MUD, Items.MUD_BRICKS, Items.MUDDY_MANGROVE_ROOTS, Items.PODZOL, Items.MYCELIUM)
+          .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_GLASSBLOWER))
           .addTag(Tags.Items.GLASS_BLOCKS)
@@ -382,13 +387,18 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.FIRE_CHARGE)
           .add(Items.CONDUIT)
           .add(Items.RESPAWN_ANCHOR)
+          .add(Items.RECOVERY_COMPASS)
           .add(Items.SHULKER_BOX)
           .add(Items.SLIME_BALL)
           .add(Items.GLOW_ITEM_FRAME)
-          .add(Items.SPYGLASS);
+          .add(Items.SPYGLASS)
+          .add(Items.WAXED_COPPER_DOOR, Items.WAXED_COPPER_TRAPDOOR)
+          .add(Items.WAXED_EXPOSED_COPPER_DOOR, Items.WAXED_EXPOSED_COPPER_TRAPDOOR)
+          .add(Items.WAXED_OXIDIZED_COPPER_DOOR, Items.WAXED_OXIDIZED_COPPER_TRAPDOOR)
+          .add(Items.WAXED_WEATHERED_COPPER_DOOR, Items.WAXED_WEATHERED_COPPER_TRAPDOOR);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.SPECTRAL_ARROW)
-          .add(Items.HAY_BLOCK)
+          .add(Items.HAY_BLOCK, Items.WHEAT)
           .add(Items.LEAD);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_PLANTATION))
@@ -456,10 +466,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON))
           .add(Items.POLISHED_DEEPSLATE, Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES)
           .add(Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
-          .add(Items.BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
+          .add(Items.BRICKS, Items.POLISHED_BLACKSTONE_BRICKS, Items.TUFF_BRICKS)
           .add(Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS)
           .add(Items.DRIPSTONE_BLOCK)
-          .add(Items.CHISELED_QUARTZ_BLOCK)
+          .add(Items.QUARTZ_BLOCK, Items.CHISELED_QUARTZ_BLOCK)
           .add(Items.QUARTZ_PILLAR)
           .add(Items.QUARTZ_BRICKS)
           .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
@@ -482,8 +492,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(paperExtras);
 
         tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
-          .add(Items.STONE, Items.CALCITE)
-          .add(Items.MUD_BRICKS)
+          .add(Items.STONE, Items.CALCITE, Items.POLISHED_ANDESITE, Items.POLISHED_DIORITE, Items.POLISHED_GRANITE)
           .add(Items.QUARTZ_BLOCK, Items.SMOOTH_QUARTZ, Items.QUARTZ_BRICKS, Items.QUARTZ_PILLAR, Items.CHISELED_QUARTZ_BLOCK)
           .add(Items.NETHERRACK)
           .add(Items.BLACKSTONE, Items.CHISELED_POLISHED_BLACKSTONE, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS)

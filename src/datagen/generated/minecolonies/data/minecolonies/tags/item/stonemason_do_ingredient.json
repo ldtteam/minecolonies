@@ -2,7 +2,9 @@
   "values": [
     "minecraft:stone",
     "minecraft:calcite",
-    "minecraft:mud_bricks",
+    "minecraft:polished_andesite",
+    "minecraft:polished_diorite",
+    "minecraft:polished_granite",
     "minecraft:quartz_block",
     "minecraft:smooth_quartz",
     "minecraft:quartz_bricks",
