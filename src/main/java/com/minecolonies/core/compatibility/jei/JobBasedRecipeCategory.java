@@ -1,5 +1,6 @@
 package com.minecolonies.core.compatibility.jei;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,6 +15,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
@@ -52,7 +54,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,9 +74,12 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
     @NotNull private final IDrawableStatic background;
     @NotNull protected final IDrawableStatic slot;
     @NotNull protected final IDrawableStatic chanceSlot;
-    @NotNull private final EntityCitizen citizen;
     @NotNull private final List<FormattedText> description;
     @NotNull private final LoadingCache<T, List<InfoBlock>> infoBlocksCache;
+
+    private static final Cache<IJob<?>, EntityCitizen> citizenCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(2))
+            .build();
 
     protected static final int WIDTH = 167;
     protected static final int HEIGHT = 120;
@@ -99,8 +106,6 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
         this.background = guiHelper.createDrawable(TEXTURE, 0, 0, WIDTH, HEIGHT);
         this.slot = guiHelper.getSlotDrawable();
         this.chanceSlot = guiHelper.createDrawable(TEXTURE, 0, 121, 18, 18);
-
-        this.citizen = createCitizenWithJob(this.job);
 
         this.description = translateDescription(
                 TranslationConstants.PARTIAL_JEI_INFO +
@@ -199,12 +204,16 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
         final int citizen_by = CITIZEN_Y + CITIZEN_H;
         final int offsetY = 4;
 
-        final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
-        final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
-        final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-        Lighting.setupForFlatItems();
-        UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
-        Lighting.setupFor3DItems();
+        final EntityCitizen citizen = createCitizenWithJob(this.job);
+        if (citizen != null)
+        {
+            final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
+            final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
+            final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
+            Lighting.setupForFlatItems();
+            UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, citizen);
+            Lighting.setupFor3DItems();
+        }
     }
 
     @Override
@@ -283,16 +292,27 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
         public final Rect2i bounds;
     }
 
-    @NotNull
+    @Nullable
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
-        final FakeLevel level = new SingleBlockFakeLevel(Minecraft.getInstance().level);
-        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, level);
-        citizen.setFemale(citizen.getRandom().nextBoolean());
-        citizen.setTextureId(citizen.getRandom().nextInt(255));
-        citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
-        citizen.setModelId(job.getModel());
-        return citizen;
+        try
+        {
+            return citizenCache.get(job, () ->
+            {
+                final FakeLevel level = new SingleBlockFakeLevel(Minecraft.getInstance().level);
+                final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, level);
+                citizen.setFemale(citizen.getRandom().nextBoolean());
+                citizen.setTextureId(citizen.getRandom().nextInt(255));
+                citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
+                citizen.setModelId(job.getModel());
+                return citizen;
+            });
+        }
+        catch (final Throwable e)
+        {
+            Log.getLogger().error("Error creating citizen for {}", job.getJobRegistryEntry().getTranslationKey(), e);
+            return null;
+        }
     }
 
     @NotNull
