@@ -47,5 +47,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:loot_tables/miner/lucky_ore4"
+  "random_sequence": "minecolonies:miner/lucky_ore4"
 }

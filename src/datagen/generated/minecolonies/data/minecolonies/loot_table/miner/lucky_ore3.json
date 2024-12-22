@@ -38,5 +38,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "minecolonies:loot_tables/miner/lucky_ore3"
+  "random_sequence": "minecolonies:miner/lucky_ore3"
 }
