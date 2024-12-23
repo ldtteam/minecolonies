@@ -3,11 +3,11 @@ package com.minecolonies.core.network.messages.server;
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.event.ColonyCreatedEvent;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.eventbus.events.colony.ColonyCreatedModEvent;
 import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -20,7 +20,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
@@ -170,16 +169,9 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
                   .sendTo(sender);
             }
 
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyCreatedModEvent(createdColony));
             new OpenBuildingUIMessage(building).sendToPlayer(sender);;
 
-            try
-            {
-                NeoForge.EVENT_BUS.post(new ColonyCreatedEvent(createdColony));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyCreatedEvent", e);
-            }
             return;
         }
 

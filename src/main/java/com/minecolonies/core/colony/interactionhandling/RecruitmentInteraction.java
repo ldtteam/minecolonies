@@ -6,13 +6,13 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.Box;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
+import com.minecolonies.api.eventbus.events.colony.citizens.CitizenAddedModEvent;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
@@ -23,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import java.util.Collections;
 import java.util.List;
@@ -188,14 +187,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                         MessageUtils.format(MESSAGE_RECRUITMENT_SUCCESS, data.getName()).sendTo(colony).forAllPlayers();
                     }
 
-                    try
-                    {
-                        NeoForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.HIRED));
-                    }
-                    catch (final Exception e)
-                    {
-                        Log.getLogger().error("Error during CitizenAddedEvent", e);
-                    }
+                    IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(newCitizen, CitizenAddedModEvent.CitizenAddedSource.HIRED));
                 }
             }
             else

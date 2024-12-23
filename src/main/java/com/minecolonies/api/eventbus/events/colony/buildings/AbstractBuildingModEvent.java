@@ -1,12 +1,12 @@
-package com.minecolonies.api.colony.buildings.event;
+package com.minecolonies.api.eventbus.events.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.event.AbstractColonyEvent;
+import com.minecolonies.api.eventbus.events.colony.AbstractColonyModEvent;
 
 /**
  * Abstract event for building related things.
  */
-public abstract class AbstractBuildingEvent extends AbstractColonyEvent
+public abstract class AbstractBuildingModEvent extends AbstractColonyModEvent
 {
     /**
      * The building related to the event.
@@ -18,7 +18,7 @@ public abstract class AbstractBuildingEvent extends AbstractColonyEvent
      *
      * @param building the building related to the event.
      */
-    protected AbstractBuildingEvent(final IBuilding building)
+    protected AbstractBuildingModEvent(final IBuilding building)
     {
         super(building.getColony());
         this.building = building;

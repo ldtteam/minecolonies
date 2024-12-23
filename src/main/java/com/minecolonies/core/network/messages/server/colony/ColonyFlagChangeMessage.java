@@ -1,16 +1,15 @@
 package com.minecolonies.core.network.messages.server.colony;
 
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.eventbus.events.colony.ColonyFlagChangedModEvent;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
@@ -20,12 +19,15 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_flag_change", ColonyFlagChangeMessage::new);
 
-    /** The chosen list of patterns from the window */
+    /**
+     * The chosen list of patterns from the window
+     */
     private final BannerPatternLayers patterns;
 
     /**
      * Spawn a new change message
-     * @param colony the colony the player changed the banner in
+     *
+     * @param colony      the colony the player changed the banner in
      * @param patternList the list of patterns they set in the banner picker
      */
     public ColonyFlagChangeMessage(final IColony colony, final BannerPatternLayers patternList)
@@ -38,14 +40,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.setColonyFlag(patterns);
-        try
-        {
-            NeoForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.FLAG));
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
-        }
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyFlagChangedModEvent(colony));
     }
 
     @Override
