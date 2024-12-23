@@ -3,15 +3,15 @@
 	"rarity": 10,
 	"items": [
 		{
-			"item": "minecraft:poppy",
+			"id": "minecraft:poppy",
 			"count": 1
 		},
 		{
-			"item": "minecraft:dandelion",
+			"id": "minecraft:dandelion",
 			"count": 1
 		},
 		{
-			"item": "minecraft:kelp",
+			"id": "minecraft:kelp",
 			"count": 1
 		}
 	]

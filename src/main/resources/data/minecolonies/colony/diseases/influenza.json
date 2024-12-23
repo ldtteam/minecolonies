@@ -3,11 +3,11 @@
 	"rarity": 100,
 	"items": [
 		{
-			"item": "minecraft:carrot",
+			"id": "minecraft:carrot",
 			"count": 1
 		},
 		{
-			"item": "minecraft:potato",
+			"id": "minecraft:potato",
 			"count": 1
 		}
 	]
