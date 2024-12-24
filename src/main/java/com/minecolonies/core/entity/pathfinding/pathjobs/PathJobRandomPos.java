@@ -158,18 +158,6 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
         getPathingOptions().canDrop = false;
     }
 
-    /**
-     * Checks if position and range match the given parameters
-     *
-     * @param range max dist to dest range
-     * @param pos   dest to look from
-     * @return
-     */
-    public boolean posAndRangeMatch(final int range, final BlockPos pos)
-    {
-        return;
-    }
-
     @Override
     public BlockPos getDestination()
     {

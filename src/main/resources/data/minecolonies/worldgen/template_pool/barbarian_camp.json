@@ -1,0 +1,24 @@
+{
+  "name": "minecolonies:start_pool",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:camps/large_barbarian_camp",
+        "processors": "minecolonies:placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:camps/small_barbarian_camp",
+        "processors": "minecolonies:placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}
