@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -16,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,19 +112,18 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
         {
             if (module.canLearn(ModCraftingTypes.BREWING.get()))
             {
+                final ItemStack potion = container.getSlot(0).getItem();
+                final ItemStack ingredient = container.getSlot(3).getItem();
+
                 final List<ItemStorage> input = new ArrayList<>();
-                input.add(new ItemStorage(container.slots.get(0).getItem()));
-                input.add(new ItemStorage(container.slots.get(1).getItem()));
-                input.add(new ItemStorage(container.slots.get(2).getItem()));
-                input.add(new ItemStorage(container.slots.get(3).getItem()));
+                input.add(new ItemStorage(potion, 3, false));
+                input.add(new ItemStorage(ingredient));
 
-                final ItemStack
-                  primaryOutput = PotionBrewing.EMPTY.mix(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
-                primaryOutput.setCount(3);
+                final ItemStack primaryOutput = Minecraft.getInstance().level.potionBrewing().mix(ingredient, potion);
 
-                if (!ItemStackUtils.isEmpty(primaryOutput))
+                if (!ItemStackUtils.isEmpty(primaryOutput) && primaryOutput != potion)
                 {
-                    new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.BREWING_STAND, module.getProducer().getRuntimeID()).sendToServer();
+                    new AddRemoveRecipeMessage(building, input, 1, primaryOutput.copyWithCount(3), false, Blocks.BREWING_STAND, module.getProducer().getRuntimeID()).sendToServer();
                 }
             }
         }

@@ -171,11 +171,11 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
         this.playerInventory = inv;
         this.buildingPos = pos;
 
-        this.addSlot(new SlotItemHandler(brewingStandInventory, 3, 79, 17));
-
         this.addSlot(new InputItemHandler(brewingStandInventory, 0, 56, 51));
         this.addSlot(new InputItemHandler(brewingStandInventory, 1, 79, 58));
         this.addSlot(new InputItemHandler(brewingStandInventory, 2, 102, 51));
+
+        this.addSlot(new SlotItemHandler(brewingStandInventory, 3, 79, 17));
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -273,7 +273,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      */
     public void setInput(final ItemStack stack)
     {
-        handleSlotClick(getSlot(0), stack);
+        handleSlotClick(getSlot(3), stack);
     }
 
     /**
@@ -283,9 +283,9 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      */
     public void setContainer(final ItemStack stack)
     {
+        handleSlotClick(getSlot(0), stack);
         handleSlotClick(getSlot(1), stack);
         handleSlotClick(getSlot(2), stack);
-        handleSlotClick(getSlot(3), stack);
     }
 
     /**

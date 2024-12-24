@@ -8,19 +8,14 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A crafting type for brewing recipes
@@ -39,31 +34,23 @@ public class BrewingCraftingType extends CraftingType
         final List<IGenericRecipe> recipes = new ArrayList<>();
         final ICompatibilityManager compatibilityManager = MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager();
 
-        for (final IBrewingRecipe recipe : PotionBrewing.EMPTY.getRecipes())
+        final List<ItemStack> containers = compatibilityManager.getListOfAllItems().stream()
+                .filter(world.potionBrewing()::isInput)
+                .toList();
+        final List<ItemStack> ingredients = compatibilityManager.getListOfAllItems().stream()
+                .filter(world.potionBrewing()::isIngredient)
+                .toList();
+
+        for (final ItemStack container : containers)
         {
-            final List<ItemStack> inputs = compatibilityManager.getListOfAllItems().stream()
-                    .filter(recipe::isInput)
-                    .collect(Collectors.toList());
-            final List<ItemStack> ingredients = compatibilityManager.getListOfAllItems().stream()
-                    .filter(recipe::isIngredient)
-                    .collect(Collectors.toList());
-
-            for (final ItemStack input : inputs)
+            for (final ItemStack ingredient : ingredients)
             {
-                for (final ItemStack ingredient : ingredients)
+                final ItemStack output = world.potionBrewing().mix(ingredient, container);
+                if (!output.isEmpty() && output != container)
                 {
-                    final ItemStack output = recipe.getOutput(input, ingredient);
-                    if (!output.isEmpty())
-                    {
-                        final ItemStack actualInput = input.copy();
-                        actualInput.setCount(3);
-                        final ItemStack actualOutput = output.copy();
-                        actualOutput.setCount(3);
-
-                        recipes.add(new GenericRecipe(null, actualOutput, Collections.emptyList(),
-                                Arrays.asList(Collections.singletonList(ingredient), Collections.singletonList(actualInput)),
-                                1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), Collections.emptyList(), -1));
-                    }
+                    recipes.add(new GenericRecipe(null, output.copyWithCount(3), List.of(),
+                            List.of(List.of(ingredient), List.of(container.copyWithCount(3))),
+                            1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), List.of(), -1));
                 }
             }
         }
