@@ -54,7 +54,6 @@ public class EventListener
         }
     }
 
-    @SubscribeEvent
     public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedModEvent event)
     {
         final IColonyView colony = event.getColony();
