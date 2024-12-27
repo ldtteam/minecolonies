@@ -1582,7 +1582,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public void remove(final @NotNull RemovalReason reason)
     {
         super.remove(reason);
-        IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenRemovedModEvent(citizenData, reason));
+        if (reason != RemovalReason.DISCARDED && citizenData != null)
+        {
+            IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenRemovedModEvent(citizenData, reason));
+        }
     }
 
     /**

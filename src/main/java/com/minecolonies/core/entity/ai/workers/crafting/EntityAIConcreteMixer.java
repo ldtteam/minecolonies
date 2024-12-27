@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ConcretePowderBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -72,7 +71,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         final int slot = getSlotWithPowder();
         if (slot == -1)
         {
-            if (InventoryUtils.hasItemInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), CONCRETE))
+            if (InventoryUtils.getCountFromBuilding(building, CONCRETE) > 0)
             {
                 needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
