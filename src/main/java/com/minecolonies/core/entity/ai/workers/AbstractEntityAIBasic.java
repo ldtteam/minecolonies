@@ -36,10 +36,10 @@ import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
-import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.core.util.WorkerUtil;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState walkToState()
     {
-        if (!walkWithProxy(walkTo, DEFAULT_RANGE_FOR_DELAY))
+        if (!walkToSafePos(walkTo))
         {
             return getState();
         }
@@ -900,6 +900,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             workOnBlock(null, DELAY_RECHECK);
             return true;
         }
+
+        worker.getNavigation().stop();
         return false;
     }
 
