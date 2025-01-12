@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#forge:is_desert"
+    "#c:is_desert"
   ]
 }

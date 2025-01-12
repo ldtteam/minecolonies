@@ -2,7 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:plains",
-    "#forge:is_plains",
+    "#c:is_plains",
     "minecraft:sunflower_plains",
     "minecraft:snowy_plains",
     "minecraft:forest",
