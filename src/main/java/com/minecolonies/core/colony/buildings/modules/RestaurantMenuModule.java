@@ -12,11 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.items.IMinecoloniesFoodItem;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.MathUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -30,7 +26,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 
 /**
  * Minimum stock module.
@@ -208,7 +203,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
         for (int i = 0; i < minimumStockTagList.size(); i++)
         {
             final ItemStack itemStack = ItemStack.of(minimumStockTagList.getCompound(i));
-            if (ISFOOD.test(itemStack) || itemStack.getItem() instanceof IMinecoloniesFoodItem)
+            if (FoodUtils.EDIBLE.test(itemStack))
             {
                 menu.add(new ItemStorage(itemStack));
             }
