@@ -23,8 +23,6 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
 {
     //  Parent class private members
     protected final Mob    ourEntity;
-    @Nullable
-    protected       BlockPos     destination;
     protected       double       walkSpeedFactor = 1.0D;
     @Nullable
     protected       BlockPos     originalDestination;
@@ -40,17 +38,6 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     {
         super(entityLiving, worldIn);
         this.ourEntity = mob;
-    }
-
-    /**
-     * Get the destination from the path.
-     *
-     * @return the destination position.
-     */
-    @Nullable
-    public BlockPos getDestination()
-    {
-        return destination;
     }
 
     /**
@@ -211,18 +198,11 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     }
 
     /**
-     * Gets the desired to go position
-     *
-     * @return desired go to pos
-     */
-    public abstract BlockPos getDesiredPos();
-
-    /**
      * Sets the desired position to reach, used also for stuckhandling
      *
      * @param pos
      */
-    public abstract void setDesiredPos(BlockPos pos);
+    public abstract void setSafeDestinationPos(BlockPos pos);
 
     /**
      * Sets the stuck handler for this navigator

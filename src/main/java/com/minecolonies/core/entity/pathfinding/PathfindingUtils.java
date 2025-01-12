@@ -81,11 +81,40 @@ public class PathfindingUtils
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
             Mth.floor(entity.getY()),
             Mth.floor(entity.getZ()));
         final Level level = entity.level;
         BlockState bs = level.getBlockState(pos);
+
+        // Check if the entity is standing ontop of another block with part of its bb
+        final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
+        if (entity.onGround() && SurfaceType.getSurfaceType(level, level.getBlockState(below), below) != SurfaceType.WALKABLE)
+        {
+            int minX = Mth.floor(entity.getBoundingBox().minX);
+            int minZ = Mth.floor(entity.getBoundingBox().minZ);
+            int maxX = Mth.floor(entity.getBoundingBox().maxX);
+            int maxZ = Mth.floor(entity.getBoundingBox().maxZ);
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                for (int z = minZ; z <= maxZ; z++)
+                {
+                    final BlockPos toCheck = new BlockPos(x, below.getY(), z);
+                    // Only check other positions than the current
+                    if ((x != pos.getX() || z != pos.getZ())
+                        && SurfaceType.getSurfaceType(level, level.getBlockState(toCheck), toCheck) == SurfaceType.WALKABLE
+                        && Math.abs(ShapeUtil.max(level.getBlockState(toCheck).getCollisionShape(level, toCheck), Direction.Axis.Y) + toCheck.getY() - entity.getY()) < 0.1)
+                    {
+                        pos.setX(x);
+                        pos.setZ(z);
+                        below.setX(x);
+                        below.setZ(z);
+                    }
+                }
+            }
+        }
+
         // 1 Up when we're standing within this collision shape
         final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
         final boolean isFineToStandIn = canStandInSolidBlock(bs);
