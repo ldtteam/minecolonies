@@ -84,7 +84,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
      */
     private final CraftingModuleView module;
 
-    private final Map<IRequest<?>, ItemStack> requestables = new HashMap<>();
+    private final Map<IRequest<?>, List<ItemStack>> requestables = new HashMap<>();
 
     /**
      * Create a crafting gui window.
@@ -156,12 +156,9 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
 
         if (request.getRequest() instanceof IConcreteDeliverable deliverable)
         {
-            for (final ItemStack stack : deliverable.getRequestedItems())
-            {
-                // todo filter?
-                requestables.put(request, stack);
-                return true;
-            }
+            // todo filter?
+            requestables.put(request, deliverable.getRequestedItems());
+            return true;
         }
         return false;
     }
@@ -170,10 +167,10 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     {
         minecraft.setScreen(this);
 
-        final ItemStack stack = requestables.getOrDefault(request, ItemStack.EMPTY);
-        if (!stack.isEmpty() && WindowCrafting.JEI_REQUEST_HOOK != null)
+        final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
+        if (!stacks.isEmpty() && WindowCrafting.JEI_REQUEST_HOOK != null)
         {
-            WindowCrafting.JEI_REQUEST_HOOK.accept(stack);
+            WindowCrafting.JEI_REQUEST_HOOK.accept(stacks);
         }
     }
 

@@ -25,15 +25,13 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.CRAFTING_SWITCH_SIZE;
+import static com.minecolonies.api.util.constant.WindowConstants.CRAFTING_SWITCH_TEXTURE;
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
@@ -126,8 +124,8 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      */
     private ImageButton switchButton;
 
-    @Nullable public static Consumer<ItemStack> JEI_REQUEST_HOOK;
-    private final Map<IRequest<?>, ItemStack> requestables = new HashMap<>();
+    @Nullable public static Consumer<List<ItemStack>> JEI_REQUEST_HOOK;
+    private final Map<IRequest<?>, List<ItemStack>> requestables = new HashMap<>();
 
     /**
      * Create a crafting gui window.
@@ -204,12 +202,9 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 
         if (request.getRequest() instanceof IConcreteDeliverable deliverable)
         {
-            for (final ItemStack stack : deliverable.getRequestedItems())
-            {
-                // todo filter?
-                requestables.put(request, stack);
-                return true;
-            }
+            // todo filter?
+            requestables.put(request, deliverable.getRequestedItems());
+            return true;
         }
         return false;
     }
@@ -218,10 +213,10 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     {
         minecraft.setScreen(this);
 
-        final ItemStack stack = requestables.getOrDefault(request, ItemStack.EMPTY);
-        if (!stack.isEmpty() && JEI_REQUEST_HOOK != null)
+        final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
+        if (!stacks.isEmpty() && JEI_REQUEST_HOOK != null)
         {
-            JEI_REQUEST_HOOK.accept(stack);
+            JEI_REQUEST_HOOK.accept(stacks);
         }
     }
 

@@ -23,6 +23,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.IFocusFactory;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
@@ -45,7 +46,7 @@ public class JEIPlugin implements IModPlugin
 {
     public JEIPlugin()
     {
-        WindowCrafting.JEI_REQUEST_HOOK = this::showOutputStack;
+        WindowCrafting.JEI_REQUEST_HOOK = this::showOutputStacks;
     }
 
     @NotNull
@@ -212,12 +213,15 @@ public class JEIPlugin implements IModPlugin
         this.jei = null;
     }
 
-    private void showOutputStack(@NotNull final ItemStack stack)
+    private void showOutputStacks(@NotNull final List<ItemStack> stacks)
     {
-        if (this.jei != null)
+        if (this.jei != null && !stacks.isEmpty())
         {
-            final IFocus<?> focus = this.jei.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack);
-            this.jei.getRecipesGui().show(focus);
+            final IFocusFactory focusFactory = this.jei.getJeiHelpers().getFocusFactory();
+            final List<IFocus<?>> focuses = stacks.stream()
+                    .<IFocus<?>>map(stack -> focusFactory.createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack))
+                    .toList();
+            this.jei.getRecipesGui().show(focuses);
         }
     }
 }
