@@ -24,10 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -125,8 +122,8 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      */
     private ImageButton switchButton;
 
-    @Nullable public static Consumer<ItemStack> JEI_REQUEST_HOOK;
-    private final Map<IRequest<?>, ItemStack> requestables = new HashMap<>();
+    @Nullable public static Consumer<List<ItemStack>> JEI_REQUEST_HOOK;
+    private final Map<IRequest<?>, List<ItemStack>> requestables = new HashMap<>();
 
     /**
      * Create a crafting gui window.
@@ -173,10 +170,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         }
 
         this.switchButton = new ImageButton(leftPos + SWITCH_X_OFFSET, topPos + SWITCH_Y_OFFSET, CRAFTING_SWITCH_SIZE.width, CRAFTING_SWITCH_SIZE.height,
-                CRAFTING_SWITCH, btn ->
-        {
-            new SwitchRecipeCraftingTeachingMessage().sendToServer();
-        });
+                CRAFTING_SWITCH, btn -> new SwitchRecipeCraftingTeachingMessage().sendToServer());
         this.switchButton.visible = false;
         this.addRenderableWidget(this.switchButton);
 
@@ -203,12 +197,9 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 
         if (request.getRequest() instanceof IConcreteDeliverable deliverable)
         {
-            for (final ItemStack stack : deliverable.getRequestedItems())
-            {
-                // todo filter?
-                requestables.put(request, stack);
-                return true;
-            }
+            // todo filter?
+            requestables.put(request, deliverable.getRequestedItems());
+            return true;
         }
         return false;
     }
@@ -217,10 +208,10 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     {
         minecraft.setScreen(this);
 
-        final ItemStack stack = requestables.getOrDefault(request, ItemStack.EMPTY);
-        if (!stack.isEmpty() && JEI_REQUEST_HOOK != null)
+        final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
+        if (!stacks.isEmpty() && JEI_REQUEST_HOOK != null)
         {
-            JEI_REQUEST_HOOK.accept(stack);
+            JEI_REQUEST_HOOK.accept(stacks);
         }
     }
 
