@@ -527,7 +527,9 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getSafeDestination()).getOpposite();
+        final Direction badFacing = navigator.getSafeDestination() == null
+            ? entity.getDirection().getOpposite()
+            : BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getSafeDestination()).getOpposite();
 
         for (final Direction dir : HORIZONTAL_DIRS)
         {
@@ -573,7 +575,8 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         final Level world = navigator.getOurEntity().level();
         final Mob entity = navigator.getOurEntity();
 
-        final Direction facing = BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getSafeDestination());
+        final Direction facing =
+            navigator.getSafeDestination() == null ? entity.getDirection() : BlockPosUtil.getFacing(BlockPos.containing(entity.position()), navigator.getSafeDestination());
 
         if (breakBlocksAhead(world, entity.blockPosition(), facing) && entity.getHealth() >= entity.getMaxHealth() / 3)
         {
