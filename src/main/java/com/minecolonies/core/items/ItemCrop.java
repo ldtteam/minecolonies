@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
@@ -64,11 +65,12 @@ public class ItemCrop extends BlockItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP).withStyle(ChatFormatting.GRAY));
         if (preferredBiome != null)
         {
             tooltip.add(Component.translatable(TranslationConstants.BIOME_TOOLTIP + "." + preferredBiome.location().getPath()));
         }
+        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP_HOE).withStyle(ChatFormatting.DARK_AQUA).withStyle(ChatFormatting.ITALIC));
     }
 
     /**

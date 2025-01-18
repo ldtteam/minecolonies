@@ -1,12 +1,12 @@
 {
   "type": "minecraft:jigsaw",
   "biomes": "#minecolonies:has_structure/barbarian_camp",
-  "adapt_noise": false,
+  "adapt_noise": true,
+  "terrain_adaptation": "beard_box",
   "start_pool": "minecolonies:barbarian_camp",
   "spawn_overrides": {},
   "size": 1,
   "step": "surface_structures",
-
   "start_height": {
     "absolute": 0
   },

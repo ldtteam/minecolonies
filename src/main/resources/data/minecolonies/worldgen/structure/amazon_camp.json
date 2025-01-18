@@ -1,7 +1,8 @@
 {
   "type": "minecraft:jigsaw",
   "biomes": "#minecolonies:has_structure/amazon_camp",
-  "adapt_noise": false,
+  "adapt_noise": true,
+  "terrain_adaptation": "beard_box",
   "start_pool": "minecolonies:amazon_camp",
   "spawn_overrides": {},
   "size": 7,
