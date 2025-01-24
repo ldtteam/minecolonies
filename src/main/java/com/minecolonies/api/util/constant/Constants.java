@@ -9,7 +9,6 @@ import net.minecraft.world.effect.MobEffects;
 public final class Constants
 {
     public static final String MOD_ID                           = "minecolonies";
-    public static final String HARVESTCRAFTMODID                = "harvestcraft";
     public static final int    ROTATE_0_TIMES                   = 0;
     public static final int    ROTATE_ONCE                      = 1;
     public static final int    ROTATE_TWICE                     = 2;
