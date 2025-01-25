@@ -507,6 +507,11 @@ public final class ItemStackUtils
                 return false;
             }
 
+            if (matchNBTExactly)
+            {
+                return ItemStack.isSameItemSameComponents(itemStack1, itemStack2);
+            }
+
             final Set<DataComponentType<?>> checkedKeys = CHECKED_NBT_KEYS.get(itemStack1.getItem());
             if (checkedKeys == null || checkedKeys.isEmpty())
             {
@@ -522,7 +527,7 @@ public final class ItemStackUtils
                 }
             }
 
-            return itemStack1.getComponents().size() == itemStack2.getComponents().size();
+            return true;
         }
         return false;
     }
