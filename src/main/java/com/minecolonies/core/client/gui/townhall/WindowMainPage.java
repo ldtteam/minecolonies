@@ -46,7 +46,6 @@ import static com.minecolonies.core.event.TextureReloadListener.TEXTURE_PACKS;
  */
 public class WindowMainPage extends AbstractWindowTownHall
 {
-
     /**
      * Is the special feature unlocked.
      */
@@ -76,8 +75,6 @@ public class WindowMainPage extends AbstractWindowTownHall
      * The initial texture index.
      */
     private int initialNamePackIndex;
-
-
 
     /**
      * Label for the colony name.
@@ -316,7 +313,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
-        if (isFeatureUnlocked.get() || !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
         {
             return;
         }
