@@ -149,7 +149,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Heuristic modifier
      */
-    private double heuristicMod = 2;
+    protected double heuristicMod = 2;
 
     /**
      * First node
