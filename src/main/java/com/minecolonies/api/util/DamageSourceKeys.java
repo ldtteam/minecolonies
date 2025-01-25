@@ -50,7 +50,7 @@ public class DamageSourceKeys
     public static ResourceKey<DamageType> CAMP_NORSEMENARCHER = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campnorsemenarcher"));
     public static ResourceKey<DamageType> CAMP_SHIELDMAIDEN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campshieldmaiden"));
     public static ResourceKey<DamageType> CAMP_BARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campbarbarian"));
-    public static ResourceKey<DamageType> CAMP_CHIEFBARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "ccamphiefbarbarian"));
+    public static ResourceKey<DamageType> CAMP_CHIEFBARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campchiefbarbarian"));
     public static ResourceKey<DamageType> CAMP_ARCHERBARBARIAN = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camparcherbarbarian"));
     public static ResourceKey<DamageType> CAMP_PIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "camppirate"));
     public static ResourceKey<DamageType> CAMP_CHIEFPIRATE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Constants.MOD_ID, "campchiefpirate"));
