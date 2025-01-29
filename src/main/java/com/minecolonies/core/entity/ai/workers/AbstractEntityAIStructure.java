@@ -345,7 +345,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return PICK_UP_RESIDUALS;
         }
 
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        if (!worker.getInventoryCitizen().hasSpace())
         {
             return INVENTORY_FULL;
         }
