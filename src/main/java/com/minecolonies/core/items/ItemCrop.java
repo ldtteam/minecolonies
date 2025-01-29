@@ -4,6 +4,9 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.MinecoloniesFarmland;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
@@ -15,6 +18,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +55,9 @@ public class ItemCrop extends BlockItem
         Player player = ctx.getPlayer();
         if (!player.isCreative())
         {
-            if (ctx.getLevel().isClientSide)
+            final BlockPos clickedPos = ctx.getClickedPos().below();
+            final BlockState worldState = ctx.getLevel().getBlockState(clickedPos);
+            if (ctx.getLevel().isClientSide && (worldState.getBlock() instanceof MinecoloniesFarmland || worldState.getBlock() instanceof FarmBlock))
             {
                 MessageUtils.format(Component.translatable("com.minecolonies.core.crop.cantplant")).sendTo(player);
             }
@@ -64,11 +70,12 @@ public class ItemCrop extends BlockItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP));
+        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP).withStyle(ChatFormatting.GRAY));
         if (preferredBiome != null)
         {
             tooltip.add(Component.translatable(TranslationConstants.BIOME_TOOLTIP + "." + preferredBiome.location().getPath()));
         }
+        tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP_HOE).withStyle(ChatFormatting.DARK_AQUA).withStyle(ChatFormatting.ITALIC));
     }
 
     /**

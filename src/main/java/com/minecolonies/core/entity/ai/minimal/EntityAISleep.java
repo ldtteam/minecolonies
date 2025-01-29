@@ -201,7 +201,7 @@ public class EntityAISleep implements IStateAI
                 usedBed = homePos;
             }
 
-            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 5))
+            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 12))
             {
                 bedTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))

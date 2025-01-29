@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -14,7 +13,6 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -35,7 +33,6 @@ import com.minecolonies.core.util.AdvancementUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -48,8 +45,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ToolActions;
@@ -647,15 +642,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         position = findHarvestableSurface(position);
         if (position != null)
         {
-            if (Compatibility.isPamsInstalled())
-            {
-                worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
-                harvestCrop(position.above());
-                worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
-
-                return true;
-            }
-
             if (mineBlock(position.above()))
             {
                 worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
@@ -876,45 +862,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     public int getBreakSpeedLevel()
     {
         return getSecondarySkillLevel();
-    }
-
-    /**
-     * Harvest the crop (only if pams is installed).
-     *
-     * @param pos the position to harvest.
-     */
-    private void harvestCrop(@NotNull final BlockPos pos)
-    {
-        final ItemStack tool = worker.getMainHandItem();
-
-        final int fortune = ItemStackUtils.getFortuneOf(tool);
-        final BlockState state = world.getBlockState(pos);
-
-        final double chance = worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
-
-        final NonNullList<ItemStack> drops = NonNullList.create();
-        state.getDrops(new LootParams.Builder((ServerLevel) world).withLuck(fortune)
-                         .withLuck(fortune)
-                         .withParameter(LootContextParams.ORIGIN, worker.position())
-                         .withParameter(LootContextParams.TOOL, tool)
-                         .withParameter(LootContextParams.THIS_ENTITY, getCitizen()));
-        for (final ItemStack item : drops)
-        {
-            final ItemStack drop = item.copy();
-            if (worker.getRandom().nextDouble() < chance)
-            {
-                drop.setCount(drop.getCount() * 2);
-            }
-            InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), drop);
-        }
-
-        if (state.getBlock() instanceof final CropBlock crops)
-        {
-            world.setBlockAndUpdate(pos, crops.getStateForAge(0));
-        }
-
-        this.incrementActionsDone();
-        worker.decreaseSaturationForContinuousAction();
     }
 
     /**

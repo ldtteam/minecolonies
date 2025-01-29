@@ -1,4 +1,4 @@
-package com.minecolonies.core.entity.pathfinding.navigation;
+package com.minecolonies.api.entity.pathfinding;
 
 /**
  * Interface for navigators which keep an internal heuristic mod

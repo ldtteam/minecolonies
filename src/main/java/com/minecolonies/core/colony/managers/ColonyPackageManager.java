@@ -211,11 +211,9 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
             players.addAll(newSubscribers);
 
-            final ColonyViewMessage message = new ColonyViewMessage(colony, colonyFriendlyByteBuf);
             for (ServerPlayer player : players)
             {
-                message.setIsNewSubscription(newSubscribers.contains(player));
-                Network.getNetwork().sendToPlayer(message, player);
+                Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyFriendlyByteBuf, newSubscribers.contains(player)), player);
             }
         }
         colony.getRequestManager().setDirty(false);

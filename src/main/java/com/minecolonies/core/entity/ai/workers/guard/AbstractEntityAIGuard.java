@@ -606,6 +606,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
+     * Get the current patrol point
+     *
+     * @return
+     */
+    public BlockPos getCurrentPatrolPoint()
+    {
+        return currentPatrolPoint;
+    }
+
+    /**
      * Check if the worker has the required tool to fight.
      *
      * @return true if so.

@@ -55,20 +55,11 @@ public class ColonyViewMessage implements IMessage
      * @param colony Colony of the view to update.
      * @param buf    the bytebuffer.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final FriendlyByteBuf buf)
+    public ColonyViewMessage(@NotNull final Colony colony, final FriendlyByteBuf buf, boolean newSubscription)
     {
         this.colonyId = colony.getID();
         this.dim = colony.getDimension();
         this.colonyBuffer = new FriendlyByteBuf(buf.copy());
-    }
-
-    /**
-     * Set whether the message is a new subscription(full view)
-     *
-     * @param newSubscription
-     */
-    public void setIsNewSubscription(boolean newSubscription)
-    {
         isNewSubscription = newSubscription;
     }
 

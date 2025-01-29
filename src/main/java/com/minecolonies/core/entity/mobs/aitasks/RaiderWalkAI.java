@@ -102,7 +102,7 @@ public class RaiderWalkAI implements IStateAI
                 walkTimer = raider.level.getGameTime() + TICKS_SECOND * 30;
                 walkInBuilding = raider.getColony().getBuildingManager().getBuilding(targetBlock);
             }
-            else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
+            else if (raider.getNavigation().isDone())
             {
                 final List<BlockPos> wayPoints = ((IColonyRaidEvent) event).getWayPoints();
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(wayPoints, raider.blockPosition(), targetBlock);
