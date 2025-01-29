@@ -50,23 +50,13 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
      * @param colony Colony of the view to update.
      * @param buf    the bytebuffer.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final RegistryFriendlyByteBuf buf)
+    public ColonyViewMessage(@NotNull final Colony colony, final RegistryFriendlyByteBuf buf, final boolean newSubscription)
     {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dim = colony.getDimension();
         this.colonyBuffer = buf;
-    }
-
-    /**
-     * Set whether the message is a new subscription(full view)
-     *
-     * @param newSubscription
-     */
-    public ColonyViewMessage setIsNewSubscription(final boolean newSubscription)
-    {
         isNewSubscription = newSubscription;
-        return this;
     }
 
     protected ColonyViewMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
