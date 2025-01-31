@@ -862,11 +862,10 @@ public final class ItemStackUtils
     public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
-
         citizenData.increaseSaturation(satIncrease);
 
+        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         // Special handling for these as those are stackable + have a return per item.
         if (foodStack.getItem() instanceof HoneyBottleItem)
         {
