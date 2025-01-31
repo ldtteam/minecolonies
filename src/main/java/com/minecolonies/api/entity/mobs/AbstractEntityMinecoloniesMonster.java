@@ -19,8 +19,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
@@ -32,7 +33,7 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SPAWN_POS;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
@@ -285,11 +286,6 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
                 }
             }
             threatTable.addThreat(attacker, (int) damage);
-        }
-
-        if (damageSource.typeHolder().is(DamageTypes.FELL_OUT_OF_WORLD))
-        {
-            return super.hurt(damageSource, damage);
         }
 
         return super.hurt(damageSource, damage);
