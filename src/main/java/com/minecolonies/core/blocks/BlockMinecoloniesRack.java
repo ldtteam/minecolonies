@@ -172,29 +172,36 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
         }
 
+        final BlockEntity here = level.getBlockEntity(pos);
+        if (!(here instanceof TileEntityRack hereRack))
+        {
+            return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
+        }
+
         if (neighbourState.getBlock() != this)
         {
             // Reset to single
             if (state.getValue(VARIANT).isDoubleVariant() && pos.relative(state.getValue(FACING)).equals(neighbourPos))
             {
-                return state.setValue(VARIANT, ((TileEntityRack) level.getBlockEntity(pos)).isEmpty() ? RackType.EMPTY : RackType.FULL);
+                return state.setValue(VARIANT, hereRack.isEmpty() ? RackType.EMPTY : RackType.FULL);
             }
 
             return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
         }
 
+
         // Connect two
         if (!state.getValue(VARIANT).isDoubleVariant() && !neighbourState.getValue(VARIANT).isDoubleVariant())
         {
-            final BlockEntity here = level.getBlockEntity(pos);
+
             final BlockEntity neighbour = level.getBlockEntity(neighbourPos);
 
-            if (!(here instanceof TileEntityRack) || !(neighbour instanceof TileEntityRack))
+            if (!(neighbour instanceof TileEntityRack neighborRack))
             {
                 return super.updateShape(state, dir, neighbourState, level, pos, neighbourPos);
             }
 
-            boolean isEmpty = ((TileEntityRack) here).isEmpty() && ((TileEntityRack) neighbour).isEmpty();
+            boolean isEmpty = hereRack.isEmpty() && neighborRack.isEmpty();
 
             level.setBlock(neighbourPos,
               neighbourState.setValue(FACING, BY_NORMAL.get(neighbourPos.subtract(pos).asLong()).getOpposite()).setValue(VARIANT, RackType.NO_RENDER),
@@ -208,7 +215,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         {
             if (!neighbourState.getValue(FACING).equals(state.getValue(FACING).getOpposite()) || !neighbourState.getValue(VARIANT).isDoubleVariant())
             {
-                return state.setValue(VARIANT, ((TileEntityRack) level.getBlockEntity(pos)).isEmpty() ? RackType.EMPTY : RackType.FULL);
+                return state.setValue(VARIANT, hereRack.isEmpty() ? RackType.EMPTY : RackType.FULL);
             }
 
             if (neighbourState.getValue(VARIANT) != RackType.NO_RENDER && state.getValue(VARIANT) != RackType.NO_RENDER)
