@@ -200,11 +200,11 @@ public class SittingEntity extends Entity
             minY = 0;
         }
 
+        entity.getNavigation().stop();
         sittingEntity.setPos(pos.getX() + 0.5, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5);
         sittingEntity.setMaxLifeTime(maxLifeTime);
         sittingEntity.setSittingPos(pos);
         entity.level().addFreshEntity(sittingEntity);
         entity.startRiding(sittingEntity);
-        entity.getNavigation().stop();
     }
 }
