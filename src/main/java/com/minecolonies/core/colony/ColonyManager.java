@@ -3,13 +3,16 @@ package com.minecolonies.core.colony;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.claim.ChunkClaimData;
 import com.minecolonies.api.colony.claim.IChunkClaimData;
-import com.minecolonies.api.colony.savedata.IServerColonySaveData;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.savedata.IServerColonySaveData;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
@@ -892,7 +895,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IChunkClaimData getClaimData(final ResourceKey<Level> dimension, final ChunkPos pos)
     {
-        return this.chunkClaimData.getOrDefault(dimension, new Long2ObjectOpenHashMap<>()).getOrDefault(pos.toLong(), null);
+        return this.chunkClaimData.computeIfAbsent(dimension, (k) -> new Long2ObjectOpenHashMap<>()).getOrDefault(pos.toLong(), null);
     }
 
     @Override
