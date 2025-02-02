@@ -17,11 +17,7 @@ import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.IItemHandlerCapProvider;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
@@ -59,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.GuardConstants.BASE_PHYSICAL_DAMAGE;
 
 /**
  * The abstract citizen entity.
@@ -160,10 +157,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public static AttributeSupplier.Builder getDefaultAttributes()
     {
-        return LivingEntity.createLivingAttributes()
-          .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-          .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-          .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+        return Mob.createLivingAttributes()
+            .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+            .add(Attributes.ATTACK_DAMAGE, BASE_PHYSICAL_DAMAGE)
+            .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+            .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()

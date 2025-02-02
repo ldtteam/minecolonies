@@ -32,6 +32,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -256,13 +257,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         {
             if (heldItem.getItem() instanceof SwordItem)
             {
-                addDmg += ((SwordItem) heldItem.getItem()).getDamage(heldItem) + BASE_PHYSICAL_DAMAGE;
+                addDmg += user.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
             }
             else
             {
                 addDmg += TinkersToolHelper.getDamage(heldItem);
             }
-            addDmg += EnchantmentHelper.modifyDamage((ServerLevel) user.level(), heldItem, target, user.level().damageSources().mobAttack(user), 1) / 2.5;
+            addDmg += EnchantmentHelper.modifyDamage((ServerLevel) user.level(), heldItem, target, user.level().damageSources().mobAttack(user), (float) addDmg);
         }
 
         addDmg += user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
