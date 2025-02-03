@@ -1182,7 +1182,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y + 1, z)))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
@@ -1208,7 +1208,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
         else if (walkability == SurfaceType.NOT_PASSABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         return handleNotStanding(node, x, y, z, below);
@@ -1415,7 +1415,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Need to try jumping up one, if we can
         if (!canJump || SurfaceType.getSurfaceType(world, target, tempWorldPos.set(x, y, z), getPathingOptions()) != SurfaceType.WALKABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for headroom in the target space
@@ -1425,13 +1425,13 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 2, z).getCollisionShape(world, tempWorldPos.set(x, y + 2, z));
             if ((y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
         if (!canLeaveBlock(x, y + 2, z, parent, true))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for jump room from the origin space
@@ -1441,10 +1441,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(parent.x, parent.y + 2, parent.z).getCollisionShape(world, tempWorldPos.set(parent.x, parent.y + 2, parent.z));
             if ((parent.y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
-
 
         final BlockState parentBelow = cachedBlockLookup.getBlockState(parent.x, parent.y - 1, parent.z);
         final VoxelShape parentBB = parentBelow.getCollisionShape(world, tempWorldPos.set(parent.x, parent.y - 1, parent.z));
@@ -1463,7 +1462,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return y + 1;
         }
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1515,7 +1514,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              getPathingOptions())
                              == SurfaceType.DROPABLE))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         for (int i = 2; i <= (pathingOptions.canDrop ? 10 : 2); i++)
@@ -1528,11 +1527,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (!below.isAir())
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1560,7 +1559,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         //  Not allowed to swim or this isn't water, and we're on dry land
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
