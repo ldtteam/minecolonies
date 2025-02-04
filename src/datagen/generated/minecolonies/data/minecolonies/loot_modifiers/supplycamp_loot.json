@@ -29,6 +29,22 @@
         },
         {
           "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_plains_house"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_taiga_house"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_snowy_house"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/village/village_savanna_house"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
           "loot_table_id": "minecraft:chests/abandoned_mineshaft"
         },
         {
