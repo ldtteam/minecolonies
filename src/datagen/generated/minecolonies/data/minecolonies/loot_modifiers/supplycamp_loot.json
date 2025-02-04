@@ -1,6 +1,9 @@
 {
-  "type": "minecolonies:supplycamp_loot",
+  "type": "neoforge:add_table",
   "conditions": [
+    {
+      "condition": "minecolonies:generate_supply_loot"
+    },
     {
       "condition": "minecraft:any_of",
       "terms": [
@@ -62,5 +65,6 @@
         }
       ]
     }
-  ]
+  ],
+  "table": "minecolonies:chests/supplycamp"
 }

@@ -1,13 +1,13 @@
 {
   "entries": [
+    "minecolonies:supplycamp_loot",
+    "minecolonies:supplyship_loot",
     "minecolonies:crops/blocks/dead_bush",
     "minecolonies:crops/dungeon",
     "minecolonies:crops/blocks/small_dripleaf",
     "minecolonies:crops/blocks/seagrass",
-    "minecolonies:crops/blocks/short_grass",
     "minecolonies:crops/blocks/fern",
-    "minecolonies:supplycamp_loot",
-    "minecolonies:supplyship_loot"
+    "minecolonies:crops/blocks/short_grass"
   ],
   "replace": false
 }

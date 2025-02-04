@@ -30,9 +30,14 @@ import static com.minecolonies.api.util.constant.Constants.*;
  */
 public class DefaultSupplyLootProvider implements LootTableSubProvider
 {
+    /**
+     * Resource locations, path and names must fit the existing json file.
+     */
+    public final static ResourceLocation SUPPLY_CAMP_LT = new ResourceLocation(MOD_ID, "chests/supplycamp");
+    public final static ResourceLocation SUPPLY_SHIP_LT = new ResourceLocation(MOD_ID, "chests/supplyship");
+
     public DefaultSupplyLootProvider(@NotNull final HolderLookup.Provider provider)
     {
-
     }
 
     @Override
@@ -41,7 +46,7 @@ public class DefaultSupplyLootProvider implements LootTableSubProvider
         final CompoundTag instantTag = new CompoundTag();
         instantTag.putString(PLACEMENT_NBT, INSTANT_PLACEMENT);
 
-        generator.accept(ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(MOD_ID, "chests/supplycamp")),
+        generator.accept(ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_CAMP_LT),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyCamp)
@@ -53,7 +58,7 @@ public class DefaultSupplyLootProvider implements LootTableSubProvider
                                         .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
                         ));
 
-        generator.accept(ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(MOD_ID, "chests/supplyship")),
+        generator.accept(ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_SHIP_LT),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyChest)

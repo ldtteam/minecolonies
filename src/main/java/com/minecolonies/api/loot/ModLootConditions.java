@@ -27,9 +27,11 @@ public final class ModLootConditions
 
     public static final ResourceLocation ENTITY_IN_BIOME_TAG_ID = new ResourceLocation(MOD_ID, "entity_in_biome_tag");
     public static final ResourceLocation RESEARCH_UNLOCKED_ID = new ResourceLocation(MOD_ID, "research_unlocked");
+    public static final ResourceLocation GENERATE_SUPPLY_LOOT_ID = new ResourceLocation(MOD_ID, "generate_supply_loot");
 
     public static final DeferredHolder<LootItemConditionType, LootItemConditionType> entityInBiomeTag;
     public static final DeferredHolder<LootItemConditionType, LootItemConditionType> researchUnlocked;
+    public static final DeferredHolder<LootItemConditionType, LootItemConditionType> generateSupplyLoot;
 
 
     // also some convenience definitions for existing conditions; some stolen from BlockLootSubProvider
@@ -85,6 +87,9 @@ public final class ModLootConditions
 
         researchUnlocked = DEFERRED_REGISTER.register(ModLootConditions.RESEARCH_UNLOCKED_ID.getPath(),
           () -> new LootItemConditionType(ResearchUnlocked.CODEC));
+
+        generateSupplyLoot = DEFERRED_REGISTER.register(ModLootConditions.GENERATE_SUPPLY_LOOT_ID.getPath(),
+                () -> new LootItemConditionType(GenerateSupplyLoot.CODEC));
     }
 
 
