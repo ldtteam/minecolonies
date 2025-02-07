@@ -2022,7 +2022,7 @@ public class CitizenData implements ICitizenData
         if (colony != null)
         {
             final IBuilding tavern = colony.getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
-            if (tavern != null)
+            if (tavern != null && tavern.getBuildingLevel() > 0)
             {
                 return tavern.getPosition();
             }

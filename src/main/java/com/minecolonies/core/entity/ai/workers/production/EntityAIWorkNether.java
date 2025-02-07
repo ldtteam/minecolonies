@@ -312,7 +312,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 return getState();
             }
-            if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+            if (!worker.getInventoryCitizen().hasSpace())
             {
                 return INVENTORY_FULL;
             }
@@ -339,7 +339,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState leaveForNether()
     {
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        if (!worker.getInventoryCitizen().hasSpace())
         {
             return INVENTORY_FULL;
         }

@@ -159,7 +159,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PATIENT_FULL_INVENTORY),
             citizen -> citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
-                       && InventoryUtils.isItemHandlerFull(citizen.getEntity().get().getInventoryCitizen()));
+                && !citizen.getEntity().get().getInventoryCitizen().hasSpace());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PUPIL_NO_CARPET),
           citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
