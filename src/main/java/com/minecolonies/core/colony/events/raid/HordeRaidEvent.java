@@ -362,7 +362,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
           .forManagers();
         Log.getLogger().debug("Raiders coming from: " + spawnPoint.toShortString() + " towards colony: " + colony.getName());
 
-        PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
+        PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.HOSTILE);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);
     }
 

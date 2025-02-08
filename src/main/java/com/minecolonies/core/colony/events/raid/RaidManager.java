@@ -1057,7 +1057,7 @@ public class RaidManager implements IRaiderManager
             MessageUtils.format(msgID, colony.getName()).sendTo(colony).forManagers();
         }
 
-        PlayAudioMessage audio = new PlayAudioMessage(raidHistories.get(0).raiderAmount <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.RECORDS);
+        PlayAudioMessage audio = new PlayAudioMessage(raidHistories.get(0).raiderAmount <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.HOSTILE);
         PlayAudioMessage.sendToAll(colony, false, true, audio);
 
         if (colony.getRaiderManager().getLostCitizen() == 0)
