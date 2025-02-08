@@ -165,12 +165,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected IAIState decide()
     {
-        if (job.getCurrentTask() == null)
-        {
-            return performMixingWork();
-        }
-
-        if (walkTo == null && !walkToBuilding())
+        if ((walkTo == null && !walkToBuilding()) || job.getCurrentTask() == null)
         {
             return START_WORKING;
         }
