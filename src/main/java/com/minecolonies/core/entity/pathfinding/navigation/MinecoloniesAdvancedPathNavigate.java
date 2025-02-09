@@ -1057,17 +1057,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             pathResult.cancel();
             pathResult.setStatus(PathFindingStatus.CANCELLED);
             pathResult = null;
+            if (ourEntity.getVehicle() != null)
+            {
+                final Entity entity = ourEntity.getVehicle();
+                ourEntity.stopRiding();
+                entity.remove(Entity.RemovalReason.DISCARDED);
+            }
         }
 
         safeDestinationPos = BlockPos.ZERO;
         stuckHandler.resetGlobalStuckTimers();
-
-        if (ourEntity.getVehicle() != null)
-        {
-            final Entity entity = ourEntity.getVehicle();
-            ourEntity.stopRiding();
-            entity.remove(Entity.RemovalReason.DISCARDED);
-        }
 
         super.stop();
     }

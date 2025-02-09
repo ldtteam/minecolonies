@@ -291,7 +291,7 @@ public class EntityAIEatTask implements IStateAI
             }
         }
 
-        if (citizen.getVehicle() != null || EntityNavigationUtils.walkToPos(citizen, eatPos, 2, true))
+        if (EntityNavigationUtils.walkToPos(citizen, eatPos, 2, true))
         {
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating
