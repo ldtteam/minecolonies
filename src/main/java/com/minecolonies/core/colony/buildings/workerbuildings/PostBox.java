@@ -62,9 +62,6 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     }
 
     @Override
-    public int getBuildingLevel() { return 1; }
-
-    @Override
     public boolean canBeGathered()
     {
         return false;

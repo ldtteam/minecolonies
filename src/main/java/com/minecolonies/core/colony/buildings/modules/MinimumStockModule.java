@@ -57,8 +57,9 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     private int minimumStockSize()
     {
         final double increase = 1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MINIMUM_STOCK);
+        final int buildingLevelOr1 = building.getMaxBuildingLevel() != 0 ? building.getBuildingLevel() : 1;
 
-        return (int) (building.getBuildingLevel() * STOCK_PER_LEVEL * increase);
+        return (int) (buildingLevelOr1 * STOCK_PER_LEVEL * increase);
     }
 
     @Override
