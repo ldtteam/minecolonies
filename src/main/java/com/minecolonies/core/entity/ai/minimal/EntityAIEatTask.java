@@ -257,9 +257,8 @@ public class EntityAIEatTask implements IStateAI
             final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), cookBuilding.getModule(RESTAURANT_MENU).getMenu(), cookBuilding);
             if (storageToGet != null)
             {
-                int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 1 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
                 int qty = (int) (Math.max(1.0,
-                    (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen) * homeBuildingLevel / 2.0));
+                    (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
                 return EAT;
             }

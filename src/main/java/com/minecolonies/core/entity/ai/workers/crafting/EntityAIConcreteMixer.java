@@ -123,6 +123,11 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
+                    incrementActionsDone(getActionRewardForCraftingSuccess());
+                    worker.decreaseSaturationForAction();
+                    job.finishRequest(true);
+                    worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+                    currentRequest = null;
                     currentRecipeStorage = null;
                     resetValues();
 
@@ -165,12 +170,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected IAIState decide()
     {
-        if (job.getCurrentTask() == null)
-        {
-            return performMixingWork();
-        }
-
-        if (walkTo == null && !walkToBuilding())
+        if ((walkTo == null && !walkToBuilding()) || job.getCurrentTask() == null)
         {
             return START_WORKING;
         }
@@ -198,7 +198,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected IAIState craft()
     {
-        if (currentRecipeStorage == null)
+        if (currentRecipeStorage == null || job.getCurrentTask() == null)
         {
             return START_WORKING;
         }
