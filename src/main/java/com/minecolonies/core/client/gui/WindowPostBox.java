@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
+import static com.minecolonies.core.client.gui.AbstractModuleWindow.placeWindowModuleViews;
 
 /**
  * BOWindow for the replace block GUI.
@@ -100,75 +101,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
                 this.tick = 10;
             }
         });
-
-        int offset = 0;
-        final Random random = new Random(buildingView.getID().hashCode());
-        boolean anyVisible = false;
-
-        for (IBuildingModuleView view : buildingView.getAllModuleViews())
-        {
-            if (view.isPageVisible())
-            {
-                anyVisible = true;
-                break;
-            }
-        }
-
-
-        if (buildingView.getAllModuleViews().size() > 0 && anyVisible)
-        {
-            final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
-            image.setPosition(-5, 10 + offset);
-            image.setSize(32, 26);
-            image.setHandler(button -> buildingView.getWindow().open());
-
-            final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"), false);
-            iconImage.setID("main");
-            iconImage.setPosition(0, 13 + offset);
-            iconImage.setSize(20, 20);
-            iconImage.setHandler(button -> buildingView.getWindow().open());
-
-            offset += image.getHeight() + 2;
-
-            this.addChild(image);
-            this.addChild(iconImage);
-
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(LABEL_MAIN_TAB_NAME));
-        }
-
-        for (IBuildingModuleView view : buildingView.getAllModuleViews())
-        {
-            if (!view.isPageVisible()) continue;
-
-            final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
-            image.setPosition(-5, 10 + offset);
-            image.setSize(32, 26);
-            image.setHandler(button -> {
-                mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-                view.getWindow().open();
-            });
-
-            final String icon = view.getIcon();
-            final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
-            iconImage.setSize(20, 20);
-            iconImage.setID(icon);
-            iconImage.setPosition(0, 13 + offset);
-            iconImage.setHandler(button -> {
-                mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-                view.getWindow().open();
-            });
-
-            offset += image.getHeight() + 2;
-
-            this.addChild(image);
-            this.addChild(iconImage);
-
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(view.getDesc().toLowerCase(Locale.US)));
-        }
+        placeWindowModuleViews(this, buildingView, -5, this.mc);
     }
 
     /**

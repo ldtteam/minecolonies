@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,12 +33,19 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
      * @param building   {@link AbstractBuildingView}.
      * @param res        the resource String.
      */
+
     public AbstractModuleWindow(final IBuildingView building, final String res)
     {
         super(res);
         this.buildingView = building;
+        placeWindowModuleViews(this, building, -20, this.mc);
+
+    }
+    // need mc as its own arg because it's protected in Pane
+    static void placeWindowModuleViews(AbstractWindowSkeleton window, final IBuildingView building, int xOffset, Minecraft mc) {
         final Random random = new Random(building.getID().hashCode());
         int offset = 0;
+        final int iconXOffset = xOffset+5;
 
         boolean anyVisible = false;
 
@@ -50,26 +58,26 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             }
         }
 
-            //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
-        if (building.getAllModuleViews().size() > 0 && anyVisible)
+        //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
+        if (!building.getAllModuleViews().isEmpty() && anyVisible)
         {
             final ButtonImage image = new ButtonImage();
             image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
-            image.setPosition(-20, 10 + offset);
+            image.setPosition(xOffset, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> building.getWindow().open());
 
             final ButtonImage iconImage = new ButtonImage();
             iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"), false);
             iconImage.setID("main");
-            iconImage.setPosition(-15, 13 + offset);
+            iconImage.setPosition(iconXOffset, 13 + offset);
             iconImage.setSize(20, 20);
             iconImage.setHandler(button -> building.getWindow().open());
 
             offset += image.getHeight() + 2;
 
-            this.addChild(image);
-            this.addChild(iconImage);
+            window.addChild(image);
+            window.addChild(iconImage);
 
             PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(LABEL_MAIN_TAB_NAME));
         }
@@ -80,7 +88,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
             final ButtonImage image = new ButtonImage();
             image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
-            image.setPosition(-20, 10 + offset);
+            image.setPosition(xOffset, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
@@ -92,7 +100,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
             iconImage.setSize(20, 20);
             iconImage.setID(icon);
-            iconImage.setPosition(-15, 13 + offset);
+            iconImage.setPosition(iconXOffset, 13 + offset);
             iconImage.setHandler(button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
                 view.getWindow().open();
@@ -100,8 +108,8 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
             offset += image.getHeight() + 2;
 
-            this.addChild(image);
-            this.addChild(iconImage);
+            window.addChild(image);
+            window.addChild(iconImage);
 
             PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatable(view.getDesc().toLowerCase(Locale.US)));
         }
