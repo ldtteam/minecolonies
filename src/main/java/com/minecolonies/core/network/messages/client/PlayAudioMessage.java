@@ -6,8 +6,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -29,8 +30,8 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     /**
      * The sound event to play.
      */
-    private final SoundEvent soundEvent;
-    private final SoundSource category;
+    private final ResourceLocation soundEvent;
+    private final SoundSource      category;
 
     /**
      * Create a play music message with a specific sound event.
@@ -51,23 +52,22 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     public PlayAudioMessage(final SoundEvent event, final SoundSource category)
     {
         super(TYPE);
-        this.soundEvent = event;
+        this.soundEvent = event.getLocation();
         this.category = category;
     }
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
-        buf.writeResourceLocation(BuiltInRegistries.SOUND_EVENT.getKey(this.soundEvent));
+        buf.writeResourceLocation(soundEvent);
     }
 
     protected PlayAudioMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.category = SoundSource.values()[buf.readVarInt()];
-        this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
+        this.soundEvent = buf.readResourceLocation();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -76,7 +76,7 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
           soundEvent, category,
-          1.0F, 1.0F, RandomSource.create(), 0.0, 0.0, 0.0));
+            1.0F, 1.0F, RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE, player.getX(), player.getY(), player.getZ(), true));
     }
 
     /**

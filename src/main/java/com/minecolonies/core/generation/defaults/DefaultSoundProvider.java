@@ -6,7 +6,9 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.data.*;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,13 +126,13 @@ public class DefaultSoundProvider implements DataProvider
         sounds.add("mob.mercenary.step", createSoundJson("neutral", getDefaultProperties(), ImmutableList.of("minecolonies:mob/mercenary/step/step1", "minecolonies:mob/mercenary/step/step2", "minecolonies:mob/mercenary/step/step3", "minecolonies:mob/mercenary/step/step4")));
         sounds.add("tile.sawmill.saw", createSoundJson("neutral", getDefaultProperties(), ImmutableList.of("minecolonies:tile/sawmill/saw")));
 
-        add("record", false,
+        addMusic("record", false,
           "raid.raid_alert",
           "raid.raid_alert_early",
           "raid.raid_won",
           "raid.raid_won_early");
 
-        add("music", true,
+        addMusic("music", true,
           "raid.desert.desert_raid",
           "raid.desert.desert_raid_warning",
           "raid.desert.desert_raid_victory",
@@ -161,12 +163,13 @@ public class DefaultSoundProvider implements DataProvider
         return properties;
     }
 
-    private void add(String category, boolean stream, String... ids)
+    private void addMusic(String category, boolean stream, String... ids)
     {
         for (String id : ids)
         {
             JsonObject obj = new JsonObject();
             obj.addProperty("stream", stream);
+            obj.addProperty("relative", true);
             sounds.add(id, createSoundJson(category, obj, ImmutableList.of(Constants.MOD_ID+":"+id.replace(".", "/"))));
         }
     }
