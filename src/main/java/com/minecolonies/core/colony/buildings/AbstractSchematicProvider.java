@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
@@ -12,14 +11,17 @@ import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.FireworkUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.util.BuildingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -323,62 +325,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public int getRotation()
     {
-        if (cachedRotation != -1)
+        if (cachedRotation == -1)
         {
-            return cachedRotation;
+            cachedRotation = BuildingUtils.getRotationFromBlueprint(colony.getWorld(), getPosition());
         }
-
-        if (!WorldUtil.isBlockLoaded(colony.getWorld(), getPosition()))
-        {
-            return -1;
-        }
-
-        try
-        {
-            Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
-            if (blueprint == null && this.path.endsWith("0.blueprint"))
-            {
-                blueprint = StructurePacks.getBlueprint(this.structurePack, this.path.replace("0.blueprint", "1.blueprint"), true);
-            }
-            if (blueprint != null)
-            {
-                final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-                if (structureState != null)
-                {
-                    if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
-                    {
-                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", this.path));
-                        return 0;
-                    }
-
-                    final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
-                    final int worldRotation = colony.getWorld().getBlockState(this.location).getValue(AbstractBlockHut.FACING).get2DDataValue();
-
-                    if (structureRotation <= worldRotation)
-                    {
-                        cachedRotation = worldRotation - structureRotation;
-                    }
-                    else
-                    {
-                        cachedRotation = 4 + worldRotation - structureRotation;
-                    }
-                    return cachedRotation;
-                }
-            }
-            else
-            {
-                Log.getLogger()
-                  .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path));
-            }
-        }
-        catch (Exception e)
-        {
-            Log.getLogger()
-              .error(String.format("Failed to get rotation of building %s at pos: %s with path: %s", getBuildingDisplayName(), getPosition().toShortString(), this.path), e);
-            return 0;
-        }
-
-        return 0;
+        return cachedRotation;
     }
 
     /**
