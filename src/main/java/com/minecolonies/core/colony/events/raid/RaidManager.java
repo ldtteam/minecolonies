@@ -489,7 +489,10 @@ public class RaidManager implements IRaiderManager
 
         if (amount == 0)
         {
-            Log.getLogger().info("Trying to spawn raid on colony with no loaded buildings, aborting!");
+            Log.getLogger()
+                .info("Trying to spawn raid on colony with no loaded buildings, aborting! Colony:" + colony.getID() + " buildings:" + colony.getBuildingManager()
+                    .getBuildings()
+                    .size() + " isActive:" + colony.isActive() + " colony state:" + colony.getState());
             return null;
         }
 
