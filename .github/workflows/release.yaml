@@ -17,5 +17,4 @@ jobs:
     with:
       java: 17
       curse_release_type: ${{ contains(github.ref, 'release') && 'release' || 'beta' }}
-      gradle_tasks: publish --refresh-dependencies --scan --info
     secrets: inherit
