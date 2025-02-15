@@ -3,14 +3,11 @@ package com.minecolonies.core.colony.jobs;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_SLEEP;
@@ -82,24 +79,6 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
                 new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
                     MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
                     AttributeModifier.Operation.MULTIPLY_TOTAL));
-        }
-    }
-
-    @Override
-    public void onRemoval()
-    {
-        super.onRemoval();
-
-        if (this.getCitizen().getEntity().isPresent())
-        {
-            final Mob citizenEntity = getCitizen().getEntity().get();
-            // Unequip armor and weapons
-            citizenEntity.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-            citizenEntity.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
-            citizenEntity.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            citizenEntity.setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            citizenEntity.setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-            citizenEntity.setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
         }
     }
 }
