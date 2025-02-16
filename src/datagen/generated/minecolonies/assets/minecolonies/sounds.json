@@ -137836,6 +137836,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/amazon/amazon_raid",
+        "relative": true,
         "stream": true
       }
     ]
@@ -137845,6 +137846,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/desert/desert_raid",
+        "relative": true,
         "stream": true
       }
     ]
@@ -137854,6 +137856,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/desert/desert_raid_victory",
+        "relative": true,
         "stream": true
       }
     ]
@@ -137863,6 +137866,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/desert/desert_raid_warning",
+        "relative": true,
         "stream": true
       }
     ]
@@ -137872,6 +137876,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/raid_alert",
+        "relative": true,
         "stream": false
       }
     ]
@@ -137881,6 +137886,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/raid_alert_early",
+        "relative": true,
         "stream": false
       }
     ]
@@ -137890,6 +137896,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/raid_won",
+        "relative": true,
         "stream": false
       }
     ]
@@ -137899,6 +137906,7 @@
     "sounds": [
       {
         "name": "minecolonies:raid/raid_won_early",
+        "relative": true,
         "stream": false
       }
     ]
