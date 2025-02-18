@@ -27,6 +27,7 @@ import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.client.render.RenderBipedCitizen;
 import com.minecolonies.core.colony.ColonyManager;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
@@ -830,7 +831,7 @@ public class EventHandler
                     }
 
                     final IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
-                    final TavernBuildingModule module = tavern.getFirstModuleOccurance(TavernBuildingModule.class);
+                    final TavernBuildingModule module = tavern.getModule(BuildingModules.TAVERN_VISITOR);
                     final IVisitorData visitorData = module.spawnVisitor();
                     visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
                       "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
