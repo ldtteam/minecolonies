@@ -11,6 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -227,4 +229,11 @@ public interface ICitizenDataView extends ICitizen
      * @return the uuid.
      */
     UUID getCustomTextureUUID();
+
+    /**
+     * Get Armor in slot of citizen data view.
+     * @param equipmentSlot the equipment slot to get it from.
+     * @return the armor in the slot.
+     */
+    ItemStack getDisplayArmor(EquipmentSlot equipmentSlot);
 }

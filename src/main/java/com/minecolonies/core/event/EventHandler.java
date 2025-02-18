@@ -180,9 +180,7 @@ public class EventHandler
         if (crops != null)
         {
             // grass blocks have a lot of crops (both MineColonies and vanilla) so the base drop chance is reduced
-            final float baseChance = event.getName().equals(Blocks.GRASS.getLootTable()) ? 0.001f : 0.01f;
-            // hoes have a boosted chance
-            final float hoeChance = 0.1f;
+            final float chance = event.getName().equals(Blocks.GRASS.getLootTable()) ? 0.001f : 0.01f;
 
             for (final MinecoloniesCropBlock crop : crops)
             {
@@ -195,10 +193,27 @@ public class EventHandler
 
                 pool.add(AlternativesEntry.alternatives()
                     .otherwise(LootItem.lootTableItem(crop)
-                            .when(ModLootConditions.HAS_HOE)
-                            .when(LootItemRandomChanceCondition.randomChance(hoeChance)))
+                        .when(ModLootConditions.HAS_NETHERITE_HOE)
+                        .when(LootItemRandomChanceCondition.randomChance(chance * 4f)))
                     .otherwise(LootItem.lootTableItem(crop)
-                            .when(LootItemRandomChanceCondition.randomChance(baseChance))));
+                        .when(ModLootConditions.HAS_DIAMOND_HOE)
+                        .when(LootItemRandomChanceCondition.randomChance(chance * 3.5f)))
+                    .otherwise(LootItem.lootTableItem(crop)
+                        .when(ModLootConditions.HAS_IRON_HOE)
+                        .when(LootItemRandomChanceCondition.randomChance(chance * 3f)))
+                    .otherwise(LootItem.lootTableItem(crop)
+                        .when(ModLootConditions.HAS_GOLDEN_HOE)
+                        .when(LootItemRandomChanceCondition.randomChance(chance * 2.5f)))
+                    .otherwise(LootItem.lootTableItem(crop)
+                        .when(ModLootConditions.HAS_HOE
+                            .and(ModLootConditions.HAS_NETHERITE_HOE.invert())
+                            .and(ModLootConditions.HAS_DIAMOND_HOE.invert())
+                            .and(ModLootConditions.HAS_IRON_HOE.invert())
+                            .and(ModLootConditions.HAS_GOLDEN_HOE.invert()))
+                        .when(LootItemRandomChanceCondition.randomChance(chance * 2f)))
+                    .otherwise(LootItem.lootTableItem(crop)
+                        .when(ModLootConditions.HAS_HOE.invert())
+                        .when(LootItemRandomChanceCondition.randomChance(chance))));
 
                 event.getTable().addPool(pool.build());
             }
@@ -743,7 +758,7 @@ public class EventHandler
 
         // Global events
         // Halloween ghost mode
-        if (event.getLevel().isClientSide() && MineColonies.getConfig().getServer().holidayFeatures.get() &&
+        if (event.getLevel().isClientSide() && MineColonies.getConfig().getClient().holidayFeatures.get() &&
               (LocalDateTime.now().getDayOfMonth() == 31 && LocalDateTime.now().getMonth() == Month.OCTOBER
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))

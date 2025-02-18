@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.amazons;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -12,9 +12,9 @@ import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
- * Abstract for all egyptian entities.
+ * Abstract for all amazon entities.
  */
-public abstract class AbstractEntityAmazon extends AbstractEntityRaiderMob
+public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMonster
 {
     /**
      * Swim speed for amazons
@@ -22,7 +22,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityRaiderMob
     private static final double AMAZON_SWIM_BONUS = 1.9;
 
     /**
-     * Constructor method for Abstract egyptian.
+     * Constructor method for Abstract amazon.
      *
      * @param type  the type.
      * @param world the world.

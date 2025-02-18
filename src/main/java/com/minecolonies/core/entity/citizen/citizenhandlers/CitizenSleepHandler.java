@@ -10,6 +10,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobMiner;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -120,7 +121,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         citizen.hasImpulse = true;
 
         //Remove item while citizen is asleep.
-        citizen.getCitizenItemHandler().removeHeldItem();
+        CitizenItemUtils.removeHeldItem(citizen);
 
         setIsAsleep(true);
 

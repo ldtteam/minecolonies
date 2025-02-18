@@ -13,6 +13,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -32,8 +33,8 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
@@ -279,7 +280,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -410,7 +411,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (current_module == null)
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             return DECIDE;
         }
 
@@ -424,7 +425,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (breedables.size() < 2)
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             breedTimeOut = TICKS_SECOND * 60;
             return DECIDE;
         }
@@ -448,14 +449,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (animalTwo == null)
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             breedTimeOut = TICKS_SECOND * 20;
             return DECIDE;
         }
 
         if (!equipItem(InteractionHand.MAIN_HAND, current_module.getBreedingItems()))
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             return START_WORKING;
         }
 
@@ -469,7 +470,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         }
 
         breedTimeOut = TICKS_SECOND * 60;
-        worker.getCitizenItemHandler().removeHeldItem();
+        CitizenItemUtils.removeHeldItem(worker);
         return IDLE;
     }
 
@@ -547,7 +548,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level.broadcastEntityEvent(toFeed, (byte) 18);
             toFeed.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
             fedRecently.put(toFeed.getUUID(), worker.level.getGameTime());
 
             return DECIDE;
@@ -566,7 +567,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         final List<? extends ItemEntity> items = searchForItemsInArea();
 
-        if (!items.isEmpty() && walkToBlock(items.get(0).blockPosition(), 1))
+        if (!items.isEmpty() && walkWithProxy(items.get(0).blockPosition(), 1))
         {
             return getState();
         }
@@ -612,11 +613,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null)
         {
-            return walkToBlock(animal.blockPosition());
+            return walkToWorkPos(animal.blockPosition());
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -634,7 +635,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 it.remove();
             }
-            else if (walkingToAnimal(animal))
+            else if (!walkingToAnimal(animal))
             {
                 break;
             }
@@ -694,7 +695,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (getToolSlot(toolType) != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(hand, getToolSlot(toolType));
+            CitizenItemUtils.setHeldItem(worker, hand, getToolSlot(toolType));
             return true;
         }
         return false;
@@ -731,7 +732,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             if (checkIfRequestForItemExistOrCreateAsync(itemStack))
             {
-                worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
+                CitizenItemUtils.setHeldItem(worker, hand, getItemSlot(itemStack.getItem()));
                 return true;
             }
         }
@@ -762,7 +763,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             worker.swing(InteractionHand.MAIN_HAND);
             final DamageSource ds = animal.level.damageSources().playerAttack(getFakePlayer());
             animal.hurt(ds, (float) getButcheringAttackDamage());
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
         }
     }
 

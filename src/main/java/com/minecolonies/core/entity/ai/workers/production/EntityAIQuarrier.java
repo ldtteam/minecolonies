@@ -16,7 +16,6 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -27,7 +26,9 @@ import com.minecolonies.core.colony.jobs.JobQuarrier;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -123,7 +124,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             return IDLE;
         }
 
-        if (walkToBlock(quarry.getPosition()))
+        if (!walkToBuilding(quarry))
         {
             return getState();
         }
@@ -295,7 +296,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     protected BlockPos getPosToWorkAt()
     {
         final BlockPos progressPos = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        if (progressPos == NULL_POS)
+        if (progressPos.equals(NULL_POS))
         {
             return null;
         }
@@ -669,33 +670,27 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     {
         if (workFrom == null)
         {
-            workFrom = findRandomPositionToWalkTo(5, currentBlock);
-            if (workFrom == null && pathBackupFactor > 10)
+            if (EntityNavigationUtils.walkToRandomPosAround(worker, currentBlock, 5, 1.0))
             {
                 workFrom = worker.blockPosition();
             }
             return false;
         }
 
-        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) <= 5 + 5 * pathBackupFactor)
+        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) <= 5 + 5)
         {
             return true;
         }
 
-        if (walkToBlock(workFrom))
+        if (!walkToSafePos(workFrom))
         {
             return false;
         }
 
-        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
+        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) > 5 + 5)
         {
             workFrom = null;
             return false;
-        }
-
-        if (pathBackupFactor > 1)
-        {
-            pathBackupFactor--;
         }
 
         return true;

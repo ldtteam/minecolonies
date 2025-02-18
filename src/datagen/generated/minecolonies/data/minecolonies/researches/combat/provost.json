@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:combat/duelist",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "combatacademy",
       "level": 5
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:diamond"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond",
       "quantity": 16
     }
   ],

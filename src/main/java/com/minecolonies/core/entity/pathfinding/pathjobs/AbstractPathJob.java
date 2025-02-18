@@ -5,6 +5,7 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleSlabBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.entity.pathfinding.IDynamicHeuristicNavigator;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -14,7 +15,6 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.entity.pathfinding.*;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.world.CachingBlockLookup;
 import com.minecolonies.core.entity.pathfinding.world.ChunkCache;
@@ -149,7 +149,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Heuristic modifier
      */
-    private double heuristicMod = 1;
+    protected double heuristicMod = 2;
 
     /**
      * First node
@@ -192,6 +192,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         result.setJob(this);
 
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -218,6 +222,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         result.setJob(this);
 
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -256,6 +264,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         this.result = result;
         result.setJob(this);
         this.entity = entity;
+        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator navigator)
+        {
+            heuristicMod = 1 + navigator.getAvgHeuristicModifier();
+        }
     }
 
     /**
@@ -285,7 +297,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private MNode getAndSetupStartNode()
     {
-        final MNode startNode = new MNode(null, start.getX(), start.getY(), start.getZ(), 0, computeHeuristic(start.getX(), start.getY(), start.getZ()));
+        final MNode startNode = new MNode(null, start.getX(), start.getY(), start.getZ(), 0, computeHeuristic(start.getX(), start.getY(), start.getZ()) * heuristicMod);
 
         if (PathfindingUtils.isLadder(cachedBlockLookup.getBlockState(start.getX(), start.getY(), start.getZ()), pathingOptions))
         {
@@ -728,13 +740,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
               node.y + newY - nextY,
               node.z)))
             {
-                dX = 0;
-                dY = newY - nextY;
-                dZ = 0;
-
-                nextX = node.x + dX;
-                nextY = node.y + dY;
-                nextZ = node.z + dZ;
+                nextX = node.x;
+                nextY = node.y + (newY - nextY);
+                nextZ = node.z;
                 corner = true;
             }
             // If we're going down, take the air-corner before going to the lower node
@@ -742,10 +750,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                        (node.parent == null || (node.x != node.parent.x || node.y - 1 != node.parent.y
                                                   || node.z != node.parent.z)))
             {
-                dY = 0;
-
                 nextX = node.x + dX;
-                nextY = node.y + dY;
+                nextY = node.y;
                 nextZ = node.z + dZ;
 
                 corner = true;
@@ -772,7 +778,19 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 return;
             }
 
-            corner = true;
+            if (corner && nextNode.parent != null && (nextNode.parent.x != nextX || nextNode.parent.z != nextZ))
+            {
+                // Corner node from different direction already created, skip to using the actual next pos
+                nextX = node.x + dX;
+                nextY = newY;
+                nextZ = node.z + dZ;
+                nextNode = nodes.get(MNode.computeNodeKey(nextX, nextY, nextZ));
+                corner = false;
+            }
+            else
+            {
+                corner = true;
+            }
         }
 
         // Current node is already visited, only update nearby costs do not create new nodes
@@ -989,7 +1007,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             cost += pathingOptions.traverseToggleAbleCost;
         }
-        else if (!onPath && !ShapeUtil.hasCollision(cachedBlockLookup, tempWorldPos.set(x, y, z), state))
+        else if (!onPath && ShapeUtil.hasCollision(cachedBlockLookup, tempWorldPos.set(x, y, z), state))
         {
             cost += pathingOptions.walkInShapesCost;
         }
@@ -1167,7 +1185,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y + 1, z)))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
@@ -1193,7 +1211,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
         else if (walkability == SurfaceType.NOT_PASSABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         return handleNotStanding(node, x, y, z, below);
@@ -1400,36 +1418,35 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Need to try jumping up one, if we can
         if (!canJump || SurfaceType.getSurfaceType(world, target, tempWorldPos.set(x, y, z), getPathingOptions()) != SurfaceType.WALKABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for headroom in the target space
-        if (!isPassable(x, y + 2, z, false, parent))
+        if (!isPassable(x, y + 2, z, true, parent))
         {
             final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y, z).getCollisionShape(world, tempWorldPos.set(x, y, z));
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 2, z).getCollisionShape(world, tempWorldPos.set(x, y + 2, z));
             if ((y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
         if (!canLeaveBlock(x, y + 2, z, parent, true))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.x, parent.y + 2, parent.z, false, parent))
+        if (!isPassable(parent.x, parent.y + 2, parent.z, true, parent))
         {
             final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y, z).getCollisionShape(world, tempWorldPos.set(x, y, z));
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(parent.x, parent.y + 2, parent.z).getCollisionShape(world, tempWorldPos.set(parent.x, parent.y + 2, parent.z));
             if ((parent.y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
-
 
         final BlockState parentBelow = cachedBlockLookup.getBlockState(parent.x, parent.y - 1, parent.z);
         final VoxelShape parentBB = parentBelow.getCollisionShape(world, tempWorldPos.set(parent.x, parent.y - 1, parent.z));
@@ -1448,7 +1465,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return y + 1;
         }
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1500,7 +1517,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              getPathingOptions())
                              == SurfaceType.DROPABLE))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         for (int i = 2; i <= (pathingOptions.canDrop ? 10 : 2); i++)
@@ -1513,11 +1530,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (!below.isAir())
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1545,7 +1562,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         //  Not allowed to swim or this isn't water, and we're on dry land
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**

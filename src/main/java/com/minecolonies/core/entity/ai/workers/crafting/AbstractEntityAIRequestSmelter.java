@@ -24,6 +24,7 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -377,7 +378,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (fuelPos == null || walkToBlock(fuelPos))
+        if (fuelPos == null || !walkToWorkPos(fuelPos))
         {
             return getState();
         }
@@ -532,7 +533,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -584,7 +585,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return START_WORKING;
         }
 
-        if (walkToBlock(walkTo))
+        if (!walkToWorkPos(walkTo))
         {
             return getState();
         }
@@ -736,11 +737,11 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     }
                     if (toTransfer > 0)
                     {
-                        if (walkToBlock(walkTo))
+                        if (!walkToWorkPos(walkTo))
                         {
                             return getState();
                         }
-                        worker.getCitizenItemHandler().hitBlockWithToolInHand(walkTo);
+                        CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
                         InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
                           worker.getInventoryCitizen(),
                           smeltable,
@@ -812,7 +813,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             possibleFuels.removeIf(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getCleanedInput().get(0).getItemStack()));
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(AbstractEntityAIBasic.STANDARD_DELAY);
             return getState();

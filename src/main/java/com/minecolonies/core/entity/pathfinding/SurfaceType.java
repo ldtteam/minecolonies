@@ -67,14 +67,17 @@ public enum SurfaceType
         }
 
         if (block instanceof FenceBlock
-              || block instanceof FenceGateBlock
               || block instanceof WallBlock
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof BambooStalkBlock
-              || block instanceof BambooSaplingBlock
-              || block instanceof DoorBlock)
+              || block instanceof BambooSaplingBlock)
         {
             return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (block instanceof FenceGateBlock || block instanceof DoorBlock)
+        {
+            return SurfaceType.DROPABLE;
         }
 
         final VoxelShape shape = blockState.getCollisionShape(world, pos);

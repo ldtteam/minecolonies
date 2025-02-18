@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:redstone"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:redstone",
       "quantity": 64
     }
   ],

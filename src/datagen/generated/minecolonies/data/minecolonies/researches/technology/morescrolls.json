@@ -8,34 +8,23 @@
   "icon": "minecolonies:scroll_highlight",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "enchanter",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:paper"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:paper",
       "quantity": 64
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:ancienttome"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:ancienttome",
       "quantity": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:lapis_lazuli"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:lapis_lazuli",
       "quantity": 64
     }
   ],

@@ -60,7 +60,7 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
             return false;
         }
 
-        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) < distToDesired
+        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) <= distToDesired
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
     }
@@ -104,5 +104,20 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     public BlockPos getDestination()
     {
         return desiredPosition;
+    }
+
+    /**
+     * Helper to compare if the given move close to X near Y job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos desiredPosition, final BlockPos nearbyPosition, final int distance)
+    {
+        if (job instanceof PathJobMoveCloseToXNearY pathJob)
+        {
+            return pathJob.desiredPosition.equals(desiredPosition) && pathJob.nearbyPosition.equals(nearbyPosition) && pathJob.distToDesired == distance;
+        }
+
+        return false;
     }
 }

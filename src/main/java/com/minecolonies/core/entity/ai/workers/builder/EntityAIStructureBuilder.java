@@ -145,7 +145,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -230,7 +230,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (walkToBlock(workFrom))
+        if (!walkToSafePos(workFrom))
         {
             return false;
         }

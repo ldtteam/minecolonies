@@ -229,6 +229,7 @@ public class NetworkChannel
         registerMessage(++idx, OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
         registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
         registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
+        registerMessage(++idx, GlobalDiseaseSyncMessage.class, GlobalDiseaseSyncMessage::new);
         registerMessage(++idx, OpenColonyFoundingCovenantMessage.class, OpenColonyFoundingCovenantMessage::new);
         registerMessage(++idx, OpenBuildingUIMessage.class, OpenBuildingUIMessage::new);
         registerMessage(++idx, OpenCantFoundColonyWarningMessage.class, OpenCantFoundColonyWarningMessage::new);

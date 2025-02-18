@@ -6,13 +6,14 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.event.BuildingConstructionEvent;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingConstructionModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
@@ -31,7 +32,6 @@ import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandl
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -421,31 +421,24 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             job.complete();
 
-            if (wo instanceof WorkOrderBuilding)
+            if (wo instanceof WorkOrderBuilding workOrderBuilding)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
-                try
+                if (building == null)
                 {
-                    MinecraftForge.EVENT_BUS.post(new BuildingConstructionEvent(building, BuildingConstructionEvent.EventType.fromWorkOrderType(wo.getWorkOrderType())));
+                    Log.getLogger()
+                      .error("Builder ({}:{}) ERROR - Finished, but missing building({})",
+                        worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
+                        worker.getCitizenData().getId(),
+                        wo.getLocation());
                 }
-                catch (final Exception e)
+                else
                 {
-                    Log.getLogger().error("Error during BuildingConstructionEvent", e);
-                }
-                switch (wo.getWorkOrderType())
-                {
-                    case BUILD:
-                    case UPGRADE:
-                    case REPAIR:
-                        if (building == null)
-                        {
-                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                              worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-                              worker.getCitizenData().getId(),
-                              wo.getLocation()));
-                        }
-                        else
-                        {
+                    switch (wo.getWorkOrderType())
+                    {
+                        case BUILD:
+                        case UPGRADE:
+                        case REPAIR:
                             // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
                             final BlockEntity te = worker.level.getBlockEntity(building.getID());
                             if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
@@ -453,21 +446,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                                 building.onUpgradeComplete(wo.getTargetLevel());
                                 building.setBuildingLevel(wo.getTargetLevel());
                             }
-                        }
-                        break;
-                    case REMOVE:
-                        if (building == null)
-                        {
-                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                              worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-                              worker.getCitizenData().getId(),
-                              wo.getLocation()));
-                        }
-                        else
-                        {
+                            break;
+                        case REMOVE:
                             building.setDeconstructed();
-                        }
-                        break;
+                            break;
+                    }
+                    IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingConstructionModEvent(building, workOrderBuilding));
                 }
             }
         }

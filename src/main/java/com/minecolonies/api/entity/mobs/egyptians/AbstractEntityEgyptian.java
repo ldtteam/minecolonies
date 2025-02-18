@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.egyptians;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
@@ -14,13 +14,12 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 /**
  * Abstract for all egyptian entities.
  */
-public abstract class AbstractEntityEgyptian extends AbstractEntityRaiderMob
+public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesMonster
 {
     /**
      * Swim speed for mummies
      */
     private static final double MUMMY_SWIM_SPEED = 1.7;
-
 
     /**
      * Constructor method for Abstract egyptian..

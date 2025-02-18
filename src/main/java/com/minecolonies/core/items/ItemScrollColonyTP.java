@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
@@ -61,7 +62,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
                   player.blockPosition().relative(dir, 10),
                   5,
                   5,
-                  (predWorld, predPos) -> predWorld.getBlockState(predPos).isAir() && predWorld.getBlockState(predPos.above()).isAir());
+                  (predWorld, predPos) -> BlockUtils.isAnySolid(predWorld.getBlockState(predPos.below())) && predWorld.getBlockState(predPos).isAir() && predWorld.getBlockState(predPos.above()).isAir());
                 if (pos != null)
                 {
                     break;
@@ -132,6 +133,10 @@ public class ItemScrollColonyTP extends AbstractItemScroll
         if (colony != null)
         {
             colonyDesc = Component.literal(colony.getName());
+        }
+        else if (stack.getOrCreateTag().contains(TAG_CACHED_COLONY_NAME))
+        {
+            colonyDesc = Component.literal(stack.getOrCreateTag().getString(TAG_CACHED_COLONY_NAME));
         }
 
         final MutableComponent guiHint2 = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);

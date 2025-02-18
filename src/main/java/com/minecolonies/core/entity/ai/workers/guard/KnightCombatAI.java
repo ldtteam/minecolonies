@@ -20,7 +20,9 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -111,7 +113,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
-            user.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
+            CitizenItemUtils.setHeldItem(user, InteractionHand.OFF_HAND, shieldSlot);
             user.startUsingItem(InteractionHand.OFF_HAND);
 
             // Apply the colony Flag to the shield
@@ -137,7 +139,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (weaponSlot != -1)
         {
-            user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
+            CitizenItemUtils.setHeldItem(user, InteractionHand.MAIN_HAND, weaponSlot);
             return true;
         }
 
@@ -188,7 +190,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
         user.getCitizenData().setVisibleStatus(KNIGHT_COMBAT);
-        user.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+        CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
     }
 
     /**
@@ -301,7 +303,8 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation().moveToXYZ(target.getX(), target.getY(), target.getZ(), getCombatMovementSpeed());
+        EntityNavigationUtils.walkToPos(user, target.blockPosition(), (int) getAttackDistance(), false, getCombatMovementSpeed());
+        return user.getNavigation().getPathResult();
     }
 
     /**

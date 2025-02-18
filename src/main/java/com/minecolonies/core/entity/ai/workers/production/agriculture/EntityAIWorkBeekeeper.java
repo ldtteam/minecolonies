@@ -16,6 +16,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobBeekeeper;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
@@ -180,7 +181,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             setDelay(2);
             return getState();
@@ -348,7 +349,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             building.removeHive(hive);
             return PREPARING;
         }
-        if (walkToBlock(hive))
+        if (!walkToWorkPos(hive))
         {
             return getState();
         }
@@ -357,7 +358,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         final ItemStack itemStack = worker.getMainHandItem();
         if (!building.getHarvestTypes().equals(BuildingBeekeeper.HONEY) && ModEquipmentTypes.shears.get().checkIsEquipment(itemStack))
         {
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
 
             for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
             {
@@ -403,17 +404,17 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * Lets the herder walk to the animal.
      *
      * @param animal the animal to walk to.
-     * @return true if the herder is walking to the animal.
+     * @return false if the herder is walking to the animal.
      */
     public boolean walkingToAnimal(final Animal animal)
     {
         if (animal != null)
         {
-            return walkToBlock(animal.blockPosition());
+            return walkToWorkPos(animal.blockPosition());
         }
         else
         {
-            return false;
+            return true;
         }
     }
 
@@ -472,7 +473,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         for (final Animal animal : animalsToBreed)
         {
-            if (!animal.isInLove() && !walkingToAnimal(animal))
+            if (!animal.isInLove() && walkingToAnimal(animal))
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
@@ -492,7 +493,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         if (getToolSlot(toolType) != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(hand, getToolSlot(toolType));
+            CitizenItemUtils.setHeldItem(worker, hand, getToolSlot(toolType));
             return true;
         }
         return false;
@@ -527,7 +528,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         if (checkIfRequestForItemExistOrCreateAsync(itemStack))
         {
-            worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
+            CitizenItemUtils.setHeldItem(worker, hand, getItemSlot(itemStack.getItem()));
             return true;
         }
         return false;
@@ -544,8 +545,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         if (checkIfRequestForTagExistOrCreateAsync(ItemTags.FLOWERS, NUM_OF_FLOWERS_TO_BREED))
         {
             ItemListModule flowersModule = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
-            worker.getCitizenItemHandler()
-              .setHeldItem(hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> flowersModule.isItemInList(new ItemStorage(stack))));
+            CitizenItemUtils
+              .setHeldItem(worker, hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> flowersModule.isItemInList(new ItemStorage(stack))));
             return true;
         }
         return false;

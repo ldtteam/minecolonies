@@ -5,10 +5,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.*;
@@ -24,11 +22,14 @@ import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityInteractGoal;
 import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenInventoryHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenJobHandler;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSleepHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
-import com.minecolonies.core.entity.pathfinding.proxy.EntityCitizenWalkToProxy;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -78,19 +79,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
      */
     private int          citizenId = 0;
     /**
-     * The Walk to proxy (Shortest path through intermediate blocks).
-     */
-    private IWalkToProxy proxy;
-    /**
      * Reference to the data representation inside the colony.
      */
     @Nullable
     private ICitizenData citizenData;
 
-    /**
-     * The citizen item handler.
-     */
-    private ICitizenItemHandler      citizenItemHandler;
     /**
      * The citizen inv handler.
      */
@@ -119,7 +112,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * The location used for requests
      */
     private ILocation              location = null;
-    private ICitizenDiseaseHandler citizenDiseaseHandler;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -130,15 +122,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
     {
         super(type, world);
-        this.goalSelector = new CustomGoalSelector(this.goalSelector);
-        this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        this.citizenItemHandler = new CitizenItemHandler(this);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new VisitorColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenDiseaseHandler = new CitizenDiseaseHandler(this);
 
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
@@ -208,23 +196,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         return false;
     }
 
-    /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    @Override
-    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
-    {
-        if (proxy == null)
-        {
-            proxy = new EntityCitizenWalkToProxy(this);
-        }
-        return proxy.walkToBlock(site, range, true);
-    }
-
     @Nullable
     @Override
     public ICitizenData getCitizenData()
@@ -292,12 +263,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public IWalkToProxy getProxy()
-    {
-        return proxy;
-    }
-
-    @Override
     public void decreaseSaturationForAction()
     {
         if (citizenData != null)
@@ -349,12 +314,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenItemHandler getCitizenItemHandler()
-    {
-        return citizenItemHandler;
-    }
-
-    @Override
     public ICitizenInventoryHandler getCitizenInventoryHandler()
     {
         return citizenInventoryHandler;
@@ -391,18 +350,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public ICitizenDiseaseHandler getCitizenDiseaseHandler()
-    {
-        return citizenDiseaseHandler;
-    }
-
-    @Override
-    public void setCitizenDiseaseHandler(final ICitizenDiseaseHandler citizenDiseaseHandler)
-    {
-        this.citizenDiseaseHandler = citizenDiseaseHandler;
-    }
-
-    @Override
     public float getRotationYaw()
     {
         return getYRot();
@@ -430,12 +377,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public void setCitizenJobHandler(final ICitizenJobHandler citizenJobHandler)
     {
         this.citizenJobHandler = citizenJobHandler;
-    }
-
-    @Override
-    public void setCitizenItemHandler(final ICitizenItemHandler citizenItemHandler)
-    {
-        this.citizenItemHandler = citizenItemHandler;
     }
 
     @Override
@@ -600,8 +541,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         {
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-
-        citizenDiseaseHandler.write(compound);
     }
 
     @Override
@@ -617,8 +556,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 citizenId = compound.getInt(TAG_CITIZEN);
             }
         }
-
-        citizenDiseaseHandler.read(compound);
     }
 
     @Override
@@ -656,7 +593,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                citizenItemHandler.entityDropItem(itemstack);
+                CitizenItemUtils.entityDropItem(this, itemstack);
             }
         }
     }

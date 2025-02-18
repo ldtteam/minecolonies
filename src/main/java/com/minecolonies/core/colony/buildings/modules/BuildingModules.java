@@ -73,7 +73,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("restaurant_menu", () -> new RestaurantMenuModule(true, ISchematicProvider::getBuildingLevel), () -> RestaurantMenuModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<RestaurantMenuModule, RestaurantMenuModuleView> NETHERMINER_MENU =
-      new BuildingEntry.ModuleProducer<>("netherminer_menu", () -> new RestaurantMenuModule(false, building ->  16), () -> RestaurantMenuModuleView::new);
+      new BuildingEntry.ModuleProducer<>("netherminer_menu", () -> new RestaurantMenuModule(false, building -> 1), () -> RestaurantMenuModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<ItemListModule,ItemListModuleView> ITEMLIST_SAPLING =
       new BuildingEntry.ModuleProducer<>("itemlist_sapling", () -> new ItemListModule(SAPLINGS_LIST),

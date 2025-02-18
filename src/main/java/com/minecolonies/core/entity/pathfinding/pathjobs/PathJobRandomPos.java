@@ -5,7 +5,6 @@ import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
@@ -38,11 +37,7 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
      * Box restriction area
      */
     private AABB     restrictionBox = null;
-
-    /**
-     * Modifier to the heuristics
-     */
-    private double heuristicModifier = 1.0;
+    private BlockPos restrictionBoxCenter = null;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -65,11 +60,6 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
         this.maxDistToDest = -1;
 
         this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
-
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
-        {
-            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
-        }
     }
 
     /**
@@ -122,7 +112,7 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
           Math.max(startRestriction.getX(), endRestriction.getX()),
           Math.max(startRestriction.getY(), endRestriction.getY()),
           Math.max(startRestriction.getZ(), endRestriction.getZ()));
-
+        restrictionBoxCenter = BlockPos.containing(restrictionBox.getCenter());
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = -1;
 
@@ -132,7 +122,12 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
+        if (restrictionBox != null)
+        {
+            return (BlockPosUtil.distManhattan(destination, x, y, z) + BlockPosUtil.distManhattan(restrictionBoxCenter, x, y, z) / 2.0);
+        }
+
+        return BlockPosUtil.distManhattan(destination, x, y, z);
     }
 
     @Override
@@ -163,21 +158,24 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
         getPathingOptions().canDrop = false;
     }
 
-    /**
-     * Checks if position and range match the given parameters
-     *
-     * @param range max dist to dest range
-     * @param pos   dest to look from
-     * @return
-     */
-    public boolean posAndRangeMatch(final int range, final BlockPos pos)
-    {
-        return destination != null && pos != null && range == maxDistToDest && destination.equals(pos);
-    }
-
     @Override
     public BlockPos getDestination()
     {
         return destination;
+    }
+
+    /**
+     * Helper to compare if the given random pos job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos center, final int range)
+    {
+        if (job instanceof PathJobRandomPos pathJob)
+        {
+            return pathJob.destination != null && pathJob.destination.equals(center) && pathJob.maxDistToDest == range;
+        }
+
+        return false;
     }
 }

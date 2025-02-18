@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.mobs.amazon;
 
-import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.render.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -15,7 +15,7 @@ import net.minecraft.world.InteractionHand;
 /**
  * Abstract for rendering amazons.
  */
-public abstract class AbstractRendererAmazon<T extends AbstractEntityAmazon, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
+public abstract class AbstractRendererAmazon<T extends AbstractEntityMinecoloniesMonster, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
 {
     public AbstractRendererAmazon(final EntityRendererProvider.Context context, final M modelBipedIn, final float shadowSize)
     {

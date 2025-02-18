@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.minimal;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -8,11 +9,12 @@ import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +94,7 @@ public class EntityAICitizenChild implements IStateAI
     /**
      * The blockpos the child is visiting
      */
-    private BlockPos visitHutPos;
+    private IBuilding visitingHut;
 
     /**
      * The path for visiting the hut
@@ -195,13 +197,13 @@ public class EntityAICitizenChild implements IStateAI
         if (actionTimer <= 0 || followTarget.get() == null)
         {
             // run back to start position
-            child.getNavigation().moveToXYZ(followStart.getX(), followStart.getY(), followStart.getZ(), 1.0d);
+            EntityNavigationUtils.walkToPos(child, followStart, 2, true);
 
             setDelayForNextAction();
             return CitizenAIState.IDLE;
         }
 
-        child.getNavigation().moveToLivingEntity(followTarget.get(), 1.0d);
+        EntityNavigationUtils.walkToPos(child, followTarget.get().blockPosition(), 2, false);
         return State.FOLLOWING;
     }
 
@@ -216,7 +218,7 @@ public class EntityAICitizenChild implements IStateAI
         if (visitingPath == null && child.getCitizenColonyHandler().getColonyOrRegister() != null)
         {
             // Visiting huts for 3min.
-            if (actionTimer <= 0 && visitHutPos == null)
+            if (actionTimer <= 0 && visitingHut == null)
             {
                 actionTimer = 3 * 60 * 20;
             }
@@ -225,10 +227,11 @@ public class EntityAICitizenChild implements IStateAI
 
             index = rand.nextInt(index);
 
-            final List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().keySet());
-            visitHutPos = buildings.get(index);
+            final List<IBuilding> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().values());
+            visitingHut = buildings.get(index);
 
-            visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
+            EntityNavigationUtils.walkToBuilding(child, visitingHut);
+            visitingPath = child.getNavigation().getPathResult();
         }
 
         actionTimer -= 120;
@@ -238,7 +241,8 @@ public class EntityAICitizenChild implements IStateAI
             // Path got interrupted by sth
             if (visitingPath != null && !visitingPath.isInProgress())
             {
-                visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
+                EntityNavigationUtils.walkToBuilding(child, visitingHut);
+                visitingPath = child.getNavigation().getPathResult();
             }
 
             return State.VISITING;
@@ -246,7 +250,7 @@ public class EntityAICitizenChild implements IStateAI
 
         child.getNavigation().stop();
         visitingPath = null;
-        visitHutPos = null;
+        visitingHut = null;
         setDelayForNextAction();
 
         return CitizenAIState.IDLE;

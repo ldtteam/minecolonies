@@ -231,7 +231,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
                 homelessness++;
             }
 
-            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
+            if (citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick())
             {
                 sickPeople++;
             }

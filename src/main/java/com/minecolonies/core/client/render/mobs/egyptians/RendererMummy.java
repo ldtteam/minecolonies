@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.mobs.egyptians;
 
-import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelMummy;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for mummies.
  */
-public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgyptian, ModelMummy>
+public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityMinecoloniesMonster, ModelMummy>
 {
     /**
      * Texture of the entity.
@@ -27,7 +27,7 @@ public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgypti
     }
 
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMonster entity)
     {
         return TEXTURE;
     }

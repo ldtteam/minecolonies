@@ -14,7 +14,6 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
-import com.minecolonies.api.entity.pathfinding.proxy.IWalkToProxy;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
@@ -25,7 +24,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -51,7 +49,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -557,15 +554,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract ILocation getLocation();
 
     /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location
-     *
-     * @param site  the place where he should walk to
-     * @param range Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    public abstract boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range);
-
-    /**
      * Getter for the citizendata. Tries to get it from the colony is the data is null.
      *
      * @return the data.
@@ -596,13 +584,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void playMoveAwaySound();
 
     /**
-     * Get the path proxy of the citizen.
-     *
-     * @return the proxy.
-     */
-    public abstract IWalkToProxy getProxy();
-
-    /**
      * Decrease the saturation of the citizen for 1 action.
      */
     public abstract void decreaseSaturationForAction();
@@ -618,13 +599,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @return the instance of the handler.
      */
     public abstract ICitizenExperienceHandler getCitizenExperienceHandler();
-
-    /**
-     * The Handler for all item related methods.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenItemHandler getCitizenItemHandler();
 
     /**
      * The Handler for all inventory related methods.
@@ -658,15 +632,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract ICitizenSleepHandler getCitizenSleepHandler();
 
-    /**
-     * The Handler to check if the citizen is sick.
-     *
-     * @return the instance of the handler.
-     */
-    public abstract ICitizenDiseaseHandler getCitizenDiseaseHandler();
-
-    public abstract void setCitizenDiseaseHandler(ICitizenDiseaseHandler citizenDiseaseHandler);
-
     public abstract float getRotationYaw();
 
     public abstract float getRotationPitch();
@@ -676,8 +641,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public abstract void setCitizenSleepHandler(ICitizenSleepHandler citizenSleepHandler);
 
     public abstract void setCitizenJobHandler(ICitizenJobHandler citizenJobHandler);
-
-    public abstract void setCitizenItemHandler(ICitizenItemHandler citizenItemHandler);
 
     public abstract void setCitizenExperienceHandler(ICitizenExperienceHandler citizenExperienceHandler);
 

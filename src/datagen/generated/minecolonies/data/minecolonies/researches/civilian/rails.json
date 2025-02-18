@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/keen",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "deliveryman",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rail"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rail",
       "quantity": 64
     }
   ],

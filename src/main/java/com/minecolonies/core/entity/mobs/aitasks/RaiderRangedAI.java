@@ -3,7 +3,7 @@ package com.minecolonies.core.entity.mobs.aitasks;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.util.EntityUtils;
@@ -11,6 +11,7 @@ import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.CustomArrowEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -24,7 +25,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
+public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
 {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
@@ -184,7 +185,8 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation().moveToXYZ(target.getX(), target.getY(), target.getZ(), COMBAT_MOVEMENT_SPEED);
+        EntityNavigationUtils.walkToPos(user, target.blockPosition(), (int) getAttackDistance(), false, COMBAT_MOVEMENT_SPEED);
+        return user.getNavigation().getPathResult();
     }
 
     @Override

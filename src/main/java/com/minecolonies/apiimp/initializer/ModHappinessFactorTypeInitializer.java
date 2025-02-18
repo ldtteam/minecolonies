@@ -43,7 +43,8 @@ public final class ModHappinessFactorTypeInitializer
 
         HappinessRegistry.housingFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HOUSING_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getHomeBuilding() == null ? 0.0 : data.getHomeBuilding().getBuildingLevel() / 3.0));
         HappinessRegistry.unemploymentFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(UNEMPLOYMENT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isChild() ? 1.0 : (data.getWorkBuilding() == null ? 0.5 : data.getWorkBuilding().getBuildingLevel() > 3 ? 2.0 : 1.0)));
-        HappinessRegistry.healthFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HEALTH_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getEntity().isPresent() ? (data.getEntity().get().getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0));
+        HappinessRegistry.healthFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(HEALTH_FUNCTION.getPath(),
+            () -> new HappinessFunctionEntry(data -> data.getEntity().isPresent() ? (data.getCitizenDiseaseHandler().isSick() ? 0.5 : 1.0) : 1.0));
         HappinessRegistry.idleatjobFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(IDLEATJOB_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.isIdleAtJob() ? 0.5 : 1.0));
 
         HappinessRegistry.sleptTonightFunction = DEFERRED_REGISTER_HAPPINESS_FUNCTION.register(SLEPTTONIGHT_FUNCTION.getPath(), () -> new HappinessFunctionEntry(data -> data.getJob() instanceof AbstractJobGuard ? 1 : 0.5));

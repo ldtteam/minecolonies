@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/firstaid2",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:hay_block"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:hay_block",
       "quantity": 32
     }
   ],

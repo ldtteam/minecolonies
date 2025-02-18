@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobDruid;
@@ -67,16 +68,17 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
     {
         if (worker.getRandom().nextInt(3) < 1)
         {
-            worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 3);
+            walkToSafePos(buildingGuards.getGuardPos());
             return;
         }
 
-        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
+        if ((BlockPosUtil.dist(buildingGuards.getGuardPos(), worker.blockPosition()) <= 10 || walkToSafePos(buildingGuards.getGuardPos()))
+            || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
         {
             // Moves the druid randomly to close edges, for better vision to mobs
             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
-              null,
-              1.0, true);
+                null,
+                1.0, true);
         }
     }
 }

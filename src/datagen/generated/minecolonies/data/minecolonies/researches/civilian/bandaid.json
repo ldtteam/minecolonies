@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/stamina",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "library",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_carrot"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_carrot",
       "quantity": 1
     }
   ],

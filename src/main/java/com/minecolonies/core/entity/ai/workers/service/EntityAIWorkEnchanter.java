@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.workers.service;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -12,7 +13,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -21,17 +22,17 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     protected IAIState decide()
     {
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return START_WORKING;
         }
@@ -137,7 +138,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (getPrimarySkillLevel() < building.getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
             final BuildingEnchanter enchanterBuilding = building;
-            final EnchanterStationsModule module = enchanterBuilding.getFirstModuleOccurance(EnchanterStationsModule.class);
+            final EnchanterStationsModule module = enchanterBuilding.getModule(BuildingModules.ENCHANTER_STATIONS);
             if (module.getBuildingsToGatherFrom().isEmpty())
             {
                 if (worker.getCitizenData() != null)
@@ -298,12 +299,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return IDLE;
         }
 
-        if (walkToBlock(job.getPosToDrainFrom()))
+        final IBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom());
+        if (!walkToBuilding(buildingWorker))
         {
             return getState();
         }
-
-        final AbstractBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuilding.class);
 
         if (buildingWorker == null)
         {

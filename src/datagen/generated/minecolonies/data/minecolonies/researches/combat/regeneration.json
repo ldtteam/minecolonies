@@ -10,16 +10,13 @@
   "parentResearch": "minecolonies:combat/improvedleather",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 2
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:emerald"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
       "quantity": 1
     }
   ],

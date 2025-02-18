@@ -9,25 +9,18 @@
   "parentResearch": "minecolonies:civilian/rails",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "deliveryman",
       "level": 9
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:clipboard"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:clipboard",
       "quantity": 1
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:book",
       "quantity": 16
     }
   ],

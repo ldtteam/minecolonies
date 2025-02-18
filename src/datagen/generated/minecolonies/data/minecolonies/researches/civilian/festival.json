@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:civilian/circus",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "cook",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cake"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cake",
       "quantity": 9
     }
   ],

@@ -5,9 +5,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -173,9 +174,11 @@ public class EntityAICitizenAvoidEntity implements IStateAI
     {
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
         {
-            moveAwayPath =
-              citizen.getNavigation()
-                .moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
+            EntityNavigationUtils.walkAwayFrom(citizen,
+                citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)),
+                (int) (distanceFromEntity + getMoveAwayDist(citizen)),
+                nearSpeed);
+            moveAwayPath = citizen.getNavigation().getPathResult();
             return true;
         }
         return false;
@@ -248,7 +251,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
         safeTime = 0;
         if (startingPos != null)
         {
-            citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
+            EntityNavigationUtils.walkToPos(citizen, startingPos, 1, true);
         }
         closestLivingEntity = null;
         moveAwayPath = null;

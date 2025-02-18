@@ -112,14 +112,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private ImmutableSet<ItemStorage> beekeeperflowers = ImmutableSet.of();
 
     /**
-     * Set of all possible diseases.
+     * List of lucky oreBlocks which get dropped by the miner.
      */
-    private final Map<String, Disease> diseases = new HashMap<>();
-
-    /**
-     * List of diseases including the random factor.
-     */
-    private final List<String> diseaseList = new ArrayList<>();
+    private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
 
     /**
      * Random obj.
@@ -164,8 +159,6 @@ public class CompatibilityManager implements ICompatibilityManager
         fuel.clear();
         compostRecipes.clear();
 
-        diseases.clear();
-        diseaseList.clear();
         monsters = ImmutableSet.of();
         creativeModeTabMap.clear();
     }
@@ -181,7 +174,6 @@ public class CompatibilityManager implements ICompatibilityManager
         clear();
         discoverAllItems(level);
 
-        discoverDiseases();
         discoverModCompat();
 
         discoverCompostRecipes(recipeManager);
@@ -235,7 +227,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostRecipes(deserializeCompostRecipes(buf));
 
         // the below are loaded from config files, which have been synched already by this point
-        discoverDiseases();
         discoverModCompat();
     }
 
@@ -450,24 +441,6 @@ public class CompatibilityManager implements ICompatibilityManager
             Log.getLogger().error("getImmutableFlowers when empty");
         }
         return beekeeperflowers;
-    }
-
-    @Override
-    public String getRandomDisease()
-    {
-        return diseaseList.get(random.nextInt(diseaseList.size()));
-    }
-
-    @Override
-    public Disease getDisease(final String disease)
-    {
-        return diseases.get(disease);
-    }
-
-    @Override
-    public List<Disease> getDiseases()
-    {
-        return new ArrayList<>(diseases.values());
     }
 
     @Override
@@ -749,57 +722,6 @@ public class CompatibilityManager implements ICompatibilityManager
                 edibles.add(new ItemStorage(stack));
             }
         }
-    }
-
-    /**
-     * Go through the disease config and setup all possible diseases.
-     */
-    private void discoverDiseases()
-    {
-        if (diseases.isEmpty())
-        {
-            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getServer().diseases.get())
-            {
-                final String[] split = disease.split(",");
-                if (split.length < 3)
-                {
-                    Log.getLogger().warn("Wrongly configured disease: " + disease);
-                    continue;
-                }
-
-                try
-                {
-                    final String name = split[0];
-                    final int rarity = Integer.parseInt(split[1]);
-
-                    final List<ItemStack> cure = new ArrayList<>();
-
-                    for (int i = 2; i < split.length; i++)
-                    {
-                        final String[] theItem = split[i].split(":");
-                        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(theItem[0], theItem[1]));
-                        if (item == null || item == Items.AIR)
-                        {
-                            Log.getLogger().warn("Invalid cure item: " + disease);
-                            continue;
-                        }
-
-                        final ItemStack stack = new ItemStack(item, 1);
-                        cure.add(stack);
-                    }
-                    diseases.put(name, new Disease(name, rarity, cure));
-                    for (int i = 0; i < rarity; i++)
-                    {
-                        diseaseList.add(name);
-                    }
-                }
-                catch (final NumberFormatException e)
-                {
-                    Log.getLogger().warn("Wrongly configured disease: " + disease);
-                }
-            }
-        }
-        Log.getLogger().info("Finished discovering diseases");
     }
 
     private static CompoundTag writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)

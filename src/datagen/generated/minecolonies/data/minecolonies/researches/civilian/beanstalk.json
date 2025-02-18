@@ -9,12 +9,8 @@
   "parentResearch": "minecolonies:civilian/growth",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cooked_chicken"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_chicken",
       "quantity": 512
     }
   ],

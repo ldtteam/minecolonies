@@ -45,6 +45,8 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
+import static com.minecolonies.api.util.constant.CitizenConstants.MIN_WORKING_RANGE;
+import static com.minecolonies.api.util.constant.CitizenConstants.STANDARD_WORKING_RANGE;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
@@ -72,7 +74,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Lucky ore loot table
      */
-    public static final ResourceLocation LUCKY_ORE_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "loot_tables/miner/lucky_ore");
+    public static final ResourceLocation LUCKY_ORE_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "miner/lucky_ore");
 
     /**
      * Lead the miner to the other side of the shaft.
@@ -173,7 +175,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private IAIState startWorkingAtOwnBuilding()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if ((building.getLadderLocation() == null || worker.getY() >= building.getPosition().getY()) && walkToBuilding())
+        if ((building.getLadderLocation() == null || worker.getY() >= building.getPosition().getY()) && !walkToBuilding())
         {
             return START_WORKING;
         }
@@ -308,7 +310,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private IAIState goToLadder()
     {
-        if (walkToLadder())
+        if (!walkToLadder())
         {
             return MINER_WALKING_TO_LADDER;
         }
@@ -317,7 +319,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private boolean walkToLadder()
     {
-        return walkToBlock(building.getLadderLocation());
+        return walkToWorkPos(building.getLadderLocation());
+    }
+
+    public boolean walkToConstructionSite(final BlockPos currentBlock)
+    {
+        if (workFrom == null)
+        {
+            workFrom = getWorkingPosition(currentBlock);
+        }
+
+        //The miner shouldn't search for a save position. Just let him build from where he currently is.
+        return walkWithProxy(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.blockPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     @NotNull
@@ -627,7 +640,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private IAIState doShaftBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return MINER_BUILDING_SHAFT;
         }
@@ -730,7 +743,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_MINING_SHAFT;
         }
 
-        if ((workingNode.getStatus() == MineNode.NodeStatus.AVAILABLE || workingNode.getStatus() == MineNode.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
+        if ((workingNode.getStatus() == MineNode.NodeStatus.AVAILABLE || workingNode.getStatus() == MineNode.NodeStatus.IN_PROGRESS) && !walkWithProxy(standingPosition))
         {
             workingNode.setRot(rotation);
             return executeStructurePlacement(workingNode, standingPosition, rotation);

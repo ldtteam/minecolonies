@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
@@ -172,18 +173,18 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (walkToBlock(citizenToServe.peek().blockPosition()))
+        if (!walkToWorkPos(citizenToServe.peek().blockPosition()))
         {
             return getState();
         }
 
         final AbstractEntityCitizen citizen = citizenToServe.poll();
-        final IItemHandler handler = citizen.getInventoryCitizen();
+        final InventoryCitizen handler = citizen.getInventoryCitizen();
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
         final Predicate<ItemStack> canEatPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
         final ICitizenData citizenData = citizen.getCitizenData();
 
-        if (InventoryUtils.isItemHandlerFull(handler))
+        if (!handler.hasSpace())
         {
             for (int feedingAttempts = 0; feedingAttempts < 10; feedingAttempts++)
             {
@@ -224,8 +225,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
 
         final int countInSlot = worker.getInventoryCitizen().getStackInSlot(foodSlot).getCount();
-        int homeBuildingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 1 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
-        int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)) * homeBuildingLevel/2.0);
+        int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)));
 
         final int transferCount = Math.min(countInSlot, building.getBuildingLevel());
         if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
@@ -257,7 +257,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return START_WORKING;
         }
 
-        if (walkToBlock(playerToServe.peek().blockPosition()))
+        if (!walkToWorkPos(playerToServe.peek().blockPosition()))
         {
             return getState();
         }

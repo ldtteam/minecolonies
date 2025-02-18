@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.ldtteam.blockui.Color;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
@@ -31,8 +32,6 @@ public final class ModItemsInitializer
     private static final int SECONDARY_COLOR_BARBARIAN = 700;
     private static final int PRIMARY_COLOR_PIRATE      = 7;
     private static final int SECONDARY_COLOR_PIRATE    = 600;
-    private static final int PRIMARY_COLOR_MERC        = 8;
-    private static final int SECONDARY_COLOR_MERC      = 300;
     private static final int PRIMARY_COLOR_EG          = 10;
     private static final int SECONDARY_COLOR_EG        = 400;
 
@@ -378,65 +377,82 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_milk_bottle"), ModItems.large_milk_bottle);
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_soy_milk_bottle"), ModItems.large_soy_milk_bottle);
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.BARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_BARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("black"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERBARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_CHIEFBARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new ForgeSpawnEggItem(() -> ModEntities.PIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_PIRATE,
+                Color.getByName("red"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERPIRATE,
+                Color.getByName("red"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_CHIEFPIRATE,
+                Color.getByName("red"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new ForgeSpawnEggItem(() -> ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERMUMMY,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new ForgeSpawnEggItem(() -> ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_MUMMY,
+                Color.getByName("yellow"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERMUMMY,
+                Color.getByName("yellow"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_PHARAO,
+                Color.getByName("yellow"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new ForgeSpawnEggItem(() -> ModEntities.SHIELDMAIDEN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_ARCHER,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_CHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_SHIELDMAIDEN,
+                Color.getByName("black"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_NORSEMEN_ARCHER,
+                Color.getByName("black"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_NORSEMEN_CHIEF,
+                Color.getByName("black"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONSPEARMAN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          new Item.Properties()));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONCHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZON,
+                Color.getByName("green"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZONSPEARMAN,
+                Color.getByName("green"),
+                Color.getByName("green"),
+                new Item.Properties()));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZONCHIEF,
+                Color.getByName("green"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mercegg"), new ForgeSpawnEggItem(() -> ModEntities.MERCENARY,
-          PRIMARY_COLOR_MERC,
-          SECONDARY_COLOR_MERC,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpirateegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_PIRATE,
+                Color.getByName("blue"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_ARCHERPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("green"),
+                new Item.Properties()));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_CHIEFPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
     }
 }

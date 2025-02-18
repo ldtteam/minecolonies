@@ -151,7 +151,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
 
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        if (!worker.getInventoryCitizen().hasSpace())
         {
             return INVENTORY_FULL;
         }

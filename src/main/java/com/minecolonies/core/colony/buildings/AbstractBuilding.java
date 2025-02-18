@@ -331,7 +331,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onPlacement()
     {
-        if (getBuildingLevel() == 0)
+        if (getBuildingLevel() == 0 && !hasParent())
         {
             ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
         }
@@ -961,7 +961,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onUpgradeComplete(final int newLevel)
     {
         cachedRotation = -1;
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
+        if (!hasParent())
+        {
+            ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
+        }
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
@@ -1041,61 +1044,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void resetGuardBuildingNear()
     {
         this.recheckGuardBuildingNear = true;
-    }
-
-    @Override
-    public BlockPos getStandingPosition()
-    {
-        if (cachedStandingPosition == null)
-        {
-            if (!WorldUtil.isEntityBlockLoaded(colony.getWorld(), getPosition()))
-            {
-                return getPosition();
-            }
-
-            BlockPos bestPos = getPosition();
-            int bestScore = 0;
-
-            //Return true if the building is null to stall the worker
-            for (final Direction dir : Direction.Plane.HORIZONTAL)
-            {
-                final BlockPos currentPos = getPosition().relative(dir);
-                final BlockState hereState = colony.getWorld().getBlockState(currentPos);
-                // Check air here and air above.
-                if ((!hereState.getBlock().properties.hasCollision || hereState.is(BlockTags.WOOL_CARPETS))
-                      && !colony.getWorld().getBlockState(currentPos.above()).getBlock().properties.hasCollision
-                      && BlockUtils.isAnySolid(colony.getWorld().getBlockState(currentPos.below())))
-                {
-                    int localScore = BEST_STANDING_SCORE;
-                    if (colony.getWorld().canSeeSky(currentPos))
-                    {
-                        // More critical
-                        localScore-=2;
-                    }
-                    if (colony.getWorld().getBlockState(getPosition()).getValue(AbstractBlockHut.FACING) == dir)
-                    {
-                        // Less critical
-                        localScore--;
-                    }
-
-                    if (localScore == BEST_STANDING_SCORE)
-                    {
-                        cachedStandingPosition = currentPos;
-                        return cachedStandingPosition;
-                    }
-
-                    if (localScore > bestScore)
-                    {
-                        bestScore = localScore;
-                        bestPos = currentPos;
-                    }
-                }
-            }
-
-            // prefer default rotation of the building facing this.
-            cachedStandingPosition = bestPos;
-        }
-        return cachedStandingPosition == null ? getPosition() : cachedStandingPosition;
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//

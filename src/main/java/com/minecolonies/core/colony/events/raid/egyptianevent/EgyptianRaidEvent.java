@@ -2,13 +2,13 @@ package com.minecolonies.core.colony.events.raid.egyptianevent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
-import com.minecolonies.core.entity.mobs.egyptians.EntityArcherMummy;
-import com.minecolonies.core.entity.mobs.egyptians.EntityMummy;
-import com.minecolonies.core.entity.mobs.egyptians.EntityPharao;
+import com.minecolonies.core.entity.mobs.raider.egyptians.EntityArcherMummyRaider;
+import com.minecolonies.core.entity.mobs.raider.egyptians.EntityMummyRaider;
+import com.minecolonies.core.entity.mobs.raider.egyptians.EntityPharaoRaider;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -76,25 +76,25 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityPharao && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityPharaoRaider && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherMummy && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityArcherMummyRaider && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityMummy && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityMummyRaider && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUUID());
             return;
@@ -107,24 +107,24 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider))
         {
             return;
         }
 
-        if (entity instanceof EntityPharao)
+        if (entity instanceof EntityPharaoRaider)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherMummy)
+        if (entity instanceof EntityArcherMummyRaider)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityMummy)
+        if (entity instanceof EntityMummyRaider)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;

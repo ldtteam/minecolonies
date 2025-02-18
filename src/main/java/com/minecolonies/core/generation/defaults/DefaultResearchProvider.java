@@ -126,7 +126,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(VINES).setTranslatedName("Citizens can climb Vines"));
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
-        effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
+        effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need Less Sleep"));
         effects.add(new ResearchEffect(GUARD_CRIT).setTranslatedName("Guards have a chance to score critical hits").setLevels(new double[] {0.2, 0.3, 0.4, 0.5}));
         effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));

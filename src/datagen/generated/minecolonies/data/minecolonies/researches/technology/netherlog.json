@@ -9,24 +9,17 @@
   "parentResearch": "minecolonies:technology/opennether",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:ender_eye"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:ender_eye",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:ancienttome"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:ancienttome",
       "quantity": 1
     },
     {
+      "type": "minecolonies:building",
       "building": "netherworker",
       "level": 1
     }

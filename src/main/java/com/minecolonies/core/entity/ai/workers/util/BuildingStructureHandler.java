@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_PLACED;
 
 /**
@@ -182,7 +182,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
               && Mth.floor(structureAI.getWorker().getZ()) == worldPos.getZ()
               && structureAI.getWorker().getNavigation().isDone())
         {
-            structureAI.getWorker().getNavigation().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1, true);
+            EntityNavigationUtils.walkAwayFrom(structureAI.getWorker(), worldPos, 1, 1.0);
         }
 
         structureAI.getWorker().swing(InteractionHand.MAIN_HAND);

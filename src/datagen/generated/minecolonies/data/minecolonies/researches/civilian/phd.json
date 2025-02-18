@@ -9,12 +9,8 @@
   "parentResearch": "minecolonies:civilian/master",
   "requirements": [
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:bookshelf"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bookshelf",
       "quantity": 64
     }
   ],

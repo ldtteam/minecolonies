@@ -265,12 +265,12 @@ public class BuildingBeekeeper extends AbstractBuilding
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal.getType(), Collections.emptyList(), 0));
 
             recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
                     Collections.emptyList(), Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
-                    0, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal, Collections.emptyList(), 0));
+                    0, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
 
             return recipes;
         }

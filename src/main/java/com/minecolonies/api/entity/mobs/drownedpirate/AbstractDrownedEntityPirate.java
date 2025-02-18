@@ -1,12 +1,11 @@
 package com.minecolonies.api.entity.mobs.drownedpirate;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -15,15 +14,13 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all drowned pirate entities.
  */
-public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMob
+public abstract class AbstractDrownedEntityPirate extends AbstractEntityMinecoloniesMonster
 {
     /**
      * Swim speed for pirates
@@ -36,11 +33,6 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
     private static final int PIRATE_TEXTURES = 4;
 
     /**
-     * Texture id of the pirates.
-     */
-    private int textureId;
-
-    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param type  the type.
@@ -48,8 +40,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
      */
     public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world)
     {
-        super(type, world);
-        this.textureId = new Random().nextInt(PIRATE_TEXTURES);
+        super(type, world, PIRATE_TEXTURES);
     }
 
     @Override
@@ -71,16 +62,6 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityRaiderMo
     public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
     {
         return true;
-    }
-
-    /**
-     * Get the unique texture id.
-     *
-     * @return the texture id.
-     */
-    public int getTextureId()
-    {
-        return this.textureId;
     }
 
     @NotNull

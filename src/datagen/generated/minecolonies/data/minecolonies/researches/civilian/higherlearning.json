@@ -9,16 +9,13 @@
   "icon": "minecolonies:blockhutschool",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "residence",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:book",
       "quantity": 3
     }
   ],

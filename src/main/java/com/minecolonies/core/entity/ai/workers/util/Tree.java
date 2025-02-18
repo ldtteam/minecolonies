@@ -327,7 +327,7 @@ public class Tree
     private BlockPos getFirstLeaf(final LevelAccessor world)
     {
         // Find the closest leaf above, stay below max height
-        for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
+        for (int i = 1; (i + topLog.getY()) < world.getMaxBuildHeight() && i < 10; i++)
         {
             final BlockState blockState = world.getBlockState(topLog.offset(0, i, 0));
             if (blockState.is(BlockTags.LEAVES) || blockState.is(ModTags.hugeMushroomBlocks))

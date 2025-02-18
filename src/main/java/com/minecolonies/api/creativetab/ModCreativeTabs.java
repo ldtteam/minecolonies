@@ -2,6 +2,7 @@ package com.minecolonies.api.creativetab;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.Registry;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -114,6 +116,31 @@ public final class ModCreativeTabs
           output.accept(ModItems.sugaryBread);
           output.accept(ModItems.goldenBread);
           output.accept(ModItems.chorusBread);
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_BARBARIAN));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_ARCHERBARBARIAN));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_CHIEFBARBARIAN));
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_PIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_ARCHERPIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_CHIEFPIRATE));
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_MUMMY));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_ARCHERMUMMY));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_PHARAO));
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_SHIELDMAIDEN));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_NORSEMEN_ARCHER));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_NORSEMEN_CHIEF));
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_AMAZON));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_AMAZONSPEARMAN));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_AMAZONCHIEF));
+
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_PIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_ARCHERPIRATE));
+          output.accept(ForgeSpawnEggItem.fromEntityType(ModEntities.CAMP_DROWNED_CHIEFPIRATE));
+
       }).build());
 
     public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)

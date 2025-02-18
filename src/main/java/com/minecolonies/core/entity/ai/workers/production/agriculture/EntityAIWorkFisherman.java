@@ -21,6 +21,7 @@ import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobFindWater;
 import com.minecolonies.core.entity.pathfinding.pathresults.WaterPathResult;
 import com.minecolonies.core.util.WorkerUtil;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +30,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -182,7 +182,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -274,7 +274,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             return FISHERMAN_SEARCHING_WATER;
         }
 
-        if (walkToWater())
+        if (!walkToWater())
         {
             return getState();
         }
@@ -288,7 +288,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean walkToWater()
     {
-        return job.getWater() != null && walkToBlock(job.getWater().getB());
+        return job.getWater() != null && walkToSafePos(job.getWater().getB());
     }
 
     /**
@@ -607,7 +607,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void equipRod()
     {
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, getRodSlot());
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getRodSlot());
     }
 
     /**
@@ -658,8 +658,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             worker.swing(worker.getUsedItemHand());
             final int i = entityFishHook.getDamage();
             generateBonusLoot();
-            entityFishHook.remove(Entity.RemovalReason.DISCARDED);
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, i);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
         }
     }

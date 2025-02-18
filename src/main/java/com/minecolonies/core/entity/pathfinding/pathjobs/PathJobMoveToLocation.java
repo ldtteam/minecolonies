@@ -6,7 +6,6 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
@@ -29,11 +28,6 @@ public class PathJobMoveToLocation extends AbstractPathJob implements IDestinati
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
 
     /**
-     * Modifier to the heuristics
-     */
-    private double heuristicModifier = 1;
-
-    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world  world the entity is in.
@@ -49,13 +43,6 @@ public class PathJobMoveToLocation extends AbstractPathJob implements IDestinati
         maxNodes += range;
         this.destination = new BlockPos(end);
 
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
-        {
-            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
-        }
-
-        // Overestimate for long distances, +1 per 100 blocks
-        heuristicModifier += BlockPosUtil.distManhattan(start, end) / 100.0;
         extraNodes = 4;
     }
 
@@ -80,7 +67,7 @@ public class PathJobMoveToLocation extends AbstractPathJob implements IDestinati
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
+        return BlockPosUtil.distManhattan(destination, x, y, z);
     }
 
     /**
@@ -173,5 +160,20 @@ public class PathJobMoveToLocation extends AbstractPathJob implements IDestinati
     public BlockPos getDestination()
     {
         return destination;
+    }
+
+    /**
+     * Helper to compare if the given move to location job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos desiredPosition)
+    {
+        if (job instanceof PathJobMoveToLocation pathJob)
+        {
+            return pathJob.getDestination().equals(desiredPosition);
+        }
+
+        return false;
     }
 }

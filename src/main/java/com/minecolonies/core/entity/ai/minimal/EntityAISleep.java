@@ -17,6 +17,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -137,7 +138,7 @@ public class EntityAISleep implements IStateAI
      */
     private boolean findBed()
     {
-        if (!citizen.getCitizenSleepHandler().isAsleep() || bedTicks < MAX_BED_TICKS)
+        if (!citizen.getCitizenSleepHandler().isAsleep() && bedTicks < MAX_BED_TICKS)
         {
             findBedAndTryToSleep();
             return false;
@@ -200,7 +201,7 @@ public class EntityAISleep implements IStateAI
                 usedBed = homePos;
             }
 
-            if (citizen.isWorkerAtSiteWithMove(usedBed, 3))
+            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 12))
             {
                 bedTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
@@ -209,6 +210,10 @@ public class EntityAISleep implements IStateAI
                     usedBed = null;
                 }
                 citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(SLEPTTONIGHT);
+            }
+            else
+            {
+                bedTicks = 0;
             }
         }
     }
@@ -237,10 +242,14 @@ public class EntityAISleep implements IStateAI
      */
     private void goHome()
     {
-        final BlockPos pos = citizen.getCitizenData().getHomePosition();
-        if (pos != null && !citizen.isWorkerAtSiteWithMove(pos, 2) && citizen.getPose() == Pose.SLEEPING)
+        final IBuilding home = citizen.getCitizenData().getHomeBuilding();
+        if (home != null)
         {
-            citizen.setPose(Pose.STANDING);
+            EntityNavigationUtils.walkToBuilding(citizen, home);
+        }
+        else
+        {
+            EntityNavigationUtils.walkToPos(citizen, citizen.getCitizenData().getHomePosition(), 4, true);
         }
 
         final int chance = citizen.getRandom().nextInt(CHANCE);

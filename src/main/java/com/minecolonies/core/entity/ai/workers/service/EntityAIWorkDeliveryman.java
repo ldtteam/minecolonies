@@ -12,9 +12,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -28,6 +25,9 @@ import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -160,16 +160,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenData().setVisibleStatus(DELIVERING);
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
-        if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
-        {
-            return PICKUP;
-        }
-
         final IBuilding pickupBuilding = building.getColony().getBuildingManager().getBuilding(pickupTarget);
         if (pickupBuilding == null)
         {
             job.finishRequest(false);
             return START_WORKING;
+        }
+
+        if (!walkToBuilding(pickupBuilding))
+        {
+            return PICKUP;
         }
 
         if (pickupFromBuilding(pickupBuilding))
@@ -253,7 +253,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         // The worker gets a little bit of exp for every itemstack he grabs.
         worker.getCitizenExperienceHandler().addExperience(0.01D);
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -297,14 +297,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        if (!worker.isWorkerAtSiteWithMove(warehouse.getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
+        if (!walkToBuilding(warehouse))
         {
             setDelay(WALK_DELAY);
             return DUMPING;
         }
 
         warehouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
 
         return START_WORKING;
     }
@@ -345,22 +345,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        if (!worker.isWorkerAtSiteWithMove(targetBuildingLocation.getInDimensionLocation(), MIN_DISTANCE_TO_WAREHOUSE))
+        final IBuilding targetBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(targetBuildingLocation.getInDimensionLocation());
+        if (targetBuilding == null)
         {
-            setDelay(WALK_DELAY);
-            return DELIVERY;
-        }
-
-        final BlockEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
-
-        if (!(tileEntity instanceof TileEntityColonyBuilding) || ((AbstractTileEntityColonyBuilding) tileEntity).getBuilding() == null)
-        {
-            // TODO: Non-Colony deliveries are unsupported yet. Fix that at some point in time.
             job.finishRequest(true);
             return START_WORKING;
         }
 
-        final IBuilding targetBuilding = ((AbstractTileEntityColonyBuilding) tileEntity).getBuilding();
+        if (!walkToBuilding(targetBuilding))
+        {
+            setDelay(WALK_DELAY);
+            return DELIVERY;
+        }
 
         boolean success = true;
         boolean extracted = false;
@@ -450,7 +446,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             // This can only happen if the dman's inventory was completely empty.
             // Let the retry-system handle this case.
             worker.decreaseSaturationForContinuousAction();
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
             job.finishRequest(false);
 
             // No need to go dumping in this case.
@@ -459,7 +455,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         worker.getCitizenExperienceHandler().addExperience(1.5D);
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
         return success ? START_WORKING : DUMPING;
     }
@@ -522,7 +518,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        if (walkToBlock(location.getInDimensionLocation()))
+        if (!walkToSafePos(location.getInDimensionLocation()))
         {
             return PREPARE_DELIVERY;
         }
@@ -594,7 +590,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (currentTask == null)
         {
             // If there are no deliveries/pickups pending, just loiter around the warehouse.
-            if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
+            if (!walkToBuilding(getAndCheckWareHouse()))
             {
                 setDelay(WALK_DELAY);
                 return START_WORKING;

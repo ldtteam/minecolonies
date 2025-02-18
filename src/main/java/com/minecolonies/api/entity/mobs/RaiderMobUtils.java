@@ -65,7 +65,7 @@ public final class RaiderMobUtils
      * @param mob    The mob to set the attributes on.
      * @param colony The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final AbstractEntityRaiderMob mob, final IColony colony)
+    public static void setMobAttributes(final AbstractEntityMinecoloniesRaider mob, final IColony colony)
     {
         final double difficultyModifier = colony.getRaiderManager().getRaidDifficultyModifier();
         mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE * 2);
@@ -120,7 +120,7 @@ public final class RaiderMobUtils
 
             for (int i = 0; i < numberOfSpawns; i++)
             {
-                final AbstractEntityRaiderMob entity = (AbstractEntityRaiderMob) entityToSpawn.create(world);
+                final AbstractEntityMinecoloniesRaider entity = (AbstractEntityMinecoloniesRaider) entityToSpawn.create(world);
 
                 if (entity != null)
                 {
@@ -152,7 +152,7 @@ public final class RaiderMobUtils
      *
      * @param mob the equipment to set up.
      */
-    public static void setEquipment(final AbstractEntityRaiderMob mob)
+    public static void setEquipment(final AbstractEntityMinecoloniesMonster mob)
     {
         if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
         {
@@ -208,10 +208,10 @@ public final class RaiderMobUtils
      * @param distanceFromEntity The distance to check for
      * @return the barbarians (if any) that is nearest
      */
-    public static List<AbstractEntityRaiderMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
+    public static List<AbstractEntityMinecoloniesRaider> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
         return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesOfClass(
-          AbstractEntityRaiderMob.class,
+          AbstractEntityMinecoloniesRaider.class,
           entity.getBoundingBox().expandTowards(
             distanceFromEntity,
             3.0D,

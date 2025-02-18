@@ -16,14 +16,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_U_PIRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
 
 /**
  * The Pirate raid event, spawns a ship with pirate spawners onboard.
@@ -165,19 +165,5 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     {
         super.updateRaidBar();
         raidBar.setDarkenScreen(true);
-    }
-
-    @Override
-    public void onFinish()
-    {
-        MessageUtils.format(DROWNED_PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint).getLongText(), colony.getName())
-          .sendTo(colony).forManagers();
-        for (final Entity entity : raiders.keySet())
-        {
-            entity.remove(Entity.RemovalReason.DISCARDED);
-        }
-
-        raidBar.setVisible(false);
-        raidBar.removeAllPlayers();
     }
 }

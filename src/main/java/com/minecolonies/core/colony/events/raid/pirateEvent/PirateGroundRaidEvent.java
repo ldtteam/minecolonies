@@ -2,12 +2,12 @@ package com.minecolonies.core.colony.events.raid.pirateEvent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
-import com.minecolonies.core.entity.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.core.entity.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.core.entity.mobs.pirates.EntityPirate;
+import com.minecolonies.core.entity.mobs.raider.pirates.EntityArcherPirateRaider;
+import com.minecolonies.core.entity.mobs.raider.pirates.EntityCaptainPirateRaider;
+import com.minecolonies.core.entity.mobs.raider.pirates.EntityPirateRaider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -60,33 +60,27 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void onFinish()
-    {
-        super.onFinish();
-    }
-
-    @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityCaptainPirateRaider && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherPirate && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityArcherPirateRaider && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityPirate && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityPirateRaider && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUUID());
             return;
@@ -99,24 +93,24 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider))
         {
             return;
         }
 
-        if (entity instanceof EntityCaptainPirate)
+        if (entity instanceof EntityCaptainPirateRaider)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherPirate)
+        if (entity instanceof EntityArcherPirateRaider)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityPirate)
+        if (entity instanceof EntityPirateRaider)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;

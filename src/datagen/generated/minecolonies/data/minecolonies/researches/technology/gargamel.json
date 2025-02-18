@@ -9,29 +9,23 @@
   "parentResearch": "minecolonies:technology/croprotation",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
     },
     {
+      "type": "minecolonies:building",
       "building": "netherworker",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:crimson_fungus"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:crimson_fungus",
       "quantity": 16
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:warped_fungus"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:warped_fungus",
       "quantity": 16
     }
   ],

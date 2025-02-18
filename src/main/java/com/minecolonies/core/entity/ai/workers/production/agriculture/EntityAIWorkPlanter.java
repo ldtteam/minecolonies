@@ -14,7 +14,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.FieldsModule;
@@ -23,6 +22,7 @@ import com.minecolonies.core.colony.fields.PlantationField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPlanter;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -165,7 +165,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PLANTATION_PICK_FIELD;
         }
 
-        if (walkToBlock(currentPlantationField.getPosition(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY))
+        if (!walkToSafePos(currentPlantationField.getPosition()))
         {
             return getState();
         }
@@ -207,7 +207,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private IAIState workField()
     {
         IPlantationModule planterModule = activeModuleResult.getModule();
-        if (!Objects.isNull(activeModuleResult.getActionPosition()) && walkToBlock(planterModule.getPositionToWalkTo(world, activeModuleResult.getActionPosition())))
+        if (!Objects.isNull(activeModuleResult.getActionPosition()) && !walkToSafePos(planterModule.getPositionToWalkTo(world, activeModuleResult.getActionPosition())))
         {
             return PLANTATION_WORK_FIELD;
         }
@@ -223,7 +223,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (handlerResult.equals(ActionHandlerResult.FINISHED))
         {
-            worker.getCitizenItemHandler().removeHeldItem();
+            CitizenItemUtils.removeHeldItem(worker);
 
             if (activeModuleResult.getAction().increasesActionCount())
             {
@@ -262,7 +262,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IAIState returnToBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -311,13 +311,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getItemHandlerCitizen(), currentStack.getItem());
-            worker.getCitizenItemHandler().setMainHeldItem(slot);
+            CitizenItemUtils.setMainHeldItem(worker, slot);
 
             BlockState blockState = planterModule.getPlantingBlockState(world, activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
             if (world.setBlockAndUpdate(activeModuleResult.getActionPosition(), blockState))
             {
                 InventoryUtils.reduceStackInItemHandler(worker.getItemHandlerCitizen(), currentStack);
-                worker.getCitizenItemHandler().removeHeldItem();
+                CitizenItemUtils.removeHeldItem(worker);
                 return ActionHandlerResult.FINISHED;
             }
 
@@ -371,7 +371,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             boolean mineResult = mineBlock(activeModuleResult.getActionPosition());
             if (mineResult)
             {
-                worker.getCitizenItemHandler().pickupItems();
+                CitizenItemUtils.pickupItems(worker);
 
                 if (isHarvest)
                 {

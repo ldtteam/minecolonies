@@ -2,10 +2,15 @@ package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.MineColonies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static com.minecolonies.api.client.render.modeltype.SimpleModelType.cachedHalloweenStyle;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_STYLE;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_TEXTURE_SUFFIX;
 
@@ -44,10 +49,30 @@ public interface ISimpleModelType extends IModelType
      */
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
+        if (cachedHalloweenStyle == null)
+        {
+            if (MineColonies.getConfig().getClient().holidayFeatures.get() &&
+                ((LocalDateTime.now().getDayOfMonth() >= 29 && LocalDateTime.now().getMonth() == Month.OCTOBER)
+                    || (LocalDateTime.now().getDayOfMonth() <= 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER)))
+            {
+                cachedHalloweenStyle = "nether";
+            }
+            else
+            {
+                cachedHalloweenStyle = "";
+            }
+        }
+
+        String style = entityCitizen.getEntityData().get(DATA_STYLE);
+        if (!cachedHalloweenStyle.isEmpty())
+        {
+            style = cachedHalloweenStyle;
+        }
+
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
           getName().getPath() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getEntityData().get(DATA_TEXTURE_SUFFIX);
-        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
+        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + style + "/" + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().getResource(modified).isPresent())
         {
             return modified;
@@ -58,10 +83,16 @@ public interface ISimpleModelType extends IModelType
 
     default ResourceLocation getTextureIcon(@NotNull final AbstractEntityCitizen entityCitizen)
     {
+        String style = entityCitizen.getEntityData().get(DATA_STYLE);
+        if (cachedHalloweenStyle != null && !cachedHalloweenStyle.isEmpty())
+        {
+            style = cachedHalloweenStyle;
+        }
+
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
           getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getEntityData()
             .get(DATA_TEXTURE_SUFFIX);
-        return new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/" + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
+        return new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/" + style + "/" + textureIdentifier + ".png");
     }
 }

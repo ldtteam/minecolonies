@@ -3,7 +3,6 @@ package com.minecolonies.api.items;
 import com.minecolonies.api.util.constant.TagConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;

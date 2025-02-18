@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/alchemist",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "fisherman",
       "level": 4
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:heart_of_the_sea"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:heart_of_the_sea",
       "quantity": 1
     }
   ],

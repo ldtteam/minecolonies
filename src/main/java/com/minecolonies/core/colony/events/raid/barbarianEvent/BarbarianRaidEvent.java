@@ -2,12 +2,12 @@ package com.minecolonies.core.colony.events.raid.barbarianEvent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
-import com.minecolonies.core.entity.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.core.entity.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.core.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.core.entity.mobs.raider.barbarians.EntityArcherBarbarianRaider;
+import com.minecolonies.core.entity.mobs.raider.barbarians.EntityBarbarianRaider;
+import com.minecolonies.core.entity.mobs.raider.barbarians.EntityChiefBarbarianRaider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -43,25 +43,25 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityChiefBarbarian && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityChiefBarbarianRaider && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityArcherBarbarian && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityArcherBarbarianRaider && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityBarbarian && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityBarbarianRaider && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUUID());
             return;
@@ -74,24 +74,24 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider))
         {
             return;
         }
 
-        if (entity instanceof EntityChiefBarbarian)
+        if (entity instanceof EntityChiefBarbarianRaider)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityArcherBarbarian)
+        if (entity instanceof EntityArcherBarbarianRaider)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityBarbarian)
+        if (entity instanceof EntityBarbarianRaider)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;

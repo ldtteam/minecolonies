@@ -7,9 +7,9 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -18,7 +18,6 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -107,43 +106,6 @@ public final class WorkerUtil
     public static boolean isPathBlock(final Block block)
     {
         return block.defaultBlockState().is(ModTags.pathingBlocks);
-    }
-
-    /**
-     * {@link WorkerUtil#isWorkerAtSiteWithMove(AbstractEntityCitizen, int, int, int, int)}.
-     *
-     * @param worker Worker to check.
-     * @param site   Chunk coordinates of site to check.
-     * @param range  Range to check in.
-     * @return True when within range, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site, final int range)
-    {
-        return isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ(), range);
-    }
-
-    /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location.
-     *
-     * @param worker Worker to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @param range  Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final AbstractEntityCitizen worker, final int x, final int y, final int z, final int range)
-    {
-        if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
-        {
-            //If not moving the try setting the point where the entity should move to
-            if (worker.getNavigation().isDone())
-            {
-                EntityUtils.tryMoveLivingToXYZ(worker, x, y, z);
-            }
-            return false;
-        }
-        return true;
     }
 
     /**

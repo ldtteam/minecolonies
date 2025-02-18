@@ -22,8 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
-import static com.minecolonies.api.research.ModResearchCostTypes.TAG_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchCostTypes.*;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -393,6 +392,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
         {
             JsonObject req = new JsonObject();
+            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, propertyType).toString());
             req.addProperty(propertyType, buildingName);
             req.addProperty("level", level);
             return req;
@@ -545,7 +545,16 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addItemCost(final Item item, final int count)
         {
-            return addItemCost(List.of(item), count);
+            final JsonArray reqArray = getRequirementsArray();
+
+            JsonObject req = new JsonObject();
+            req.addProperty("type", SIMPLE_ITEM_COST_ID.toString());
+            req.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString());
+            req.addProperty("quantity", count);
+
+            reqArray.add(req);
+            this.json.add("requirements", reqArray);
+            return this;
         }
 
         /**

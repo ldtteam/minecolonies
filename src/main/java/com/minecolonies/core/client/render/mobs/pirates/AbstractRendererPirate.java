@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.mobs.pirates;
 
-import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.render.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -15,7 +15,7 @@ import net.minecraft.world.InteractionHand;
 /**
  * Abstract for rendering Pirates.
  */
-public abstract class AbstractRendererPirate<T extends AbstractEntityPirate, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
+public abstract class AbstractRendererPirate<T extends AbstractEntityMinecoloniesMonster, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
 {
     public AbstractRendererPirate(final EntityRendererProvider.Context context, final M modelBipedIn, final float shadowSize)
     {

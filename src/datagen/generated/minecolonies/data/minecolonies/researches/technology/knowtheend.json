@@ -9,16 +9,13 @@
   "parentResearch": "minecolonies:technology/theflintstones",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "baker",
       "level": 3
     },
     {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:chorus_fruit"
-        ]
-      },
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:chorus_fruit",
       "quantity": 64
     }
   ],

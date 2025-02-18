@@ -83,26 +83,6 @@ public class BuildingSmeltery extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
-    @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
-    public int ingotMultiplier(final int skillLevel, final Random random)
-    {
-        switch (getBuildingLevel())
-        {
-            case 1:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? DOUBLE : 1;
-            case 2:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? DOUBLE : 1;
-            case 3:
-                return 2;
-            case 4:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? TRIPLE : DOUBLE;
-            case 5:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? TRIPLE : DOUBLE;
-            default:
-                return 1;
-        }
-    }
-
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
         /**
