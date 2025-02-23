@@ -1,5 +1,6 @@
 package com.minecolonies.core.client.gui;
 
+import com.ldtteam.blockui.Alignment;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
@@ -508,7 +509,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             final ButtonImage jobButton = new ButtonImage();
             jobButton.setImage(new ResourceLocation("minecolonies:textures/gui/builderhut/builder_button_medium.png"), false);
             jobButton.setPosition(xOffset, 30);
-            if (hireModule.getAssignedCitizens().size() > 0)
+            if (!hireModule.getAssignedCitizens().isEmpty())
             {
                 jobButton.setText(Component.translatable(entry.getTranslationKey()).append(Component.literal(" " + hireModule.getAssignedCitizens().size())));
             }
@@ -519,7 +520,6 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             jobButton.setID(hireModule.getJobEntry().getKey().toString());
             jobButton.setHandler(this::jobClicked);
             jobButton.setSize(86, 17);
-            jobButton.setTextSize(86, 17);
 
             this.addChild(jobButton);
             PaneBuilders.tooltipBuilder().hoverPane(jobButton).build().setText(Component.translatable(entry.getKey().toString() + ".job.desc"));
@@ -531,7 +531,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             {
                 jobButton.enable();
             }
-            jobButton.setTextColor(BLACK);
+            jobButton.setColors(BLACK);
+            jobButton.setTextAlignment(Alignment.MIDDLE);
 
             xOffset += 90;
         }
