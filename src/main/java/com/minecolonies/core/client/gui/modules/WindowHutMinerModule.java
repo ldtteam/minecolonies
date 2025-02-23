@@ -114,7 +114,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
                              .append(Component.literal(": "))
                              .append(Component.literal(String.valueOf(miner.levelsInfo.get(index).getB() + 1))));
                 rowPane.findPaneOfTypeByID(TEXT_NODE_COUNT, Text.class)
-                  .setText(Component.translatableEscape(MINER_NODES).append(": ").append(String.valueOf(miner.levelsInfo.get(index).getA())));
+                  .setText(Component.translatable(MINER_NODES).append(": ").append(String.valueOf(miner.levelsInfo.get(index).getA())));
             }
         });
     }
