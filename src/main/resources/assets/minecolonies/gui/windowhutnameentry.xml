@@ -1,5 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <text size="100% 11" pos="0 100" textalign="TOP_MIDDLE" color="white"
            label="$(com.minecolonies.coremod.gui.building.rename.title)"/>

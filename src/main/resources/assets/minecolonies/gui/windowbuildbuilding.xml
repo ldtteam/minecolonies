@@ -1,5 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
     <button id="previousStyle" size="14 15" pos="40 0" label="&lt;"

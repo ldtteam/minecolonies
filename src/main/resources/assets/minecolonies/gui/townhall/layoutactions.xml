@@ -1,4 +1,4 @@
-<window size="524 243" pause="false" lightbox="false">
+<window size="524 243">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <text size="148 11" color="green" pos="100 24"

@@ -1,4 +1,4 @@
-<window size="524 243" pause="false" lightbox="false">
+<window size="524 243">
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <view id="movein" size="148 16" pos="100 100" tooltip="$(com.minecolonies.coremod.gui.townhall.movein.tooltip)">
         <text id="1" label="$(com.minecolonies.coremod.gui.townhall.movein)" pos="0 3" size="148 11" color="black"/>

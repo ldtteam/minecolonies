@@ -1,4 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 130" pause="false" lightbox="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 130"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>

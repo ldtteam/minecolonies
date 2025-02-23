@@ -527,6 +527,8 @@ public final class TranslationConstants
     @NonNls
     public static final String MINER_MINE_NODE                                    = "com.minecolonies.coremod.gui.workerhuts.minerminenode";
     @NonNls
+    public static final String MINER_LEVEL_DEPTH                                  = "com.minecolonies.coremod.gui.workerhuts.minerleveldepth";
+    @NonNls
     public static final String WARNING_POPULATION_NEEDS_HOUSING                   = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited";
     @NonNls
     public static final String WARNING_POPULATION_RESEARCH_LIMITED                =

@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244" pause="false" lightbox="false">
+    size="190 244">
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <text size="164 11" pos="13 32" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.workerassigned)"/>
