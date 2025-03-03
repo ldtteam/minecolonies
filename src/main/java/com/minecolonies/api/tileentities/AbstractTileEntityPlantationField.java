@@ -3,7 +3,7 @@ package com.minecolonies.api.tileentities;
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -39,7 +39,7 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity impl
      *
      * @return the field type.
      */
-    public abstract Set<FieldRegistries.FieldEntry> getPlantationFieldTypes();
+    public abstract Set<BuildingExtensionEntry> getPlantationFieldTypes();
 
     /**
      * The working positions stored in this field.

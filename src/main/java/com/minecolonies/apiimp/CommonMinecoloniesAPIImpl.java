@@ -8,7 +8,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -60,7 +61,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final  IPathNavigateRegistry              pathNavigateRegistry   = new PathNavigateRegistry();
     private        IForgeRegistry<EquipmentTypeEntry> equipmentTypeRegistry;
     private        IForgeRegistry<BuildingEntry>      buildingRegistry;
-    private        IForgeRegistry<FieldRegistries.FieldEntry>              fieldRegistry;
+    private        IForgeRegistry<BuildingExtensionRegistries.BuildingExtensionEntry> buildingExtensionRegistry;
     private final  IBuildingDataManager                                    buildingDataManager    = new BuildingDataManager();
     private final  IJobDataManager                                         jobDataManager         = new JobDataManager();
     private final  IGuardTypeDataManager                                   guardTypeDataManager   = new com.minecolonies.core.colony.buildings.registry.GuardTypeDataManager();
@@ -129,9 +130,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     @NotNull
-    public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
+    public IForgeRegistry<BuildingExtensionEntry> getBuildingExtensionRegistry()
     {
-        return fieldRegistry;
+        return buildingExtensionRegistry;
     }
 
     @Override
@@ -223,12 +224,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
 
-        event.create(new RegistryBuilder<FieldRegistries.FieldEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "fields"))
+        event.create(new RegistryBuilder<BuildingExtensionEntry>()
+                       .setName(new ResourceLocation(Constants.MOD_ID, "buildingextensions"))
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving()
                        .allowModification()
-                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> fieldRegistry = b);
+                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingExtensionRegistry = b);
 
         event.create(new RegistryBuilder<JobEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
