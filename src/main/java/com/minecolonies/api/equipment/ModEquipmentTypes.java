@@ -126,25 +126,25 @@ public class ModEquipmentTypes
         helmet = register("helmet",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ModEquipmentTypes.armorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
                   .build());
 
         leggings = register("leggings",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ModEquipmentTypes.armorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
                   .build());
 
         chestplate = register("chestplate",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ModEquipmentTypes.armorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
                   .build());
 
         boots = register("boots",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ModEquipmentTypes.armorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) ->ItemStackUtils.getArmorLevel(itemStack))
                   .build());
 
         flint_and_steel = register("flintandsteel",
@@ -196,21 +196,6 @@ public class ModEquipmentTypes
         {
             // todo: Think about sth smarter in the future
             return (int) tieredItem.getTier().getAttackDamageBonus();
-        }
-        return -1;
-    }
-
-    /**
-     * Get the armor level.
-     *
-     * @param itemStack The item stack to check
-     * @return The armor level
-     */
-    public static int armorLevel(ItemStack itemStack)
-    {
-        if (itemStack.getItem() instanceof final ArmorItem armorItem)
-        {
-            return ItemStackUtils.getArmorLevel(armorItem.getMaterial().value());
         }
         return -1;
     }
