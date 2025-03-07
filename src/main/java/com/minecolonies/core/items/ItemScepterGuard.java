@@ -120,7 +120,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 tower.resetPatrolTargets();
             }
-            tower.addPatrolTargets(pos);
+            tower.addPatrolTarget(pos);
             MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGET, pos.toShortString()).sendTo(playerIn);
         }
         BlockPosUtil.write(compound, TAG_LAST_POS, pos);
