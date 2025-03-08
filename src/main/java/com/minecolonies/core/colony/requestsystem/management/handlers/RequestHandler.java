@@ -171,7 +171,7 @@ public class RequestHandler implements IRequestHandler
                 continue;
             }
 
-            if (previousResolver != null && !previousResolver.getClass().equals(resolver.getClass()))
+            if (previousResolver != null && previousResolver.getPriority() != resolver.getPriority())
             {
                 break;
             }
