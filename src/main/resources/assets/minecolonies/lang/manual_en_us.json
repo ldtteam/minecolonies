@@ -41,6 +41,8 @@
 
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
+  "minecolonies.config.diseaseduration": "Disease Duration",
+  "minecolonies.config.diseaseduration.comment": "Maximum duration of a disease in days. 0 = No Limit",
   "minecolonies.config.diseases": "Diseases",
   "minecolonies.config.diseases.comment": "All diseases citizens can get. The name, how common it is, and all ingredients to cure it.",
   "minecolonies.config.configliststudyitems": "List of Study Items",

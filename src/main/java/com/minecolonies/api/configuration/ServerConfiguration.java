@@ -30,6 +30,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
+    public final ForgeConfigSpec.IntValue     diseaseDuration;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
     public final ForgeConfigSpec.IntValue     loadtime;
     public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
@@ -135,6 +136,7 @@ public class ServerConfiguration extends AbstractConfiguration
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
+        diseaseDuration = defineInteger(builder, "diseaseduration", 5, 0, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", true);
         loadtime = defineInteger(builder, "loadtime", 10, 1, 1440);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);

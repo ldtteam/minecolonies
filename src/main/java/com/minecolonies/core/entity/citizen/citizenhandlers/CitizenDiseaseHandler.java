@@ -46,6 +46,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private static final int IMMUNITY_TIME = 20 * 60 * 90;
 
     /**
+     * Maximum number of ticks a citizen can be sick before automatically recovering.
+     */
+    private static final int DISEASE_DURATION = 20 * 60 * 20;
+
+    /**
      * Additional immunity time through vaccines.
      */
     private static final int VACCINE_MODIFIER = 10;
@@ -65,6 +70,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Special immunity time after being cured.
      */
     private int immunityTicks = 0;
+
+    /**
+     * How long the citizen has been sick.
+     */
+    private int durationTicks = 0;
 
     /**
      * Whether the citizen sleeps at the hostpital
@@ -105,6 +115,19 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             if (citizenData.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
                 this.disease = DiseasesListener.getRandomDisease(citizenData.getEntity().map(AbstractEntityCitizen::getRandom).orElse(RandomSource.create()));
+            }
+        }
+
+        if (isSick())
+        {
+            final int configDuration = MineColonies.getConfig().getServer().diseaseDuration.get();
+            if (configDuration > 0 && durationTicks >= DISEASE_DURATION * configDuration)
+            {
+                this.cure();
+            }
+            else
+            {
+               durationTicks += tickRate;
             }
         }
 
@@ -176,6 +199,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             diseaseTag.putString(TAG_DISEASE_ID, disease.id().toString());
         }
         diseaseTag.putInt(TAG_IMMUNITY, immunityTicks);
+        diseaseTag.putInt(TAG_DURATION, durationTicks);
         compound.put(TAG_DISEASE, diseaseTag);
     }
 
@@ -193,6 +217,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             this.disease = DiseasesListener.getDisease(new ResourceLocation(diseaseTag.getString(TAG_DISEASE_ID)));
         }
         this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
+        this.durationTicks = diseaseTag.getInt(TAG_DURATION);
     }
 
     @Override
@@ -206,6 +231,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     public void cure()
     {
         this.disease = null;
+        durationTicks = 0;
         sleepsAtHospital = false;
         if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
         {
