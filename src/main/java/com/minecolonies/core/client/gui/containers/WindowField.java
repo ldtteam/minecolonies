@@ -8,14 +8,14 @@ import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.WindowSelectRes;
-import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
 import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
 import net.minecraft.ChatFormatting;
@@ -192,7 +192,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IField field = colonyView.getField(otherField -> otherField.getFieldType().equals(FieldRegistries.farmField.get()) && otherField.getPosition()
+        final IBuildingExtension field = colonyView.getBuildingExtension(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
                                                                                                                                       .equals(tileEntityScarecrow.getBlockPos()));
         if (field instanceof FarmField farmFieldFound)
         {

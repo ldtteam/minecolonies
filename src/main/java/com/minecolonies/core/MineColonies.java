@@ -104,7 +104,7 @@ public class MineColonies
         ModIngredientTypeInitializer.DEFERRED_REGISTER.register(modBus);
         ModContainerInitializers.CONTAINERS.register(modBus);
         ModBuildingsInitializer.DEFERRED_REGISTER.register(modBus);
-        ModFieldsInitializer.DEFERRED_REGISTER.register(modBus);
+        ModBuildingExtensionsInitializer.DEFERRED_REGISTER.register(modBus);
         ModGuardTypesInitializer.DEFERRED_REGISTER.register(modBus);
         ModColonyEventDescriptionTypeInitializer.DEFERRED_REGISTER.register(modBus);
         ModResearchRequirementInitializer.DEFERRED_REGISTER.register(modBus);
@@ -283,7 +283,7 @@ public class MineColonies
         ColonyViewRemoveCitizenMessage.TYPE.register(registry);
         ColonyViewBuildingViewMessage.TYPE.register(registry);
         ColonyViewRemoveBuildingMessage.TYPE.register(registry);
-        ColonyViewFieldsUpdateMessage.TYPE.register(registry);
+        ColonyViewBuildingExtensionsUpdateMessage.TYPE.register(registry);
         PermissionsMessage.View.TYPE.register(registry);
         ColonyViewWorkOrderMessage.TYPE.register(registry);
         ColonyViewRemoveWorkOrderMessage.TYPE.register(registry);

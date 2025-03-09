@@ -1,6 +1,6 @@
-package com.minecolonies.api.colony.fields.plantation;
+package com.minecolonies.api.colony.buildingextensions.plantation;
 
-import com.minecolonies.api.colony.fields.modules.IFieldModule;
+import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtensionModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Interface for planter modules that determines how the AI should work specific fields.
  */
-public interface IPlantationModule extends IFieldModule
+public interface IPlantationModule extends IBuildingExtensionModule
 {
     /**
      * Get the field tag property.

@@ -4,8 +4,8 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -17,11 +17,11 @@ import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -106,11 +106,11 @@ public class BuildingFarmer extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
+        for (BuildingExtensionsModule module : getModulesByType(BuildingExtensionsModule.class))
         {
-            for (final IField field : module.getOwnedFields())
+            for (final IBuildingExtension extension : module.getOwnedExtensions())
             {
-                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
+                if (extension instanceof FarmField farmField && !farmField.getSeed().isEmpty())
                 {
                     toKeep.put(stack -> ItemStack.isSameItem(farmField.getSeed(), stack), new Tuple<>(64, true));
                 }
@@ -122,9 +122,9 @@ public class BuildingFarmer extends AbstractBuilding
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
+        for (BuildingExtensionsModule module : getModulesByType(BuildingExtensionsModule.class))
         {
-            for (final IField field : module.getOwnedFields())
+            for (final IBuildingExtension field : module.getOwnedExtensions())
             {
                 if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(farmField.getSeed(), stack))
                 {
@@ -164,34 +164,34 @@ public class BuildingFarmer extends AbstractBuilding
     /**
      * Field module implementation for the farmer.
      */
-    public static class FarmerFieldsModule extends FieldsModule
+    public static class FarmerFieldsModule extends BuildingExtensionsModule
     {
         @Override
-        protected int getMaxFieldCount()
+        protected int getMaxExtensionCount()
         {
             return building.getBuildingLevel();
         }
 
         @Override
-        public Class<?> getExpectedFieldType()
+        public Class<?> getExpectedExtensionType()
         {
             return FarmField.class;
         }
 
         @Override
-        public @NotNull List<IField> getFields()
+        public @NotNull List<IBuildingExtension> getExtensions()
         {
-            return building.getColony().getBuildingManager().getFields(field -> field.getFieldType().equals(FieldRegistries.farmField.get())).stream().toList();
+            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get())).stream().toList();
         }
 
         @Override
-        public boolean canAssignFieldOverride(final IField field)
+        public boolean canAssignExtensionOverride(final IBuildingExtension extension)
         {
-            return field instanceof FarmField farmField && !farmField.getSeed().isEmpty();
+            return extension instanceof FarmField farmField && !farmField.getSeed().isEmpty();
         }
 
         @Override
-        protected int getFieldCheckTimeoutSeconds()
+        protected int getExtensionCheckTimeoutSeconds()
         {
             return 60;
         }
@@ -210,19 +210,19 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        public boolean canAssignFieldOverride(final IField field)
+        public boolean canAssignFieldOverride(final IBuildingExtension field)
         {
             return field instanceof FarmField farmField && !farmField.getSeed().isEmpty();
         }
 
         @Override
-        protected List<IField> getFieldsInColony()
+        protected List<IBuildingExtension> getFieldsInColony()
         {
-            return getColony().getFields(field -> field.getFieldType().equals(FieldRegistries.farmField.get()));
+            return getColony().getBuildingExtensions(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()));
         }
 
         @Override
-        public @Nullable MutableComponent getFieldWarningTooltip(final IField field)
+        public @Nullable MutableComponent getFieldWarningTooltip(final IBuildingExtension field)
         {
             MutableComponent result = super.getFieldWarningTooltip(field);
             if (result != null)
