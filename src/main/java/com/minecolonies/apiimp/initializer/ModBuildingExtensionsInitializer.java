@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public final class ModBuildingExtensionsInitializer
 {
-    public static final DeferredRegister<BuildingExtensionEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "fields"), Constants.MOD_ID);
+    public static final DeferredRegister<BuildingExtensionEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "buildingextensions"), Constants.MOD_ID);
     static
     {
         BuildingExtensionRegistries.farmField = createEntry(BuildingExtensionRegistries.FARM_FIELD_ID, builder -> builder.setExtensionProducer(FarmField::new));
