@@ -1,8 +1,8 @@
 package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
@@ -16,9 +16,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.core.colony.fields.PlantationField;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPlanter;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
@@ -107,10 +107,10 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return IDLE;
         }
 
-        FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
-        module.claimFields();
+        BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+        module.claimExtensions();
 
-        if (module.hasNoFields())
+        if (module.hasNoExtensions())
         {
             if (worker.getCitizenData() != null)
             {
@@ -120,8 +120,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         // Get the next field to work on, if any.
-        final IField lastField = module.getCurrentField();
-        final IField fieldToWork = module.getFieldToWorkOn();
+        final IBuildingExtension lastField = module.getCurrentExtension();
+        final IBuildingExtension fieldToWork = module.getBuildingExtensionToWorkOn();
         if (fieldToWork != null)
         {
             // If we suddenly have to work on a new field, always reset the working position.
@@ -278,8 +278,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     @Nullable
     private PlantationField getCurrentField()
     {
-        FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-        if (fieldsModule.getCurrentField() instanceof PlantationField field)
+        BuildingExtensionsModule fieldsModule = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+        if (fieldsModule.getCurrentExtension() instanceof PlantationField field)
         {
             return field;
         }
@@ -288,8 +288,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     private void resetActiveField()
     {
-        FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-        fieldsModule.resetCurrentField();
+        BuildingExtensionsModule fieldsModule = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+        fieldsModule.resetCurrentExtension();
         currentFieldActionCount = 0;
     }
 

@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.claim.ChunkClaimData;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -89,12 +89,12 @@ public final class ColonyView implements IColonyView
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
+    private final Map<BlockPos, IBuildingView>   buildings  = new HashMap<>();
     @NotNull
-    private final Set<IField>                    fields      = new HashSet<>();
+    private final Set<IBuildingExtension>        extensions = new HashSet<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
+    private final Map<Integer, ICitizenDataView> citizens   = new HashMap<>();
     private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
     private       ResourceKey<Level>                            dimensionId;
@@ -1088,24 +1088,24 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyFieldViewUpdateMessage(final Set<IField> fields)
+    public void handleColonyBuildingExtensionsViewUpdateMessage(final Set<IBuildingExtension> extensions)
     {
-        this.fields.clear();
-        this.fields.addAll(fields);
+        this.extensions.clear();
+        this.extensions.addAll(extensions);
     }
 
     @Override
-    public @NotNull List<IField> getFields(final Predicate<IField> matcher)
+    public @NotNull List<IBuildingExtension> getBuildingExtensions(final Predicate<IBuildingExtension> matcher)
     {
-        return fields.stream()
+        return extensions.stream()
                  .filter(matcher)
                  .toList();
     }
 
     @Override
-    public @Nullable IField getField(final Predicate<IField> matcher)
+    public @Nullable IBuildingExtension getBuildingExtension(final Predicate<IBuildingExtension> matcher)
     {
-        return getFields(matcher).stream()
+        return getBuildingExtensions(matcher).stream()
                  .findFirst()
                  .orElse(null);
     }

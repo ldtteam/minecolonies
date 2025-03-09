@@ -131,6 +131,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         if (availableItems.isEmpty())
         {
             final List<ItemStack> itemsToRequest = new ArrayList<>();
+            int amountToRequest = 1;
             for (final StudyItem studyItem : studyItems)
             {
                 final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.item());
@@ -142,9 +143,10 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
                 final ItemStack itemStack = new ItemStack(studyItem.item(), studyItem.item().getDefaultInstance().getMaxStackSize());
                 itemsToRequest.add(itemStack);
+                amountToRequest = Math.max(amountToRequest, studyItem.breakChance() / 10 > 0 ? studyItem.breakChance() : 1);
             }
 
-            checkIfRequestForItemExistOrCreate(new StackList(itemsToRequest, "Study Items", 64));
+            checkIfRequestForItemExistOrCreate(new StackList(itemsToRequest, "Study Items", amountToRequest));
 
             // Default levelup
             data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE, data);

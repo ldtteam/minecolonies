@@ -5,36 +5,37 @@ package com.minecolonies.api.util.constant;
  */
 public final class NbtTagConstants
 {
-    public static final String TAG_ID                = "id";
-    public static final String TAG_NAME              = "name";
-    public static final String TAG_SUFFIX            = "suffix";
-    public static final String TAG_DIMENSION         = "dimension";
-    public static final String TAG_CENTER            = "center";
-    public static final String TAG_BUILDINGS         = "buildings";
-    public static final String TAG_BUILDING_MODULES  = "building_modules";
-    public static final String TAG_BUILDING          = "building";
-    public static final String TAG_BUILDING_CLAIM    = "buildingClaim";
-    public static final String TAG_BUILDING_LIST_CLAIM  = "buildingListClaim";
-    public static final String TAG_CITIZENS          = "citizens";
-    public static final String TAG_VISITORS          = "visitors";
-    public static final String TAG_WORK              = "work";
-    public static final String TAG_MANUAL_HIRING     = "manualHiring";
-    public static final String TAG_MANUAL_HOUSING    = "manualHousing";
-    public static final String TAG_MOVE_IN           = "moveIn";
-    public static final String TAG_REQUESTMANAGER    = "requestManager";
-    public static final String TAG_WAYPOINT          = "waypoints";
-    public static final String TAG_FREE_BLOCKS       = "freeBlocks";
-    public static final String TAG_FREE_POSITIONS    = "freePositions";
-    public static final String TAG_GRAVE             = "graves";
-    public static final String TAG_ABANDONED         = "abandoned";
-    public static final String TAG_PRIO              = "prio";
-    public static final String TAG_LAST_ONLINE       = "lastOnlineTime";
-    public static final String TAG_SOUND_PROFILE     = "soundProfile";
-    public static final String TAG_CLAIM_DATA        = "colonyclaimdata";
-    public static final String TAG_CHUNK_CLAIM       = "chunkclaimdata";
-    public static final String TAG_CHUNK_POS         = "chunkpos";
-    public static final String STACK                 = "stack";
-    public static final String SLOT                 = "slot";
+    public static final String TAG_ID                  = "id";
+    public static final String TAG_NAME                = "name";
+    public static final String TAG_SUFFIX              = "suffix";
+    public static final String TAG_DIMENSION           = "dimension";
+    public static final String TAG_CENTER              = "center";
+    public static final String TAG_BUILDINGS           = "buildings";
+    public static final String TAG_BUILDING_EXTENSIONS = "building_extensions";
+    public static final String TAG_BUILDING_MODULES    = "building_modules";
+    public static final String TAG_BUILDING            = "building";
+    public static final String TAG_BUILDING_CLAIM      = "buildingClaim";
+    public static final String TAG_BUILDING_LIST_CLAIM = "buildingListClaim";
+    public static final String TAG_CITIZENS            = "citizens";
+    public static final String TAG_VISITORS            = "visitors";
+    public static final String TAG_WORK                = "work";
+    public static final String TAG_MANUAL_HIRING       = "manualHiring";
+    public static final String TAG_MANUAL_HOUSING      = "manualHousing";
+    public static final String TAG_MOVE_IN             = "moveIn";
+    public static final String TAG_REQUESTMANAGER      = "requestManager";
+    public static final String TAG_WAYPOINT            = "waypoints";
+    public static final String TAG_FREE_BLOCKS         = "freeBlocks";
+    public static final String TAG_FREE_POSITIONS      = "freePositions";
+    public static final String TAG_GRAVE               = "graves";
+    public static final String TAG_ABANDONED           = "abandoned";
+    public static final String TAG_PRIO                = "prio";
+    public static final String TAG_LAST_ONLINE         = "lastOnlineTime";
+    public static final String TAG_SOUND_PROFILE       = "soundProfile";
+    public static final String TAG_CLAIM_DATA          = "colonyclaimdata";
+    public static final String TAG_CHUNK_CLAIM         = "chunkclaimdata";
+    public static final String TAG_CHUNK_POS           = "chunkpos";
+    public static final String STACK                   = "stack";
+    public static final String SLOT                    = "slot";
 
     /**
      * @deprecated Superseeded by request-based pickup system.

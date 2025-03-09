@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,9 +53,9 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<IBuildi
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        if (building.hasModule(FieldsModule.class))
+        if (building.hasModule(BuildingExtensionsModule.class))
         {
-            ((FieldsModule)building.getModule(id)).setAssignManually(assignmentMode);
+            ((BuildingExtensionsModule)building.getModule(id)).setAssignManually(assignmentMode);
         }
     }
 }

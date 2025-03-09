@@ -714,9 +714,33 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         int nextX = node.x + dX;
         int nextY = node.y + dY;
         int nextZ = node.z + dZ;
-
+        
+        final int newY;
         //  Can we traverse into this node?  Fix the y up, skip on already explored nodes
-        final int newY = node.isVisited() ? nextY : getGroundHeight(node, nextX, nextY, nextZ);
+        if (node.isVisited())
+        {
+            final Block target = cachedBlockLookup.getBlockState(nextX, nextY, nextZ).getBlock();
+            if (target instanceof PanelBlock || target instanceof TrapDoorBlock)
+            {
+                newY = getGroundHeight(node, nextX, nextY, nextZ);
+            }
+            else
+            {
+                final Block origin = cachedBlockLookup.getBlockState(node.x, node.y, node.z).getBlock();
+                if (origin instanceof PanelBlock || origin instanceof TrapDoorBlock)
+                {
+                    newY = getGroundHeight(node, nextX, nextY, nextZ);
+                }
+                else
+                {
+                    newY = nextY;
+                }
+            }
+        }
+        else
+        {
+            newY = getGroundHeight(node, nextX, nextY, nextZ);
+        }
 
         if (newY < world.getMinBuildHeight())
         {
@@ -948,6 +972,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param onRails    checks if the node is a rail block.
      * @param railsExit  the exit of the rails.
      * @param swimStart  if its the swim start.
+     * @param state      the blockstate
      * @return cost to move from the parent to the new position.
      */
     protected double computeCost(
@@ -1225,7 +1250,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private boolean checkHeadBlock(@Nullable final MNode parent, final int x, final int y, final int z)
     {
-
         if (!canLeaveBlock(x, y + 1, z, parent, true))
         {
             return true;

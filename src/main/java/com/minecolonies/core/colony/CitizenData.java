@@ -1800,9 +1800,6 @@ public class CitizenData implements ICitizenData
               Component.translatableEscape(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
-
-        decreaseSaturation(
-          job == null || job.getWorkBuilding().getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, job.getWorkBuilding().getBuildingLevel())) * 2);
     }
 
     @Override

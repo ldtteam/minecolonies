@@ -1,14 +1,14 @@
-package com.minecolonies.core.colony.fields;
+package com.minecolonies.core.colony.buildingextensions;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Field class implementation for the plantation
  */
-public class FarmField extends AbstractField
+public class FarmField extends AbstractBuildingExtension
 {
     /**
      * The max width/length of a field.
@@ -62,7 +62,7 @@ public class FarmField extends AbstractField
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    public FarmField(final FieldRegistries.FieldEntry fieldType, final BlockPos position)
+    public FarmField(final BuildingExtensionEntry fieldType, final BlockPos position)
     {
         super(fieldType, position);
         this.maxRadius = MAX_RANGE;
@@ -75,7 +75,7 @@ public class FarmField extends AbstractField
      */
     public static FarmField create(final BlockPos position)
     {
-        return (FarmField) FieldRegistries.farmField.get().produceField(position);
+        return (FarmField) BuildingExtensionRegistries.farmField.get().produceExtension(position);
     }
 
     @Override

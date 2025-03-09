@@ -8,6 +8,7 @@ import com.minecolonies.core.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -107,6 +108,11 @@ public class WindowBannerPicker extends Screen
     /** The assigned renderer for the banner models */
     private final ModelPart modelRender;
 
+    /**
+     * Local reference of feature unlocked flag.
+     */
+    private final AtomicBoolean isFeatureUnlocked;
+
     /** The currently selected palette color. */
     private ColorPalette colors;
 
@@ -144,10 +150,7 @@ public class WindowBannerPicker extends Screen
 
         this.patterns = colony.getWorld().registryAccess().registry(Registries.BANNER_PATTERN).get().holders().collect(Collectors.toCollection(LinkedList::new));
         this.patterns.removeAll(exclusion);
-        if (!isFeatureUnlocked.get())
-        {
-            this.patterns.removeIf(key -> key.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID));
-        }
+        this.isFeatureUnlocked = isFeatureUnlocked;
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = new ArrayList<>(colony.getColonyFlag().layers());
@@ -203,7 +206,14 @@ public class WindowBannerPicker extends Screen
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
             int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
+            final PatternButton button = new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i));
+            this.addRenderableWidget(button);
+
+            if (!isFeatureUnlocked.get() && patterns.get(i).unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID))
+            {
+                button.setTooltip(Tooltip.create(Component.translatable("com.minecolonies.core.gui.banner.patreon")));
+                button.blocked = true;
+            }
         }
     }
 
@@ -331,7 +341,14 @@ public class WindowBannerPicker extends Screen
 
         List<BannerPatternLayers.Layer> list = new ArrayList<>();
         list.add(new BannerPatternLayers.Layer(Utils.getRegistryValue(BannerPatterns.BASE, colony.getWorld()), DyeColor.GRAY));
-        list.add(new BannerPatternLayers.Layer(pattern, DyeColor.WHITE));
+        if (!isFeatureUnlocked.get() && pattern.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID))
+        {
+            list.add(new BannerPatternLayers.Layer(pattern, DyeColor.BLACK));
+        }
+        else
+        {
+            list.add(new BannerPatternLayers.Layer(pattern, DyeColor.WHITE));
+        }
 
         PoseStack transform = new PoseStack();
         transform.pushPose();
@@ -476,6 +493,7 @@ public class WindowBannerPicker extends Screen
     {
         private final Holder<BannerPattern> pattern;
         private int index = -1;
+        private boolean blocked = false;
 
         /**
          * @param x the left x position of the button
@@ -500,7 +518,13 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void onPress() { setLayer(this.pattern, colors.getSelected()); }
+        public void onPress()
+        {
+            if (!this.blocked)
+            {
+                setLayer(this.pattern, colors.getSelected());
+            }
+        }
 
         @Override
         public void renderWidget(final GuiGraphics stack, int mx, int my, float p_renderButton_3_)
@@ -518,14 +542,21 @@ public class WindowBannerPicker extends Screen
 
             if (isVisible)
             {
-                if (this.isHovered && this.active)
-                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);
+                if (this.blocked)
+                {
+                    stack.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xFF000000);
+                }
+                else if (this.visible)
+                {
+                    if (this.isHovered && this.active)
+                        stack.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xDDFFFFFF);
 
-                if (activeLayer < layers.size() && layers.get(activeLayer).pattern() == this.pattern)
-                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFFDD88FF);
+                    if (activeLayer < layers.size() && layers.get(activeLayer).pattern() == this.pattern)
+                        stack.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0xFFDD88FF);
 
-                else
-                    stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x33888888);
+                    else
+                        stack.fill(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, 0x33888888);
+                }
             }
 
             try

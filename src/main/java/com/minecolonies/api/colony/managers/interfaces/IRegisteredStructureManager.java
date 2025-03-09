@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 
 /**
  * Interface for the managers for registered structures.
- * Buildings, Fields, Decorations, etc.
+ * Buildings + Extensions, Decorations, etc.
  */
 public interface IRegisteredStructureManager
 {
@@ -186,9 +186,9 @@ public interface IRegisteredStructureManager
     void markBuildingsDirty();
 
     /**
-     * Marks fields data dirty.
+     * Marks building extensions data dirty.
      */
-    void markFieldsDirty();
+    void markBuildingExtensionsDirty();
 
     /**
      * Creates a building from a tile entity and adds it to the colony.
@@ -318,34 +318,34 @@ public interface IRegisteredStructureManager
     BlockPos getRandomLeisureSite();
 
     /**
-     * Get all the fields
+     * Get all the building extensions.
      *
-     * @param matcher the field matcher predicate.
-     * @return an unmodifiable collection of all fields.
+     * @param matcher the building extension matcher predicate.
+     * @return an unmodifiable collection of all building extensions.
      */
-    @NotNull List<IField> getFields(Predicate<IField> matcher);
+    @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher);
 
     /**
-     * Get a specific field on the given location.
+     * Get a specific building extension on the given location.
      *
-     * @param matcher the field matcher predicate.
-     * @return the field, if any.
+     * @param matcher the building extension matcher predicate.
+     * @return the building extension, if any.
      */
-    Optional<IField> getField(Predicate<IField> matcher);
+    Optional<IBuildingExtension> getBuildingExtension(Predicate<IBuildingExtension> matcher);
 
     /**
-     * Add a new field to the building manager.
-     * If an identical field already exists, this field won't be added.
+     * Add a new building extension to the building manager.
+     * If an identical building extension already exists, this building extension won't be added.
      *
-     * @param field the new field to add.
-     * @return true if the field was added.
+     * @param extension the new building extension to add.
+     * @return true if the building extension was added.
      */
-    boolean addField(IField field);
+    boolean addBuildingExtension(IBuildingExtension extension);
 
     /**
-     * Remove a field from the field collection.
+     * Remove a building extension from the building extension collection.
      *
-     * @param matcher the field matcher predicate.
+     * @param matcher the building extension matcher predicate.
      */
-    void removeField(Predicate<IField> matcher);
+    void removeBuildingExtension(Predicate<IBuildingExtension> matcher);
 }
