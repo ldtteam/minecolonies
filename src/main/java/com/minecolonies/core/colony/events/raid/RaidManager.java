@@ -251,7 +251,6 @@ public class RaidManager implements IRaiderManager
         this.raidTonight = willRaid;
         this.nextForcedType = raidType;
         this.allowShips = allowShips;
-        extraDaysToNextRaid = 0;
     }
 
     @Override
@@ -766,6 +765,7 @@ public class RaidManager implements IRaiderManager
             RaidSpawnResult result = raiderEvent(nextForcedType, overrideConfig, allowShips);
             if (result == RaidSpawnResult.SUCCESS || result == RaidSpawnResult.TOO_SMALL)
             {
+                extraDaysToNextRaid = 0;
                 raidTonight = false;
                 nextForcedType = INITIAL_NEXT_RAID_TYPE;
             }
