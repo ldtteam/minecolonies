@@ -4,8 +4,9 @@ import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -82,7 +83,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     /**
      * Cached result for {@link TileEntityPlantationField#getPlantationFieldTypes()}.
      */
-    private Set<FieldRegistries.FieldEntry> plantationFieldTypes;
+    private Set<BuildingExtensionEntry> plantationFieldTypes;
 
     /**
      * Default constructor.
@@ -96,7 +97,7 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public Set<FieldRegistries.FieldEntry> getPlantationFieldTypes()
+    public Set<BuildingExtensionEntry> getPlantationFieldTypes()
     {
         if (plantationFieldTypes == null)
         {
@@ -161,11 +162,11 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
         return rotationMirror;
     }
 
-    private FieldRegistries.FieldEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
+    private BuildingExtensionEntry getPlantationFieldEntryFromFieldTag(String fieldTag)
     {
-        return FieldRegistries.getFieldRegistry().stream()
+        return BuildingExtensionRegistries.getBuildingExtensionRegistry().stream()
                  .filter(fieldEntry -> {
-                     List<IPlantationModule> modules = fieldEntry.getFieldModuleProducers().stream().map(m -> m.apply(null))
+                     List<IPlantationModule> modules = fieldEntry.getExtensionModuleProducers().stream().map(m -> m.apply(null))
                                                          .filter(IPlantationModule.class::isInstance)
                                                          .map(m -> (IPlantationModule) m)
                                                          .toList();

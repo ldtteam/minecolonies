@@ -2,7 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -257,7 +257,7 @@ public interface IColonyView extends IColony
      *
      * @param fields the list of fields.
      */
-    void handleColonyFieldViewUpdateMessage(Set<IField> fields);
+    void handleColonyFieldViewUpdateMessage(Set<IBuildingExtension> fields);
 
     /**
      * Get all fields.
@@ -265,7 +265,7 @@ public interface IColonyView extends IColony
      * @param matcher the field matcher predicate.
      * @return a collection of fields.
      */
-    @NotNull List<IField> getFields(Predicate<IField> matcher);
+    @NotNull List<IBuildingExtension> getFields(Predicate<IBuildingExtension> matcher);
 
     /**
      * Get a specific field.
@@ -273,7 +273,7 @@ public interface IColonyView extends IColony
      * @param matcher the field matcher predicate.
      * @return a field instance, or null.
      */
-    @Nullable IField getField(Predicate<IField> matcher);
+    @Nullable IBuildingExtension getField(Predicate<IBuildingExtension> matcher);
 
     /**
      * Update a players permissions.

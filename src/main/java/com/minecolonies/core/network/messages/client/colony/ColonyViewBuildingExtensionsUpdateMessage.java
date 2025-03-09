@@ -5,10 +5,10 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.fields.registry.FieldDataManager;
+import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,9 +27,9 @@ import java.util.Set;
 /**
  * Update message for auto syncing the entire field list.
  */
-public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
+public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_fields_update", ColonyViewFieldsUpdateMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_fields_update", ColonyViewBuildingExtensionsUpdateMessage::new);
 
     /**
      * The colony this field belongs to.
@@ -44,7 +44,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
     /**
      * The list of field items.
      */
-    private final Map<IField, IField> fields;
+    private final Map<IBuildingExtension, IBuildingExtension> fields;
 
     /**
      * Creates a message to handle colony all field views.
@@ -52,7 +52,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
      * @param colony the colony this field is in.
      * @param fields the complete list of fields of this colony.
      */
-    public ColonyViewFieldsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IField> fields)
+    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IBuildingExtension> fields)
     {
         super(TYPE);
         this.colonyId = colony.getID();
@@ -67,15 +67,15 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeInt(fields.size());
-        for (final IField field : fields.keySet())
+        for (final IBuildingExtension field : fields.keySet())
         {
-            final RegistryFriendlyByteBuf fieldBuffer = FieldDataManager.fieldToBuffer(field, buf.registryAccess());
+            final RegistryFriendlyByteBuf fieldBuffer = BuildingExtensionDataManager.extensionToBuffer(field, buf.registryAccess());
             fieldBuffer.resetReaderIndex();
             buf.writeByteArray(fieldBuffer.array());
         }
     }
 
-    protected ColonyViewFieldsUpdateMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
+    protected ColonyViewBuildingExtensionsUpdateMessage(@NotNull final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         colonyId = buf.readInt();
@@ -84,7 +84,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         final int fieldCount = buf.readInt();
         for (int i = 0; i < fieldCount; i++)
         {
-            final IField parsedField = FieldDataManager.bufferToField(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
+            final IBuildingExtension parsedField = BuildingExtensionDataManager.bufferToExtension(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
             fields.put(parsedField, parsedField);
         }
     }
@@ -95,7 +95,7 @@ public class ColonyViewFieldsUpdateMessage extends AbstractClientPlayMessage
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
         {
-            final Set<IField> updatedFields = new HashSet<>();
+            final Set<IBuildingExtension> updatedFields = new HashSet<>();
             view.getFields(field -> true).forEach(existingField -> {
                 if (this.fields.containsKey(existingField))
                 {
