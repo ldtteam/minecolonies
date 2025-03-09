@@ -1088,10 +1088,10 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyBuildingExtensionsViewUpdateMessage(final Set<IBuildingExtension> buildingExtensions)
+    public void handleColonyBuildingExtensionsViewUpdateMessage(final Set<IBuildingExtension> extensions)
     {
         this.extensions.clear();
-        this.extensions.addAll(buildingExtensions);
+        this.extensions.addAll(extensions);
     }
 
     @Override
