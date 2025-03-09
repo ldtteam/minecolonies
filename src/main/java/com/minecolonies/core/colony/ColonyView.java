@@ -89,12 +89,12 @@ public final class ColonyView implements IColonyView
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings = new HashMap<>();
+    private final Map<BlockPos, IBuildingView>   buildings  = new HashMap<>();
     @NotNull
-    private final Set<IBuildingExtension>        fields    = new HashSet<>();
+    private final Set<IBuildingExtension>        extensions = new HashSet<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens  = new HashMap<>();
+    private final Map<Integer, ICitizenDataView> citizens   = new HashMap<>();
     private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
     private       ResourceKey<Level>                            dimensionId;
@@ -1088,24 +1088,24 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyFieldViewUpdateMessage(final Set<IBuildingExtension> fields)
+    public void handleColonyBuildingExtensionsViewUpdateMessage(final Set<IBuildingExtension> buildingExtensions)
     {
-        this.fields.clear();
-        this.fields.addAll(fields);
+        this.extensions.clear();
+        this.extensions.addAll(buildingExtensions);
     }
 
     @Override
-    public @NotNull List<IBuildingExtension> getFields(final Predicate<IBuildingExtension> matcher)
+    public @NotNull List<IBuildingExtension> getBuildingExtensions(final Predicate<IBuildingExtension> matcher)
     {
-        return fields.stream()
+        return extensions.stream()
                  .filter(matcher)
                  .toList();
     }
 
     @Override
-    public @Nullable IBuildingExtension getField(final Predicate<IBuildingExtension> matcher)
+    public @Nullable IBuildingExtension getBuildingExtension(final Predicate<IBuildingExtension> matcher)
     {
-        return getFields(matcher).stream()
+        return getBuildingExtensions(matcher).stream()
                  .findFirst()
                  .orElse(null);
     }

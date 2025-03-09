@@ -87,7 +87,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final IGlobalResearchTree                    globalResearchTree     = new GlobalResearchTree();
 
     private Registry<BuildingEntry>          buildingRegistry;
-    private Registry<BuildingExtensionEntry> fieldRegistry;
+    private Registry<BuildingExtensionEntry> buildingExtensionEntryRegistry;
     private Registry<JobEntry>               jobRegistry;
     private Registry<GuardType>                                  guardTypeRegistry;
     private Registry<InteractionResponseHandlerEntry>            interactionHandlerRegistry;
@@ -153,7 +153,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @NotNull
     public Registry<BuildingExtensionEntry> getBuildingExtensionRegistry()
     {
-        return fieldRegistry;
+        return buildingExtensionEntryRegistry;
     }
 
     @Override
@@ -226,7 +226,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         buildingRegistry = event.create(syncedRegistry(BUILDINGS));
-        fieldRegistry = event.create(syncedRegistry(BUILDING_EXTENSIONS));
+        buildingExtensionEntryRegistry = event.create(syncedRegistry(BUILDING_EXTENSIONS));
         jobRegistry = event.create(syncedRegistry(JOBS));
         guardTypeRegistry = event.create(syncedRegistry(GUARD_TYPES, ModGuardTypes.KNIGHT_ID));
         interactionHandlerRegistry = event.create(syncedRegistry(INTERACTION_RESPONSE_HANDLERS));

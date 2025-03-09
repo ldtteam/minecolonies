@@ -338,7 +338,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         protected List<IBuildingExtension> getFieldsInColony()
         {
-            return getColony().getFields(field -> field.hasModule(IPlantationModule.class));
+            return getColony().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override

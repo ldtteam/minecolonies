@@ -257,7 +257,7 @@ public interface IColonyView extends IColony
      *
      * @param fields the list of fields.
      */
-    void handleColonyFieldViewUpdateMessage(Set<IBuildingExtension> fields);
+    void handleColonyBuildingExtensionsViewUpdateMessage(Set<IBuildingExtension> fields);
 
     /**
      * Get all fields.
@@ -265,7 +265,7 @@ public interface IColonyView extends IColony
      * @param matcher the field matcher predicate.
      * @return a collection of fields.
      */
-    @NotNull List<IBuildingExtension> getFields(Predicate<IBuildingExtension> matcher);
+    @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher);
 
     /**
      * Get a specific field.
@@ -273,7 +273,7 @@ public interface IColonyView extends IColony
      * @param matcher the field matcher predicate.
      * @return a field instance, or null.
      */
-    @Nullable IBuildingExtension getField(Predicate<IBuildingExtension> matcher);
+    @Nullable IBuildingExtension getBuildingExtension(Predicate<IBuildingExtension> matcher);
 
     /**
      * Update a players permissions.

@@ -25,14 +25,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Update message for auto syncing the entire field list.
+ * Update message for auto syncing the entire building extensions list.
  */
 public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_fields_update", ColonyViewBuildingExtensionsUpdateMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "colony_view_building_extensions_update", ColonyViewBuildingExtensionsUpdateMessage::new);
 
     /**
-     * The colony this field belongs to.
+     * The colony this building extension belongs to.
      */
     private final int colonyId;
 
@@ -42,23 +42,23 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
     private final ResourceKey<Level> dimension;
 
     /**
-     * The list of field items.
+     * The list of building extension items.
      */
-    private final Map<IBuildingExtension, IBuildingExtension> fields;
+    private final Map<IBuildingExtension, IBuildingExtension> extensions;
 
     /**
-     * Creates a message to handle colony all field views.
+     * Creates a message to handle colony all building extension views.
      *
-     * @param colony the colony this field is in.
-     * @param fields the complete list of fields of this colony.
+     * @param colony the colony this building extension is in.
+     * @param extensions the complete list of building extensions of this colony.
      */
-    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IBuildingExtension> fields)
+    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IBuildingExtension> extensions)
     {
         super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
-        this.fields = new HashMap<>();
-        fields.forEach(field -> this.fields.put(field, field));
+        this.extensions = new HashMap<>();
+        extensions.forEach(extension -> this.extensions.put(extension, extension));
     }
 
     @Override
@@ -66,12 +66,12 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
-        buf.writeInt(fields.size());
-        for (final IBuildingExtension field : fields.keySet())
+        buf.writeInt(extensions.size());
+        for (final IBuildingExtension extension : extensions.keySet())
         {
-            final RegistryFriendlyByteBuf fieldBuffer = BuildingExtensionDataManager.extensionToBuffer(field, buf.registryAccess());
-            fieldBuffer.resetReaderIndex();
-            buf.writeByteArray(fieldBuffer.array());
+            final RegistryFriendlyByteBuf extensionBuffer = BuildingExtensionDataManager.extensionToBuffer(extension, buf.registryAccess());
+            extensionBuffer.resetReaderIndex();
+            buf.writeByteArray(extensionBuffer.array());
         }
     }
 
@@ -80,12 +80,12 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
         super(buf, type);
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
-        fields = new HashMap<>();
-        final int fieldCount = buf.readInt();
-        for (int i = 0; i < fieldCount; i++)
+        extensions = new HashMap<>();
+        final int extensionCount = buf.readInt();
+        for (int i = 0; i < extensionCount; i++)
         {
-            final IBuildingExtension parsedField = BuildingExtensionDataManager.bufferToExtension(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
-            fields.put(parsedField, parsedField);
+            final IBuildingExtension extension = BuildingExtensionDataManager.bufferToExtension(new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray()), buf.registryAccess()));
+            extensions.put(extension, extension);
         }
     }
 
@@ -95,19 +95,19 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
         final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, dimension);
         if (view != null)
         {
-            final Set<IBuildingExtension> updatedFields = new HashSet<>();
-            view.getFields(field -> true).forEach(existingField -> {
-                if (this.fields.containsKey(existingField))
+            final Set<IBuildingExtension> updatedExtensions = new HashSet<>();
+            view.getBuildingExtensions(extension -> true).forEach(existingExtension -> {
+                if (this.extensions.containsKey(existingExtension))
                 {
                     final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.level().registryAccess());
-                    this.fields.get(existingField).serialize(copyBuffer);
-                    existingField.deserialize(copyBuffer);
-                    updatedFields.add(existingField);
+                    this.extensions.get(existingExtension).serialize(copyBuffer);
+                    existingExtension.deserialize(copyBuffer);
+                    updatedExtensions.add(existingExtension);
                 }
             });
-            updatedFields.addAll(this.fields.keySet());
+            updatedExtensions.addAll(this.extensions.keySet());
 
-            view.handleColonyFieldViewUpdateMessage(updatedFields);
+            view.handleColonyBuildingExtensionsViewUpdateMessage(updatedExtensions);
         }
         else
         {

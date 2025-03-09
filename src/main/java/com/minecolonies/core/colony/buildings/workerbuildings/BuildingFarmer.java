@@ -218,7 +218,7 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         protected List<IBuildingExtension> getFieldsInColony()
         {
-            return getColony().getFields(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()));
+            return getColony().getBuildingExtensions(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()));
         }
 
         @Override

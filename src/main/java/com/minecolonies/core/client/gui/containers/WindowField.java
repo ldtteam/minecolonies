@@ -192,7 +192,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IBuildingExtension field = colonyView.getField(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
+        final IBuildingExtension field = colonyView.getBuildingExtension(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
                                                                                                                                       .equals(tileEntityScarecrow.getBlockPos()));
         if (field instanceof FarmField farmFieldFound)
         {
