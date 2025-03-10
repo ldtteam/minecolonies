@@ -23,7 +23,7 @@ import java.util.List;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandGetRanks implements IMCCommand
+public class CommandGetRanks implements IMCOPCommand
 {
     private static final String COLONY_INFO_TEXT       = "ID: %s  Name: %s  Rank: %s";
     private static final String COORDINATES_TEXT       = "Coordinates: ";
