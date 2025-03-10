@@ -454,7 +454,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
             if (pos != null)
             {
-                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+                if (BlockPosUtil.getDistance(pos, getPosition()) > getPatrolDistance())
                 {
                     lastPatrolPoint = getPosition();
                     return lastPatrolPoint;
@@ -675,12 +675,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     /**
-     * Adds new patrolTargets.
+     * Adds new patrolTarget.
      *
      * @param target the target to add
      */
     @Override
-    public void addPatrolTargets(final BlockPos target)
+    public void addPatrolTarget(final BlockPos target)
     {
         this.patrolTargets.add(target);
         this.markDirty();

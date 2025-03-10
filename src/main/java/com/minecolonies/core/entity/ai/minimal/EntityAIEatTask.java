@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
@@ -453,7 +454,13 @@ public class EntityAIEatTask implements IStateAI
 
         if (restaurantPos == null)
         {
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(NO_RESTAURANT), ChatPriority.BLOCKING));
+            if (citizen.getCitizenData().getSaturation() >= CitizenConstants.AVERAGE_SATURATION)
+            {
+                reset();
+                citizenData.setJustAte(true);
+                return DONE;
+            }
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_RESTAURANT), ChatPriority.BLOCKING));
             return CHECK_FOR_FOOD;
         }
         return GO_TO_RESTAURANT;

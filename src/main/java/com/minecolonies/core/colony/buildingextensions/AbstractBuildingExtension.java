@@ -1,12 +1,13 @@
-package com.minecolonies.core.colony.fields;
+package com.minecolonies.core.colony.buildingextensions;
 
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.modules.IFieldModule;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtensionModule;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
@@ -23,28 +24,28 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 
 /**
- * Abstract implementation for field instances.
- * Contains some basic mandatory logic for fields.
+ * Abstract implementation for building extension instances.
+ * Contains some basic mandatory logic for building extensions.
  */
-public abstract class AbstractField implements IField
+public abstract class AbstractBuildingExtension implements IBuildingExtension
 {
     /**
-     * Set of field modules this field has.
+     * Set of building extension modules this building extension has.
      */
-    private final List<IFieldModule> modules = new ArrayList<>();
+    private final List<IBuildingExtensionModule> modules = new ArrayList<>();
 
     /**
-     * The type of the field.
+     * The type of the building extension.
      */
-    private final FieldRegistries.FieldEntry fieldType;
+    private final BuildingExtensionEntry buildingExtensionEntry;
 
     /**
-     * The position of the field.
+     * The position of the building extension.
      */
     private final BlockPos position;
 
     /**
-     * Building id of the building owning the field.
+     * Building id of the building owning the building extension.
      */
     @Nullable
     private BlockPos buildingId = null;
@@ -52,34 +53,34 @@ public abstract class AbstractField implements IField
     /**
      * Constructor used in NBT deserialization.
      *
-     * @param fieldType the type of field.
-     * @param position  the position of the field.
+     * @param buildingExtensionEntry the type of building extension.
+     * @param position  the position of the building extension.
      */
-    protected AbstractField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
+    protected AbstractBuildingExtension(final @NotNull BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, final @NotNull BlockPos position)
     {
-        this.fieldType = fieldType;
+        this.buildingExtensionEntry = buildingExtensionEntry;
         this.position = position;
     }
 
     @Override
-    public boolean hasModule(final Class<? extends IFieldModule> clazz)
+    public boolean hasModule(final Class<? extends IBuildingExtensionModule> clazz)
     {
         return ModuleContainerUtils.hasModule(modules, clazz);
     }
 
     @Override
-    public boolean hasModule(final BuildingEntry.ModuleProducer producer)
+    public boolean hasModule(final BuildingEntry.ModuleProducer<?, ?> producer)
     {
         throw new RuntimeException("Not implemented");
     }
 
     @NotNull
     @Override
-    public <T extends IFieldModule> T getFirstModuleOccurance(final Class<T> clazz)
+    public <T extends IBuildingExtensionModule> T getFirstModuleOccurance(final Class<T> clazz)
     {
         return ModuleContainerUtils.getFirstModuleOccurance(modules,
           clazz,
-          "The module of class: " + clazz.toString() + "should never be null! Field:" + getFieldType().getRegistryName() + " pos:" + getPosition());
+          "The module of class: " + clazz.toString() + "should never be null! Building extension:" + getBuildingExtensionType().getRegistryName() + " pos:" + getPosition());
     }
 
     @Override
@@ -97,31 +98,31 @@ public abstract class AbstractField implements IField
 
     @NotNull
     @Override
-    public <T extends IFieldModule> List<T> getModulesByType(final Class<T> clazz)
+    public <T extends IBuildingExtensionModule> List<T> getModulesByType(final Class<T> clazz)
     {
         return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @NotNull
     @Override
-    public <T extends IFieldModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    public <T extends IBuildingExtensionModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         return ModuleContainerUtils.getModuleMatching(modules,
           clazz,
           modulePredicate,
-          "no matching module for Field:" + getFieldType().getRegistryName() + " pos:" + getPosition().toShortString());
+          "no matching module for building extension:" + getBuildingExtensionType().getRegistryName() + " pos:" + getPosition().toShortString());
     }
 
     @Override
-    public void registerModule(@NotNull final IFieldModule module)
+    public void registerModule(@NotNull final IBuildingExtensionModule module)
     {
         this.modules.add(module);
     }
 
     @Override
-    public final @NotNull FieldRegistries.FieldEntry getFieldType()
+    public final @NotNull BuildingExtensionRegistries.BuildingExtensionEntry getBuildingExtensionType()
     {
-        return fieldType;
+        return buildingExtensionEntry;
     }
 
     @Override
@@ -205,7 +206,7 @@ public abstract class AbstractField implements IField
     public int hashCode()
     {
         int result = position.hashCode();
-        result = 31 * result + fieldType.hashCode();
+        result = 31 * result + buildingExtensionEntry.hashCode();
         return result;
     }
 
@@ -221,12 +222,12 @@ public abstract class AbstractField implements IField
             return false;
         }
 
-        final AbstractField that = (AbstractField) o;
+        final AbstractBuildingExtension that = (AbstractBuildingExtension) o;
 
         if (!position.equals(that.position))
         {
             return false;
         }
-        return fieldType.equals(that.fieldType);
+        return buildingExtensionEntry.equals(that.buildingExtensionEntry);
     }
 }

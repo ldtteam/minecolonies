@@ -5,11 +5,11 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
@@ -57,9 +57,9 @@ import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EF
 
 public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
-    public static final ResourceKey<Registry<BuildingEntry>> BUILDINGS = key("buildings");
-    public static final ResourceKey<Registry<FieldRegistries.FieldEntry>> FIELDS = key("fields");
-    public static final ResourceKey<Registry<JobEntry>> JOBS = key("jobs");
+    public static final ResourceKey<Registry<BuildingEntry>>          BUILDINGS           = key("buildings");
+    public static final ResourceKey<Registry<BuildingExtensionEntry>> BUILDING_EXTENSIONS = key("building_extensions");
+    public static final ResourceKey<Registry<JobEntry>>               JOBS                = key("jobs");
     public static final ResourceKey<Registry<GuardType>> GUARD_TYPES = key("guardtypes");
     public static final ResourceKey<Registry<InteractionResponseHandlerEntry>> INTERACTION_RESPONSE_HANDLERS = key("interactionresponsehandlers");
     public static final ResourceKey<Registry<ColonyEventTypeRegistryEntry>> COLONY_EVENT_TYPES = key("colonyeventtypes");
@@ -86,9 +86,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private final IInteractionResponseHandlerDataManager interactionDataManager = new InteractionResponseHandlerManager();
     private final IGlobalResearchTree                    globalResearchTree     = new GlobalResearchTree();
 
-    private Registry<BuildingEntry>                              buildingRegistry;
-    private Registry<FieldRegistries.FieldEntry>                 fieldRegistry;
-    private Registry<JobEntry>                                   jobRegistry;
+    private Registry<BuildingEntry>          buildingRegistry;
+    private Registry<BuildingExtensionEntry> buildingExtensionEntryRegistry;
+    private Registry<JobEntry>               jobRegistry;
     private Registry<GuardType>                                  guardTypeRegistry;
     private Registry<InteractionResponseHandlerEntry>            interactionHandlerRegistry;
     private Registry<ColonyEventTypeRegistryEntry>               colonyEventRegistry;
@@ -151,9 +151,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     @NotNull
-    public Registry<FieldRegistries.FieldEntry> getFieldRegistry()
+    public Registry<BuildingExtensionEntry> getBuildingExtensionRegistry()
     {
-        return fieldRegistry;
+        return buildingExtensionEntryRegistry;
     }
 
     @Override
@@ -226,7 +226,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         buildingRegistry = event.create(syncedRegistry(BUILDINGS));
-        fieldRegistry = event.create(syncedRegistry(FIELDS));
+        buildingExtensionEntryRegistry = event.create(syncedRegistry(BUILDING_EXTENSIONS));
         jobRegistry = event.create(syncedRegistry(JOBS));
         guardTypeRegistry = event.create(syncedRegistry(GUARD_TYPES, ModGuardTypes.KNIGHT_ID));
         interactionHandlerRegistry = event.create(syncedRegistry(INTERACTION_RESPONSE_HANDLERS));

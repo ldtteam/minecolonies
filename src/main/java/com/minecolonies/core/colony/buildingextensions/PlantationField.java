@@ -1,9 +1,10 @@
-package com.minecolonies.core.colony.fields;
+package com.minecolonies.core.colony.buildingextensions;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Field class implementation for the plantation
  */
-public class PlantationField extends AbstractField
+public class PlantationField extends AbstractBuildingExtension
 {
     private static final String TAG_WORKING_POS = "workingPositions";
 
@@ -33,7 +34,7 @@ public class PlantationField extends AbstractField
      * @param fieldType the type of field.
      * @param position  the position of the field.
      */
-    public PlantationField(final @NotNull FieldRegistries.FieldEntry fieldType, final @NotNull BlockPos position)
+    public PlantationField(final @NotNull BuildingExtensionRegistries.BuildingExtensionEntry fieldType, final @NotNull BlockPos position)
     {
         super(fieldType, position);
     }
@@ -41,12 +42,12 @@ public class PlantationField extends AbstractField
     /**
      * Constructor to create new instances
      *
-     * @param fieldEntry the type of field we want to produce.
-     * @param position   the position it is placed in.
+     * @param extensionEntry the type of field we want to produce.
+     * @param position       the position it is placed in.
      */
-    public static PlantationField create(final FieldRegistries.FieldEntry fieldEntry, final BlockPos position)
+    public static PlantationField create(final BuildingExtensionEntry extensionEntry, final BlockPos position)
     {
-        return (PlantationField) fieldEntry.produceField(position);
+        return (PlantationField) extensionEntry.produceExtension(position);
     }
 
     @Override

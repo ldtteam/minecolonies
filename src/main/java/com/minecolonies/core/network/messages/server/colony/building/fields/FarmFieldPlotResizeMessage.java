@@ -2,9 +2,9 @@ package com.minecolonies.core.network.messages.server.colony.building.fields;
 
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,7 +51,7 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.getBuildingManager()
-          .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
+          .getBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
           .map(m -> (FarmField) m)
           .ifPresent(field -> field.setRadius(direction, size));
     }

@@ -65,11 +65,6 @@ public class EntityAISickTask implements IStateAI
     private static final int REQUIRED_TIME_TO_CURE = 60;
 
     /**
-     * Chance for a random cure to happen.
-     */
-    private static final int CHANCE_FOR_RANDOM_CURE = 10;
-
-    /**
      * Attempts to position right in the bed.
      */
     private static final int GOING_TO_BED_ATTEMPTS = 20;
@@ -332,7 +327,7 @@ public class EntityAISickTask implements IStateAI
             return CitizenAIState.IDLE;
         }
 
-        if (citizen.getRandom().nextInt(10000) < CHANCE_FOR_RANDOM_CURE)
+        if (citizen.getRandom().nextInt(60*60*2) < 1)
         {
             cure();
             return CitizenAIState.IDLE;

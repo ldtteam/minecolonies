@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -19,17 +19,17 @@ import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.core.colony.fields.registry.FieldDataManager;
+import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
-import com.minecolonies.core.network.messages.client.colony.ColonyViewFieldsUpdateMessage;
+import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -64,9 +64,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
 
     /**
-     * List of fields of the colony.
+     * List of building extensions of the colony.
      */
-    private final Set<IField> fields = ConcurrentHashMap.newKeySet();
+    private final Set<IBuildingExtension> buildingExtensions = ConcurrentHashMap.newKeySet();
 
     /**
      * The warehouse building position. Initially null.
@@ -95,9 +95,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private boolean isBuildingsDirty = false;
 
     /**
-     * Variable to check if the fields needs to be synced.
+     * Variable to check if the building extensions needs to be synced.
      */
-    private boolean isFieldsDirty = false;
+    private boolean isBuildingExtensionsDirty = false;
 
     /**
      * The colony of the manager.
@@ -131,18 +131,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         maxChunkZ = colony.getCenter().getZ() >> 4;
         minChunkZ = colony.getCenter().getZ() >> 4;
 
-        // Fields
+        // Building extensions (previously fields)
+        final ListTag extensionsTagList;
         if (compound.contains(TAG_FIELDS))
         {
-            final ListTag fieldsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
-            for (int i = 0; i < fieldsTagList.size(); ++i)
+            extensionsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
+        }
+        else
+        {
+            extensionsTagList = compound.getList(TAG_BUILDING_EXTENSIONS, Tag.TAG_COMPOUND);
+        }
+        for (int i = 0; i < extensionsTagList.size(); ++i)
+        {
+            final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+            final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
+            if (extension != null)
             {
-                final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                final IField field = FieldDataManager.compoundToField(provider, fieldCompound);
-                if (field != null)
-                {
-                    addField(field);
-                }
+                addBuildingExtension(extension);
             }
         }
 
@@ -174,23 +179,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureSites = ImmutableList.copyOf(leisureSitesList);
         }
 
-        // Ensure fields are still tied to an appropriate building
-        for (IField field : fields.stream().filter(IField::isTaken).toList())
+        // Ensure building extensions are still tied to an appropriate building
+        for (final IBuildingExtension extension : buildingExtensions.stream().filter(IBuildingExtension::isTaken).toList())
         {
-            final IBuilding building = buildings.get(field.getBuildingId());
+            final IBuilding building = buildings.get(extension.getBuildingId());
             if (building == null)
             {
-                field.resetOwningBuilding();
+                extension.resetOwningBuilding();
                 continue;
             }
 
-            final FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
+            final BuildingExtensionsModule extensionsModule = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+            if (extensionsModule == null || !extension.getClass().equals(extensionsModule.getExpectedExtensionType()))
             {
-                field.resetOwningBuilding();
-                if (fieldsModule != null)
+                extension.resetOwningBuilding();
+                if (extensionsModule != null)
                 {
-                    fieldsModule.freeField(field);
+                    extensionsModule.freeExtension(extension);
                 }
             }
         }
@@ -238,10 +243,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
         compound.put(TAG_BUILDINGS, buildingTagList);
 
-        // Fields
-        compound.put(TAG_FIELDS, fields.stream()
-                                   .map(f -> FieldDataManager.fieldToCompound(provider, f))
-                                   .collect(NBTUtils.toListNBT()));
+        // Building extensions
+        compound.put(TAG_BUILDING_EXTENSIONS, buildingExtensions.stream().map(f -> BuildingExtensionDataManager.extensionToCompound(provider, f)).collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         @NotNull final ListTag leisureTagList = new ListTag();
@@ -258,7 +261,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void clearDirty()
     {
         isBuildingsDirty = false;
-        isFieldsDirty = false;
+        isBuildingExtensionsDirty = false;
         buildings.values().forEach(IBuilding::clearDirty);
     }
 
@@ -266,9 +269,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         sendBuildingPackets(closeSubscribers, newSubscribers);
-        sendFieldPackets(closeSubscribers, newSubscribers);
+        sendBuildingExtensionPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
-        isFieldsDirty = false;
+        isBuildingExtensionsDirty = false;
     }
 
     @Override
@@ -308,11 +311,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        for (final IField field : fields)
+        for (final IBuildingExtension extension : buildingExtensions)
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony)))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), extension.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), extension.getPosition()) || !extension.isValidPlacement(colony)))
             {
-                removeField(f -> f.equals(field));
+                removeBuildingExtension(f -> f.equals(extension));
             }
         }
 
@@ -779,12 +782,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     /**
-     * Updates all subscribers of fields etc.
+     * Updates all subscribers of building extensions etc.
      */
     @Override
-    public void markFieldsDirty()
+    public void markBuildingExtensionsDirty()
     {
-        isFieldsDirty = true;
+        isBuildingExtensionsDirty = true;
     }
 
     /**
@@ -841,22 +844,22 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     /**
-     * Sends packages to update the fields.
+     * Sends packages to update the building extensions.
      *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
+    private void sendBuildingExtensionPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
-        if (isFieldsDirty || !newSubscribers.isEmpty())
+        if (isBuildingExtensionsDirty || !newSubscribers.isEmpty())
         {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isFieldsDirty)
+            if (isBuildingExtensionsDirty)
             {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            new ColonyViewFieldsUpdateMessage(colony, fields).sendToPlayer(players);
+            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions).sendToPlayer(players);
         }
     }
 
@@ -902,46 +905,46 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public @NotNull List<IField> getFields(Predicate<IField> matcher)
+    public @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher)
     {
-        return fields.stream()
+        return buildingExtensions.stream()
                  .filter(matcher)
                  .toList();
     }
 
     @Override
-    public Optional<IField> getField(Predicate<IField> matcher)
+    public Optional<IBuildingExtension> getBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
-        return getFields(matcher)
+        return getBuildingExtensions(matcher)
                  .stream()
                  .findFirst();
     }
 
     @Override
-    public boolean addField(IField field)
+    public boolean addBuildingExtension(IBuildingExtension extension)
     {
-        if (fields.add(field))
+        if (buildingExtensions.add(extension))
         {
-            markFieldsDirty();
+            markBuildingExtensionsDirty();
             return true;
         }
         return false;
     }
 
     @Override
-    public void removeField(Predicate<IField> matcher)
+    public void removeBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
-        final List<IField> fieldsToRemove = fields.stream()
+        final List<IBuildingExtension> extensionsToRemove = buildingExtensions.stream()
                                               .filter(matcher)
                                               .toList();
 
-        // We must send the message to everyone since fields here will be permanently removed from the list.
-        // And the clients have no way to later on also get their fields removed, thus every client has to be told
-        // immediately that the field is gone.
-        for (IField field : fieldsToRemove)
+        // We must send the message to everyone since building extensions here will be permanently removed from the list.
+        // And the clients have no way to later on also get their building extensions removed, thus every client has to be told
+        // immediately that the building extension is gone.
+        for (final IBuildingExtension extension : extensionsToRemove)
         {
-            fields.remove(field);
-            markFieldsDirty();
+            buildingExtensions.remove(extension);
+            markBuildingExtensionsDirty();
         }
     }
 }

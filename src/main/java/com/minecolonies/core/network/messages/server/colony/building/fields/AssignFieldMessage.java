@@ -4,10 +4,10 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
-import com.minecolonies.core.colony.fields.registry.FieldDataManager;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
+import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -44,11 +44,11 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param field    the field.
      * @param building the building we're executing on.
      */
-    public AssignFieldMessage(final IBuildingView building, final IField field, final boolean assign, final int moduleID)
+    public AssignFieldMessage(final IBuildingView building, final IBuildingExtension field, final boolean assign, final int moduleID)
     {
         super(TYPE, building);
         this.assign = assign;
-        this.fieldData = FieldDataManager.fieldToBuffer(field, building.getColony().getWorld().registryAccess());
+        this.fieldData = BuildingExtensionDataManager.extensionToBuffer(field, building.getColony().getWorld().registryAccess());
         this.moduleID = moduleID;
     }
 
@@ -73,18 +73,18 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        final IField parsedField = FieldDataManager.bufferToField(fieldData);
-        colony.getBuildingManager().getField(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
+        final IBuildingExtension parsedField = BuildingExtensionDataManager.bufferToExtension(fieldData);
+        colony.getBuildingManager().getBuildingExtension(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
 
-            if (building.getModule(moduleID) instanceof final FieldsModule fieldsModule)
+            if (building.getModule(moduleID) instanceof final BuildingExtensionsModule fieldsModule)
             {
                 if (assign)
                 {
-                    fieldsModule.assignField(field);
+                    fieldsModule.assignExtension(field);
                 }
                 else
                 {
-                    fieldsModule.freeField(field);
+                    fieldsModule.freeExtension(field);
                 }
             }
         });

@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public abstract class BoneMealedPlantModule extends AbstractPlantationModule
      * @param item     the item which is harvested.
      */
     protected BoneMealedPlantModule(
-      final IField field, final String fieldTag, final String workTag, final Item item)
+      final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
         this.random = new Random();

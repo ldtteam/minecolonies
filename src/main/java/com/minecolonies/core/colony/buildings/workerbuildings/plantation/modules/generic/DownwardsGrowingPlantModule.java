@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
@@ -45,7 +45,7 @@ public abstract class DownwardsGrowingPlantModule extends AbstractPlantationModu
      * @param item     the item which is harvested.
      */
     protected DownwardsGrowingPlantModule(
-      final IField field,
+      final IBuildingExtension field,
       final String fieldTag,
       final String workTag,
       final Item item)

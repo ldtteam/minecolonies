@@ -8,14 +8,14 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockPosUtil.DirectionResult;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.core.colony.fields.PlantationField;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -135,7 +135,7 @@ public class PlantationFieldsModuleWindow extends AbstractModuleWindow
     private void assignClicked(@NotNull final Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
-        final IField field = moduleView.getFields().get(row);
+        final IBuildingExtension field = moduleView.getFields().get(row);
         if (field.isTaken())
         {
             moduleView.freeField(field);
