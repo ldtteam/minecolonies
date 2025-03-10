@@ -6,7 +6,7 @@
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed1.png",
-  "parentResearch": "minecolonies:civilian/rails",
+  "parentResearch": "minecolonies:civilian/keen",
   "requirements": [
     {
       "type": "minecolonies:building",
@@ -19,6 +19,7 @@
       "quantity": 1
     }
   ],
-  "researchLevel": 3,
+  "researchLevel": 2,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.nimble.subtitle"
 }

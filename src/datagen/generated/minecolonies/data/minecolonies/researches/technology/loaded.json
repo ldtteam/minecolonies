@@ -6,6 +6,7 @@
     }
   ],
   "icon": "minecraft:red_shulker_box",
+  "no-reset": true,
   "parentResearch": "minecolonies:technology/deeppockets",
   "requirements": [
     {
