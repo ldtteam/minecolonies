@@ -1,12 +1,12 @@
 {
-  "branch": "minecolonies:civilian",
+  "branch": "minecolonies:technology",
   "effects": [
     {
       "minecolonies:effects/min_order": 1
     }
   ],
   "icon": "minecolonies:clipboard",
-  "parentResearch": "minecolonies:civilian/rails",
+  "parentResearch": "minecolonies:technology/memoryaid",
   "requirements": [
     {
       "building": "deliveryman",
@@ -26,6 +26,6 @@
     }
   ],
   "researchLevel": 3,
-  "sortOrder": 10,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.moq.subtitle"
 }

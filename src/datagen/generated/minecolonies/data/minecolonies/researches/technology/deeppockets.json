@@ -6,6 +6,7 @@
     }
   ],
   "icon": "minecraft:pink_shulker_box",
+  "no-reset": true,
   "parentResearch": "minecolonies:technology/cheatsheet",
   "requirements": [
     {
