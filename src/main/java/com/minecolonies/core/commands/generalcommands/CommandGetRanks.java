@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
+import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandGetRanks implements IMCCommand
+public class CommandGetRanks implements IMCOPCommand
 {
     private static final String COLONY_INFO_TEXT       = "ID: %s  Name: %s  Rank: %s";
     private static final String COORDINATES_TEXT       = "Coordinates: ";
