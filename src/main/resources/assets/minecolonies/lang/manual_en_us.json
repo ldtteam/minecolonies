@@ -2199,6 +2199,7 @@
   "com.minecolonies.coremod.gui.chat.zarlios": "Hire me to slaughter your enemies!",
   "com.minecolonies.coremod.gui.chat.trazyne": "I am the guardian of knowledge and history at Solemnace. I'm now out in the world to search for more knowledge... If you could let me stay with you to learn more of your culture, I would be deeply grateful.",
   "com.minecolonies.coremod.gui.chat.undead": "Do you hear that..? mumbles",
+  "com.minecolonies.coremod.gui.chat.sparky": "I am a dragonkin from the far northern tundras. I like to study plants and wildlife for use in the arcane arts, but I have also dabbled in this or that over the many years I've lived. Having adventured for quite some time, I might be interested in settling down for a spell...",
   "com.minecolonies.coremod.gui.docrafting": "Architects Cutter Recipes",
   "com.minecolonies.coremod.gui.docrafting.block": "Input%s:",
   "com.minecolonies.coremod.gui.docrafting.switch": "Switch",
@@ -2841,5 +2842,6 @@
   "death.attack.entity.minecolonies.campshieldmaiden": "%s was crushed by a Shieldmaiden",
   "death.attack.entity.minecolonies.campdrownedpirate": "%s was taken to the depths by a drowned Pirate",
   "death.attack.entity.minecolonies.campdrownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
-  "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief"
+  "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
+  "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive"
 }

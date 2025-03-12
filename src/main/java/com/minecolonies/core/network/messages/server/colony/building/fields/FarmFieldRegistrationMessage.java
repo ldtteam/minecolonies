@@ -1,9 +1,9 @@
 package com.minecolonies.core.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
-import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -46,14 +46,14 @@ public class FarmFieldRegistrationMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final Optional<IField> field = colony.getBuildingManager()
-                                         .getField(f -> f.getFieldType().equals(FieldRegistries.farmField.get()) && f.getPosition().equals(position))
+        final Optional<IBuildingExtension> field = colony.getBuildingManager()
+                                         .getBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
                                          .stream()
                                          .findFirst();
 
         if (field.isEmpty())
         {
-            colony.getBuildingManager().addField(FarmField.create(position));
+            colony.getBuildingManager().addBuildingExtension(FarmField.create(position));
         }
     }
 
