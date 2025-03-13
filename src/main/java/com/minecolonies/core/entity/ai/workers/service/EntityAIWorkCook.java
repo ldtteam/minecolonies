@@ -224,15 +224,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        final int countInSlot = worker.getInventoryCitizen().getStackInSlot(foodSlot).getCount();
         int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)));
-
-        final int transferCount = Math.min(countInSlot, building.getBuildingLevel());
         if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
         {
             worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().incrementBy(FOOD_SERVED, qty, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-            this.incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForAction();
         }
 
         return getState();
@@ -324,7 +321,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IAIState checkForImportantJobs()
     {
-        citizenToServe.clear();
         final List<? extends Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
           building, player -> player != null
                                 && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER

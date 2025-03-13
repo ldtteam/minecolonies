@@ -123,16 +123,21 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                     continue;
                 }
                 ItemStack requestStack = originalStack;
-
-                if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage && MathUtils.RANDOM.nextBoolean())
+                ItemStack rawStack = ItemStack.EMPTY;
+                if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage)
                 {
                     // Smelting Recipes only got 1 input. Request sometimes the input if this is a smeltable.
-                    requestStack = recipeStorage.getInput().get(0).getItemStack().copy();
+                    rawStack = recipeStorage.getInput().get(0).getItemStack().copy();
                 }
 
                 final int target = originalStack.getMaxStackSize() * getExpectedStock();
                 final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(originalStack, true), target);
-                final int delta = target - count;
+                final int rawCount = rawStack.isEmpty() ? 0 : InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(rawStack, true), target);
+                final int delta = target - count - rawCount;
+                if (MathUtils.RANDOM.nextBoolean() && !rawStack.isEmpty())
+                {
+                    requestStack = rawStack.copy();
+                }
                 final IToken<?> request = getMatchingRequest(requestStack, list);
                 if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))
                 {
