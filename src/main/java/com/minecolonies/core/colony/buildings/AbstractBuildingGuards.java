@@ -21,7 +21,6 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -385,21 +384,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     /**
      * Starts the patrol to the next point
      */
-    private void startPatrolNext()
+    public void startPatrolNext()
     {
         getNextPatrolTarget(true);
         patrolTimer = 5;
-
-        for (final ICitizenData curguard : getAllAssignedCitizen())
-        {
-            if (curguard.getEntity().isPresent())
-            {
-                if (curguard.getJob() instanceof AbstractJobGuard guardEntity)
-                {
-                    ((AbstractEntityAIGuard<?, ?>) guardEntity.getWorkerAI()).setNextPatrolTargetAndMove(lastPatrolPoint);
-                }
-            }
-        }
         arrivedAtPatrol.clear();
     }
 
