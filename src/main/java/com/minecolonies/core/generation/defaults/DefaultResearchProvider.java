@@ -104,7 +104,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(SATURATION).setTranslatedName("Citizen Saturation Per Meal +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(TEACHING).setTranslatedName("XP Gain When Studying +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
         effects.add(new ResearchEffect(TOOL_DURABILITY).setTranslatedName("Citizen Tools +%3$s%% Durability").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 0.9}));
-        effects.add(new ResearchEffect(WALKING).setTranslatedName("Citizen Walk Speed +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.25}));
+        effects.add(new ResearchEffect(WALKING).setTranslatedName("Citizen Walk Speed +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.3}));
         effects.add(new ResearchEffect(WORK_LONGER).setTranslatedName("Citizen Work Day +%sH").setLevels(new double[] {1, 2}));
         effects.add(new ResearchEffect(RESURRECT_CHANCE).setTranslatedName("Improve Resurrection Chance by +%3$s%%").setLevels(new double[] {0.01, 0.03}));
         effects.add(new ResearchEffect(GRAVE_DECAY_BONUS).setTranslatedName("Citizen Graves Take %s More Minutes to Decay").setLevels(new double[] {2, 5}));
@@ -364,13 +364,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(LEVELING, 5)
           .addToList(r);
 
-        final Research nimble = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nimble"), CIVIL).setParentResearch(keen)
-                                  .setTranslatedName("Nimble")
-                                  .setTranslatedSubtitle("Not that we get time to exercise. It must be the morning commute.")
+        final Research haste = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/haste"), CIVIL).setParentResearch(keen)
+                                  .setTranslatedName("Haste")
+                                  .setTranslatedSubtitle("We have got to hurry up!")
                                   .setIcon(new ResourceLocation("minecolonies:textures/icons/research/speed1.png"))
                                   .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 3)
                                   .addItemCost(Items.RABBIT_FOOT, 1)
                                   .addEffect(WALKING, 1)
+                                  .setSortOrder(3)
+                                  .addToList(r);
+        final Research nimble = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nimble"), CIVIL).setParentResearch(haste)
+                                  .setTranslatedName("Nimble")
+                                  .setTranslatedSubtitle("Not that we get time to exercise. It must be the morning commute.")
+                                  .setIcon(new ResourceLocation("minecolonies:textures/icons/research/speed1.png"))
+                                  .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 3)
+                                  .addItemCost(Items.RABBIT_FOOT, 4)
+                                  .addEffect(WALKING, 2)
                                   .setSortOrder(3)
                                   .addToList(r);
         final Research agile = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/agile"), CIVIL).setParentResearch(nimble)
@@ -378,8 +387,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .setTranslatedSubtitle("So this is how it feels to be young again...")
                                  .setIcon(new ResourceLocation("minecolonies:textures/icons/research/speed2.png"))
                                  .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 4)
-                                 .addItemCost(Items.RABBIT_FOOT, 10)
-                                 .addEffect(WALKING, 2)
+                                 .addItemCost(Items.RABBIT_FOOT, 8)
+                                 .addEffect(WALKING, 3)
                                  .addToList(r);
         final Research swift = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/swift"), CIVIL).setParentResearch(agile)
                                  .setTranslatedName("Swift")
@@ -387,14 +396,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .setIcon(new ResourceLocation("minecolonies:textures/icons/research/speed3.png"))
                                  .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 5)
                                  .addItemCost(Items.RABBIT_FOOT, 32)
-                                 .addEffect(WALKING, 3)
+                                 .addEffect(WALKING, 4)
                                  .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/athlete"), CIVIL).setParentResearch(swift)
           .setTranslatedName("Athlete")
           .setTranslatedSubtitle("Try thinking as fast as your feet now!")
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/speed4.png"))
           .addItemCost(Items.RABBIT_FOOT, 64)
-          .addEffect(WALKING, 4)
+          .addEffect(WALKING, 5)
           .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/rails"), CIVIL).setParentResearch(keen)
           .setTranslatedName("Rails")

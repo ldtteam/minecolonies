@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 3
+      "minecolonies:effects/walkingmultiplier": 4
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed3.png",
@@ -19,6 +19,6 @@
       "quantity": 32
     }
   ],
-  "researchLevel": 4,
+  "researchLevel": 5,
   "subtitle": "com.minecolonies.research.civilian.swift.subtitle"
 }
