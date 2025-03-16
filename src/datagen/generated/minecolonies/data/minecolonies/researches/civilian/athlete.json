@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 4
+      "minecolonies:effects/walkingmultiplier": 5
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed4.png",
@@ -15,6 +15,6 @@
       }
     }
   ],
-  "researchLevel": 5,
+  "researchLevel": 6,
   "subtitle": "com.minecolonies.research.civilian.athlete.subtitle"
 }

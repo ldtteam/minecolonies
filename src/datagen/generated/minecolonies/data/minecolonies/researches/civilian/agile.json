@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 2
+      "minecolonies:effects/walkingmultiplier": 3
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed2.png",
@@ -14,11 +14,11 @@
     },
     {
       "items": {
-        "count": 10,
+        "count": 8,
         "item": "minecraft:rabbit_foot"
       }
     }
   ],
-  "researchLevel": 3,
+  "researchLevel": 4,
   "subtitle": "com.minecolonies.research.civilian.agile.subtitle"
 }
