@@ -31,7 +31,6 @@ import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.events.raid.RaidManager;
 import com.minecolonies.core.colony.managers.*;
-import com.minecolonies.core.colony.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.core.colony.permissions.Permissions;
 import com.minecolonies.core.colony.pvp.AttackingPlayer;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
@@ -58,7 +57,6 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -193,11 +191,6 @@ public class Colony implements IColony
      * The Blocks which players can freely interact with.
      */
     private ImmutableSet<Block> freeBlocks = ImmutableSet.of();
-
-    /**
-     * Colony permission event handler.
-     */
-    private ColonyPermissionEventHandler eventHandler;
 
     /**
      * Whether or not this colony may be auto-deleted.
@@ -818,16 +811,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the event handler assigned to the colony.
-     *
-     * @return the ColonyPermissionEventHandler.
-     */
-    public ColonyPermissionEventHandler getEventHandler()
-    {
-        return eventHandler;
-    }
-
-    /**
      * Write colony to save data.
      *
      * @param compound compound to write to.
@@ -964,13 +947,7 @@ public class Colony implements IColony
         if (w.dimension() == dimensionId)
         {
             this.world = w;
-            // Register a new event handler
-            if (eventHandler == null)
-            {
-                eventHandler = new ColonyPermissionEventHandler(this);
-                questManager.onWorldLoad();
-                MinecraftForge.EVENT_BUS.register(eventHandler);
-            }
+            questManager.onWorldLoad();
             setColonyColor(this.colonyTeamColor);
         }
     }
@@ -992,10 +969,6 @@ public class Colony implements IColony
             return;
         }
 
-        if (eventHandler != null)
-        {
-            MinecraftForge.EVENT_BUS.unregister(eventHandler);
-        }
         world = null;
     }
 

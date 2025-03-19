@@ -132,7 +132,8 @@ public class NetworkChannel
 
         //  Colony Request messages
         registerMessage(++idx, BuildRequestMessage.class, BuildRequestMessage::new);
-        registerMessage(++idx, OpenInventoryMessage.class, OpenInventoryMessage::new);
+        registerMessage(++idx, OpenBuildingInventoryMessage.class, OpenBuildingInventoryMessage::new);
+        registerMessage(++idx, OpenCitizenInventoryMessage.class, OpenCitizenInventoryMessage::new);
         registerMessage(++idx, TownHallRenameMessage.class, TownHallRenameMessage::new);
         registerMessage(++idx, MinerSetLevelMessage.class, MinerSetLevelMessage::new);
         registerMessage(++idx, RecallCitizenMessage.class, RecallCitizenMessage::new);

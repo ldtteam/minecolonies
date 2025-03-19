@@ -16,7 +16,7 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.HUT_BLOCK_MISSING_COLONY;
-import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_PERMISSION_DENY;
+import static com.minecolonies.api.util.constant.TranslationConstants.PERMISSION_DENIED;
 
 public abstract class AbstractColonyServerMessage implements IMessage
 {
@@ -116,35 +116,35 @@ public abstract class AbstractColonyServerMessage implements IMessage
     public final void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayer player = ctxIn.getSender();
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimensionId);
-        if (colony != null)
+        if (player == null)
         {
-            if (!ownerOnly() && permissionNeeded() != null && !colony.getPermissions().hasPermission(player, permissionNeeded()))
-            {
-                if (player == null)
-                {
-                    return;
-                }
-
-                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
-                return;
-            }
-            else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUUID())))
-            {
-                if (player == null)
-                {
-                    return;
-                }
-
-                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
-                return;
-            }
-
-            onExecute(ctxIn, isLogicalServer, colony);
+            return;
         }
-        else
+
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimensionId);
+        if (colony == null)
         {
             MessageUtils.format(HUT_BLOCK_MISSING_COLONY, this.getClass().getSimpleName()).sendTo(player);
+            return;
         }
+
+        if (ownerOnly())
+        {
+            if (!colony.getPermissions().getOwner().equals(player.getUUID()))
+            {
+                MessageUtils.format(PERMISSION_DENIED).sendTo(player);
+                return;
+            }
+        }
+        else if (permissionNeeded() != null)
+        {
+            if (!colony.getPermissions().hasPermission(player, permissionNeeded()))
+            {
+                MessageUtils.format(PERMISSION_DENIED).sendTo(player);
+                return;
+            }
+        }
+
+        onExecute(ctxIn, isLogicalServer, colony);
     }
 }

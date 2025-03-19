@@ -28,7 +28,7 @@ import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenJobHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSleepHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
-import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.network.messages.server.colony.citizen.OpenCitizenInventoryMessage;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -426,14 +426,14 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
         {
-            if (player.isShiftKeyDown())
+            final ICitizenDataView citizenDataView = getCitizenDataView();
+            if (citizenDataView != null && !isInvisible())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
-            }
-            else
-            {
-                final ICitizenDataView citizenDataView = getCitizenDataView();
-                if (citizenDataView != null)
+                if (player.isShiftKeyDown())
+                {
+                    Network.getNetwork().sendToServer(new OpenCitizenInventoryMessage(citizenDataView));
+                }
+                else
                 {
                     new WindowInteraction(citizenDataView).open();
                 }

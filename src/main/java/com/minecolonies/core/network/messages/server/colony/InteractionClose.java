@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.server.colony;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to trigger a response handler close on the server side.
@@ -50,6 +52,13 @@ public class InteractionClose extends AbstractColonyServerMessage
         super(dimension, colonyId);
         this.citizenId = citizenId;
         this.key = key;
+    }
+
+    @Override
+    @Nullable
+    public Action permissionNeeded()
+    {
+        return null;
     }
 
     /**

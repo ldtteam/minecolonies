@@ -34,7 +34,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -183,15 +182,6 @@ public final class ColonyManager implements IColonyManager
                 {
                     Log.getLogger().warn("Something went wrong deleting a building while deleting the colony!", ex);
                 }
-            }
-
-            try
-            {
-                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
-            }
-            catch (final NullPointerException e)
-            {
-                Log.getLogger().warn("Can't unregister the event handler twice");
             }
 
             Log.getLogger().info("Deleting colony: " + colony.getID());

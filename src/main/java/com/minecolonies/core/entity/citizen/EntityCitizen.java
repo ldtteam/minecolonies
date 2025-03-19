@@ -64,7 +64,7 @@ import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.core.network.messages.client.colony.PlaySoundForCitizenMessage;
-import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.network.messages.server.colony.citizen.OpenCitizenInventoryMessage;
 import com.minecolonies.core.util.TeleportHelper;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
@@ -374,14 +374,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide && iColonyView != null)
         {
-            if (player.isShiftKeyDown() && !isInvisible())
+            final ICitizenDataView citizenDataView = getCitizenDataView();
+            if (citizenDataView != null && !isInvisible())
             {
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
-            }
-            else
-            {
-                final ICitizenDataView citizenDataView = getCitizenDataView();
-                if (citizenDataView != null && !isInvisible())
+                if (player.isShiftKeyDown())
+                {
+                    Network.getNetwork().sendToServer(new OpenCitizenInventoryMessage(citizenDataView));
+                }
+                else
                 {
                     new WindowInteraction(citizenDataView).open();
                 }

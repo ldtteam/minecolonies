@@ -10,7 +10,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.core.network.messages.server.colony.building.OpenBuildingInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -104,7 +104,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
      */
     private void inventoryClicked()
     {
-        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
+        Network.getNetwork().sendToServer(new OpenBuildingInventoryMessage(buildingView));
     }
 
     /**
