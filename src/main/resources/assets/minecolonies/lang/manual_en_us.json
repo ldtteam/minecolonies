@@ -847,7 +847,7 @@
 
   "com.minecolonies.coremod.request.delivery": "Delivery of:",
   "com.minecolonies.coremod.request.pickup": "Pickup",
-  "com.minecolonies.coremod.request.food": "Food",
+  "com.minecolonies.coremod.request.food": "Menu",
   "com.minecolonies.coremod.request.burnable": "Fuel",
   "com.minecolonies.coremod.request.tool.pretype": "Tool of class:",
   "com.minecolonies.coremod.request.tool.preminlevel": "with minimal level:",
@@ -2843,5 +2843,9 @@
   "death.attack.entity.minecolonies.campdrownedpirate": "%s was taken to the depths by a drowned Pirate",
   "death.attack.entity.minecolonies.campdrownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
   "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
-  "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive"
+  "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive",
+  "com.minecolonies.core.gui.restaurant.vanillafoodquality": "Citizens get only 25% nutrition from this food!",
+  "com.minecolonies.core.restaurant.poormenu": "The restaurant menu is lacking variety and is unlikely to satisfy citizens. Please consider adding more Minecolonies food options to improve happiness.",
+  "com.minecolonies.core.restaurant.poorrestaurant": "My restaurant needs an upgrade to meet the expectations of my guests. It currently falls short of their standards!",
+  "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!"
 }

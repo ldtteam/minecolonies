@@ -3,7 +3,7 @@
     <label id="title" size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.core.menu.title)"/>
     <text id="warning" size="150 22" pos="13 50" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.menu.warning)"/>
-
+    <text id="poorwarning" size="160 22" pos="14 25" color="red" textalign="MIDDLE" label="$(com.minecolonies.core.poor.menu.warning)" visible="false"/>
 
     <list id="resourcesstock" size="164 180" pos="13 50">
         <box size="100% 17" linewidth="1">
