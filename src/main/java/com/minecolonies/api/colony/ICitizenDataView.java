@@ -236,4 +236,10 @@ public interface ICitizenDataView extends ICitizen
      * @return the armor in the slot.
      */
     ItemStack getDisplayArmor(EquipmentSlot equipmentSlot);
+
+    /**
+     * Check if sick.
+     * @return true if so.
+     */
+    boolean isSick();
 }

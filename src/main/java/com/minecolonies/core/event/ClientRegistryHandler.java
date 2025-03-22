@@ -265,6 +265,7 @@ public class ClientRegistryHandler
     public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
     {
         event.register(ModItems.clipboard, new ClipBoardDecorator());
+        event.register(ModItems.colonyMap, new ColonyMapDecorator());
     }
 
     @OnlyIn(Dist.CLIENT)

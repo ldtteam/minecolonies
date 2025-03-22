@@ -660,6 +660,15 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_scimitar", has(ModItems.scimitar))
                 .save(consumer, new ResourceLocation(MOD_ID, "iron_nugget_from_iron_scimitar_blasting"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.colonyMap)
+                .pattern("XXX")
+                .pattern("XTX")
+                .pattern("XXX")
+                .define('X', Items.MAP)
+                .define('T', buildTool.get())
+                .unlockedBy("has_build_tool", has(buildTool.get()))
+                .save(consumer);
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
           .requires(ModItems.large_milk_bottle)
           .requires(ModItems.large_milk_bottle)

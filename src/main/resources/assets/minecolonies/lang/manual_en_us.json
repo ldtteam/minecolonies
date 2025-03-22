@@ -2843,5 +2843,6 @@
   "death.attack.entity.minecolonies.campdrownedpirate": "%s was taken to the depths by a drowned Pirate",
   "death.attack.entity.minecolonies.campdrownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
   "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
-  "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive"
+  "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive",
+  "item.minecolonies.colonymap": "Colony Map"
 }

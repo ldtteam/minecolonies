@@ -79,6 +79,7 @@ public final class ModItems
 
     public static Item buildGoggles;
     public static Item scanAnalyzer;
+    public static Item colonyMap;
 
     public static Item butter;
     public static Item cabochis;
