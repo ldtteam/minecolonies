@@ -296,7 +296,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     protected BlockPos getPosToWorkAt()
     {
         final BlockPos progressPos = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
-        if (progressPos == NULL_POS)
+        if (progressPos.equals(NULL_POS))
         {
             return null;
         }

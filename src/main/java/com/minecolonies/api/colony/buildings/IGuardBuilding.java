@@ -138,7 +138,7 @@ public interface IGuardBuilding extends IBuilding
      *
      * @param target the target to add
      */
-    void addPatrolTargets(BlockPos target);
+    void addPatrolTarget(BlockPos target);
 
     /**
      * Resets the patrolTargets list.

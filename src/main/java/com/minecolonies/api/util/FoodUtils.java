@@ -30,7 +30,7 @@ public class FoodUtils
     /**
      * Predicate describing food which can be eaten (is not raw).
      */
-    public static Predicate<ItemStack> EDIBLE;
+    public static final Predicate<ItemStack> EDIBLE = itemStack -> ItemStackUtils.ISFOOD.test(itemStack) && !ItemStackUtils.ISCOOKABLE.test(itemStack);
 
     /**
      * @param stack

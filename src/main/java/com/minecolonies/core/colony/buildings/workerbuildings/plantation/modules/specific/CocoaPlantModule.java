@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -38,7 +38,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public CocoaPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
+    public CocoaPlantModule(final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
     }

@@ -188,7 +188,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean hasModule(final BuildingEntry.ModuleProducer producer)
+    public boolean hasModule(final BuildingEntry.ModuleProducer<?, ?> producer)
     {
         return modulesMap.containsKey(producer.getRuntimeID());
     }

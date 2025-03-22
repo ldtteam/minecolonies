@@ -32,12 +32,10 @@ public class ResearchEffectManager implements IResearchEffectManager
     @Override
     public double getEffectStrength(final ResourceLocation id)
     {
-        if(effectMap.containsKey(id))
+        final IResearchEffect<?> effect = effectMap.get(id);
+        if (effect instanceof GlobalResearchEffect)
         {
-            if(effectMap.get(id) instanceof GlobalResearchEffect)
-            {
-                return ((GlobalResearchEffect)effectMap.get(id)).getEffect();
-            }
+            return ((GlobalResearchEffect) effect).getEffect();
         }
         return 0;
     }
@@ -45,9 +43,9 @@ public class ResearchEffectManager implements IResearchEffectManager
     @Override
     public void applyEffect(final IResearchEffect<?> effect)
     {
-        if (effectMap.containsKey(effect.getId()))
+        final IResearchEffect<?> effectInMap = effectMap.get(effect.getId());
+        if (effectInMap != null)
         {
-            final IResearchEffect<?> effectInMap = effectMap.get(effect.getId());
             if (effect.overrides(effectInMap))
             {
                 effectMap.put(effect.getId(), effect);

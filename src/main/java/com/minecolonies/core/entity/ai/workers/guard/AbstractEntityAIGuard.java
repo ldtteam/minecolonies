@@ -522,13 +522,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            if (currentPatrolPoint == null)
-            {
-                currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
-            }
-
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
             if (currentPatrolPoint != null && (walkToSafePos(currentPatrolPoint)))
             {
+                setCurrentDelay(10);
                 buildingGuards.arrivedAtPatrolPoint(worker);
             }
         }
@@ -578,24 +575,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Sets the next patrol target, and moves to it if patrolling
-     *
-     * @param target the next patrol target.
-     */
-    public void setNextPatrolTargetAndMove(final BlockPos target)
-    {
-        setNextPatrolTarget(target);
-        registerTarget(new AIOneTimeEventTarget(() ->
-        {
-            if (getState() == CombatAIStates.NO_TARGET)
-            {
-                return decide();
-            }
-            return getState();
-        }));
-    }
-
-    /**
      * Sets the next patrol target.
      *
      * @param target the next patrol target.
@@ -603,6 +582,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private void setNextPatrolTarget(final BlockPos target)
     {
         currentPatrolPoint = target;
+    }
+
+    /**
+     * Get the current patrol point
+     *
+     * @return
+     */
+    public BlockPos getCurrentPatrolPoint()
+    {
+        return currentPatrolPoint;
     }
 
     /**

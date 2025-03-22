@@ -369,4 +369,15 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      * @return the team name.
      */
     public abstract int getTeamId();
+
+    /**
+     * Preven dimension changes
+     *
+     * @return
+     */
+    @Override
+    public boolean canChangeDimensions()
+    {
+        return false;
+    }
 }

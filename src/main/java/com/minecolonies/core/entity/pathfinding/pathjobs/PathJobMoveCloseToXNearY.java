@@ -115,7 +115,7 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestin
     {
         if (job instanceof PathJobMoveCloseToXNearY pathJob)
         {
-            return pathJob.nearbyPosition.equals(desiredPosition) && pathJob.nearbyPosition.equals(nearbyPosition) && pathJob.distToDesired == distance;
+            return pathJob.desiredPosition.equals(desiredPosition) && pathJob.nearbyPosition.equals(nearbyPosition) && pathJob.distToDesired == distance;
         }
 
         return false;

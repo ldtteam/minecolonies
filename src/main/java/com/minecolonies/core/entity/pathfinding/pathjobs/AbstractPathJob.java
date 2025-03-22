@@ -5,6 +5,7 @@ import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleSlabBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.entity.pathfinding.IDynamicHeuristicNavigator;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -14,7 +15,6 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.entity.pathfinding.*;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.world.CachingBlockLookup;
 import com.minecolonies.core.entity.pathfinding.world.ChunkCache;
@@ -149,7 +149,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Heuristic modifier
      */
-    private double heuristicMod = 2;
+    protected double heuristicMod = 2;
 
     /**
      * First node
@@ -715,9 +715,33 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         int nextX = node.x + dX;
         int nextY = node.y + dY;
         int nextZ = node.z + dZ;
-
+        
+        final int newY;
         //  Can we traverse into this node?  Fix the y up, skip on already explored nodes
-        final int newY = node.isVisited() ? nextY : getGroundHeight(node, nextX, nextY, nextZ);
+        if (node.isVisited())
+        {
+            final Block target = cachedBlockLookup.getBlockState(nextX, nextY, nextZ).getBlock();
+            if (target instanceof PanelBlock || target instanceof TrapDoorBlock)
+            {
+                newY = getGroundHeight(node, nextX, nextY, nextZ);
+            }
+            else
+            {
+                final Block origin = cachedBlockLookup.getBlockState(node.x, node.y, node.z).getBlock();
+                if (origin instanceof PanelBlock || origin instanceof TrapDoorBlock)
+                {
+                    newY = getGroundHeight(node, nextX, nextY, nextZ);
+                }
+                else
+                {
+                    newY = nextY;
+                }
+            }
+        }
+        else
+        {
+            newY = getGroundHeight(node, nextX, nextY, nextZ);
+        }
 
         if (newY < world.getMinBuildHeight())
         {
@@ -949,7 +973,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * @param onRails    checks if the node is a rail block.
      * @param railsExit  the exit of the rails.
      * @param swimStart  if its the swim start.
-     * @param blockState
+     * @param state      the blockstate
      * @return cost to move from the parent to the new position.
      */
     protected double computeCost(
@@ -1185,7 +1209,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     {
         if (!pathingOptions.canWalkUnderWater() && PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y + 1, z)))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
@@ -1211,7 +1235,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
         else if (walkability == SurfaceType.NOT_PASSABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         return handleNotStanding(node, x, y, z, below);
@@ -1228,7 +1252,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      */
     private boolean checkHeadBlock(@Nullable final MNode parent, final int x, final int y, final int z)
     {
-
         if (!canLeaveBlock(x, y + 1, z, parent, true))
         {
             return true;
@@ -1418,7 +1441,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Need to try jumping up one, if we can
         if (!canJump || SurfaceType.getSurfaceType(world, target, tempWorldPos.set(x, y, z), getPathingOptions()) != SurfaceType.WALKABLE)
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for headroom in the target space
@@ -1428,13 +1451,13 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 2, z).getCollisionShape(world, tempWorldPos.set(x, y + 2, z));
             if ((y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
         if (!canLeaveBlock(x, y + 2, z, parent, true))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         //  Check for jump room from the origin space
@@ -1444,10 +1467,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(parent.x, parent.y + 2, parent.z).getCollisionShape(world, tempWorldPos.set(parent.x, parent.y + 2, parent.z));
             if ((parent.y + 2 + ShapeUtil.getStartY(bb2, 1)) - (y + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
-
 
         final BlockState parentBelow = cachedBlockLookup.getBlockState(parent.x, parent.y - 1, parent.z);
         final VoxelShape parentBB = parentBelow.getCollisionShape(world, tempWorldPos.set(parent.x, parent.y - 1, parent.z));
@@ -1466,7 +1488,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return y + 1;
         }
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1518,7 +1540,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              getPathingOptions())
                              == SurfaceType.DROPABLE))
         {
-            return -100;
+            return Integer.MIN_VALUE;
         }
 
         for (int i = 2; i <= (pathingOptions.canDrop ? 10 : 2); i++)
@@ -1531,11 +1553,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
             else if (!below.isAir())
             {
-                return -100;
+                return Integer.MIN_VALUE;
             }
         }
 
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**
@@ -1563,7 +1585,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         }
 
         //  Not allowed to swim or this isn't water, and we're on dry land
-        return -100;
+        return Integer.MIN_VALUE;
     }
 
     /**

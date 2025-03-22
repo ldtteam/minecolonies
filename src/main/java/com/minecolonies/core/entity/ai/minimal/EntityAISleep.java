@@ -138,7 +138,7 @@ public class EntityAISleep implements IStateAI
      */
     private boolean findBed()
     {
-        if (!citizen.getCitizenSleepHandler().isAsleep() || bedTicks < MAX_BED_TICKS)
+        if (!citizen.getCitizenSleepHandler().isAsleep() && bedTicks < MAX_BED_TICKS)
         {
             findBedAndTryToSleep();
             return false;
@@ -201,7 +201,7 @@ public class EntityAISleep implements IStateAI
                 usedBed = homePos;
             }
 
-            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 5))
+            if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 12))
             {
                 bedTicks++;
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
@@ -210,6 +210,10 @@ public class EntityAISleep implements IStateAI
                     usedBed = null;
                 }
                 citizen.getCitizenData().getCitizenHappinessHandler().resetModifier(SLEPTTONIGHT);
+            }
+            else
+            {
+                bedTicks = 0;
             }
         }
     }

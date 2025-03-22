@@ -1786,9 +1786,6 @@ public class CitizenData implements ICitizenData
               Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
-
-        decreaseSaturation(
-          job == null || job.getWorkBuilding().getBuildingLevel() == 0 ? 1 : (SATURATION_DECREASE_FACTOR * Math.pow(2, job.getWorkBuilding().getBuildingLevel())) * 2);
     }
 
     @Override
@@ -2022,7 +2019,7 @@ public class CitizenData implements ICitizenData
         if (colony != null)
         {
             final IBuilding tavern = colony.getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
-            if (tavern != null)
+            if (tavern != null && tavern.getBuildingLevel() > 0)
             {
                 return tavern.getPosition();
             }

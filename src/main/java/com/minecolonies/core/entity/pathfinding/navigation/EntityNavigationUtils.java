@@ -60,8 +60,7 @@ public class EntityNavigationUtils
         // 1. Navigation Finished
         // 2. Navigation is progressing towards a previous task
         // 3. Navigation did not try once
-        boolean isOnRightTask = (nav.getPathResult() != null
-            && PathJobMoveCloseToXNearY.isJobFor(nav.getPathResult().getJob(), desiredPosition, nearbyPosition, distToDesired));
+        boolean isOnRightTask = nav.getPathResult() != null && PathJobMoveCloseToXNearY.isJobFor(nav.getPathResult().getJob(), desiredPosition, nearbyPosition, 1);
 
         if (nav.isDone() || !isOnRightTask)
         {

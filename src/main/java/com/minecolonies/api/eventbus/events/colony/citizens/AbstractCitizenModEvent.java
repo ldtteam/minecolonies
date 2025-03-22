@@ -13,14 +13,15 @@ public class AbstractCitizenModEvent extends AbstractColonyModEvent
     /**
      * The citizen related to the event.
      */
-    private final @NotNull ICitizenData citizen;
+    @NotNull
+    private final ICitizenData citizen;
 
     /**
      * Constructs a citizen-based event.
      *
      * @param citizen the citizen related to the event.
      */
-    protected AbstractCitizenModEvent(final @NotNull ICitizenData citizen)
+    protected AbstractCitizenModEvent(@NotNull final ICitizenData citizen)
     {
         super(citizen.getColony());
         this.citizen = citizen;
