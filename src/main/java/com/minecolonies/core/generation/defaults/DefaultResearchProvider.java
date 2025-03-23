@@ -382,7 +382,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                   .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/speed1.png"))
                                   .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 3)
                                   .addItemCost(Items.RABBIT_FOOT, 1, provider)
-                                  .addEffect(WALKING, 4)
+                                  .addEffect(WALKING, 2)
                                   .setSortOrder(3)
                                   .addToList(r);
         final Research agile = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/agile"), CIVIL).setParentResearch(nimble)

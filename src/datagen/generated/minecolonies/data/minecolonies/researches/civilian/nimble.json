@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 4
+      "minecolonies:effects/walkingmultiplier": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed1.png",
