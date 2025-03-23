@@ -433,7 +433,7 @@ public class CraftingTagAuditor
             for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
             {
                 writer.write(',');
-                writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, level, 0)));
+                writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
             }
 
             writer.newLine();

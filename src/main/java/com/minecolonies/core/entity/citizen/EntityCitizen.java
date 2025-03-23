@@ -266,7 +266,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_CLIENT, this::shouldBeInactive, () -> EntityState.INACTIVE, TICKS_20));
         entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_CLIENT, this::refreshCitizenDataView, () -> null, TICKS_20));
 
-        entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::updateSaturation, () -> null, HEAL_CITIZENS_AFTER));
+        entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::updateHealing, () -> null, HEAL_CITIZENS_AFTER));
         entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::updateVisualData, () -> null, 200));
         entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::onServerUpdateHandlers, () -> null, TICKS_20));
         entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::onTickDecrements, () -> null, 1));
@@ -275,7 +275,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenAI.tick();
             return false;
         }, () -> null, 1));
-
+        entityStateController.addTransition(new TickingTransition<>(EntityState.ACTIVE_SERVER, this::decreaseIdleSaturation, () -> null, SATURATION_DECREASE_AFTER));
         entityStateController.addTransition(new TickingTransition<>(EntityState.INACTIVE, this::isAlive, () -> EntityState.INIT, 100));
     }
 
@@ -788,7 +788,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Adds potion effect and regenerates life, depending on saturation
      */
-    private boolean updateSaturation()
+    private boolean updateHealing()
     {
         checkHeal();
         if (citizenData.getSaturation() <= 0)
@@ -1063,7 +1063,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 2.0);
             citizenData.markDirty(20 * 20);
         }
     }
@@ -1076,7 +1076,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 150.0);
             citizenData.markDirty(20 * 60 * 2);
         }
     }
@@ -1508,6 +1508,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
     }
 
+    @Override
+    public float getScale()
+    {
+        return this.isBaby() ? 0.62F : 1.0F;
+    }
+    
     /**
      * Called when the mob's health reaches 0.
      *
@@ -1912,5 +1918,27 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public int getTeamId()
     {
         return citizenColonyHandler.getColonyId();
+    }
+    
+    /**
+     * Decrease idle saturation.
+     * @return saturation.
+     */
+    private boolean decreaseIdleSaturation()
+    {
+        if (citizenData != null)
+        {
+            final int buildingLevel = citizenData.getHomeBuilding() == null ? 1 :  citizenData.getHomeBuilding().getBuildingLevel();
+            if (buildingLevel <= 2)
+            {
+                citizenData.decreaseSaturation(buildingLevel / 25.0);
+            }
+            else
+            {
+                citizenData.decreaseSaturation(buildingLevel / 10.0);
+            }
+
+        }
+        return false;
     }
 }

@@ -2,9 +2,10 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -16,9 +17,9 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.client.gui.modules.PlantationFieldsModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.core.colony.fields.PlantationField;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -84,9 +85,9 @@ public class BuildingPlantation extends AbstractBuilding
 
     private void updateFields()
     {
-        updateField(FieldRegistries.plantationSugarCaneField.get());
-        updateField(FieldRegistries.plantationCactusField.get());
-        updateField(FieldRegistries.plantationBambooField.get());
+        updateField(BuildingExtensionRegistries.plantationSugarCaneField.get());
+        updateField(BuildingExtensionRegistries.plantationCactusField.get());
+        updateField(BuildingExtensionRegistries.plantationBambooField.get());
     }
 
     /**
@@ -94,24 +95,24 @@ public class BuildingPlantation extends AbstractBuilding
      * Legacy code, can be removed when plantations will no longer have to support fields
      * directly from the hut building.
      */
-    private void updateField(FieldRegistries.FieldEntry type)
+    private void updateField(BuildingExtensionEntry type)
     {
         final PlantationField plantationField = PlantationField.create(type, getPosition());
         final List<BlockPos> workingPositions =
           plantationField.getModule().getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(plantationField.getModule().getWorkTag()));
         if (workingPositions.isEmpty())
         {
-            colony.getBuildingManager().removeField(field -> field.equals(plantationField));
+            colony.getBuildingManager().removeBuildingExtension(field -> field.equals(plantationField));
             return;
         }
 
-        if (colony.getBuildingManager().addField(plantationField))
+        if (colony.getBuildingManager().addBuildingExtension(plantationField))
         {
             plantationField.setWorkingPositions(workingPositions);
         }
         else
         {
-            final Optional<IField> existingField = colony.getBuildingManager().getField(field -> field.equals(plantationField));
+            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getBuildingExtension(field -> field.equals(plantationField));
             if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField)
             {
                 existingPlantationField.setWorkingPositions(workingPositions);
@@ -148,9 +149,9 @@ public class BuildingPlantation extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
+        for (BuildingExtensionsModule module : getModulesByType(BuildingExtensionsModule.class))
         {
-            for (final IField field : module.getOwnedFields())
+            for (final IBuildingExtension field : module.getOwnedExtensions())
             {
                 if (field instanceof PlantationField plantationField)
                 {
@@ -178,9 +179,9 @@ public class BuildingPlantation extends AbstractBuilding
             return false;
         }
 
-        for (FieldsModule module : getModulesByType(FieldsModule.class))
+        for (BuildingExtensionsModule module : getModulesByType(BuildingExtensionsModule.class))
         {
-            for (final IField field : module.getOwnedFields())
+            for (final IBuildingExtension field : module.getOwnedExtensions())
             {
                 if (field instanceof PlantationField plantationField)
                 {
@@ -222,7 +223,7 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * Field module implementation for the plantation.
      */
-    public static class PlantationFieldsModule extends FieldsModule
+    public static class PlantationFieldsModule extends BuildingExtensionsModule
     {
         @Override
         public void serializeToView(final @NotNull FriendlyByteBuf buf)
@@ -242,7 +243,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        protected int getMaxFieldCount()
+        protected int getMaxExtensionCount()
         {
             int allowedPlants = (int) Math.ceil(building.getBuildingLevel() / 2D);
             return building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANTATION_LARGE) > 0
@@ -251,25 +252,25 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public Class<?> getExpectedFieldType()
+        public Class<?> getExpectedExtensionType()
         {
             return PlantationField.class;
         }
 
         @Override
-        public @NotNull List<IField> getFields()
+        public @NotNull List<IBuildingExtension> getExtensions()
         {
-            return building.getColony().getBuildingManager().getFields(field -> field.hasModule(IPlantationModule.class));
+            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override
-        public boolean canAssignFieldOverride(IField field)
+        public boolean canAssignExtensionOverride(IBuildingExtension extension)
         {
-            return getCurrentPlantsPlusField(field) <= getMaxConcurrentPlants() && hasRequiredResearchForField(field);
+            return getCurrentPlantsPlusField(extension) <= getMaxConcurrentPlants() && hasRequiredResearchForField(extension);
         }
 
         @Override
-        protected int getFieldCheckTimeoutSeconds()
+        protected int getExtensionCheckTimeoutSeconds()
         {
             return 60;
         }
@@ -280,9 +281,9 @@ public class BuildingPlantation extends AbstractBuilding
          * @param extraField the extra field to calculate.
          * @return the amount of worked plants.
          */
-        private int getCurrentPlantsPlusField(final IField extraField)
+        private int getCurrentPlantsPlusField(final IBuildingExtension extraField)
         {
-            final Set<IPlantationModule> plants = getOwnedFields().stream()
+            final Set<IPlantationModule> plants = getOwnedExtensions().stream()
                                                     .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
                                                     .collect(Collectors.toSet());
             plants.add(extraField.getFirstModuleOccurance(IPlantationModule.class));
@@ -295,7 +296,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param field the field in question.
          * @return true if the research is handled.
          */
-        private boolean hasRequiredResearchForField(final IField field)
+        private boolean hasRequiredResearchForField(final IBuildingExtension field)
         {
             if (field instanceof PlantationField plantationField)
             {
@@ -328,19 +329,19 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        protected boolean canAssignFieldOverride(final IField field)
+        protected boolean canAssignFieldOverride(final IBuildingExtension field)
         {
             return getCurrentPlantsPlusField(field) <= maxConcurrentPlants && hasRequiredResearchForField(field);
         }
 
         @Override
-        protected List<IField> getFieldsInColony()
+        protected List<IBuildingExtension> getFieldsInColony()
         {
-            return getColony().getFields(field -> field.hasModule(IPlantationModule.class));
+            return getColony().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override
-        public @Nullable MutableComponent getFieldWarningTooltip(final IField field)
+        public @Nullable MutableComponent getFieldWarningTooltip(final IBuildingExtension field)
         {
             MutableComponent result = super.getFieldWarningTooltip(field);
             if (result != null)
@@ -366,7 +367,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param extraField the extra field to calculate.
          * @return the amount of worked plants.
          */
-        private int getCurrentPlantsPlusField(final IField extraField)
+        private int getCurrentPlantsPlusField(final IBuildingExtension extraField)
         {
             final Set<IPlantationModule> plants = getOwnedFields().stream()
                                                     .map(field -> field.getFirstModuleOccurance(IPlantationModule.class))
@@ -381,7 +382,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param field the field in question.
          * @return true if the research is handled.
          */
-        private boolean hasRequiredResearchForField(final IField field)
+        private boolean hasRequiredResearchForField(final IBuildingExtension field)
         {
             if (field instanceof PlantationField plantationField)
             {
@@ -454,9 +455,9 @@ public class BuildingPlantation extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
-            for (FieldRegistries.FieldEntry type : FieldRegistries.getFieldRegistry().getValues())
+            for (BuildingExtensionEntry type : BuildingExtensionRegistries.getBuildingExtensionRegistry().getValues())
             {
-                type.getFieldModuleProducers().stream()
+                type.getExtensionModuleProducers().stream()
                   .map(m -> m.apply(null))
                   .filter(IPlantationModule.class::isInstance)
                   .map(m -> (IPlantationModule) m)

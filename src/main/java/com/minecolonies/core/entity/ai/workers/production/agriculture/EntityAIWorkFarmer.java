@@ -2,7 +2,7 @@ package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -21,9 +21,9 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.blocks.MinecoloniesFarmland;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.core.colony.fields.FarmField;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFarmer;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
@@ -213,10 +213,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return PREPARING;
         }
 
-        final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
-        module.claimFields();
+        final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+        module.claimExtensions();
 
-        if (module.getOwnedFields().size() == building.getMaxBuildingLevel())
+        if (module.getOwnedExtensions().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
         }
@@ -240,7 +240,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        if (module.hasNoFields())
+        if (module.hasNoExtensions())
         {
             if (worker.getCitizenData() != null)
             {
@@ -249,8 +249,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return IDLE;
         }
 
-        module.resetCurrentField();
-        final IField fieldToWork = module.getFieldToWorkOn();
+        module.resetCurrentExtension();
+        final IBuildingExtension fieldToWork = module.getExtensionToWorkOn();
         if (fieldToWork instanceof FarmField farmField)
         {
             worker.getCitizenData().setIdleAtJob(false);
@@ -499,15 +499,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState workAtField()
     {
-        final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
-        if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()) || module.getCurrentField() == null)
+        final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+        if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()) || module.getCurrentExtension() == null)
         {
             return PREPARING;
         }
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
 
-        final IField field = module.getCurrentField();
+        final IBuildingExtension field = module.getCurrentExtension();
         if (field instanceof FarmField farmField)
         {
             if (workingOffset != null)
