@@ -33,6 +33,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
@@ -59,6 +63,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD;
+import static java.util.Map.entry;
 
 /**
  * Utility methods for the inventories.
@@ -69,6 +74,37 @@ public final class ItemStackUtils
      * Pattern for {@link #parseIdTemplate}.
      */
     private static final Pattern TEMPLATE_PATH_PATTERN = Pattern.compile("\\[PATH(?::([^=]*)=([^]]*))?]");
+
+    private static final Map<Item, Integer> VANILLA_ARMOR_DISTRIBUTION = Map.ofEntries(entry(Items.LEATHER_HELMET, 1),
+      entry(Items.LEATHER_CHESTPLATE, 1),
+      entry(Items.LEATHER_LEGGINGS, 1),
+      entry(Items.LEATHER_BOOTS, 1),
+      entry(Items.GOLDEN_HELMET, 1),
+      entry(Items.GOLDEN_CHESTPLATE, 1),
+      entry(Items.GOLDEN_LEGGINGS, 1),
+      entry(Items.GOLDEN_BOOTS, 1),
+      entry(Items.CHAINMAIL_HELMET, 2),
+      entry(Items.CHAINMAIL_CHESTPLATE, 2),
+      entry(Items.CHAINMAIL_LEGGINGS, 2),
+      entry(Items.CHAINMAIL_BOOTS, 2),
+      entry(Items.IRON_HELMET, 3),
+      entry(Items.IRON_CHESTPLATE, 3),
+      entry(Items.IRON_LEGGINGS, 3),
+      entry(Items.IRON_BOOTS, 3),
+      entry(Items.DIAMOND_HELMET, 4),
+      entry(Items.DIAMOND_CHESTPLATE, 4),
+      entry(Items.DIAMOND_LEGGINGS, 4),
+      entry(Items.DIAMOND_BOOTS, 4),
+      entry(Items.NETHERITE_HELMET, 5),
+      entry(Items.NETHERITE_CHESTPLATE, 5),
+      entry(Items.NETHERITE_LEGGINGS, 5),
+      entry(Items.NETHERITE_BOOTS, 5));
+
+    private static final Map<EquipmentSlot, List<Item>> VANILLA_ARMOR_MAPPING =
+      Map.ofEntries(entry(EquipmentSlot.HEAD, List.of(Items.LEATHER_HELMET, Items.CHAINMAIL_HELMET, Items.IRON_HELMET, Items.DIAMOND_HELMET)),
+        entry(EquipmentSlot.CHEST, List.of(Items.LEATHER_CHESTPLATE, Items.CHAINMAIL_CHESTPLATE, Items.IRON_CHESTPLATE, Items.DIAMOND_CHESTPLATE)),
+        entry(EquipmentSlot.LEGS, List.of(Items.LEATHER_LEGGINGS, Items.CHAINMAIL_LEGGINGS, Items.IRON_LEGGINGS, Items.DIAMOND_LEGGINGS)),
+        entry(EquipmentSlot.FEET, List.of(Items.LEATHER_BOOTS, Items.CHAINMAIL_BOOTS, Items.IRON_BOOTS, Items.DIAMOND_BOOTS)));
 
     /**
      * Variable representing the empty itemstack in 1.10. Used for easy updating to 1.11
@@ -246,53 +282,58 @@ public final class ItemStackUtils
     }
 
     /**
-     * This routine converts the material type of armor into a numerical value for the request system.
+     * This routine converts the {@link ItemStackUtils#getArmorValue(ItemStack, EquipmentSlot)}} of an item stack into a given
+     * request system level, based on the standard leather - netherite armor levels.
      *
-     * @param material type of material of the armor
+     * @param itemStack the input item stack.
      * @return armor level
      */
-    public static int getArmorLevel(final ArmorMaterial material)
+    public static int getArmorLevel(final ItemStack itemStack)
     {
-        final float armorLevel = getArmorValue(material);
+        final Integer value = VANILLA_ARMOR_DISTRIBUTION.get(itemStack.getItem());
+        if (value != null)
+        {
+            return value;
+        }
 
-        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER.value()))
+        final EquipmentSlot targetEquipmentSlot = Optional.ofNullable(Equipable.get(itemStack)).map(Equipable::getEquipmentSlot).orElse(EquipmentSlot.MAINHAND);
+        final List<Item> armorItems = VANILLA_ARMOR_MAPPING.get(targetEquipmentSlot);
+        if (armorItems == null)
         {
-            return 0;
+            return 5;
         }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD.value()))
+
+        final double targetArmorLevel = getArmorValue(itemStack, targetEquipmentSlot);
+
+        for (final Item item : armorItems)
         {
-            return 1;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN.value()))
-        {
-            return 2;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON.value()))
-        {
-            return 3;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND.value()))
-        {
-            return 4;
+            if (item instanceof ArmorItem armorItem)
+            {
+                final double armorValue = getArmorValue(armorItem.getDefaultInstance(), armorItem.getEquipmentSlot());
+                if (targetArmorLevel <= armorValue)
+                {
+                    return VANILLA_ARMOR_DISTRIBUTION.get(armorItem);
+                }
+            }
         }
 
         return 5;
     }
 
     /**
-     * Calculate the full armor level of an entire kit of armor combined.
+     * Calculate the armor level for an item stack.
+     * (Level is determined by taking the base armor rating, and 4 points for each toughness level.)
      *
-     * @param material type of material of the armor.
+     * @param itemStack     the input item stack.
+     * @param equipmentSlot the equipment slot the item goes in.
      * @return the armor value.
      */
-    private static float getArmorValue(final ArmorMaterial material)
+    private static double getArmorValue(final ItemStack itemStack, final EquipmentSlot equipmentSlot)
     {
-        int value = 0;
-        for (final ArmorItem.Type type : ArmorItem.Type.values())
-        {
-            value += Objects.requireNonNullElse(material.defense().get(type), 0);
-        }
-        return value + material.toughness() * 4;
+        final double armor = getItemStackAttributeValue(itemStack, equipmentSlot, Attributes.ARMOR);
+        final double toughness = getItemStackAttributeValue(itemStack, equipmentSlot, Attributes.ARMOR_TOUGHNESS);
+
+        return armor + (toughness * 4);
     }
 
     /**
@@ -935,6 +976,34 @@ public final class ItemStackUtils
             }
         }
         return true;
+    }
+
+    /**
+     * Get an attribute value for a given item stack.
+     *
+     * @param itemStack the input item stack.
+     * @param equipmentSlot the equipment slot the item goes in.
+     * @param attribute the attribute to get the value for.
+     * @return the computed value of the attribute with all modifiers.
+     */
+    public static double getItemStackAttributeValue(final ItemStack itemStack, final EquipmentSlot equipmentSlot, final Holder<Attribute> attribute)
+    {
+        try
+        {
+            final AttributeInstance instance = new AttributeInstance(attribute, (f) -> {});
+            itemStack.getAttributeModifiers().forEach(equipmentSlot, (attr, modifier) -> {
+                if (attr.equals(attribute))
+                {
+                    instance.addTransientModifier(modifier);
+                }
+            });
+            return instance.getValue();
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Could not get attribute value for '{}' on item '{}'", attribute.value().getDescriptionId(), itemStack.getDescriptionId(), e);
+            return 0;
+        }
     }
 }
 

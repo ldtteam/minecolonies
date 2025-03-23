@@ -63,6 +63,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     {
         this(id);
         defaultValues = ImmutableList.copyOf(defaultStacks);
+        itemsAllowed = ImmutableList.copyOf(defaultStacks);
     }
 
     @Override

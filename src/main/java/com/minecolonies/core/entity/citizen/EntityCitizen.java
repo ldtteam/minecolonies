@@ -1055,7 +1055,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 2.0);
             citizenData.markDirty(20 * 20);
         }
     }
@@ -1068,7 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
+            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 150.0);
             citizenData.markDirty(20 * 60 * 2);
         }
     }
@@ -1524,6 +1524,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
     }
 
+    @Override
+    public float getAgeScale()
+    {
+        return this.isBaby() ? 0.62F : 1.0F;
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -1872,7 +1878,15 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null)
         {
             final int buildingLevel = citizenData.getHomeBuilding() == null ? 1 :  citizenData.getHomeBuilding().getBuildingLevel();
-            citizenData.decreaseSaturation(buildingLevel / 10.0);
+            if (buildingLevel <= 2)
+            {
+                citizenData.decreaseSaturation(buildingLevel / 25.0);
+            }
+            else
+            {
+                citizenData.decreaseSaturation(buildingLevel / 10.0);
+            }
+
         }
         return false;
     }
