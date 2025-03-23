@@ -1,5 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        lightbox="false">
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="440 244" pos="0 0"/>
 
     <text id="desc" size="130 11" pos="60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>

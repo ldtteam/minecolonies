@@ -1,5 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        lightbox="false">
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
 
     <text size="164 11" pos="13 32" textalign="MIDDLE" color="black"

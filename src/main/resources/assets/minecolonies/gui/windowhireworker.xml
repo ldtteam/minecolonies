@@ -1,5 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        lightbox="false">
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
     <text id="jobLabel" size="100% 11" pos="0 15" textalign="MIDDLE" color="black"/>
