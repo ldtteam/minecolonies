@@ -482,11 +482,7 @@ public class EntityAIEatTask implements IStateAI
 
         final ICitizenData citizenData = citizen.getCitizenData();
 
-        if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
-        {
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(RAW_FOOD), ChatPriority.PENDING));
-        }
-        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> FoodUtils.canEat(stack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding())))
+        if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> FoodUtils.canEat(stack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding())))
         {
             if (citizenData.isChild())
             {
@@ -497,7 +493,10 @@ public class EntityAIEatTask implements IStateAI
                 citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD), ChatPriority.BLOCKING));
             }
         }
-
+        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
+        {
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(RAW_FOOD), ChatPriority.PENDING));
+        }
         return false;
     }
 

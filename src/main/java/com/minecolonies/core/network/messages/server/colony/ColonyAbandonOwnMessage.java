@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  */
 public class ColonyAbandonOwnMessage extends AbstractServerPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_abandon_own", ColonyDeleteOwnMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "colony_abandon_own", ColonyAbandonOwnMessage::new);
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)

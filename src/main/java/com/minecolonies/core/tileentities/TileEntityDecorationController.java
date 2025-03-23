@@ -19,6 +19,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
+import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -225,12 +226,21 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             // TODO: remove this later (data break introduced in 1.20.4) because of blueprint data
             this.rotationMirror = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)], compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
         }
-        if(compound.contains(TAG_PATH))
+
+        // inexplicably IBlueprintDataProviderBE does not load the pack/path even though it saved them
+        this.packName = compound.getCompound(TAG_BLUEPRINTDATA).getString(TAG_PACK);
+        this.schematicPath = compound.getCompound(TAG_BLUEPRINTDATA).getString(TAG_PATH);
+
+        // the rest of this is backwards compat code that can be removed at some point (maybe even now)
+        if(compound.contains(TAG_PATH) && StringUtils.isEmpty(this.schematicName))
         {
             this.schematicPath = compound.getString(TAG_PATH);
         }
-
-        if(compound.contains(TAG_NAME))
+        if(compound.contains(TAG_PACK) && StringUtils.isEmpty(this.packName))
+        {
+            this.packName = compound.getString(TAG_PACK);
+        }
+        if(compound.contains(TAG_NAME) && StringUtils.isEmpty(this.schematicName))
         {
             this.schematicName = compound.getString(TAG_NAME);
             if (this.schematicPath == null || this.schematicPath.isEmpty())
@@ -240,7 +250,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
                 this.schematicName = "";
             }
         }
-        this.packName = compound.getString(TAG_PACK);
+        // end of backwards compat code
 
         if (!this.schematicPath.endsWith(".blueprint"))
         {
@@ -254,9 +264,6 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         super.saveAdditional(compound, provider);
         writeSchematicDataToNBT(compound);
         compound.putByte(TAG_ROTATION_MIRROR, (byte) this.rotationMirror.ordinal());
-        compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
-        compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
-        compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
     }
 
     @Nullable
