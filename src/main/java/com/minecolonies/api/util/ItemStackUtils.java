@@ -956,8 +956,7 @@ public final class ItemStackUtils
     {
         try
         {
-            final AttributeInstance instance = new AttributeInstance(attribute, (f) -> {
-            });
+            final AttributeInstance instance = new AttributeInstance(attribute, (f) -> {});
             itemStack.getAttributeModifiers(LivingEntity.getEquipmentSlotForItem(itemStack)).get(attribute).forEach(instance::addTransientModifier);
             return instance.getValue();
         }
