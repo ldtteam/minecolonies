@@ -10,62 +10,62 @@
     <image id="alliances0" pos="56 193" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
     <image id="settings0" pos="56 217" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_06.png"/>
 
-    <buttonimage id="actions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
+    <button id="actions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.actions)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="infopage1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
+    <button id="infopage1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.information)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="permissions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_03.png" visible="false"
+    <button id="permissions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_03.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.permissions)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="citizens1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_04.png" visible="false"
+    <button id="citizens1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_04.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.citizens)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="happiness1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
+    <button id="happiness1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.stats)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="alliances1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
+    <button id="alliances1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.alliances)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
-    <buttonimage id="settings1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
+    <button id="settings1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.settings)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
 
-    <buttonimage id="actionsExt" pos="-17 73" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
+    <button id="actionsExt" pos="-17 73" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.actions)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="infoExt" pos="-17 97" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_02.png" visible="false"
+    <button id="infoExt" pos="-17 97" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_02.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.information)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="permissionsExt" pos="-17 121" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_03.png" visible="false"
+    <button id="permissionsExt" pos="-17 121" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_03.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.permissions)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="citizensExt" pos="-17 145" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_04.png" visible="false"
+    <button id="citizensExt" pos="-17 145" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_04.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.citizens)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="happinessExt" pos="-17 169" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_05.png" visible="false"
+    <button id="happinessExt" pos="-17 169" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_05.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.stats)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="alliancesExt" pos="-17 193" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_06.png" visible="false"
+    <button id="alliancesExt" pos="-17 193" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_06.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.alliances)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
-    <buttonimage id="settingsExt" pos="-17 217" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_06.png" visible="false"
+    <button id="settingsExt" pos="-17 217" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_06.png" visible="false"
                  label="$(com.minecolonies.coremod.gui.townhalltab.settings)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
 
-    <buttonimage id="actions" size="17 17" pos="62 71" onHoverId="actionsExt"
+    <button id="actions" size="17 17" pos="62 71" onHoverId="actionsExt"
                  source="minecolonies:textures/gui/red_wax_home.png"/>
-    <buttonimage id="infopage" size="17 17" pos="62 95" onHoverId="infoExt"
+    <button id="infopage" size="17 17" pos="62 95" onHoverId="infoExt"
                  source="minecolonies:textures/gui/red_wax_work_orders.png"/>
-    <buttonimage id="permissions" size="17 17" pos="62 119" onHoverId="permissionsExt"
+    <button id="permissions" size="17 17" pos="62 119" onHoverId="permissionsExt"
                  source="minecolonies:textures/gui/red_wax_permissions.png"/>
-    <buttonimage id="citizens" size="17 17" pos="62 143" onHoverId="citizensExt"
+    <button id="citizens" size="17 17" pos="62 143" onHoverId="citizensExt"
                  source="minecolonies:textures/gui/red_wax_citizens.png"/>
-    <buttonimage id="happiness" size="17 17" pos="62 167" onHoverId="happinessExt"
+    <button id="happiness" size="17 17" pos="62 167" onHoverId="happinessExt"
                  source="minecolonies:textures/gui/red_wax_stats.png"/>
-    <buttonimage id="alliances" size="17 17" pos="62 191" onHoverId="alliancesExt"
+    <button id="alliances" size="17 17" pos="62 191" onHoverId="alliancesExt"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
-    <buttonimage id="settings" size="17 17" pos="62 215" onHoverId="settingsExt"
+    <button id="settings" size="17 17" pos="62 215" onHoverId="settingsExt"
                  source="minecolonies:textures/gui/red_wax_settings.png"/>
 </window>
