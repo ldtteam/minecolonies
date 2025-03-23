@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="400 244"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        lightbox="false">
+        >
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
 
     <button id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
