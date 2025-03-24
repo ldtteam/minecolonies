@@ -50,13 +50,20 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
 
     private final ResourceLocation    blockId;
 
+    /**
+     * If should behave waterlogged.
+     */
+    private final boolean waterLogged;
+
     public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);;
+        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
+
         this.shape = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
+        this.waterLogged = waterLogged;
     }
 
     @NotNull
@@ -67,7 +74,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         {
             level.scheduleTick(pos, this, 1);
         }
-        if (state.getValue(WATERLOGGED)) {
+        if (state.getValue(WATERLOGGED) && waterLogged)
+        {
             level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
 
@@ -105,7 +113,6 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         return shape;
     }
 
-
     @Override
     public void randomTick(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource rng)
     {
@@ -133,9 +140,14 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         }
 
         final BlockState aboveState = level.getBlockState(pos.above());
-        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(25) == 0)
+        int growthChance = 25;
+        if (level.isRaining())
         {
-            // todo balance randomness after evaluating crop yield.
+            growthChance = 18;
+            BoneMealItem.addGrowthParticles(level, pos, 1);
+        }
+        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(growthChance) == 0)
+        {
             cropBlock.attemptGrow(aboveState, level, pos.above());
             BoneMealItem.addGrowthParticles(level, pos, 1);
         }
@@ -201,7 +213,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
-        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    public FluidState getFluidState(BlockState state)
+    {
+        return state.getValue(WATERLOGGED) && waterLogged ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 }

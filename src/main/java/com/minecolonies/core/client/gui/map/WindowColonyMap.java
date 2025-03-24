@@ -1,12 +1,8 @@
 package com.minecolonies.core.client.gui.map;
 
 import com.ldtteam.blockui.BOScreen;
-import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.AbstractTextBuilder;
-import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
@@ -16,10 +12,14 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.core.client.render.worldevent.HighlightManager;
+import com.minecolonies.core.client.render.worldevent.highlightmanager.CitizenRenderData;
+import com.minecolonies.core.colony.buildings.modules.HomeBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
@@ -43,6 +43,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FU
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.SATURATION_ICON_HEIGHT_WIDTH;
+import static com.minecolonies.core.client.gui.questlog.Constants.HIGHLIGHT_QUEST_LOG_TRACKER_DURATION;
 import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
 public class WindowColonyMap extends AbstractWindowSkeleton
@@ -335,8 +336,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private void addCenterPos()
     {
         final Image citizenImage = new Image();
-        citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
-        citizenImage.setSize(16, 16);
+        citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, this.atTownHall ? "textures/gui/red_wax_home.png" : "textures/icons/player_position.png"), false);
+        citizenImage.setSize(10, 14);
         citizenImage.setPosition(worldPosToUIPos(playerPos).getX(), worldPosToUIPos(playerPos).getZ());
         dragView.addChild(citizenImage);
     }
@@ -365,7 +366,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             tooltip.hoverPane(uiBuilding)
               .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
               .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
-              .appendNL(Component.literal("Citizens: " + buildingView.getAllAssignedCitizens().size()));
+              .appendNL(Component.literal("Citizens: " + (buildingView instanceof HomeBuildingModule.View home ? home.getResidents().size() : buildingView.getAllAssignedCitizens().size())));
 
             for (int id : buildingView.getAllAssignedCitizens())
             {
@@ -424,12 +425,15 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 final View citizenView = new View();
                 citizenView.setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
 
-                final Image citizenImage = new Image();
+                final ButtonImage citizenImage = new ButtonImage();
                 citizenImage.setImage(((ISimpleModelType) IModelTypeRegistry.getInstance().getModelType(citizen.getModelType())).getTextureIcon(citizen), false);
                 citizenImage.setSize(4, 4);
-                citizenView.addChild(citizenImage);
+                citizenImage.setID("citizen: " + data.getId());
+                registerButton(citizenImage.getID(), button -> {
+                    HighlightManager.addHighlight("mapsearchtracking", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+                    SoundUtils.playSuccessSound(mc.player, mc.player.blockPosition());
+                });
 
-                dragView.addChild(citizenView);
                 final AbstractTextBuilder.TooltipBuilder builder = PaneBuilders.tooltipBuilder().hoverPane(citizenView).paragraphBreak().append(citizen.getDisplayName());
                 if (!data.getJob().isEmpty())
                 {
@@ -437,6 +441,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     builder.newLine().append(Component.translatable("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
                 }
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());
+                citizenView.addChild(citizenImage);
+                dragView.addChild(citizenView);
 
                 if (data.hasVisibleInteractions())
                 {

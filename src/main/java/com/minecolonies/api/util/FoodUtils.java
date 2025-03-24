@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
@@ -118,6 +119,7 @@ public class FoodUtils
         int bestScore = Integer.MAX_VALUE;
         int bestSlot = -1;
         Item bestItem = null;
+        final boolean restaurantExists = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getWorkBuilding().getPosition(), BuildingCook.class) != null;
 
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
         final ICitizenFoodHandler.CitizenFoodStats foodStats = foodHandler.getFoodHappinessStats();
@@ -131,7 +133,7 @@ public class FoodUtils
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
                 // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
-                if (menu == null && foodHandler.getLastEaten() == invStack.getItem())
+                if (menu == null && foodHandler.getLastEaten() == invStack.getItem() && restaurantExists)
                 {
                     continue;
                 }
