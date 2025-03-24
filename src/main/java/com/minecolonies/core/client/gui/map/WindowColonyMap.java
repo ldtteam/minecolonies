@@ -336,8 +336,17 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private void addCenterPos()
     {
         final Image citizenImage = new Image();
-        citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, this.atTownHall ? "textures/gui/red_wax_home.png" : "textures/icons/player_position.png"), false);
-        citizenImage.setSize(10, 14);
+        if (this.atTownHall)
+        {
+            citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
+            citizenImage.setSize(16, 16);
+        }
+        else
+        {
+            citizenImage.setImage(new ResourceLocation(Constants.MOD_ID,  "textures/icons/player_position.png"), false);
+            citizenImage.setSize(10, 14);
+        }
+
         citizenImage.setPosition(worldPosToUIPos(playerPos).getX(), worldPosToUIPos(playerPos).getZ());
         dragView.addChild(citizenImage);
     }

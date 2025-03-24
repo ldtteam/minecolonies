@@ -140,13 +140,13 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         }
 
         final BlockState aboveState = level.getBlockState(pos.above());
-        int growthChance = 25;
+        int growthChance = 4;
         if (level.isRaining())
         {
-            growthChance = 18;
+            growthChance = 6;
             BoneMealItem.addGrowthParticles(level, pos, 1);
         }
-        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(growthChance) == 0)
+        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(100) <= growthChance)
         {
             cropBlock.attemptGrow(aboveState, level, pos.above());
             BoneMealItem.addGrowthParticles(level, pos, 1);
