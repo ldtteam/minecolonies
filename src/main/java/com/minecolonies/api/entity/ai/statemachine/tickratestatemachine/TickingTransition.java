@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_AI_TICKRATE;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE_VARIANT;
 
 /**
@@ -49,7 +49,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         super(state, condition, nextState);
 
         // Limit rates
-        this.tickRate = Math.min(tickRate, MAX_TICKRATE);
+        this.tickRate = Math.min(tickRate, MAX_AI_TICKRATE);
         this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later
@@ -77,7 +77,7 @@ public class TickingTransition<S extends IState> extends BasicTransition<S> impl
         super(condition, nextState);
 
         // Limit rates
-        this.tickRate = Math.min(tickRate, MAX_TICKRATE);
+        this.tickRate = Math.min(tickRate, MAX_AI_TICKRATE);
         this.tickRate = Math.max(this.tickRate, 1);
 
         // Calculate offSet % tickRate already to not have redundant calculations later

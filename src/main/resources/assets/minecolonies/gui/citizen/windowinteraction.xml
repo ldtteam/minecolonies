@@ -1,4 +1,4 @@
-<window size="350 170" pause="false" lightbox="false">
+<window size="350 170" lightbox="true">
     <switch id="head" size="100% 100%" pos="0 0">
         <view id="interactionView">
             <gradient id="gradient" size="300 170" pos="20 0"/>
@@ -8,6 +8,6 @@
             <itemicon id="requestItem" size="32 32" pos="30 60"/>
         </view>
     </switch>
-    <buttonimage id="cancel" pos="303 1" size="14 15"
-                 source="minecolonies:textures/gui/button_x.png" textcolor="black" tooltip="$(com.minecolonies.core.exit_interactions)"/>
+    <button id="cancel" pos="303 1" size="14 15"
+                 source="minecolonies:textures/gui/button_x.png" color="black" tooltip="$(com.minecolonies.core.exit_interactions)"/>
 </window>

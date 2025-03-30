@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
@@ -78,18 +79,17 @@ public class FoodUtils
      * Calculate the actual food value for a citizen consuming a given food.
      * @param foodStack the food to consume.
      * @param itemFood the food properties of that food.
-     * @param housingLevel the citizen's current housing level.
      * @param researchBonus the bonus from research (0 for no bonus).
      * @return the saturation adjustment to apply when consuming this food.
      */
-    public static double getFoodValue(final ItemStack foodStack, @Nullable final FoodProperties itemFood, final int housingLevel, final double researchBonus)
+    public static double getFoodValue(final ItemStack foodStack, @Nullable final FoodProperties itemFood, final double researchBonus)
     {
         if (itemFood == null)
         {
             return 0;
         }
 
-        final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : (1.0 / (housingLevel + 1));
+        final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : 0.25;
         return itemFood.getNutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
     }
 
@@ -102,9 +102,8 @@ public class FoodUtils
     public static double getFoodValue(final ItemStack foodStack, final AbstractEntityCitizen citizen)
     {
         final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
-        final int housingLevel = citizen.getCitizenData().getHomeBuilding() == null ? 0 : citizen.getCitizenData().getHomeBuilding().getBuildingLevel();
         final double researchBonus = citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
-        return getFoodValue(foodStack, itemFood, housingLevel, researchBonus);
+        return getFoodValue(foodStack, itemFood, researchBonus);
     }
 
     /**
@@ -120,6 +119,7 @@ public class FoodUtils
         int bestScore = Integer.MAX_VALUE;
         int bestSlot = -1;
         Item bestItem = null;
+        final boolean restaurantExists = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getWorkBuilding() == null ? citizenData.getHomePosition() : citizenData.getWorkBuilding().getPosition(), BuildingCook.class) != null;
 
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
         final ICitizenFoodHandler.CitizenFoodStats foodStats = foodHandler.getFoodHappinessStats();
@@ -133,7 +133,7 @@ public class FoodUtils
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
                 // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
-                if (menu == null && foodHandler.getLastEaten() == invStack.getItem())
+                if (menu == null && foodHandler.getLastEaten() == invStack.getItem() && restaurantExists)
                 {
                     continue;
                 }

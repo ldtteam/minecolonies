@@ -395,7 +395,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mapButtonClicked()
     {
-        new WindowColonyMap(building).open();
+        new WindowColonyMap(true, building).open();
     }
 
     @Override
