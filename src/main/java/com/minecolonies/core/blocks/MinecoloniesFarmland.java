@@ -2,10 +2,13 @@ package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BoneMealItem;
@@ -38,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
+
 public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
 {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -50,13 +55,20 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
 
     private final ResourceLocation    blockId;
 
+    /**
+     * If should behave waterlogged.
+     */
+    private final boolean waterLogged;
+
     public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);;
+        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
+
         this.shape = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
+        this.waterLogged = waterLogged;
     }
 
     @NotNull
@@ -67,7 +79,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         {
             level.scheduleTick(pos, this, 1);
         }
-        if (state.getValue(WATERLOGGED)) {
+        if (state.getValue(WATERLOGGED) && waterLogged)
+        {
             level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
 
@@ -105,7 +118,6 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         return shape;
     }
 
-
     @Override
     public void randomTick(BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource rng)
     {
@@ -133,12 +145,27 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         }
 
         final BlockState aboveState = level.getBlockState(pos.above());
-        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(25) == 0)
+        int growthChance = 4;
+        if (level.isRaining())
         {
-            // todo balance randomness after evaluating crop yield.
-            cropBlock.attemptGrow(aboveState, level, pos.above());
-            BoneMealItem.addGrowthParticles(level, pos, 1);
+            growthChance = 6;
         }
+        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(100) <= growthChance)
+        {
+            cropBlock.attemptGrow(aboveState, level, pos.above());
+            new VanillaParticleMessage(pos.getX() + 0.5F, pos.getY() - 0.5F, pos.getZ() + 0.5F, ParticleTypes.HAPPY_VILLAGER).sendToTargetPoint(level, null, pos.getX(), pos.getY(), pos.getZ(), BLOCK_BREAK_SOUND_RANGE);
+        }
+    }
+
+    @Override
+    public void animateTick(final BlockState state, final Level level, final BlockPos pos, final RandomSource rng)
+    {
+        if (level.isRaining() && rng.nextInt(100) < 25)
+        {
+            ParticleUtils.spawnParticleInBlock(level, pos, 1, ParticleTypes.HAPPY_VILLAGER);
+
+        }
+        super.animateTick(state, level, pos, rng);
     }
 
     @Override
@@ -201,7 +228,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     }
 
     @Override
-    public FluidState getFluidState(BlockState state) {
-        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    public FluidState getFluidState(BlockState state)
+    {
+        return state.getValue(WATERLOGGED) && waterLogged ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 }

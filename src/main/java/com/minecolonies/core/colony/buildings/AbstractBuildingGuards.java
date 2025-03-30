@@ -804,5 +804,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
          * @param pos the position of the mine
          */
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
+
+        @Override
+        public int getRange()
+        {
+            return getClaimRadius() * 16;
+        }
     }
 }

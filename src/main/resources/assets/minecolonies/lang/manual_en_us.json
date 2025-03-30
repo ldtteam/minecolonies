@@ -2851,8 +2851,11 @@
   "death.attack.entity.minecolonies.campdrownedarcherpirate": "%s was pierced from the depths by a drowned Pirate Archer",
   "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
   "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive",
+  "item.minecolonies.colonymap": "Colony Map",
   "com.minecolonies.core.gui.restaurant.vanillafoodquality": "Citizens get only 25% nutrition from this food!",
   "com.minecolonies.core.restaurant.poormenu": "The restaurant menu is lacking variety and is unlikely to satisfy citizens. Please consider adding more Minecolonies food options to improve happiness.",
   "com.minecolonies.core.restaurant.poorrestaurant": "My restaurant needs an upgrade to meet the expectations of my guests. It currently falls short of their standards!",
-  "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!"
+  "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!",
+  "com.minecolonies.core.item.colonymap.needcolony": "No colony set (sneak + use the colony map on the Town Hall)",
+  "com.minecolonies.core.item.colonymap.registered": "Drawing mapdata on the colony map from %s."
 }

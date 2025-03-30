@@ -2,7 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.client.gui.WindowClipBoard;
+import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -18,43 +18,43 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_MAP_COLONY_SET;
 
 /**
- * Class describing the clipboard item.
+ * Class describing the colonymap item.
  */
-public class ItemClipboard extends AbstractItemMinecolonies
+public class ItemColonyMap extends AbstractItemMinecolonies
 {
     /**
-     * Sets the name, creative tab, and registers the Clipboard item.
+     * Sets the name, creative tab, and registers the colonymap item.
      *
      * @param properties the properties.
      */
-    public ItemClipboard(final Item.Properties properties)
+    public ItemColonyMap(final Item.Properties properties)
     {
-        super("clipboard", properties.stacksTo(1));
+        super("colonymap", properties.stacksTo(1));
     }
 
     @Override
     @NotNull
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        final ItemStack clipboard = ctx.getPlayer().getItemInHand(ctx.getHand());
+        final ItemStack colonymap = ctx.getPlayer().getItemInHand(ctx.getHand());
 
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
-            buildingEntity.writeColonyToItemStack(clipboard);
+            buildingEntity.writeColonyToItemStack(colonymap);
 
             if (!ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_MAP_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)
         {
-            openWindow(clipboard, ctx.getLevel(), ctx.getPlayer());
+            openWindow(colonymap, ctx.getLevel(), ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
@@ -71,36 +71,36 @@ public class ItemClipboard extends AbstractItemMinecolonies
     @Override
     @NotNull
     public InteractionResultHolder<ItemStack> use(
-            final Level worldIn,
-            final Player playerIn,
-            final InteractionHand hand)
+        final Level worldIn,
+        final Player playerIn,
+        final InteractionHand hand)
     {
-        final ItemStack clipboard = playerIn.getItemInHand(hand);
+        final ItemStack colonymap = playerIn.getItemInHand(hand);
 
         if (!worldIn.isClientSide) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, colonymap);
         }
 
-        openWindow(clipboard, worldIn, playerIn);
+        openWindow(colonymap, worldIn, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, colonymap);
     }
 
     /**
-     * Opens the clipboard window if there is a valid colony linked
+     * Opens the colonymap window if there is a valid colony linked
      * @param stack the item
      * @param player the player entity opening the window
      */
     private static void openWindow(ItemStack stack, Level world, Player player)
-    {        
+    {
         final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        if (colonyView != null)
+        if (colonyView != null && colonyView.getTownHall() != null)
         {
-            new WindowClipBoard(colonyView).open();
+            new WindowColonyMap(false, colonyView.getTownHall()).open();
         }
         else
         {
-            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_MAP_NEED_COLONY), true);
         }
     }
 }
