@@ -772,7 +772,6 @@ public class EventHandler
         if (event.getLevel().isClientSide() && MineColonies.getConfig().getClient().holidayFeatures.get() &&
             LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.APRIL)
         {
-            // Re-enable for ghostly halloween
             CitizenModel.isItApril1st = true;
         }
     }
