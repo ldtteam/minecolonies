@@ -21,6 +21,8 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      */
     private static final String RENDER_META_WORKING = "working";
 
+    public static boolean isItApril1st = false;
+
     public CitizenModel(final ModelPart part)
     {
         super(part, RenderType::entityCutoutNoCull);
@@ -49,6 +51,34 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             head.visible = true;
             hat.visible = true;
+        }
+
+        if (isItApril1st)
+        {
+            switch (citizen.getCivilianID() % 7)
+            {
+                case 0:
+                    leftArm.visible = false;
+                    break;
+                case 1:
+                    rightArm.visible = false;
+                    break;
+                case 2:
+                    body.visible = false;
+                    break;
+                case 3:
+                    head.visible = false;
+                    break;
+                case 4:
+                    hat.visible = false;
+                    break;
+                case 5:
+                    leftLeg.visible = false;
+                    break;
+                case 6:
+                    rightLeg.visible = false;
+                    break;
+            }
         }
     }
 
