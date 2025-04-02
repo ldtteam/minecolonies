@@ -10,6 +10,8 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.*;
@@ -184,7 +186,7 @@ public class Tool implements IDeliverable
         }
         catch (final Exception e)
         {
-            Log.getLogger().warn("Got exception for Itemstack when trying to match: " +  stack.getDisplayName().getString(), e);
+            Log.getLogger().warn("Got exception for Itemstack when trying to match equipment level: " + stack.getDisplayName() + " - " + stack.getItem().getCreatorModId(stack), e);
             return false;
         }
     }
