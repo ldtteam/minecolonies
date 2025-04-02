@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -177,7 +178,15 @@ public class Tool implements IDeliverable
             return false;
         }
 
-        return ItemStackUtils.hasEquipmentLevel(stack, getEquipmentType(), getMinLevel(), getMaxLevel());
+        try
+        {
+            return ItemStackUtils.hasEquipmentLevel(stack, getEquipmentType(), getMinLevel(), getMaxLevel());
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Got exception for Itemstack when trying to match: " +  stack.getDisplayName().getString(), e);
+            return false;
+        }
     }
 
     @Override
