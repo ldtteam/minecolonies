@@ -288,29 +288,43 @@ public class BuildingFarmer extends AbstractBuilding
                     final Supplier<List<Component>> restrictions = preferredBiome == null ? ArrayList::new
                             : () -> provideBiomeList(preferredBiome);
 
-                    recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(),
-                            List.of(List.of(new ItemStack(cropItem))),
-                            1, crop.getPreferredFarmland(), crop.getLootTable(), ModEquipmentTypes.hoe.get(), restrictions, 0));
+                    recipes.add(GenericRecipe.builder()
+                            .withInputs(List.of(List.of(cropItem.getDefaultInstance())))
+                            .withIntermediate(crop.getPreferredFarmland())
+                            .withLootTable(crop.getLootTable())
+                            .withRequiredTool(ModEquipmentTypes.hoe.get())
+                            .withRestrictions(restrictions)
+                            .build());
                 }
                 else if (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock crop)
                 {
                     // regular crop
-                    recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(),
-                            List.of(List.of(crop.getCloneItemStack(world, BlockPos.ZERO, crop.defaultBlockState()))),
-                            1, Blocks.FARMLAND, crop.getLootTable(), ModEquipmentTypes.hoe.get(), List::of, 0));
+                    recipes.add(GenericRecipe.builder()
+                            .withInputs(List.of(List.of(crop.getCloneItemStack(world, BlockPos.ZERO, crop.defaultBlockState()))))
+                            .withIntermediate(Blocks.FARMLAND)
+                            .withLootTable(crop.getLootTable())
+                            .withRequiredTool(ModEquipmentTypes.hoe.get())
+                            .build());
                 }
                 else if (stack.is(Tags.Items.SEEDS))
                 {
                     // another kind of seed?
                     if (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof StemBlock stem)
                     {
-                        recipes.add(new GenericRecipe(null, new ItemStack(BuiltInRegistries.BLOCK.get(stem.fruit)), List.of(), List.of(List.of(stack)),
-                                1, Blocks.FARMLAND, null, ModEquipmentTypes.hoe.get(), List::of, 0));
+                        recipes.add(GenericRecipe.builder()
+                                .withOutput(BuiltInRegistries.BLOCK.get(stem.fruit))
+                                .withInputs(List.of(List.of(stack)))
+                                .withIntermediate(Blocks.FARMLAND)
+                                .withRequiredTool(ModEquipmentTypes.hoe.get())
+                                .build());
                     }
                     else
                     {
-                        recipes.add(new GenericRecipe(null, ItemStack.EMPTY, List.of(), List.of(List.of(stack)),
-                                1, Blocks.FARMLAND, null, ModEquipmentTypes.hoe.get(), List::of, 0));
+                        recipes.add(GenericRecipe.builder()
+                                .withInputs(List.of(List.of(stack)))
+                                .withIntermediate(Blocks.FARMLAND)
+                                .withRequiredTool(ModEquipmentTypes.hoe.get())
+                                .build());
                     }
                 }
             }
