@@ -871,7 +871,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
         if (job.getBlueprint() != null)
         {
-            if (job.getBlueprint().getName().contains("minermainshaft"))
+            if (job.getBlueprint().getFileName().contains("minermainshaft"))
             {
                 final int depth = job.getWorkOrder().getLocation().getY();
                 boolean exists = false;
