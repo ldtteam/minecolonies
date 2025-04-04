@@ -62,7 +62,7 @@ public class BrewingCraftingType extends CraftingType
 
                         recipes.add(new GenericRecipe(null, actualOutput, Collections.emptyList(),
                                 Arrays.asList(Collections.singletonList(ingredient), Collections.singletonList(actualInput)),
-                                1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), Collections.emptyList(), -1));
+                                1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), List::of, -1));
                     }
                 }
             }

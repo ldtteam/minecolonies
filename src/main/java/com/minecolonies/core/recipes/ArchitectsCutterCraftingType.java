@@ -66,7 +66,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
             }
 
             recipes.add(new GenericRecipe(recipe.getId(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1));
+                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), List::of, -1));
         }
 
         return recipes;

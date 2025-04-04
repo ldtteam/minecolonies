@@ -470,7 +470,7 @@ public class BuildingPlantation extends AbstractBuilding
                     Blocks.AIR,
                     null,
                     module.getRequiredTool(),
-                    Collections.emptyList(),
+                    List::of,
                     -1)));
             }
 
