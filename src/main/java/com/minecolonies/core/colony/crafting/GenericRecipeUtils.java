@@ -64,7 +64,7 @@ public final class GenericRecipeUtils
     public static IGenericRecipe create(@NotNull final CustomRecipe customRecipe, @NotNull final IRecipeStorage storage)
     {
         final List<Component> restrictions = calculateRestrictions(customRecipe);
-        return Objects.requireNonNull(GenericRecipe.of(storage, restrictions, customRecipe.getMinBuildingLevel()));
+        return Objects.requireNonNull(GenericRecipe.of(storage, () -> restrictions, customRecipe.getMinBuildingLevel()));
     }
 
     /**

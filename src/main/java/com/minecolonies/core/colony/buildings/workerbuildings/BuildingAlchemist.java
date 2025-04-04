@@ -262,14 +262,14 @@ public class BuildingAlchemist extends AbstractBuilding
                     Collections.emptyList(),
                     Collections.emptyList(),
                     1, Blocks.OAK_LEAVES,
-                    null, ModEquipmentTypes.shears.get(), Collections.emptyList(), -1));
+                    null, ModEquipmentTypes.shears.get(), List::of, -1));
 
             // growing netherwart
             recipes.add(new GenericRecipe(null, new ItemStack(Items.NETHER_WART, 4),
                     Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.NETHER_WART))),
                     1, Blocks.SOUL_SAND,
-                    null, ModEquipmentTypes.none.get(), Collections.emptyList(), -1));
+                    null, ModEquipmentTypes.none.get(), List::of, -1));
 
             return recipes;
         }

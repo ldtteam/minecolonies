@@ -139,7 +139,7 @@ public class BuildingDyer extends AbstractBuilding
                         {
                             recipes.add(new GenericRecipe(null, result, List.of(),
                                     List.of(List.of(item), dyeItems), 2, Blocks.AIR,
-                                    null, ModEquipmentTypes.none.get(), List.of(), 0));
+                                    null, ModEquipmentTypes.none.get(), List::of, 0));
                         }
                     }
                 }

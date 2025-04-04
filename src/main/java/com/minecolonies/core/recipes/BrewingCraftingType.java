@@ -50,7 +50,7 @@ public class BrewingCraftingType extends CraftingType
                 {
                     recipes.add(new GenericRecipe(null, output.copyWithCount(3), List.of(),
                             List.of(List.of(ingredient), List.of(container.copyWithCount(3))),
-                            1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), List.of(), -1));
+                            1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), List::of, -1));
                 }
             }
         }

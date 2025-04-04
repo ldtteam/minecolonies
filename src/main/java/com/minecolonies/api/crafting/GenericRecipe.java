@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,11 +61,11 @@ public class GenericRecipe implements IGenericRecipe
             intermediate = Blocks.AIR;
         }
         return new GenericRecipe(holder.id(), recipe.getResultItem(world.registryAccess()), calculateSecondaryOutputs(recipe, world), inputs,
-                size, intermediate, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1);
+                size, intermediate, null, ModEquipmentTypes.none.get(), ArrayList::new, -1);
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<Component> restrictions, final int levelSort)
+    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final Supplier<List<Component>> restrictions, final int levelSort)
     {
         if (storage == null) return null;
         final List<List<ItemStack>> inputs = storage.getCleanedInput().stream()
@@ -78,7 +79,7 @@ public class GenericRecipe implements IGenericRecipe
     @Nullable
     public static IGenericRecipe of(@Nullable final IRecipeStorage storage)
     {
-        return of(storage, new ArrayList<>(), -1);
+        return of(storage, ArrayList::new, -1);
     }
 
     @Nullable
@@ -98,7 +99,7 @@ public class GenericRecipe implements IGenericRecipe
     private final @Nullable ResourceKey<LootTable> lootTable;
     private final EquipmentTypeEntry requiredTool;
     private final EntityType<?>       requiredEntity;
-    private final List<Component>    restrictions;
+    private final Supplier<List<Component>> restrictions;
     private final int levelSort;
 
     public GenericRecipe(@Nullable final ResourceLocation id,
@@ -108,7 +109,7 @@ public class GenericRecipe implements IGenericRecipe
                          final int gridSize, @NotNull final Block intermediate,
                          final @Nullable ResourceKey<LootTable> lootTable,
                          @NotNull final EquipmentTypeEntry requiredTool,
-                         @NotNull final List<Component> restrictions,
+                         @NotNull final Supplier<List<Component>> restrictions,
                          final int levelSort)
     {
         this.id = id == null || id.getPath().isEmpty() ? null : id;
@@ -121,7 +122,7 @@ public class GenericRecipe implements IGenericRecipe
         this.lootTable = lootTable;
         this.requiredTool = requiredTool;
         this.requiredEntity = null;
-        this.restrictions = Collections.unmodifiableList(restrictions);
+        this.restrictions = restrictions;
         this.levelSort = levelSort;
     }
 
@@ -134,7 +135,7 @@ public class GenericRecipe implements IGenericRecipe
                          @Nullable final ResourceKey<LootTable> lootTable,
                          @NotNull final EquipmentTypeEntry requiredTool,
                          @Nullable final EntityType<?> requiredEntity,
-                         @NotNull final List<Component> restrictions,
+                         @NotNull final Supplier<List<Component>> restrictions,
                          final int levelSort)
     {
         this.id = id;
@@ -147,7 +148,7 @@ public class GenericRecipe implements IGenericRecipe
         this.lootTable = lootTable;
         this.requiredTool = requiredTool;
         this.requiredEntity = requiredEntity;
-        this.restrictions = Collections.unmodifiableList(restrictions);
+        this.restrictions = restrictions;
         this.levelSort = levelSort;
     }
 
@@ -190,7 +191,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     @Override
-    public List<Component> getRestrictions()
+    public Supplier<List<Component>> getRestrictions()
     {
         return this.restrictions;
     }

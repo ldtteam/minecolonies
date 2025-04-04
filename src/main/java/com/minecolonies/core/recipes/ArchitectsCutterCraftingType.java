@@ -68,7 +68,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
             MaterialTextureData.EMPTY.writeToItemStack(output);
 
             recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1));
+                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), List::of, -1));
         }
 
         return recipes;
