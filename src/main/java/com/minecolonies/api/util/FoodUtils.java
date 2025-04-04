@@ -93,7 +93,7 @@ public class FoodUtils
         }
 
         final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : 0.25;
-        return itemFood.nutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
+        return itemFood.nutrition() * saturationNerf / 1.2 * (1.0 + researchBonus);
     }
 
     /**
