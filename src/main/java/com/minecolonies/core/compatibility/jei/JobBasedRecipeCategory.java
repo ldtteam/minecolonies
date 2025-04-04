@@ -187,10 +187,10 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                                @NotNull final EquipmentTypeEntry requiredTool,
                                final int x, final int y, final boolean withBackground)
     {
-        final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
-
         if (requiredTool != ModEquipmentTypes.none.get())
         {
+            final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
+
             if (withBackground)
             {
                 slot.setBackground(this.slot, -1, -1);

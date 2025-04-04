@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -121,21 +120,19 @@ public class BuildingSmeltery extends AbstractBuilding
                 if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
-                    recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
+                    recipes.add(createSmeltingRecipe(stack, output, Blocks.FURNACE));
                 }
             }
             return recipes;
         }
 
-        private static IGenericRecipe createSmeltingRecipe(final ItemStorage input, final ItemStack output, final Block intermediate)
+        private static IGenericRecipe createSmeltingRecipe(final ItemStack input, final ItemStack output, final Block intermediate)
         {
-            return GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    Collections.singletonList(input),
-                    1,
-                    output,
-                    intermediate));
+            return GenericRecipe.builder()
+                    .withInputs(List.of(List.of(input)))
+                    .withOutput(output)
+                    .withIntermediate(intermediate)
+                    .build();
         }
     }
 
@@ -181,17 +178,10 @@ public class BuildingSmeltery extends AbstractBuilding
             //noinspection ConstantConditions
             for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
-                recipes.add(new GenericRecipe(
-                        null,                    //recipe
-                        ItemStack.EMPTY,            //output
-                        Collections.emptyList(),    //additional outputs
-                        Collections.singletonList(Collections.singletonList(new ItemStack(input))), //inputs
-                        1,                   //grid
-                        Blocks.AIR,                 //intermediate
-                        getLootTable(input),        //loottable
-                        ModEquipmentTypes.pickaxe.get(),
-                        List::of,    //restrictions
-                        -1));               //levelsort
+                recipes.add(GenericRecipe.builder()
+                        .withInputs(List.of(List.of(input.getDefaultInstance())))
+                        .withLootTable(getLootTable(input))
+                        .build());
             }
 
             return recipes;
