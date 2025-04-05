@@ -3,14 +3,12 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
@@ -204,19 +202,11 @@ public class BuildingSmeltery extends AbstractBuilding
                     }
                 }
 
-                final RecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    Collections.singletonList(new ItemStorage(new ItemStack(input))),
-                    1,                  //gridsize
-                    ItemStack.EMPTY,    //Output
-                    null,               //Intermediate
-                    null,               //Source
-                    null,               //Type
-                    null,               //Altoutputs
-                    drops,              //SecOutputs
-                    getLootTable(input) //Loot Table
-                    );
+                final RecipeStorage tempRecipe = RecipeStorage.builder()
+                        .withInputs(Collections.singletonList(new ItemStorage(new ItemStack(input))))
+                        .withSecondaryOutputs(drops)
+                        .withLootTable(getLootTable(input))
+                        .build();
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
                 this.addRecipeToList(token, false);
             }

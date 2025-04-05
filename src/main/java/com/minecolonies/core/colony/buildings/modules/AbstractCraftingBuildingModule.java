@@ -606,19 +606,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
             if (didReduction)
             {
-                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                  TypeConstants.RECIPE,
-                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  newRecipe,
-                  1,
-                  recipe.getPrimaryOutput(),
-                  recipe.getIntermediate(),
-                  null,     // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
-                  recipe.getRecipeType().getId(),
-                  recipe.getAlternateOutputs(),
-                  recipe.getSecondaryOutputs(),
-                  recipe.getLootTable(),
-                  recipe.getRequiredTool());
+                final IRecipeStorage storage = RecipeStorage.builder(recipe)
+                        .withInputs(newRecipe)
+                        .withRecipeId(null) // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
+                        .build();
 
                 final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
                 if (isRecipeCompatibleWithCraftingModule(token))
