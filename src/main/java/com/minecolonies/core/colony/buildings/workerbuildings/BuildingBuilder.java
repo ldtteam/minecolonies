@@ -5,31 +5,33 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.colony.jobs.JobBuilder;
+import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import com.minecolonies.core.colony.workorders.*;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
 
 /**
  * The builders building.
@@ -147,7 +149,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(wo -> wo.canBeMadeBy(citizen.getJob()), getPosition());
+        final List<IServerWorkOrder> list =
+            getColony().getWorkManager().getOrderedList(wo -> (wo instanceof IBuilderWorkOrder && ((IBuilderWorkOrder) wo).canBuild(citizen)), getPosition());
         list.sort((a, b) -> {
             if (a.getWorkOrderType() == WorkOrderType.REMOVE)
             {
@@ -160,11 +163,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return 0;
         });
 
-        final IWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final IServerWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
-            order.setClaimedBy(citizen);
+            order.setClaimedBy(getID());
             return;
         }
 
@@ -173,11 +176,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        for (final IWorkOrder wo : list)
+        for (final IServerWorkOrder wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 
-            if (wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !wo.canBuild(citizen))
+            if (wo instanceof WorkOrderBuilding workOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !workOrderBuilding.canBuild(citizen))
             {
                 continue;
             }
@@ -191,7 +194,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                     continue;
                 }
 
-                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && wo.canBuild(otherBuilder))
+                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding workOrderBuilding && workOrderBuilding.canBuild(otherBuilder))
                 {
                     final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getLocation());
                     if (distance < distanceToBuilder)
@@ -204,7 +207,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             if (citizen.getWorkBuilding().getID().distSqr(wo.getLocation()) < distanceToBuilder)
             {
                 citizen.getJob(JobBuilder.class).setWorkOrder(wo);
-                wo.setClaimedBy(citizen);
+                wo.setClaimedBy(getID());
                 return;
             }
         }
@@ -217,29 +220,29 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     public void setWorkOrder(int orderId)
     {
-        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        final ICitizenData citizen = getModule(BuildingModules.BUILDER_WORK).getFirstCitizen();
         if (citizen == null)
         {
             return;
         }
 
-        IWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
+        IServerWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
+        if (!(wo instanceof IBuilderWorkOrder) || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
         {
             return;
         }
 
         if (citizen.getJob(JobBuilder.class).hasWorkOrder())
         {
-            wo.setClaimedBy(citizen);
+            wo.setClaimedBy(getID());
             getColony().getWorkManager().setDirty(true);
             return;
         }
 
-        if (wo.canBeMadeBy(citizen.getJob()))
+        if (((IBuilderWorkOrder) wo).canBuild(citizen))
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(wo);
-            wo.setClaimedBy(citizen);
+            wo.setClaimedBy(getID());
             getColony().getWorkManager().setDirty(true);
             markDirty();
         }

@@ -43,10 +43,13 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world, final IColony colony)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
-            placeConstructionTape(corners, colony);
-        })));
+        workOrder.loadBlueprint(world, (blueprint -> {
+            if (blueprint != null)
+            {
+                final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
+                placeConstructionTape(corners, colony);
+            }
+        }));
     }
 
     /**
@@ -172,10 +175,13 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
-            removeConstructionTape(corners, world);
-        })));
+        workOrder.loadBlueprint(world, (blueprint -> {
+            if (blueprint != null)
+            {
+                final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
+                removeConstructionTape(corners, world);
+            }
+        }));
     }
 
     /**
