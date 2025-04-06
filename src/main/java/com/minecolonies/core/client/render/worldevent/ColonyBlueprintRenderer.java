@@ -22,6 +22,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.workorders.view.WorkOrderBuildingView;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -88,16 +89,12 @@ public class ColonyBlueprintRenderer
      */
     private static final List<IRenderBlueprintRule> renderRules = new ArrayList<>();
 
-    /**
-     * Timer for pending entries refresh
-     */
-    private static int pendingTimer = 0;
     static
     {
         renderRules.add(new NearBuildPreview());
         renderRules.add(new BuildGoggles());
-        renderRules.add(new AssistantHammerRule());
     }
+
     /**
      * Invalidate the cache, because something significant has changed in colony data (e.g. more work orders).
      */
@@ -162,9 +159,8 @@ public class ColonyBlueprintRenderer
             lastCacheRebuild = activePosition;
         }
 
-        if (pendingTimer++ > 40)
+        if (Minecraft.getInstance().level.getGameTime() % 20 == 0)
         {
-            pendingTimer = 0;
             processPendingBlueprints();
         }
 
@@ -495,7 +491,7 @@ public class ColonyBlueprintRenderer
         /**
          * Find the builder for this work order, if any.
          *
-         * @param colony     the colony.
+         * @param colony the colony.
          * @param builderPos the builder's building id.
          * @return the builder's id, or 0.
          */
@@ -514,43 +510,6 @@ public class ColonyBlueprintRenderer
                 }
             }
             return 0;
-        }
-    }
-
-    /**
-     * Render work orders near the player wearing build goggles.
-     */
-    private static class AssistantHammerRule implements IRenderBlueprintRule
-    {
-        @Override
-        public boolean isEnabled(final WorldEventContext ctx)
-        {
-            return ctx.clientPlayer.getMainHandItem().is(ModItems.assistantHammer) || ctx.clientPlayer.getOffhandItem().is(ModItems.assistantHammer);
-        }
-
-        @Override
-        public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
-        {
-            // show work orders
-            final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
-            for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
-            {
-                if (workOrder.getWorkOrderType() != WorkOrderType.REMOVE && workOrder.getBoundingBox().inflate(4, 4, 4).contains(ctx.clientPlayer.blockPosition().getCenter()))
-                {
-                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(),
-                        RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
-                            workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
-                    desired.put(workOrder.getLocation(),
-                        new PendingRenderData(key, workOrder.getLocation(), 0,
-                            workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
-                            workOrder instanceof WorkOrderBuildingView));
-
-                    blueprintDataCache.getUnchecked(key).setOverridePreviewTransparency(0.6f);
-                    blueprintDataCache.getUnchecked(key).setRenderBlocksNice(true);
-                }
-            }
-
-            return desired;
         }
     }
 }
