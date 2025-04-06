@@ -1075,6 +1075,7 @@ public class CitizenData implements ICitizenData
             buf.writeBoolean(true);
             buf.writeUUID(textureUUID);
         }
+        buf.writeBoolean(citizenDiseaseHandler.isSick());
     }
 
     @Override

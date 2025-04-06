@@ -119,11 +119,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
 
     /**
-     * The items and weights of the recruitment.
-     */
-    private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
-
-    /**
      * Random obj.
      */
     private static final Random random = new Random();
@@ -166,7 +161,6 @@ public class CompatibilityManager implements ICompatibilityManager
         fuel.clear();
         compostRecipes.clear();
 
-        recruitmentCostsWeights.clear();
         monsters = ImmutableSet.of();
         creativeModeTabMap.clear();
     }
@@ -182,7 +176,6 @@ public class CompatibilityManager implements ICompatibilityManager
         clear();
         discoverAllItems(level);
 
-        discoverRecruitCosts();
         discoverModCompat();
 
         discoverCompostRecipes(recipeManager);
@@ -247,7 +240,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostRecipes(deserializeCompostRecipes(buf));
 
         // the below are loaded from config files, which have been synched already by this point
-        discoverRecruitCosts();
         discoverModCompat();
 
         for (int i = 0, amount = buf.readInt(); i < amount; i++)
@@ -474,12 +466,6 @@ public class CompatibilityManager implements ICompatibilityManager
             Log.getLogger().error("getImmutableFlowers when empty");
         }
         return beekeeperflowers;
-    }
-
-    @Override
-    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights()
-    {
-        return Collections.unmodifiableList(recruitmentCostsWeights);
     }
 
     @Override
@@ -761,43 +747,6 @@ public class CompatibilityManager implements ICompatibilityManager
                 edibles.add(new ItemStorage(stack));
             }
         }
-    }
-
-    /**
-     * Parses recruitment costs from config
-     */
-    private void discoverRecruitCosts()
-    {
-        if (recruitmentCostsWeights.isEmpty())
-        {
-            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getServer().configListRecruitmentItems.get())
-            {
-                final String[] split = itemString.split(";");
-                if (split.length < 2)
-                {
-                    Log.getLogger().warn("Wrong configured recruitment cost: " + itemString);
-                    continue;
-                }
-
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR)
-                {
-                    Log.getLogger().warn("Invalid recruitment item: " + item);
-                    continue;
-                }
-
-                try
-                {
-                    final int rarity = Integer.parseInt(split[split.length - 1]);
-                    recruitmentCostsWeights.add(new Tuple<>(item, rarity));
-                }
-                catch (final NumberFormatException ex)
-                {
-                    Log.getLogger().warn("Invalid recruitment weight for: " + item);
-                }
-            }
-        }
-        Log.getLogger().info("Finished discovering recruitment costs");
     }
 
     private static CompoundTag writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)

@@ -1,12 +1,10 @@
 package com.minecolonies.core.client.gui.map;
 
 import com.ldtteam.blockui.BOScreen;
-import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.AbstractTextBuilder;
-import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
+import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -15,17 +13,25 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.core.client.render.worldevent.HighlightManager;
+import com.minecolonies.core.client.render.worldevent.highlightmanager.CitizenRenderData;
+import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
@@ -36,8 +42,11 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FULFILLED;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_INVENTORY;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.SATURATION_ICON_HEIGHT_WIDTH;
+import static com.minecolonies.core.client.gui.questlog.Constants.HIGHLIGHT_QUEST_LOG_TRACKER_DURATION;
+import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
 public class WindowColonyMap extends AbstractWindowSkeleton
 {
@@ -67,12 +76,17 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private final ZoomDragMap dragView;
 
     /**
+     * If map is being accessed directly from town hall.
+     */
+    private final boolean atTownHall;
+
+    /**
      * Colony data beeing currently displayed
      */
-    private Map<ICitizenDataView, Pane>             citizens       = new HashMap<>();
-    private Map<IBuildingView, ItemIcon>            buildings      = new HashMap<>();
-    private Map<ColonyListMessage.ColonyInfo, View> coloniesImages = new HashMap<>();
-    private List<MinecraftMap>                      maps           = new ArrayList<>();
+    private Map<ICitizenDataView, View>              citizens       = new HashMap<>();
+    private Map<IBuildingView, Tuple<ItemIcon, Box>> buildings      = new HashMap<>();
+    private Map<ColonyListMessage.ColonyInfo, View>  coloniesImages = new HashMap<>();
+    private List<MinecraftMap>                       maps           = new ArrayList<>();
 
     /**
      * building reference of the view
@@ -99,9 +113,10 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      *
      * @param building The building the info window is for.
      */
-    public WindowColonyMap(final IBuildingView building)
+    public WindowColonyMap(final boolean atTownHall, final IBuildingView building)
     {
         super(Constants.MOD_ID + WINDOW_RESOURCE);
+        this.atTownHall = atTownHall;
         this.building = building;
         playerPos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), 0, Minecraft.getInstance().player.blockPosition().getZ());
         final ZoomDragView parent = findPaneOfTypeByID("dragView", ZoomDragView.class);
@@ -119,7 +134,15 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             addCenterPos();
         }
 
-        registerButton(BUTTON_EXIT, () -> building.openGui(false));
+        if (atTownHall)
+        {
+            registerButton(BUTTON_EXIT, () -> building.openGui(false));
+        }
+        else
+        {
+            findPaneByID(BUTTON_INVENTORY).hide();
+            registerButton(BUTTON_EXIT, this::close);
+        }
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
 
         Network.getNetwork().sendToServer(new ColonyListMessage());
@@ -186,12 +209,52 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
         if (hasMaps)
         {
-            for (Map.Entry<ICitizenDataView, Pane> entry : citizens.entrySet())
+            for (Map.Entry<ICitizenDataView, View> entry : citizens.entrySet())
             {
                 final EntityCitizen citizen = (EntityCitizen) building.getColony().getWorld().getEntity(entry.getKey().getEntityId());
                 if (citizen != null)
                 {
                     entry.getValue().setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
+                }
+            }
+
+            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> building : buildings.entrySet())
+            {
+                if (building.getValue().getB() != null)
+                {
+                    if (building.getValue().getA().wasCursorInPane())
+                    {
+                        building.getValue().getB().show();
+                    }
+                    else
+                    {
+                        building.getValue().getB().hide();
+                    }
+                }
+            }
+
+            for (final Player player : Minecraft.getInstance().level.players())
+            {
+                if (building.getColony().isCoordInColony(Minecraft.getInstance().level, player.blockPosition()))
+                {
+                    Image playerImage = findPaneOfTypeByID(player.getStringUUID(), Image.class);
+                    if (playerImage == null)
+                    {
+                        final ResourceLocation resourceLocation = OutOfJarResourceLocation.ofMinecraftSkin(Minecraft.getInstance(), Minecraft.getInstance().getUser().getGameProfile(), null);
+                        if (resourceLocation == null)
+                        {
+                            continue;
+                        }
+                        playerImage = new Image();
+                        playerImage.setID(player.getStringUUID());
+                        playerImage.setImage(resourceLocation, 8,8,8,8);
+                        playerImage.setSize(16,16);
+                        dragView.addChild(playerImage);
+                        PaneBuilders.tooltipBuilder().hoverPane(playerImage)
+                            .append(Component.literal(player.getDisplayName().getString()))
+                            .build();
+                    }
+                    playerImage.setPosition(worldPosToUIPos(player.blockPosition()).getX(), worldPosToUIPos(player.blockPosition()).getZ());
                 }
             }
 
@@ -228,12 +291,12 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             // Hide small icons
             // show colony
 
-            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet())
+            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> buildingEntry : buildings.entrySet())
             {
-                buildingEntry.getValue().off();
+                buildingEntry.getValue().getA().off();
             }
 
-            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet())
+            for (Map.Entry<ICitizenDataView, View> citizenEntry : citizens.entrySet())
             {
                 citizenEntry.getValue().off();
             }
@@ -241,12 +304,12 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         else
         {
             // Display small icons
-            for (Map.Entry<IBuildingView, ItemIcon> buildingEntry : buildings.entrySet())
+            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> buildingEntry : buildings.entrySet())
             {
-                buildingEntry.getValue().on();
+                buildingEntry.getValue().getA().on();
             }
 
-            for (Map.Entry<ICitizenDataView, Pane> citizenEntry : citizens.entrySet())
+            for (Map.Entry<ICitizenDataView, View> citizenEntry : citizens.entrySet())
             {
                 citizenEntry.getValue().on();
             }
@@ -300,10 +363,13 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private void addCenterPos()
     {
         final Image citizenImage = new Image();
-        citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
-        citizenImage.setSize(16, 16);
-        citizenImage.setPosition(worldPosToUIPos(playerPos).getX(), worldPosToUIPos(playerPos).getZ());
-        dragView.addChild(citizenImage);
+        if (this.atTownHall)
+        {
+            citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
+            citizenImage.setSize(16, 16);
+            citizenImage.setPosition(worldPosToUIPos(playerPos).getX(), worldPosToUIPos(playerPos).getZ());
+            dragView.addChild(citizenImage);
+        }
     }
 
     /**
@@ -314,10 +380,11 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private void updateBuildingView(final IBuildingView buildingView)
     {
-        ItemIcon uiBuilding = buildings.get(buildingView);
-        if (uiBuilding == null)
+        Tuple<ItemIcon, Box> buildingTuple = buildings.get(buildingView);
+        if (buildingTuple == null)
         {
-            uiBuilding = new ItemIcon();
+            ItemIcon uiBuilding = new ItemIcon();
+            Box box = null;
 
             uiBuilding.setID(buildingView.getID().toShortString());
             uiBuilding.setSize(11 + buildingView.getBuildingLevel(), 11 + buildingView.getBuildingLevel());
@@ -329,7 +396,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             tooltip.hoverPane(uiBuilding)
               .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
               .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
-              .appendNL(Component.literal("Citizens: " + buildingView.getAllAssignedCitizens().size()));
+              .appendNL(Component.literal("Citizens: " + (buildingView instanceof LivingBuildingView home ? home.getResidents().size() : buildingView.getAllAssignedCitizens().size())));
 
             for (int id : buildingView.getAllAssignedCitizens())
             {
@@ -340,13 +407,38 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 }
             }
             tooltip.build();
-
             uiBuilding.setVisible(true);
 
-            this.buildings.put(buildingView, uiBuilding);
+            if (buildingView.getRange() != 0)
+            {
+                final int range = buildingView.getRange();
+                final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range/2, 0, -range/2));
+                final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range/2, 0, range/2));
+
+                box = new Box();
+                box.setLineWidth(2);
+                box.setColor(255, 0, 0);
+                box.setPosition(UIPos1.getX(), UIPos1.getZ());
+                box.setSize(UIPos2.getX() - UIPos1.getX(), UIPos2.getZ() - UIPos1.getZ());
+                box.hide();
+                dragView.addChild(box);
+            }
+            dragView.addChild(uiBuilding);
+
+            buildingTuple = new Tuple<>(uiBuilding, box);
+            this.buildings.put(buildingView, buildingTuple);
         }
 
-        uiBuilding.setPosition(worldPosToUIPos(buildingView.getID()).getX(), worldPosToUIPos(buildingView.getID()).getZ());
+        final BlockPos newPos = worldPosToUIPos(buildingView.getID());
+        buildingTuple.getA().setPosition(newPos.getX(), newPos.getZ());
+        if (buildingTuple.getB() != null)
+        {
+            final int range = buildingView.getRange();
+            final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range / 2, 0, -range / 2));
+            final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range / 2, 0, range / 2));
+            buildingTuple.getB().setPosition(UIPos1.getX(), UIPos1.getZ());
+            buildingTuple.getB().setSize(UIPos2.getX() - UIPos1.getX(), UIPos2.getZ() - UIPos1.getZ());
+        }
     }
 
     /**
@@ -364,30 +456,62 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 final View citizenView = new View();
                 citizenView.setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
 
-                final Image citizenImage = new Image();
+                final ButtonImage citizenImage = new ButtonImage();
                 citizenImage.setImage(((ISimpleModelType) IModelTypeRegistry.getInstance().getModelType(citizen.getModelType())).getTextureIcon(citizen), false);
                 citizenImage.setSize(4, 4);
-                citizenView.addChild(citizenImage);
+                citizenImage.setID("citizen: " + data.getId());
+                registerButton(citizenImage.getID(), button -> {
+                    HighlightManager.addHighlight("mapsearchtracking", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+                    SoundUtils.playSuccessSound(mc.player, mc.player.blockPosition());
+                });
 
-                dragView.addChild(citizenView);
                 final AbstractTextBuilder.TooltipBuilder builder = PaneBuilders.tooltipBuilder().hoverPane(citizenView).paragraphBreak().append(citizen.getDisplayName());
                 if (!data.getJob().isEmpty())
                 {
                     citizenImage.setSize(8, 8);
                     builder.newLine().append(Component.translatable("com.minecolonies.coremod.gui.citizen.job.label", LanguageHandler.format(data.getJob())));
                 }
-                builder.color(COLOR_TEXT_FULFILLED).build();
                 citizenView.setSize(citizenImage.getWidth(), citizenImage.getHeight());
+                citizenView.addChild(citizenImage);
+                dragView.addChild(citizenView);
 
                 if (data.hasVisibleInteractions())
                 {
                     final Image interactionImage = new Image();
                     interactionImage.setImage(data.getInteractionIcon(), false);
                     interactionImage.setSize(6, 6);
-                    citizenImage.setPosition(5, 0);
+                    interactionImage.setPosition(-3, -3);
                     citizenView.addChild(interactionImage);
                     citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
+                    if (data.hasBlockingInteractions())
+                    {
+                        final MutableComponent inquiry = (MutableComponent) data.getOrderedInteractions().get(0).getInquiry();
+                        builder.newLine().append(inquiry.withStyle(ChatFormatting.DARK_RED));
+                    }
                 }
+
+                if (data.isSick())
+                {
+                    final Image sickIcon = new Image();
+                    sickIcon.setImage(new ResourceLocation("minecolonies:textures/icons/small_sick_icon.png"), false);
+                    sickIcon.setSize(4, 8);
+                    sickIcon.setPosition(3,-3);
+                    citizenView.addChild(sickIcon);
+                    citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
+                }
+                else if (data.getSaturation() < LOW_SATURATION)
+                {
+                    final Image saturationIcon = new Image();
+                    saturationIcon.setImage(GUI_ICONS_LOCATION,
+                            EMPTY_SATURATION_ITEM_ROW_POS,
+                            SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+                    saturationIcon.setMapDimensions(256, 256);
+                    saturationIcon.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
+                    saturationIcon.setPosition(3, -3);
+                    citizenView.addChild(saturationIcon);
+                    citizenView.setSize(citizenView.getWidth() + 6, citizenView.getHeight() + 6);
+                }
+                builder.color(COLOR_TEXT_FULFILLED).build();
 
                 if (citizens.containsKey(data))
                 {

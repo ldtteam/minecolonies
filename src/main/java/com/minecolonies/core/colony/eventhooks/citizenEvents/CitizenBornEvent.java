@@ -32,9 +32,9 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public CitizenBornEvent(BlockPos eventPos, String citizenName)
+    public CitizenBornEvent(final BlockPos eventPos, final String citizenName)
     {
-        super(eventPos, citizenName);
+        super(true, eventPos, citizenName);
     }
 
     @Override
@@ -73,5 +73,11 @@ public class CitizenBornEvent extends AbstractCitizenEvent
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserialize(buf);
         return birthEvent;
+    }
+
+    @Override
+    public String getSummaryTranslationKey()
+    {
+        return "com.minecolonies.core.event.summary.citizen.born";
     }
 }

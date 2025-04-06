@@ -289,6 +289,10 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
+    public static final String POOR_MENU_INTERACTION                                                = "com.minecolonies.coremod.restaurant.poormenu";
+    @NonNls
+    public static final String POOR_RESTAURANT_INTERACTION                                          = "com.minecolonies.coremod.restaurant.poorrestaurant";
+    @NonNls
     public static final String NETHERMINER_NO_FOOD                                                  = "com.minecolonies.coremod.netherminer.nofood";
     @NonNls
     public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
@@ -525,6 +529,8 @@ public final class TranslationConstants
     @NonNls
     public static final String MINER_MINE_NODE                                    = "com.minecolonies.coremod.gui.workerhuts.minerminenode";
     @NonNls
+    public static final String MINER_LEVEL_DEPTH                                  = "com.minecolonies.coremod.gui.workerhuts.minerleveldepth";
+    @NonNls
     public static final String WARNING_POPULATION_NEEDS_HOUSING                   = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited";
     @NonNls
     public static final String WARNING_POPULATION_RESEARCH_LIMITED                =
@@ -656,6 +662,13 @@ public final class TranslationConstants
     public static final String PACK_DESC                                          = "com.minecolonies.coremod.gui.colony.packdesc";
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
+    @NonNls
+    public static final String COM_MINECOLONIES_MAP_NEED_COLONY                   = "com.minecolonies.core.item.colonymap.needcolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_MAP_COLONY_SET                    = "com.minecolonies.core.item.colonymap.registered";
+    @NonNls
+    public static final String VANILLA_FOOD_QUALITY_TOOLTIP                       = "com.minecolonies.core.gui.restaurant.vanillafoodquality";
+
     @NonNls
     public static final String FOOD_QUALITY                                       = "foodquality";
     @NonNls

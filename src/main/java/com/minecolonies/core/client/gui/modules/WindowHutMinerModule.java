@@ -1,6 +1,5 @@
 package com.minecolonies.core.client.gui.modules;
 
-import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
@@ -15,13 +14,9 @@ import com.minecolonies.core.network.messages.server.colony.building.miner.Miner
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
-import static com.minecolonies.api.util.constant.TranslationConstants.MINER_REPAIR_ENQUEUED;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * BOWindow for the miner hut.
@@ -31,15 +26,24 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     /**
      * Util tags.
      */
-    private static final String LIST_LEVELS         = "levels";
-    private static final String BUTTON_CURRENTLEVEL = "changeToLevel";
-    private static final String BUTTON_REPAIR       = "repair";
+    private static final String LIST_LEVELS       = "levels";
+    private static final String TEXT_LEVEL        = "level";
+    private static final String BUTTON_MINE_LEVEL = "mine";
+    private static final String BUTTON_REPAIR     = "repair";
+    private static final String TEXT_DEPTH        = "depth";
+    private static final String TEXT_NODE_COUNT   = "nodes";
 
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutminermodule.xml";
 
+    /**
+     * The underlying miner management module.
+     */
     private final MinerLevelManagementModuleView miner;
-    private       List<Tuple<Integer, Integer>>  levelsInfo;
-    private       ScrollingList                  levelList;
+
+    /**
+     * The list containing the levels.
+     */
+    private ScrollingList levelList;
 
     /**
      * Constructor for the window of the miner hut.
@@ -50,12 +54,16 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = moduleView;
-        pullLevelsFromHut();
 
-        registerButton(BUTTON_CURRENTLEVEL, this::currentLevelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
+        registerButton(BUTTON_MINE_LEVEL, this::mineLevelClicked);
     }
 
+    /**
+     * Handler for clicking on any of the repair buttons.
+     *
+     * @param button the input button clicked.
+     */
     private void repairClicked(final Button button)
     {
         final int row = levelList.getListElementIndexByPane(button);
@@ -63,24 +71,18 @@ public class WindowHutMinerModule extends AbstractModuleWindow
         MessageUtils.format(MINER_REPAIR_ENQUEUED).sendTo(Minecraft.getInstance().player);
     }
 
-    private void currentLevelClicked(final Button button)
+    /**
+     * Handler for clicking on any of the mine level buttons.
+     *
+     * @param button the input button clicked.
+     */
+    private void mineLevelClicked(final Button button)
     {
         final int row = levelList.getListElementIndexByPane(button);
-        if (row != miner.current && row >= 0 && row < levelsInfo.size())
+        if (row != miner.current && row >= 0 && row < miner.levelsInfo.size())
         {
             miner.current = row;
             Network.getNetwork().sendToServer(new MinerSetLevelMessage(buildingView, row));
-        }
-    }
-
-    /**
-     * Retrieve levels from the building to display in GUI.
-     */
-    private void pullLevelsFromHut()
-    {
-        if (miner.getColony().getBuilding(buildingView.getID()) != null)
-        {
-            levelsInfo = miner.levelsInfo;
         }
     }
 
@@ -94,42 +96,26 @@ public class WindowHutMinerModule extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return levelsInfo.size();
+                return miner.levelsInfo.size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                if (index == miner.current)
-                {
-                    rowPane.findPaneOfTypeByID("lvl", Text.class).setColors(Color.getByName("red", 0));
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID("lvl", Text.class).setColors(Color.getByName("black", 0));
-                }
+                final boolean isCurrentLevel = index == miner.current;
+                rowPane.findPaneOfTypeByID(TEXT_LEVEL, Text.class).setText(Component.literal(String.format("%02d", index + 1)));
 
-                if (miner.doesWorkOrderExist(index))
-                {
-                    rowPane.findPaneOfTypeByID("repair", Button.class).disable();
-                }
+                rowPane.findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setEnabled(!miner.doesWorkOrderExist(index));
+                rowPane.findPaneOfTypeByID(BUTTON_MINE_LEVEL, Button.class).setEnabled(!isCurrentLevel);
 
-                rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Component.literal(Integer.toString(index)));
-                rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(Component.translatable(MINER_NODES)
-                             .append(": ")
-                             .append(String.valueOf(levelsInfo.get(index).getA())));
-                rowPane.findPaneOfTypeByID("yLevel", Text.class)
-                  .setText(Component.literal("Y: " + (levelsInfo.get(index).getB() + 1)));
-                // ^^ 1 is for Y depth fix
+                // Extra 1 is for Y depth fix
+                rowPane.findPaneOfTypeByID(TEXT_DEPTH, Text.class)
+                  .setText(Component.translatable(MINER_LEVEL_DEPTH)
+                             .append(Component.literal(": "))
+                             .append(Component.literal(String.valueOf(miner.levelsInfo.get(index).getB() + 1))));
+                rowPane.findPaneOfTypeByID(TEXT_NODE_COUNT, Text.class)
+                  .setText(Component.translatable(MINER_NODES).append(": ").append(String.valueOf(miner.levelsInfo.get(index).getA())));
             }
         });
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-        pullLevelsFromHut();
     }
 }

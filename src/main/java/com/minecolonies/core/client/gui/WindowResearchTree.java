@@ -243,31 +243,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             return;
                         }
                     }
-                    // Generally allow "unrestricted-tree" branches to undo complete research, if not prohibited.
-                    // This is more meant to allow "unrestricted-tree"-style research's effects to be toggled on and off at a small cost.
-                    // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
-                    if (branchType == ResearchBranchType.UNLOCKABLES)
-                    {
-                        drawUndoCompleteButton(button);
-                    }
-                    // above-max-level research prohibits other options, and should be resetable.
-                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())
-                    {
-                        drawUndoCompleteButton(button);
-                        return;
-                    }
-                    // researches with an ancestor with OnlyChild status should be undoable, no children are complete or in-progress.
-                    ResourceLocation parentId = IGlobalResearchTree.getInstance().getResearch(branch, research.getId()).getParent();
-                    while (!parentId.getPath().isEmpty())
-                    {
-                        if (IGlobalResearchTree.getInstance().getResearch(branch, parentId) != null
-                              && IGlobalResearchTree.getInstance().getResearch(branch, parentId).hasOnlyChild())
-                        {
-                            drawUndoCompleteButton(button);
-                            break;
-                        }
-                        parentId = IGlobalResearchTree.getInstance().getResearch(branch, parentId).getParent();
-                    }
+                    drawUndoCompleteButton(button);
                 }
             }
         }

@@ -131,6 +131,7 @@ public final class ModItemsInitializer
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", new Item.Properties());
         ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", new Item.Properties());
         ModItems.scanAnalyzer = new ItemScanAnalyzer("scan_analyzer", new Item.Properties());
+        ModItems.colonyMap = new ItemColonyMap(new Item.Properties());
 
 
 
@@ -261,6 +262,7 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "mistletoe"), ModItems.mistletoe);
         registry.register(new ResourceLocation(Constants.MOD_ID, "spear"), ModItems.spear);
         registry.register(new ResourceLocation(Constants.MOD_ID, "questlog"), ModItems.questLog);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "colonymap"), ModItems.colonyMap);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "bread_dough"), ModItems.breadDough);
         registry.register(new ResourceLocation(Constants.MOD_ID, "cookie_dough"), ModItems.cookieDough);

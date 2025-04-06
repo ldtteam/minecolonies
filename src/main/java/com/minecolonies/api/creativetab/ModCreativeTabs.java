@@ -67,6 +67,7 @@ public final class ModCreativeTabs
           output.accept(ModItems.buildGoggles);
           output.accept(ModItems.scanAnalyzer);
           output.accept(ModItems.questLog);
+          output.accept(ModItems.colonyMap);
 
           output.accept(ModItems.scrollColonyTP);
           output.accept(ModItems.scrollColonyAreaTP);

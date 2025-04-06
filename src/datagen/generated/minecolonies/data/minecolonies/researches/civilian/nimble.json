@@ -2,11 +2,11 @@
   "branch": "minecolonies:civilian",
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 1
+      "minecolonies:effects/walkingmultiplier": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed1.png",
-  "parentResearch": "minecolonies:civilian/rails",
+  "parentResearch": "minecolonies:civilian/haste",
   "requirements": [
     {
       "type": "minecolonies:building",
@@ -16,9 +16,10 @@
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:rabbit_foot",
-      "quantity": 1
+      "quantity": 4
     }
   ],
   "researchLevel": 3,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.nimble.subtitle"
 }

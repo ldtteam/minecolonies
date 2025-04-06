@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -108,22 +108,25 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
      */
     private void updateWorkOrders()
     {
-        workOrders.clear();
-        workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
-          .filter(wo -> wo.shouldShowIn(buildingView))
-          .collect(Collectors.toList()));
+        final Predicate<IWorkOrderView> shouldShow = wo -> wo.shouldShowIn(buildingView);
+        final Predicate<IWorkOrderView> isClaimedBySelf = wo -> wo.getClaimedBy().equals(buildingView.getPosition());
+        final Predicate<IWorkOrderView> isUnclaimed = wo -> wo.getClaimedBy().equals(BlockPos.ZERO);
+        final Predicate<IWorkOrderView> isInRange = wo -> wo.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel());
 
+        Predicate<IWorkOrderView> finalPredicate = shouldShow.and(isInRange);
         if (manualMode)
         {
-            workOrders.removeIf(order -> !order.getClaimedBy().equals(buildingView.getPosition()) && !order.getClaimedBy().equals(BlockPos.ZERO));
+            finalPredicate = finalPredicate.and(isClaimedBySelf).or(isUnclaimed);
         }
         else
         {
-            workOrders.removeIf(order -> !order.getClaimedBy().equals(buildingView.getPosition()));
+            finalPredicate = finalPredicate.and(isClaimedBySelf);
         }
 
-        workOrders.removeIf(order -> !order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()));
-
+        workOrders.clear();
+        workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
+                            .filter(finalPredicate)
+                            .toList());
         sortWorkOrders();
     }
 

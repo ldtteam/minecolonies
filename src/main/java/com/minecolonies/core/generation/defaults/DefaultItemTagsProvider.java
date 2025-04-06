@@ -312,6 +312,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FARMER));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
+          .addTag(ItemTags.LEAVES)
           .addTag(Tags.Items.STRING)
           .addTag(ItemTags.WOOL)
           .add(Items.RABBIT_HIDE)

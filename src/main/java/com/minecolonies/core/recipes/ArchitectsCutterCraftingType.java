@@ -8,14 +8,12 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,8 +63,12 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
                 output.getTag().put("textureData", new CompoundTag());
             }
 
-            recipes.add(new GenericRecipe(recipe.getId(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1));
+            recipes.add(GenericRecipe.builder()
+                    .withRecipeId(recipe.getId())
+                    .withOutput(output)
+                    .withInputs(inputs)
+                    .withGridSize(3)
+                    .build());
         }
 
         return recipes;

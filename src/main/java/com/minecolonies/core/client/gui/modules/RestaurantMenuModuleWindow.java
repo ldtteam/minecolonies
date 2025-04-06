@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.FOOD_QUALITY_TOOLTIP;
+import static com.minecolonies.api.util.constant.TranslationConstants.VANILLA_FOOD_QUALITY_TOOLTIP;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
@@ -181,6 +182,25 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
         else
         {
             findPaneByID("warning").hide();
+
+            boolean hasGoodMinecoloniesFood = false;
+            for (ItemStorage menuItem : menu)
+            {
+                if (menuItem.getItem() instanceof IMinecoloniesFoodItem minecoloniesFoodItem && minecoloniesFoodItem.getTier() >= 2)
+                {
+                    hasGoodMinecoloniesFood = true;
+                    break;
+                }
+            }
+
+            if (hasGoodMinecoloniesFood)
+            {
+                findPaneByID("poorwarning").hide();
+            }
+            else
+            {
+                findPaneByID("poorwarning").show();
+            }
         }
 
         menuList.enable();
@@ -230,18 +250,23 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
                         gradient.setGradientStart(205, 127, 50, 255);
                         gradient.setGradientEnd(205, 127, 50, 255);
                     }
+
+                    PaneBuilders.tooltipBuilder()
+                            .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
+                            .hoverPane(gradient)
+                            .build();
                 }
                 else
                 {
                     gradient.setGradientStart(0, 0, 0, 0);
                     gradient.setGradientEnd(0, 0, 0, 0);
+
+                    PaneBuilders.tooltipBuilder()
+                            .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
+                            .appendNL(Component.translatable(VANILLA_FOOD_QUALITY_TOOLTIP))
+                            .hoverPane(gradient)
+                            .build();
                 }
-
-                PaneBuilders.tooltipBuilder()
-                  .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
-                  .hoverPane(gradient)
-                  .build();
-
             }
         });
     }
@@ -343,18 +368,23 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
                         gradient.setGradientStart(205, 127, 50, 255);
                         gradient.setGradientEnd(205, 127, 50, 255);
                     }
+
+                    PaneBuilders.tooltipBuilder()
+                            .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
+                            .hoverPane(gradient)
+                            .build();
                 }
                 else
                 {
                     gradient.setGradientStart(0, 0, 0, 0);
                     gradient.setGradientEnd(0, 0, 0, 0);
+
+                    PaneBuilders.tooltipBuilder()
+                            .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
+                            .appendNL(Component.translatable(VANILLA_FOOD_QUALITY_TOOLTIP))
+                            .hoverPane(gradient)
+                            .build();
                 }
-
-                PaneBuilders.tooltipBuilder()
-                  .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
-                  .hoverPane(gradient)
-                  .build();
-
 
                 if (moduleView.hasReachedLimit())
                 {

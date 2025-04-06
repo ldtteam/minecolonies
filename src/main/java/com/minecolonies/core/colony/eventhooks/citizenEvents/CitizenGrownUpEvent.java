@@ -32,9 +32,9 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public CitizenGrownUpEvent(BlockPos eventPos, String citizenName)
+    public CitizenGrownUpEvent(final BlockPos eventPos, final String citizenName)
     {
-        super(eventPos, citizenName);
+        super(true, eventPos, citizenName);
     }
 
     @Override
@@ -73,5 +73,11 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
         final CitizenGrownUpEvent growUpEvent = new CitizenGrownUpEvent();
         growUpEvent.deserialize(buf);
         return growUpEvent;
+    }
+
+    @Override
+    public String getSummaryTranslationKey()
+    {
+        return "com.minecolonies.core.event.summary.citizen.grownup";
     }
 }

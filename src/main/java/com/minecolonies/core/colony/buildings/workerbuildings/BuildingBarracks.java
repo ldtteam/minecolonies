@@ -228,5 +228,11 @@ public class BuildingBarracks extends AbstractBuilding
         {
             return new WindowBarracksBuilding(this);
         }
+
+        @Override
+        public int getRange()
+        {
+            return getClaimRadius() * 16;
+        }
     }
 }

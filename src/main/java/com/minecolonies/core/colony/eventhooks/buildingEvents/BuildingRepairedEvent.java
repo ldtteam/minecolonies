@@ -33,9 +33,9 @@ public class BuildingRepairedEvent extends AbstractBuildingEvent
      * @param buildingName  the name of the building.
      * @param level         the level of the repaired building
      */
-    public BuildingRepairedEvent(BlockPos eventPos, String buildingName, int level)
+    public BuildingRepairedEvent(final BlockPos eventPos, final String buildingName, final int level)
     {
-        super(eventPos, buildingName, level);
+        super(false, eventPos, buildingName, level);
     }
 
     @Override
