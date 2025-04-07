@@ -191,7 +191,7 @@ public class WorkManager implements IWorkManager
         {
             for (final IWorkOrder workOrder : workOrders.values())
             {
-                if (workOrder.getClaimedBy() == citizen.getWorkBuilding().getPosition())
+                if (workOrder.getClaimedBy().equals(citizen.getWorkBuilding().getPosition()))
                 {
                     workOrder.setClaimedBy(null);
                 }
