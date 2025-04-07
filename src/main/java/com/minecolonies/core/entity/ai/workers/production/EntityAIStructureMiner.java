@@ -1015,7 +1015,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected boolean checkIfCanceled()
     {
-        if ((structurePlacer != null && !structurePlacer.getB().hasBluePrint()) || (job.getWorkOrder() != null && job.getWorkOrder().getStructurePath().contains("quarry")))
+        if ((job.getWorkOrder() == null && structurePlacer != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()) || (job.getWorkOrder() != null
+            && job.getWorkOrder().getStructurePath().contains("quarry")))
         {
             if (job.hasWorkOrder())
             {
