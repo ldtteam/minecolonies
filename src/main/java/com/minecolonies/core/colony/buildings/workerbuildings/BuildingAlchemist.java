@@ -16,7 +16,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -29,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Class of the alchemist building. Crafts potions and grows netherwart.
@@ -262,18 +261,18 @@ public class BuildingAlchemist extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // growing mistletoe
-            recipes.add(new GenericRecipe(null, new ItemStack(ModItems.mistletoe),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    1, Blocks.OAK_LEAVES,
-                    null, ModEquipmentTypes.shears.get(), Collections.emptyList(), -1));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(ModItems.mistletoe)
+                    .withIntermediate(Blocks.OAK_LEAVES)
+                    .withRequiredTool(ModEquipmentTypes.shears.get())
+                    .build());
 
             // growing netherwart
-            recipes.add(new GenericRecipe(null, new ItemStack(Items.NETHER_WART, 4),
-                    Collections.emptyList(),
-                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.NETHER_WART))),
-                    1, Blocks.SOUL_SAND,
-                    null, ModEquipmentTypes.none.get(), Collections.emptyList(), -1));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.NETHER_WART, 4)
+                    .withInputs(List.of(List.of(Items.NETHER_WART.getDefaultInstance())))
+                    .withIntermediate(Blocks.SOUL_SAND)
+                    .build());
 
             return recipes;
         }

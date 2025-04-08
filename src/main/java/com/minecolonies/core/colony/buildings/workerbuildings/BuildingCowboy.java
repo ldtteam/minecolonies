@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -27,7 +26,6 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -184,27 +182,25 @@ public class BuildingCowboy extends AbstractBuilding
 
             if (animal instanceof MushroomCow)
             {
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(Items.MUSHROOM_STEW),                                                 // output
-                        Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
-                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
+                recipes.add(GenericRecipe.builder()
+                        .withOutputs(List.of(Items.MUSHROOM_STEW.getDefaultInstance(),
+                                Items.SUSPICIOUS_STEW.getDefaultInstance()))
+                        .withInputs(List.of(List.of(Items.BOWL.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
             }
             else if (animal instanceof Cow)
             {
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(Items.MILK_BUCKET),                                                   // output
-                        Collections.emptyList(),                                                            // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
-                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(ModItems.large_milk_bottle),                                          // output
-                        Collections.emptyList(),                                                            // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(ModItems.large_empty_bottle))),  // input
-                        1, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(Items.MILK_BUCKET)
+                        .withInputs(List.of(List.of(Items.BUCKET.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(ModItems.large_milk_bottle)
+                        .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
             }
 
             return recipes;

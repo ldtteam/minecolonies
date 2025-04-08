@@ -1,6 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
@@ -10,6 +13,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
@@ -27,6 +32,72 @@ public final class ColonyUtils
         /*
          * Intentionally left empty.
          */
+    }
+
+    /**
+     * Queues a blueprint load to the right side
+     *
+     * @param world
+     * @param structurePack
+     * @param structurePath
+     * @param afterLoad
+     */
+    public static CompletableFuture<Blueprint> queueBlueprintLoad(final Level world, final String structurePack, final String structurePath, final Consumer<Blueprint> afterLoad)
+    {
+        return queueBlueprintLoad(world, structurePack, structurePath, afterLoad, e -> Log.getLogger().warn(e));
+    }
+
+    /**
+     * Queues a blueprint load to the right side
+     *
+     * @param world
+     * @param structurePack
+     * @param structurePath
+     * @param afterLoad
+     */
+    public static CompletableFuture<Blueprint> queueBlueprintLoad(
+        final Level world,
+        final String structurePack,
+        final String structurePath,
+        final Consumer<Blueprint> afterLoad,
+        final Consumer<String> errorHandler)
+    {
+        if (world.isClientSide)
+        {
+            final CompletableFuture<Blueprint> future = StructurePacks.getBlueprintFuture(structurePack, structurePath);
+            ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(future,
+                (blueprint ->
+                {
+                    if (blueprint == null)
+                    {
+                        Log.getLogger().warn("Couldn't find structure with name: " + structurePack + " in: " + structurePath + ". Aborting loading procedure");
+                    }
+                    else
+                    {
+                        afterLoad.accept(blueprint);
+                    }
+                })));
+
+            return future;
+        }
+        else
+        {
+            final CompletableFuture<Blueprint> future = StructurePacks.getBlueprintFuture(structurePack, structurePath);
+            ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(future, world,
+                (blueprint ->
+                {
+                    if (blueprint == null)
+                    {
+                        Log.getLogger().warn("Couldn't find structure with name: " + structurePack + " in: " + structurePath + ". Aborting loading procedure");
+                    }
+                    else
+                    {
+                        afterLoad.accept(blueprint);
+                    }
+                })));
+
+            return future;
+        }
     }
 
     /**

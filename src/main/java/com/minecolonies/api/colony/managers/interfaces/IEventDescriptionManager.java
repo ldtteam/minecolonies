@@ -2,7 +2,9 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,9 +21,13 @@ public interface IEventDescriptionManager extends INBTSerializable<CompoundTag>
     void addEventDescription(IColonyEventDescription colonyEventDescription);
 
     /**
-     * Returns the current list of colony events.
-     * 
-     * @return the list of colony events.
+     * Compute news to print for the player.
      */
-    List<IColonyEventDescription> getEventDescriptions();
+    void computeNews();
+
+    /**
+     * Serialize to bytebuf.
+     * @param buf the buf to serialize it to.
+     */
+    void serialize(@NotNull FriendlyByteBuf buf);
 }

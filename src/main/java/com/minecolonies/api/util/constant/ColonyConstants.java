@@ -3,6 +3,7 @@ package com.minecolonies.api.util.constant;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.Comparator;
 import java.util.Random;
@@ -94,6 +95,11 @@ public final class ColonyConstants
 
     public static final long ONE_HOUR_IN_MILLIS = 3600000;
     public static final int CHUNK_UNLOAD_DELAY = 20 * 60 * 10;
+
+    /**
+     * Empty scoreboard
+     */
+    public static final Scoreboard EMPTY_SCOREBOARD = new Scoreboard();
 
     /**
      * Private constructor to hide the implicit one.
