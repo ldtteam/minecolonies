@@ -6,14 +6,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
@@ -24,7 +21,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -137,9 +133,11 @@ public class BuildingDyer extends AbstractBuilding
                         final ItemStack result = DyedItemColor.applyDyes(item, List.of(dye));
                         if (!result.isEmpty())
                         {
-                            recipes.add(new GenericRecipe(null, result, List.of(),
-                                    List.of(List.of(item), dyeItems), 2, Blocks.AIR,
-                                    null, ModEquipmentTypes.none.get(), List.of(), 0));
+                            recipes.add(GenericRecipe.builder()
+                                    .withOutput(result)
+                                    .withInputs(List.of(List.of(item), dyeItems))
+                                    .withGridSize(2)
+                                    .build());
                         }
                     }
                 }
@@ -246,13 +244,10 @@ public class BuildingDyer extends AbstractBuilding
          */
         private IToken<?> getTokenForWool(ItemStorage wool)
         {
-            final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
-              1,
-              new ItemStack(Items.WHITE_WOOL, 1),
-              Blocks.AIR);
+            final IRecipeStorage tempRecipe = RecipeStorage.builder()
+                    .withInputs(ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE))))
+                    .withPrimaryOutput(new ItemStack(Items.WHITE_WOOL))
+                    .build();
 
             return IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
         }

@@ -313,6 +313,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
           .addTag(Tags.Items.STRINGS)
+          .addTag(ItemTags.LEAVES)
           .addTag(ItemTags.WOOL)
           .add(Items.RABBIT_HIDE)
           .add(Items.LEATHER)

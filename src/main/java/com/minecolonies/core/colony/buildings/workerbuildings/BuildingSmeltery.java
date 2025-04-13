@@ -3,16 +3,13 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
@@ -32,10 +29,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
 /**
@@ -124,21 +122,19 @@ public class BuildingSmeltery extends AbstractBuilding
                 if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
-                    recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
+                    recipes.add(createSmeltingRecipe(stack, output, Blocks.FURNACE));
                 }
             }
             return recipes;
         }
 
-        private static IGenericRecipe createSmeltingRecipe(final ItemStorage input, final ItemStack output, final Block intermediate)
+        private static IGenericRecipe createSmeltingRecipe(final ItemStack input, final ItemStack output, final Block intermediate)
         {
-            return GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    Collections.singletonList(input),
-                    1,
-                    output,
-                    intermediate));
+            return GenericRecipe.builder()
+                    .withInputs(List.of(List.of(input)))
+                    .withOutput(output)
+                    .withIntermediate(intermediate)
+                    .build();
         }
     }
 
@@ -184,17 +180,10 @@ public class BuildingSmeltery extends AbstractBuilding
             //noinspection ConstantConditions
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                recipes.add(new GenericRecipe(
-                        null,                    //recipe
-                        ItemStack.EMPTY,            //output
-                        Collections.emptyList(),    //additional outputs
-                        Collections.singletonList(Collections.singletonList(new ItemStack(input))), //inputs
-                        1,                   //grid
-                        Blocks.AIR,                 //intermediate
-                        getLootTable(input.value()),        //loottable
-                        ModEquipmentTypes.pickaxe.get(),
-                        Collections.emptyList(),    //restrictions
-                        -1));               //levelsort
+                recipes.add(GenericRecipe.builder()
+                        .withInputs(List.of(List.of(input.value().getDefaultInstance())))
+                        .withLootTable(getLootTable(input.value()))
+                        .build());
             }
 
             return recipes;
@@ -217,19 +206,11 @@ public class BuildingSmeltery extends AbstractBuilding
                     }
                 }
 
-                final RecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    Collections.singletonList(new ItemStorage(new ItemStack(input))),
-                    1,                  //gridsize
-                    ItemStack.EMPTY,    //Output
-                    null,               //Intermediate
-                    null,               //Source
-                    null,               //Type
-                    null,               //Altoutputs
-                    drops,              //SecOutputs
-                    getLootTable(input.value()) //Loot Table
-                    );
+                final RecipeStorage tempRecipe = RecipeStorage.builder()
+                        .withInputs(Collections.singletonList(new ItemStorage(new ItemStack(input.value()))))
+                        .withSecondaryOutputs(drops)
+                        .withLootTable(getLootTable(input.value()))
+                        .build();
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
                 this.addRecipeToList(token, false);
             }
