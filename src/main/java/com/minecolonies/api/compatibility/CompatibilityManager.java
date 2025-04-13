@@ -195,6 +195,17 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void serialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
+        buf.writeInt(CHECKED_NBT_KEYS.size());
+        for (final var entry : CHECKED_NBT_KEYS.entrySet())
+        {
+            buf.writeInt(BuiltInRegistries.ITEM.getId(entry.getKey()));
+            buf.writeInt(entry.getValue().size());
+            for (final DataComponentType<?> key : entry.getValue())
+            {
+                Utils.serializeCodecMess(DataComponentType.STREAM_CODEC, buf, key);
+            }
+        }
+
         serializeItemStorageList(buf, saplings);
         serializeBlockList(buf, oreBlocks);
         serializeItemStorageList(buf, smeltableOres);
@@ -207,17 +218,6 @@ public class CompatibilityManager implements ICompatibilityManager
         serializeRegistryIds(buf, BuiltInRegistries.ENTITY_TYPE, monsters);
 
         serializeCompostRecipes(buf, compostRecipes);
-
-        buf.writeInt(CHECKED_NBT_KEYS.size());
-        for (final var entry : CHECKED_NBT_KEYS.entrySet())
-        {
-            buf.writeInt(BuiltInRegistries.ITEM.getId(entry.getKey()));
-            buf.writeInt(entry.getValue().size());
-            for (final DataComponentType<?> key : entry.getValue())
-            {
-                Utils.serializeCodecMess(DataComponentType.STREAM_CODEC, buf, key);
-            }
-        }
     }
 
     @Override
@@ -225,6 +225,19 @@ public class CompatibilityManager implements ICompatibilityManager
     public void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level)
     {
         clear();
+
+        for (int i = 0, amount = buf.readInt(); i < amount; i++)
+        {
+            final Item item = BuiltInRegistries.ITEM.byId(buf.readInt());
+            Set<DataComponentType<?>> nbtKeys = new HashSet<>();
+            for (int j = 0, children = buf.readInt(); j < children; j++)
+            {
+                nbtKeys.add(Utils.deserializeCodecMess(DataComponentType.STREAM_CODEC, buf));
+            }
+
+            CHECKED_NBT_KEYS.put(item, nbtKeys);
+        }
+
         discoverAllItems(level);
 
         saplings.addAll(deserializeItemStorageList(buf));
@@ -252,18 +265,6 @@ public class CompatibilityManager implements ICompatibilityManager
         // the below are loaded from config files, which have been synched already by this point
         discoverRecruitCosts();
         discoverModCompat();
-
-        for (int i = 0, amount = buf.readInt(); i < amount; i++)
-        {
-            final Item item = BuiltInRegistries.ITEM.byId(buf.readInt());
-            Set<DataComponentType<?>> nbtKeys = new HashSet<>();
-            for (int j = 0, children = buf.readInt(); j < children; j++)
-            {
-                nbtKeys.add(Utils.deserializeCodecMess(DataComponentType.STREAM_CODEC, buf));
-            }
-
-            CHECKED_NBT_KEYS.put(item, nbtKeys);
-        }
     }
 
     private static void serializeItemStorageList(

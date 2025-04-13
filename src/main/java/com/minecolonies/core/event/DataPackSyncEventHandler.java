@@ -19,6 +19,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -109,15 +110,26 @@ public class DataPackSyncEventHandler
                     }
                 }
             }
-            else if (event.getPlayer().getGameProfile() != owner)
-            {
-                sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
-            }
 
             if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
                     (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
             {
                 CraftingTagAuditor.doRecipeAudit(server, recipeManager);
+            }
+        }
+
+        /**
+         * Sends compat manager data on login, has to be after datapack sync registries are loaded
+         *
+         * @param event
+         */
+        @SubscribeEvent(priority = EventPriority.LOWEST)
+        public static void sendOnLogin(final PlayerEvent.PlayerLoggedInEvent event)
+        {
+            if (!event.getEntity().level().isClientSide && event.getEntity() instanceof ServerPlayer)
+            {
+                final MinecraftServer server = event.getEntity().getServer();
+                sendPackets((ServerPlayer) event.getEntity(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
         }
 
