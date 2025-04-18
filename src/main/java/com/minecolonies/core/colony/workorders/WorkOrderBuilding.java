@@ -74,6 +74,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
           building.getBuildingLevel(),
           targetLevel);
         wo.setCustomName(building);
+        wo.setColony(building.getColony());
         return wo;
     }
 

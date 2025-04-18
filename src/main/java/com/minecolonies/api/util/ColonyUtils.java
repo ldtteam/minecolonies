@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
@@ -124,7 +125,7 @@ public final class ColonyUtils
             return new Tuple<>(pos, pos);
         }
 
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE), world);
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 
         final BlockPos pos1 = new BlockPos(zeroPos.getX(), zeroPos.getY(), zeroPos.getZ());
