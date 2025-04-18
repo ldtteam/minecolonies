@@ -2,7 +2,6 @@ package com.minecolonies.core.placementhandlers.main;
 
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -167,7 +166,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
-                PlacementHandlers.handleTileEntityPlacement(blueprint.getTileEntityData(blockPos, blueprint.getPrimaryBlockOffset()), world, blockPos);
                 ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
                   blockPos,
                   anchor,
