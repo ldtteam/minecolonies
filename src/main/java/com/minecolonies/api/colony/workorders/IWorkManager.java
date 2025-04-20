@@ -16,9 +16,9 @@ public interface IWorkManager
     /**
      * Removes a work order from the work manager.
      *
-     * @param order {@link IWorkOrder} to remove.
+     * @param order {@link IServerWorkOrder} to remove.
      */
-    void removeWorkOrder(@NotNull IWorkOrder order);
+    void removeWorkOrder(@NotNull IServerWorkOrder order);
 
     /**
      * Removes a work order from the work manager.
@@ -35,7 +35,8 @@ public interface IWorkManager
      * @param <W>  the type of work order to return.
      * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
-    @Nullable <W extends IWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type);
+    @Nullable
+    <W extends IServerWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type);
 
     /**
      * Get a work order of the specified id.
@@ -43,7 +44,7 @@ public interface IWorkManager
      * @param id the id of the work order.
      * @return the work order of the specified id, or null.
      */
-    IWorkOrder getWorkOrder(int id);
+    IServerWorkOrder getWorkOrder(int id);
 
     /**
      * Get an unclaimed work order of a specified type.
@@ -52,7 +53,8 @@ public interface IWorkManager
      * @param <W>  the type of work order to return.
      * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
-    @Nullable <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type);
+    @Nullable
+    <W extends IServerWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type);
 
     /**
      * Get all work orders of a specified type.
@@ -61,7 +63,7 @@ public interface IWorkManager
      * @param <W>  the type of work order to return.
      * @return a list of all work orders of the given type.
      */
-    <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull Class<W> type);
+    <W extends IServerWorkOrder> List<W> getWorkOrdersOfType(@NotNull Class<W> type);
 
     /**
      * Get all work orders.
@@ -69,7 +71,7 @@ public interface IWorkManager
      * @return a list of all work orders.
      */
     @NotNull
-    Map<Integer, IWorkOrder> getWorkOrders();
+    Map<Integer, IServerWorkOrder> getWorkOrders();
 
     /**
      * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
@@ -98,7 +100,7 @@ public interface IWorkManager
      * @param order          Order to add.
      * @param readingFromNbt if being read from NBT.
      */
-    void addWorkOrder(@NotNull IWorkOrder order, boolean readingFromNbt);
+    void addWorkOrder(@NotNull IServerWorkOrder order, boolean readingFromNbt);
 
     /**
      * Process updates on the Colony Tick. Currently, does periodic Work Order cleanup.
@@ -115,7 +117,7 @@ public interface IWorkManager
      * @param <W>     the type.
      * @return the list.
      */
-    <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder);
+    <W extends IServerWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder);
 
     /**
      * Get an ordered list by priority of the work orders.
@@ -124,7 +126,7 @@ public interface IWorkManager
      * @param predicate a predicate to check each item against
      * @return the list.
      */
-    List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder);
+    List<IServerWorkOrder> getOrderedList(@NotNull Predicate<IServerWorkOrder> predicate, final BlockPos builder);
 
     /**
      * Checks if changes has been made.

@@ -27,7 +27,6 @@ import com.minecolonies.core.network.messages.client.OpenPlantationFieldBuildWin
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

@@ -5,10 +5,9 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.items.component.WarehouseSnapshot;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.core.client.gui.WindowResourceList;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.WindowResourceList;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -36,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -111,7 +109,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
 
         long location = currentWorkOrder.get().getLocation().asLong();
-        return location + "__" + currentWorkOrder.get().getPackName();
+        return location + "__" + currentWorkOrder.get().getStructurePack();
     }
 
     /**
