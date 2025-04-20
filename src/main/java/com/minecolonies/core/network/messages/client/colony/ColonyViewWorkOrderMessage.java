@@ -3,7 +3,7 @@ package com.minecolonies.core.network.messages.client.colony;
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.workorders.view.AbstractWorkOrderView;
@@ -37,7 +37,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
      * @param colony        colony of the workOrder.
      * @param workOrderList list of workorders to send to the client
      */
-    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
+    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IServerWorkOrder> workOrderList)
     {
         super(TYPE);
         this.colonyId = colony.getID();
@@ -45,7 +45,7 @@ public class ColonyViewWorkOrderMessage extends AbstractClientPlayMessage
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
-        for (final IWorkOrder workOrder : workOrderList)
+        for (final IServerWorkOrder workOrder : workOrderList)
         {
             workOrder.serializeViewNetworkData(workOrderBuffer);
         }

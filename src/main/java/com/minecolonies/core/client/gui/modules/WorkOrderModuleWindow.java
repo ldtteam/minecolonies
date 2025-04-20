@@ -179,11 +179,11 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         if (view.getClaimedBy().equals(buildingView.getPosition()))
         {
             view.setClaimedBy(buildingView.getPosition());
-            new WorkOrderChangeMessage(buildingView, view.getId(), true, 0).sendToServer();
+            new WorkOrderChangeMessage(buildingView, view.getID(), true, 0).sendToServer();
         }
         else
         {
-            new BuilderSelectWorkOrderMessage(buildingView, view.getId()).sendToServer();
+            new BuilderSelectWorkOrderMessage(buildingView, view.getID()).sendToServer();
         }
     }
 }

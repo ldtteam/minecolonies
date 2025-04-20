@@ -5,17 +5,18 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,11 +39,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     private int workOrderId;
 
     /**
-     * The structure the job should build.
-     */
-    protected Blueprint blueprint;
-
-    /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
@@ -50,38 +46,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     public AbstractJobStructure(final ICitizenData entity)
     {
         super(entity);
-    }
-
-    /**
-     * Does this job has a loaded StructureProxy?
-     * <p>
-     * if a structure is not null there exists a location for it
-     *
-     * @return true if there is a loaded structure for this Job
-     */
-    public boolean hasBlueprint()
-    {
-        return blueprint != null;
-    }
-
-    /**
-     * Get the StructureProxy loaded by the Job.
-     *
-     * @return StructureProxy loaded by the Job
-     */
-    public Blueprint getBlueprint()
-    {
-        return blueprint;
-    }
-
-    /**
-     * Set the structure of the structure job.
-     *
-     * @param blueprint {@link Blueprint} object
-     */
-    public void setBlueprint(final Blueprint blueprint)
-    {
-        this.blueprint = blueprint;
     }
 
     /**
@@ -138,6 +102,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
+        final Blueprint blueprint = getWorkOrder().getBlueprint();
         if (blueprint != null)
         {
             final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
@@ -180,7 +145,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setBlueprint(null);
     }
 
     /**
@@ -188,9 +152,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return WorkOrderBuildDecoration for the Build
      */
-    public IWorkOrder getWorkOrder()
+    public IBuilderWorkOrder getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, IWorkOrder.class);
+        return getColony().getWorkManager().getWorkOrder(workOrderId, IBuilderWorkOrder.class);
     }
 
     /**

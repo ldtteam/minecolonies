@@ -16,8 +16,11 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.Constants.EMPTY_AABB;
 
 /**
  * Helper class to place and remove constructionTapes from the buildings.
@@ -37,10 +40,11 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world, final IColony colony)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(world.registryAccess()), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotationMirror());
-            placeConstructionTape(corners, colony);
-        })));
+        final AABB box = workOrder.getBoundingBox();
+        if (box != null && box != EMPTY_AABB)
+        {
+            placeConstructionTape(ColonyUtils.calculateCorners(box), colony);
+        }
     }
 
     /**
@@ -166,10 +170,11 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(workOrder.getBlueprintFuture(world.registryAccess()), world, (blueprint -> {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotationMirror());
-            removeConstructionTape(corners, world);
-        })));
+        final AABB box = workOrder.getBoundingBox();
+        if (box != null && box != EMPTY_AABB)
+        {
+            removeConstructionTape(ColonyUtils.calculateCorners(box), world);
+        }
     }
 
     /**

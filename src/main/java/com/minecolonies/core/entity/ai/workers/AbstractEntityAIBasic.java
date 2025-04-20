@@ -1149,12 +1149,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return afterDump();
         }
 
-        if (!walkToBuilding(building))
-        {
-            setDelay(WALK_DELAY);
-            return INVENTORY_FULL;
-        }
-
         if (InventoryUtils.isBuildingFull(building))
         {
             final ICitizenData citizenData = worker.getCitizenData();

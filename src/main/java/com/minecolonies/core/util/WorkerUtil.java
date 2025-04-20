@@ -177,7 +177,7 @@ public final class WorkerUtil
         int required = 0;
         for (final Tiers tier : Tiers.values())
         {
-            TagKey<Block> tag = tier.getIncorrectBlocksForDrops();
+            TagKey<Block> tag = tier.getTag();
             if (target.is(tag))
             {
                 required = tier.ordinal();

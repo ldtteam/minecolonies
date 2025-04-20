@@ -280,7 +280,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             showManualSuffix = true;
             for (final IWorkOrder workorder : building.getColony().getWorkManager().getWorkOrders().values())
             {
-                if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData()))
+                if (workorder.getID() != wo.getID() && building.getID().equals(workorder.getClaimedBy()))
                 {
                     showManualSuffix = false;
                 }

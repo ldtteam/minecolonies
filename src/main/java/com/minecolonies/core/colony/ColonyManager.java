@@ -434,7 +434,8 @@ public final class ColonyManager implements IColonyManager
      * @param pos coordinates.
      * @return returns the view belonging to the colony at x, y, z.
      */
-    private IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
+    @Override
+    public IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 
