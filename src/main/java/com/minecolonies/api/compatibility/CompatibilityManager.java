@@ -15,6 +15,7 @@ import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.core.util.FurnaceRecipes;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
@@ -145,6 +146,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * Mapping of itemstorage to creativemodetab.
      */
     private final Map<ItemStorage, CreativeModeTab> creativeModeTabMap = new HashMap<>();
+
+    /**
+     * Furnace recipes storage
+     */
+    private final FurnaceRecipes furnaceRecipes = new FurnaceRecipes();
 
     /**
      * Instantiates the compatibilityManager.
@@ -834,5 +840,11 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
+    }
+
+    @Override
+    public FurnaceRecipes getFurnaceRecipes()
+    {
+        return furnaceRecipes;
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.core.event;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
@@ -9,10 +10,8 @@ import com.minecolonies.core.compatibility.CraftingTagAuditor;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.datalistener.QuestJsonListener;
 import com.minecolonies.core.network.messages.client.UpdateClientWithCompatibilityMessage;
-import com.minecolonies.core.util.FurnaceRecipes;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
@@ -58,7 +57,7 @@ public class DataPackSyncEventHandler
         private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
             Log.getLogger().warn("Starting Compat Discovery");
-            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager(), server.overworld());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getFurnaceRecipes().loadRecipes(server.getRecipeManager(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
             CustomRecipeManager.getInstance().buildLootData(server.overworld());
@@ -169,16 +168,7 @@ public class DataPackSyncEventHandler
         @SubscribeEvent
         public static void onRecipesLoaded(@NotNull final RecipesUpdatedEvent event)
         {
-            final IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
-            final GameProfile owner = server == null ? null : server.getSingleplayerProfile();
-
-            if (owner != null && owner == Minecraft.getInstance().player.getGameProfile())
-            {
-                // don't need to update on single player, this already happened "server-side".
-                return;
-            }
-
-            FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager(), Minecraft.getInstance().level);
+            IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().loadRecipes(event.getRecipeManager(), Minecraft.getInstance().level);
         }
     }
 }

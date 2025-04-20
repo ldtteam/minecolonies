@@ -20,11 +20,6 @@ import java.util.Map;
 public class FurnaceRecipes implements IFurnaceRecipes
 {
     /**
-     * Instance of the furnace recipes.
-     */
-    private static FurnaceRecipes instance;
-
-    /**
      * Furnace recipes.
      */
     private Map<ItemStorage, RecipeStorage> recipes = new HashMap<>();
@@ -83,19 +78,5 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public RecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage)
     {
         return reverseRecipes.get(storage);
-    }
-
-    /**
-     * Get the instance of the class.
-     *
-     * @return the instance.
-     */
-    public static FurnaceRecipes getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new FurnaceRecipes();
-        }
-        return instance;
     }
 }

@@ -13,7 +13,6 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
-import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -121,7 +120,7 @@ public class BuildingSmeltery extends AbstractBuilding
             {
                 if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
                 {
-                    final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
+                    final ItemStack output = IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().getSmeltingResult(stack);
                     recipes.add(createSmeltingRecipe(stack, output, Blocks.FURNACE));
                 }
             }

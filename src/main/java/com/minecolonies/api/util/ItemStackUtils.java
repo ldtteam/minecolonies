@@ -16,7 +16,6 @@ import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.util.AdvancementUtils;
-import com.minecolonies.core.util.FurnaceRecipes;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.resources.language.I18n;
@@ -142,12 +141,14 @@ public final class ItemStackUtils
     /**
      * Predicate describing things which work in the furnace.
      */
-    public static Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.getInstance().getSmeltingResult(itemStack));
+    public static Predicate<ItemStack> IS_SMELTABLE =
+        itemStack -> !ItemStackUtils.isEmpty(IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
      */
-    public static Predicate<ItemStack> ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack));
+    public static Predicate<ItemStack> ISCOOKABLE =
+        itemStack -> ItemStackUtils.ISFOOD.test(IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().getSmeltingResult(itemStack));
 
     /**
      * Predicate to check for compost items.
