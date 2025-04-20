@@ -37,11 +37,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     private int workOrderId;
 
     /**
-     * The structure the job should build.
-     */
-    protected Blueprint blueprint;
-
-    /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
@@ -105,6 +100,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
+        final Blueprint blueprint = getWorkOrder().getBlueprint();
         if (blueprint != null)
         {
             final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();

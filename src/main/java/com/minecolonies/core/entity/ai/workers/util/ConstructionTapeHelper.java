@@ -19,8 +19,11 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.Constants.EMPTY_AABB;
 
 /**
  * Helper class to place and remove constructionTapes from the buildings.
@@ -43,13 +46,11 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world, final IColony colony)
     {
-        workOrder.loadBlueprint(world, (blueprint -> {
-            if (blueprint != null)
-            {
-                final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
-                placeConstructionTape(corners, colony);
-            }
-        }));
+        final AABB box = workOrder.getBoundingBox();
+        if (box != null && box != EMPTY_AABB)
+        {
+            placeConstructionTape(ColonyUtils.calculateCorners(box), colony);
+        }
     }
 
     /**
@@ -175,13 +176,11 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        workOrder.loadBlueprint(world, (blueprint -> {
-            if (blueprint != null)
-            {
-                final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
-                removeConstructionTape(corners, world);
-            }
-        }));
+        final AABB box = workOrder.getBoundingBox();
+        if (box != null && box != EMPTY_AABB)
+        {
+            removeConstructionTape(ColonyUtils.calculateCorners(box), world);
+        }
     }
 
     /**
