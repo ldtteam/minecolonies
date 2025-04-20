@@ -521,6 +521,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         colony.getWorkManager().addWorkOrder(workOrder, false);
+        workOrder.loadBlueprint(colony.getWorld(), b -> {});
 
         if (workOrder.getID() != 0)
         {
