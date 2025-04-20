@@ -13,6 +13,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -240,7 +241,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               blueprintFuture.get(),
               new PlacementSettings(),
               true);
-            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
+            structure.getBluePrint().setRotationMirror(RotationMirror.of(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE), Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;

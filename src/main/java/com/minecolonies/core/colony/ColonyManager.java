@@ -2,7 +2,10 @@ package com.minecolonies.core.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -400,7 +403,8 @@ public final class ColonyManager implements IColonyManager
      * @param pos coordinates.
      * @return returns the view belonging to the colony at x, y, z.
      */
-    private IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
+    @Override
+    public IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 

@@ -108,7 +108,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @Override
     protected List<Component> generateInfoBlocks(@NotNull IGenericRecipe recipe)
     {
-        return recipe.getRestrictions();
+        return recipe.getRestrictions().get();
     }
 
     @Override

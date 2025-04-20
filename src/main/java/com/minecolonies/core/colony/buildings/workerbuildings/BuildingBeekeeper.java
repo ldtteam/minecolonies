@@ -27,7 +27,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -263,14 +262,17 @@ public class BuildingBeekeeper extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
 
-            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
-                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal.getType(), Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.HONEYCOMB)
+                    .withRequiredTool(ModEquipmentTypes.shears.get())
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
-            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
-                    Collections.emptyList(), Collections.emptyList(),
-                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
-                    0, Blocks.AIR, null, ModEquipmentTypes.none.get(), animal.getType(), Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.HONEY_BOTTLE)
+                    .withInputs(List.of(List.of(Items.GLASS_BOTTLE.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
             return recipes;
         }

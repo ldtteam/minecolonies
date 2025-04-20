@@ -847,6 +847,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!corner)
         {
             MNode costFrom = node;
+
+            dY = nextY - node.y;
             // Base cost calc on parent if we're expanding from a corner node
             if (node.isCornerNode() && node.parent != null)
             {

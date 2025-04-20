@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.jobs.JobBuilder;
@@ -80,13 +79,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     public boolean canBuild(@NotNull final ICitizenData citizen)
     {
-        return true;
-    }
-
-    @Override
-    public boolean canBeMadeBy(final IJob<?> job)
-    {
-        return job instanceof JobBuilder;
+        return citizen.getJob() instanceof JobBuilder;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.events.raid.pirateEvent;
 
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -74,7 +75,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
           "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
+            blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE), colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
             {

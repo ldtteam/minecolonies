@@ -461,7 +461,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 citizenImage.setSize(4, 4);
                 citizenImage.setID("citizen: " + data.getId());
                 registerButton(citizenImage.getID(), button -> {
-                    HighlightManager.addHighlight("mapsearchtracking", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+                    HighlightManager.addHighlight("mapsearchtracking", "", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
                     SoundUtils.playSuccessSound(mc.player, mc.player.blockPosition());
                 });
 

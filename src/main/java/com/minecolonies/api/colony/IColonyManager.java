@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -169,6 +168,15 @@ public interface IColonyManager
     IColony getIColony(@NotNull Level w, @NotNull BlockPos pos);
 
     /**
+     * Gets the colony view aat the given position
+     *
+     * @param w
+     * @param pos
+     * @return IColonyView
+     */
+    IColonyView getColonyView(@NotNull Level w, @NotNull BlockPos pos);
+
+    /**
      * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself. {@link #getClosestColony(Level, BlockPos)}
      *
      * @param w   World.
@@ -185,6 +193,7 @@ public interface IColonyManager
      * @param pos Block Position.
      * @return View of the closest colony.
      */
+    // TODO: Check usages, some of the probably want to avoid getting a distant colony and use getColonyView at pos instead
     @Nullable
     IColonyView getClosestColonyView(@Nullable Level w, @Nullable BlockPos pos);
 

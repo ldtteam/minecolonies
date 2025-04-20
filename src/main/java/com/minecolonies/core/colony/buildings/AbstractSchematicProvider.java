@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
@@ -376,7 +377,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 blueprint = blueprintFuture.get();
                 if (blueprint != null)
                 {
-                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+                    blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE),
+                        colony.getWorld());
                     final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
                     if (info.getTileEntityData() != null)
                     {
