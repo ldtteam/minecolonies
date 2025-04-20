@@ -70,7 +70,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         lastEatenFoods.add(item);
         citizenData.markDirty(TICKS_SECOND);
         dirty = true;
-        if (lastEatenFoods.size() >= 10)
+        if (lastEatenFoods.size() >= FOOD_QUEUE_SIZE)
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
@@ -115,7 +115,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
                 }
                 uniqueFoods.add(foodItem);
             }
-            foodStatCache = new CitizenFoodStats(qualityFoodCounter, Math.max(1, uniqueFoods.size()));
+            foodStatCache = new CitizenFoodStats(Math.max(1, uniqueFoods.size()), qualityFoodCounter);
         }
         return foodStatCache;
     }
@@ -154,7 +154,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public double getDiseaseModifier(final double baseModifier)
     {
-        if (lastEatenFoods.size() < 10 || baseModifier == 0)
+        if (lastEatenFoods.size() < FOOD_QUEUE_SIZE || baseModifier == 0)
         {
             return baseModifier;
         }

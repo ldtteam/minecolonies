@@ -574,7 +574,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public AABB getBoundingBox()
     {
-        if (box == Constants.EMPTY_AABB && colony.getWorld() != null)
+        if (box == Constants.EMPTY_AABB && colony != null && colony.getWorld() != null)
         {
             loadBlueprint(colony.getWorld(), b -> clearBlueprint());
         }
