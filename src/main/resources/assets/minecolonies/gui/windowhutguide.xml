@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        size="960 540" type="FULLSCREEN_VANILLA"
+        size="960 540" type="FULLSCREEN_VANILLA" lightbox="true"
         >
 
     <image source="minecolonies:textures/gui/guide/background.png" size="960 540" id="guide1"/>
