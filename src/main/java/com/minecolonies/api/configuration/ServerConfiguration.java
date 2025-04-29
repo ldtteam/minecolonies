@@ -54,6 +54,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseModifyCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
@@ -154,6 +155,7 @@ public class ServerConfiguration extends AbstractConfiguration
         canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", false);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", false);
+        canPlayerUseModifyCitizensCommand = defineBoolean(builder, "canplayerusemodifycitizenscommand", false);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", false);
         canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
