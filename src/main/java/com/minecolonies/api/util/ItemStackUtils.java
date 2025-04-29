@@ -919,10 +919,12 @@ public final class ItemStackUtils
 
         return Component.translatable("%sx %s", ingredient.count(), tag.map(t ->
         {
-            final String key = "com.minecolonies.coremod.research.tags." + t.location();
-            return (Component) (I18n.exists(key)
-                    ? Component.translatable(key)
-                    : Component.translatable("com.minecolonies.coremod.research.tags.other", t.location().toString()));
+            final String standardKey = Tags.getTagTranslationKey(t);
+            final String localKey = "com.minecolonies.coremod.research.tags." + t.location();
+            return I18n.exists(localKey) && !I18n.exists(standardKey)
+                    ? (Component) Component.translatable(localKey)
+                    : Component.translatable("com.minecolonies.coremod.research.tags.other",
+                            Component.translatableWithFallback(Tags.getTagTranslationKey(t), t.location().toString()));
         }).orElseGet(() ->
         {
             if (items.length == 1)
