@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
@@ -25,9 +26,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +72,7 @@ public class CraftingTagAuditor
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
         createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
         createFile("food audit", server, "food_audit.csv", writer -> doFoodAudit(writer, server));
+        createFile("compost audit", server, "compost_audit.csv", writer -> doCompostAudit(writer, server));
     }
 
     private static boolean createFile(@NotNull final String description,
@@ -90,7 +94,7 @@ public class CraftingTagAuditor
             Log.getLogger().info("Completed " + description + "; written to " + outputPath);
             return true;
         }
-        catch (final Exception ex)
+        catch (final Throwable ex)
         {
             Log.getLogger().error("Failed to write " + description + " to " + outputPath, ex);
             return false;
@@ -430,6 +434,38 @@ public class CraftingTagAuditor
             writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
             writer.write(',');
             writer.write(Double.toString(FULL_SATURATION / FoodUtils.getFoodValue(item, properties, 0)));
+            writer.newLine();
+        }
+    }
+
+    private static void doCompostAudit(@NotNull final BufferedWriter writer,
+                                       @NotNull final MinecraftServer server) throws IOException
+    {
+        writeItemHeaders(writer);
+        writer.write(",vanilla,mcol");
+        writer.newLine();
+
+        final Map<Item, CompostRecipe> compostRecipes = IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostRecipes();
+
+        for (final ItemStack item : getAllItems())
+        {
+            writeItemData(writer, item);
+            writer.write(",");
+
+            final float vanilla = ComposterBlock.COMPOSTABLES.getFloat(item.getItem());
+            if (vanilla > 0.0f)
+            {
+                writer.write(String.valueOf(vanilla));
+            }
+
+            writer.write(",");
+
+            final CompostRecipe compostRecipe = compostRecipes.get(item.getItem());
+            if (compostRecipe != null)
+            {
+                writer.write(String.valueOf(compostRecipe.getStrength()));
+            }
+
             writer.newLine();
         }
     }
