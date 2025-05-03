@@ -120,6 +120,9 @@
     "minecolonies:mintchoco_cheesecake": {
       "chance": 1.0
     },
+    "minecolonies:mistletoe": {
+      "chance": 0.5
+    },
     "minecolonies:muffin": {
       "chance": 1.0
     },

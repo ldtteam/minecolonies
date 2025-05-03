@@ -111,7 +111,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
           .add(Items.SHORT_GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN, Items.HAY_BLOCK)
-          .add(Items.BIG_DRIPLEAF, Items.SPORE_BLOSSOM, Items.GLOW_LICHEN)
+          .add(Items.BIG_DRIPLEAF, Items.SPORE_BLOSSOM, Items.GLOW_LICHEN, ModItems.mistletoe)
           .add(Items.KELP, Items.DRIED_KELP_BLOCK, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE, Items.TWISTING_VINES, Items.WEEPING_VINES)
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)

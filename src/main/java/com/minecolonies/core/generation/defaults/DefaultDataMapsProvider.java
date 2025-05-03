@@ -51,6 +51,8 @@ public class DefaultDataMapsProvider extends DataMapProvider
             registerCompostItemFromNutrition(builder, item, 6f);
         }
 
+        builder.add(ModItems.mistletoe.builtInRegistryHolder(), new Compostable(0.5f), false);
+
         for (final Block block : ModBlocks.getCrops())
         {
             builder.add(block.asItem().builtInRegistryHolder(), new Compostable(0.5f), false);
