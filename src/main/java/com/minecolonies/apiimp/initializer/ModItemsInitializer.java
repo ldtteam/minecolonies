@@ -478,6 +478,8 @@ public final class ModItemsInitializer
         {
             registerCompostItemFromNutrition(item, 6f);
         }
+
+        ComposterBlock.COMPOSTABLES.put(ModItems.mistletoe, 0.5f);
     }
 
     private static void registerCompostItemFromNutrition(final Item item, final float factor)
