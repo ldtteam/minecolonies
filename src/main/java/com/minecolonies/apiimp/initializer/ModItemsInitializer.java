@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,6 +48,8 @@ public final class ModItemsInitializer
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
         {
             ModItemsInitializer.init(event.getForgeRegistry());
+
+            registerCompostItems();
         }
     }
 
@@ -456,5 +460,36 @@ public final class ModItemsInitializer
                 Color.getByName("blue"),
                 Color.getByName("yellow"),
                 (new Item.Properties())));
+    }
+
+    private static void registerCompostItems()
+    {
+        // these items aren't registered in "getAllFoods"
+        registerCompostItemFromNutrition(ModItems.milkyBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.sugaryBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.goldenBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.chorusBread.asItem(), 6f);
+
+        for (final Item item : ModItems.getAllIngredients())
+        {
+            registerCompostItemFromNutrition(item, 10f);
+        }
+        for (final Item item : ModItems.getAllFoods())
+        {
+            registerCompostItemFromNutrition(item, 6f);
+        }
+    }
+
+    private static void registerCompostItemFromNutrition(final Item item, final float factor)
+    {
+        final FoodProperties food = item.getFoodProperties(new ItemStack(item), null);
+        if (food != null)
+        {
+            final float strength = Math.min(1.0f, food.getNutrition() / factor);
+            if (strength > 0)
+            {
+                ComposterBlock.COMPOSTABLES.put(item, strength);
+            }
+        }
     }
 }

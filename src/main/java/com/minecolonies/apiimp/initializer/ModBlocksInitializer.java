@@ -13,6 +13,7 @@ import com.minecolonies.core.blocks.schematic.BlockWaypoint;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -153,6 +154,8 @@ public final class ModBlocksInitializer
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
         {
             ModBlocksInitializer.registerBlockItem(event.getForgeRegistry());
+
+            registerCompostItems();
         }
     }
 
@@ -246,5 +249,15 @@ public final class ModBlocksInitializer
         ModBlocks.blockSimpleQuarry.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockMediumQuarry.registerBlockItem(registry, new Item.Properties());
         //ModBlocks.blockLargeQuarry.registerBlockItem(registry, new Item.Properties());
+    }
+
+    private static void registerCompostItems()
+    {
+        for (final Block block : ModBlocks.getCrops())
+        {
+            ComposterBlock.COMPOSTABLES.put(block.asItem(), 0.5f);
+        }
+
+        ComposterBlock.COMPOSTABLES.put(ModBlocks.blockCompostedDirt.asItem(), 1f);
     }
 }
