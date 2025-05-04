@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -118,10 +119,11 @@ public interface IWorkOrder
     boolean isClaimed();
 
     /**
-     * Get the ID of the Citizen that the Work Order is claimed by.
+     * Get the position of the Citizen that the Work Order is claimed by.
      *
-     * @return ID of citizen the Work Order has been claimed by, or null
+     * @return ID of citizen the Work Order has been claimed by, BLockpos.ZERO
      */
+    @NotNull
     BlockPos getClaimedBy();
 
     /**

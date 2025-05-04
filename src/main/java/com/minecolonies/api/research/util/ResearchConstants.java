@@ -156,6 +156,7 @@ public final class ResearchConstants
     public static final ResourceLocation PLANTATION_NETHER = new ResourceLocation(Constants.MOD_ID, "effects/plantationnether");
     public static final ResourceLocation BEEKEEP_2         = new ResourceLocation(Constants.MOD_ID, "effects/beekeep2unlock");
     public static final ResourceLocation PLATE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock");
+    public static final ResourceLocation BUILDERS_ASSISTANT_HAMMER = new ResourceLocation(Constants.MOD_ID, "effects/assistanthammerunlock");
     public static final ResourceLocation RAILS             = new ResourceLocation(Constants.MOD_ID, "effects/railsunlock");
     public static final ResourceLocation VINES             = new ResourceLocation(Constants.MOD_ID, "effects/vinesunlock");
     public static final ResourceLocation RETREAT           = new ResourceLocation(Constants.MOD_ID, "effects/retreatunlock");

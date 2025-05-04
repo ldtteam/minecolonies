@@ -6,6 +6,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.PackOutput;
@@ -178,6 +179,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(THE_DEPTHS).setTranslatedName("Crusher Learns Deepslate and Tuff Recipes"));
         effects.add(new ResearchEffect(MORE_SCROLLS).setTranslatedName("Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
         effects.add(new ResearchEffect(PLATE_ARMOR).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
+        effects.add(new ResearchEffect(BUILDERS_ASSISTANT_HAMMER).setTranslatedName("Blacksmith Learns Advanced Builder's Assistant Hammer Recipes"));
 
         //Sifter Mesh triggers
         effects.add(new ResearchEffect(SIFTER_STRING).setTranslatedName("Fletcher Learns How to Make String Meshes for the Sifter"));
@@ -1722,6 +1724,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(Items.ANVIL, 1)
                                        .addEffect(ModBuildings.blacksmith.get().getBuildingBlock(), 1)
                                        .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/assistanthammers"), TECH).setParentResearch(hittingIron)
+            .setTranslatedName("Professional Assistant")
+            .setIcon(ModItems.assistantHammer_Diamond)
+            .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 1)
+            .addItemCost(Items.IRON_BLOCK, 2)
+            .addEffect(ResearchConstants.BUILDERS_ASSISTANT_HAMMER, 1)
+            .addToList(r);
         final Research strong = new Research(new ResourceLocation(Constants.MOD_ID, "technology/strong"), TECH).setParentResearch(hittingIron)
                                   .setTranslatedName("Strong")
                                   .setIcon(Items.WOODEN_PICKAXE)

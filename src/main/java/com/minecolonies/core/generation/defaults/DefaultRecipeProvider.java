@@ -1,12 +1,10 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
 import com.minecolonies.core.generation.CompostRecipeBuilder;
-import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -17,21 +15,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 import static com.ldtteam.structurize.items.ModItems.shapeTool;
-import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -223,6 +217,16 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .define('T', buildTool.get())
 //                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
 //                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.assistantHammer_Gold)
+            .pattern("GGG")
+            .pattern("GBG")
+            .pattern(" S ")
+            .define('G', Tags.Items.INGOTS_GOLD)
+            .define('B', buildTool.get())
+            .define('S', Items.STICK)
+            .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutBuilder))
+            .save(consumer);
     }
 
     private static InventoryChangeTrigger.TriggerInstance hasAllOf(ItemLike... items)

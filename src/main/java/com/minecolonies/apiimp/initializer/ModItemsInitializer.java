@@ -61,6 +61,9 @@ public final class ModItemsInitializer
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
+        ModItems.assistantHammer_Gold = new ItemAssistantHammer("assistanthammer_gold", new Item.Properties().durability(200), 1);
+        ModItems.assistantHammer_Iron = new ItemAssistantHammer("assistanthammer_iron", new Item.Properties().durability(400), 2);
+        ModItems.assistantHammer_Diamond = new ItemAssistantHammer("assistanthammer_diamond", new Item.Properties().durability(1000), 3);
         ModItems.bannerRallyGuards = new ItemBannerRallyGuards(new Item.Properties());
         ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
@@ -247,6 +250,9 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "scan_analyzer"), ModItems.scanAnalyzer);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterguard"), ModItems.scepterGuard);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_gold"), ModItems.assistantHammer_Gold);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_iron"), ModItems.assistantHammer_Iron);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_diamond"), ModItems.assistantHammer_Diamond);
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);

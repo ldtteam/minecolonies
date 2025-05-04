@@ -254,7 +254,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     @Override
     public boolean isClaimed()
     {
-        return claimedBy != null;
+        return !BlockPos.ZERO.equals(claimedBy);
     }
 
     @Override
