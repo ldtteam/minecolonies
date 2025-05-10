@@ -175,8 +175,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-                  || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+        return (buckets.isEmpty()
+            || ((AbstractBuildingStructureBuilder) building).getProgress() == null
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
