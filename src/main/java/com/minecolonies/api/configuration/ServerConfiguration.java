@@ -3,12 +3,7 @@ package com.minecolonies.api.configuration;
 import com.ldtteam.common.config.AbstractConfiguration;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
-import net.neoforged.neoforge.common.ModConfigSpec.Builder;
-import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
-import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
-import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
-import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.neoforge.common.ModConfigSpec.*;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -60,6 +55,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final BooleanValue canPlayerUseHomeTPCommand;
     public final BooleanValue canPlayerUseShowColonyInfoCommand;
     public final BooleanValue canPlayerUseKillCitizensCommand;
+    public final BooleanValue canPlayerUseModifyCitizensCommand;
     public final BooleanValue canPlayerUseAddOfficerCommand;
     public final BooleanValue canPlayerUseDeleteColonyCommand;
     public final BooleanValue canPlayerUseResetCommand;
@@ -163,6 +159,7 @@ public class ServerConfiguration extends AbstractConfiguration
         canPlayerUseHomeTPCommand = defineBoolean("canplayerusehometpcommand", false);
         canPlayerUseShowColonyInfoCommand = defineBoolean("canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean("canplayerusekillcitizenscommand", false);
+        canPlayerUseModifyCitizensCommand = defineBoolean("canplayerusemodifycitizenscommand", false);
         canPlayerUseAddOfficerCommand = defineBoolean("canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean("canplayerusedeletecolonycommand", false);
         canPlayerUseResetCommand = defineBoolean("canplayeruseresetcommand", false);

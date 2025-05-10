@@ -3,7 +3,6 @@ package com.minecolonies.core.recipes;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.domumornamentum.component.ModDataComponents;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
@@ -11,7 +10,6 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,7 +18,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,8 +64,12 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
             MaterialTextureData.EMPTY.writeToItemStack(output);
 
-            recipes.add(new GenericRecipe(holder.id(), output, new ArrayList<>(),
-                    inputs, 3, Blocks.AIR, null, ModEquipmentTypes.none.get(), new ArrayList<>(), -1));
+            recipes.add(GenericRecipe.builder()
+                    .withRecipeId(holder.id())
+                    .withOutput(output)
+                    .withInputs(inputs)
+                    .withGridSize(3)
+                    .build());
         }
 
         return recipes;

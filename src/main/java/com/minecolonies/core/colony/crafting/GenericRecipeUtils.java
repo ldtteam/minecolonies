@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -63,8 +62,10 @@ public final class GenericRecipeUtils
     @NotNull
     public static IGenericRecipe create(@NotNull final CustomRecipe customRecipe, @NotNull final IRecipeStorage storage)
     {
-        final List<Component> restrictions = calculateRestrictions(customRecipe);
-        return Objects.requireNonNull(GenericRecipe.of(storage, restrictions, customRecipe.getMinBuildingLevel()));
+        return GenericRecipe.builder(storage)
+                .withRestrictions(calculateRestrictions(customRecipe))
+                .withLevelSort(customRecipe.getMinBuildingLevel())
+                .build();
     }
 
     /**
@@ -109,16 +110,7 @@ public final class GenericRecipeUtils
             return recipe;
         }
 
-        return new GenericRecipe(recipe.getRecipeId(),
-                recipe.getPrimaryOutput(),
-                recipe.getAdditionalOutputs(),
-                newInputs,
-                recipe.getGridSize(),
-                recipe.getIntermediate(),
-                recipe.getLootTable(),
-                recipe.getRequiredTool(),
-                recipe.getRestrictions(),
-                recipe.getLevelSort());
+        return GenericRecipe.builder(recipe).withInputs(newInputs).build();
     }
 
     private static <T> List<T> filterList(@NotNull final List<T> input,

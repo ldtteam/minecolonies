@@ -5,7 +5,6 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

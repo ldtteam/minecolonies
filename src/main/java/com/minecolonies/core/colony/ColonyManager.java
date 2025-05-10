@@ -84,6 +84,11 @@ public final class ColonyManager implements IColonyManager
     private final ICompatibilityManager compatibilityManager = new CompatibilityManager();
 
     /**
+     * Creates a new compatibilityManager.
+     */
+    private final ICompatibilityManager compatibilityManagerClient = new CompatibilityManager();
+
+    /**
      * Indicate if a schematic have just been downloaded. Client only
      */
     private boolean schematicDownloaded = false;
@@ -434,7 +439,8 @@ public final class ColonyManager implements IColonyManager
      * @param pos coordinates.
      * @return returns the view belonging to the colony at x, y, z.
      */
-    private IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
+    @Override
+    public IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 
@@ -836,7 +842,14 @@ public final class ColonyManager implements IColonyManager
     @Override
     public ICompatibilityManager getCompatibilityManager()
     {
-        return compatibilityManager;
+        if (Thread.currentThread().getName().toLowerCase().contains("server"))
+        {
+            return compatibilityManager;
+        }
+        else
+        {
+            return compatibilityManagerClient;
+        }
     }
 
     @Override

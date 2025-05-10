@@ -23,8 +23,8 @@ import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
+import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.eventbus.DefaultEventBus;
@@ -44,10 +44,9 @@ import com.minecolonies.core.colony.jobs.registry.JobDataManager;
 import com.minecolonies.core.entity.mobs.registry.MobAIRegistry;
 import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
-import com.minecolonies.core.util.FurnaceRecipes;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -201,7 +200,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public IFurnaceRecipes getFurnaceRecipes()
     {
-        return FurnaceRecipes.getInstance();
+        return IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes();
     }
 
     @Override

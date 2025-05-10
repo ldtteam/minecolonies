@@ -103,24 +103,6 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage getNewInstance(
-      @NotNull final IToken<?> token,
-      @NotNull final List<ItemStorage> input,
-      final int gridSize,
-      @NotNull final ItemStack primaryOutput,
-      final Block intermediate,
-      final ResourceLocation source,
-      final ResourceLocation type,
-      final List<ItemStack> altOutputs,
-      final List<ItemStack> secOutputs,
-      final ResourceKey<LootTable> lootTable,
-      @NotNull final EquipmentTypeEntry requiredTool)
-    {
-        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
-    }
-
-    @NotNull
-    @Override
     public CompoundTag serialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
     {
         final CompoundTag compound = new CompoundTag();
@@ -221,7 +203,19 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final ResourceKey<LootTable> lootTable = nbt.contains(LOOT_TAG) ? ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(nbt.getString(LOOT_TAG))) : null;
         final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().get(EquipmentTypeEntry.parseResourceLocation(nbt.getString(TOOL_TAG)));
 
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
+        return RecipeStorage.builder()
+                .withToken(token)
+                .withInputs(input)
+                .withGridSize(gridSize)
+                .withPrimaryOutput(primaryOutput)
+                .withIntermediate(intermediate)
+                .withRecipeId(source)
+                .withRecipeType(type)
+                .withAlternateOutputs(altOutputs)
+                .withSecondaryOutputs(secOutputs)
+                .withLootTable(lootTable)
+                .withRequiredTool(requiredTool)
+                .build();
     }
 
     @Override
@@ -310,7 +304,19 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final IToken<?> token = controller.deserialize(buffer);
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
+        return RecipeStorage.builder()
+                .withToken(token)
+                .withInputs(input)
+                .withGridSize(gridSize)
+                .withPrimaryOutput(primaryOutput)
+                .withIntermediate(intermediate)
+                .withRecipeId(source)
+                .withRecipeType(type)
+                .withAlternateOutputs(altOutputs)
+                .withSecondaryOutputs(secOutputs)
+                .withLootTable(lootTable)
+                .withRequiredTool(requiredTool)
+                .build();
     }
 
     @Override

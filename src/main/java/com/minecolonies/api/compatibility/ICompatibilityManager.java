@@ -3,6 +3,8 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -219,4 +221,11 @@ public interface ICompatibilityManager
      * @return the number or default.
      */
     int getCreativeTabKey(ItemStorage checkItem);
+
+    /**
+     * Gets the furnace recipe storage
+     *
+     * @return furnace recipes
+     */
+    FurnaceRecipes getFurnaceRecipes();
 }
