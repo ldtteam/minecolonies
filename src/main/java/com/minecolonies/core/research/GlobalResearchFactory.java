@@ -57,7 +57,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean instant,
         final boolean immutable)
     {
-        return new GlobalResearch(id, branch, parent, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
+        return new GlobalResearch(id, parent, branch, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
     }
 
     @NotNull
