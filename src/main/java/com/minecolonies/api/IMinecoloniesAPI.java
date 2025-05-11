@@ -25,7 +25,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchCosts;
 import com.minecolonies.api.research.ModResearchEffects;
 import com.minecolonies.api.research.ModResearchRequirements;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -167,21 +167,21 @@ public interface IMinecoloniesAPI
      *
      * @return the registry instance.
      */
-    IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry();
+    IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry();
 
     /**
      * Get the registry for research costs.
      *
      * @return the registry instance.
      */
-    IForgeRegistry<ResearchCostType> getResearchCostRegistry();
+    IForgeRegistry<ModResearchCosts.ResearchCostEntry> getResearchCostRegistry();
 
     /**
      * Get the registry for research effects.
      *
      * @return the registry instance.
      */
-    IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry();
+    IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry();
 
     /**
      * Get the registry for recipe types.

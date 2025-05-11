@@ -29,7 +29,7 @@ import com.minecolonies.api.eventbus.DefaultEventBus;
 import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchCosts;
 import com.minecolonies.api.research.ModResearchEffects;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.util.constant.Constants;
@@ -50,9 +50,9 @@ import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchCosts.LIST_ITEM_COST_ID;
+import static com.minecolonies.api.research.ModResearchEffects.GLOBAL_EFFECT_ID;
 import static com.minecolonies.api.research.ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
-import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
 /**
  * Server side implementation for the {@link IMinecoloniesAPI}.
@@ -121,9 +121,9 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private IForgeRegistry<JobEntry>                                           jobRegistry;
     private IForgeRegistry<GuardType>                                          guardTypeRegistry;
     private IForgeRegistry<InteractionResponseHandlerEntry>                    interactionHandlerRegistry;
-    private IForgeRegistry<ResearchRequirementEntry>                           researchRequirementRegistry;
-    private IForgeRegistry<ResearchCostType>                                   researchCostRegistry;
-    private IForgeRegistry<ResearchEffectEntry>                                researchEffectRegistry;
+    private IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry>   researchRequirementRegistry;
+    private IForgeRegistry<ModResearchCosts.ResearchCostEntry>                 researchCostRegistry;
+    private IForgeRegistry<ModResearchEffects.ResearchEffectEntry>             researchEffectRegistry;
     private IForgeRegistry<RecipeTypeEntry>                                    recipeTypeEntryRegistry;
     private IForgeRegistry<CraftingType>                                       craftingTypeRegistry;
     private IForgeRegistry<HappinessRegistry.HappinessFactorTypeEntry>         happinessFactorTypeRegistry;
@@ -191,19 +191,19 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
             .allowModification()
             .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> craftingTypeRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchRequirementEntry>().setName(REGISTRY_KEY_RESEARCH_REQUIREMENT_TYPES)
+        event.create(new RegistryBuilder<ModResearchRequirements.ResearchRequirementEntry>().setName(REGISTRY_KEY_RESEARCH_REQUIREMENT_TYPES)
             .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
             .disableSaving()
             .allowModification()
             .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchCostType>().setName(REGISTRY_KEY_RESEARCH_COST_TYPES)
+        event.create(new RegistryBuilder<ModResearchCosts.ResearchCostEntry>().setName(REGISTRY_KEY_RESEARCH_COST_TYPES)
             .setDefaultKey(LIST_ITEM_COST_ID)
             .disableSaving()
             .allowModification()
             .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchCostRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchEffectEntry>().setName(REGISTRY_KEY_RESEARCH_EFFECT_TYPES)
+        event.create(new RegistryBuilder<ModResearchEffects.ResearchEffectEntry>().setName(REGISTRY_KEY_RESEARCH_EFFECT_TYPES)
             .setDefaultKey(GLOBAL_EFFECT_ID)
             .disableSaving()
             .allowModification()
@@ -348,16 +348,16 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
+    public IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public IForgeRegistry<ModResearchCosts.ResearchCostEntry> getResearchCostRegistry()
     {
         return researchCostRegistry;
     }
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
+    public IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
     @Override
     public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
