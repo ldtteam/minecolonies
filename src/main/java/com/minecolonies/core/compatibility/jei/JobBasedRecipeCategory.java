@@ -187,10 +187,10 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                                @NotNull final EquipmentTypeEntry requiredTool,
                                final int x, final int y, final boolean withBackground)
     {
-        final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
-
         if (requiredTool != ModEquipmentTypes.none.get())
         {
+            final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
+
             if (withBackground)
             {
                 slot.setBackground(this.slot, -1, -1);
@@ -254,7 +254,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             if (block.tip == null) continue;
             if (block.bounds.contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(Component.literal(block.tip));
+                tooltips.add(block.tip);
             }
         }
 
@@ -271,20 +271,19 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         int y = CITIZEN_Y;
         for (final Component line : lines)
         {
-            final String text = line.getString();
-            final int width = (int) mc.font.getSplitter().stringWidth(text);
+            final int width = (int) mc.font.getSplitter().stringWidth(line.getString());
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
-            String tip = null;
+            Component tip = null;
             if (line.getContents() instanceof TranslatableContents contents)
             {
                 final String key = contents.getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (Component.translatable(key, contents.getArgs())).getString();
+                    tip = Component.translatable(key, contents.getArgs());
                 }
             }
-            result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
+            result.add(new InfoBlock(line, tip, new Rect2i(x, y, width, height)));
             y += height + 2;
         }
         return result;
@@ -293,18 +292,8 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     protected abstract List<Component> generateInfoBlocks(@NotNull T recipe);
 
-    private static class InfoBlock
+    private record InfoBlock(@NotNull Component text, @Nullable Component tip, @NotNull Rect2i bounds)
     {
-        public InfoBlock(final String text, final String tip, final Rect2i bounds)
-        {
-            this.text = text;
-            this.tip = tip;
-            this.bounds = bounds;
-        }
-
-        public final String text;
-        public final String tip;
-        public final Rect2i bounds;
     }
 
     @Nullable

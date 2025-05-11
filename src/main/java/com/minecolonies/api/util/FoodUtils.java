@@ -90,7 +90,7 @@ public class FoodUtils
         }
 
         final double saturationNerf = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 1.0 : 0.25;
-        return itemFood.getNutrition() * saturationNerf * (1.0 + researchBonus) / 2.0;
+        return itemFood.getNutrition() * saturationNerf / 1.2 * (1.0 + researchBonus);
     }
 
     /**
@@ -156,7 +156,7 @@ public class FoodUtils
         }
 
         // If we're not at the restaurant and are the brink of complaining about food, go to the restaurant instead of eating the food you got in the inventory.
-        if (menu == null &&
+        if (restaurantExists && menu == null &&
               ((bestScore >= 0 && foodStats.diversity() <= diversityRequirement)
               || (!(bestItem instanceof IMinecoloniesFoodItem) && foodStats.quality() <= qualityRequirement)))
         {

@@ -3,10 +3,10 @@ package com.minecolonies.core.colony;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -932,9 +932,10 @@ public final class ColonyView implements IColonyView
             @Nullable final IWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             if (workOrder != null)
             {
-                workOrders.put(workOrder.getId(), workOrder);
+                workOrder.setColony(this);
+                workOrders.put(workOrder.getID(), workOrder);
 
-                final BlockPos oldClaimedBy = workOrderClaimCache.put(workOrder.getId(), workOrder.getClaimedBy());
+                final BlockPos oldClaimedBy = workOrderClaimCache.put(workOrder.getID(), workOrder.getClaimedBy());
                 claimsChanged |= !Objects.equals(workOrder.getClaimedBy(), oldClaimedBy);
             }
         }

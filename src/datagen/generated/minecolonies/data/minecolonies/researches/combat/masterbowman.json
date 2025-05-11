@@ -1,18 +1,19 @@
 {
   "branch": "minecolonies:combat",
-  "effects": [
-    {
-      "minecolonies:effects/doublearrowsmultiplier": 4
-    }
-  ],
-  "icon": "minecraft:blaze_rod",
-  "parentResearch": "minecolonies:combat/rapidshot",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:bow",
       "quantity": 27
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/doublearrowsmultiplier",
+      "level": 4
+    }
+  ],
+  "icon": "minecraft:blaze_rod",
+  "parentResearch": "minecolonies:combat/rapidshot",
   "researchLevel": 6
 }

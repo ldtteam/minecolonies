@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:lava_bucket",
+      "quantity": 4
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutsmeltery": 1
+      "id": "minecolonies:effects/blockhutsmeltery",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutsmeltery",
@@ -11,11 +19,6 @@
       "type": "minecolonies:building",
       "building": "miner",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:lava_bucket",
-      "quantity": 4
     }
   ],
   "researchLevel": 1,

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -128,44 +129,216 @@ public class RecipeStorage implements IRecipeStorage
                 .optional(LootContextParams.DIRECT_KILLER_ENTITY)
                 .build();
 
+    public static class Builder
+    {
+        private ResourceLocation recipeType = null;
+        private ResourceLocation recipeSource = null;
+        @NotNull private List<ItemStorage> input = List.of();
+        @NotNull private ItemStack primaryOutput = ItemStack.EMPTY;
+        @NotNull private List<ItemStack> alternateOutputs = List.of();
+        @NotNull private List<ItemStack> secondaryOutputs = List.of();
+        private Block intermediate = Blocks.AIR;
+        private int gridSize = 1;
+        private IToken<?> token = null;
+        private ResourceLocation lootTable = null;
+        private EquipmentTypeEntry requiredTool = ModEquipmentTypes.none.get();
+
+        /**
+         * Default constructor.
+         */
+        public Builder()
+        {
+        }
+
+        /**
+         * Construct from existing recipe.
+         * @param recipe a recipe to use as a base.
+         */
+        public Builder(@NotNull final IRecipeStorage recipe)
+        {
+            this.recipeType = recipe.getRecipeType().getId();
+            this.recipeSource = recipe.getRecipeSource();
+            this.input = recipe.getInput();
+            this.primaryOutput = recipe.getPrimaryOutput();
+            this.alternateOutputs = recipe.getAlternateOutputs();
+            this.secondaryOutputs = recipe.getSecondaryOutputs();
+            this.intermediate = recipe.getIntermediate();
+            this.gridSize = recipe.getGridSize();
+            this.token = null;
+            this.lootTable = recipe.getLootTable();
+            this.requiredTool = recipe.getRequiredTool();
+        }
+
+        /**
+         * Set the recipe type.
+         * @param type What type of recipe this is. (ie: minecolonies:classic)
+         * @return this
+         */
+        public Builder withRecipeType(@Nullable final ResourceLocation type)
+        {
+            this.recipeType = type;
+            return this;
+        }
+
+        /**
+         * Set the recipe id.
+         * @param id the source of this recipe (ie: minecolonies:crafter/recipename, "player name", "improvement", etc)
+         * @return this
+         */
+        public Builder withRecipeId(@Nullable final ResourceLocation id)
+        {
+            this.recipeSource = id;
+            return this;
+        }
+
+        /**
+         * Set the recipe inputs.
+         * @param inputs the list of input items (required for the recipe).
+         * @return this
+         */
+        public Builder withInputs(@NotNull final List<ItemStorage> inputs)
+        {
+            this.input = inputs;
+            return this;
+        }
+
+        /**
+         * Set the recipe primary output.
+         * @param output the primary output of the recipe.
+         * @return this
+         */
+        public Builder withPrimaryOutput(@NotNull final ItemStack output)
+        {
+            this.primaryOutput = output;
+            return this;
+        }
+
+        /**
+         * Set alternative outputs (one-of with the primary output).
+         * @param outputs List of alternate outputs for a multi-output recipe
+         * @return this
+         */
+        public Builder withAlternateOutputs(@NotNull final List<ItemStack> outputs)
+        {
+            this.alternateOutputs = outputs;
+            return this;
+        }
+
+        /**
+         * Set the secondary outputs (in addition to the primary output).
+         * @param outputs List of secondary outputs for a recipe. this includes containers, etc.
+         * @return this
+         */
+        public Builder withSecondaryOutputs(@NotNull final List<ItemStack> outputs)
+        {
+            this.secondaryOutputs = outputs;
+            return this;
+        }
+
+        /**
+         * Set the intermediate crafting block.
+         * @param intermediate the intermediate to use (e.g furnace).
+         * @return this
+         */
+        public Builder withIntermediate(@NotNull final Block intermediate)
+        {
+            this.intermediate = intermediate;
+            return this;
+        }
+
+        /**
+         * Set the crafting grid size (e.g. 3 for 3x3 grid).
+         * @param gridSize the required grid size to make it.
+         * @return this
+         */
+        public Builder withGridSize(final int gridSize)
+        {
+            this.gridSize = gridSize;
+            return this;
+        }
+
+        /**
+         * Set the token.
+         * @param token the token of the storage.
+         */
+        public Builder withToken(@Nullable final IToken<?> token)
+        {
+            this.token = token;
+            return this;
+        }
+
+        /**
+         * Set the loot table.
+         * @param lootTable Loot table to use for possible alternate outputs
+         * @return this
+         */
+        public Builder withLootTable(@Nullable final ResourceLocation lootTable)
+        {
+            this.lootTable = lootTable;
+            return this;
+        }
+
+        /**
+         * Set the required crafting tool
+         * @param tool the tool needed to craft (in addition to anything in the recipe itself)
+         * @return this
+         */
+        public Builder withRequiredTool(@NotNull final EquipmentTypeEntry tool)
+        {
+            this.requiredTool = tool;
+            return this;
+        }
+
+        /**
+         * Build the recipe.
+         * @return the recipe.
+         */
+        public RecipeStorage build()
+        {
+            return new RecipeStorage(this);
+        }
+    }
+
+    /**
+     * Start building a RecipeStorage.
+     * @return the builder.
+     */
+    public static Builder builder()
+    {
+        return new Builder();
+    }
+
+    /**
+     * Start building a RecipeStorage.
+     * @param recipe a recipe to use as a base.
+     * @return the builder.
+     */
+    public static Builder builder(@NotNull final IRecipeStorage recipe)
+    {
+        return new Builder(recipe);
+    }
+
     /**
      * Create an instance of the recipe storage.
-     *
-     * @param token         the token of the storage.
-     * @param input         the list of input items (required for the recipe).
-     * @param gridSize      the required grid size to make it.
-     * @param primaryOutput the primary output of the recipe.
-     * @param intermediate  the intermediate to use (e.g furnace).
-     * @param source        the source of this recipe (ie: minecolonies:crafter/recipename, "player name", "improvement", etc)
-     * @param type          What type of recipe this is. (ie: minecolonies:classic)
-     * @param altOutputs    List of alternate outputs for a multi-output recipe
-     * @param secOutputs    List of secondary outputs for a recipe. this includes containers, etc. 
-     * @param lootTable     Loot table to use for possible alternate outputs
-     * @param requiredTool  the tool needed to craft (in addition to anything in the recipe itself)
      */
-    public RecipeStorage(final IToken<?> token, final List<ItemStorage> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate, final ResourceLocation source, final ResourceLocation type, final List<ItemStack> altOutputs, final List<ItemStack> secOutputs, final ResourceLocation lootTable, final EquipmentTypeEntry requiredTool)
+    private RecipeStorage(@NotNull final Builder builder)
     {
-        this.input = Collections.unmodifiableList(input);
-        this.primaryOutput = primaryOutput;
-        this.alternateOutputs = altOutputs != null && !altOutputs.isEmpty() ? altOutputs : ImmutableList.of();
-        this.gridSize = gridSize;
-        this.intermediate = intermediate == null ? Blocks.AIR : intermediate;
-        this.token = token;
-        this.recipeSource = source;
-        IForgeRegistry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
-        if(type != null && recipeTypes.containsKey(type))
-        {
-            this.recipeType = recipeTypes.getValue(type).getHandlerProducer().apply(this);
-        }
-        else
-        {
-            this.recipeType = recipeTypes.getValue(recipeTypes.getDefaultKey()).getHandlerProducer().apply(this);
-        }
+        this.input = Collections.unmodifiableList(builder.input);
+        this.primaryOutput = builder.primaryOutput;
+        this.alternateOutputs = !builder.alternateOutputs.isEmpty() ? builder.alternateOutputs : ImmutableList.of();
+        this.gridSize = builder.gridSize;
+        this.intermediate = builder.intermediate;
+        this.token = builder.token == null ? StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN) : builder.token;
+        this.recipeSource = builder.recipeSource;
+        this.lootTable = builder.lootTable;
+        this.requiredTool = builder.requiredTool;
 
-        this.lootTable = lootTable;
-        this.requiredTool = requiredTool;
+        final ResourceLocation type = builder.recipeType != null ? builder.recipeType
+                : builder.alternateOutputs.isEmpty() ? ModRecipeTypes.CLASSIC_ID : ModRecipeTypes.MULTI_OUTPUT_ID;
+        final IForgeRegistry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
+        this.recipeType = recipeTypes.getValue(type).getHandlerProducer().apply(this);
 
-        this.processInputsAndTools(secOutputs);
+        this.processInputsAndTools(builder.secondaryOutputs);
     }
 
     /**
@@ -652,20 +825,11 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public RecipeStorage getClassicForMultiOutput(final ItemStack requiredOutput)
     {
-        return new RecipeStorage(
-            StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-            this.input,
-            this.gridSize,
-            requiredOutput,
-            intermediate,
-            this.recipeSource,
-            ModRecipeTypes.CLASSIC_ID,
-            null,                   // alternate outputs
-            this.secondaryOutputs,  // secondary output
-            this.lootTable,         // loot table
-            this.requiredTool
-            );
-
+        return RecipeStorage.builder(this)
+                .withPrimaryOutput(requiredOutput)
+                .withAlternateOutputs(List.of())
+                .withRecipeType(ModRecipeTypes.CLASSIC_ID)
+                .build();
     }
 
     @Override

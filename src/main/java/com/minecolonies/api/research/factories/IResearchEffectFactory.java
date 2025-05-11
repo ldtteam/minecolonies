@@ -3,7 +3,7 @@ package com.minecolonies.api.research.factories;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.IResearchEffect;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.PARAMS_RESEARCH_EFFECT;
@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_RESEARCH_EFFEC
 /**
  * Interface for the IResearchEffectFactory which is responsible for creating and maintaining ResearchEffect objects.
  */
-public interface IResearchEffectFactory<T extends IResearchEffect<?>> extends IFactory<FactoryVoidInput, T>
+public interface IResearchEffectFactory<T extends IResearchEffect> extends IFactory<FactoryVoidInput, T>
 {
     @NotNull
     @Override

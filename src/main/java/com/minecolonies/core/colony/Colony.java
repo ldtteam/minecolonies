@@ -583,6 +583,7 @@ public class Colony implements IColony
             }
 
             citizenManager.updateCitizenSleep(false);
+            eventDescManager.computeNews();
         }
         else if (!isDay && WorldUtil.isDayTime(world))
         {

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:shield",
+      "quantity": 4
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockattacksmultiplier": 1
+      "id": "minecolonies:effects/blockattacksmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:iron_ingot",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "combatacademy",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:shield",
-      "quantity": 4
     }
   ],
   "researchLevel": 3,

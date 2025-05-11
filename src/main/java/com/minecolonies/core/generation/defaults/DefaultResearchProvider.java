@@ -25,11 +25,10 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  * Note that this does not validate that the resulting research tree is coherent:
  * programmers should make sure that research parents and effects exist, that depth is 1 or one level above the parent depth,
  * and that cost and requirement identifiers match real items.
- *
- * Avoid changing research resource locations here unless necessary.
+ * <p>Avoid changing research resource locations here unless necessary.
  * If such a change is required, add the old and new ResearchIds to ResearchCompatMap.
  * ResearchIDs are stored to disk, and if not present on a GlobalResearchTree during colony load, will be lost.
- * Effect and Branch ResourceLocations are not stored to disk, but changing them may cause confusion with outside data packs.
+ * Effect and Branch ResourceLocations are not stored to disk, but changing them may cause confusion with outside data packs.</p>
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {
@@ -101,7 +100,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(PODZOL_CHANCE).setTranslatedName("Composters Get +%3$s%% More Podzol").setLevels(new double[] {1, 2}));
         effects.add(new ResearchEffect(RECIPES).setTranslatedName("Workers Can Learn +%3$s%% More Recipes").setLevels(new double[] {0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(REGENERATION).setTranslatedName("Citizen Regeneration +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
-        effects.add(new ResearchEffect(SATURATION).setTranslatedName("Citizen Saturation Per Meal +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
+        effects.add(new ResearchEffect(SATURATION).setTranslatedName("Citizen Saturation Per Meal +%3$s%%").setLevels(new double[] {0.1, 0.2, 0.3, 0.4, 0.5}));
         effects.add(new ResearchEffect(TEACHING).setTranslatedName("XP Gain When Studying +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
         effects.add(new ResearchEffect(TOOL_DURABILITY).setTranslatedName("Citizen Tools +%3$s%% Durability").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 0.9}));
         effects.add(new ResearchEffect(WALKING).setTranslatedName("Citizen Walk Speed +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.25}));
@@ -143,6 +142,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(STANDARD).setTranslatedName("Place Rallying Banner at location"));
         effects.add(new ResearchEffect(MORE_AIR).setTranslatedName("Citizens can stay longer underwater"));
         effects.add(new ResearchEffect(MIN_ORDER).setTranslatedName("Buildings wait a bit longer before placing orders"));
+        effects.add(new ResearchEffect(GREEN_REVOLUTION).setTranslatedName("Crops grow outward in offshoots"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.get().getBuildingBlock()).setTranslatedName("Unlocks Archery").setLevels(new double[] {5}));
@@ -1327,6 +1327,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.WARPED_FUNGUS, 16)
           .addEffect(PLANTATION_NETHER, 1)
           .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/greenrevolution"), TECH).setParentResearch(biodegradable)
+            .setTranslatedName("Green Revolution")
+            .setTranslatedSubtitle("I can feel it in the soil!")
+            .setSortOrder(3)
+            .setIcon(ModItems.compost)
+            .addBuildingRequirement(ModBuildings.FARMER_ID, 4)
+            .addItemCost(ModItems.compost, 32)
+            .addEffect(GREEN_REVOLUTION, 1)
+            .addToList(r);
 
         final Research bonemeal = new Research(new ResourceLocation(Constants.MOD_ID, "technology/bonemeal"), TECH).setParentResearch(biodegradable)
                                     .setTranslatedName("Bonemeal")

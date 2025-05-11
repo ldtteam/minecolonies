@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/standard": 1
+      "id": "minecolonies:effects/standard",
+      "level": 1
     }
   ],
   "icon": "minecolonies:banner_rally_guards",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "barracks",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:emerald",
-      "quantity": 32
     }
   ],
   "researchLevel": 5

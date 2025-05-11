@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:chorus_fruit",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/resurrectchanceaddition": 2
+      "id": "minecolonies:effects/resurrectchanceaddition",
+      "level": 2
     }
   ],
   "icon": "minecolonies:blockhutgraveyard",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "graveyard",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:chorus_fruit",
-      "quantity": 16
     }
   ],
   "researchLevel": 3,

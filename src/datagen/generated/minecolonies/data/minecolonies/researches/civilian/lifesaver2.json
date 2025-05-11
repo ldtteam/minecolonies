@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:hay_block",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/healthaddition": 4
+      "id": "minecolonies:effects/healthaddition",
+      "level": 4
     }
   ],
   "icon": "minecolonies:textures/icons/research/hp4.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "townhall",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:hay_block",
-      "quantity": 64
     }
   ],
   "researchLevel": 4

@@ -1,7 +1,10 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,6 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.minecolonies.api.research.util.ResearchConstants.GREEN_REVOLUTION;
+import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
@@ -121,10 +127,22 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
         {
             if (level.getRawBrightness(pos, 0) >= 9)
             {
-                int i = state.getValue(AGE);
-                if (i < this.getMaxAge())
+                final BlockPos offset = pos.relative(Direction.Plane.HORIZONTAL.getRandomDirection(level.random));
+                if (WorldUtil.isBlockLoaded(level, offset)
+                    && level.getBlockState(offset.below()).getBlock() == level.getBlockState(pos.below()).getBlock()
+                    && level.getBlockState(offset).isAir()
+                    && IColonyManager.getInstance().getColonyByPosFromWorld(level, pos) instanceof Colony colony && colony.getResearchManager().getResearchEffects().getEffectStrength(
+                    GREEN_REVOLUTION) > 0)
                 {
-                    level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
+                    level.setBlock(offset, defaultBlockState(), UPDATE_FLAG);
+                }
+                else
+                {
+                    int i = state.getValue(AGE);
+                    if (i < this.getMaxAge())
+                    {
+                        level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
+                    }
                 }
             }
         }

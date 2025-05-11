@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond",
+      "quantity": 8
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/tooldurabilitymultiplier": 1
+      "id": "minecolonies:effects/tooldurabilitymultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:wooden_pickaxe",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:diamond",
-      "quantity": 8
     }
   ],
   "researchLevel": 2

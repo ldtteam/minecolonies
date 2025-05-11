@@ -22,15 +22,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.minecolonies.api.research.ModResearchCostTypes.*;
+import static com.minecolonies.api.research.ModResearchCosts.*;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
  * Note that this does not validate that the resulting research tree is coherent:
  * programmers should make sure that research parents and effects exist, that depth is 1 or one level greater than the parent depth,
  * and that cost and requirement identifiers match real items.
- *
- * Avoid changing research identifiers here unless necessary. If required, update ResearchCompatMap.
+ * <p>Avoid changing research identifiers here unless necessary. If required, update ResearchCompatMap.</p>
  */
 public abstract class AbstractResearchProvider implements DataProvider
 {
@@ -48,7 +47,7 @@ public abstract class AbstractResearchProvider implements DataProvider
     /**
      * Creates a collection of Research Branches, holding the human-readable name and time multiplier.
      * Research Branches are optional: if no matching json is present, or no values set,
-     * the branch will default to its ResourceLocation.path, at 1.0 research time.
+     * the branch will default to its {@code ResourceLocation.getPath()}, at 1.0 research time.
      * @return  A collection of Research Branches, or Collection.EMPTY_LIST.
      */
     protected abstract Collection<ResearchBranch> getResearchBranchCollection();
@@ -161,20 +160,23 @@ public abstract class AbstractResearchProvider implements DataProvider
     /**
      * A Builder-like class for producing Researches.
      */
-    protected static class Research
+    public static class Research
     {
         final public JsonObject       json = new JsonObject();
         final public ResourceLocation id;
+
         /**
          * The university level of the research.
          */
         public int researchLevel;
+
         /**
-         *  A Translated Name to add to the output language file.
+         * A Translated Name to add to the output language file.
          */
         public String translatedName;
+
         /**
-         *  A Translated Subtitle to add to the output language file.
+         * A Translated Subtitle to add to the output language file.
          */
         public String translatedSubtitle;
 
@@ -409,16 +411,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addBuildingRequirement(final String buildingName, final int level)
         {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
-            {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
-            }
-            else
-            {
-                reqArray = new JsonArray();
-            }
+            final JsonArray reqArray = getRequirementsArray();
             reqArray.add(makeSafeBuildingProperty("building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
@@ -436,16 +429,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addMandatoryBuildingRequirement(final String buildingName, final int level)
         {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
-            {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
-            }
-            else
-            {
-                reqArray = new JsonArray();
-            }
+            final JsonArray reqArray = getRequirementsArray();
             reqArray.add(makeSafeBuildingProperty("mandatory-building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
@@ -464,16 +448,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addAlternateBuildingRequirement(final String buildingName, final int level)
         {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
-            {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
-            }
-            else
-            {
-                reqArray = new JsonArray();
-            }
+            final JsonArray reqArray = getRequirementsArray();
             reqArray.add(makeSafeBuildingProperty("alternate-building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
@@ -489,47 +464,9 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addResearchRequirement(final ResourceLocation researchReq)
         {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
-            {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
-            }
-            else
-            {
-                reqArray = new JsonArray();
-            }
+            final JsonArray reqArray = getRequirementsArray();
             JsonObject req = new JsonObject();
             req.addProperty("research", researchReq.toString());
-            reqArray.add(req);
-            this.json.add("requirements", reqArray);
-            return this;
-        }
-
-        /**
-         * The non-parent required research, which must be completed in addition to Parent research to begin this research.
-         * This manually sets a requirement description.  To use the auto-generated key from the research itself, remove the String param.
-         * Multiple ResearchRequirements are supported.  ResearchRequirements can apply from other branches.
-         * If the research requirement does not exist, it is fulfilled automatically.
-         * @param researchReq  The id of the required research.
-         * @param name         The human-readable name of the required research.
-         * @return this
-         */
-        public Research addResearchRequirement(final ResourceLocation researchReq, final String name)
-        {
-            final JsonArray reqArray;
-            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
-            {
-                reqArray = this.json.getAsJsonArray("requirements");
-                this.json.remove("requirements");
-            }
-            else
-            {
-                reqArray = new JsonArray();
-            }
-            JsonObject req = new JsonObject();
-            req.addProperty("research", researchReq.toString());
-            req.addProperty("name", name);
             reqArray.add(req);
             this.json.add("requirements", reqArray);
             return this;
@@ -545,15 +482,15 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addItemCost(final Item item, final int count)
         {
-            final JsonArray reqArray = getRequirementsArray();
+            final JsonArray costArray = getCostsArray();
 
-            JsonObject req = new JsonObject();
-            req.addProperty("type", SIMPLE_ITEM_COST_ID.toString());
-            req.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString());
-            req.addProperty("quantity", count);
+            JsonObject cost = new JsonObject();
+            cost.addProperty("type", SIMPLE_ITEM_COST_ID.toString());
+            cost.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString());
+            cost.addProperty("quantity", count);
 
-            reqArray.add(req);
-            this.json.add("requirements", reqArray);
+            costArray.add(cost);
+            this.json.add("costs", costArray);
             return this;
         }
 
@@ -567,7 +504,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addItemCost(final List<Item> items, final int count)
         {
-            final JsonArray reqArray = getRequirementsArray();
+            final JsonArray costArray = getCostsArray();
 
             JsonArray itemArr = new JsonArray();
             for (Item item : items)
@@ -575,16 +512,13 @@ public abstract class AbstractResearchProvider implements DataProvider
                 itemArr.add(ForgeRegistries.ITEMS.getKey(item).toString());
             }
 
-            JsonObject itemObj = new JsonObject();
-            itemObj.add("items", itemArr);
+            JsonObject cost = new JsonObject();
+            cost.addProperty("type", LIST_ITEM_COST_ID.toString());
+            cost.add("items", itemArr);
+            cost.addProperty("quantity", count);
+            costArray.add(cost);
 
-            JsonObject req = new JsonObject();
-            req.addProperty("type", LIST_ITEM_COST_ID.toString());
-            req.add("item",itemObj);
-            req.addProperty("quantity", count);
-            reqArray.add(req);
-
-            this.json.add("requirements", reqArray);
+            this.json.add("costs", costArray);
             return this;
         }
 
@@ -598,18 +532,15 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addItemCost(final TagKey<Item> tag, final int count)
         {
-            final JsonArray reqArray = getRequirementsArray();
+            final JsonArray costArray = getCostsArray();
 
-            JsonObject itemObj = new JsonObject();
-            itemObj.addProperty("tag", tag.location().toString());
+            JsonObject cost = new JsonObject();
+            cost.addProperty("type", TAG_ITEM_COST_ID.toString());
+            cost.addProperty("tag", tag.location().toString());
+            cost.addProperty("quantity", count);
+            costArray.add(cost);
 
-            JsonObject req = new JsonObject();
-            req.addProperty("type", TAG_ITEM_COST_ID.toString());
-            req.add("item", itemObj);
-            req.addProperty("quantity", count);
-            reqArray.add(req);
-
-            this.json.add("requirements", reqArray);
+            this.json.add("costs", costArray);
             return this;
         }
 
@@ -634,6 +565,26 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
+         * Internal method to ensure the costs array exists.
+         *
+         * @return the costs array.
+         */
+        private JsonArray getCostsArray()
+        {
+            final JsonArray costArray;
+            if (this.json.has("costs") && this.json.get("costs").isJsonArray())
+            {
+                costArray = this.json.getAsJsonArray("costs");
+                this.json.remove("costs");
+            }
+            else
+            {
+                costArray = new JsonArray();
+            }
+            return costArray;
+        }
+
+        /**
          * Add an effect to the research.  Research Effects are applied on completion,
          * and remain unless the colony is destroyed or the research is undone.
          * Multiple Effects are supported.
@@ -644,7 +595,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         public Research addEffect(final ResourceLocation effect, final int level)
         {
             final JsonArray effects;
-            if(this.json.has("effects") && this.json.get("effects").isJsonArray())
+            if (this.json.has("effects") && this.json.get("effects").isJsonArray())
             {
                 effects = this.json.getAsJsonArray("effects");
                 this.json.remove("effects");
@@ -653,8 +604,9 @@ public abstract class AbstractResearchProvider implements DataProvider
             {
                 effects = new JsonArray();
             }
-            JsonObject eff = new JsonObject();
-            eff.addProperty(effect.toString(), level);
+            final JsonObject eff = new JsonObject();
+            eff.addProperty("id", effect.toString());
+            eff.addProperty("level", level);
             effects.add(eff);
             this.json.add("effects", effects);
             return this;
@@ -686,7 +638,8 @@ public abstract class AbstractResearchProvider implements DataProvider
             }
             final ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(buildingBlock);
             JsonObject eff = new JsonObject();
-            eff.addProperty(registryName.getNamespace() + ":effects/" + registryName.getPath(), level);
+            eff.addProperty("id", registryName.getNamespace() + ":effects/" + registryName.getPath());
+            eff.addProperty("level", level);
             effects.add(eff);
             this.json.add("effects", effects);
             return this;
@@ -748,16 +701,18 @@ public abstract class AbstractResearchProvider implements DataProvider
     /**
      * A Builder-like class for producing Research Effects.
      */
-    protected static class ResearchEffect
+    public static class ResearchEffect
     {
         final public JsonObject       json = new JsonObject();
         final public ResourceLocation id;
+
         /**
-         *  A Translated Name to add to the output language file.
+         * A Translated Name to add to the output language file.
          */
         public String translatedName;
+
         /**
-         *  A Translated Subtitle to add to the output language file.
+         * A Translated Subtitle to add to the output language file.
          */
         public String translatedSubtitle;
 
@@ -862,16 +817,18 @@ public abstract class AbstractResearchProvider implements DataProvider
     /**
      * A Builder-like class for producing Research Branches
      */
-    protected static class ResearchBranch
+    public static class ResearchBranch
     {
         final public JsonObject       json = new JsonObject();
         final public ResourceLocation id;
+
         /**
-         *  A Translated Name to add to the output language file.
+         * A Translated Name to add to the output language file.
          */
         public String translatedName;
+
         /**
-         *  A Translated Subtitle to add to the output language file.
+         * A Translated Subtitle to add to the output language file.
          */
         public String translatedSubtitle;
 

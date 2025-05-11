@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:glow_berries",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/plantationexotic": 1
+      "id": "minecolonies:effects/plantationexotic",
+      "level": 1
     }
   ],
   "icon": "minecraft:glow_berries",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:glow_berries",
-      "quantity": 32
     }
   ],
   "researchLevel": 3,
