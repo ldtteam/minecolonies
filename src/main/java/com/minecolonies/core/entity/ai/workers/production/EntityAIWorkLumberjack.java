@@ -926,13 +926,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 }
             }
 
-            if (!(block instanceof SaplingBlock) || block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, block.defaultBlockState()).isFalse()
-                  || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
+            if (!block.defaultBlockState().canSurvive(world, pos) || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
                 job.getTree().removeStump(pos);
                 continue;
             }
-
+            
             if (world.setBlockAndUpdate(pos, block.defaultBlockState()) && !ItemStackUtils.isEmpty(getInventory().getStackInSlot(saplingSlot)))
             {
                 getInventory().extractItem(saplingSlot, 1, false);

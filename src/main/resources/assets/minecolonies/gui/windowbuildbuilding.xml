@@ -1,6 +1,6 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        lightbox="true">
 
     <button id="previousStyle" size="14 15" pos="40 0" label="&lt;"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>

@@ -1,4 +1,4 @@
-<window size="210 244" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window size="210 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <layout source="minecolonies:gui/citizen/nav.xml"/>
 
     <text pos="80 15" size="110 11" color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.title):§r"/>

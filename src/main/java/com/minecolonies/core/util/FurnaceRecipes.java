@@ -1,11 +1,9 @@
 package com.minecolonies.core.util;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -21,11 +19,6 @@ import java.util.Map;
 
 public class FurnaceRecipes implements IFurnaceRecipes
 {
-    /**
-     * Instance of the furnace recipes.
-     */
-    private static FurnaceRecipes instance;
-
     /**
      * Furnace recipes.
      */
@@ -50,14 +43,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
                 {
                     if (!smeltable.isEmpty())
                     {
-                        final RecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                          TypeConstants.RECIPE,
-                          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                          ImmutableList.of(new ItemStorage(smeltable)),
-                          1,
-                          recipe.getResultItem(level.registryAccess()),
-                          Blocks.FURNACE,
-                          holder.id());
+                        final RecipeStorage storage = RecipeStorage.builder()
+                                .withInputs(ImmutableList.of(new ItemStorage(smeltable)))
+                                .withPrimaryOutput(recipe.getResultItem(level.registryAccess()))
+                                .withGridSize(1)
+                                .withIntermediate(Blocks.FURNACE)
+                                .withRecipeId(holder.id())
+                                .build();
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 
@@ -86,19 +78,5 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public RecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage)
     {
         return reverseRecipes.get(storage);
-    }
-
-    /**
-     * Get the instance of the class.
-     *
-     * @return the instance.
-     */
-    public static FurnaceRecipes getInstance()
-    {
-        if (instance == null)
-        {
-            instance = new FurnaceRecipes();
-        }
-        return instance;
     }
 }

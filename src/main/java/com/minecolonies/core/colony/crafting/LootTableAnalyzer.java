@@ -520,10 +520,21 @@ public final class LootTableAnalyzer
         /** Copy a LootDrop to a packet buffer */
         public void serialize(@NotNull final RegistryFriendlyByteBuf buffer)
         {
+            int prevIndex = buffer.writerIndex();
             buffer.writeVarInt(stacks.size());
             for (final ItemStack stack : stacks)
             {
-                Utils.serializeCodecMess(buffer, stack);
+                try
+                {
+                    Utils.serializeCodecMess(buffer, stack);
+                }
+                catch (Exception e)
+                {
+                    Log.getLogger().warn("Error serializing item stack: " + stack, e);
+                    buffer.writerIndex(prevIndex);
+                    buffer.writeVarInt(0);
+                    break;
+                }
             }
             buffer.writeFloat(probability);
             buffer.writeFloat(quality);

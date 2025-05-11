@@ -25,9 +25,9 @@ import com.minecolonies.core.colony.requestsystem.management.IStandardRequestMan
 import com.minecolonies.core.colony.requestsystem.management.handlers.*;
 import com.minecolonies.core.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -293,7 +293,11 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void updateRequestState(@NotNull final IToken<?> token, @NotNull final RequestState state)
     {
-        final IRequest<?> request = getRequestHandler().getRequest(token);
+        final IRequest<?> request = getRequestHandler().getRequestOrNull(token);
+        if (request == null)
+        {
+            return;
+        }
 
         log("Updating request state from:" + token + ". With original state: " + request.getState() + " to : " + state);
 

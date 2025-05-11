@@ -1,12 +1,10 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
 import com.ldtteam.structurize.api.RotationMirror;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.minecolonies.api.colony.IColonyManager;
@@ -37,7 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -46,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -217,12 +213,13 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final RotationMirror rotMir, final boolean removal)
+    public void loadStructure(
+        @NotNull final IWorkOrder workOrder,
+        final BlockPos position,
+        final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture(world.registryAccess());
         this.loadingBlueprint = true;
-
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
+        workOrder.loadBlueprint(world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
@@ -236,7 +233,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             structure = new BuildingStructureHandler<>(world,
               position,
               blueprint,
-              rotMir,
+                workOrder.getRotationMirror(),
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
             building.setTotalStages(3);
 
@@ -248,8 +245,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 return;
             }
 
-            job.setBlueprint(structure.getBluePrint());
-            job.getBlueprint().setRotationMirror(rotMir, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -257,7 +252,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 structure.setStage(getProgressPos().getB());
             }
             this.loadingBlueprint = false;
-        })));
+        }));
     }
 
     @Override
@@ -694,7 +689,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
-    
+
     public BlockState getSolidSubstitution(final BlockPos worldPos, final Function<BlockPos, @Nullable BlockState> virtualBlocks)
     {
         return getMainFillBlock().defaultBlockState();

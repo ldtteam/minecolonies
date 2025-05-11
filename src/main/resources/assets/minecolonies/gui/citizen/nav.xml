@@ -1,4 +1,4 @@
-<window size="210 244" pause="false" lightbox="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window size="210 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <button id="mainTab" size="32 26" pos="0 36"
                  source="minecolonies:textures/gui/modules/tab_side1.png"/>
     <button id="mainIcon" size="20 20" pos="5 39"

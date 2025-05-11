@@ -18,7 +18,9 @@ import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessa
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -140,7 +142,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         for (int i = 0; i < workOrders.size(); i++)
         {
             final IWorkOrderView workOrder = workOrders.get(i);
-            if (workOrder.getId() == id)
+            if (workOrder.getID() == id)
             {
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
@@ -170,7 +172,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
         for (int i = 0; i < workOrders.size(); i++)
         {
-            if (workOrders.get(i).getId() == id)
+            if (workOrders.get(i).getID() == id)
             {
                 workOrders.remove(i);
                 break;
@@ -235,7 +237,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
                 workOrderTextPanel.setText(Component.literal(workOrder.getDisplayName().getString().replace("\n", ": ")));
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(Component.literal(claimingCitizen));
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getId())));
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getID())));
             }
         });
     }

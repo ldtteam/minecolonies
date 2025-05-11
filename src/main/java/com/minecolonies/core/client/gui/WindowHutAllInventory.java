@@ -6,13 +6,13 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.TimedBoxRenderData;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -135,7 +135,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                     // mixing equation: alpha | red part | green part 
                     final int color = 0x80000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
                         | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
-                    HighlightManager.addHighlight("inventoryHighlight" + blockPos,
+                    HighlightManager.addHighlight("inventoryHighlight", blockPos.toString(),
                       new TimedBoxRenderData(blockPos)
                         .setDuration(Duration.ofSeconds(60))
                         .addText("" + count)

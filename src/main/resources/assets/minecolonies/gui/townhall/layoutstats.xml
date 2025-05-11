@@ -1,4 +1,4 @@
-<window size="524 243" pause="false" lightbox="false">
+<window size="524 243">
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <text size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
     <text id="totalCitizens" size="50 11" pos="215 61" color="black"/>

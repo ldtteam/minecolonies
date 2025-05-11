@@ -1,14 +1,12 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -55,7 +53,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -676,15 +673,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      *
      * @param workOrder   the work order.
      * @param position    the position to set it.
-     * @param rotMir      rotation and mirror of structure
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final RotationMirror rotMir, final boolean removal)
+    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture(world.registryAccess());
         this.loadingBlueprint = true;
-
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
+        workOrder.loadBlueprint(world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
@@ -703,7 +697,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  rotMir,
+                    workOrder.getRotationMirror(),
                   this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
@@ -713,7 +707,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  rotMir,
+                    workOrder.getRotationMirror(),
                   this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
@@ -722,13 +716,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  rotMir,
+                    workOrder.getRotationMirror(),
                   this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
-            job.setBlueprint(blueprint);
-            job.getBlueprint().setRotationMirror(rotMir, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -736,7 +728,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure.setStage(getProgressPos().getB());
             }
             this.loadingBlueprint = false;
-        })));
+        }));
     }
 
     /**

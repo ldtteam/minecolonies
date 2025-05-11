@@ -1,5 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244" pause="false"
-        lightbox="false"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="440 244" pos="0 0"/>
 

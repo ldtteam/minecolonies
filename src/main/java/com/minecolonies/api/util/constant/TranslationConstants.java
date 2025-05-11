@@ -289,9 +289,9 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
-    public static final String POOR_MENU_INTERACTION                                                = "com.minecolonies.coremod.restaurant.poormenu";
+    public static final String POOR_MENU_INTERACTION                                                = "com.minecolonies.core.restaurant.poormenu";
     @NonNls
-    public static final String POOR_RESTAURANT_INTERACTION                                          = "com.minecolonies.coremod.restaurant.poorrestaurant";
+    public static final String POOR_RESTAURANT_INTERACTION                                          = "com.minecolonies.core.restaurant.poorrestaurant";
     @NonNls
     public static final String NETHERMINER_NO_FOOD                                                  = "com.minecolonies.coremod.netherminer.nofood";
     @NonNls
@@ -530,6 +530,8 @@ public final class TranslationConstants
     public static final String MINER_NODES                                        = "com.minecolonies.coremod.gui.workerhuts.minernode";
     @NonNls
     public static final String MINER_MINE_NODE                                    = "com.minecolonies.coremod.gui.workerhuts.minerminenode";
+    @NonNls
+    public static final String MINER_LEVEL_DEPTH                                  = "com.minecolonies.coremod.gui.workerhuts.minerleveldepth";
     @NonNls
     public static final String WARNING_POPULATION_NEEDS_HOUSING                   = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited";
     @NonNls

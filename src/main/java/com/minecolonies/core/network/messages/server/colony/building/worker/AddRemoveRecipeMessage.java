@@ -10,10 +10,10 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -84,24 +84,13 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         super(TYPE, building);
         this.remove = remove;
-        if (gridSize == 1)
-        {
-            storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, Blocks.FURNACE);
-        }
-        else
-        {
-            storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
-        }
+        this.storage = RecipeStorage.builder()
+                .withInputs(input)
+                .withPrimaryOutput(primaryOutput)
+                .withSecondaryOutputs(additionalOutputs)
+                .withGridSize(gridSize)
+                .withIntermediate(gridSize == 1 ? Blocks.FURNACE : Blocks.AIR)
+                .build();
         this.id = id;
     }
 
@@ -122,12 +111,12 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         this.remove = remove;
         if (gridSize == 1)
         {
-            storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              gridSize,
-              primaryOutput, intermediary);
+            this.storage = RecipeStorage.builder()
+                    .withInputs(input)
+                    .withPrimaryOutput(primaryOutput)
+                    .withGridSize(gridSize)
+                    .withIntermediate(intermediary)
+                    .build();
         }
         else
         {

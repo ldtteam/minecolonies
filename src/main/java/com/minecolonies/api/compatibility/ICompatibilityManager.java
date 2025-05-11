@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -141,13 +142,6 @@ public interface ICompatibilityManager
     ImmutableSet<ResourceLocation> getAllMonsters();
 
     /**
-     * Gets the list of recruitment costs with weights
-     *
-     * @return list of costs
-     */
-    List<Tuple<Item, Integer>> getRecruitmentCostsWeights();
-
-    /**
      * Checks if a certain Block is an ore.
      *
      * @param block the block to check.
@@ -227,4 +221,11 @@ public interface ICompatibilityManager
      * @return the number or default.
      */
     int getCreativeTabKey(ItemStorage checkItem);
+
+    /**
+     * Gets the furnace recipe storage
+     *
+     * @return furnace recipes
+     */
+    FurnaceRecipes getFurnaceRecipes();
 }

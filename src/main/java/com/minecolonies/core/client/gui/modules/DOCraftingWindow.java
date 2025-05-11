@@ -13,14 +13,13 @@ import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipeInput;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.buildings.moduleviews.DOCraftingModuleView;
@@ -216,17 +215,13 @@ public class DOCraftingWindow extends AbstractModuleWindow
             additionalOutput.add(list.get(inputIndizes.get(i)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy());
         }
 
-        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-          TypeConstants.RECIPE,
-          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          input,
-          3,
-          list.get(inputIndizes.get(0)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy(),
-          Blocks.AIR,
-          null,
-          com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
-          additionalOutput,
-          new ArrayList<>());
+        final IRecipeStorage storage = RecipeStorage.builder()
+                .withInputs(input)
+                .withPrimaryOutput(list.get(inputIndizes.get(0)).value().assemble(new ArchitectsCutterRecipeInput(inputInventory), Minecraft.getInstance().level.registryAccess()).copy())
+                .withAlternateOutputs(additionalOutput)
+                .withGridSize(3)
+                .withRecipeType(com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID)
+                .build();
 
         new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()).sendToServer();
     }

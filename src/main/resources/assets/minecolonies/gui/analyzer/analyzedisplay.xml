@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        size="420 240" pause="false" lightbox="false">
+        size="420 240">
 
     <button id="selectleft" size="14 30" pos="1 1" color="black" label="&lt;"/>
     <button id="selectright" size="14 30" pos="126 1" color="black" label="&gt;"/>

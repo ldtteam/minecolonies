@@ -5,7 +5,10 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestObjectiveTemplate;
+import com.minecolonies.api.quests.IQuestTemplate;
 import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.CitizenRenderData;
 import net.minecraft.ChatFormatting;
@@ -56,7 +59,7 @@ public class WindowQuestLogInProgressQuestQuestModule implements WindowQuestLogQ
     @Override
     public void trackQuest(final IQuestInstance quest)
     {
-        HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, new CitizenRenderData(quest.getQuestTarget(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+        HighlightManager.addHighlight(HIGHLIGHT_QUEST_LOG_TRACKER_KEY, "", new CitizenRenderData(quest.getQuestTarget(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
     }
 
     /**
