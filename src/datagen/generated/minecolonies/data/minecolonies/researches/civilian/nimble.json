@@ -9,11 +9,11 @@
   "effects": [
     {
       "id": "minecolonies:effects/walkingmultiplier",
-      "level": 1
+      "level": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed1.png",
-  "parentResearch": "minecolonies:civilian/rails",
+  "parentResearch": "minecolonies:civilian/haste",
   "requirements": [
     {
       "type": "minecolonies:building",
@@ -22,5 +22,6 @@
     }
   ],
   "researchLevel": 3,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.nimble.subtitle"
 }

@@ -9,7 +9,7 @@
   "effects": [
     {
       "id": "minecolonies:effects/walkingmultiplier",
-      "level": 3
+      "level": 4
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed3.png",
