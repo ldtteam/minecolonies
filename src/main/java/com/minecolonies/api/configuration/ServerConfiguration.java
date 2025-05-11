@@ -113,6 +113,12 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue creativeResolve;
 
+    /*  --------------------------------------------------------------------------------- *
+     *  ------------------- ######## Debugging Settings ######## ------------------- *
+     *  --------------------------------------------------------------------------------- */
+
+    public final ForgeConfigSpec.BooleanValue netherWorkerTakesDamage;
+
     /**
      * Builds server configuration.
      *
@@ -200,6 +206,10 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "requestSystem");
 
         creativeResolve = defineBoolean(builder, "creativeresolve", false);
+
+        swapToCategory(builder, "debugging");
+
+        netherWorkerTakesDamage = defineBoolean(builder, "netherworkertakesdamage", true);
 
         finishCategory(builder);
     }

@@ -31,6 +31,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
+import com.minecolonies.core.colony.managers.TravellingManager;
 import com.minecolonies.core.colony.permissions.PermissionsView;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
@@ -240,6 +241,8 @@ public final class ColonyView implements IColonyView
      */
     private IQuestManager questManager;
 
+    private final TravellingManager travellingManager = new TravellingManager(this);
+
     /**
      * Day in the colony.
      */
@@ -436,6 +439,8 @@ public final class ColonyView implements IColonyView
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
+
+        buf.writeNbt(colony.getTravelingManager().serializeNBT());
     }
 
     /**
@@ -896,6 +901,7 @@ public final class ColonyView implements IColonyView
         this.statisticManager.deserialize(buf);
         this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
+        this.travellingManager.deserializeNBT(buf.readNbt());
         return null;
     }
 
@@ -1503,6 +1509,11 @@ public final class ColonyView implements IColonyView
     public IColonyPackageManager getPackageManager()
     {
         return null;
+    }
+
+    @Override
+    public ITravellingManager getTravelingManager() {
+        return travellingManager;
     }
 
     @Override

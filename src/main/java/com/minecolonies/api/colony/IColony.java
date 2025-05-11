@@ -269,7 +269,19 @@ public interface IColony
      */
     IEventDescriptionManager getEventDescriptionManager();
 
+    /**
+     * The colony networking packaging manager.
+     *
+     * @return The packaging manager.
+     */
     IColonyPackageManager getPackageManager();
+
+    /**
+     * Get the travelling manager of the colony.
+     *
+     * @return the travelling manager.
+     */
+    ITravellingManager getTravelingManager();
 
     /**
      * Add a visiting player.

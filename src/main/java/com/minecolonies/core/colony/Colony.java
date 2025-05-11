@@ -61,6 +61,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -183,6 +184,8 @@ public class Colony implements IColony
      * Quest manager for this colony
      */
     private IQuestManager questManager;
+
+    private final TravellingManager travellingManager = new TravellingManager(this);
 
     /**
      * The Positions which players can freely interact.
@@ -376,6 +379,7 @@ public class Colony implements IColony
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickTravellers, () -> ACTIVE, UPDATE_TRAVELING_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::worldTickSlow, () -> ACTIVE, MAX_TICKRATE));
@@ -431,6 +435,20 @@ public class Colony implements IColony
         if (getRequestManager() != null)
         {
             getRequestManager().tick();
+        }
+        return false;
+    }
+
+    /**
+     * Ticks the travelling manager.
+     *
+     * @return false
+     */
+    private boolean tickTravellers()
+    {
+        if (getTravelingManager() != null)
+        {
+            return !getTravelingManager().onTick();
         }
         return false;
     }
@@ -809,13 +827,17 @@ public class Colony implements IColony
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
 
-        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key))
+        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key) && settingsModule != null)
         {
             settingsModule.deserializeNBT(compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
 
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
+
+        if (compound.contains(NbtTagConstants.TAG_TRAVELLING_DATA)) {
+            this.travellingManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_TRAVELLING_DATA));
+        }
     }
 
     /**
@@ -925,6 +947,8 @@ public class Colony implements IColony
         final CompoundTag settings = new CompoundTag();
         settingsModule.serializeNBT(settings);
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
+
+        compound.put(TAG_TRAVELLING_DATA, travellingManager.serializeNBT());
 
         this.colonyTag = compound;
 
@@ -1565,6 +1589,11 @@ public class Colony implements IColony
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
+    }
+
+    @Override
+    public TravellingManager getTravelingManager() {
+        return travellingManager;
     }
 
     /**

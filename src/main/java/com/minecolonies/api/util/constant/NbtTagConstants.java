@@ -739,6 +739,10 @@ public final class NbtTagConstants
     public static final String TAG_RANDOM_KEY    = "randkey";
 
     public static final String TAG_LAST_FOODS    = "lastfoods";
+    public static final String TRAVELER_DATA = "travelerData";
+    public static final String TAG_INITIAL_TRAVEL_TIME = "initialTravelTime";
+    public static final String TAG_REMAINING_TRAVEL_TIME = "remainingTravelTime";
+    public static final String TAG_TRAVELLING_DATA = "travellingData";
 
     /**
      * Private constructor to hide the implicit one.
