@@ -176,7 +176,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Nullable
     public IVisitorData spawnVisitor()
     {
-        final RecruitmentItemsListener.RecruitCostResult cost = RecruitmentItemsListener.getRandomRecruitCost(building.getColony().getWorld().getRandom(), building.getBuildingLevel());
+        final RecruitmentItemsListener.RecruitCostResult cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
         if (cost == null)
         {
             return null;

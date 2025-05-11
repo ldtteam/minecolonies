@@ -5,12 +5,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,14 +44,11 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     private static Map<RecruitmentTiers, List<RecruitCost>> RECRUIT_COSTS = new HashMap<>();
 
     /**
-     * The current max level of the recruitment tiers.
-     */
-    private static int MAX_RECRUIT_COST_LEVEL = -1;
-
-    /**
-     * @param itemStack
-     * @param recruitLevel
-     * @param boots
+     * The result for the recruit cost, indicating the stack to recruit with, the level for the citizen and which boots they have to get.
+     *
+     * @param itemStack    the recruit cost.
+     * @param recruitLevel the recruit level.
+     * @param boots        the boots they have to wear.
      */
     public record RecruitCostResult(
         ItemStack itemStack,
@@ -70,18 +67,17 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     /**
      * Get a random recruit cost using the input random source.
      *
-     * @param source        the random source.
      * @param buildingLevel the building level.
      * @return a random recruit cost.
      */
     @Nullable
-    public static RecruitCostResult getRandomRecruitCost(final RandomSource source, final int buildingLevel)
+    public static RecruitCostResult getRandomRecruitCost(final int buildingLevel)
     {
-        final int recruitLevel = Math.min(MAX_RECRUIT_COST_LEVEL, source.nextInt(10 * buildingLevel) + 15);
+        final int recruitTier = ColonyConstants.rand.nextInt(1, 10 * buildingLevel + 1);
         final Map.Entry<RecruitmentTiers, List<RecruitCost>> tierAndCosts = RECRUIT_COSTS.entrySet()
             .stream()
             .filter(f -> !f.getValue().isEmpty())
-            .filter(f -> recruitLevel <= f.getKey().maxLevel)
+            .filter(f -> recruitTier <= f.getKey().maxLevel)
             .min(Comparator.comparingInt(f -> f.getKey().maxLevel))
             .orElse(null);
         if (tierAndCosts == null)
@@ -89,19 +85,20 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
             return null;
         }
 
-        final RecruitCost recruitCost = tierAndCosts.getValue().get(source.nextInt(tierAndCosts.getValue().size()));
-        return new RecruitCostResult(new ItemStack(recruitCost.item, (int) Math.round(recruitLevel * 3.0 / recruitCost.rarity)), recruitLevel, tierAndCosts.getKey().boots);
+        final int recruitLevel = recruitTier + 15;
+        final RecruitCost recruitCost = tierAndCosts.getValue().get(ColonyConstants.rand.nextInt(tierAndCosts.getValue().size()));
+        return new RecruitCostResult(new ItemStack(recruitCost.item, (int) Math.round(recruitLevel * 3.0d / recruitCost.rarity)), recruitLevel, tierAndCosts.getKey().boots);
     }
 
     @Override
     protected void apply(final @NotNull Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
     {
         final Map<RecruitmentTiers, List<RecruitCost>> recruitCosts = new HashMap<>();
-        int maxRecruitCostLevel = -1;
 
         if (jsonElementMap.isEmpty())
         {
-            Log.getLogger().warn("No recruitment items found, please ensure to add at least one recruitment item, otherwise visitors will be unable to spawn.");
+            Log.getLogger().error("No recruitment items found, please ensure to add at least one recruitment item, otherwise visitors will be unable to spawn.");
+            return;
         }
 
         for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
@@ -126,25 +123,27 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
                 {
                     recruitCosts.putIfAbsent(tier, new ArrayList<>());
                     recruitCosts.get(tier).add(new RecruitCost(item, rarity));
-
-                    if (maxRecruitCostLevel > tier.maxLevel)
-                    {
-                        maxRecruitCostLevel = tier.maxLevel;
-                    }
                 }
             }
         }
 
+        for (final Map.Entry<RecruitmentTiers, List<RecruitCost>> entry : recruitCosts.entrySet())
+        {
+            if (entry.getValue().isEmpty())
+            {
+                Log.getLogger().error("No recruitment items found for tier {}. This tier requires items with a rarity of at least {}.", entry.getKey(), entry.getKey().minRarity);
+            }
+        }
+
         RECRUIT_COSTS = Collections.unmodifiableMap(recruitCosts);
-        MAX_RECRUIT_COST_LEVEL = maxRecruitCostLevel;
     }
 
     private enum RecruitmentTiers
     {
-        LEATHER(20, 0, Items.LEATHER_BOOTS),
-        GOLD(25, 2, Items.GOLDEN_BOOTS),
-        IRON(35, 4, Items.IRON_BOOTS),
-        DIAMOND(45, 6, Items.DIAMOND_BOOTS);
+        LEATHER(5, 0, Items.LEATHER_BOOTS),
+        GOLD(10, 2, Items.GOLDEN_BOOTS),
+        IRON(20, 4, Items.IRON_BOOTS),
+        DIAMOND(30, 6, Items.DIAMOND_BOOTS);
 
         private final int maxLevel;
 
