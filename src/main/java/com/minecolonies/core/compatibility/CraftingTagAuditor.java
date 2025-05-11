@@ -39,7 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.CitizenConstants.FULL_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -63,8 +63,8 @@ public class CraftingTagAuditor
     {
         createFile("item tag audit", server, "tag_item_audit.csv", writer -> doItemTagAudit(writer, server));
         createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
-        createFile("path block audit", server, "path_block_audit.csv", writer -> doPathBlockTagAudit(writer, server));
-        createFile("biome tag audit", server, "biome_tag_audit.csv", writer -> doBiomeTagAudit(writer, server));
+        createFile("path block audit", server, "tag_path_audit.csv", writer -> doPathBlockTagAudit(writer, server));
+        createFile("biome tag audit", server, "tag_biome_audit.csv", writer -> doBiomeTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
         createFile("tools audit", server, "tools_audit.csv", writer -> doToolsAudit(writer, server));
@@ -405,11 +405,7 @@ public class CraftingTagAuditor
                                     @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
-        writer.write(",nutrition,maxlevel,tier");
-        for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
-        {
-            writer.write(",actual" + level);
-        }
+        writer.write(",nutrition,maxlevel,tier,foodvalue,fullhealth");
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
@@ -430,12 +426,10 @@ public class CraftingTagAuditor
             {
                 writer.write(Integer.toString(mcolFood.getTier()));
             }
-            for (int level = 0; level <= MAX_BUILDING_LEVEL; ++level)
-            {
-                writer.write(',');
-                writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
-            }
-
+            writer.write(',');
+            writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
+            writer.write(',');
+            writer.write(Double.toString(FULL_SATURATION / FoodUtils.getFoodValue(item, properties, 0)));
             writer.newLine();
         }
     }

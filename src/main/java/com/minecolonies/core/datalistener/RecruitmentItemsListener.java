@@ -95,7 +95,7 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
         {
             minimumRarity = 0;
         }
-        final List<RecruitCost> recruitCostStream = RECRUIT_COSTS.stream().filter(f -> f.rarity <= minimumRarity).toList();
+        final List<RecruitCost> recruitCostStream = RECRUIT_COSTS.stream().filter(f -> f.rarity >= minimumRarity).toList();
         return recruitCostStream.get(source.nextInt(recruitCostStream.size()));
     }
 

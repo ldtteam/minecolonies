@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
@@ -162,7 +162,7 @@ public class PlantationFieldBuildRequestMessage implements IMessage
             return;
         }
 
-        final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
+        final Optional<Map.Entry<Integer, IServerWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
                                                               .filter(entry -> entry.getValue() instanceof WorkOrderPlantationField)
                                                               .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
@@ -197,6 +197,7 @@ public class PlantationFieldBuildRequestMessage implements IMessage
                 rotation.ordinal(),
                 mirror,
                 0);
+              order.setBlueprint(blueprint, colony.getWorld());
 
               if (!builder.equals(BlockPos.ZERO))
               {

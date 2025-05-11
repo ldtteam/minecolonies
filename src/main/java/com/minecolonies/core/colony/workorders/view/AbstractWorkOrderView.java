@@ -1,10 +1,22 @@
 package com.minecolonies.core.colony.workorders.view;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * The WorkOrderView is the client-side representation of a WorkOrders. Views contain the WorkOrder's data that is relevant to a Client, in a more client-friendly form Mutable
@@ -68,38 +80,44 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     private int targetLevel;
 
     /**
-     * The amount of resources the work order requires.
-     */
-    private int amountOfResources;
-
-    /**
-     * The iterator type (building method) this work order uses.
-     */
-    private String iteratorType;
-
-    /**
-     * Whether the work order area has been cleared.
-     */
-    private boolean cleared;
-
-    /**
-     * Whether the work order resources have been requested.
-     */
-    private boolean requested;
-
-    /**
      * Translation key.
      */
     private String translationKey;
+
+    /**
+     * The workorder area
+     */
+    protected AABB box = Constants.EMPTY_AABB;
+
+    /**
+     * The blueprint of this workorders schematic
+     */
+    protected Blueprint blueprint = null;
+
+    /**
+     * The related colony
+     */
+    protected IColony colony = null;
+
+    /**
+     * The cached blueprint future
+     */
+    protected CompletableFuture<Blueprint> future = null;
 
     public AbstractWorkOrderView()
     {
     }
 
     @Override
-    public int getId()
+    public int getID()
     {
         return id;
+    }
+
+    @Override
+    public void setID(final int id)
+    {
+
     }
 
     @Override
@@ -124,15 +142,78 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         this.claimedBy = position;
     }
 
+    @Override
+    public void setBlueprint(final Blueprint blueprint, final Level world)
+    {
+        if (blueprint != null)
+        {
+            this.blueprint = blueprint;
+            blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE), world);
+        }
+    }
+
+    @Override
+    public Blueprint getBlueprint()
+    {
+        return blueprint;
+    }
+
+    @Override
+    public void clearBlueprint()
+    {
+        blueprint = null;
+        future = null;
+    }
+
+    @Override
+    public AABB getBoundingBox()
+    {
+        return box;
+    }
+
+    @Override
+    public IColony getColony()
+    {
+        return colony;
+    }
+
+    @Override
+    public void setColony(final IColony colony)
+    {
+        this.colony = colony;
+    }
+
     /**
      * Value getter.
      *
      * @return the value String.
      */
     @Override
-    public String getPackName()
+    public String getStructurePack()
     {
         return packName.replaceAll("schematics/(?:decorations/)?", "");
+    }
+
+    @Override
+    public void loadBlueprint(final Level world, final Consumer<Blueprint> afterLoad)
+    {
+        if (blueprint != null)
+        {
+            afterLoad.accept(blueprint);
+        }
+        else if (future == null || future.isDone())
+        {
+            future = ColonyUtils.queueBlueprintLoad(world, getStructurePack(), getStructurePath(), blueprint ->
+                {
+                    setBlueprint(blueprint, world);
+                    afterLoad.accept(blueprint);
+                },
+                e -> afterLoad.accept(null));
+        }
+        else
+        {
+            afterLoad.accept(null);
+        }
     }
 
     @Override
@@ -170,41 +251,25 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         return isMirrored;
     }
 
+    @Override
+    public boolean isClaimed()
+    {
+        return claimedBy != null;
+    }
+
+    @Override
     public int getCurrentLevel()
     {
         return currentLevel;
     }
 
+    @Override
     public int getTargetLevel()
     {
         return targetLevel;
     }
 
-    public int getAmountOfResources()
-    {
-        return amountOfResources;
-    }
-
-    public String getIteratorType()
-    {
-        return iteratorType;
-    }
-
-    public boolean isCleared()
-    {
-        return cleared;
-    }
-
-    public boolean isRequested()
-    {
-        return requested;
-    }
-
-    /**
-     * Deserialize the attributes and variables from transition. Buffer may be not readable because the workOrderView may be null.
-     *
-     * @param buf Byte buffer to deserialize.
-     */
+    @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         id = buf.readInt();
@@ -219,19 +284,10 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         isMirrored = buf.readBoolean();
         currentLevel = buf.readInt();
         targetLevel = buf.readInt();
-        amountOfResources = buf.readInt();
-        iteratorType = buf.readUtf(32767);
-        cleared = buf.readBoolean();
-        requested = buf.readBoolean();
+        box = new AABB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
-    /**
-     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
-     *
-     * @param builderLocation position of the builders own hut.
-     * @param builderLevel    level of the builders hut.
-     * @return true if so.
-     */
+    @Override
     public boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:

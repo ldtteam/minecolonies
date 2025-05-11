@@ -9,7 +9,6 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,17 +93,12 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     @NotNull
     public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
     {
-        return Collections.singletonList(new GenericRecipe(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()),
-                ItemStack.EMPTY,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.singletonList(getBreedingItems()),
-                0,
-                Blocks.AIR,
-                animal.getLootTable(),
-                ModEquipmentTypes.axe.get(),
-                animal.getType(),
-                Collections.emptyList(),
-                0));
+        return List.of(GenericRecipe.builder()
+                .withRecipeId(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()))
+                .withInputs(List.of(getBreedingItems()))
+                .withLootTable(animal.getLootTable())
+                .withRequiredTool(ModEquipmentTypes.axe.get())
+                .withRequiredEntity(animal.getType())
+                .build());
     }
 }

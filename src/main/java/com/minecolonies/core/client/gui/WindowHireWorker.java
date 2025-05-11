@@ -520,6 +520,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             jobButton.setID(hireModule.getJobEntry().getKey().toString());
             jobButton.setHandler(this::jobClicked);
             jobButton.setSize(86, 17);
+            jobButton.setTextSize(86, 17);
 
             this.addChild(jobButton);
             PaneBuilders.tooltipBuilder().hoverPane(jobButton).build().setText(Component.translatable(entry.getKey().toString() + ".job.desc"));

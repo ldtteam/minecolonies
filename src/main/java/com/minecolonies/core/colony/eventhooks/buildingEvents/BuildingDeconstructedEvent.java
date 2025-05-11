@@ -33,9 +33,9 @@ public class BuildingDeconstructedEvent extends AbstractBuildingEvent
      * @param buildingName  the name of the building.
      * @param buildingLevel the level of the building before this event.
      */
-    public BuildingDeconstructedEvent(BlockPos eventPos, String buildingName, int buildingLevel)
+    public BuildingDeconstructedEvent(final BlockPos eventPos, final String buildingName, final int buildingLevel)
     {
-        super(eventPos, buildingName, buildingLevel);
+        super(false, eventPos, buildingName, buildingLevel);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui.map;
 import com.ldtteam.blockui.BOScreen;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
@@ -239,7 +240,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     Image playerImage = findPaneOfTypeByID(player.getStringUUID(), Image.class);
                     if (playerImage == null)
                     {
-                        final ResourceLocation resourceLocation = Minecraft.getInstance().getSkinManager().getInsecureSkinLocation(player.getGameProfile());
+                        final ResourceLocation resourceLocation = OutOfJarResourceLocation.ofMinecraftSkin(Minecraft.getInstance(), Minecraft.getInstance().getUser().getGameProfile(), null);
                         if (resourceLocation == null)
                         {
                             continue;
@@ -460,7 +461,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 citizenImage.setSize(4, 4);
                 citizenImage.setID("citizen: " + data.getId());
                 registerButton(citizenImage.getID(), button -> {
-                    HighlightManager.addHighlight("mapsearchtracking", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
+                    HighlightManager.addHighlight("mapsearchtracking", "", new CitizenRenderData(citizen.getCivilianID(), HIGHLIGHT_QUEST_LOG_TRACKER_DURATION));
                     SoundUtils.playSuccessSound(mc.player, mc.player.blockPosition());
                 });
 

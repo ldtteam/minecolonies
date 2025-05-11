@@ -1351,7 +1351,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             damageInc = damage;
         }
 
-        if (!level.isClientSide && !this.isInvisible())
+        if (!level.isClientSide && !this.isInvisible() && !damageSource.typeHolder().is(DamageTypes.FALL))
         {
             performMoveAway(sourceEntity);
         }

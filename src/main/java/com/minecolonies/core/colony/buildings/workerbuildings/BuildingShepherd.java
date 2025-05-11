@@ -17,12 +17,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -105,10 +103,11 @@ public class BuildingShepherd extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            recipes.add(new GenericRecipe(null, ItemStack.EMPTY,
-                    ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList(),
-                    Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ModEquipmentTypes.shears.get(), animal.getType(), Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutputs(ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList())
+                    .withRequiredTool(ModEquipmentTypes.shears.get())
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
             return recipes;
         }

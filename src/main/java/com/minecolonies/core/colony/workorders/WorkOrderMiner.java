@@ -1,20 +1,19 @@
 package com.minecolonies.core.colony.workorders;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.IOPool;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.core.colony.jobs.JobMiner;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -62,35 +61,35 @@ public class WorkOrderMiner extends AbstractWorkOrder
     }
 
     @Override
-    public Future<Blueprint> getBlueprintFuture()
+    public void loadBlueprint(final Level world, final Consumer<Blueprint> afterLoad)
     {
-        return IOPool.submit(() ->
+        if (blueprint != null)
         {
-            Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getStructurePath(), true);
-            if (blueprint == null)
-            {
-                // automatic fallback to default style
-                blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, getStructurePath());
-                if (blueprint != null)
+            afterLoad.accept(blueprint);
+        }
+        else if (future == null || future.isDone())
+        {
+            future = ColonyUtils.queueBlueprintLoad(world, getStructurePack(), getStructurePath(), blueprint ->
                 {
-                    packName = STORAGE_STYLE;
-                    changed = true;
-                }
-            }
-            return blueprint;
-        });
+                    setBlueprint(blueprint, world);
+                    afterLoad.accept(blueprint);
+                },
+                error ->
+                {
+                    future = ColonyUtils.queueBlueprintLoad(world, STORAGE_STYLE, getStructurePath(), blueprint ->
+                    {
+                        setBlueprint(blueprint, world);
+                        packName = STORAGE_STYLE;
+                        afterLoad.accept(blueprint);
+                    });
+                });
+        }
     }
 
     @Override
     public boolean canBuild(@NotNull ICitizenData citizen)
     {
-        return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
-    }
-
-    @Override
-    public boolean canBeMadeBy(final IJob<?> job)
-    {
-        return job instanceof JobMiner;
+        return citizen.getJob() instanceof JobMiner && this.minerBuilding.equals(citizen.getWorkBuilding().getID());
     }
 
     @Override

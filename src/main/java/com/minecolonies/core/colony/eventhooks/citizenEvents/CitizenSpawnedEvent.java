@@ -32,9 +32,9 @@ public class CitizenSpawnedEvent extends AbstractCitizenEvent
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public CitizenSpawnedEvent(BlockPos eventPos, String citizenName)
+    public CitizenSpawnedEvent(final BlockPos eventPos, final String citizenName)
     {
-        super(eventPos, citizenName);
+        super(false, eventPos, citizenName);
     }
 
     @Override

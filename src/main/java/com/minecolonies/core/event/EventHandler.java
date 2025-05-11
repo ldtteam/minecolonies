@@ -3,6 +3,7 @@ package com.minecolonies.core.event;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -766,6 +767,12 @@ public class EventHandler
         {
             // Re-enable for ghostly halloween
             RenderBipedCitizen.isItGhostTime = false;
+        }
+        // April 1st mode
+        if (event.getLevel().isClientSide() && MineColonies.getConfig().getClient().holidayFeatures.get() &&
+            LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.APRIL)
+        {
+            CitizenModel.isItApril1st = true;
         }
     }
 

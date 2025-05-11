@@ -7,7 +7,6 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -56,7 +55,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -679,12 +677,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param isMirrored  is the structure mirroed?
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
-
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
+        workOrder.loadBlueprint(world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
@@ -703,7 +699,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
                   this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
@@ -713,7 +709,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
                   this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
@@ -722,13 +718,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure = new BuildingStructureHandler<>(world,
                   position,
                   blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
                   this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
-            job.setBlueprint(blueprint);
-            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -736,7 +730,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 structure.setStage(getProgressPos().getB());
             }
             this.loadingBlueprint = false;
-        })));
+        }));
     }
 
     /**

@@ -4,11 +4,9 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
@@ -76,6 +74,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
           building.getBuildingLevel(),
           targetLevel);
         wo.setCustomName(building);
+        wo.setColony(building.getColony());
         return wo;
     }
 
@@ -152,23 +151,18 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBeMadeBy(final IJob<?> job)
-    {
-        return job instanceof JobBuilder;
-    }
-
-    @Override
     public boolean canBuild(@NotNull final ICitizenData citizen)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
         //  - OR the WorkOrder is for the TownHall
-        //  - OR the WorkOrder is not farther away than 100 blocks from any builder
+        //  - OR the WorkOrder is not farther away than 100 blocks from any builder and not manually assigned
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIgnoringDistance(building.getPosition(), building.getBuildingLevel())
-                 && citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ;
+                 && (citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ
+                 || (isClaimed() && getClaimedBy().equals(building.getPosition())));
     }
 
     /**

@@ -154,13 +154,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             event.serialize(buf);
         }
 
-        List<IColonyEventDescription> colonyEvents = colony.getEventDescriptionManager().getEventDescriptions();
-        buf.writeInt(colonyEvents.size());
-        for (final IColonyEventDescription event : colonyEvents)
-        {
-            buf.writeUtf(event.getEventTypeId().getPath());
-            event.serialize(buf);
-        }
+        colony.getEventDescriptionManager().serialize(buf);
 
         final List<ItemStack> maps = new ArrayList<>();
         for (final ItemStack stack : InventoryUtils.getBuildingInventory(this))
