@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizeninvslotsaddition": 1
+      "id": "minecolonies:effects/citizeninvslotsaddition",
+      "level": 1
     }
   ],
   "icon": "minecraft:pink_shulker_box",
@@ -13,11 +21,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:emerald",
-      "quantity": 64
     }
   ],
   "researchLevel": 4,

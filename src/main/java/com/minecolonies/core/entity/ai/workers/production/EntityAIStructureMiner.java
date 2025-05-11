@@ -780,7 +780,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         mineNode.setStatus(MineNode.NodeStatus.IN_PROGRESS);
         building.markDirty();
         //Preload structures
-        if (job.getWorkOrder().getBlueprint() == null)
+        if (job.getWorkOrder() == null || job.getWorkOrder().getBlueprint() == null)
         {
             initStructure(mineNode,
               rotation,

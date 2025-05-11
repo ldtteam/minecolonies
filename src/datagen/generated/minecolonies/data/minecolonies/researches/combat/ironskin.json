@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/armordurabilitymultiplier": 3
+      "id": "minecolonies:effects/armordurabilitymultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:chainmail_helmet",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "townhall",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:iron_ingot",
-      "quantity": 16
     }
   ],
   "researchLevel": 3

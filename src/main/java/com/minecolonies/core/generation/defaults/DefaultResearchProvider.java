@@ -25,11 +25,10 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  * Note that this does not validate that the resulting research tree is coherent:
  * programmers should make sure that research parents and effects exist, that depth is 1 or one level above the parent depth,
  * and that cost and requirement identifiers match real items.
- *
- * Avoid changing research resource locations here unless necessary.
+ * <p>Avoid changing research resource locations here unless necessary.
  * If such a change is required, add the old and new ResearchIds to ResearchCompatMap.
  * ResearchIDs are stored to disk, and if not present on a GlobalResearchTree during colony load, will be lost.
- * Effect and Branch ResourceLocations are not stored to disk, but changing them may cause confusion with outside data packs.
+ * Effect and Branch ResourceLocations are not stored to disk, but changing them may cause confusion with outside data packs.</p>
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {

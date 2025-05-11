@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bow",
+      "quantity": 18
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/doublearrowsmultiplier": 3
+      "id": "minecolonies:effects/doublearrowsmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecolonies:firearrow",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "archery",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:bow",
-      "quantity": 18
     }
   ],
   "researchLevel": 5,

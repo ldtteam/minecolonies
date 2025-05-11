@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:bookshelf",
+      "quantity": 12
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/teachingmultiplier": 3
+      "id": "minecolonies:effects/teachingmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecolonies:textures/icons/research/xpgain3.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:bookshelf",
-      "quantity": 12
     }
   ],
   "researchLevel": 4,

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:stone",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutcrusher": 1
+      "id": "minecolonies:effects/blockhutcrusher",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutcrusher",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "stonemason",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:stone",
-      "quantity": 64
     }
   ],
   "researchLevel": 2

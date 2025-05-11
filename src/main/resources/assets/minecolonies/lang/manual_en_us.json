@@ -153,6 +153,8 @@
   "minecolonies.config.canplayeruseshowcolonyinfocommand.comment": "Should players be allowed to use the /mc colony info command?",
   "minecolonies.config.canplayerusekillcitizenscommand": "Can Players Use the Kill Citizens Command",
   "minecolonies.config.canplayerusekillcitizenscommand.comment": "Should players be allowed to use the /mc citizens kill command?",
+  "minecolonies.config.canplayerusemodifycitizenscommand": "Can Players Use the Modify Citizens Command",
+  "minecolonies.config.canplayerusemodifycitizenscommand.comment": "Should players be allowed to use the /mc citizens modify command?",
   "minecolonies.config.canplayeruseaddofficercommand": "Can Players Use the Add Officer Command",
   "minecolonies.config.canplayeruseaddofficercommand.comment": "Should players be allowed to use the /mc colony addOfficer command?",
   "minecolonies.config.canplayerusedeletecolonycommand": "Can Players Use the Delete Colony Command",
@@ -384,6 +386,7 @@
 
   "com.minecolonies.command.help.wiki": "Check out the wiki to learn more: ",
   "com.minecolonies.command.help.discord": "Join the community at  ",
+  "com.minecolonies.command.notcreative": "Must be in Creative Mode to use this command.",
   "com.minecolonies.command.notop": "Must be OP to use this command.",
   "com.minecolonies.command.whereami.nocolony": "No close colony.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony. The closest colony is approx %.2f blocks away.",
@@ -446,6 +449,7 @@
   "com.minecolonies.command.citizenlist.pagestyle": "§2 | ",
   "com.minecolonies.command.citizenlist.prev": " <- prev",
   "com.minecolonies.command.citizenlist.next": "next -> ",
+  "com.minecolonies.command.citizenmodify.success": "The %s of %s is now %s.",
   "com.minecolonies.command.citizenreload.success": "Updated entity for citizen ID %s.",
   "com.minecolonies.command.citizenspawn.success": "Spawned new citizen (%s).",
 

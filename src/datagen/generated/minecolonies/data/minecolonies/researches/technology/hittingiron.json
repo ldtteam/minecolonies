@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:anvil",
+      "quantity": 1
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutblacksmith": 1
+      "id": "minecolonies:effects/blockhutblacksmith",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutblacksmith",
@@ -11,11 +19,6 @@
       "type": "minecolonies:building",
       "building": "miner",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:anvil",
-      "quantity": 1
     }
   ],
   "researchLevel": 1,

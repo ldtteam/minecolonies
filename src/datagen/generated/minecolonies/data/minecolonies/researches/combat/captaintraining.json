@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:shield",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockattacksmultiplier": 3
+      "id": "minecolonies:effects/blockattacksmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:iron_bars",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "combatacademy",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:shield",
-      "quantity": 16
     }
   ],
   "researchLevel": 5

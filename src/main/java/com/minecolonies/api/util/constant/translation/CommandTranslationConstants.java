@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NonNls;
 public class CommandTranslationConstants
 {
     @NonNls
+    public static final String COMMAND_REQUIRES_CREATIVE                     = "com.minecolonies.command.notcreative";
+    @NonNls
     public static final String COMMAND_REQUIRES_OP                           = "com.minecolonies.command.notop";
     @NonNls
     public static final String COMMAND_DISABLED_IN_CONFIG                    = "com.minecolonies.command.notenabledinconfig";
@@ -55,6 +57,8 @@ public class CommandTranslationConstants
     public static final String COMMAND_CITIZEN_LIST_PREVIOUS                 = "com.minecolonies.command.citizenlist.prev";
     @NonNls
     public static final String COMMAND_CITIZEN_LIST_NEXT                     = "com.minecolonies.command.citizenlist.next";
+    @NonNls
+    public static final String COMMAND_CITIZEN_MODIFY_SUCCESS                = "com.minecolonies.command.citizenmodify.success";
     @NonNls
     public static final String COMMAND_CITIZEN_RELOAD_SUCCESS                = "com.minecolonies.command.citizenreload.success";
     @NonNls

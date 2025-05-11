@@ -9,8 +9,8 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.costs.IResearchCost;
-import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.IResearchCost;
+import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -20,8 +20,8 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.core.research.AlternateBuildingResearchRequirement;
-import com.minecolonies.core.research.BuildingResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -284,7 +284,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
 
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchList.get(i));
-            if (research.isHidden() && !IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), this.building.getColony()))
+            if (research.isHidden() && !IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirements(), this.building.getColony()))
             {
                 continue;
             }
@@ -302,7 +302,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final boolean trueAbandoned = drawResearchItem(view, offsetX, offsetY, research, abandoned);
 
-            if (!research.getParent().getPath().isEmpty())
+            if (research.getParent() != null)
             {
                 drawArrows(view, offsetX - X_SPACING, offsetY - NAME_LABEL_HEIGHT, researchList.size(), research.getParent(), i, nextHeight, height);
             }
@@ -406,7 +406,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             return ResearchButtonState.AVAILABLE;
         }
         // is missing a requirement, such as a building, alternate building, or research requirement.
-        else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), building.getColony()))
+        else if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirements(), building.getColony()))
         {
             return ResearchButtonState.MISSING_REQUIREMENT;
         }
@@ -609,7 +609,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
-            final IResearchEffect<?> researchEffect = research.getEffects().get(txt);
+            final IResearchEffect researchEffect = research.getEffects().get(txt);
             // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
             // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
             // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
@@ -617,14 +617,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                   && globalResearchEffect.getEffect() > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
             {
                 final MutableComponent mainText =
-                  Component.translatable(researchEffect.getDesc().getKey(), 0, IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get());
+                  Component.translatable(researchEffect.getName().getKey(), 0, IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get());
                 // This call to `Math.round` doesn't serve any purpose, it's only meant to convert the double into a long, so that it will display correctly without any trailing zeroes.
-                final MutableComponent finishText = Component.translatable(researchEffect.getDesc().getKey() + ".over", Math.round(globalResearchEffect.getEffect()));
+                final MutableComponent finishText = Component.translatable(researchEffect.getName().getKey() + ".over", Math.round(globalResearchEffect.getEffect()));
                 hoverPaneBuilder.paragraphBreak().append(mainText).append(Component.literal(" ")).append(finishText);
             }
             else
             {
-                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(researchEffect.getDesc()));
+                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(researchEffect.getName()));
             }
 
             if (!researchEffect.getSubtitle().getKey().isEmpty())
@@ -634,17 +634,17 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
         {
-            for (int txt = 0; txt < research.getResearchRequirement().size(); txt++)
+            for (int txt = 0; txt < research.getResearchRequirements().size(); txt++)
             {
-                if (research.getResearchRequirement().get(txt).isFulfilled(this.building.getColony()))
+                if (research.getResearchRequirements().get(txt).isFulfilled(this.building.getColony()))
                 {
                     hoverPaneBuilder.paragraphBreak().append(Component.literal(" - ")).color(COLOR_TEXT_FULFILLED)
-                      .append(research.getResearchRequirement().get(txt).getDesc());
+                      .append(research.getResearchRequirements().get(txt).getDesc());
                 }
                 else
                 {
                     hoverPaneBuilder.paragraphBreak().append(Component.literal(" - ")).color(COLOR_TEXT_UNFULFILLED)
-                      .append(research.getResearchRequirement().get(txt).getDesc());
+                      .append(research.getResearchRequirements().get(txt).getDesc());
                 }
             }
             for (final IResearchCost cost : research.getCostList())
@@ -844,13 +844,13 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         int storageXOffset = ICON_WIDTH;
 
-        final List<AlternateBuildingResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
+        final List<BuildingAlternatesResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
         final List<BuildingResearchRequirement> buildingRequirements = new ArrayList<>();
         final List<IResearchCost> itemRequirements = research.getCostList();
 
-        research.getResearchRequirement().forEach(requirement -> {
+        research.getResearchRequirements().forEach(requirement -> {
             // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-            if (requirement instanceof AlternateBuildingResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
+            if (requirement instanceof BuildingAlternatesResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
             {
                 alternateBuildingRequirements.add(alternateBuildingRequirement);
             }
@@ -860,7 +860,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
         });
 
-        for (final AlternateBuildingResearchRequirement requirement : alternateBuildingRequirements)
+        for (final BuildingAlternatesResearchRequirement requirement : alternateBuildingRequirements)
         {
             for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
             {
@@ -1017,34 +1017,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 view.addChild(playIcon);
                 break;
             case FINISHED:
-                if(DRAW_ICONS)
-                {
-                    if (!research.getIconTextureResourceLocation().getPath().isEmpty())
-                    {
-                        final Image iconTex = new Image();
-                        iconTex.setImage(research.getIconTextureResourceLocation(), false);
-                        iconTex.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                        iconTex.setPosition(offsetX, offsetY);
-                        view.addChild(iconTex);
-                    }
-                    else if (!research.getIconItemStack().isEmpty())
-                    {
-                        ItemIcon iconItem = new ItemIcon();
-                        iconItem.setItem(research.getIconItemStack());
-                        iconItem.setPosition(offsetX, offsetY);
-                        iconItem.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                        view.addChild(iconItem);
-                    }
-                }
-                else
-                {
-                    final ButtonImage checkIcon = new ButtonImage();
-                    checkIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"), false);
-                    checkIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                    checkIcon.setPosition(offsetX, offsetY);
-                    checkIcon.setID(research.getId().toString());
-                    view.addChild(checkIcon);
-                }
+                final ButtonImage checkIcon = new ButtonImage();
+                checkIcon.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/icon_check.png"), false);
+                checkIcon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+                checkIcon.setPosition(offsetX, offsetY);
+                checkIcon.setID(research.getId().toString());
+                view.addChild(checkIcon);
                 break;
             default:
                 Log.getLogger().error("Error with DrawIcons :" + research.getId());

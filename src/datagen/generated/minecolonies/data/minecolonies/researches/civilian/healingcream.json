@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_carrot",
+      "quantity": 8
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/regenerationmultiplier": 2
+      "id": "minecolonies:effects/regenerationmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/regeneration2.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:golden_carrot",
-      "quantity": 8
     }
   ],
   "researchLevel": 3,

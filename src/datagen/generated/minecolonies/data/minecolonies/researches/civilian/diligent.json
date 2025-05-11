@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:book",
+      "quantity": 6
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/levelingmultiplier": 1
+      "id": "minecolonies:effects/levelingmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:experience_bottle",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:book",
-      "quantity": 6
     }
   ],
   "researchLevel": 2,

@@ -1,18 +1,6 @@
 {
   "branch": "minecolonies:combat",
-  "effects": [
-    {
-      "minecolonies:effects/piercingarrowsunlock": 1
-    }
-  ],
-  "icon": "minecraft:enchanted_book",
-  "parentResearch": "minecolonies:combat/arrowuse",
-  "requirements": [
-    {
-      "type": "minecolonies:building",
-      "building": "archery",
-      "level": 1
-    },
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:arrow",
@@ -22,6 +10,21 @@
       "type": "minecolonies:item_simple",
       "item": "minecraft:redstone",
       "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/piercingarrowsunlock",
+      "level": 1
+    }
+  ],
+  "icon": "minecraft:enchanted_book",
+  "parentResearch": "minecolonies:combat/arrowuse",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "archery",
+      "level": 1
     }
   ],
   "researchLevel": 3

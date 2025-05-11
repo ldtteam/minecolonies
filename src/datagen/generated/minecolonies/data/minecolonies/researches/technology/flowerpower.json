@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:compost",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutflorist": 1
+      "id": "minecolonies:effects/blockhutflorist",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutflorist",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "composter",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecolonies:compost",
-      "quantity": 64
     }
   ],
   "researchLevel": 2
