@@ -61,7 +61,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final boolean instant,
         final boolean immutable)
     {
-        return new GlobalResearch(id, branch, parent, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
+        return new GlobalResearch(id, parent, branch, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
     }
 
     @NotNull
@@ -169,7 +169,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeBoolean(input.isAutostart());
         packetBuffer.writeBoolean(input.isImmutable());
         packetBuffer.writeBoolean(input.isHidden());
-        packetBuffer.writeVarInt(input.getCostList().size());
         Utils.serializeCodecMess(SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), packetBuffer, input.getCostList());
         packetBuffer.writeVarInt(input.getResearchRequirements().size());
         for (IResearchRequirement req : input.getResearchRequirements())
