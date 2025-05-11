@@ -126,6 +126,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     protected BlockPos workFrom;
 
     /**
+     * Previous Position where the Builders constructed from.
+     */
+    protected BlockPos prevBlockPosition;
+
+    /**
      * Block to mine.
      */
     protected BlockPos blockToMine;
