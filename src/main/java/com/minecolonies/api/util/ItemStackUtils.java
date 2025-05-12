@@ -130,13 +130,19 @@ public final class ItemStackUtils
     /**
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
+    public static final Predicate<ItemStack> IS_ANY_FOOD =
+            stack ->
+            {
+                final FoodProperties foodProperties = stack.getFoodProperties(null);
+                return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
+                        && foodProperties.saturation() > 0;
+            };
+
+    /**
+     * True if this stack is a standard food item that isn't excluded for colonists.
+     */
     public static final Predicate<ItemStack> ISFOOD =
-      stack ->
-      {
-          final FoodProperties foodProperties = stack.getFoodProperties(null);
-          return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
-                     && foodProperties.saturation() > 0 && !stack.is(ModTags.excludedFood);
-      };
+      stack -> IS_ANY_FOOD.test(stack) && !stack.is(ModTags.excludedFood);
 
     /**
      * Predicate describing things which work in the furnace.
