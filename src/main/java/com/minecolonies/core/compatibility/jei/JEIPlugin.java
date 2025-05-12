@@ -40,6 +40,7 @@ import java.util.function.BiConsumer;
 public class JEIPlugin implements IModPlugin
 {
     @Nullable IJeiRuntime jei;
+    boolean compatLoaded;
 
     @NotNull
     @Override
@@ -128,6 +129,8 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
+        IMinecoloniesAPI.getInstance().getEventBus().subscribe(CompatibilityManagerLoadedEvent.class, this::onCompatibilityManagerLoaded);
+
         registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
@@ -147,11 +150,16 @@ public class JEIPlugin implements IModPlugin
 
     private void onCompatibilityManagerLoaded(@NotNull final CompatibilityManagerLoadedEvent event)
     {
-        if (event.isClientSide() && this.jei != null)
+        if (event.isClientSide())
         {
-            // defer some recipes until after the compatibility manager is populated, because they use it
-            this.jei.getRecipeManager().addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
-            this.jei.getRecipeManager().addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
+            this.compatLoaded = true;
+
+            if (this.jei != null)
+            {
+                // defer some recipes until after the compatibility manager is populated, because they use it
+                this.jei.getRecipeManager().addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
+                this.jei.getRecipeManager().addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
+            }
         }
     }
 
@@ -205,7 +213,11 @@ public class JEIPlugin implements IModPlugin
     public void onRuntimeAvailable(@NotNull final IJeiRuntime jeiRuntime)
     {
         this.jei = jeiRuntime;
-        IMinecoloniesAPI.getInstance().getEventBus().subscribe(CompatibilityManagerLoadedEvent.class, this::onCompatibilityManagerLoaded);
+
+        if (this.compatLoaded)
+        {
+            onCompatibilityManagerLoaded(new CompatibilityManagerLoadedEvent(true));
+        }
     }
 
     @Override
