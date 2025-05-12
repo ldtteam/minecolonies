@@ -175,17 +175,14 @@ public class GlobalResearch implements IGlobalResearch
         {
             if (ingredient.ingredient().hasNoItems())
             {
-                if (ingredient.ingredient().hasNoItems())
-                {
-                    return false;
-                }
+                return false;
+            }
 
-                final int requiredCount = ingredient.count();
-                final int totalCount = InventoryUtils.getItemCountInItemHandler(inventory, ingredient.ingredient());
-                if (totalCount < requiredCount)
-                {
-                    return false;
-                }
+            final int requiredCount = ingredient.count();
+            final int totalCount = InventoryUtils.getItemCountInItemHandler(inventory, ingredient.ingredient());
+            if (totalCount < requiredCount)
+            {
+                return false;
             }
         }
         return true;
