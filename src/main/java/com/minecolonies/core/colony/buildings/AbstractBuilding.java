@@ -1579,9 +1579,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Collection<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
+    public Collection<IRequest<?>> getCompletedRequests(@Nullable final ICitizenData data)
     {
-        final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(data.getId());
+        final int citizenId = data == null ? -1 : data.getId();
+        final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(citizenId);
         if (tokens == null || tokens.isEmpty())
         {
             return ImmutableList.of();
@@ -1598,10 +1599,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                getCompletedRequestsByCitizen().get(data.getId()).remove(token);
-                if (getCompletedRequestsByCitizen().get(data.getId()).isEmpty())
+                getCompletedRequestsByCitizen().get(citizenId).remove(token);
+                if (getCompletedRequestsByCitizen().get(citizenId).isEmpty())
                 {
-                    getCompletedRequestsByCitizen().remove(data.getId());
+                    getCompletedRequestsByCitizen().remove(citizenId);
                 }
             }
         }
@@ -1652,9 +1653,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void cancelAllRequestsOfCitizen(@NotNull final ICitizenData data)
+    public void cancelAllRequestsOfCitizen(@Nullable final ICitizenData data)
     {
-        getOpenRequests(data.getId()).forEach(request ->
+        final int citizenId = data == null ? -1 : data.getId();
+        getOpenRequests(citizenId).forEach(request ->
         {
             colony.getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
 
@@ -1672,9 +1674,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getCompletedRequests(data).forEach(request -> colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
-        getOpenRequestsByCitizen().remove(data.getId());
+        getOpenRequestsByCitizen().remove(citizenId);
 
-        getCompletedRequestsByCitizen().remove(data.getId());
+        getCompletedRequestsByCitizen().remove(citizenId);
 
         markDirty();
     }

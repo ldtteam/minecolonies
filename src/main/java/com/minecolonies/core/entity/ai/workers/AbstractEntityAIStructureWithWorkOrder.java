@@ -487,6 +487,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.setWorkOrder(null);
             resetCurrentStructure();
             building.cancelAllRequestsOfCitizen(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizen(null);
             building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }

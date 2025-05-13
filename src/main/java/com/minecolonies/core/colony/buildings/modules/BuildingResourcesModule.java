@@ -368,7 +368,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 }
             }
 
-            worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1));
+            building.createRequest(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1), true);
         }
     }
 
