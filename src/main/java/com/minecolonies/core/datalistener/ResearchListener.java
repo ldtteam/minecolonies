@@ -287,7 +287,9 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
 
             final List<IResearchRequirement> requirements =
                 parseResearchRequirements(researchId, GsonHelper.getAsJsonArray(researchJson, RESEARCH_REQUIREMENTS_PROP, new JsonArray()));
-            final List<SizedIngredient> costs = parseResearchCosts(GsonHelper.getAsJsonArray(researchJson, RESEARCH_COSTS_PROP, new JsonArray()));
+            final List<SizedIngredient> costs = parseResearchCosts(researchId,
+                GsonHelper.getAsJsonArray(researchJson, RESEARCH_COSTS_PROP, new JsonArray()),
+                GsonHelper.getAsJsonArray(researchJson, RESEARCH_REQUIREMENTS_PROP, new JsonArray()));
             final List<GlobalResearchEffect> effects =
                 parseResearchEffects(researchId, GsonHelper.getAsJsonArray(researchJson, RESEARCH_EFFECTS_PROP, new JsonArray()), effectCategories);
 
@@ -343,15 +345,28 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
     /**
      * Parses a JSON object for research costs.
      *
-     * @param jsonCosts the array of requirements.
+     * @param researchId       a json object to retrieve the ID from.
+     * @param jsonCosts        the array of requirements.
+     * @param jsonRequirements the array of requirements.
      */
-    private List<SizedIngredient> parseResearchCosts(final JsonArray jsonCosts)
+    private List<SizedIngredient> parseResearchCosts(final ResourceLocation researchId, final JsonArray jsonCosts, final JsonArray jsonRequirements)
     {
         final List<SizedIngredient> costs = new ArrayList<>();
         for (int index = 0; index < jsonCosts.size(); index++)
         {
             final JsonElement jsonCost = jsonCosts.get(index);
             costs.add(Utils.deserializeCodecMessFromJson(SizedIngredient.FLAT_CODEC, getRegistryLookup(), jsonCost));
+        }
+
+        // TODO: 1.22 remove the json requirements array as a potential input here, costs should move to a separate list to get them mixed out with requirements
+        for (int index = 0; index < jsonRequirements.size(); index++)
+        {
+            final JsonObject jsonRequirement = jsonRequirements.get(index).getAsJsonObject();
+            if (jsonRequirement.has("items"))
+            {
+                Log.getLogger().warn("Research '{}' requirement #{} is deprecated. Cost requirements should be put in the 'costs' array.", researchId, index);
+                costs.add(Utils.deserializeCodecMessFromJson(SizedIngredient.FLAT_CODEC, getRegistryLookup(), jsonRequirement.get("items")));
+            }
         }
 
         return costs;
