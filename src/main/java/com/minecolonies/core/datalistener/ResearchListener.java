@@ -491,6 +491,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
      * @param object        A Map containing the resource location of each json file, and the element within that json file.
      * @return              A Tuple containing resource locations of Researches (A) and Branches (B) to remove from the global research tree.
      */
+    // TODO: 1.22 remove "remove" property from researches, as datapacks can be removed natively already by providing an empty file instead
     private Tuple<Collection<ResourceLocation>, Collection<ResourceLocation>> parseRemoveResearches(final Map<ResourceLocation, JsonElement> object)
     {
         final Collection<ResourceLocation> removeResearches = new HashSet<>();
