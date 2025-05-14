@@ -365,7 +365,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             }
 
             int requestCount = entry.getValue() - count;
-            if (requestedItems.contains(itemStack))
+            if (requestedItems.contains(new ItemStorage(itemStack.getItemStack())))
             {
                 continue;
             }

@@ -2067,5 +2067,71 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return map;
     }
 
+    /**
+     * Get a list of open requests from the building that are filtered by a predicate for citizen id or building (-1).
+     * @param citizenId the citizen id to include.
+     * @param selectionPredicate the selection predicate.
+     * @return the list.
+     */
+    public List<IRequest<?>> getOpenRequestsOfCitizenOrBuilding(final int citizenId, final Predicate<IRequest<?>> selectionPredicate)
+    {
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IRequest<?> req : getOpenRequests(-1))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        for (final IRequest<?> req : getOpenRequests(citizenId))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        return requests;
+    }
+
+    /**
+     * Get a list of closed requests from the building that are filtered by a predicate for citizen or building (null citizen).
+     * @param citizenData the citizen to include.
+     * @param selectionPredicate the selection predicate.
+     * @return the list.
+     */
+    public List<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable final ICitizenData citizenData, final Predicate<IRequest<?>> selectionPredicate)
+    {
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IRequest<?> req : getCompletedRequests(citizenData))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        for (final IRequest<?> req : getCompletedRequests(citizenData))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        return requests;
+    }
+
+    /**
+     * Move request from building (-1) to citizen and mark synchronous.
+     * @param citizenData the citizen to move it to.
+     * @param request the request to move.
+     */
+    public void moveToSyncCitizen(final ICitizenData citizenData, final IRequest<?> request)
+    {
+        getDataStore().moveToSyncCitizen(citizenData, request);
+    }
+
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

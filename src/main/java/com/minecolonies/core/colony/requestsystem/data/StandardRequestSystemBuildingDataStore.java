@@ -1,11 +1,13 @@
 package com.minecolonies.core.colony.requestsystem.data;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
@@ -76,6 +78,33 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
     public Map<IToken<?>, Integer> getCitizensByRequest()
     {
         return citizenByOpenRequest;
+    }
+
+    @Override
+    public void moveToSyncCitizen(final ICitizenData citizenData, final IRequest<?> request)
+    {
+        if (citizenByOpenRequest.containsKey(request.getId()))
+        {
+            citizenByOpenRequest.remove(request.getId());
+            citizenByOpenRequest.put(request.getId(), citizenData.getId());
+
+            openRequestsByCitizen.get(-1).remove(request.getId());
+
+            final Collection<IToken<?>> list = openRequestsByCitizen.getOrDefault(citizenData.getId(), new ArrayList<>());
+            list.add(request.getId());
+            openRequestsByCitizen.put(citizenData.getId(), list);
+        }
+
+        if (completedRequestsByCitizen.getOrDefault(-1, new ArrayList<>()).contains(request.getId()))
+        {
+            completedRequestsByCitizen.get(-1).remove(request.getId());
+
+            final Collection<IToken<?>> list = completedRequestsByCitizen.getOrDefault(citizenData.getId(), new ArrayList<>());
+            list.add(request.getId());
+            completedRequestsByCitizen.put(citizenData.getId(), list);
+        }
+
+        citizenData.getJob().markRequestSync(request.getId());
     }
 
     @Override

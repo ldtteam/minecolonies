@@ -12,6 +12,7 @@ import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -51,10 +52,7 @@ import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -834,6 +832,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                               entry.getKey().getItemStack())));
         }
 
+        final ICitizenData citizenData = placer.getWorker().getCitizenData();
+        final int citizenId = citizenData.getId();
         for (final Map.Entry<ItemStorage, Integer> placedStack : requestedMap.entrySet())
         {
             final ItemStack stack = placedStack.getKey().getItemStack();
@@ -842,41 +842,26 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 return FAIL;
             }
 
-            final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.building
-                                                                               .getOpenRequestsOfTypeFiltered(
-                                                                                 placer.getWorker().getCitizenData(),
-                                                                                 TypeConstants.DELIVERABLE,
-                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
-
-            final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.building
-                                                                                        .getCompletedRequestsOfTypeFiltered(
-                                                                                          placer.getWorker().getCitizenData(),
-                                                                                          TypeConstants.DELIVERABLE,
-                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
+            final List<IRequest<?>> requests = placer.building.getOpenRequestsOfCitizenOrBuilding(citizenId, e -> e.getRequest() instanceof IDeliverable deliverable && deliverable.matches(stack));
+            final List<IRequest<?>> completedRequests = placer.building.getCompletedRequestsOfCitizenOrBuilding(citizenData, e -> e.getRequest() instanceof IDeliverable deliverable && deliverable.matches(stack));
 
             if (requests.isEmpty() && completedRequests.isEmpty())
             {
-                final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(stack, placer.getTotalAmount(stack).getCount(), 1);
+                final Stack stackRequest = new Stack(stack, placer.getTotalAmount(stack).getCount(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(stack);
                 return FAIL;
             }
             else
             {
-                for (final IRequest<? extends IDeliverable> request : requests)
+                for (final IRequest<?> request : requests)
                 {
-                    if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
-                    {
-                        placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
-                    }
+                    placer.building.moveToSyncCitizen(citizenData, request);
                 }
 
-                for (final IRequest<? extends IDeliverable> request : completedRequests)
+                for (final IRequest<?> request : completedRequests)
                 {
-                    if (placer.worker.getCitizenJobHandler().getColonyJob().getAsyncRequests().contains(request.getId()))
-                    {
-                        placer.worker.getCitizenJobHandler().getColonyJob().markRequestSync(request.getId());
-                    }
+                    placer.building.moveToSyncCitizen(citizenData, request);
                 }
             }
             return FAIL;
