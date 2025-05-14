@@ -1735,13 +1735,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         for (final int citizenId : citizenIdsWithRequests)
         {
             final ICitizenData data = colony.getCitizenManager().getCivilian(citizenId);
-
-            if (data == null)
+            if (data == null && citizenId != -1)
             {
                 continue;
             }
 
-            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data.getId(), TypeConstants.DELIVERABLE), stack);
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenId, TypeConstants.DELIVERABLE), stack);
 
             if (target == null || !isRequestStuck(target, playerRequests, retryingRequests))
             {
