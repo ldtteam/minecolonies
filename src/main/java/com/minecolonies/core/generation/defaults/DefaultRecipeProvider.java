@@ -1,12 +1,11 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.BottleRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
 import com.minecolonies.core.generation.CompostRecipeBuilder;
-import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -21,17 +20,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 import static com.ldtteam.structurize.items.ModItems.shapeTool;
-import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -923,7 +919,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+        BottleRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
           .requires(ModItems.large_water_bottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
