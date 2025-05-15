@@ -74,7 +74,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY + URGENT), ChatPriority.BLOCKING));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
         }
     }
