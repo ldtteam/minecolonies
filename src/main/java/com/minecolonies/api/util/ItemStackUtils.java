@@ -874,8 +874,6 @@ public final class ItemStackUtils
             itemUseReturn = ItemStack.EMPTY;
         }
 
-        citizenData.increaseSaturation(satIncrease);
-
         if (!itemUseReturn.isEmpty())
         {
             if (citizenData.getInventory().isFull() || (player != null && !player.getInventory().add(itemUseReturn)))
