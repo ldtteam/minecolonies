@@ -666,11 +666,23 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_water_bottle)
+          .requires(ModItems.large_empty_bottle)
+          .requires(Tags.Items.BUCKETS_WATER)
+          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_milk_bottle)
+          .requires(ModItems.large_empty_bottle)
+          .requires(Tags.Items.BUCKETS_MILK)
+          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .save(consumer, new ResourceLocation(MOD_ID, "large_milk_bottle"));
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
-          .save(consumer, new ResourceLocation(MOD_ID, "butter"));
+                .requires(ModItems.large_milk_bottle)
+                .requires(ModItems.large_milk_bottle)
+                .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+                .save(consumer, new ResourceLocation(MOD_ID, "butter"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
           .requires(ModItems.large_soy_milk_bottle)
