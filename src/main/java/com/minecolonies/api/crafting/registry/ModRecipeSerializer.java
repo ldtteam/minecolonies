@@ -1,6 +1,6 @@
 package com.minecolonies.api.crafting.registry;
 
-import com.minecolonies.api.crafting.BottleRecipe;
+import com.minecolonies.api.crafting.ZeroWasteRecipe;
 import com.minecolonies.api.crafting.CompostRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.registries.RegistryObject;
@@ -13,5 +13,5 @@ public class ModRecipeSerializer
     public static RegistryObject<CompostRecipe.Serializer> CompostRecipeSerializer;
     public static RegistryObject<RecipeType<CompostRecipe>>   CompostRecipeType;
 
-    public static RegistryObject<BottleRecipe.Serializer> BottleRecipeSerializer;
+    public static RegistryObject<ZeroWasteRecipe.Serializer> ZeroWasteRecipeSerializer;
 }

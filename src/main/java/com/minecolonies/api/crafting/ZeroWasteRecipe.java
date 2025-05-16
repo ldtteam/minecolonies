@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
-import com.minecolonies.api.items.ModItems;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.CriterionTriggerInstance;
@@ -28,17 +27,19 @@ import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * A recipe to mix additional items into filled bottles.  Avoids duplicating the bottles.
+ * A shapeless recipe that discards any remaining items.  Mainly intended for mixing things into bottles or bowls
+ * without leaving extra empties behind, but can be used for other things too.
  */
-public class BottleRecipe extends ShapelessRecipe
+public class ZeroWasteRecipe extends ShapelessRecipe
 {
-    public BottleRecipe(@NotNull final ResourceLocation id,
-                        @NotNull final ItemStack output,
-                        @NotNull final NonNullList<Ingredient> inputs)
+    public ZeroWasteRecipe(@NotNull final ResourceLocation id,
+                           @NotNull final ItemStack output,
+                           @NotNull final NonNullList<Ingredient> inputs)
     {
         super(id, "", CraftingBookCategory.MISC, output, inputs);
     }
@@ -48,13 +49,7 @@ public class BottleRecipe extends ShapelessRecipe
     public NonNullList<ItemStack> getRemainingItems(@NotNull final CraftingContainer container)
     {
         final NonNullList<ItemStack> remainingItems = super.getRemainingItems(container);
-        for (int i = 0; i < remainingItems.size(); ++i)
-        {
-            if (remainingItems.get(i).is(ModItems.large_empty_bottle))
-            {
-                remainingItems.set(i, ItemStack.EMPTY);
-            }
-        }
+        Collections.fill(remainingItems, ItemStack.EMPTY);
         return remainingItems;
     }
 
@@ -62,15 +57,15 @@ public class BottleRecipe extends ShapelessRecipe
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return ModRecipeSerializer.BottleRecipeSerializer.get();
+        return ModRecipeSerializer.ZeroWasteRecipeSerializer.get();
     }
 
-    public static class Serializer implements RecipeSerializer<BottleRecipe>
+    public static class Serializer implements RecipeSerializer<ZeroWasteRecipe>
     {
         @NotNull
         @Override
-        public BottleRecipe fromJson(@NotNull final ResourceLocation id,
-                                     @NotNull final JsonObject json)
+        public ZeroWasteRecipe fromJson(@NotNull final ResourceLocation id,
+                                        @NotNull final JsonObject json)
         {
             final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
             final JsonArray array = GsonHelper.getAsJsonArray(json, "ingredients");
@@ -80,13 +75,13 @@ public class BottleRecipe extends ShapelessRecipe
                 inputs.add(Ingredient.fromJson(array.get(i), false));
             }
 
-            return new BottleRecipe(id, output, inputs);
+            return new ZeroWasteRecipe(id, output, inputs);
         }
 
         @Nullable
         @Override
-        public BottleRecipe fromNetwork(@NotNull final ResourceLocation id,
-                                        @NotNull final FriendlyByteBuf buf)
+        public ZeroWasteRecipe fromNetwork(@NotNull final ResourceLocation id,
+                                           @NotNull final FriendlyByteBuf buf)
         {
             final int count = buf.readVarInt();
             final NonNullList<Ingredient> inputs = NonNullList.withSize(count, Ingredient.EMPTY);
@@ -96,12 +91,12 @@ public class BottleRecipe extends ShapelessRecipe
             }
             final ItemStack output = buf.readItem();
 
-            return new BottleRecipe(id, output, inputs);
+            return new ZeroWasteRecipe(id, output, inputs);
         }
 
         @Override
         public void toNetwork(@NotNull final FriendlyByteBuf buf,
-                              @NotNull final BottleRecipe recipe)
+                              @NotNull final ZeroWasteRecipe recipe)
         {
             buf.writeVarInt(recipe.getIngredients().size());
             for (final Ingredient input : recipe.getIngredients())
@@ -250,7 +245,7 @@ public class BottleRecipe extends ShapelessRecipe
             @NotNull
             public RecipeSerializer<?> getType()
             {
-                return ModRecipeSerializer.BottleRecipeSerializer.get();
+                return ModRecipeSerializer.ZeroWasteRecipeSerializer.get();
             }
 
             @NotNull

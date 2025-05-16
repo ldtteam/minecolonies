@@ -1,7 +1,7 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.crafting.BottleRecipe;
+import com.minecolonies.api.crafting.ZeroWasteRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -919,7 +918,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        BottleRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
           .requires(ModItems.large_water_bottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
