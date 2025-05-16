@@ -1,6 +1,7 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.crafting.ZeroWasteRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
@@ -919,7 +920,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
           .requires(ModItems.large_water_bottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
