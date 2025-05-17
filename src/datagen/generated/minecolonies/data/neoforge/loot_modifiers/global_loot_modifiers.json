@@ -7,8 +7,8 @@
     "minecolonies:crops/blocks/tall_grass",
     "minecolonies:crops/blocks/small_dripleaf",
     "minecolonies:crops/blocks/seagrass",
-    "minecolonies:crops/blocks/short_grass",
-    "minecolonies:crops/blocks/fern"
+    "minecolonies:crops/blocks/fern",
+    "minecolonies:crops/blocks/short_grass"
   ],
   "replace": false
 }
