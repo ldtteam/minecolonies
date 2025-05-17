@@ -7,12 +7,11 @@
     }
   },
   "pattern": [
-    "M",
-    " ",
-    "M"
+    "MM",
+    "MM"
   ],
   "result": {
-    "count": 1,
+    "count": 2,
     "id": "minecolonies:cheddar_cheese"
   }
 }

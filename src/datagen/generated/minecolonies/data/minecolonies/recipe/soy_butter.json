@@ -7,11 +7,11 @@
     }
   },
   "pattern": [
-    "M",
-    "M"
+    "MMM",
+    "MMM"
   ],
   "result": {
-    "count": 1,
+    "count": 3,
     "id": "minecolonies:butter"
   }
 }
