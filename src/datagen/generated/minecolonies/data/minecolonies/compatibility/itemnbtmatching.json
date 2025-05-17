@@ -752,13 +752,25 @@
     "item": "domum_ornamentum:yellow_floating_carpet"
   },
   {
+    "item": "minecolonies:ancienttome"
+  },
+  {
     "item": "minecolonies:apple_pie"
   },
   {
     "item": "minecolonies:baked_salmon"
   },
   {
+    "item": "minecolonies:banner_rally_guards"
+  },
+  {
+    "item": "minecolonies:barrel_block"
+  },
+  {
     "item": "minecolonies:bell_pepper"
+  },
+  {
+    "item": "minecolonies:blockconstructiontape"
   },
   {
     "item": "minecolonies:blockhutalchemist"
@@ -821,6 +833,9 @@
     "item": "minecolonies:blockhutfarmer"
   },
   {
+    "item": "minecolonies:blockhutfield"
+  },
+  {
     "item": "minecolonies:blockhutfisherman"
   },
   {
@@ -866,6 +881,9 @@
     "item": "minecolonies:blockhutplantation"
   },
   {
+    "item": "minecolonies:blockhutplantationfield"
+  },
+  {
     "item": "minecolonies:blockhutrabbithutch"
   },
   {
@@ -905,13 +923,41 @@
     "item": "minecolonies:blockhutwarehouse"
   },
   {
+    "item": "minecolonies:blockminecoloniesgrave"
+  },
+  {
+    "item": "minecolonies:blockminecoloniesnamedgrave"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "textureData"
+      }
+    ],
+    "item": "minecolonies:blockminecoloniesrack"
+  },
+  {
     "item": "minecolonies:blockpostbox"
   },
   {
     "item": "minecolonies:blockstash"
   },
   {
+    "item": "minecolonies:blockwaypoint"
+  },
+  {
     "item": "minecolonies:borscht"
+  },
+  {
+    "item": "minecolonies:bread_dough"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
+    "item": "minecolonies:build_goggles"
   },
   {
     "item": "minecolonies:butter"
@@ -924,6 +970,9 @@
   },
   {
     "item": "minecolonies:cabochis"
+  },
+  {
+    "item": "minecolonies:cake_batter"
   },
   {
     "item": "minecolonies:cheddar_cheese"
@@ -941,10 +990,42 @@
     "item": "minecolonies:chickpea"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:chiefsword"
+  },
+  {
+    "item": "minecolonies:chorus_bread"
+  },
+  {
+    "item": "minecolonies:clipboard"
+  },
+  {
+    "item": "minecolonies:colony_banner"
+  },
+  {
+    "item": "minecolonies:colonymap"
+  },
+  {
+    "item": "minecolonies:compost"
+  },
+  {
+    "item": "minecolonies:composted_dirt"
+  },
+  {
     "item": "minecolonies:congee"
   },
   {
     "item": "minecolonies:cooked_rice"
+  },
+  {
+    "item": "minecolonies:cookie_dough"
   },
   {
     "item": "minecolonies:corn"
@@ -957,6 +1038,9 @@
   },
   {
     "item": "minecolonies:creamcheese"
+  },
+  {
+    "item": "minecolonies:decorationcontroller"
   },
   {
     "item": "minecolonies:durum"
@@ -977,6 +1061,9 @@
     "item": "minecolonies:feta_cheese"
   },
   {
+    "item": "minecolonies:firearrow"
+  },
+  {
     "item": "minecolonies:fish_dinner"
   },
   {
@@ -992,7 +1079,27 @@
     "item": "minecolonies:garlic"
   },
   {
+    "item": "minecolonies:gate_iron"
+  },
+  {
+    "item": "minecolonies:gate_wood"
+  },
+  {
+    "item": "minecolonies:golden_bread"
+  },
+  {
     "item": "minecolonies:hand_pie"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:iron_scimitar"
   },
   {
     "item": "minecolonies:kebab"
@@ -1019,6 +1126,9 @@
     "item": "minecolonies:lembas_scone"
   },
   {
+    "item": "minecolonies:magicpotion"
+  },
+  {
     "item": "minecolonies:manchet_bread"
   },
   {
@@ -1031,6 +1141,9 @@
     "item": "minecolonies:mediumquarry"
   },
   {
+    "item": "minecolonies:milky_bread"
+  },
+  {
     "item": "minecolonies:mint"
   },
   {
@@ -1041,6 +1154,9 @@
   },
   {
     "item": "minecolonies:mintchoco_cheesecake"
+  },
+  {
+    "item": "minecolonies:mistletoe"
   },
   {
     "item": "minecolonies:muffin"
@@ -1076,13 +1192,156 @@
     "item": "minecolonies:pepper_hummus"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pharaoscepter"
+  },
+  {
     "item": "minecolonies:pierogi"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_boots"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_cap"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_chest"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_hat"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_leggins"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_legs"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_shoes"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:pirate_top"
   },
   {
     "item": "minecolonies:pita_hummus"
   },
   {
     "item": "minecolonies:plain_cheesecake"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:plate_armor_boots"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:plate_armor_chest"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:plate_armor_helmet"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:plate_armor_legs"
   },
   {
     "item": "minecolonies:polenta"
@@ -1094,10 +1353,19 @@
     "item": "minecolonies:pottage"
   },
   {
+    "item": "minecolonies:questlog"
+  },
+  {
     "item": "minecolonies:ramen"
   },
   {
     "item": "minecolonies:raw_noodle"
+  },
+  {
+    "item": "minecolonies:raw_pumpkin_pie"
+  },
+  {
+    "item": "minecolonies:resourcescroll"
   },
   {
     "item": "minecolonies:rice"
@@ -1106,7 +1374,96 @@
     "item": "minecolonies:rice_ball"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:santa_hat"
+  },
+  {
+    "item": "minecolonies:scan_analyzer"
+  },
+  {
+    "item": "minecolonies:scepterbeekeeper"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:scepterguard"
+  },
+  {
+    "item": "minecolonies:scepterlumberjack"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:scepterpermission"
+  },
+  {
     "item": "minecolonies:schnitzel"
+  },
+  {
+    "item": "minecolonies:scroll_area_tp"
+  },
+  {
+    "item": "minecolonies:scroll_buff"
+  },
+  {
+    "item": "minecolonies:scroll_guard_help"
+  },
+  {
+    "item": "minecolonies:scroll_highlight"
+  },
+  {
+    "item": "minecolonies:scroll_tp"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
+    "item": "minecolonies:sifter_mesh_diamond"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
+    "item": "minecolonies:sifter_mesh_flint"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
+    "item": "minecolonies:sifter_mesh_iron"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      }
+    ],
+    "item": "minecolonies:sifter_mesh_string"
   },
   {
     "item": "minecolonies:simplequarry"
@@ -1116,6 +1473,17 @@
   },
   {
     "item": "minecolonies:soysauce"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:spear"
   },
   {
     "item": "minecolonies:spicy_eggplant"
@@ -1137,6 +1505,15 @@
   },
   {
     "item": "minecolonies:stuffed_pita"
+  },
+  {
+    "item": "minecolonies:sugary_bread"
+  },
+  {
+    "item": "minecolonies:supplycampdeployer"
+  },
+  {
+    "item": "minecolonies:supplychestdeployer"
   },
   {
     "item": "minecolonies:sushi_roll"
