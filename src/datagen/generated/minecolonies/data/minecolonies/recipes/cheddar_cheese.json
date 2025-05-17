@@ -7,11 +7,11 @@
     }
   },
   "pattern": [
-    "M",
-    " ",
-    "M"
+    "MM",
+    "MM"
   ],
   "result": {
+    "count": 2,
     "item": "minecolonies:cheddar_cheese"
   },
   "show_notification": true

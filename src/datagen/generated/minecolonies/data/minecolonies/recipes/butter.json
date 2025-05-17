@@ -7,10 +7,11 @@
     }
   },
   "pattern": [
-    "M",
-    "M"
+    "MMM",
+    "MMM"
   ],
   "result": {
+    "count": 3,
     "item": "minecolonies:butter"
   },
   "show_notification": true
