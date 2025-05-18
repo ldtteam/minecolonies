@@ -322,7 +322,7 @@ public class FoodUtils
                                 || (localScore < 0 && foodStats.quality() > qualityRequirement * 2)
                                 || (isMinecolfood && foodStats.diversity() > diversityRequirement * 2))
                             {
-                                return bestInvScore < localScore;
+                                return bestInvScore <= localScore;
                             }
                         }
                     }
@@ -334,7 +334,7 @@ public class FoodUtils
         {
             return bestInvScore < Integer.MAX_VALUE;
         }
-        return bestInvScore < bestScore;
+        return bestInvScore <= bestScore;
     }
 
     /**
