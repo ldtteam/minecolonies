@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cookie",
+      "quantity": 128
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/saturationmultiplier": 3
+      "id": "minecolonies:effects/saturationmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecolonies:textures/icons/research/saturation3.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "cook",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:cookie",
-      "quantity": 128
     }
   ],
   "researchLevel": 4

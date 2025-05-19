@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_carrot",
+      "quantity": 25
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/workingdayhaddition": 1
+      "id": "minecolonies:effects/workingdayhaddition",
+      "level": 1
     }
   ],
   "icon": "minecraft:clock:1",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:golden_carrot",
-      "quantity": 25
     }
   ],
   "researchLevel": 3,

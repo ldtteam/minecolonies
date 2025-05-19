@@ -1,18 +1,6 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/crushing11unlock": 1
-    }
-  ],
-  "icon": "minecraft:gold_block",
-  "parentResearch": "minecolonies:technology/rockingroll",
-  "requirements": [
-    {
-      "type": "minecolonies:building",
-      "building": "crusher",
-      "level": 3
-    },
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:gravel",
@@ -27,6 +15,21 @@
       "type": "minecolonies:item_simple",
       "item": "minecraft:clay",
       "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/crushing11unlock",
+      "level": 1
+    }
+  ],
+  "icon": "minecraft:gold_block",
+  "parentResearch": "minecolonies:technology/rockingroll",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "crusher",
+      "level": 3
     }
   ],
   "researchLevel": 3,

@@ -160,11 +160,14 @@ public class BuildingCowboy extends AbstractBuilding
             if (bucketsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
+                requiredItems.put(s -> s.is(ModItems.large_empty_bottle), new Tuple<>(bucketsToKeep, true));
             }
+
             if (bowlsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BOWL), new Tuple<>(bowlsToKeep, false));
             }
+
             return requiredItems;
         }
 

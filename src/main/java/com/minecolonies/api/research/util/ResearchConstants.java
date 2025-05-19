@@ -50,8 +50,6 @@ public final class ResearchConstants
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
-    public static final String TAG_ICON_TEXTURE   = "icon_tex";
-    public static final String TAG_ICON_ITEM_STACK= "icon_is";
     public static final String TAG_SUBTITLE_NAME  = "subtitle";
     public static final String TAG_INSTANT        = "instant";
     public static final String TAG_AUTOSTART      = "autostart";
@@ -92,7 +90,6 @@ public final class ResearchConstants
     public static final int    OR_WIDTH             = 16;
     public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
-    public static final boolean DRAW_ICONS = false;
 
     public static final int    COLOR_TEXT_NEGATIVE   = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL      = Color.rgbaToInt(218, 202, 171, 255);

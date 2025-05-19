@@ -1,18 +1,6 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/min_order": 1
-    }
-  ],
-  "icon": "minecolonies:clipboard",
-  "parentResearch": "minecolonies:technology/memoryaid",
-  "requirements": [
-    {
-      "type": "minecolonies:building",
-      "building": "deliveryman",
-      "level": 9
-    },
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecolonies:clipboard",
@@ -22,6 +10,21 @@
       "type": "minecolonies:item_simple",
       "item": "minecraft:book",
       "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/min_order",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:clipboard",
+  "parentResearch": "minecolonies:technology/memoryaid",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "deliveryman",
+      "level": 9
     }
   ],
   "researchLevel": 3,

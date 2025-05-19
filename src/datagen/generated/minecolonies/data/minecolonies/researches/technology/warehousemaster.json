@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 3
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/recipemodeunlock": 1
+      "id": "minecolonies:effects/recipemodeunlock",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockminecoloniesrack",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "sawmill",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecolonies:blockminecoloniesrack",
-      "quantity": 3
     }
   ],
   "researchLevel": 3,

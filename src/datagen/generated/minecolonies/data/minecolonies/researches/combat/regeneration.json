@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 1
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/retreatunlock": 1
+      "id": "minecolonies:effects/retreatunlock",
+      "level": 1
     }
   ],
   "exclusiveChildResearch": true,
@@ -13,11 +21,6 @@
       "type": "minecolonies:building",
       "building": "guardtower",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:emerald",
-      "quantity": 1
     }
   ],
   "researchLevel": 2,

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 8
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/fleeingdamagemultiplier": 1
+      "id": "minecolonies:effects/fleeingdamagemultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:leather_boots",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "guardtower",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:emerald",
-      "quantity": 8
     }
   ],
   "researchLevel": 3

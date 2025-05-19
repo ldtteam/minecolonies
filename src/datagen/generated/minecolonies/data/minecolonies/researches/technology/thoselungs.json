@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:glass",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutglassblower": 1
+      "id": "minecolonies:effects/blockhutglassblower",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutglassblower",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "smeltery",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:glass",
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

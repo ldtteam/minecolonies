@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_chicken",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/growthmultiplier": 2
+      "id": "minecolonies:effects/growthmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/childgrowth2.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "school",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:cooked_chicken",
-      "quantity": 64
     }
   ],
   "researchLevel": 3,

@@ -1,15 +1,18 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "ingredients": [
-    {
-      "item": "minecolonies:large_soy_milk_bottle"
-    },
-    {
+  "key": {
+    "M": {
       "item": "minecolonies:large_soy_milk_bottle"
     }
+  },
+  "pattern": [
+    "MMM",
+    "MMM"
   ],
   "result": {
+    "count": 3,
     "item": "minecolonies:butter"
-  }
+  },
+  "show_notification": true
 }

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:white_wool",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/masks": 1
+      "id": "minecolonies:effects/masks",
+      "level": 1
     }
   ],
   "icon": "minecolonies:textures/icons/research/hp4.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "library",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:white_wool",
-      "quantity": 32
     }
   ],
   "researchLevel": 3,
