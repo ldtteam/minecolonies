@@ -516,7 +516,7 @@ public class ColonyBlueprintRenderer
     }
 
     /**
-     * Render work orders near the player wearing build goggles.
+     * Render work orders near the player using/holding an Assistant hammer
      */
     private static class AssistantHammerPreview implements IRenderBlueprintRule
     {

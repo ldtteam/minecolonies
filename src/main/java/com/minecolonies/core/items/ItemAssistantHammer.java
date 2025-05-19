@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Guard Scepter Item class. Used to give tasks to guards.
+ * Assistant Hammer item used to allow the player to assist the builder in building
  */
 public class ItemAssistantHammer extends AbstractItemMinecolonies
 {

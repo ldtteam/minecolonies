@@ -60,7 +60,7 @@ public class SolidPlaceholderPlacementHandler implements IPlacementHandler
         {
             for (final IPlacementHandler handler : PlacementHandlers.handlers)
             {
-                if (handler.canHandle(world, pos, replacement))
+                if (handler != this && handler.canHandle(world, pos, replacement))
                 {
                     replacementHandler = handler;
                     break;
