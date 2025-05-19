@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:compost",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/greenrevolution": 1
+      "id": "minecolonies:effects/greenrevolution",
+      "level": 1
     }
   ],
   "icon": "minecolonies:compost",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "farmer",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecolonies:compost",
-      "quantity": 32
     }
   ],
   "researchLevel": 2,

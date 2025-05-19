@@ -1363,21 +1363,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
 
+        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
+
+        colony.getRequestManager().assignRequest(requestToken);
+
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
             citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
-              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
+                request.getLongDisplayString()), ChatPriority.PENDING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
         }
         else
         {
             citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
-              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+                request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
-
-        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
-
-        colony.getRequestManager().assignRequest(requestToken);
 
         markDirty();
 
