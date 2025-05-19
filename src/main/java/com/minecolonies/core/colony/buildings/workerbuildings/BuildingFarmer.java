@@ -184,21 +184,15 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IBuildingExtension> getExtensions()
+        public @NotNull List<IBuildingExtension> getMatchingExtension(final Predicate<IBuildingExtension> predicateToMatch)
         {
-            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get())).stream().toList();
+            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.getBuildingExtensionType() == BuildingExtensionRegistries.farmField.get() && predicateToMatch.test(field));
         }
 
         @Override
         public boolean canAssignExtensionOverride(final IBuildingExtension extension)
         {
             return extension instanceof FarmField farmField && !farmField.getSeed().isEmpty();
-        }
-
-        @Override
-        protected int getExtensionCheckTimeoutSeconds()
-        {
-            return 60;
         }
     }
 

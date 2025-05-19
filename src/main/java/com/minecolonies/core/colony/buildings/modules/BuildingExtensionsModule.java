@@ -4,19 +4,23 @@ import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.core.util.CollectorUtils;
+import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Abstract class to list all building extensions (assigned) to a building.
@@ -31,7 +35,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     /**
      * A map of building extensions, along with their unix timestamp of when they can next be checked again.
      */
-    private final Map<IBuildingExtension, Instant> checkedExtensions = new HashMap<>();
+    private final Map<BlockPos, Integer> checkedExtensions = new HashMap<>();
 
     /**
      * The building extension the citizen is currently working on.
@@ -48,12 +52,28 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
+        final ListTag listTag = compound.getList(TAG_LIST, Tag.TAG_COMPOUND);
+        for (int i = 0; i < listTag.size(); ++i)
+        {
+            final CompoundTag tag = listTag.getCompound(i);
+            checkedExtensions.put(BlockPosUtil.read(tag, TAG_POS), compound.getInt(TAG_DAY));
+        }
     }
 
     @Override
     public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
+
+        final ListTag listTag = new ListTag();
+        for (final Map.Entry<BlockPos, Integer> entry : checkedExtensions.entrySet())
+        {
+            final CompoundTag listEntry = new CompoundTag();
+            BlockPosUtil.write(compound, TAG_POS, entry.getKey());
+            listEntry.putLong(TAG_DAY, entry.getValue());
+            listTag.add(listEntry);
+        }
+        compound.put(TAG_LIST, listTag);
     }
 
     @Override
@@ -103,17 +123,31 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
             return currentExtension;
         }
 
-        final Instant now = Instant.now();
-        for (final IBuildingExtension extension : getOwnedExtensions().stream().collect(CollectorUtils.toShuffledList()))
+        IBuildingExtension lastUsedExtension = null;
+        int lastUsedExtensionDay = 0;
+
+        for (final IBuildingExtension extension : getOwnedExtensions())
         {
-            if (!checkedExtensions.containsKey(extension) || now.isAfter(checkedExtensions.get(extension)))
+            if (!checkedExtensions.containsKey(extension.getPosition()))
             {
-                checkedExtensions.remove(extension);
                 currentExtension = extension;
                 return extension;
             }
+
+            final int lastDay = checkedExtensions.get(extension.getPosition());
+            if (lastUsedExtension == null && lastDay < building.getColony().getDay())
+            {
+                lastUsedExtension = extension;
+                lastUsedExtensionDay = lastDay;
+            }
+            else if (lastUsedExtensionDay < lastDay)
+            {
+                lastUsedExtension = extension;
+                lastUsedExtensionDay = lastDay;
+            }
         }
-        return null;
+        currentExtension = lastUsedExtension;
+        return lastUsedExtension;
     }
 
     /**
@@ -124,7 +158,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     @NotNull
     public final List<IBuildingExtension> getOwnedExtensions()
     {
-        return getExtensions().stream().filter(f -> building.getID().equals(f.getBuildingId())).toList();
+        return getMatchingExtension(f -> building.getID().equals(f.getBuildingId()));
     }
 
     /**
@@ -133,7 +167,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
      * @return a list of building extension objects.
      */
     @NotNull
-    public abstract List<IBuildingExtension> getExtensions();
+    public abstract List<IBuildingExtension> getMatchingExtension(final Predicate<IBuildingExtension>  predicateToMatch);
 
     /**
      * Attempt to automatically claim free building extensions, if possible and if any building extensions are available.
@@ -156,7 +190,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
      */
     public final List<IBuildingExtension> getFreeExtensions()
     {
-        return getExtensions().stream().filter(extension -> !extension.isTaken()).toList();
+        return getMatchingExtension(extension -> !extension.isTaken());
     }
 
     /**
@@ -252,13 +286,8 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     {
         if (currentExtension != null)
         {
-            checkedExtensions.put(currentExtension, Instant.now().plus(getExtensionCheckTimeoutSeconds(), ChronoUnit.SECONDS));
+            checkedExtensions.put(currentExtension.getPosition(), building.getColony().getDay());
         }
         currentExtension = null;
     }
-
-    /**
-     * Get the timeout for building extensions to be allowed to be checked again.
-     */
-    protected abstract int getExtensionCheckTimeoutSeconds();
 }

@@ -904,8 +904,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
     }
 
+    @NotNull
     @Override
-    public @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher)
+    public List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher)
     {
         return buildingExtensions.stream()
                  .filter(matcher)

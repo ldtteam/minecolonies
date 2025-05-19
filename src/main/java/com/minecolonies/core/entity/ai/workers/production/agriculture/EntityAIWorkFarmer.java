@@ -247,7 +247,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return IDLE;
         }
 
-        module.resetCurrentExtension();
         final IBuildingExtension fieldToWork = module.getBuildingExtensionToWorkOn();
         if (fieldToWork instanceof FarmField farmField)
         {
@@ -267,6 +266,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return FARMER_HOE;
             }
             farmField.nextState();
+            module.resetCurrentExtension();
         }
         return PREPARING;
     }
@@ -336,9 +336,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return PREPARING;
         }
 
+        final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+
         seeds.setCount(seeds.getMaxStackSize());
         checkIfRequestForItemExistOrCreateAsync(seeds, seeds.getMaxStackSize(), 1);
         farmField.nextState();
+        module.resetCurrentExtension();
         return PREPARING;
     }
 
@@ -555,6 +558,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 shouldDumpInventory = true;
                 farmField.nextState();
+                module.resetCurrentExtension();
                 prevPos = null;
                 return IDLE;
             }
@@ -705,8 +709,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
               || world.getBlockState(position.above()).getBlock() instanceof StemBlock
               || world.getBlockState(position).getBlock() instanceof BlockScarecrow
               || !isRightFarmLandForCrop(farmField, world.getBlockState(position))
-              || world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock
-        )
+              || world.getBlockState(position.above()).getBlock() instanceof MinecoloniesCropBlock)
         {
             return null;
         }
@@ -733,7 +736,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
 
-        if (item.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() instanceof CropBlock || blockItem.getBlock() instanceof StemBlock || blockItem.getBlock() instanceof MinecoloniesCropBlock))
+        if (item.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() instanceof CropBlock || blockItem.getBlock() instanceof StemBlock || blockItem.getBlock() instanceof MinecoloniesCropBlock)
+            && blockItem.getBlock().defaultBlockState().canSurvive(worker.level(), position.above()))
         {
             @NotNull final Item seed = item.getItem();
             if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))

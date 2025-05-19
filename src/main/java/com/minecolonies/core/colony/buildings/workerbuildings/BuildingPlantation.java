@@ -258,21 +258,15 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IBuildingExtension> getExtensions()
+        public @NotNull List<IBuildingExtension> getMatchingExtension(final Predicate<IBuildingExtension> predicateToMatch)
         {
-            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
+            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class) && predicateToMatch.test(field));
         }
 
         @Override
         public boolean canAssignExtensionOverride(IBuildingExtension extension)
         {
             return getCurrentPlantsPlusField(extension) <= getMaxConcurrentPlants() && hasRequiredResearchForField(extension);
-        }
-
-        @Override
-        protected int getExtensionCheckTimeoutSeconds()
-        {
-            return 60;
         }
 
         /**
