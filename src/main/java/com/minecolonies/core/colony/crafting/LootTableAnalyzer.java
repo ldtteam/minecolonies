@@ -10,6 +10,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -520,9 +521,25 @@ public final class LootTableAnalyzer
         /** Copy a LootDrop to a packet buffer */
         public void serialize(@NotNull final RegistryFriendlyByteBuf buffer)
         {
-            int prevIndex = buffer.writerIndex();
-            buffer.writeVarInt(stacks.size());
+            RegistryFriendlyByteBuf testBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), buffer.registryAccess());
+
+            List<ItemStack> toSerialize = new ArrayList<>();
             for (final ItemStack stack : stacks)
+            {
+                try
+                {
+                    Utils.serializeCodecMess(testBuffer, stack);
+                    toSerialize.add(stack);
+                }
+                catch (Exception e)
+                {
+                    Log.getLogger().warn("Error serializing item stack: " + stack, e);
+                }
+            }
+
+            int prevIndex = buffer.writerIndex();
+            buffer.writeVarInt(toSerialize.size());
+            for (final ItemStack stack : toSerialize)
             {
                 try
                 {
@@ -536,6 +553,7 @@ public final class LootTableAnalyzer
                     break;
                 }
             }
+
             buffer.writeFloat(probability);
             buffer.writeFloat(quality);
             buffer.writeBoolean(conditional);

@@ -96,7 +96,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     /**
      * Which building has claimed this work order.
      */
-    private BlockPos claimedBy;
+    private BlockPos claimedBy = BlockPos.ZERO;
 
     /**
      * The structurize schematic name.
@@ -377,12 +377,16 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     {
         changed = true;
         this.claimedBy = claimedBy;
+        if (claimedBy == null)
+        {
+            this.claimedBy = BlockPos.ZERO;
+        }
     }
 
     @Override
     public final boolean isClaimed()
     {
-        return claimedBy != null;
+        return !BlockPos.ZERO.equals(claimedBy);
     }
 
     @Override
@@ -668,10 +672,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putInt(TAG_TH_PRIORITY, priority);
         compound.putString(TAG_TYPE, getMappingName());
         compound.putInt(TAG_ID, id);
-        if (claimedBy != null)
-        {
-            BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
-        }
+        BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         compound.putString(TAG_STRUCTURE_PACK, packName);
         compound.putString(TAG_STRUCTURE_PATH, path);
         compound.putString(TAG_TRANSLATION_KEY, translationKey);
@@ -709,7 +710,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeUtf(getMappingName());
         buf.writeInt(id);
         buf.writeInt(priority);
-        buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
+        buf.writeBlockPos(claimedBy);
         buf.writeUtf(packName);
         buf.writeUtf(path);
         buf.writeUtf(translationKey);

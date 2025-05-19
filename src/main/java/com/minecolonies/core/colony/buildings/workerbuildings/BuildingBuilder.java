@@ -164,7 +164,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return 0;
         });
 
-        final IServerWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final IServerWorkOrder order = list.stream().filter(w -> w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
@@ -228,7 +228,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
 
         IServerWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (!(wo instanceof IBuilderWorkOrder) || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
+        if (!(wo instanceof IBuilderWorkOrder) || (!wo.getClaimedBy().equals(getPosition())))
         {
             return;
         }

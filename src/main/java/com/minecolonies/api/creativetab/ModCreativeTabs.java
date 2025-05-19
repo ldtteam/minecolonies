@@ -5,17 +5,15 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.world.level.block.Block;
 
 /**
  * Class used to handle the creativeTab of minecolonies.
@@ -50,6 +48,9 @@ public final class ModCreativeTabs
           output.accept(ModItems.scepterLumberjack);
           output.accept(ModItems.permTool);
           output.accept(ModItems.scepterGuard);
+            output.accept(ModItems.assistantHammer_Gold);
+            output.accept(ModItems.assistantHammer_Iron);
+            output.accept(ModItems.assistantHammer_Diamond);
           output.accept(ModItems.scepterBeekeeper);
 
           output.accept(ModItems.bannerRallyGuards);

@@ -15,6 +15,9 @@ public final class ModItems
     public static Item supplyChest;
     public static Item permTool;
     public static Item scepterGuard;
+    public static Item assistantHammer_Iron;
+    public static Item assistantHammer_Gold;
+    public static Item assistantHammer_Diamond;
     public static Item bannerRallyGuards;
     public static Item supplyCamp;
     public static Item ancientTome;

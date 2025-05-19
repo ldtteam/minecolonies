@@ -65,7 +65,7 @@ public class PathingOptions
     /**
      * Cost for walking within shapes(e.g. panels)
      */
-    public double walkInShapesCost = 2D;
+    public double walkInShapesCost = 1D;
 
     /**
      * Cost to dive (head underwater).

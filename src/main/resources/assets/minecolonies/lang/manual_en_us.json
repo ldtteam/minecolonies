@@ -2748,6 +2748,16 @@
   "item.minecolonies.mintchoco_cheesecake": "Mintchoco Cheesecake",
   "item.minecolonies.spicy_eggplant": "Spicy Eggplant",
 
+  "item.minecolonies.assistanthammer_gold": "Golden Builder's Assistant Hammer",
+  "item.minecolonies.assistanthammer_iron": "Iron Builder's Assistant Hammer",
+  "item.minecolonies.assistanthammer_diamond": "Diamond Builder's Assistant Hammer",
+  "item.minecolonies.assistanthammer.reach": "Reach: %d",
+  "item.minecolonies.assistanthammer.happybuilder": "Thanks a lot for helping me building!",
+  "item.minecolonies.assistanthammer.noitems": "No fitting items in your inventory",
+  "item.minecolonies.assistanthammer.notloaded": "Structure not loaded yet, loading...",
+  "item.minecolonies.assistanthammer.onlyactive": "Your builder needs to start working on this construction site before you can assist them",
+  "item.minecolonies.assistanthammer.desc": "A useful tool for assisting a Minecolonies builder with their active task, allows you to place materials for them.",
+
   "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
   "com.minecolonies.core.item.food.tooltip.baker": "Ask a Baker in a Bakery to prepare this for you",
 

@@ -219,6 +219,16 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .define('T', buildTool.get())
 //                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
 //                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.assistantHammer_Gold)
+            .pattern("GGG")
+            .pattern("GBG")
+            .pattern(" S ")
+            .define('G', Tags.Items.INGOTS_GOLD)
+            .define('B', buildTool.get())
+            .define('S', Items.STICK)
+            .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutBuilder))
+            .save(consumer);
     }
 
     private static Criterion<?> hasAllOf(ItemLike... items)

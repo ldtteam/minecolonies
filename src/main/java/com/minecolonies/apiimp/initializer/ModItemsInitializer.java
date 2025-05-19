@@ -13,7 +13,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -70,6 +73,9 @@ public final class ModItemsInitializer
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
+        ModItems.assistantHammer_Gold = new ItemAssistantHammer("assistanthammer_gold", new Item.Properties().durability(200), 1);
+        ModItems.assistantHammer_Iron = new ItemAssistantHammer("assistanthammer_iron", new Item.Properties().durability(400), 2);
+        ModItems.assistantHammer_Diamond = new ItemAssistantHammer("assistanthammer_diamond", new Item.Properties().durability(1000), 3);
         ModItems.bannerRallyGuards = new ItemBannerRallyGuards(new Item.Properties());
         ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
@@ -272,6 +278,9 @@ public final class ModItemsInitializer
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "spear"), ModItems.spear);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "questlog"), ModItems.questLog);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "colonymap"), ModItems.colonyMap);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "assistanthammer_gold"), ModItems.assistantHammer_Gold);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "assistanthammer_iron"), ModItems.assistantHammer_Iron);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "assistanthammer_diamond"), ModItems.assistantHammer_Diamond);
 
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "bread_dough"), ModItems.breadDough);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "cookie_dough"), ModItems.cookieDough);

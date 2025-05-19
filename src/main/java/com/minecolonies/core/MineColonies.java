@@ -366,6 +366,7 @@ public class MineColonies
         ColonyTextureStyleMessage.TYPE.register(registry);
         MinerRepairLevelMessage.TYPE.register(registry);
         PlantationFieldBuildRequestMessage.TYPE.register(registry);
+        PlayerAssistantBuildRequestMessage.TYPE.register(registry);
         ResetFilterableItemMessage.TYPE.register(registry);
         CourierHiringModeMessage.TYPE.register(registry);
         QuarryHiringModeMessage.TYPE.register(registry);
