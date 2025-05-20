@@ -48,13 +48,13 @@ IMPORTANT: Please report any issues you have, as there might be some problems wi
 #### Setup Java
 The Java JDK is used to compile MineColonies.
 
-1. Download and install the Java JDK 8.
-    * [Windows](https://adoptopenjdk.net/): Choose OpenJDK 8 (LTS) version and HotSpot JVM, then click the `latest release` button. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
-    * Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-		* Gentoo: `emerge dev-java/openjdk-bin:8`
-		* Archlinux: `pacman -S jdk8-openjdk`
-		* Ubuntu/Debian: `apt-get install openjdk-8-jdk`
-		* Fedora: `yum install java-1.8.0-openjdk`
+1. Download and install the Java JDK 17.
+    * [Windows](https://adoptium.net/temurin/releases/): Choose `JDK 17 - LTS` version, then download the latest installer. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set or override JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
+    * Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](https://www.oracle.com/java/technologies/downloads/#java17).
+		* Gentoo: `emerge dev-java/openjdk-bin:17`
+		* Archlinux: `pacman -S jdk17-openjdk`
+		* Ubuntu/Debian: `apt-get install openjdk-17-jdk`
+		* Fedora: `yum install java-17-openjdk`
 2. Open up your command line and run `javac`. If it spews out a bunch of possible options and the usage, you're good to go. If not, try the steps again.
 
 **Troubleshooting**
@@ -63,7 +63,7 @@ If the `javac` command does not work on Windows:
 * Click on `Environment Variables`.
 * Under `System Variables`, click `New`.
 * For `Variable Name`, input `JAVA_HOME`.
-* For `Variable Value`, input something similar to `C:\Program Files\Java\jdk1.8.0_45` exactly as shown (or wherever your Java JDK installation is) and click `OK`.
+* For `Variable Value`, input something similar to `C:\Program Files\Eclipse Adoptium\jdk-17.0.15.6-hotspot` exactly as shown (or wherever your Java JDK installation is) and click `OK`.
 * Scroll down to a variable named `Path` and double-click on it.
 * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`. Make sure the location is correct; double-check to make sure.
 
