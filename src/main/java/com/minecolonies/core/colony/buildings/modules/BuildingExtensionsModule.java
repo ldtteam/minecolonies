@@ -135,10 +135,13 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
             }
 
             final int lastDay = checkedExtensions.get(extension.getPosition());
-            if (lastUsedExtension == null && lastDay < building.getColony().getDay())
+            if (lastUsedExtension == null)
             {
-                lastUsedExtension = extension;
-                lastUsedExtensionDay = lastDay;
+                if (lastDay < building.getColony().getDay())
+                {
+                    lastUsedExtension = extension;
+                    lastUsedExtensionDay = lastDay;
+                }
             }
             else if (lastUsedExtensionDay < lastDay)
             {

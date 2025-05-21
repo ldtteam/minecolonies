@@ -5,6 +5,7 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -336,12 +337,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return PREPARING;
         }
 
-        final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-
         seeds.setCount(seeds.getMaxStackSize());
         checkIfRequestForItemExistOrCreateAsync(seeds, seeds.getMaxStackSize(), 1);
-        farmField.nextState();
-        module.resetCurrentExtension();
+        if (InventoryUtils.getCountFromBuilding(building, new ItemStorage(seeds.getItem())) <= 0)
+        {
+            farmField.nextState();
+        }
         return PREPARING;
     }
 
