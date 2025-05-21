@@ -134,7 +134,7 @@ public class FoodUtils
             if ((menu == null || menu.contains(invStack)) && FoodUtils.canEat(invStack.getItemStack(), citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
             {
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
-                final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 2 : 1);
+                final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 1 : 2);
                 // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
                 if (menu == null && foodHandler.getLastEaten() == invStack.getItem() && restaurantExists)
                 {
@@ -204,7 +204,7 @@ public class FoodUtils
                         if ((menu == null || menu.contains(storage)) && FoodUtils.canEat(storage.getItemStack(), citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
                         {
                             final boolean isMinecolfood = storage.getItem() instanceof IMinecoloniesFoodItem;
-                            final int localScore = foodHandler.checkLastEaten(storage.getItem());
+                            final int localScore = foodHandler.checkLastEaten(storage.getItem()) * (isMinecolfood ? 1 : 2);
 
                             // If this is great food and we're at critical levels, go with it!
                             if ((localScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
@@ -224,7 +224,7 @@ public class FoodUtils
                                 continue;
                             }
 
-                            bestScore = localScore * (isMinecolfood ? 2 : 1);
+                            bestScore = localScore;
                             bestStorage = storage;
 
                             // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
@@ -276,7 +276,7 @@ public class FoodUtils
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(invSlot);
             final boolean isMinecolfood = stack.getItem() instanceof IMinecoloniesFoodItem;
-            bestInvScore = foodHandler.checkLastEaten(stack.getItem()) * (isMinecolfood ? 2 : 1);;
+            bestInvScore = foodHandler.checkLastEaten(stack.getItem()) * (isMinecolfood ? 1 : 2);;
 
             // Already good enough food in inventory? Skip building check.
             if ((bestInvScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
@@ -297,7 +297,7 @@ public class FoodUtils
                         if ((menu == null || menu.contains(storage)) && FoodUtils.canEat(storage.getItemStack(), citizenData.getHomeBuilding(), citizenData.getWorkBuilding()))
                         {
                             final boolean isMinecolfood = storage.getItem() instanceof IMinecoloniesFoodItem;
-                            final int localScore = foodHandler.checkLastEaten(storage.getItem());
+                            final int localScore = foodHandler.checkLastEaten(storage.getItem())  * (isMinecolfood ? 1 : 2);
 
                             // If this is great food and we're at critical levels, go with it!
                             if ((localScore < 0 && isMinecolfood) && (criticalDiversity || criticalQuality))
@@ -317,7 +317,7 @@ public class FoodUtils
                                 continue;
                             }
 
-                            bestScore = localScore * (isMinecolfood ? 2 : 1);
+                            bestScore = localScore;
                             bestStorage = storage;
 
                             // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
