@@ -264,21 +264,25 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                         areBlocksToBuildNearby = true;
                         boolean hasItems = true;
-                        for (final ItemStack required : requiredItem)
-                        {
-                            boolean found = false;
-                            for (final ItemStack stack : player.getInventory().items)
-                            {
-                                if (ItemStackUtils.compareItemStacksIgnoreStackSize(required, stack))
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
 
-                            if (!found)
+                        if (!player.isCreative())
+                        {
+                            for (final ItemStack required : requiredItem)
                             {
-                                hasItems = false;
+                                boolean found = false;
+                                for (final ItemStack stack : player.getInventory().items)
+                                {
+                                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(required, stack))
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!found)
+                                {
+                                    hasItems = false;
+                                }
                             }
                         }
 
