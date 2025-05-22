@@ -9,14 +9,14 @@
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
-      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 1
     },
     {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:iron_block",
-      "quantity": 2
+      "items": {
+        "count": 2,
+        "item": "minecraft:iron_block"
+      }
     }
   ],
   "researchLevel": 2

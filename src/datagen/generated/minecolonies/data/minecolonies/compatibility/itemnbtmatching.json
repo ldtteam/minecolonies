@@ -412,6 +412,30 @@
   },
   {
     "checkednbtkeys": [
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
+    ],
+    "item": "minecolonies:assistanthammer_diamond"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
+    ],
+    "item": "minecolonies:assistanthammer_gold"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:enchantments",
+      "minecraft:max_damage",
+      "minecraft:repair_cost"
+    ],
+    "item": "minecolonies:assistanthammer_iron"
+  },
+  {
+    "checkednbtkeys": [
       "minecraft:food"
     ],
     "item": "minecolonies:baked_salmon"
