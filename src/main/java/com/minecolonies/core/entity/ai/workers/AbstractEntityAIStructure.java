@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
@@ -9,7 +8,6 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
@@ -27,7 +25,6 @@ import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
@@ -44,7 +41,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -52,7 +48,10 @@ import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -706,9 +705,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             if (removal)
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
+                    workOrder,
                   this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
@@ -716,18 +713,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                        (entity instanceof TileEntityDecorationController && Utils.getBlueprintLevel(((TileEntityDecorationController) entity).getBlueprintPath()) != -1))
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
+                    workOrder,
                   this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
             else
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
+                    workOrder,
                   this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }

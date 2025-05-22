@@ -190,4 +190,11 @@ public interface IWorkOrder
      * @return
      */
     public void setColony(IColony colony);
+
+    /**
+     * The buildings stage
+     *
+     * @return stage index
+     */
+    int getStage();
 }

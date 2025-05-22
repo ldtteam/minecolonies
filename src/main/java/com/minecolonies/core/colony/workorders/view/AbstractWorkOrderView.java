@@ -80,6 +80,11 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     private int targetLevel;
 
     /**
+     * The building stage this workorder is in
+     */
+    private int stage = 0;
+
+    /**
      * Translation key.
      */
     private String translationKey;
@@ -183,6 +188,12 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         this.colony = colony;
     }
 
+    @Override
+    public int getStage()
+    {
+        return stage;
+    }
+
     /**
      * Value getter.
      *
@@ -284,6 +295,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         isMirrored = buf.readBoolean();
         currentLevel = buf.readInt();
         targetLevel = buf.readInt();
+        stage = buf.readInt();
         box = new AABB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 

@@ -2757,7 +2757,8 @@
   "item.minecolonies.assistanthammer.happybuilder": "Thanks a lot for helping me building!",
   "item.minecolonies.assistanthammer.noitems": "No fitting items in your inventory",
   "item.minecolonies.assistanthammer.notloaded": "Structure not loaded yet, loading...",
-  "item.minecolonies.assistanthammer.onlyactive": "Your builder needs to start working on this construction site before you can assist them",
+  "item.minecolonies.assistanthammer.notcleared": "You need to wait until the builder finishes clearing the area",
+  "item.minecolonies.assistanthammer.onlyactive": "You are too far from the building site or your builder needs to start working on it yet",
   "item.minecolonies.assistanthammer.desc": "A useful tool for assisting a Minecolonies builder with their active task, allows you to place materials for them.",
 
   "com.minecolonies.core.item.food.tooltip.chef": "Ask a Chef in a Cookery to cook this for you",
