@@ -1,6 +1,7 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.crafting.ZeroWasteRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
