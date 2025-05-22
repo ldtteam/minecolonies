@@ -1,7 +1,6 @@
-package com.minecolonies.api.research.effects;
+package com.minecolonies.api.research;
 
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The manager of unlocked research effects of a given colony.
@@ -9,30 +8,20 @@ import org.jetbrains.annotations.NotNull;
 public interface IResearchEffectManager
 {
     /**
-     * Get the research effect which is assigned to a particular string.
-     *
-     * @param id   the id of the effect.
-     * @param type it's type.
-     * @param <W>  the Generic type.
-     * @return one of the expected type or null.
-     */
-    <W extends IResearchEffect<?>> W getEffect(final ResourceLocation id, @NotNull final Class<W> type);
-
-    /**
      * Get the research effect strength for a given ResearchEffect type,
      * or zero, if no matching effect is present.
      *
-     * @param id   the id of the effect.
+     * @param id the id of the effect.
      * @return the strength of the effect, 1 by default for researches effects which do not have values configured, or zero if it isn't present.
      */
-     double getEffectStrength(final ResourceLocation id);
+    double getEffectStrength(final ResourceLocation id);
 
     /**
      * Apply the effect to the research effects class.
      *
      * @param effect the effect to apply.
      */
-    void applyEffect(final IResearchEffect<?> effect);
+    void applyEffect(final IResearchEffect effect);
 
     /**
      * Clear all effects from the effect manager.

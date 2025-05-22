@@ -1,20 +1,19 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 256,
+      "item": "minecraft:redstone"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockbreakspeedmultiplier": 2
+      "id": "minecolonies:effects/blockbreakspeedmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:redstone_torch",
   "parentResearch": "minecolonies:technology/isthisredstone",
-  "requirements": [
-    {
-      "items": {
-        "count": 256,
-        "item": "minecraft:redstone"
-      }
-    }
-  ],
   "researchLevel": 3,
   "subtitle": "com.minecolonies.research.technology.redstonepowered.subtitle"
 }

@@ -362,7 +362,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 continue;
             }
 
-            if (FoodUtils.getBestFoodForCitizen(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu()) >= 0)
+            if (FoodUtils.hasBestOptionInInv(worker.getInventoryCitizen(), citizen.getCitizenData(), module.getMenu(), building))
             {
                 citizenToServe.add(citizen);
             }

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecolonies:compost"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutplantation": 1
+      "id": "minecolonies:effects/blockhutplantation",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutplantation",
   "parentResearch": "minecolonies:technology/biodegradable",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "farmer",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecolonies:compost"
-      }
     }
   ],
   "researchLevel": 2,

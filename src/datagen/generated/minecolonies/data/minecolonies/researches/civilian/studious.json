@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 12,
+      "item": "minecraft:book"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/levelingmultiplier": 2
+      "id": "minecolonies:effects/levelingmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:experience_bottle:2",
   "parentResearch": "minecolonies:civilian/diligent",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "library",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 12,
-        "item": "minecraft:book"
-      }
     }
   ],
   "researchLevel": 3

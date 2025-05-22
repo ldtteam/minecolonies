@@ -97,7 +97,6 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final BooleanValue                        auditCraftingTags;
     public final BooleanValue                        debugInventories;
     public final BooleanValue                        blueprintBuildMode;
@@ -193,23 +192,6 @@ public class ServerConfiguration extends AbstractConfiguration
         turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
 
         swapToCategory("compatibility");
-
-        configListRecruitmentItems = defineList("configlistrecruitmentitems",
-            () -> "item ID;rarity",
-            stringValidator,
-            "minecraft:hay_block;3",
-            "minecraft:book;2",
-            "minecraft:enchanted_book;9",
-            "minecraft:diamond;9",
-            "minecraft:emerald;8",
-            "minecraft:baked_potato;1",
-            "minecraft:gold_ingot;2",
-            "minecraft:redstone;2",
-            "minecraft:lapis_lazuli;2",
-            "minecraft:cake;11",
-            "minecraft:sunflower;5",
-            "minecraft:honeycomb;6",
-            "minecraft:quartz;3");
 
         auditCraftingTags = defineBoolean("auditcraftingtags", false);
         debugInventories = defineBoolean("debuginventories", false);

@@ -284,7 +284,7 @@ public final class StandardFactoryController implements IFactoryController
             }
             catch (final IllegalArgumentException e)
             {
-                throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+                throw (IllegalArgumentException) new IllegalArgumentException("The given compound:" + compound + " holds an unknown output type for this Controller").initCause(e);
             }
         }
         else
@@ -296,7 +296,8 @@ public final class StandardFactoryController implements IFactoryController
             }
             catch (final IllegalArgumentException e)
             {
-                throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller: " + className).initCause(e);
+                throw (IllegalArgumentException) new IllegalArgumentException(
+                    "The given compound:" + compound + " holds an unknown output type for this Controller: " + className).initCause(e);
             }
         }
 
@@ -306,7 +307,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (Throwable throwable)
         {
-            Log.getLogger().error("Error when deserializing", throwable);
+            Log.getLogger().error("Error when deserializing: " + compound, throwable);
             return null;
         }
     }
@@ -331,7 +332,7 @@ public final class StandardFactoryController implements IFactoryController
         }
         catch (final IllegalArgumentException e)
         {
-            throw (IllegalArgumentException) new IllegalArgumentException("The given compound holds an unknown output type for this Controller").initCause(e);
+            throw (IllegalArgumentException) new IllegalArgumentException("The given buffer holds an unknown output type for this Controller").initCause(e);
         }
 
         try

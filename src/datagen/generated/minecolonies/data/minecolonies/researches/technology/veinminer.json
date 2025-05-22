@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 32,
+      "tag": "minecraft:iron_ores"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/moreoresmultiplier": 1
+      "id": "minecolonies:effects/moreoresmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:iron_block",
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 32,
-        "tag": "minecraft:iron_ores"
-      }
     }
   ],
   "researchLevel": 2

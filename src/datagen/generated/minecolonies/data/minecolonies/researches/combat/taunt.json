@@ -1,33 +1,31 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "count": 8,
+      "item": "minecraft:bone"
+    },
+    {
+      "count": 8,
+      "item": "minecraft:spider_eye"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/knighttauntmobsunlock": 1
+      "id": "minecolonies:effects/knighttauntmobsunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:chain",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:rotten_flesh"
-      }
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:bone"
-      }
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:spider_eye"
-      }
     }
   ],
   "researchLevel": 1,

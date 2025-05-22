@@ -1,19 +1,18 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 1024,
+      "item": "minecraft:iron_ingot"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockplacespeedmultiplier": 5
+      "id": "minecolonies:effects/blockplacespeedmultiplier",
+      "level": 5
     }
   ],
   "icon": "minecraft:spectral_arrow",
   "parentResearch": "minecolonies:technology/seemsautomatic",
-  "requirements": [
-    {
-      "items": {
-        "count": 1024,
-        "item": "minecraft:iron_ingot"
-      }
-    }
-  ],
   "researchLevel": 6
 }

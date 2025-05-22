@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:iron_block"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/meleedamageaddition": 4
+      "id": "minecolonies:effects/meleedamageaddition",
+      "level": 4
     }
   ],
   "icon": "minecraft:golden_sword",
   "parentResearch": "minecolonies:combat/cleave",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "barracks",
       "level": 5
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:iron_block"
-      }
     }
   ],
   "researchLevel": 5

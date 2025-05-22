@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 64,
+      "item": "minecraft:chorus_fruit"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/knowledgeoftheendunlock": 1
+      "id": "minecolonies:effects/knowledgeoftheendunlock",
+      "level": 1
     }
   ],
   "icon": "minecolonies:chorus_bread",
   "parentResearch": "minecolonies:technology/theflintstones",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "baker",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:chorus_fruit"
-      }
     }
   ],
   "researchLevel": 3,

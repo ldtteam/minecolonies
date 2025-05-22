@@ -675,39 +675,56 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_water_bottle)
+          .requires(ModItems.large_empty_bottle)
+          .requires(Tags.Items.BUCKETS_WATER)
+          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_milk_bottle)
+          .requires(ModItems.large_empty_bottle)
+          .requires(Tags.Items.BUCKETS_MILK)
+          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .save(consumer, new ResourceLocation(MOD_ID, "large_milk_bottle"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+          .pattern("MMM")
+          .pattern("MMM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "butter"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
-          .requires(ModItems.large_soy_milk_bottle)
-          .requires(ModItems.large_soy_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+          .pattern("MMM")
+          .pattern("MMM")
+          .define('M', ModItems.large_soy_milk_bottle)
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_butter"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cheddar_cheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.cheddar_cheese, 2)
+          .pattern("MM")
+          .pattern("MM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cheddar_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.feta_cheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.feta_cheese)
+          .pattern("MM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "feta_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.creamcheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+          .pattern(" M ")
+          .pattern("MMM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cream_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.creamcheese)
-          .requires(ModItems.large_soy_milk_bottle)
-          .requires(ModItems.large_soy_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+          .pattern(" M ")
+          .pattern("MMM")
+          .define('M', ModItems.large_soy_milk_bottle)
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_cream_cheese"));
 
@@ -929,7 +946,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
           .requires(ModItems.large_water_bottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))

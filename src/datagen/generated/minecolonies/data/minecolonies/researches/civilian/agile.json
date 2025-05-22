@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:rabbit_foot"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 3
+      "id": "minecolonies:effects/walkingmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed2.png",
   "parentResearch": "minecolonies:civilian/nimble",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:rabbit_foot"
-      }
     }
   ],
   "researchLevel": 4,

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:emerald"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/fleeingdamagemultiplier": 1
+      "id": "minecolonies:effects/fleeingdamagemultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:leather_boots",
   "parentResearch": "minecolonies:combat/regeneration",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:emerald"
-      }
     }
   ],
   "researchLevel": 3

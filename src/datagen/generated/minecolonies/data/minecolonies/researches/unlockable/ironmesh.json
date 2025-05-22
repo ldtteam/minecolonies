@@ -3,7 +3,8 @@
   "branch": "minecolonies:unlockable",
   "effects": [
     {
-      "minecolonies:effects/sifterironunlock": 1
+      "id": "minecolonies:effects/sifterironunlock",
+      "level": 1
     }
   ],
   "hidden": true,
@@ -12,6 +13,7 @@
   "parentResearch": "minecolonies:unlockable/flintmesh",
   "requirements": [
     {
+      "type": "minecolonies:mandatory-building",
       "level": 4,
       "mandatory-building": "sifter"
     }

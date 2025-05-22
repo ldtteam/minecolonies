@@ -62,6 +62,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
                 .setBackground(this.slot, -1, -1)
                 .addItemStack(new ItemStack(ModItems.compost));
 
+        if (recipe.flowers().isEmpty()) return;
         final int initialColumns = LOOT_SLOTS_W / this.slot.getWidth();
         final int rows = (recipe.flowers().size() + initialColumns - 1) / initialColumns;
         final int columns = (recipe.flowers().size() + rows - 1) / rows;

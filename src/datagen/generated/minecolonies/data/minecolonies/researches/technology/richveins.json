@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 32,
+      "tag": "minecraft:gold_ores"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/moreoresmultiplier": 3
+      "id": "minecolonies:effects/moreoresmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:gold_block",
   "parentResearch": "minecolonies:technology/goodveins",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 32,
-        "tag": "minecraft:gold_ores"
-      }
     }
   ],
   "researchLevel": 4

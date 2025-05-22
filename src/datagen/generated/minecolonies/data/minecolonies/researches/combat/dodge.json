@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:leather"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 1
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 1
     }
   ],
   "icon": "minecolonies:pirate_shoes",
   "parentResearch": "minecolonies:combat/avoidance",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "smeltery",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:leather"
-      }
     }
   ],
   "researchLevel": 2,

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 32,
+      "tag": "minecolonies:concrete"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutconcretemixer": 1
+      "id": "minecolonies:effects/blockhutconcretemixer",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutconcretemixer",
   "parentResearch": "minecolonies:technology/rockingroll",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "crusher",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 32,
-        "tag": "minecolonies:concrete"
-      }
     }
   ],
   "researchLevel": 3,

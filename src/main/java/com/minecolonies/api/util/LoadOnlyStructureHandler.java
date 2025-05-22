@@ -76,6 +76,12 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
     }
 
     @Override
+    public boolean isCreative()
+    {
+        return false;
+    }
+
+    @Override
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null

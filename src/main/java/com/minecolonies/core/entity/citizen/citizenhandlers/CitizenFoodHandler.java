@@ -73,8 +73,8 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         if (lastEatenFoods.size() >= FOOD_QUEUE_SIZE)
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY), ChatPriority.IMPORTANT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY + URGENT), ChatPriority.BLOCKING));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
         }
     }
@@ -88,16 +88,18 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public int checkLastEaten(final Item item)
     {
+        int foundIndex = -1;
+
         int index = -1;
         for (final Item foodItem : lastEatenFoods)
         {
+            index++;
             if (foodItem == item)
             {
-                return index;
+                foundIndex = index;
             }
-            index++;
         }
-        return -1;
+        return foundIndex;
     }
 
     @Override

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 9,
+      "item": "minecraft:bow"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/doublearrowsmultiplier": 2
+      "id": "minecolonies:effects/doublearrowsmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:tipped_arrow",
   "parentResearch": "minecolonies:combat/trickshot",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "archery",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 9,
-        "item": "minecraft:bow"
-      }
     }
   ],
   "researchLevel": 4,

@@ -1,28 +1,28 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 32,
+      "item": "minecraft:sugar_cane"
+    },
+    {
+      "count": 32,
+      "item": "minecraft:cactus"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/plantationlarge": 1
+      "id": "minecolonies:effects/plantationlarge",
+      "level": 1
     }
   ],
   "icon": "minecraft:green_dye",
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 32,
-        "item": "minecraft:sugar_cane"
-      }
-    },
-    {
-      "items": {
-        "count": 32,
-        "item": "minecraft:cactus"
-      }
     }
   ],
   "researchLevel": 3,

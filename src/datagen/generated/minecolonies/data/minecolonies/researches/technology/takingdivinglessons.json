@@ -1,34 +1,32 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:kelp"
+    },
+    {
+      "count": 16,
+      "item": "minecraft:seagrass"
+    },
+    {
+      "count": 16,
+      "item": "minecraft:sea_pickle"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/plantationsea": 1
+      "id": "minecolonies:effects/plantationsea",
+      "level": 1
     }
   ],
   "icon": "minecraft:kelp",
   "parentResearch": "minecolonies:technology/letitgrow",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 2
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:kelp"
-      }
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:seagrass"
-      }
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:sea_pickle"
-      }
     }
   ],
   "researchLevel": 3,

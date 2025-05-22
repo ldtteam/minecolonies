@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.ItemStackUtils.IS_ANY_FOOD;
 
 /**
  * An ingredient that can be used in a vanilla recipe to match food items.
@@ -83,7 +83,7 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
             return false;
         }
 
-        return ISFOOD.test(stack) && matchesFood(stack);
+        return IS_ANY_FOOD.test(stack) && matchesFood(stack);
     }
 
     @NotNull

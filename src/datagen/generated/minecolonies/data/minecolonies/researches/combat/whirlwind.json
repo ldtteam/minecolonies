@@ -1,34 +1,32 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 64,
+      "item": "minecraft:redstone"
+    },
+    {
+      "count": 64,
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "count": 128,
+      "item": "minecraft:lapis_lazuli"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/whirlwindabilityunlock": 1
+      "id": "minecolonies:effects/whirlwindabilityunlock",
+      "level": 1
     }
   ],
   "icon": "minecolonies:iron_scimitar",
   "parentResearch": "minecolonies:combat/arrowpierce",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "barracks",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:redstone"
-      }
-    },
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:gold_ingot"
-      }
-    },
-    {
-      "items": {
-        "count": 128,
-        "item": "minecraft:lapis_lazuli"
-      }
     }
   ],
   "researchLevel": 4

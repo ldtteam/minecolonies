@@ -1,32 +1,33 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:crimson_fungus"
+    },
+    {
+      "count": 16,
+      "item": "minecraft:warped_fungus"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/plantationnether": 1
+      "id": "minecolonies:effects/plantationnether",
+      "level": 1
     }
   ],
   "icon": "minecraft:crimson_fungus",
   "parentResearch": "minecolonies:technology/croprotation",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "plantation",
       "level": 3
     },
     {
+      "type": "minecolonies:building",
       "building": "netherworker",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:crimson_fungus"
-      }
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:warped_fungus"
-      }
     }
   ],
   "researchLevel": 4,

@@ -1,21 +1,23 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:bone"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutgraveyard": 1
+      "id": "minecolonies:effects/blockhutgraveyard",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutgraveyard",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 2
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:bone"
-      }
     }
   ],
   "researchLevel": 1,

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 64,
+      "item": "minecraft:iron_ingot"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/meleearmormultiplier": 3
+      "id": "minecolonies:effects/meleearmormultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:chainmail_chestplate",
   "parentResearch": "minecolonies:combat/riposte",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "smeltery",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:iron_ingot"
-      }
     }
   ],
   "researchLevel": 4

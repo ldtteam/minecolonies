@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecolonies:blockminecoloniesrack"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/minimumstockmultiplier": 1
+      "id": "minecolonies:effects/minimumstockmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:chest",
   "parentResearch": "minecolonies:technology/sieving",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "miner",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecolonies:blockminecoloniesrack"
-      }
     }
   ],
   "researchLevel": 3,

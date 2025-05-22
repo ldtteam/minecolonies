@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:string"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutfletcher": 1
+      "id": "minecolonies:effects/blockhutfletcher",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutfletcher",
   "parentResearch": "minecolonies:technology/woodwork",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "sawmill",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:string"
-      }
     }
   ],
   "researchLevel": 2

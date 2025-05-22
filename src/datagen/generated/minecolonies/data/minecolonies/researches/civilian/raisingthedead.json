@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 1,
+      "item": "minecraft:totem_of_undying"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/usetotemunlock": 1
+      "id": "minecolonies:effects/usetotemunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:totem_of_undying",
   "parentResearch": "minecolonies:civilian/resurrectchance2",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "graveyard",
       "level": 5
-    },
-    {
-      "items": {
-        "count": 1,
-        "item": "minecraft:totem_of_undying"
-      }
     }
   ],
   "researchLevel": 4,

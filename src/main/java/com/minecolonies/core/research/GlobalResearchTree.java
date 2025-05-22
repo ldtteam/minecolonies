@@ -8,7 +8,7 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
-import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import io.netty.buffer.Unpooled;
@@ -115,7 +115,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             reloadableResearch.add(research.getId());
         }
-        for (IResearchEffect<?> effect : research.getEffects())
+        for (IResearchEffect effect : research.getEffects())
         {
             researchEffectsIds.computeIfAbsent(effect.getId(), id -> new HashSet<>()).add(research);
         }
@@ -169,7 +169,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         {
             return Collections.emptyList();
         }
-        return researchTree.get(branch).values().stream().filter(research -> research.getParent().getPath().isEmpty())
+        return researchTree.get(branch).values().stream().filter(research -> research.getParent() == null)
                  .sorted(Comparator.comparing(IGlobalResearch::getId))
                  .map(IGlobalResearch::getId).collect(Collectors.toList());
     }
@@ -193,9 +193,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
         autostartResearch.clear();
         branchDatas.clear();
         final Iterator<Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
-        while (researchTree.entrySet().size() > 0 && iterator.hasNext())
+        while (!researchTree.isEmpty() && iterator.hasNext())
         {
-            if(iterator.next().getValue().size() == 0)
+            if (iterator.next().getValue().isEmpty())
             {
                 iterator.remove();
             }
@@ -261,7 +261,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                 addResearch(newResearch.getBranch(), newResearch, true);
             }
         }
-        for (int i = 0; i < researchTree.entrySet().size(); i++)
+        for (int i = 0; i < researchTree.size(); i++)
         {
             ResourceLocation branchId = buf.readResourceLocation();
             branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
@@ -269,7 +269,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<IResearchEffect<?>> getEffectsForResearch(@NotNull final ResourceLocation id)
+    public List<IResearchEffect> getEffectsForResearch(@NotNull final ResourceLocation id)
     {
         for(final ResourceLocation branch: this.getBranches())
         {

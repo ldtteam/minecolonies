@@ -521,25 +521,9 @@ public final class LootTableAnalyzer
         /** Copy a LootDrop to a packet buffer */
         public void serialize(@NotNull final RegistryFriendlyByteBuf buffer)
         {
-            RegistryFriendlyByteBuf testBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), buffer.registryAccess());
-
-            List<ItemStack> toSerialize = new ArrayList<>();
-            for (final ItemStack stack : stacks)
-            {
-                try
-                {
-                    Utils.serializeCodecMess(testBuffer, stack);
-                    toSerialize.add(stack);
-                }
-                catch (Exception e)
-                {
-                    Log.getLogger().warn("Error serializing item stack: " + stack, e);
-                }
-            }
-
             int prevIndex = buffer.writerIndex();
-            buffer.writeVarInt(toSerialize.size());
-            for (final ItemStack stack : toSerialize)
+            buffer.writeVarInt(stacks.size());
+            for (final ItemStack stack : stacks)
             {
                 try
                 {

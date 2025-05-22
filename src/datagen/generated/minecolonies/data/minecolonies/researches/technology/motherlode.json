@@ -1,19 +1,18 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 64,
+      "tag": "minecraft:diamond_ores"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/moreoresmultiplier": 5
+      "id": "minecolonies:effects/moreoresmultiplier",
+      "level": 5
     }
   ],
   "icon": "minecraft:diamond_block",
   "parentResearch": "minecolonies:technology/amazingveins",
-  "requirements": [
-    {
-      "items": {
-        "count": 64,
-        "tag": "minecraft:diamond_ores"
-      }
-    }
-  ],
   "researchLevel": 6
 }

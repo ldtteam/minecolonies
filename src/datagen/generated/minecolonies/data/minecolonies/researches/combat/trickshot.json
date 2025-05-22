@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 5,
+      "item": "minecraft:bow"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/doublearrowsmultiplier": 1
+      "id": "minecolonies:effects/doublearrowsmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:arrow",
   "parentResearch": "minecolonies:combat/improvedbows",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "archery",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 5,
-        "item": "minecraft:bow"
-      }
     }
   ],
   "researchLevel": 3

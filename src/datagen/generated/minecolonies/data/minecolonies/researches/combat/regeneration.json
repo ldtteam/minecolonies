@@ -1,8 +1,15 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 1,
+      "item": "minecraft:emerald"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/retreatunlock": 1
+      "id": "minecolonies:effects/retreatunlock",
+      "level": 1
     }
   ],
   "exclusiveChildResearch": true,
@@ -10,14 +17,9 @@
   "parentResearch": "minecolonies:combat/improvedleather",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 2
-    },
-    {
-      "items": {
-        "count": 1,
-        "item": "minecraft:emerald"
-      }
     }
   ],
   "researchLevel": 2,

@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 512,
+      "item": "minecraft:wheat_seeds"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/farmingmultiplier": 4
+      "id": "minecolonies:effects/farmingmultiplier",
+      "level": 4
     }
   ],
   "icon": "minecraft:bone_block",
   "parentResearch": "minecolonies:technology/compost",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "smeltery",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 512,
-        "item": "minecraft:wheat_seeds"
-      }
     }
   ],
   "researchLevel": 5,

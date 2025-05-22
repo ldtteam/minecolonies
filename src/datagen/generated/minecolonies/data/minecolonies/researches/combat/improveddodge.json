@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 32,
+      "item": "minecraft:leather"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 2
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 2
     }
   ],
   "icon": "minecolonies:pirate_boots",
   "parentResearch": "minecolonies:combat/dodge",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "archery",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 32,
-        "item": "minecraft:leather"
-      }
     }
   ],
   "researchLevel": 3,

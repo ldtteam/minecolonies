@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 256,
+      "item": "minecraft:cooked_beef"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizencapaddition": 4
+      "id": "minecolonies:effects/citizencapaddition",
+      "level": 4
     }
   ],
   "icon": "minecolonies:blockhutcitizen:100",
   "parentResearch": "minecolonies:civilian/hamlet",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "townhall",
       "level": 4
-    },
-    {
-      "items": {
-        "count": 256,
-        "item": "minecraft:cooked_beef"
-      }
     }
   ],
   "researchLevel": 4

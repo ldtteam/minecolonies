@@ -1370,21 +1370,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final IToken<?> requestToken = colony.getRequestManager().createRequest(requester, requested);
         final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
 
+        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
+
+        colony.getRequestManager().assignRequest(requestToken);
+
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
             citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
-              request.getLongDisplayString()), ChatPriority.PENDING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
+                request.getLongDisplayString()), ChatPriority.PENDING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC), request.getId()));
         }
         else
         {
             citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
-              request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+                request.getLongDisplayString()), ChatPriority.BLOCKING, Component.translatableEscape(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
-
-        addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
-
-        colony.getRequestManager().assignRequest(requestToken);
 
         markDirty();
 
@@ -1586,9 +1586,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Collection<IRequest<?>> getCompletedRequests(@NotNull final ICitizenData data)
+    public Collection<IRequest<?>> getCompletedRequests(@Nullable final ICitizenData data)
     {
-        final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(data.getId());
+        final int citizenId = data == null ? -1 : data.getId();
+        final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(citizenId);
         if (tokens == null || tokens.isEmpty())
         {
             return ImmutableList.of();
@@ -1605,10 +1606,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                getCompletedRequestsByCitizen().get(data.getId()).remove(token);
-                if (getCompletedRequestsByCitizen().get(data.getId()).isEmpty())
+                getCompletedRequestsByCitizen().get(citizenId).remove(token);
+                if (getCompletedRequestsByCitizen().get(citizenId).isEmpty())
                 {
-                    getCompletedRequestsByCitizen().remove(data.getId());
+                    getCompletedRequestsByCitizen().remove(citizenId);
                 }
             }
         }
@@ -1659,9 +1660,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void cancelAllRequestsOfCitizen(@NotNull final ICitizenData data)
+    public void cancelAllRequestsOfCitizen(@Nullable final ICitizenData data)
     {
-        getOpenRequests(data.getId()).forEach(request ->
+        final int citizenId = data == null ? -1 : data.getId();
+        getOpenRequests(citizenId).forEach(request ->
         {
             colony.getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
 
@@ -1679,9 +1681,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getCompletedRequests(data).forEach(request -> colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
-        getOpenRequestsByCitizen().remove(data.getId());
+        getOpenRequestsByCitizen().remove(citizenId);
 
-        getCompletedRequestsByCitizen().remove(data.getId());
+        getCompletedRequestsByCitizen().remove(citizenId);
 
         markDirty();
     }
@@ -1733,13 +1735,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         for (final int citizenId : citizenIdsWithRequests)
         {
             final ICitizenData data = colony.getCitizenManager().getCivilian(citizenId);
-
-            if (data == null)
+            if (data == null && citizenId != -1)
             {
                 continue;
             }
 
-            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data.getId(), TypeConstants.DELIVERABLE), stack);
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenId, TypeConstants.DELIVERABLE), stack);
 
             if (target == null || !isRequestStuck(target, playerRequests, retryingRequests))
             {
@@ -2071,6 +2072,72 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
         return map;
+    }
+
+    /**
+     * Get a list of open requests from the building that are filtered by a predicate for citizen id or building (-1).
+     * @param citizenId the citizen id to include.
+     * @param selectionPredicate the selection predicate.
+     * @return the list.
+     */
+    public List<IRequest<?>> getOpenRequestsOfCitizenOrBuilding(final int citizenId, final Predicate<IRequest<?>> selectionPredicate)
+    {
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IRequest<?> req : getOpenRequests(-1))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        for (final IRequest<?> req : getOpenRequests(citizenId))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        return requests;
+    }
+
+    /**
+     * Get a list of closed requests from the building that are filtered by a predicate for citizen or building (null citizen).
+     * @param citizenData the citizen to include.
+     * @param selectionPredicate the selection predicate.
+     * @return the list.
+     */
+    public List<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable final ICitizenData citizenData, final Predicate<IRequest<?>> selectionPredicate)
+    {
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IRequest<?> req : getCompletedRequests(citizenData))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        for (final IRequest<?> req : getCompletedRequests(citizenData))
+        {
+            if (selectionPredicate.test(req))
+            {
+                requests.add(req);
+            }
+        }
+
+        return requests;
+    }
+
+    /**
+     * Move request from building (-1) to citizen and mark synchronous.
+     * @param citizenData the citizen to move it to.
+     * @param request the request to move.
+     */
+    public void moveToSyncCitizen(final ICitizenData citizenData, final IRequest<?> request)
+    {
+        getDataStore().moveToSyncCitizen(citizenData, request);
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

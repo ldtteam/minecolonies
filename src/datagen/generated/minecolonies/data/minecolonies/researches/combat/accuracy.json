@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:iron_ingot"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/guardcrit": 1
+      "id": "minecolonies:effects/guardcrit",
+      "level": 1
     }
   ],
   "exclusiveChildResearch": true,
   "icon": "minecraft:iron_sword",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "guardtower",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:iron_ingot"
-      }
     }
   ],
   "researchLevel": 1

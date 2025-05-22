@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:diamond"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/tooldurabilitymultiplier": 1
+      "id": "minecolonies:effects/tooldurabilitymultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:wooden_pickaxe",
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 8,
-        "item": "minecraft:diamond"
-      }
     }
   ],
   "researchLevel": 2

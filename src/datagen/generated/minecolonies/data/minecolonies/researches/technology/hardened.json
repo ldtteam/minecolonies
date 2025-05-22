@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:diamond"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/tooldurabilitymultiplier": 2
+      "id": "minecolonies:effects/tooldurabilitymultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:stone_pickaxe",
   "parentResearch": "minecolonies:technology/strong",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "blacksmith",
       "level": 2
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:diamond"
-      }
     }
   ],
   "researchLevel": 3

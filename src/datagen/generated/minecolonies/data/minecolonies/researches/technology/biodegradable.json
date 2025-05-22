@@ -1,21 +1,23 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 64,
+      "item": "minecraft:bone_meal"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutcomposter": 1
+      "id": "minecolonies:effects/blockhutcomposter",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutcomposter",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "farmer",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:bone_meal"
-      }
     }
   ],
   "researchLevel": 1,

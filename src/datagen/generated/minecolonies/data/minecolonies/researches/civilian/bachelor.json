@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 12,
+      "item": "minecraft:bookshelf"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/teachingmultiplier": 3
+      "id": "minecolonies:effects/teachingmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecolonies:textures/icons/research/xpgain3.png",
   "parentResearch": "minecolonies:civilian/bookworm",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "library",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 12,
-        "item": "minecraft:bookshelf"
-      }
     }
   ],
   "researchLevel": 4,

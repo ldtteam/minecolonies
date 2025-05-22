@@ -1,20 +1,19 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 128,
+      "item": "minecraft:book"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/levelingmultiplier": 5
+      "id": "minecolonies:effects/levelingmultiplier",
+      "level": 5
     }
   ],
   "icon": "minecraft:experience_bottle:5",
   "parentResearch": "minecolonies:civilian/reflective",
-  "requirements": [
-    {
-      "items": {
-        "count": 128,
-        "item": "minecraft:book"
-      }
-    }
-  ],
   "researchLevel": 6,
   "subtitle": "com.minecolonies.research.civilian.academic.subtitle"
 }

@@ -1,19 +1,18 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 64,
+      "item": "minecraft:emerald"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/fleeingspeedaddition": 4
+      "id": "minecolonies:effects/fleeingspeedaddition",
+      "level": 4
     }
   ],
   "icon": "minecraft:chicken",
   "parentResearch": "minecolonies:combat/flee",
-  "requirements": [
-    {
-      "items": {
-        "count": 64,
-        "item": "minecraft:emerald"
-      }
-    }
-  ],
   "researchLevel": 6
 }

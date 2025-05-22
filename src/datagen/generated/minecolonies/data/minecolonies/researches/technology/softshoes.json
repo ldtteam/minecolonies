@@ -1,25 +1,22 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "count": 16,
+      "item": "minecraft:white_wool"
+    },
+    {
+      "count": 16,
+      "item": "minecraft:feather"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/softshoesunlock": 1
+      "id": "minecolonies:effects/softshoesunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:leather_boots",
-  "requirements": [
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:white_wool"
-      }
-    },
-    {
-      "items": {
-        "count": 16,
-        "item": "minecraft:feather"
-      }
-    }
-  ],
   "researchLevel": 1,
   "sortOrder": 2,
   "subtitle": "com.minecolonies.research.technology.softshoes.subtitle"

@@ -74,7 +74,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
         for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
-                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), buildingView.getColony()))
+                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirements(), buildingView.getColony()))
             {
                 return Collections.EMPTY_LIST;
             }
@@ -88,7 +88,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
                 {
                     requirements.add(Component.translatableEscape("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
                 }
-                for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
+                for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirements())
                 {
                     // We'll include even completed partial components in the requirement list.
                     if (!req.isFulfilled(buildingView.getColony()))

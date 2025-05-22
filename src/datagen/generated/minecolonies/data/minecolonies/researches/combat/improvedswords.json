@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 6,
+      "item": "minecraft:iron_block"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutcombatacademy": 1
+      "id": "minecolonies:effects/blockhutcombatacademy",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutcombatacademy",
   "parentResearch": "minecolonies:combat/tactictraining",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "barracks",
       "level": 3
-    },
-    {
-      "items": {
-        "count": 6,
-        "item": "minecraft:iron_block"
-      }
     }
   ],
   "researchLevel": 2,

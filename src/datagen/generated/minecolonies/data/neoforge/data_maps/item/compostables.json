@@ -1,0 +1,244 @@
+{
+  "values": {
+    "minecolonies:apple_pie": {
+      "chance": 1.0
+    },
+    "minecolonies:baked_salmon": {
+      "chance": 1.0
+    },
+    "minecolonies:bell_pepper": {
+      "chance": 0.5
+    },
+    "minecolonies:borscht": {
+      "chance": 1.0
+    },
+    "minecolonies:butternut_squash": {
+      "chance": 0.5
+    },
+    "minecolonies:cabbage": {
+      "chance": 0.5
+    },
+    "minecolonies:cabochis": {
+      "chance": 1.0
+    },
+    "minecolonies:cheddar_cheese": {
+      "chance": 0.6666667
+    },
+    "minecolonies:cheese_pizza": {
+      "chance": 1.0
+    },
+    "minecolonies:cheese_ravioli": {
+      "chance": 0.6666667
+    },
+    "minecolonies:chicken_broth": {
+      "chance": 0.6666667
+    },
+    "minecolonies:chickpea": {
+      "chance": 0.5
+    },
+    "minecolonies:chorus_bread": {
+      "chance": 0.8333333
+    },
+    "minecolonies:composted_dirt": {
+      "chance": 1.0
+    },
+    "minecolonies:congee": {
+      "chance": 1.0
+    },
+    "minecolonies:cooked_rice": {
+      "chance": 0.6666667
+    },
+    "minecolonies:corn": {
+      "chance": 0.5
+    },
+    "minecolonies:corn_chowder": {
+      "chance": 0.6666667
+    },
+    "minecolonies:durum": {
+      "chance": 0.5
+    },
+    "minecolonies:eggdrop_soup": {
+      "chance": 1.0
+    },
+    "minecolonies:eggplant": {
+      "chance": 0.5
+    },
+    "minecolonies:eggplant_dolma": {
+      "chance": 1.0
+    },
+    "minecolonies:feta_cheese": {
+      "chance": 0.6666667
+    },
+    "minecolonies:fish_dinner": {
+      "chance": 1.0
+    },
+    "minecolonies:fish_n_chips": {
+      "chance": 1.0
+    },
+    "minecolonies:flatbread": {
+      "chance": 0.6666667
+    },
+    "minecolonies:garlic": {
+      "chance": 0.5
+    },
+    "minecolonies:golden_bread": {
+      "chance": 0.8333333
+    },
+    "minecolonies:hand_pie": {
+      "chance": 1.0
+    },
+    "minecolonies:kebab": {
+      "chance": 1.0
+    },
+    "minecolonies:kimchi": {
+      "chance": 1.0
+    },
+    "minecolonies:lamb_stew": {
+      "chance": 1.0
+    },
+    "minecolonies:lembas_scone": {
+      "chance": 1.0
+    },
+    "minecolonies:manchet_bread": {
+      "chance": 1.0
+    },
+    "minecolonies:meat_ravioli": {
+      "chance": 0.6666667
+    },
+    "minecolonies:milky_bread": {
+      "chance": 0.8333333
+    },
+    "minecolonies:mint": {
+      "chance": 0.5
+    },
+    "minecolonies:mint_jelly": {
+      "chance": 0.6666667
+    },
+    "minecolonies:mint_tea": {
+      "chance": 0.6666667
+    },
+    "minecolonies:mintchoco_cheesecake": {
+      "chance": 1.0
+    },
+    "minecolonies:mistletoe": {
+      "chance": 0.5
+    },
+    "minecolonies:muffin": {
+      "chance": 1.0
+    },
+    "minecolonies:mushroom_pizza": {
+      "chance": 1.0
+    },
+    "minecolonies:mutton_dinner": {
+      "chance": 1.0
+    },
+    "minecolonies:nether_pepper": {
+      "chance": 0.5
+    },
+    "minecolonies:onion": {
+      "chance": 0.5
+    },
+    "minecolonies:pasta_plain": {
+      "chance": 1.0
+    },
+    "minecolonies:pasta_tomato": {
+      "chance": 1.0
+    },
+    "minecolonies:pea_soup": {
+      "chance": 0.6666667
+    },
+    "minecolonies:peas": {
+      "chance": 0.5
+    },
+    "minecolonies:pepper_hummus": {
+      "chance": 1.0
+    },
+    "minecolonies:pierogi": {
+      "chance": 1.0
+    },
+    "minecolonies:pita_hummus": {
+      "chance": 1.0
+    },
+    "minecolonies:plain_cheesecake": {
+      "chance": 1.0
+    },
+    "minecolonies:polenta": {
+      "chance": 0.6666667
+    },
+    "minecolonies:potato_soup": {
+      "chance": 0.6666667
+    },
+    "minecolonies:pottage": {
+      "chance": 1.0
+    },
+    "minecolonies:ramen": {
+      "chance": 1.0
+    },
+    "minecolonies:rice": {
+      "chance": 0.5
+    },
+    "minecolonies:rice_ball": {
+      "chance": 1.0
+    },
+    "minecolonies:schnitzel": {
+      "chance": 1.0
+    },
+    "minecolonies:soybean": {
+      "chance": 0.5
+    },
+    "minecolonies:spicy_eggplant": {
+      "chance": 1.0
+    },
+    "minecolonies:spicy_grilled_chicken": {
+      "chance": 0.6666667
+    },
+    "minecolonies:squash_soup": {
+      "chance": 0.6666667
+    },
+    "minecolonies:steak_dinner": {
+      "chance": 1.0
+    },
+    "minecolonies:stew_trencher": {
+      "chance": 1.0
+    },
+    "minecolonies:stuffed_pepper": {
+      "chance": 1.0
+    },
+    "minecolonies:stuffed_pita": {
+      "chance": 1.0
+    },
+    "minecolonies:sugary_bread": {
+      "chance": 1.0
+    },
+    "minecolonies:sushi_roll": {
+      "chance": 1.0
+    },
+    "minecolonies:tacos": {
+      "chance": 1.0
+    },
+    "minecolonies:tofu": {
+      "chance": 0.6666667
+    },
+    "minecolonies:tomato": {
+      "chance": 0.5
+    },
+    "minecolonies:tortillas": {
+      "chance": 0.6666667
+    },
+    "minecolonies:veggie_quiche": {
+      "chance": 1.0
+    },
+    "minecolonies:veggie_ravioli": {
+      "chance": 0.6666667
+    },
+    "minecolonies:veggie_soup": {
+      "chance": 1.0
+    },
+    "minecolonies:yogurt": {
+      "chance": 0.6666667
+    },
+    "minecolonies:yogurt_with_berries": {
+      "chance": 1.0
+    }
+  }
+}

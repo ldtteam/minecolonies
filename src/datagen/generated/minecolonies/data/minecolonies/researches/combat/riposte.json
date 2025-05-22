@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 32,
+      "item": "minecraft:iron_ingot"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/meleearmormultiplier": 2
+      "id": "minecolonies:effects/meleearmormultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:iron_chestplate",
   "parentResearch": "minecolonies:combat/parry",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "combatacademy",
       "level": 1
-    },
-    {
-      "items": {
-        "count": 32,
-        "item": "minecraft:iron_ingot"
-      }
     }
   ],
   "researchLevel": 3,

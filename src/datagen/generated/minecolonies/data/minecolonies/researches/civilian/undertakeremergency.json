@@ -1,22 +1,24 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "count": 1,
+      "item": "minecraft:iron_boots"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/undertakerrun": 1
+      "id": "minecolonies:effects/undertakerrun",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutgraveyard",
   "parentResearch": "minecolonies:civilian/remembrance",
   "requirements": [
     {
+      "type": "minecolonies:building",
       "building": "graveyard",
       "level": 2
-    },
-    {
-      "items": {
-        "count": 1,
-        "item": "minecraft:iron_boots"
-      }
     }
   ],
   "researchLevel": 2,

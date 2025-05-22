@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.eventbus.events.CompatibilityManagerLoadedEvent;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -22,6 +23,7 @@ import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -29,6 +31,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -36,6 +39,9 @@ import java.util.function.BiConsumer;
 @mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
+    @Nullable IJeiRuntime jei;
+    boolean compatLoaded;
+
     @NotNull
     @Override
     public ResourceLocation getPluginUid()
@@ -123,14 +129,14 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
+        IMinecoloniesAPI.getInstance().getEventBus().subscribe(CompatibilityManagerLoadedEvent.class, this::onCompatibilityManagerLoaded);
+
         registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes(Minecraft.getInstance().level));
         registration.addRecipes(ModRecipeTypes.CROPS, CropRecipeCategory.findRecipes());
-        registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
-        registration.addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
 
         final ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
@@ -139,6 +145,21 @@ public class JEIPlugin implements IModPlugin
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
             addJobBasedRecipes(vanilla, animals, category, registration::addRecipes, level);
+        }
+    }
+
+    private void onCompatibilityManagerLoaded(@NotNull final CompatibilityManagerLoadedEvent event)
+    {
+        if (event.isClientSide())
+        {
+            this.compatLoaded = true;
+
+            if (this.jei != null)
+            {
+                // defer some recipes until after the compatibility manager is populated, because they use it
+                this.jei.getRecipeManager().addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
+                this.jei.getRecipeManager().addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
+            }
         }
     }
 
@@ -186,5 +207,22 @@ public class JEIPlugin implements IModPlugin
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);
+    }
+
+    @Override
+    public void onRuntimeAvailable(@NotNull final IJeiRuntime jeiRuntime)
+    {
+        this.jei = jeiRuntime;
+
+        if (this.compatLoaded)
+        {
+            onCompatibilityManagerLoaded(new CompatibilityManagerLoadedEvent(true));
+        }
+    }
+
+    @Override
+    public void onRuntimeUnavailable()
+    {
+        this.jei = null;
     }
 }

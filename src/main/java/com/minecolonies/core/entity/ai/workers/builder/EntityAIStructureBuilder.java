@@ -227,21 +227,36 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 gotoPath = null;
             }
 
+            if (prevBlockPosition != null)
+            {
+                return BlockPosUtil.dist(prevBlockPosition, currentBlock) <= 10;
+            }
             return false;
         }
 
         if (!walkToSafePos(workFrom))
         {
+            // Something might have changed, new wall and we can't reach the position anymore. Reset workfrom if stuck.
+            if (worker.getNavigation() instanceof MinecoloniesAdvancedPathNavigate pathNavigate && pathNavigate.getStuckHandler().getStuckLevel() > 0)
+            {
+                workFrom = null;
+            }
             return false;
         }
 
         if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5)
         {
-            double distToBuilding = BlockPosUtil.dist(workFrom, job.getWorkOrder().getLocation());
+            if (BlockPosUtil.dist(workFrom, job.getWorkOrder().getLocation()) < 100)
+            {
+                prevBlockPosition = currentBlock;
+                workFrom = null;
+                return true;
+            }
             workFrom = null;
-            return distToBuilding < 100;
+            return false;
         }
 
+        prevBlockPosition = currentBlock;
         return true;
     }
 
