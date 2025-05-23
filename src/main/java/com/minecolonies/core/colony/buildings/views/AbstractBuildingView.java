@@ -534,12 +534,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-        {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
-        }
+        getOpenRequestsByCitizen().getOrDefault(citizenThatRequested, new ArrayList<>()).remove(request.getId());
     }
 
     @Override
@@ -548,12 +543,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         if (getOpenRequestsOfBuilding().contains(request))
         {
             final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-            getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-            {
-                getOpenRequestsByCitizen().remove(citizenThatRequested);
-            }
+            getOpenRequestsByCitizen().getOrDefault(citizenThatRequested, new ArrayList<>()).remove(request.getId());
         }
     }
 
