@@ -8,12 +8,9 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * View data for visitors
@@ -71,11 +68,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
                 final ProfileResult profile = minecraft.getMinecraftSessionService().fetchProfile(textureUUID, true);
                 if (profile != null)
                 {
-                    final ResourceLocation newTexture = minecraft.getSkinManager().getInsecureSkin(profile.profile()).texture();
-                    if (newTexture != null)
-                    {
-                        cachedTexture = newTexture;
-                    }
+                    minecraft.submit(() -> cachedTexture = minecraft.getSkinManager().getInsecureSkin(profile.profile()).texture());
                 }
             });
         }
