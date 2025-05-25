@@ -560,14 +560,19 @@ public abstract class AbstractBuildingView implements IBuildingView
                 return component;
             }
 
-            final int citizenId = getCitizensByRequest().get(request.getId());
+            int citizenId = getCitizensByRequest().get(request.getId());
+            if (citizenId == -1 && getAllAssignedCitizens().size() == 1)
+            {
+                citizenId = getAllAssignedCitizens().iterator().next();
+            }
+
             if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
             {
                 return component;
             }
 
             component.append(Component.literal(": "));
-            component.append(Component.literal(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
+            component.append(Component.literal(getColony().getCitizen(citizenId).getName()));
             return component;
         }
         catch (final Exception ex)
