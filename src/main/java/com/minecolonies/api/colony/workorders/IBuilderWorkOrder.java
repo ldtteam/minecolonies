@@ -110,6 +110,13 @@ public interface IBuilderWorkOrder extends IServerWorkOrder
     boolean canBuild(@NotNull ICitizenData citizen);
 
     /**
+     * Sets the building stage of the workorder
+     *
+     * @param stageIndex
+     */
+    void setStage(int stageIndex);
+
+    /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
      *
      * @param builderLocation position of the builders own hut.

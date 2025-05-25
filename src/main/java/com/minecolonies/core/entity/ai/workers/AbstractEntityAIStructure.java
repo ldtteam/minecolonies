@@ -706,9 +706,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             if (removal)
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    workOrder.getRotationMirror(),
+                    workOrder,
                     this, new BuildingProgressStage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
@@ -716,18 +714,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                        (entity instanceof TileEntityDecorationController && Utils.getBlueprintLevel(((TileEntityDecorationController) entity).getBlueprintPath()) != -1))
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    workOrder.getRotationMirror(),
+                    workOrder,
                     this, new BuildingProgressStage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
             else
             {
                 structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                    workOrder.getRotationMirror(),
+                    workOrder,
                     this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }

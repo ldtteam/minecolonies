@@ -1,13 +1,13 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
-import com.ldtteam.structurize.api.RotationMirror;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_PLACED;
@@ -71,48 +70,29 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     private int stage = 0;
 
     /**
-     * The minecolonies AI specific creative structure placer.
-     *
-     * @param world             the world.
-     * @param worldPos          the pos it is placed at.
-     * @param blueprintFuture   the structure.
-     * @param rotMir          the placement settings.
-     * @param entityAIStructure the AI handling this structure.
+     * The respective workorder used for placement
      */
-    public BuildingStructureHandler(
-      final Level world,
-      final BlockPos worldPos,
-      final Future<Blueprint> blueprintFuture,
-      final RotationMirror rotMir,
-      final AbstractEntityAIStructure<J, B> entityAIStructure,
-        final BuildingProgressStage[] stages)
-    {
-        super(world, worldPos, blueprintFuture, rotMir);
-        setupBuilding();
-        this.structureAI = entityAIStructure;
-        this.stages = stages;
-        this.stage = 0;
-    }
+    private IBuilderWorkOrder workOrder;
 
     /**
      * The minecolonies AI specific creative structure placer.
      *
      * @param world             the world.
-     * @param worldPos          the pos it is placed at.
-     * @param blueprint         the blueprint.
-     * @param rotMir          the placement settings.
+     * @param workOrder         the workorder for placement
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
-      final BlockPos worldPos,
-      final Blueprint blueprint,
-      final RotationMirror rotMir,
+        final IWorkOrder workOrder,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
-      final Stage[] stages)
+        final BuildingProgressStage[] stages)
     {
-        super(world, worldPos, blueprint, rotMir);
+        super(world,
+            workOrder.getLocation(),
+            workOrder.getBlueprint(),
+            workOrder.getRotationMirror());
         setupBuilding();
+        this.workOrder = (IBuilderWorkOrder) workOrder;
         this.structureAI = entityAIStructure;
         this.stages = stages;
         this.stage = 0;

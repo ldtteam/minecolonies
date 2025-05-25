@@ -33,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ROTATION_MIRROR;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STAGE;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
