@@ -47,7 +47,7 @@ public class TagItemCost implements IResearchCost
      */
     public TagItemCost(final CompoundTag compound)
     {
-        this.tag = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(compound.getString(TAG_COST_ITEM)));
+        this.tag = ForgeRegistries.ITEMS.tags().createTagKey(new ResourceLocation(compound.getString(TAG_COST_TAG)));
         this.count = compound.getInt(TAG_COST_COUNT);
     }
 
