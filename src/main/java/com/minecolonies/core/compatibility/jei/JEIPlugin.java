@@ -135,7 +135,7 @@ public class JEIPlugin implements IModPlugin
         registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
-        // we actually populate the recipes in onCompatibilityManagerLoaded, since that happens later
+        // we actually populate the recipes in onRecipesLoaded, since that happens later
     }
 
     private void onRecipesLoaded(@NotNull final CustomRecipesReloadedEvent event)
