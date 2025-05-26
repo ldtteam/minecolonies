@@ -3,7 +3,6 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
@@ -13,7 +12,6 @@ import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
-import com.minecolonies.api.eventbus.events.CompatibilityManagerLoadedEvent;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -181,8 +179,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
         discoverCompostRecipes(recipeManager);
         discoverMobs();
-
-        IMinecoloniesAPI.getInstance().getEventBus().post(new CompatibilityManagerLoadedEvent(false));
     }
 
     @Override
@@ -257,8 +253,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
         // the below are loaded from config files, which have been synched already by this point
         discoverModCompat();
-
-        IMinecoloniesAPI.getInstance().getEventBus().post(new CompatibilityManagerLoadedEvent(true));
     }
 
     private static void serializeItemStorageList(

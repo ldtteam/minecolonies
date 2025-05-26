@@ -73,10 +73,12 @@ public class DataPackSyncEventHandler
                                         @NotNull final UpdateClientWithCompatibilityMessage compatMsg)
         {
             compatMsg.sendToPlayer(player);
-            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
             QuestJsonListener.sendGlobalQuestPackets(player);
             DiseasesListener.sendGlobalDiseasesPackets(player);
+
+            // always send this last; we rely on CustomRecipesReloadedEvent signalling that all packets are processed
+            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
         }
 
 

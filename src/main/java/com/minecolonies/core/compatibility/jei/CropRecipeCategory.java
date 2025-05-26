@@ -116,7 +116,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
 
         final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(recipe.source().getLootTable());
         final int initialColumns = (WIDTH - 36) / this.slot.getWidth();
-        final int rows = (drops.size() + initialColumns - 1) / initialColumns;
+        final int rows = Math.max(1, (drops.size() + initialColumns - 1) / initialColumns);
         final int columns = (drops.size() + rows - 1) / rows;
         final int startX = (WIDTH - (columns * this.slot.getWidth())) / 2;
         int x = startX;

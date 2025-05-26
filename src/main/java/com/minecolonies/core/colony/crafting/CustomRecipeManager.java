@@ -1,10 +1,12 @@
 package com.minecolonies.core.colony.crafting;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.eventbus.events.CustomRecipesReloadedEvent;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
@@ -23,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -436,7 +437,7 @@ public class CustomRecipeManager
 
         try
         {
-            NeoForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
+            IMinecoloniesAPI.getInstance().getEventBus().post(new CustomRecipesReloadedEvent());
         }
         catch (final Exception e)
         {

@@ -238,7 +238,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         if (!drops.isEmpty())
         {
             final int initialColumns = LOOT_SLOTS_W / this.slot.getWidth();
-            final int rows = (drops.size() + initialColumns - 1) / initialColumns;
+            final int rows = Math.max(1, (drops.size() + initialColumns - 1) / initialColumns);
             final int columns = (drops.size() + rows - 1) / rows;
             final int startX = LOOT_SLOTS_X + (LOOT_SLOTS_W - (columns * this.slot.getWidth())) / 2;
             x = startX;
