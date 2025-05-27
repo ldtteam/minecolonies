@@ -354,5 +354,5 @@ public interface IRegisteredStructureManager
      * @param extensionId the id of the extension.
      * @return the building extension or null.
      */
-    @Nullable IBuildingExtension getMatchingBuildingExtension(int extensionId);
+    @Nullable IBuildingExtension getMatchingBuildingExtension(IBuildingExtension.ExtensionId extensionId);
 }

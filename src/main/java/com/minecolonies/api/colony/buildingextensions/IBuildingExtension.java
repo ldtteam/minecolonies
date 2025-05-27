@@ -5,12 +5,19 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtensionModule;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.modules.IModuleContainer;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Interface for building extension instances.
@@ -113,5 +120,26 @@ public interface IBuildingExtension extends IModuleContainer<IBuildingExtensionM
      * Get the unique extension id.
      * @return the unique id.
      */
-    int getId();
+    ExtensionId getId();
+
+    /**
+     * Unique extension id.
+     * @param pos the pos it's at.
+     * @param entry it's entry type.
+     */
+    record ExtensionId(BlockPos pos, BuildingExtensionRegistries.BuildingExtensionEntry entry)
+    {
+        public Tag serializeNBT(final HolderLookup.Provider provider)
+        {
+            final CompoundTag tag = new CompoundTag();
+            BlockPosUtil.write(tag, TAG_POS, pos);
+            tag.putString(TAG_ID, entry.getRegistryName().toString());
+            return tag;
+        }
+
+        public static ExtensionId deserializeNBT(final HolderLookup.Provider provider, final CompoundTag nbt)
+        {
+            return new ExtensionId(BlockPosUtil.read(nbt, TAG_POS), BuildingExtensionRegistries.getBuildingExtensionRegistry().get(ResourceLocation.parse(nbt.getString(TAG_ID))));
+        }
+    }
 }

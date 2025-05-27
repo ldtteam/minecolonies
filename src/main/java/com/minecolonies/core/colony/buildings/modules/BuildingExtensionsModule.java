@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -33,13 +34,13 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     /**
      * A map of building extensions, along with their unix timestamp of when they can next be checked again.
      */
-    private final Map<Integer, Integer> checkedExtensions = new HashMap<>();
+    private final Map<IBuildingExtension.ExtensionId, Integer> checkedExtensions = new Object2IntOpenHashMap<>();
 
     /**
      * The building extension the citizen is currently working on.
      */
     @Nullable
-    private int currentExtensionId;
+    private IBuildingExtension.ExtensionId currentExtensionId;
 
     /**
      * Building extensions should be assigned manually to the citizen.
@@ -54,11 +55,11 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
         for (int i = 0; i < listTag.size(); ++i)
         {
             final CompoundTag tag = listTag.getCompound(i);
-            checkedExtensions.put(tag.getInt(TAG_ID), compound.getInt(TAG_DAY));
+            checkedExtensions.put(IBuildingExtension.ExtensionId.deserializeNBT(provider, tag.getCompound(TAG_ID)), compound.getInt(TAG_DAY));
         }
         if (compound.contains(TAG_CURRENT_EXTENSION))
         {
-            currentExtensionId = compound.getInt(TAG_CURRENT_EXTENSION);
+            currentExtensionId = IBuildingExtension.ExtensionId.deserializeNBT(provider, compound.getCompound(TAG_CURRENT_EXTENSION));
         }
     }
 
@@ -68,17 +69,17 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
 
         final ListTag listTag = new ListTag();
-        for (final Map.Entry<Integer, Integer> entry : checkedExtensions.entrySet())
+        for (final Map.Entry<IBuildingExtension.ExtensionId, Integer> entry : checkedExtensions.entrySet())
         {
             final CompoundTag listEntry = new CompoundTag();
-            compound.putInt(TAG_POS, entry.getKey());
+            compound.put(TAG_ID, entry.getKey().serializeNBT(provider));
             listEntry.putLong(TAG_DAY, entry.getValue());
             listTag.add(listEntry);
         }
         compound.put(TAG_LIST, listTag);
-        if (currentExtensionId != 0)
+        if (currentExtensionId != null)
         {
-            compound.putInt(TAG_CURRENT_EXTENSION, currentExtensionId);
+            compound.put(TAG_CURRENT_EXTENSION, currentExtensionId.serializeNBT(provider));
         }
     }
 
@@ -111,7 +112,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     @Nullable
     public IBuildingExtension getCurrentExtension()
     {
-        if (currentExtensionId == 0)
+        if (currentExtensionId == null)
         {
             return null;
         }
@@ -134,7 +135,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
             return currentExtension;
         }
 
-        int lastUsedExtension = 0;
+        IBuildingExtension.ExtensionId lastUsedExtension = null;
         int lastUsedExtensionDay = building.getColony().getDay();
 
         for (final IBuildingExtension extension : getOwnedExtensions())
@@ -290,10 +291,10 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
      */
     public void resetCurrentExtension()
     {
-        if (currentExtensionId != 0)
+        if (currentExtensionId != null)
         {
             checkedExtensions.put(currentExtensionId, building.getColony().getDay());
         }
-        currentExtensionId = 0;
+        currentExtensionId = null;
     }
 }

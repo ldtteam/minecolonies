@@ -63,9 +63,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
 
     /**
-     * List of building extensions of the colony. TODO Extension entry as id. Also make building store the int id.
+     * List of building extensions of the colony.
      */
-    private final Map<Integer, IBuildingExtension> buildingExtensions = new HashMap<>();
+    private final Map<IBuildingExtension.ExtensionId, IBuildingExtension> buildingExtensions = new HashMap<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -946,7 +946,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @Override
     @Nullable
-    public IBuildingExtension getMatchingBuildingExtension(final int extensionId)
+    public IBuildingExtension getMatchingBuildingExtension(final IBuildingExtension.ExtensionId extensionId)
     {
         return buildingExtensions.get(extensionId);
     }
