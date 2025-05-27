@@ -19,10 +19,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Update message for auto syncing the entire building extensions list.
@@ -52,7 +49,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
      * @param colony the colony this building extension is in.
      * @param extensions the complete list of building extensions of this colony.
      */
-    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IBuildingExtension> extensions)
+    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Collection<IBuildingExtension> extensions)
     {
         super(TYPE);
         this.colonyId = colony.getID();

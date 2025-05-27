@@ -112,7 +112,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
         else
         {
-            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getBuildingExtension(field -> field.equals(plantationField));
+            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getMatchingBuildingExtension(field -> field.equals(plantationField));
             if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField)
             {
                 existingPlantationField.setWorkingPositions(workingPositions);

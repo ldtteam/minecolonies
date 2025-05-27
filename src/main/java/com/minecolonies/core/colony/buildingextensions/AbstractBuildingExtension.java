@@ -230,4 +230,10 @@ public abstract class AbstractBuildingExtension implements IBuildingExtension
         }
         return buildingExtensionEntry.equals(that.buildingExtensionEntry);
     }
+
+    @Override
+    public int getId()
+    {
+        return hashCode();
+    }
 }

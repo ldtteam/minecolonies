@@ -108,4 +108,10 @@ public interface IBuildingExtension extends IModuleContainer<IBuildingExtensionM
      * Equals implementation for this building extension.
      */
     boolean equals(Object other);
+
+    /**
+     * Get the unique extension id.
+     * @return the unique id.
+     */
+    int getId();
 }

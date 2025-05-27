@@ -47,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
@@ -64,9 +63,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
 
     /**
-     * List of building extensions of the colony.
+     * List of building extensions of the colony. TODO Extension entry as id. Also make building store the int id.
      */
-    private final Set<IBuildingExtension> buildingExtensions = ConcurrentHashMap.newKeySet();
+    private final Map<Integer, IBuildingExtension> buildingExtensions = new HashMap<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -180,8 +179,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         // Ensure building extensions are still tied to an appropriate building
-        for (final IBuildingExtension extension : buildingExtensions.stream().filter(IBuildingExtension::isTaken).toList())
+        for (final IBuildingExtension extension : buildingExtensions.values())
         {
+            if (!extension.isTaken())
+            {
+                continue;
+            }
             final IBuilding building = buildings.get(extension.getBuildingId());
             if (building == null)
             {
@@ -244,7 +247,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         compound.put(TAG_BUILDINGS, buildingTagList);
 
         // Building extensions
-        compound.put(TAG_BUILDING_EXTENSIONS, buildingExtensions.stream().map(f -> BuildingExtensionDataManager.extensionToCompound(provider, f)).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_BUILDING_EXTENSIONS, buildingExtensions.values().stream().map(f -> BuildingExtensionDataManager.extensionToCompound(provider, f)).collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         @NotNull final ListTag leisureTagList = new ListTag();
@@ -311,12 +314,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        for (final IBuildingExtension extension : buildingExtensions)
+        if (buildingExtensions.entrySet().removeIf(extension -> WorldUtil.isBlockLoaded(colony.getWorld(), extension.getValue().getPosition())
+            && (!colony.isCoordInColony(colony.getWorld(), extension.getValue().getPosition()) || !extension.getValue().isValidPlacement(colony))))
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), extension.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), extension.getPosition()) || !extension.isValidPlacement(colony)))
-            {
-                removeBuildingExtension(f -> f.equals(extension));
-            }
+            markBuildingExtensionsDirty();
         }
 
         for (@NotNull final BlockPos pos : leisureSites)
@@ -859,7 +860,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions).sendToPlayer(players);
+            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()).sendToPlayer(players);
         }
     }
 
@@ -908,13 +909,13 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher)
     {
-        return buildingExtensions.stream()
+        return buildingExtensions.values().stream()
                  .filter(matcher)
                  .toList();
     }
 
     @Override
-    public Optional<IBuildingExtension> getBuildingExtension(Predicate<IBuildingExtension> matcher)
+    public Optional<IBuildingExtension> getMatchingBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
         return getBuildingExtensions(matcher)
                  .stream()
@@ -924,7 +925,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public boolean addBuildingExtension(IBuildingExtension extension)
     {
-        if (buildingExtensions.add(extension))
+        if (buildingExtensions.putIfAbsent(extension.getId(), extension) == null)
         {
             markBuildingExtensionsDirty();
             return true;
@@ -935,17 +936,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public void removeBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
-        final List<IBuildingExtension> extensionsToRemove = buildingExtensions.stream()
-                                              .filter(matcher)
-                                              .toList();
+        buildingExtensions.entrySet().removeIf(entry -> matcher.test(entry.getValue()));
 
         // We must send the message to everyone since building extensions here will be permanently removed from the list.
         // And the clients have no way to later on also get their building extensions removed, thus every client has to be told
         // immediately that the building extension is gone.
-        for (final IBuildingExtension extension : extensionsToRemove)
-        {
-            buildingExtensions.remove(extension);
-            markBuildingExtensionsDirty();
-        }
+        markBuildingExtensionsDirty();
+    }
+
+    @Override
+    @Nullable
+    public IBuildingExtension getMatchingBuildingExtension(final int extensionId)
+    {
+        return buildingExtensions.get(extensionId);
     }
 }

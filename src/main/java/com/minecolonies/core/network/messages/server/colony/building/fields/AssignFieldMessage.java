@@ -74,7 +74,7 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
         final IBuildingExtension parsedField = BuildingExtensionDataManager.bufferToExtension(fieldData);
-        colony.getBuildingManager().getBuildingExtension(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
+        colony.getBuildingManager().getMatchingBuildingExtension(otherField -> otherField.equals(parsedField)).ifPresent(field -> {
 
             if (building.getModule(moduleID) instanceof final BuildingExtensionsModule fieldsModule)
             {

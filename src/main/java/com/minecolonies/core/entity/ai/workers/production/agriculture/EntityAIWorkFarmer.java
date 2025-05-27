@@ -112,23 +112,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean shouldDumpInventory = false;
 
     /**
-     * The offset to work at relative to the scarecrow.
-     */
-    @Nullable
-    private BlockPos workingOffset;
-
-    /**
-     * The previous position which has been worked at.
-     */
-    @Nullable
-    private BlockPos prevPos;
-
-    /**
-     * The current index within the current field
-     */
-    private int cell = -1;
-
-    /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
      *
      * @param job a farmer job to use.
@@ -299,13 +282,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         BlockPos position;
         do
         {
-            workingOffset = nextValidCell(farmField);
-            if (workingOffset == null)
+            building.setWorkingOffset(nextValidCell(farmField));
+            if (building.getWorkingOffset() == null)
             {
                 return false;
             }
 
-            position = farmField.getPosition().below().south(workingOffset.getZ()).east(workingOffset.getX());
+            position = farmField.getPosition().below().south(building.getWorkingOffset().getZ()).east(building.getWorkingOffset().getX());
         }
         while (!predicate.test(position));
 
@@ -452,19 +435,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         int ring, ringCell, x, z;
         Direction facing;
 
-        if (workingOffset == null)
+        if (building.getWorkingOffset() == null)
         {
-            cell = -1;
+            building.setCell(-1);
         }
 
         do
         {
-            if (++cell == getLargestCell(farmField))
+            if (building.setCell(building.getCell() + 1) == getLargestCell(farmField))
             {
                 return null;
             }
-            ring = (int) Math.floor((Math.sqrt(cell + 1D) + 1) / 2.0);
-            ringCell = cell - (int) (4 * Math.pow(ring - 1D, 2) + 4 * (ring - 1));
+            ring = (int) Math.floor((Math.sqrt(building.getCell() + 1D) + 1) / 2.0);
+            ringCell = building.getCell() - (int) (4 * Math.pow(ring - 1D, 2) + 4 * (ring - 1));
             facing = Direction.from2DDataValue(Math.floorDiv(ringCell, 2 * ring));
 
 
@@ -502,19 +485,18 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private IAIState workAtField()
     {
         final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-        if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()) || module.getCurrentExtension() == null)
+        final IBuildingExtension field = module.getCurrentExtension();
+        if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()) || field == null)
         {
             return PREPARING;
         }
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
-
-        final IBuildingExtension field = module.getCurrentExtension();
         if (field instanceof FarmField farmField)
         {
-            if (workingOffset != null)
+            if (building.getWorkingOffset() != null)
             {
-                final BlockPos position = farmField.getPosition().below().south(workingOffset.getZ()).east(workingOffset.getX());
+                final BlockPos position = farmField.getPosition().below().south(building.getWorkingOffset().getZ()).east(building.getWorkingOffset().getX());
 
                 // Still moving to the block
                 if (!walkToSafePos(position.above()))
@@ -550,17 +532,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                         return PREPARING;
                     }
                 }
-                prevPos = position;
+                building.setPrevPos(position);
                 setDelay(getLevelDelay());
             }
 
-            workingOffset = nextValidCell(farmField);
-            if (workingOffset == null)
+            building.setWorkingOffset(nextValidCell(farmField));
+            if (building.getWorkingOffset() == null)
             {
                 shouldDumpInventory = true;
                 farmField.nextState();
                 module.resetCurrentExtension();
-                prevPos = null;
+                building.setPrevPos(null);
                 return IDLE;
             }
         }
@@ -741,7 +723,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             && blockItem.getBlock().defaultBlockState().canSurvive(worker.level(), position.above()))
         {
             @NotNull final Item seed = item.getItem();
-            if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
+            if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && building.getPrevPos() != null && !world.isEmptyBlock(building.getPrevPos().above()))
             {
                 return true;
             }

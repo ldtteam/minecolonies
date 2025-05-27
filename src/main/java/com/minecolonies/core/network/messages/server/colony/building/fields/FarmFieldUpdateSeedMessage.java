@@ -49,7 +49,7 @@ public class FarmFieldUpdateSeedMessage extends AbstractColonyServerMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
         colony.getBuildingManager()
-          .getBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
+          .getMatchingBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
           .map(m -> (FarmField) m)
           .ifPresent(field -> field.setSeed(newSeed));
     }

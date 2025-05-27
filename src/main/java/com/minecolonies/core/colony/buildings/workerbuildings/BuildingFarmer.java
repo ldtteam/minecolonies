@@ -10,9 +10,11 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
@@ -26,8 +28,10 @@ import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -55,6 +59,7 @@ import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JEI_INFO;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_FARMER_NO_SEED;
@@ -79,6 +84,23 @@ public class BuildingFarmer extends AbstractBuilding
      * The maximum building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * The offset to work at relative to the scarecrow.
+     */
+    @Nullable
+    private BlockPos workingOffset;
+
+    /**
+     * The previous position which has been worked at.
+     */
+    @Nullable
+    private BlockPos prevPos;
+
+    /**
+     * The current index within the current field
+     */
+    private int cell = -1;
 
     /**
      * Public constructor which instantiates the building.
@@ -164,6 +186,96 @@ public class BuildingFarmer extends AbstractBuilding
     public boolean requestFertilizer()
     {
         return getSetting(FERTILIZE).getValue();
+    }
+
+    /**
+     * Get the offset to work at relative to the scarecrow.
+     * @return the blockpos.
+     */
+    public BlockPos getWorkingOffset()
+    {
+        return workingOffset;
+    }
+
+    /**
+     * Set the current index within the current field
+     * @param i the value to set.
+     * @return current value.
+     */
+    public int setCell(final int i)
+    {
+        cell = i;
+        return cell;
+    }
+
+    /**
+     * Get the current index within the current field
+     * @return current value.
+     */
+    public int getCell()
+    {
+        return cell;
+    }
+
+    /**
+     * Set the previous position which has been worked at.
+     * @param position to set.
+     */
+    public void setPrevPos(final BlockPos position)
+    {
+        this.prevPos = position;
+    }
+
+    /**
+     * Set the offset to work at relative to the scarecrow.
+     * @param blockPos the pos to set.
+     */
+    public void setWorkingOffset(final BlockPos blockPos)
+    {
+        this.workingOffset = blockPos;
+    }
+
+    /**
+     * Get the previous position which has been worked at.
+     * @return current prev pos.
+     */
+    public BlockPos getPrevPos()
+    {
+        return prevPos;
+    }
+
+    @Override
+    public CompoundTag serializeNBT(final HolderLookup.Provider provider)
+    {
+        final CompoundTag compoundTag = super.serializeNBT(provider);
+        compoundTag.putInt(TAG_CELL, this.cell);
+        if (workingOffset != null)
+        {
+            BlockPosUtil.write(compoundTag, TAG_WORKING_OFFSET, workingOffset);
+        }
+        if (prevPos != null)
+        {
+            BlockPosUtil.write(compoundTag, TAG_PREV_POS, prevPos);
+        }
+        return compoundTag;
+    }
+
+    @Override
+    public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag compound)
+    {
+        super.deserializeNBT(provider, compound);
+        if (compound.contains(TAG_CELL))
+        {
+            this.cell = compound.getInt(TAG_CELL);
+        }
+        if (compound.contains(TAG_WORKING_OFFSET))
+        {
+            this.workingOffset = BlockPosUtil.read(compound, TAG_WORKING_OFFSET);
+        }
+        if (compound.contains(TAG_PREV_POS))
+        {
+            this.prevPos = BlockPosUtil.read(compound, TAG_PREV_POS);
+        }
     }
 
     /**
