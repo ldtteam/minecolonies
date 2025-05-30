@@ -1,0 +1,33 @@
+{
+  "parent": "minecolonies:production/build_enchanter",
+  "criteria": {
+    "netherworker": {
+      "conditions": {
+        "hut_name": "netherworker",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.build.netherworker.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutnetherworker"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.build.netherworker.title"
+    }
+  },
+  "requirements": [
+    [
+      "netherworker"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

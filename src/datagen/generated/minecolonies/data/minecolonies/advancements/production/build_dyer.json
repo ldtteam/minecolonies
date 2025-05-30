@@ -1,0 +1,33 @@
+{
+  "parent": "minecolonies:production/build_composter",
+  "criteria": {
+    "dyer": {
+      "conditions": {
+        "hut_name": "dyer",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.build.dyer.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutdyer"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.build.dyer.title"
+    }
+  },
+  "requirements": [
+    [
+      "dyer"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

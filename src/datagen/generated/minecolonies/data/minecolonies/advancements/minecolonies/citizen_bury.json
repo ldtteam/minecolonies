@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:minecolonies/build_tavern",
+  "parent": "minecolonies:minecolonies/build_graveyard",
   "criteria": {
     "buried": {
       "conditions": {},

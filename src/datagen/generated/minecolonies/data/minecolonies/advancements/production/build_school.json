@@ -1,0 +1,33 @@
+{
+  "parent": "minecolonies:minecolonies/build_university",
+  "criteria": {
+    "school": {
+      "conditions": {
+        "hut_name": "school",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.build.school.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutschool"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.build.school.title"
+    }
+  },
+  "requirements": [
+    [
+      "school"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

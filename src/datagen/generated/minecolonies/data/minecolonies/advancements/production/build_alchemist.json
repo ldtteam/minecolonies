@@ -1,0 +1,33 @@
+{
+  "parent": "minecolonies:production/build_netherworker",
+  "criteria": {
+    "alchemist": {
+      "conditions": {
+        "hut_name": "alchemist",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.build.alchemist.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutalchemist"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.build.alchemist.title"
+    }
+  },
+  "requirements": [
+    [
+      "alchemist"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

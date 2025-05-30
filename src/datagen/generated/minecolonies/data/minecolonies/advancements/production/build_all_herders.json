@@ -1,6 +1,13 @@
 {
   "parent": "minecolonies:production/build_farmer",
   "criteria": {
+    "bees": {
+      "conditions": {
+        "hut_name": "apiary",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    },
     "chickens": {
       "conditions": {
         "hut_name": "chickenherder",
@@ -53,6 +60,9 @@
     }
   },
   "requirements": [
+    [
+      "bees"
+    ],
     [
       "sheep"
     ],

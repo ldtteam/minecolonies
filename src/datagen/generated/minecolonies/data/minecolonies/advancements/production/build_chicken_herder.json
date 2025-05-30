@@ -1,0 +1,33 @@
+{
+  "parent": "minecolonies:production/build_farmer",
+  "criteria": {
+    "chickens": {
+      "conditions": {
+        "hut_name": "chickenherder",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.build.chicken_herder.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutchickenherder"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.build.chicken_herder.title"
+    }
+  },
+  "requirements": [
+    [
+      "chickens"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
