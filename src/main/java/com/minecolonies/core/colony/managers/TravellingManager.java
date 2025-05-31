@@ -61,16 +61,9 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     @Override
     public void recallAllTravellingCitizens()
     {
-        final List<ICitizenData> travellersToRecall = this.travelerDataMap
-            .keySet()
-            .stream()
-            .map(this.colony.getCitizenManager()::getCivilian)
-            .toList();
-
-        this.travelerDataMap.clear();
-        colony.markDirty();
-
-        travellersToRecall.forEach(citizenData -> {
+        for (final Integer citizenId : travelerDataMap.keySet())
+        {
+            final ICitizenData citizenData = this.colony.getCitizenManager().getCivilian(citizenId);
             final BlockPos spawnHutPos;
             if (citizenData.getWorkBuilding() != null)
             {
@@ -91,7 +84,10 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
             }
 
             optionalEntityCitizen.ifPresent(abstractEntityCitizen -> TeleportHelper.teleportCitizen(abstractEntityCitizen, colony.getWorld(), spawnHutPos));
-        });
+        }
+
+        this.travelerDataMap.clear();
+        colony.markDirty();
     }
 
     public boolean onTick()
