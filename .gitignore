@@ -15,6 +15,7 @@
 /.idea/*
 !/.idea
 !/.idea/inspectionProfiles/
+!/.idea/codeStyles/
 /.idea/gradle.xml
 /classes
 
