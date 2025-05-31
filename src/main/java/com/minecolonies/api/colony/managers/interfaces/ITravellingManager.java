@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.core.BlockPos;
 
 import java.util.Optional;
@@ -13,6 +14,11 @@ public interface ITravellingManager
     default boolean isTravelling(final ICitizenData citizenData)
     {
         return isTravelling(citizenData.getId());
+    }
+
+    default boolean isTravelling(final ICitizenDataView citizenDataView)
+    {
+        return isTravelling(citizenDataView.getId());
     }
 
     boolean isTravelling(final int citizenId);
