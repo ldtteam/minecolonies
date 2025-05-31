@@ -845,7 +845,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
         }
         if (slot != -1)
-        {d w
+        {
             //Flag 1+2 is needed for updates
             if (WorldUtil.setBlockState(world, location, metadata))
             {
