@@ -166,7 +166,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
             worker.getCitizenData(),
             building.getPortalLocation(),
-            (int) Math.sqrt(building.getPortalLocation().distSqr(worker.blockPosition())) * 25
+            job.getCraftedResults().size() * 20 //One second of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
         );
 
         worker.remove(Entity.RemovalReason.DISCARDED);
@@ -337,7 +337,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     return getState();
                 }
-                goToVault();
                 building.recordTrip();
                 job.setInNether(true);
 
@@ -353,6 +352,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     job.addCraftedResultsList(result);
                 }
 
+                goToVault();
                 worker.getCitizenData().setIdleAtJob(false);
                 return NETHER_AWAY;
             }
