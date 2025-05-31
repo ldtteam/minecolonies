@@ -104,11 +104,15 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     public CompoundTag serializeNBT()
     {
         final CompoundTag data = new CompoundTag();
-        final ListTag travelerData = new ListTag();
+        final ListTag output = new ListTag();
 
-        travelerDataMap.values().stream().map(TravelerData::serializeNBT).forEach(travelerData::add);
+        for (TravelerData travelerData : travelerDataMap.values())
+        {
+            CompoundTag serializeNBT = travelerData.serializeNBT();
+            output.add(serializeNBT);
+        }
 
-        data.put(NbtTagConstants.TRAVELER_DATA, travelerData);
+        data.put(NbtTagConstants.TRAVELER_DATA, output);
 
         return data;
     }
@@ -119,12 +123,14 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         final ListTag travelerData = nbt.getList(NbtTagConstants.TRAVELER_DATA, Tag.TAG_COMPOUND);
         travelerDataMap.clear();
 
-        travelerData
-            .stream()
-            .filter(CompoundTag.class::isInstance)
-            .map(CompoundTag.class::cast)
-            .map(TravelerData::new)
-            .forEach(data -> travelerDataMap.put(data.getCitizenId(), data));
+        for (Tag travelerDatum : travelerData)
+        {
+            if (travelerDatum instanceof final CompoundTag compoundTag)
+            {
+                TravelerData data = new TravelerData(compoundTag);
+                travelerDataMap.put(data.getCitizenId(), data);
+            }
+        }
     }
 
     private static final class TravelerData implements INBTSerializable<CompoundTag>

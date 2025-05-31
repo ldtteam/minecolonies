@@ -923,8 +923,7 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        boolean spawnVisible = true;
-
+        boolean spawnVisible;
         //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
         final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
         if (travelingTargetCandidate.isPresent())
@@ -935,18 +934,23 @@ public class CitizenData implements ICitizenData
             spawnVisible = false;
             lastPosition = nextRespawnPos;
         }
+        else
+        {
+            spawnVisible = true;
+        }
 
         if (nextRespawnPos != null)
         {
             ICitizenData data = colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
-            getEntity().get().getCitizenJobHandler().setModelDependingOnJob(data.getJob());
-            if (!spawnVisible)
-            {
-                data.getEntity().ifPresent(entity -> {
+            data.getEntity().ifPresent(entity -> {
+                entity.getCitizenJobHandler().setModelDependingOnJob(data.getJob());
+                if (!spawnVisible)
+                {
                     entity.setInvisible(true);
                     entity.setPos(nextRespawnPos.getX(), nextRespawnPos.getY(), nextRespawnPos.getZ());
-                });
-            }
+                }
+            });
+
             nextRespawnPos = null;
         }
         else
