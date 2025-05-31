@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STAGE;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
@@ -93,7 +94,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     /**
      * Which building has claimed this work order.
      */
-    private BlockPos claimedBy;
+    private BlockPos claimedBy = BlockPos.ZERO;
 
     /**
      * The structurize schematic name.
@@ -139,6 +140,11 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
      * The amount of resources the work order its structure still requires.
      */
     private int amountOfResources;
+
+    /**
+     * The building stage this workorder is in
+     */
+    private int stage = 0;
 
     /**
      * The iterator type (building method) of this work order.
@@ -381,12 +387,16 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     {
         changed = true;
         this.claimedBy = claimedBy;
+        if (claimedBy == null)
+        {
+            this.claimedBy = BlockPos.ZERO;
+        }
     }
 
     @Override
     public final boolean isClaimed()
     {
-        return claimedBy != null;
+        return !BlockPos.ZERO.equals(claimedBy);
     }
 
     @Override
@@ -662,6 +672,11 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
 
+        if (compound.contains(TAG_STAGE))
+        {
+            stage = compound.getInt(TAG_STAGE);
+        }
+
         if (compound.contains(TAG_BB))
         {
             CompoundTag tag = (CompoundTag) compound.get(TAG_BB);
@@ -680,10 +695,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putInt(TAG_TH_PRIORITY, priority);
         compound.putString(TAG_TYPE, getMappingName());
         compound.putInt(TAG_ID, id);
-        if (claimedBy != null)
-        {
-            BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
-        }
+        BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         compound.putString(TAG_STRUCTURE_PACK, packName);
         compound.putString(TAG_STRUCTURE_PATH, path);
         compound.putString(TAG_TRANSLATION_KEY, translationKey);
@@ -697,6 +709,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putString(TAG_ITERATOR, iteratorType);
         compound.putBoolean(TAG_IS_CLEARED, cleared);
         compound.putBoolean(TAG_IS_REQUESTED, requested);
+        compound.putInt(TAG_STAGE, stage);
 
         if (box != Constants.EMPTY_AABB)
         {
@@ -722,7 +735,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeUtf(getMappingName());
         buf.writeInt(id);
         buf.writeInt(priority);
-        buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
+        buf.writeBlockPos(claimedBy);
         buf.writeUtf(packName);
         buf.writeUtf(path);
         buf.writeUtf(translationKey);
@@ -732,6 +745,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeBoolean(isMirrored);
         buf.writeInt(currentLevel);
         buf.writeInt(targetLevel);
+        buf.writeInt(stage);
         buf.writeDouble(getBoundingBox().minX);
         buf.writeDouble(getBoundingBox().minY);
         buf.writeDouble(getBoundingBox().minZ);
@@ -830,5 +844,21 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return false;
+    }
+
+    @Override
+    public int getStage()
+    {
+        return stage;
+    }
+
+    @Override
+    public void setStage(final int stage)
+    {
+        if (stage != this.stage)
+        {
+            changed = true;
+            this.stage = stage;
+        }
     }
 }

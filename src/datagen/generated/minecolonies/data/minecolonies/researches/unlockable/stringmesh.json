@@ -3,7 +3,8 @@
   "branch": "minecolonies:unlockable",
   "effects": [
     {
-      "minecolonies:effects/sifterstringunlock": 1
+      "id": "minecolonies:effects/sifterstringunlock",
+      "level": 1
     }
   ],
   "hidden": true,

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockplacespeedmultiplier": 1
+      "id": "minecolonies:effects/blockplacespeedmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:glowstone_dust",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "miner",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:iron_ingot",
-      "quantity": 64
     }
   ],
   "researchLevel": 2

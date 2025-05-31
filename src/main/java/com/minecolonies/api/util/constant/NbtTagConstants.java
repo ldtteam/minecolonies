@@ -745,6 +745,13 @@ public final class NbtTagConstants
     public static final String TAG_TRAVELLING_DATA     = "travellingData";
 
     /**
+     * Farmer building related things.
+     */
+    public static final String TAG_CELL           = "cell";
+    public static final String TAG_WORKING_OFFSET = "workingoffset";
+    public static final String TAG_PREV_POS       = "prevpos";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

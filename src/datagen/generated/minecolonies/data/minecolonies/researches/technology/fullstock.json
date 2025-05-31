@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/minimumstockmultiplier": 3
+      "id": "minecolonies:effects/minimumstockmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:ender_chest",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "miner",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecolonies:blockminecoloniesrack",
-      "quantity": 64
     }
   ],
   "researchLevel": 5,

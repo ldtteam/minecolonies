@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:egg",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/vaccines": 1
+      "id": "minecolonies:effects/vaccines",
+      "level": 1
     }
   ],
   "icon": "minecolonies:textures/icons/research/hp5.png",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "hospital",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:egg",
-      "quantity": 64
     }
   ],
   "researchLevel": 4,

@@ -1,15 +1,18 @@
 {
-  "type": "minecraft:crafting_shapeless",
+  "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "ingredients": [
-    {
-      "item": "minecolonies:large_milk_bottle"
-    },
-    {
+  "key": {
+    "M": {
       "item": "minecolonies:large_milk_bottle"
     }
+  },
+  "pattern": [
+    "MM",
+    "MM"
   ],
   "result": {
+    "count": 2,
     "item": "minecolonies:cheddar_cheese"
-  }
+  },
+  "show_notification": true
 }

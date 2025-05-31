@@ -106,4 +106,11 @@ public interface IBuilderWorkOrder extends IServerWorkOrder
      * @return
      */
     boolean canBuild(@NotNull ICitizenData citizen);
+
+    /**
+     * Sets the building stage of the workorder
+     *
+     * @param stageIndex
+     */
+    void setStage(int stageIndex);
 }

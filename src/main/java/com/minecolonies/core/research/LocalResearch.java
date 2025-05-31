@@ -3,8 +3,8 @@ package com.minecolonies.core.research;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
-import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.effects.IResearchEffectManager;
+import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import net.minecraft.resources.ResourceLocation;
 
@@ -61,7 +61,7 @@ public class LocalResearch implements ILocalResearch
             if (progress >= IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(this.depth))
             {
                 state = ResearchState.FINISHED;
-                for(final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
+                for(final IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())
                 {
                     effects.applyEffect(effect);
                 }

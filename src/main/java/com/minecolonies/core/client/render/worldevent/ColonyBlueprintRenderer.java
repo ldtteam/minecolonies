@@ -20,7 +20,10 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.workorders.view.WorkOrderBuildingView;
+import com.minecolonies.core.items.ItemAssistantHammer;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -88,13 +91,12 @@ public class ColonyBlueprintRenderer
      * Rendering rules.  Order matters.
      */
     private static final List<IRenderBlueprintRule> renderRules = new ArrayList<>();
-
     static
     {
         renderRules.add(new NearBuildPreview());
         renderRules.add(new BuildGoggles());
+        renderRules.add(new AssistantHammerPreview());
     }
-
     /**
      * Invalidate the cache, because something significant has changed in colony data (e.g. more work orders).
      */
@@ -491,7 +493,7 @@ public class ColonyBlueprintRenderer
         /**
          * Find the builder for this work order, if any.
          *
-         * @param colony the colony.
+         * @param colony     the colony.
          * @param builderPos the builder's building id.
          * @return the builder's id, or 0.
          */
@@ -510,6 +512,60 @@ public class ColonyBlueprintRenderer
                 }
             }
             return 0;
+        }
+    }
+
+    /**
+     * Render work orders near the player using/holding an Assistant hammer
+     */
+    private static class AssistantHammerPreview implements IRenderBlueprintRule
+    {
+        @Override
+        public boolean isEnabled(final WorldEventContext ctx)
+        {
+            return ctx.clientPlayer.getMainHandItem().getItem() instanceof ItemAssistantHammer;
+        }
+
+        @Override
+        public Map<BlockPos, PendingRenderData> getDesiredBlueprints(final WorldEventContext ctx)
+        {
+            // show work orders
+            final Map<BlockPos, PendingRenderData> desired = new HashMap<>();
+            for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
+            {
+                if (workOrder.getBoundingBox().inflate(8).contains(ctx.clientPlayer.position()))
+                {
+                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(),
+                        RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
+                            workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
+
+                    desired.put(workOrder.getLocation(), new PendingRenderData(key, workOrder.getLocation(), -1, false, true));
+
+                    workOrder.loadBlueprint(ctx.clientLevel, blueprint -> {
+                        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
+                        blueprintPreviewData.setPos(workOrder.getLocation());
+                        blueprintPreviewData.setRotationMirror(blueprint.getRotationMirror());
+                        blueprintPreviewData.setBlueprint(blueprint);
+                        blueprintPreviewData.setOverridePreviewTransparency(0.4f);
+                        blueprintPreviewData.setRenderBlocksNice(true);
+
+                        final BlockPos workerPos = workOrder.getClaimedBy();
+                        if (!workerPos.equals(BlockPos.ZERO))
+                        {
+                            final IBuildingView building = ctx.nearestColony.getBuilding(workerPos);
+                            if (building != null && building.getModuleView(BuildingModules.BUILDER_SETTINGS) != null)
+                            {
+                                blueprintPreviewData.setSolidSubstitutionOverride(building.getModuleView(BuildingModules.BUILDER_SETTINGS).getSetting(
+                                    BuildingMiner.FILL_BLOCK).getValue().getBlock().defaultBlockState());
+                            }
+                        }
+
+                        blueprintDataCache.put(key, blueprintPreviewData);
+                    });
+                }
+            }
+
+            return desired;
         }
     }
 }

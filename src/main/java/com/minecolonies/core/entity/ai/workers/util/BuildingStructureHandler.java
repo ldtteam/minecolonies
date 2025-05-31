@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -8,7 +7,10 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_PLACED;
@@ -71,51 +73,32 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     private int stage;
 
     /**
-     * The minecolonies AI specific creative structure placer.
-     *
-     * @param world             the world.
-     * @param worldPos          the pos it is placed at.
-     * @param blueprintFuture   the structure.
-     * @param settings          the placement settings.
-     * @param entityAIStructure the AI handling this structure.
+     * The respective workorder used for placement
      */
-    public BuildingStructureHandler(
-      final Level world,
-      final BlockPos worldPos,
-      final Future<Blueprint> blueprintFuture,
-      final PlacementSettings settings,
-      final AbstractEntityAIStructure<J, B> entityAIStructure,
-      final Stage[] stages)
-    {
-        super(world, worldPos, blueprintFuture, settings);
-        setupBuilding();
-        this.structureAI = entityAIStructure;
-        this.stages = stages;
-        this.stage = 0;
-    }
+    private IBuilderWorkOrder workOrder;
 
     /**
      * The minecolonies AI specific creative structure placer.
      *
      * @param world             the world.
-     * @param worldPos          the pos it is placed at.
-     * @param blueprint         the blueprint.
-     * @param settings          the placement settings.
+     * @param workOrder         the workorder for placement
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
-      final BlockPos worldPos,
-      final Blueprint blueprint,
-      final PlacementSettings settings,
+        final IWorkOrder workOrder,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
       final Stage[] stages)
     {
-        super(world, worldPos, blueprint, settings);
+        super(world,
+            workOrder.getLocation(),
+            workOrder.getBlueprint(),
+            new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation())));
         setupBuilding();
+        this.workOrder = (IBuilderWorkOrder) workOrder;
         this.structureAI = entityAIStructure;
         this.stages = stages;
-        this.stage = 0;
+        this.stage = workOrder.getStage();
     }
 
     /**
@@ -165,6 +148,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             if (stages[i] == stage)
             {
                 this.stage = i;
+                workOrder.setStage(i);
                 return;
             }
         }

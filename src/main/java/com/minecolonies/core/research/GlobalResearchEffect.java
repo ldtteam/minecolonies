@@ -1,8 +1,7 @@
 package com.minecolonies.core.research;
 
-import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.effects.ModResearchEffects;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.api.research.IResearchEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
@@ -11,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- *  An instance of a Research Effect at a specific strength, to be applied to a specific colony.
+ * An instance of a Research Effect at a specific strength, to be applied to a specific colony.
  */
-public class GlobalResearchEffect implements IResearchEffect<Double>
+public class GlobalResearchEffect implements IResearchEffect
 {
     /**
      * The NBT tag for an individual effect's identifier, as a ResourceLocation.
@@ -41,16 +40,6 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     private static final String TAG_DISPLAY_EFFECT = "display";
 
     /**
-     * The absolute effect strength to apply.
-     */
-    private double effect;
-
-    /**
-     * The relative strength of effect to display
-     */
-    private final double displayEffect;
-
-    /**
      * The unique effect Id.
      */
     private final ResourceLocation id;
@@ -58,7 +47,7 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     /**
      * The optional text description of the effect. If empty, a translation key will be derived from id.
      */
-    private final TranslatableContents desc;
+    private final TranslatableContents name;
 
     /**
      * The optional subtitle text description of the effect. If empty, a translation key will be derived from id.
@@ -66,47 +55,31 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     private final TranslatableContents subtitle;
 
     /**
-     * The constructor to create a new global research effect.
-     *
-     * @param id            the id to unlock.
-     * @param effect        the effect's absolute strength.
-     * @param displayEffect the effect's relative strength, for display purposes.
+     * The absolute effect strength to apply.
      */
-    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect)
-    {
-        this.id = id;
-        this.effect = effect;
-        this.displayEffect = displayEffect;
-        this.desc = new TranslatableContents("com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /:]", ".") + ".description", (String) null,
-          List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
-        this.subtitle = new TranslatableContents("", (String) null, TranslatableContents.NO_ARGS);
-    }
+    private final double effect;
+
+    /**
+     * The relative strength of effect to display
+     */
+    private final double displayEffect;
 
     /**
      * The constructor to create a new global research effect, with a statically assigned description.
      *
      * @param id            the id to unlock.
+     * @param name          the effect's description, for display.
+     * @param subtitle      the effect's subtitle description.
      * @param effect        the effect's absolute strength.
      * @param displayEffect the effect's relative strength, for display purposes.
-     * @param desc          the effect's description, for display.
-     * @param subtitle      the effect's subtitle description.
      */
-    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect, final TranslatableContents desc, final TranslatableContents subtitle)
+    public GlobalResearchEffect(final ResourceLocation id, final String name, final String subtitle, final double effect, final double displayEffect)
     {
         this.id = id;
+        this.name = new TranslatableContents(name, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.subtitle = new TranslatableContents(subtitle, null, TranslatableContents.NO_ARGS);
         this.effect = effect;
         this.displayEffect = displayEffect;
-        final String key = desc.getKey();
-        if (key.isEmpty())
-        {
-            this.desc = new TranslatableContents("com." + this.id.getPath() + ".research." + this.id.getNamespace().replaceAll("[ /:]", ".") + ".description", null,
-              List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
-        }
-        else
-        {
-            this.desc = new TranslatableContents(key, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
-        }
-        this.subtitle = subtitle;
     }
 
     /**
@@ -119,50 +92,53 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
         this.id = new ResourceLocation(nbt.getString(TAG_ID));
         this.effect = nbt.getDouble(TAG_EFFECT);
         this.displayEffect = nbt.getDouble(TAG_DISPLAY_EFFECT);
-        this.desc = new TranslatableContents(nbt.getString(TAG_DESC),null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.name = new TranslatableContents(nbt.getString(TAG_DESC), null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
         this.subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE), null, TranslatableContents.NO_ARGS);
     }
 
     @Override
-    public Double getEffect()
+    public ModResearchEffects.ResearchEffectEntry getRegistryEntry()
+    {
+        return ModResearchEffects.globalResearchEffect.get();
+    }
+
+    @Override
+    public ResourceLocation getId()
+    {
+        return this.id;
+    }
+
+    @Override
+    public TranslatableContents getName()
+    {
+        return this.name;
+    }
+
+    @Override
+    public TranslatableContents getSubtitle()
+    {
+        return this.subtitle;
+    }
+
+    @Override
+    public double getEffect()
     {
         return this.effect;
     }
 
     @Override
-    public void setEffect(Double effect)
-    {
-        this.effect = effect;
-    }
-
-    @Override
-    public ResourceLocation getId() { return this.id; }
-
-    @Override
-    public TranslatableContents getDesc() { return this.desc; }
-
-    @Override
-    public TranslatableContents getSubtitle() { return this.subtitle; }
-
-    @Override
-    public boolean overrides(@NotNull final IResearchEffect<?> other)
+    public boolean overrides(@NotNull final IResearchEffect other)
     {
         return Math.abs(effect) > Math.abs(((GlobalResearchEffect) other).effect);
     }
 
     @Override
-    public ResearchEffectEntry getRegistryEntry() { return ModResearchEffects.globalResearchEffect.get(); }
-
-    @Override
     public CompoundTag writeToNBT()
     {
-        final String descKey = desc.getKey();
-        final String subtitleKey = subtitle.getKey();
-
-        CompoundTag nbt = new CompoundTag();
+        final CompoundTag nbt = new CompoundTag();
         nbt.putString(TAG_ID, id.toString());
-        nbt.putString(TAG_DESC, descKey);
-        nbt.putString(TAG_SUBTITLE, subtitleKey);
+        nbt.putString(TAG_DESC, name.getKey());
+        nbt.putString(TAG_SUBTITLE, subtitle.getKey());
         nbt.putDouble(TAG_EFFECT, effect);
         nbt.putDouble(TAG_DISPLAY_EFFECT, displayEffect);
         return nbt;

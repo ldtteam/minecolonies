@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,6 +48,8 @@ public final class ModItemsInitializer
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
         {
             ModItemsInitializer.init(event.getForgeRegistry());
+
+            registerCompostItems();
         }
     }
 
@@ -61,6 +65,9 @@ public final class ModItemsInitializer
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
+        ModItems.assistantHammer_Gold = new ItemAssistantHammer("assistanthammer_gold", new Item.Properties().durability(200), 1);
+        ModItems.assistantHammer_Iron = new ItemAssistantHammer("assistanthammer_iron", new Item.Properties().durability(400), 2);
+        ModItems.assistantHammer_Diamond = new ItemAssistantHammer("assistanthammer_diamond", new Item.Properties().durability(1000), 3);
         ModItems.bannerRallyGuards = new ItemBannerRallyGuards(new Item.Properties());
         ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
@@ -247,6 +254,9 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "scan_analyzer"), ModItems.scanAnalyzer);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterguard"), ModItems.scepterGuard);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_gold"), ModItems.assistantHammer_Gold);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_iron"), ModItems.assistantHammer_Iron);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_diamond"), ModItems.assistantHammer_Diamond);
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);
@@ -456,5 +466,38 @@ public final class ModItemsInitializer
                 Color.getByName("blue"),
                 Color.getByName("yellow"),
                 (new Item.Properties())));
+    }
+
+    private static void registerCompostItems()
+    {
+        // these items aren't registered in "getAllFoods"
+        registerCompostItemFromNutrition(ModItems.milkyBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.sugaryBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.goldenBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.chorusBread.asItem(), 6f);
+
+        for (final Item item : ModItems.getAllIngredients())
+        {
+            registerCompostItemFromNutrition(item, 10f);
+        }
+        for (final Item item : ModItems.getAllFoods())
+        {
+            registerCompostItemFromNutrition(item, 6f);
+        }
+
+        ComposterBlock.COMPOSTABLES.put(ModItems.mistletoe, 0.5f);
+    }
+
+    private static void registerCompostItemFromNutrition(final Item item, final float factor)
+    {
+        final FoodProperties food = item.getFoodProperties(new ItemStack(item), null);
+        if (food != null)
+        {
+            final float strength = Math.min(1.0f, food.getNutrition() / factor);
+            if (strength > 0)
+            {
+                ComposterBlock.COMPOSTABLES.put(item, strength);
+            }
+        }
     }
 }

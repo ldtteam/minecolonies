@@ -550,12 +550,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-        {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
-        }
+        getOpenRequestsByCitizen().getOrDefault(citizenThatRequested, new ArrayList<>()).remove(request.getId());
     }
 
     @Override
@@ -564,12 +559,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         if (getOpenRequestsOfBuilding().contains(request))
         {
             final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-            getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
-            {
-                getOpenRequestsByCitizen().remove(citizenThatRequested);
-            }
+            getOpenRequestsByCitizen().getOrDefault(citizenThatRequested, new ArrayList<>()).remove(request.getId());
         }
     }
 
@@ -586,14 +576,19 @@ public abstract class AbstractBuildingView implements IBuildingView
                 return component;
             }
 
-            final int citizenId = getCitizensByRequest().get(request.getId());
+            int citizenId = getCitizensByRequest().get(request.getId());
+            if (citizenId == -1 && getAllAssignedCitizens().size() == 1)
+            {
+                citizenId = getAllAssignedCitizens().iterator().next();
+            }
+
             if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
             {
                 return component;
             }
 
             component.append(Component.literal(": "));
-            component.append(Component.literal(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
+            component.append(Component.literal(getColony().getCitizen(citizenId).getName()));
             return component;
         }
         catch (final Exception ex)

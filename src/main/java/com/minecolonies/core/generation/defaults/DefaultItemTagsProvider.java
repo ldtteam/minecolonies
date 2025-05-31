@@ -44,17 +44,21 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
     {
         ModTags.init();     // apparently runData doesn't run work queued in common setup
 
-        tag(ModTags.compostables_poor).addTags(Tags.Items.SEEDS, ItemTags.SAPLINGS);
+        tag(ModTags.compostables_poor).addTags(Tags.Items.SEEDS, ItemTags.SAPLINGS)
+                .add(Items.PITCHER_POD, Items.SMALL_DRIPLEAF);
         tag(ModTags.compostables)
           .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
-          .add(Items.GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
-          .add(Items.KELP, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE)
+          .add(Items.GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN, Items.HAY_BLOCK)
+          .add(Items.BIG_DRIPLEAF, Items.SPORE_BLOSSOM, Items.GLOW_LICHEN, ModItems.mistletoe)
+          .add(Items.KELP, Items.DRIED_KELP_BLOCK, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE, Items.TWISTING_VINES, Items.WEEPING_VINES)
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)
-          .add(Items.CAKE, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
-          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.MANGROVE_ROOTS)
-          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL);
+          .add(Items.CAKE, Items.MELON, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
+          .add(Items.MOSS_BLOCK, Items.MOSS_CARPET, Items.SHROOMLIGHT)
+          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.NETHER_SPROUTS, Items.MANGROVE_ROOTS, Items.HANGING_ROOTS, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS)
+          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL)
+          .addTags(ModTags.fungi);
         tag(ModTags.compostables_rich).add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 
         copy(ModTags.concreteBlocks, ModTags.concreteItems);

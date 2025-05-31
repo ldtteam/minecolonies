@@ -1649,7 +1649,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void triggerInteraction(@NotNull final IInteractionResponseHandler handler)
     {
-        if (!this.citizenChatOptions.containsKey(handler.getId()))
+        if (handler.isValid(this) && !this.citizenChatOptions.containsKey(handler.getId()))
         {
             this.citizenChatOptions.put(handler.getId(), handler);
             for (final IInteractionResponseHandler childHandler : handler.genChildInteractions())

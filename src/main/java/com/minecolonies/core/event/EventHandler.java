@@ -840,6 +840,11 @@ public class EventHandler
                     final IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
                     final TavernBuildingModule module = tavern.getModule(BuildingModules.TAVERN_VISITOR);
                     final IVisitorData visitorData = module.spawnVisitor();
+                    if (visitorData == null)
+                    {
+                        return;
+                    }
+
                     visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
                       "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
 

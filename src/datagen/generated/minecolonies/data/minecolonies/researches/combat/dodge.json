@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:leather",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 1
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 1
     }
   ],
   "icon": "minecolonies:pirate_shoes",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "smeltery",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:leather",
-      "quantity": 16
     }
   ],
   "researchLevel": 2,

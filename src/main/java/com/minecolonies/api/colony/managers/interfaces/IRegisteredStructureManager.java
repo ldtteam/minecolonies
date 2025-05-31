@@ -330,7 +330,7 @@ public interface IRegisteredStructureManager
      * @param matcher the building extension matcher predicate.
      * @return the building extension, if any.
      */
-    Optional<IBuildingExtension> getBuildingExtension(Predicate<IBuildingExtension> matcher);
+    Optional<IBuildingExtension> getMatchingBuildingExtension(Predicate<IBuildingExtension> matcher);
 
     /**
      * Add a new building extension to the building manager.
@@ -347,4 +347,11 @@ public interface IRegisteredStructureManager
      * @param matcher the building extension matcher predicate.
      */
     void removeBuildingExtension(Predicate<IBuildingExtension> matcher);
+
+    /**
+     * Get a building extension by id.
+     * @param extensionId the id of the extension.
+     * @return the building extension or null.
+     */
+    @Nullable IBuildingExtension getMatchingBuildingExtension(IBuildingExtension.ExtensionId extensionId);
 }

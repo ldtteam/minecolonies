@@ -260,6 +260,9 @@ public class NetworkChannel
 
         // Crafting GUI
         registerMessage(++idx, SwitchRecipeCraftingTeachingMessage.class, SwitchRecipeCraftingTeachingMessage::new);
+
+        // Assistant block place request
+        registerMessage(++idx, PlayerAssistantBuildRequestMessage.class, PlayerAssistantBuildRequestMessage::new);
     }
 
     private void setupInternalMessages()

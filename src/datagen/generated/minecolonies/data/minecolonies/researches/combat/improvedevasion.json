@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 4
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 4
     }
   ],
   "icon": "minecraft:golden_boots",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "archery",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:diamond",
-      "quantity": 16
     }
   ],
   "researchLevel": 5,

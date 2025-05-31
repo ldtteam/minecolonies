@@ -175,8 +175,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-                  || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+        return (buckets.isEmpty()
+            || ((AbstractBuildingStructureBuilder) building).getProgress() == null
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
@@ -334,7 +335,13 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             return;
         }
 
-        resourceloop:
+        final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(-1, TypeToken.of(Stack.class));
+        final Set<ItemStorage> requestedItems = new HashSet<>();
+        for (final IRequest<? extends Stack> request : list)
+        {
+            requestedItems.add(new ItemStorage(request.getRequest().getStack()));
+        }
+
         for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
         {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
@@ -358,16 +365,12 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             }
 
             int requestCount = entry.getValue() - count;
-            final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
-            for (final IRequest<? extends Stack> request : list)
+            if (requestedItems.contains(new ItemStorage(itemStack.getItemStack())))
             {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
-                {
-                    continue resourceloop;
-                }
+                continue;
             }
 
-            worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1));
+            building.createRequest(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1), true);
         }
     }
 

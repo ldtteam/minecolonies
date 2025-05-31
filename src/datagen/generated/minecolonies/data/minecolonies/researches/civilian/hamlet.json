@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_beef",
+      "quantity": 128
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizencapaddition": 3
+      "id": "minecolonies:effects/citizencapaddition",
+      "level": 3
     }
   ],
   "icon": "minecolonies:blockhutcitizen:75",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "residence",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:cooked_beef",
-      "quantity": 128
     }
   ],
   "researchLevel": 3

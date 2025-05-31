@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_block",
+      "quantity": 6
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutarchery": 1
+      "id": "minecolonies:effects/blockhutarchery",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutarchery",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "barracks",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:iron_block",
-      "quantity": 6
     }
   ],
   "researchLevel": 2,

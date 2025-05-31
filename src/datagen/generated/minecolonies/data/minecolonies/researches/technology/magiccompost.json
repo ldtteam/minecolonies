@@ -1,18 +1,19 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/farmingmultiplier": 5
-    }
-  ],
-  "icon": "minecolonies:barrel_block",
-  "parentResearch": "minecolonies:technology/fertilizer",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:wheat_seeds",
       "quantity": 2048
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/farmingmultiplier",
+      "level": 5
+    }
+  ],
+  "icon": "minecolonies:barrel_block",
+  "parentResearch": "minecolonies:technology/fertilizer",
   "researchLevel": 6
 }

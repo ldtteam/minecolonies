@@ -1,6 +1,8 @@
 {
   "values": [
     "#forge:seeds",
-    "#minecraft:saplings"
+    "#minecraft:saplings",
+    "minecraft:pitcher_pod",
+    "minecraft:small_dripleaf"
   ]
 }

@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_apple",
+      "quantity": 8
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/healingsaturationlimitaddition": 2
+      "id": "minecolonies:effects/healingsaturationlimitaddition",
+      "level": 2
     }
   ],
   "icon": "minecraft:potion",
@@ -12,11 +20,6 @@
       "type": "minecolonies:building",
       "building": "cook",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:golden_apple",
-      "quantity": 8
     }
   ],
   "researchLevel": 3
