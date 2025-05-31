@@ -62,17 +62,18 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     public void recallAllTravellingCitizens()
     {
         final List<ICitizenData> travellersToRecall = this.travelerDataMap
-          .keySet()
-          .stream()
-          .map(this.colony.getCitizenManager()::getCivilian)
-          .toList();
+            .keySet()
+            .stream()
+            .map(this.colony.getCitizenManager()::getCivilian)
+            .toList();
 
         this.travelerDataMap.clear();
         colony.markDirty();
 
         travellersToRecall.forEach(citizenData -> {
             final BlockPos spawnHutPos;
-            if (citizenData.getWorkBuilding() != null) {
+            if (citizenData.getWorkBuilding() != null)
+            {
                 spawnHutPos = citizenData.getWorkBuilding().getPosition();
             }
             else
@@ -119,11 +120,11 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         travelerDataMap.clear();
 
         travelerData
-          .stream()
-          .filter(CompoundTag.class::isInstance)
-          .map(CompoundTag.class::cast)
-          .map(TravelerData::new)
-          .forEach(data -> travelerDataMap.put(data.getCitizenId(), data));
+            .stream()
+            .filter(CompoundTag.class::isInstance)
+            .map(CompoundTag.class::cast)
+            .map(TravelerData::new)
+            .forEach(data -> travelerDataMap.put(data.getCitizenId(), data));
     }
 
     private static final class TravelerData implements INBTSerializable<CompoundTag>

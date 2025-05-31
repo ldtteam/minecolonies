@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
-import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -25,12 +24,10 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWork
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.items.ItemAdventureToken;
-import com.minecolonies.core.util.TeleportHelper;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -46,9 +43,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -89,11 +83,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      * Edibles that the worker will attempt to eat while in the nether (unfiltered)
      */
     final List<ItemStack> netherEdible = IColonyManager.getInstance()
-                                           .getCompatibilityManager()
-                                           .getEdibles(building.getBuildingLevel() - 1)
-                                           .stream()
-                                           .map(ItemStorage::getItemStack)
-                                           .collect(Collectors.toList());
+        .getCompatibilityManager()
+        .getEdibles(building.getBuildingLevel() - 1)
+        .stream()
+        .map(ItemStorage::getItemStack)
+        .collect(Collectors.toList());
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -104,11 +98,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         super(job);
         super.registerTargets(
-          new AITarget(NETHER_LEAVE, this::leaveForNether, TICK_DELAY),
-          new AITarget(NETHER_AWAY, this::stayInNether, TICK_DELAY),
-          new AITarget(NETHER_RETURN, this::returnFromNether, TICK_DELAY),
-          new AITarget(NETHER_OPENPORTAL, this::openPortal, TICK_DELAY),
-          new AITarget(NETHER_CLOSEPORTAL, this::closePortal, TICK_DELAY)
+            new AITarget(NETHER_LEAVE, this::leaveForNether, TICK_DELAY),
+            new AITarget(NETHER_AWAY, this::stayInNether, TICK_DELAY),
+            new AITarget(NETHER_RETURN, this::returnFromNether, TICK_DELAY),
+            new AITarget(NETHER_OPENPORTAL, this::openPortal, TICK_DELAY),
+            new AITarget(NETHER_CLOSEPORTAL, this::closePortal, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
 
@@ -123,10 +117,10 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected void updateRenderMetaData()
     {
         StringBuilder renderData = new StringBuilder(getState() == CRAFT
-                                                       || getState() == NETHER_LEAVE
-                                                       || getState() == NETHER_RETURN
-                                                       || getState() == NETHER_OPENPORTAL
-                                                       || getState() == NETHER_CLOSEPORTAL ? RENDER_META_WORKING : "");
+            || getState() == NETHER_LEAVE
+            || getState() == NETHER_RETURN
+            || getState() == NETHER_OPENPORTAL
+            || getState() == NETHER_CLOSEPORTAL ? RENDER_META_WORKING : "");
 
         for (int slot = 0; slot < worker.getInventoryCitizen().getSlots(); slot++)
         {
@@ -170,9 +164,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
         worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
-                worker.getCitizenData(),
-                building.getPortalLocation(),
-                (int) Math.sqrt(building.getPortalLocation().distSqr(worker.blockPosition())) * 25
+            worker.getCitizenData(),
+            building.getPortalLocation(),
+            (int) Math.sqrt(building.getPortalLocation().distSqr(worker.blockPosition())) * 25
         );
 
         worker.remove(Entity.RemovalReason.DISCARDED);
@@ -378,7 +372,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         //This is the adventure loop. 
         if (!job.getCraftedResults().isEmpty())
         {
-            for (ItemStack currStack : job.getCraftedResults()) {
+            for (ItemStack currStack : job.getCraftedResults())
+            {
                 if (currStack.getItem() instanceof ItemAdventureToken)
                 {
                     if (currStack.hasTag())
@@ -566,7 +561,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if (!worker.isDeadOrDying())
             {
                 expeditionLog.setStatus(ExpeditionLog.Status.RETURNING_HOME);
-                for (ItemStack item : job.getProcessedResults()) {
+                for (ItemStack item : job.getProcessedResults())
+                {
                     if (InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), item))
                     {
                         worker.decreaseSaturationForContinuousAction();
@@ -745,7 +741,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 for (final GuardGear item : itemList)
                 {
                     if (item.getType().equals(equipSlot)
-                          && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                        && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                     {
                         if (!item.test(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
                         {
@@ -910,7 +906,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if (!ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
                         final int slot =
-                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()));
+                            InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()));
                         if (slot > -1)
                         {
                             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);

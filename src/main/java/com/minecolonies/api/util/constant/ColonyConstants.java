@@ -35,12 +35,6 @@ public final class ColonyConstants
     public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::toLong));
 
     //  Settings
-
-    /**
-     * The colony name prefix. Use {@link IColony#getTeamName()} to access the full name.
-     */
-    public static final String TEAM_COLONY_NAME = "c";
-
     /**
      * Amount of ticks to wait until checking if a waypoint is still valid.
      */
@@ -77,8 +71,8 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
-    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
-    public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
+    public static final double ARCHER_BARBARIANS_MULTIPLIER = 0.30;
+    public static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
 
     /**
      * Different horde ids and their sizes.

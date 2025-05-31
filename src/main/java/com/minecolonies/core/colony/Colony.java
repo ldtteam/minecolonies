@@ -61,7 +61,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,7 +100,7 @@ public class Colony implements IColony
     /**
      * List of loaded chunks for the colony.
      */
-    private ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Long> loadedChunks = new ConcurrentHashMap<>();
 
     /**
      * List of loaded chunks for the colony.
@@ -113,12 +112,12 @@ public class Colony implements IColony
     /**
      * List of chunks that have to be be force loaded.
      */
-    private Set<Long> pendingChunks = new HashSet<>();
+    private final Set<Long> pendingChunks = new HashSet<>();
 
     /**
      * List of chunks pending for unloading, which have their tickets removed
      */
-    private Set<Long> pendingToUnloadChunks = new HashSet<>();
+    private final Set<Long> pendingToUnloadChunks = new HashSet<>();
 
     /**
      * List of waypoints of the colony.
@@ -278,8 +277,8 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListTag colonyFlag = new BannerPattern.Builder()
-      .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-      .toListTag();
+        .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+        .toListTag();
 
     /**
      * The last time the mercenaries were used.
@@ -365,7 +364,7 @@ public class Colony implements IColony
         researchManager = new ResearchManager(this);
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
-            Log.getLogger().warn("Exception triggered in colony:"+getID()+" in dimension:"+getDimension().location(), e);
+            Log.getLogger().warn("Exception triggered in colony:" + getID() + " in dimension:" + getDimension().location(), e);
             colonyStateMachine.setCurrentDelay(20 * 60 * 5);
         });
 
@@ -835,7 +834,8 @@ public class Colony implements IColony
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
 
-        if (compound.contains(NbtTagConstants.TAG_TRAVELLING_DATA)) {
+        if (compound.contains(NbtTagConstants.TAG_TRAVELLING_DATA))
+        {
             this.travellingManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_TRAVELLING_DATA));
         }
     }
@@ -1179,8 +1179,9 @@ public class Colony implements IColony
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
-                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
+                            ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint)
+                                && worldBlock != ModBlocks.blockConstructionTape)
+                                || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1592,7 +1593,8 @@ public class Colony implements IColony
     }
 
     @Override
-    public TravellingManager getTravelingManager() {
+    public TravellingManager getTravelingManager()
+    {
         return travellingManager;
     }
 
@@ -1715,8 +1717,8 @@ public class Colony implements IColony
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
                     MessageUtils.format(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE, attackingPlayer.getPlayer().getName(), attackingPlayer.getGuards().size())
-                      .sendTo(this)
-                      .forManagers();
+                        .sendTo(this)
+                        .forManagers();
                 }
                 return;
             }
@@ -1827,7 +1829,7 @@ public class Colony implements IColony
     public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
     {
         if (world instanceof ServerLevel
-              && getConfig().getServer().forceLoadColony.get())
+            && getConfig().getServer().forceLoadColony.get())
         {
             if (this.forceLoadTimer > 0)
             {
@@ -1946,6 +1948,7 @@ public class Colony implements IColony
 
     /**
      * Gets the colonies settings
+     *
      * @return
      */
     public ISettingsModule getSettings()

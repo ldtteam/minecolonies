@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
-
 /**
  * Interface of the Colony and ColonyView which will have to implement the following methods.
  */
@@ -454,6 +452,7 @@ public interface IColony
 
     /**
      * Get the matching citizen name file of the colony .
+     *
      * @return the matching file.
      */
     CitizenNameFile getCitizenNameFile();
@@ -467,18 +466,21 @@ public interface IColony
 
     /**
      * Get the current day of the colony.
+     *
      * @return the current day progress of the colony.
      */
     int getDay();
 
     /**
      * Get the quest manager of the colony.
+     *
      * @return the quest manager.
      */
     IQuestManager getQuestManager();
 
     /**
      * Get citizen from colony.
+     *
      * @param id the id of the cit.
      * @return the cit.
      */
