@@ -758,6 +758,39 @@
     "item": "minecolonies:apple_pie"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_diamond"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_gold"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_iron"
+  },
+  {
     "item": "minecolonies:baked_salmon"
   },
   {
