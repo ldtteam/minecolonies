@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColonyManager;
@@ -581,11 +582,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 block = getBlockState(curBlock);
                 if (!block.getFluidState().isEmpty())
                 {
+                    BlockUtils.removeFluid(world, curBlock);
                     setBlockFromInventory(curBlock, getMainFillBlock());
                 }
             }
         }
-
 
         //7x7 shaft find nearest block
         //Beware from positive to negative! to draw the miner to a wall to go down
@@ -605,6 +606,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 {
                     if (!block.getFluidState().isEmpty())
                     {
+                        BlockUtils.removeFluid(world, curBlock);
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                     nextBlockToMine = curBlock;
@@ -802,6 +804,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     final BlockState block = getBlockState(curBlock);
                     if (block.getFluidState().isSource())
                     {
+                        BlockUtils.removeFluid(world, curBlock);
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                 }
@@ -842,10 +845,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
         }
         if (slot != -1)
-        {
-            getInventory().extractItem(slot, 1, false);
+        {d w
             //Flag 1+2 is needed for updates
-            WorldUtil.setBlockState(world, location, metadata);
+            if (WorldUtil.setBlockState(world, location, metadata))
+            {
+                getInventory().extractItem(slot, 1, false);
+            }
         }
     }
 
