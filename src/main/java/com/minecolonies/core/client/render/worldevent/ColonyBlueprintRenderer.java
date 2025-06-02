@@ -542,6 +542,10 @@ public class ColonyBlueprintRenderer
                     desired.put(workOrder.getLocation(), new PendingRenderData(key, workOrder.getLocation(), -1, false, true));
 
                     workOrder.loadBlueprint(ctx.clientLevel, blueprint -> {
+                        if (blueprint == null)
+                        {
+                            return;
+                        }
                         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
                         blueprintPreviewData.setPos(workOrder.getLocation());
                         blueprintPreviewData.setRotationMirror(blueprint.getRotationMirror());
