@@ -21,6 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Implementation of the travelling system and its API.
+ * Keeps track of the travelling destination and progress of a given party.
+ * <p>
+ * Does not handle any interactions with the entities or the citizens.
+ * </p>
+ */
 public class TravellingManager implements ITravellingManager, INBTSerializable<CompoundTag>
 {
 
