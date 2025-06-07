@@ -68,6 +68,43 @@ public class BuildingKitchen extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
+    @Override
+    protected boolean keepFood()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        final ICitizenData citizenData = getModule(CHEF_WORK).getFirstCitizen();
+        if (citizenData != null)
+        {
+            final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
+            if (currentTask == null)
+            {
+                return super.canEat(stack);
+            }
+            final IRequestable request = currentTask.getRequest();
+            if (request instanceof AbstractCrafting craftingRequest)
+            {
+                final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
+                if (recipe != null)
+                {
+                    if (recipe.getCleanedInput().contains(new ItemStorage(stack)))
+                    {
+                        return false;
+                    }
+
+                    if (ItemStack.isSameItem(recipe.getPrimaryOutput(), stack))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return super.canEat(stack);
+    }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
@@ -130,37 +167,5 @@ public class BuildingKitchen extends AbstractBuilding
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(FoodUtils.EDIBLE.test(recipe.getPrimaryOutput()));
         }
-    }
-
-    @Override
-    public boolean canEat(final ItemStack stack)
-    {
-        final ICitizenData citizenData = getModule(CHEF_WORK).getFirstCitizen();
-        if (citizenData != null)
-        {
-            final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
-            if (currentTask == null)
-            {
-                return super.canEat(stack);
-            }
-            final IRequestable request = currentTask.getRequest();
-            if (request instanceof AbstractCrafting craftingRequest)
-            {
-                final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
-                if (recipe != null)
-                {
-                    if (recipe.getCleanedInput().contains(new ItemStorage(stack)))
-                    {
-                        return false;
-                    }
-
-                    if (ItemStack.isSameItem(recipe.getPrimaryOutput(), stack))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        return super.canEat(stack);
     }
 }
