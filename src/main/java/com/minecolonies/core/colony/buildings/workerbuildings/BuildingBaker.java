@@ -1,9 +1,13 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableSet;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -13,6 +17,8 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -87,6 +93,33 @@ public class BuildingBaker extends AbstractBuilding
         if (stack.getItem() == Items.WHEAT)
         {
             return false;
+        }
+
+        final ICitizenData citizenData = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        if (citizenData != null)
+        {
+            final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
+            if (currentTask == null)
+            {
+                return super.canEat(stack);
+            }
+            final IRequestable request = currentTask.getRequest();
+            if (request instanceof PublicCrafting craftingRequest)
+            {
+                final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
+                if (recipe != null)
+                {
+                    if (recipe.getCleanedInput().contains(new ItemStorage(stack)))
+                    {
+                        return false;
+                    }
+
+                    if (ItemStack.isSameItem(recipe.getPrimaryOutput(), stack))
+                    {
+                        return false;
+                    }
+                }
+            }
         }
         return super.canEat(stack);
     }
