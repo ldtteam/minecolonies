@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.CHEF_WORK;
 
 /**
  * Class of the kitchen building.
@@ -134,7 +135,7 @@ public class BuildingKitchen extends AbstractBuilding
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        final ICitizenData citizenData = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        final ICitizenData citizenData = getModule(CHEF_WORK).getFirstCitizen();
         if (citizenData != null)
         {
             final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();

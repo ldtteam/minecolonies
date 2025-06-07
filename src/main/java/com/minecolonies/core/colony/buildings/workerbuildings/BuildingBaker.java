@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -18,7 +17,6 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
@@ -32,6 +30,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BAKER;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.BAKER_WORK;
 
 /**
  * Building for the bakery.
@@ -96,7 +95,7 @@ public class BuildingBaker extends AbstractBuilding
             return false;
         }
 
-        final ICitizenData citizenData = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        final ICitizenData citizenData = getModule(BAKER_WORK).getFirstCitizen();
         if (citizenData != null)
         {
             final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
