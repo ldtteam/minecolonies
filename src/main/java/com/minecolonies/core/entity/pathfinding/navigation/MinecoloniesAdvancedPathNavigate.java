@@ -264,13 +264,25 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         if (dest != null && !dest.equals(BlockPos.ZERO))
         {
-            if (job.getStart().distSqr(dest) > 500 * 500)
+            if (job.getStart().distSqr(dest) > 900 * 900)
             {
                 Log.getLogger()
                     .error(
                         "Entity: " + ourEntity.getDisplayName().getString() + " is trying to walk too far! distance:" + Math.sqrt(job.getStart().distSqr(dest)) + " from:"
                             + job.getStart() + " to:"
                             + dest, new Exception());
+
+                if (!dest.equals(BlockPos.ZERO))
+                {
+                    if (ourEntity instanceof AbstractEntityCitizen citizen)
+                    {
+                        final BlockPos tpPos = citizen.getCitizenData().getHomePosition();
+                        ourEntity.moveTo(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+                        return null;
+                    }
+
+                    ourEntity.moveTo(dest.getX(), dest.getY(), dest.getZ());
+                }
                 return null;
             }
         }
