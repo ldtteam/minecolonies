@@ -83,7 +83,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
     @Override
     public void moveToSyncCitizen(final ICitizenData citizenData, final IRequest<?> request)
     {
-        if (citizenByOpenRequest.containsKey(request.getId()))
+        if (citizenByOpenRequest.get(request.getId()) == -1)
         {
             citizenByOpenRequest.remove(request.getId());
             citizenByOpenRequest.put(request.getId(), citizenData.getId());
