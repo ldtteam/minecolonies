@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -104,7 +105,7 @@ public class BuildingBaker extends AbstractBuilding
                 return super.canEat(stack);
             }
             final IRequestable request = currentTask.getRequest();
-            if (request instanceof PublicCrafting craftingRequest)
+            if (request instanceof AbstractCrafting craftingRequest)
             {
                 final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
                 if (recipe != null)
