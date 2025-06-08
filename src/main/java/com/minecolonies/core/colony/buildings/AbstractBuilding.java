@@ -1658,18 +1658,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final int citizenId = data == null ? -1 : data.getId();
         getOpenRequests(citizenId).forEach(request ->
         {
-            colony.getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
-
-            if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
+            try
             {
-                getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
-                if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
-                {
-                    getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
-                }
-            }
+                colony.getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
 
-            getCitizensByRequest().remove(request.getId());
+                if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
+                {
+                    getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
+                    if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
+                    {
+                        getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
+                    }
+                }
+
+                getCitizensByRequest().remove(request.getId());
+            }
+            catch (Exception ex)
+            {
+                Log.getLogger().error("Tried cancelling request of citizen but errored: " + (data == null ? -1 : data.getName()), ex);
+            }
         });
 
         getCompletedRequests(data).forEach(request -> colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));

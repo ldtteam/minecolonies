@@ -23,6 +23,7 @@ public final class StatisticsConstants
     public static final String BUILD_UPGRADED  = "build_upgraded";
     public static final String BUILD_REPAIRED  = "build_repaired";
     public static final String BUILD_REMOVED   = "build_removed";
+    public static final String ITEMS_COOKED    = "items_cooked";
 
     /**
      * Generic building Stats
@@ -35,4 +36,12 @@ public final class StatisticsConstants
      * Specific building stats.
      */
     public static final String INT_LEVELED = "int_leveled";
+
+    // Cook
+    public static final String FOOD_SERVED_DETAIL = "food_served_detail";
+
+    // Hospital
+    public static final String DISEASES_TREATED = "diseases_treated";
+    public static final String NUM_DISEASES_TREATED = "num_diseases_treated";
 }
+

@@ -1,14 +1,24 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.util.FurnaceRecipes;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +27,7 @@ import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.CHEF_WORK;
 
 /**
  * Class of the kitchen building.
@@ -58,6 +69,43 @@ public class BuildingKitchen extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
+    @Override
+    protected boolean keepFood()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        final ICitizenData citizenData = getModule(CHEF_WORK).getFirstCitizen();
+        if (citizenData != null)
+        {
+            final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
+            if (currentTask == null)
+            {
+                return super.canEat(stack);
+            }
+            final IRequestable request = currentTask.getRequest();
+            if (request instanceof AbstractCrafting craftingRequest)
+            {
+                final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
+                if (recipe != null)
+                {
+                    if (recipe.getCleanedInput().contains(new ItemStorage(stack)))
+                    {
+                        return false;
+                    }
+
+                    if (ItemStack.isSameItem(recipe.getPrimaryOutput(), stack))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return super.canEat(stack);
+    }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
