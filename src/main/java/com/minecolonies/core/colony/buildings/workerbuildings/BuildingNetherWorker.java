@@ -37,10 +37,10 @@ public class BuildingNetherWorker extends AbstractBuilding
     /**
      * Settings
      */
-    public static final ISettingKey<BoolSetting>  CLOSE_PORTAL = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
+    public static final ISettingKey<BoolSetting> CLOSE_PORTAL =
+        new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
 
     /**
-     * 
      * Constant name for the Netherworker building
      */
     private static final String NETHER_WORKER = "netherworker";
@@ -51,7 +51,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     private static final String TAG_CURRENT_TRIPS = "current_trips";
 
     /**
-     * Which day in the period is it? 
+     * Which day in the period is it?
      */
     private static final String TAG_CURRENT_DAY = "current_day";
 
@@ -69,7 +69,6 @@ public class BuildingNetherWorker extends AbstractBuilding
      * Exclusion list id.
      */
     public static final String FOOD_EXCLUSION_LIST = "food";
-
 
     /**
      * Which day we're at in the current period
@@ -98,17 +97,17 @@ public class BuildingNetherWorker extends AbstractBuilding
         keepX.put(itemStack -> itemStack.getItem() instanceof FlintAndSteelItem, new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
+            && itemStack.getItem() instanceof ArmorItem
+            && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
+            && itemStack.getItem() instanceof ArmorItem
+            && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
+            && itemStack.getItem() instanceof ArmorItem
+            && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                && itemStack.getItem() instanceof ArmorItem
-                && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+            && itemStack.getItem() instanceof ArmorItem
+            && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
     }
 
     @NotNull
@@ -125,7 +124,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     /**
-     * Should the portal be closed on return? 
+     * Should the portal be closed on return?
      */
     public boolean shallClosePortalOnReturn()
     {
@@ -137,7 +136,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     {
         super.onWakeUp();
         snapTime = colony.getWorld().getDayTime();
-        if(this.currentPeriodDay < getPeriodDays())
+        if (this.currentPeriodDay < getPeriodDays())
         {
             this.currentPeriodDay++;
         }
@@ -152,12 +151,12 @@ public class BuildingNetherWorker extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        if(compound.contains(TAG_CURRENT_TRIPS))
+        if (compound.contains(TAG_CURRENT_TRIPS))
         {
             this.currentTrips = compound.getInt(TAG_CURRENT_TRIPS);
         }
 
-        if(compound.contains(TAG_CURRENT_DAY))
+        if (compound.contains(TAG_CURRENT_DAY))
         {
             this.currentPeriodDay = compound.getInt(TAG_CURRENT_DAY);
         }
@@ -189,12 +188,12 @@ public class BuildingNetherWorker extends AbstractBuilding
 
         // Check for materials needed to go to the Nether: 
         IRecipeStorage rs = getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
-        if(rs != null)
+        if (rs != null)
         {
             final ItemStorage kept = new ItemStorage(stack);
             boolean containsItem = rs.getInput().contains(kept);
             int keptCount = localAlreadyKept.stream().filter(storage -> storage.equals(kept)).mapToInt(ItemStorage::getAmount).sum();
-            if(containsItem  && (keptCount < STACKSIZE || !inventory))
+            if (containsItem && (keptCount < STACKSIZE || !inventory))
             {
                 if (localAlreadyKept.contains(kept))
                 {
@@ -210,15 +209,16 @@ public class BuildingNetherWorker extends AbstractBuilding
 
     /**
      * Check to see if it's valid to do a trip by checking how many done in this current period
+     *
      * @return true if the worker can go to the nether
      */
     public boolean isReadyForTrip()
     {
-        if(snapTime == 0)
+        if (snapTime == 0)
         {
             snapTime = colony.getWorld().getDayTime();
         }
-        if(Math.abs(colony.getWorld().getDayTime() - snapTime) >= 24000)
+        if (Math.abs(colony.getWorld().getDayTime() - snapTime) >= 24000)
         {
             //Make sure we're incrementing if day/night cycle isn't running. 
             this.currentPeriodDay++;
@@ -235,31 +235,24 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     /**
-     * Get the tagged location that the worker should walk to in the portal. 
+     * Get the tagged location that the worker should walk to in the portal.
      * This should be a 'air block' in the portal that can directly be checked to see if the portal is open
+     *
      * @return the block above the tag, null if not available
      */
     public BlockPos getPortalLocation()
     {
         BlockPos portalLocation = getFirstLocationFromTag("portal");
-        if(portalLocation != null) {
+        if (portalLocation != null)
+        {
             return portalLocation.above();
         }
         return null;
     }
 
     /**
-     * Get the tagged location where the worker can hide while "away" in the nether
-     * 
-     * @return the tagged location, null if not available.
-     */
-    public BlockPos getVaultLocation()
-    {
-        return getFirstLocationFromTag("vault");
-    }
-
-    /**
      * Get the max per period, potentially modified by research
+     *
      * @return
      */
     public static int getMaxPerPeriod()
@@ -269,6 +262,7 @@ public class BuildingNetherWorker extends AbstractBuilding
 
     /**
      * Get how many days are in a period, potentially modified by research.
+     *
      * @return
      */
     public static int getPeriodDays()
@@ -281,7 +275,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     {
         super.onPlacement();
         final Level world = colony.getWorld();
-        if(WorldUtil.isNetherType(world))
+        if (WorldUtil.isNetherType(world))
         {
             final Block block = world.getBlockState(this.getPosition()).getBlock();
             block.destroy(world, getPosition(), world.getBlockState(getPosition()));
