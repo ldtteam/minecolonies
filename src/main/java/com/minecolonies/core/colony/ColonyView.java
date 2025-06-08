@@ -30,6 +30,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
+import com.minecolonies.core.colony.managers.TravellingManager;
 import com.minecolonies.core.colony.permissions.PermissionsView;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
@@ -84,7 +85,7 @@ public final class ColonyView implements IColonyView
     private final int                            id;
     private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
     private final Map<Integer, BlockPos>         workOrderClaimCache = new HashMap<>();
-    private int                                  workOrderCachedCount;
+    private       int                            workOrderCachedCount;
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
@@ -225,7 +226,7 @@ public final class ColonyView implements IColonyView
     /**
      * The list of name files.
      */
-    private List<String> nameFileIds = new ArrayList<>();
+    private final List<String> nameFileIds = new ArrayList<>();
 
     /**
      * The name style of the colony citizens.
@@ -235,12 +236,14 @@ public final class ColonyView implements IColonyView
     /**
      * Statistic manager associated to the view.
      */
-    private IStatisticsManager statisticManager = new StatisticsManager();
+    private final IStatisticsManager statisticManager = new StatisticsManager();
 
     /**
      * Client side quest manager.
      */
-    private IQuestManager questManager;
+    private final IQuestManager questManager;
+
+    private final TravellingManager travellingManager = new TravellingManager(this);
 
     /**
      * Day in the colony.
@@ -443,6 +446,8 @@ public final class ColonyView implements IColonyView
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT(buf.registryAccess()));
         buf.writeInt(colony.getDay());
+
+        buf.writeNbt(colony.getTravelingManager().serializeNBT(buf.registryAccess()));
     }
 
     /**
@@ -919,6 +924,7 @@ public final class ColonyView implements IColonyView
         this.statisticManager.deserialize(buf);
         this.questManager.deserializeNBT(buf.registryAccess(), buf.readNbt());
         this.day = buf.readInt();
+        this.travellingManager.deserializeNBT(buf.registryAccess(), buf.readNbt());
     }
 
     /**
@@ -1107,8 +1113,8 @@ public final class ColonyView implements IColonyView
     public @Nullable IBuildingExtension getBuildingExtension(final Predicate<IBuildingExtension> matcher)
     {
         return getBuildingExtensions(matcher).stream()
-                 .findFirst()
-                 .orElse(null);
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -1514,6 +1520,12 @@ public final class ColonyView implements IColonyView
     public IColonyPackageManager getPackageManager()
     {
         return null;
+    }
+
+    @Override
+    public ITravellingManager getTravelingManager()
+    {
+        return travellingManager;
     }
 
     @Override

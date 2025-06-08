@@ -115,6 +115,12 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final BooleanValue creativeResolve;
 
+    /*  --------------------------------------------------------------------------------- *
+     *  ------------------- ######## Debugging Settings ######## ------------------- *
+     *  --------------------------------------------------------------------------------- */
+
+    public final BooleanValue netherWorkerTakesDamage;
+
     /**
      * Builds server configuration.
      *
@@ -206,6 +212,10 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory("requestSystem");
 
         creativeResolve = defineBoolean("creativeresolve", false);
+
+        swapToCategory("debugging");
+
+        netherWorkerTakesDamage = defineBoolean("netherworkertakesdamage", true);
 
         finishCategory();
     }

@@ -65,7 +65,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     /**
      * Contains all the already assigned citizens.
      */
-    private List<ICitizenDataView> assignedCitizens = new ArrayList<>();
+    private final List<ICitizenDataView> assignedCitizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
@@ -345,7 +345,6 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 final BlockPos work = citizen.getWorkBuilding();
                 fireButton.setText(Component.translatableEscape("com.minecolonies.coremod.gui.hiring.buttonunassign"));
 
-
                 final Text citizenLabel = rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class);
                 citizenLabel.setText(Component.literal(citizen.getName()));
 
@@ -378,7 +377,16 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
 
                 if (((colony.isManualHousing() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.MANUAL)))
                 {
-                    fireButton.enable();
+                    if (citizen.getColony().getTravelingManager().isTravelling(citizen.getId()))
+                    {
+                        fireButton.disable();
+                        PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.translatable("com.minecolonies.coremod.gui.home.travelling"));
+                    }
+                    else
+                    {
+                        fireButton.enable();
+                    }
+
                     PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.empty());
                 }
                 else

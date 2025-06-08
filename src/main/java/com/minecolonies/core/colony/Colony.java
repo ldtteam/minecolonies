@@ -205,6 +205,8 @@ public class Colony implements IColony
      */
     private final IResearchManager researchManager;
 
+    private final TravellingManager travellingManager = new TravellingManager(this);
+
     /**
      * The Positions which players can freely interact.
      */
@@ -388,6 +390,7 @@ public class Colony implements IColony
 
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickTravellers, () -> ACTIVE, UPDATE_TRAVELING_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::worldTickSlow, () -> ACTIVE, MAX_TICKRATE));
@@ -441,6 +444,20 @@ public class Colony implements IColony
     private boolean tickRequests()
     {
         getRequestManager().tick();
+        return false;
+    }
+
+    /**
+     * Ticks the travelling manager.
+     *
+     * @return false
+     */
+    private boolean tickTravellers()
+    {
+        if (getTravelingManager() != null)
+        {
+            return !getTravelingManager().onTick();
+        }
         return false;
     }
 
@@ -809,7 +826,7 @@ public class Colony implements IColony
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
 
-        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key))
+        if (compound.contains(BuildingModules.TOWNHALL_SETTINGS.key) && settingsModule != null)
         {
             settingsModule.deserializeNBT(provider, compound.getCompound(BuildingModules.TOWNHALL_SETTINGS.key));
         }
@@ -826,6 +843,11 @@ public class Colony implements IColony
 
         this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
+
+        if (compound.contains(NbtTagConstants.TAG_TRAVELLING_DATA))
+        {
+            this.travellingManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_TRAVELLING_DATA));
+        }
     }
 
     /**
@@ -935,6 +957,8 @@ public class Colony implements IColony
         final CompoundTag settings = new CompoundTag();
         settingsModule.serializeNBT(provider, settings);
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
+
+        compound.put(TAG_TRAVELLING_DATA, travellingManager.serializeNBT(provider));
 
         @NotNull final ListTag claimTagList = new ListTag();
         for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
@@ -1183,8 +1207,9 @@ public class Colony implements IColony
                     {
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
-                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
+                            ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint)
+                                && worldBlock != ModBlocks.blockConstructionTape)
+                                || (world.isEmptyBlock(entry.getKey().below()) && !BlockUtils.isAnySolid(entry.getValue())))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1596,6 +1621,12 @@ public class Colony implements IColony
         return packageManager;
     }
 
+    @Override
+    public TravellingManager getTravelingManager()
+    {
+        return travellingManager;
+    }
+
     /**
      * Get all visiting players.
      *
@@ -1715,8 +1746,8 @@ public class Colony implements IColony
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
                     MessageUtils.format(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE, attackingPlayer.getPlayer().getName(), attackingPlayer.getGuards().size())
-                      .sendTo(this)
-                      .forManagers();
+                        .sendTo(this)
+                        .forManagers();
                 }
                 return;
             }
@@ -1827,7 +1858,7 @@ public class Colony implements IColony
     public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
     {
         if (world instanceof ServerLevel
-              && getConfig().getServer().forceLoadColony.get())
+            && getConfig().getServer().forceLoadColony.get())
         {
             if (this.forceLoadTimer > 0)
             {
@@ -1946,6 +1977,7 @@ public class Colony implements IColony
 
     /**
      * Gets the colonies settings
+     *
      * @return
      */
     public ISettingsModule getSettings()

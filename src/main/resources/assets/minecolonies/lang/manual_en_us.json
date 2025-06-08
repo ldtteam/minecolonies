@@ -2451,6 +2451,7 @@
   "com.minecolonies.coremod.gui.home.assigned": "Assigned Citizens: %d/%d",
   "com.minecolonies.coremod.gui.home.manage": "Manage Housing",
   "com.minecolonies.coremod.gui.home.hire.warning": "Turn the hiring mode of this hut (or colony) to manual to remove this citizen or assign another one.",
+  "com.minecolonies.coremod.gui.home.travelling": "This citizen is currently travelling. You can not fire them.",
   "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
   "com.minecolonies.coremod.gui.home.homeless": "Homeless",
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
