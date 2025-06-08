@@ -135,6 +135,9 @@ public class BuildingModules
         () -> WorkerBuildingModuleView::new);
     public static final BuildingEntry.ModuleProducer<ItemListModule,FloristFlowerListModuleView> FLORIST_ITEMS         =
       new BuildingEntry.ModuleProducer<>("florist_items", () -> new ItemListModule(BUILDING_FLOWER_LIST), () -> FloristFlowerListModuleView::new);
+    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> FLORIST_SETTINGS        =
+      new BuildingEntry.ModuleProducer<>("florist_settings", () -> new SettingsModule()
+        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false)), () -> SettingsModuleView::new);
 
     /**
      * Husbandry

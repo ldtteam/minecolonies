@@ -385,6 +385,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
           .addBuildingModuleProducer(FLORIST_WORK)
           .addBuildingModuleProducer(FLORIST_ITEMS)
+          .addBuildingModuleProducer(FLORIST_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
           .createBuildingEntry());
 
