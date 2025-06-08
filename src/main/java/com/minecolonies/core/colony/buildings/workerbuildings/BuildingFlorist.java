@@ -114,14 +114,16 @@ public class BuildingFlorist extends AbstractBuilding
 
         if(!getSetting(AbstractBuilding.USE_SHEARS).getValue())
         {
-            for(ICitizenData workerData: getAllAssignedCitizen ()) {
+            for(ICitizenData workerData: getAllAssignedCitizen ())
+            {
                 //cancel requests for shears if the setting has been turned off when it was previously on, so the player doesn't have to hit cancel request
                 final List<IRequest<? extends Tool>> openRequestsShears =
                         getOpenRequestsOfTypeFiltered(
                                 workerData,
                                 TypeConstants.TOOL,
                                 r -> r.getRequest().getEquipmentType() == ModEquipmentTypes.shears.get());
-                for (final IRequest<?> token : openRequestsShears) {
+                for (final IRequest<?> token : openRequestsShears)
+                {
                     getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
                 }
             }
