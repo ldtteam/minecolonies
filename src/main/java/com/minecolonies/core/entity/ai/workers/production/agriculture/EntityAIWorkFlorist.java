@@ -4,12 +4,14 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFlorist;
@@ -149,6 +151,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
+        }
+
+        if(building.getSetting(AbstractBuilding.USE_SHEARS).getValue())
+        {
+            if(checkForToolOrWeapon(ModEquipmentTypes.shears.get()))
+            {
+                return IDLE;
+            }
         }
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
