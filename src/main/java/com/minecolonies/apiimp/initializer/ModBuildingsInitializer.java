@@ -415,6 +415,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
           .addBuildingModuleProducer(HEALER_WORK)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
         ModBuildings.stash = DEFERRED_REGISTER.register(ModBuildings.STASH_ID, () -> new BuildingEntry.Builder()

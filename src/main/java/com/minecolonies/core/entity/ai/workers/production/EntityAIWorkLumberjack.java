@@ -814,7 +814,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         final BlockState worldState = world.getBlockState(location);
         final Block worldBlock = worldState.getBlock();
-        if (!(worldBlock instanceof AirBlock) && !(worldState.is(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
+        if (!(worldBlock instanceof AirBlock) && !(worldState.is(BlockTags.SAPLINGS)) && !worldState.canBeReplaced())
         {
             return true;
         }

@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -88,7 +87,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
             citizenByOpenRequest.remove(request.getId());
             citizenByOpenRequest.put(request.getId(), citizenData.getId());
 
-            openRequestsByCitizen.get(-1).remove(request.getId());
+            openRequestsByCitizen.getOrDefault(-1, new ArrayList<>()).remove(request.getId());
 
             final Collection<IToken<?>> list = openRequestsByCitizen.getOrDefault(citizenData.getId(), new ArrayList<>());
             list.add(request.getId());

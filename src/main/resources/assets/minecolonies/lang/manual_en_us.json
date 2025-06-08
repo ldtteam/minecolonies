@@ -2531,6 +2531,7 @@
   "com.minecolonies.coremod.gui.townhall.stats.build_upgraded": "Building Upgraded: %d",
   "com.minecolonies.coremod.gui.townhall.stats.build_repaired": "Building Repaired: %d",
   "com.minecolonies.coremod.gui.townhall.stats.build_removed": "Building Removed: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.diseases_treated": "Treated %d %s",
   "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
