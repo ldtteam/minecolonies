@@ -179,7 +179,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
             if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bow) > 0)
             {
-                arrow.setSecondsOnFire(100);
+                arrow.setSecondsOnFire(5);
             }
             final int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bow);
             if (k > 0)
