@@ -48,13 +48,13 @@ IMPORTANT: Please report any issues you have, as there might be some problems wi
 #### Setup Java
 The Java JDK is used to compile MineColonies.
 
-1. Download and install the Java JDK 21.
-    * [Windows](https://adoptopenjdk.net/): Choose OpenJDK 21 (LTS) version and HotSpot JVM, then click the `latest release` button. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
+1. Download and install the Java JDK 17.
+    * [Windows](https://adoptopenjdk.net/): Choose OpenJDK 17 (LTS) version and HotSpot JVM, then click the `latest release` button. After the download is complete, open the file, accept the license agreement, and in a custom setup make sure that `Add to Path` and `Set JAVA_HOME` are set to `Entire feature will be installed on your local hard drive`. Then choose `Install` and wait for the installation to finish.
     * Linux: Installation methods for certain popular flavors of Linux are listed below. If your distribution is not listed, follow the instructions specific to your package manager or install it manually [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-		* Gentoo: `emerge dev-java/openjdk-bin:21`
-		* Archlinux: `pacman -S jdk21-openjdk`
-		* Ubuntu/Debian: `apt-get install openjdk-21-jdk`
-		* Fedora: `yum install java-1.21.0-openjdk`
+		* Gentoo: `emerge dev-java/openjdk-bin:17`
+		* Archlinux: `pacman -S jdk17-openjdk`
+		* Ubuntu/Debian: `apt-get install openjdk-17-jdk`
+		* Fedora: `yum install java-1.17.0-openjdk`
 2. Open up your command line and run `javac`. If it spews out a bunch of possible options and the usage, you're good to go. If not, try the steps again.
 
 **Troubleshooting**
@@ -68,7 +68,7 @@ If the `javac` command does not work on Windows:
 * Append `;%JAVA_HOME%\bin` EXACTLY AS SHOWN and click `OK`. Make sure the location is correct; double-check to make sure.
 
 #### Setup Gradle (Optional)
-Gradle is used to execute the various build tasks when compiling MineColonies.
+Gradle is used to execute the various build tasks when compiling MineColonies. The version of gradle specified by this project can be found in the gradle/wrapper/gradle-wapper.properties file.
 
 1. Download and install Gradle.
 	* [Windows/Mac download link](http://www.gradle.org/downloads). You only need the binaries, but choose whatever flavor you want.
