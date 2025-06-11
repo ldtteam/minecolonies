@@ -64,9 +64,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -250,12 +250,13 @@ public class CitizenData implements ICitizenData
     /**
      * The current location of interest.
      */
-    @Nullable private BlockPos statusPosition;
+    @Nullable
+    private BlockPos statusPosition;
 
     /**
      * The citizen data random.
      */
-    private Random random = new Random();
+    private final Random random = new Random();
 
     /**
      * Chance to complain for having no guard nearby
@@ -275,12 +276,12 @@ public class CitizenData implements ICitizenData
     /**
      * Alive children of the citizen
      */
-    private Set<Integer> children = new HashSet<>();
+    private final Set<Integer> children = new HashSet<>();
 
     /**
      * Alive siblings of the citizen.
      */
-    private Set<Integer> siblings = new HashSet<>();
+    private final Set<Integer> siblings = new HashSet<>();
 
     /**
      * Alive partner of the citizen.
@@ -330,7 +331,7 @@ public class CitizenData implements ICitizenData
     /**
      * Recent interaction timer
      */
-    private Set<UUID> interactedRecentlyPlayers = new HashSet<>();
+    private final Set<UUID> interactedRecentlyPlayers = new HashSet<>();
 
     /**
      * Texture UUID.
@@ -529,7 +530,7 @@ public class CitizenData implements ICitizenData
     {
         if (!getEntity().isPresent())
         {
-            Log.getLogger().warn("Missing entity upon adding data to that entity!" + this.toString(), new Exception());
+            Log.getLogger().warn("Missing entity upon adding data to that entity!" + this, new Exception());
             return;
         }
 
@@ -777,7 +778,7 @@ public class CitizenData implements ICitizenData
     public boolean isRelatedTo(final ICitizenData data)
     {
         return siblings.contains(data.getId()) || children.contains(data.getId()) || partner == data.getId() || parents.getA().equals(data.getName()) || parents.getB()
-          .equals(data.getName());
+            .equals(data.getName());
     }
 
     @Override
@@ -916,9 +917,40 @@ public class CitizenData implements ICitizenData
             }
         }
 
+        //Check if we are traveling, we don't spawn an entity if we are traveling.
+        if (getColony().getTravelingManager().isTravelling(this))
+        {
+            return;
+        }
+
+        boolean spawnVisible;
+        //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
+        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
+        if (travelingTargetCandidate.isPresent())
+        {
+            //We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            getColony().getTravelingManager().finishTravellingFor(this);
+            nextRespawnPos = travelingTargetCandidate.get();
+            spawnVisible = false;
+            lastPosition = nextRespawnPos;
+        }
+        else
+        {
+            spawnVisible = true;
+        }
+
         if (nextRespawnPos != null)
         {
-            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
+            ICitizenData data = colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
+            data.getEntity().ifPresent(entity -> {
+                entity.getCitizenJobHandler().setModelDependingOnJob(data.getJob());
+                if (!spawnVisible)
+                {
+                    entity.setInvisible(true);
+                    entity.setPos(nextRespawnPos.getX(), nextRespawnPos.getY(), nextRespawnPos.getZ());
+                }
+            });
+
             nextRespawnPos = null;
         }
         else
@@ -1419,9 +1451,9 @@ public class CitizenData implements ICitizenData
                 try
                 {
                     final ServerCitizenInteraction handler =
-                      (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
-                        .getInteractionResponseHandlerDataManager()
-                        .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                        (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
+                            .getInteractionResponseHandlerDataManager()
+                            .createFrom(this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
                     citizenChatOptions.put(handler.getId(), handler);
                 }
                 catch (final Exception ex)
@@ -1713,7 +1745,7 @@ public class CitizenData implements ICitizenData
         if (!Objects.equals(this.statusPosition, pos))
         {
             this.statusPosition = pos;
-            markDirty(20*5);
+            markDirty(20 * 5);
         }
     }
 
@@ -1749,14 +1781,14 @@ public class CitizenData implements ICitizenData
             citizen.getNavigation().getPathingOptions().setCanClimbAdvanced(((EntityCitizen) citizen).canClimbVines());
 
             final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
-              colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),
-              AttributeModifier.Operation.MULTIPLY_TOTAL);
+                colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),
+                AttributeModifier.Operation.MULTIPLY_TOTAL);
             AttributeModifierUtils.addModifier(citizen, speedModifier, Attributes.MOVEMENT_SPEED);
 
             final AttributeModifier healthModLevel =
-              new AttributeModifier(HEALTH_BOOST.toString(),
-                colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST),
-                AttributeModifier.Operation.ADDITION);
+                new AttributeModifier(HEALTH_BOOST.toString(),
+                    colony.getResearchManager().getResearchEffects().getEffectStrength(HEALTH_BOOST),
+                    AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
 
             if (getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
@@ -1777,15 +1809,15 @@ public class CitizenData implements ICitizenData
         if (job != null && job.getWorkBuilding() != null && !job.getWorkBuilding().isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
-              ChatPriority.CHITCHAT));
+                Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
+                ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
             triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
-              Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
-              ChatPriority.CHITCHAT));
+                Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
+                ChatPriority.CHITCHAT));
         }
     }
 
@@ -1986,7 +2018,7 @@ public class CitizenData implements ICitizenData
     {
         if (uuid == null)
         {
-            uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().location().toString()).getBytes());
+            uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().location()).getBytes());
         }
         return uuid;
     }
@@ -2008,6 +2040,7 @@ public class CitizenData implements ICitizenData
     {
         return textureUUID;
     }
+
     @Nullable
     public BlockPos getHomePosition()
     {

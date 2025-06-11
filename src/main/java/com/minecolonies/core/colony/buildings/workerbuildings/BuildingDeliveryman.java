@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.COURIER_WORK;
 
 /**
  * Class of the warehouse building.
@@ -50,7 +51,7 @@ public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDe
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        final ICitizenData citizenData = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        final ICitizenData citizenData = getModule(COURIER_WORK).getFirstCitizen();
         if (citizenData != null)
         {
             final JobDeliveryman job = (JobDeliveryman) citizenData.getJob();
