@@ -300,7 +300,7 @@ public class GenericRecipe implements IGenericRecipe
         return builder()
                 .withRecipeId(storage.getRecipeSource())
                 .withOutputs(storage.getPrimaryOutput(), storage.getAlternateOutputs())
-                .withAdditionalOutputs(storage.getSecondaryOutputs())
+                .withAdditionalOutputs(storage.getCraftingToolsAndSecondaryOutputs())
                 .withInputs(inputs)
                 .withGridSize(storage.getGridSize())
                 .withIntermediate(storage.getIntermediate())
