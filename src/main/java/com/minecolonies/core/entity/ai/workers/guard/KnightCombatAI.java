@@ -167,7 +167,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));
         if (fireLevel > 0)
         {
-            target.setSecondsOnFire(fireLevel * 80);
+            target.setSecondsOnFire(fireLevel * 4);
         }
 
         if (user.level.getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)

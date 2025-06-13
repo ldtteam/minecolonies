@@ -22,6 +22,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -252,6 +253,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (pauseTicks > 0)
         {
             return null;
+        }
+
+        if (ourEntity.getPose() != Pose.STANDING)
+        {
+            ourEntity.setPose(Pose.STANDING);
         }
 
         if (pathResult != null)
