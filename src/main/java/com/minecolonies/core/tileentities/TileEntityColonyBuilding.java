@@ -5,6 +5,7 @@ import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.RotationMirror;
+import com.minecolonies.api.blocks.AbstractBaseBlockHut;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -406,7 +407,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (path == null || path.isEmpty() || path.contains("null"))
         {
-            path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+            path = BlueprintMapping.getPathMapping("", ((AbstractBaseBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
 
         if (!path.endsWith(".blueprint"))

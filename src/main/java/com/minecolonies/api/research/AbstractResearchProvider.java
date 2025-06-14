@@ -3,6 +3,7 @@ package com.minecolonies.api.research;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.blocks.AbstractBaseBlockHut;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.CachedOutput;
@@ -624,7 +625,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          *                    Manually generated effects can limited to individual tiers based on strength.
          * @return this
          */
-        public Research addEffect(final AbstractBlockHut<?> buildingBlock, int level)
+        public Research addEffect(final AbstractBaseBlockHut<?> buildingBlock, int level)
         {
             final JsonArray effects;
             if(this.json.has("effects") && this.json.get("effects").isJsonArray())
@@ -731,7 +732,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * See ModBuildings for a list of supported buildings.
          * @param buildingBlock    A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
          */
-        public ResearchEffect(final AbstractBlockHut<?> buildingBlock)
+        public ResearchEffect(final AbstractBaseBlockHut<?> buildingBlock)
         {
             final ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(buildingBlock);
             this.id = new ResourceLocation(registryName.getNamespace(), "effects/" + registryName.getPath());

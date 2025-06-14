@@ -1,5 +1,6 @@
 package com.minecolonies.api.creativetab;
 
+import com.minecolonies.api.blocks.AbstractBaseBlockHut;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.entity.ModEntities;
@@ -30,7 +31,7 @@ public final class ModCreativeTabs
     public static final RegistryObject<CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.huts")).displayItems((config, output) -> {
-          for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
+          for (final AbstractBaseBlockHut<?> hut : ModBlocks.getHuts())
           {
               output.accept(hut);
           }
