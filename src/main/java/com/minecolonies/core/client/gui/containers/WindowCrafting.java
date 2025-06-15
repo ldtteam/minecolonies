@@ -185,6 +185,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
             requestables.clear();
             new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
         });
+        requestsButton.visible = JEI_REQUEST_HOOK != null;
         this.addRenderableWidget(requestsButton);
     }
 
