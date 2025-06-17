@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -14,6 +13,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -234,6 +234,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         final IBuildingExtension fieldToWork = module.getExtensionToWorkOn();
+        // The worker is done for the day
+        if (fieldToWork == null)
+        {
+            worker.getCitizenData().setIdleAtJob(false);
+            return IDLE;
+        }
         if (fieldToWork instanceof FarmField farmField)
         {
             worker.getCitizenData().setIdleAtJob(false);
@@ -253,6 +259,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             farmField.nextState();
             module.resetCurrentExtension();
+        } else {
+            Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
         }
         return PREPARING;
     }
