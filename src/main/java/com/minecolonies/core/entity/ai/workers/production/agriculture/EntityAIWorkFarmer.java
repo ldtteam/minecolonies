@@ -254,7 +254,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             farmField.nextState();
             module.resetCurrentExtension();
-        } else if (fieldToWork != null ){
+        }
+        else if (fieldToWork != null)
+        {
             Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
         }
         return PREPARING;
