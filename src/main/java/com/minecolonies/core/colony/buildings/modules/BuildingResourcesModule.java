@@ -18,7 +18,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -177,7 +177,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     {
         return (buckets.isEmpty()
             || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingProgressStage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**

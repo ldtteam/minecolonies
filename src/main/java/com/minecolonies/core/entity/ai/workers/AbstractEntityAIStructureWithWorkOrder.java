@@ -28,7 +28,7 @@ import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingUpgradedEv
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -88,14 +88,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
-    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final BuildingProgressStage stage)
     {
         building.setProgressPos(blockPos, stage);
         worker.getCitizenData().setStatusPosition(blockPos.equals(NULL_POS) ? null : structurePlacer.getB().getProgressPosInWorld(blockPos));
     }
 
     @Override
-    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos()
+    public Tuple<BlockPos, BuildingProgressStage> getProgressPos()
     {
         return building.getProgress();
     }
@@ -488,7 +488,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             resetCurrentStructure();
             building.cancelAllRequestsOfCitizen(worker.getCitizenData());
             building.cancelAllRequestsOfCitizen(null);
-            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
         return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;

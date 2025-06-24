@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import org.jetbrains.annotations.NotNull;
 
 public interface IBuilderWorkOrder extends IServerWorkOrder
@@ -110,7 +111,7 @@ public interface IBuilderWorkOrder extends IServerWorkOrder
     /**
      * Sets the building stage of the workorder
      *
-     * @param stageIndex
+     * @param stage
      */
-    void setStage(int stageIndex);
+    void setStage(BuildingProgressStage stage);
 }

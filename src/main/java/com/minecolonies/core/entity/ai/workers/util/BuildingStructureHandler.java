@@ -60,7 +60,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     /**
      * The total number of stages.
      */
-    private final Stage[] stages;
+    private final BuildingProgressStage[] stages;
 
     /**
      * The building associated with this placement.
@@ -70,7 +70,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     /**
      * The current structure stage.
      */
-    private int stage;
+    private int stage = 0;
 
     /**
      * The respective workorder used for placement
@@ -88,7 +88,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
       final Level world,
         final IWorkOrder workOrder,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
-      final Stage[] stages)
+        final BuildingProgressStage[] stages)
     {
         super(world,
             workOrder.getLocation(),
@@ -98,7 +98,16 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         this.workOrder = (IBuilderWorkOrder) workOrder;
         this.structureAI = entityAIStructure;
         this.stages = stages;
-        this.stage = workOrder.getStage();
+
+        for (int i = 0; i < stages.length; i++)
+        {
+            final BuildingProgressStage stage = stages[i];
+            if (stage == workOrder.getStage())
+            {
+                this.stage = i;
+                break;
+            }
+        }
     }
 
     /**
@@ -119,7 +128,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      * @return the current Stage.
      */
     @Nullable
-    public Stage getStage()
+    public BuildingProgressStage getStage()
     {
         if (this.stage >= stages.length)
         {
@@ -141,14 +150,14 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      *
      * @param stage the stage to set.
      */
-    public void setStage(final Stage stage)
+    public void setStage(final BuildingProgressStage stage)
     {
         for (int i = 0; i < stages.length; i++)
         {
             if (stages[i] == stage)
             {
                 this.stage = i;
-                workOrder.setStage(i);
+                workOrder.setStage(stage);
                 return;
             }
         }
@@ -303,7 +312,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean allowReplace()
     {
-        return getStage() != null && getStage() != Stage.CLEAR;
+        return getStage() != null && getStage() != BuildingProgressStage.CLEAR;
     }
 
     @Override
@@ -350,21 +359,5 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
                  || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
                  || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
-    }
-
-    /**
-     * The different stages a StructureIterator building process can be in.
-     */
-    public enum Stage
-    {
-        CLEAR,
-        BUILD_SOLID,
-        CLEAR_WATER,
-        CLEAR_NON_SOLIDS,
-        DECORATE,
-        SPAWN,
-        REMOVE,
-        REMOVE_WATER,
-        WEAK_SOLID,
     }
 }
