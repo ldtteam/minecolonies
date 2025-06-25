@@ -314,7 +314,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         for (final ItemStack item : getExtraItemsNeeded())
         {
-            checkIfRequestForItemExistOrCreateAsync(item);
+            checkIfRequestForItemExistOrCreateAsync(item.copyWithCount(1), item.getCount(), item.getCount());
         }
 
         return DECIDE;

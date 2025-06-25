@@ -224,7 +224,7 @@ public class Stack implements IConcreteDeliverable
 
         if (stack.isEmpty())
         {
-            Log.getLogger().error("Deserialized bad stack", compound.toString());
+            Log.getLogger().error("Deserialized bad stack: {}", compound.toString());
         }
 
         return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
@@ -274,7 +274,7 @@ public class Stack implements IConcreteDeliverable
 
         if (stack.isEmpty())
         {
-            Log.getLogger().error("Deserialized bad stack", stack.toString());
+            Log.getLogger().error("Deserialized bad stack {}", stack.toString());
         }
 
         return new Stack(stack, matchMeta, matchNBT, result, count, minCount, canBeResolved);
