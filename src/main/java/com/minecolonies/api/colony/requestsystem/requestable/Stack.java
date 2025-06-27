@@ -161,10 +161,15 @@ public class Stack implements IConcreteDeliverable
     {
         if (ItemStackUtils.isEmpty(stack))
         {
-            Log.getLogger().error("Created Empty Stack:" + stack, new Exception());
+            Log.getLogger().error("Created Empty Stack: {}", stack, new Exception());
         }
 
-        this.theStack = stack.copy();
+        if (stack.getCount() != 1 && stack.getCount() != count)
+        {
+            Log.getLogger().warn("Stack count mismatch (stack={}, count={}). ItemStack's count will be ignored.", stack, count, new Exception("Stack constructor"));
+        }
+
+        this.theStack = stack.copyWithCount(1);
         this.matchDamage = matchDamage;
         this.matchNBT = matchNBT;
         this.result = result;
