@@ -1,7 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,7 +41,9 @@ public class ItemLargeBottle extends Item
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance());
+            if(!player.getInventory().add(ModItems.large_milk_bottle.getDefaultInstance())) {
+                player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
+            }
             stack.shrink(1);
             return InteractionResult.SUCCESS;
         }
@@ -69,7 +69,9 @@ public class ItemLargeBottle extends Item
                 if (level.getFluidState(blockpos).is(FluidTags.WATER))
                 {
                     level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                    InventoryUtils.addItemStackToItemHandler(new InvWrapper(player.getInventory()), ModItems.large_water_bottle.getDefaultInstance());
+                    if (!player.getInventory().add(ModItems.large_water_bottle.getDefaultInstance())) {
+                        player.drop(ModItems.large_water_bottle.getDefaultInstance(), false);
+                    }
                     itemstack.shrink(1);
                     return InteractionResultHolder.success(itemstack);
                 }
