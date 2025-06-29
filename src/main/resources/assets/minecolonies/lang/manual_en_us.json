@@ -281,6 +281,10 @@
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place huts in %s.",
   "tile.blockhut.messagetoofarfromtownhall": "You cannot place a building outside of your colony! Expand your colony by upgrading the Town Hall and/or building and upgrading Guard Towers and Barracks.",
   "tile.blockhut.messagenotownhall": "You need to place a Town Hall first!",
+  "tile.blockhut.noworkerassigned" : "You cannot assign a work order at a hut where there is no worker.",
+  "tile.blockhut.alreadyclaimed" : "You cannot assign a work order which is already claimed somewhere.",
+  "tile.blockhut.notforbuilder" : "You cannot assign a builder this work order - it is not meant for builders.",
+  "tile.blockhut.cannotbuild" : "You cannot assign a work order to a builder who cannot build it.",
 
   "block.blockhuttownhall.messagemaxsize.config": "%d has reached its max size. Edit the config file to be able to get more.",
   "block.blockhuttownhall.messagemaxsize.research": "%d has reached its max size. You can get more by completing the research in the University.",

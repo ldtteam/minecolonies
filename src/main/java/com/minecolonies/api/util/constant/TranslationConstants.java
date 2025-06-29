@@ -776,8 +776,16 @@ public final class TranslationConstants
     public static final String MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT  = "tile.blockhut.messagenotownhall";
     @NonNls
     public static final String MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY = "tile.blockhut.messagetoofarfromtownhall";
-
+    @NonNls
+    public static final String MESSAGE_WARNING_NO_WORKER_ASSIGNED = "tile.blockhut.noworkerassigned";
+    @NonNls
+    public static final String MESSAGE_WARNING_ALREADY_CLAIMED = "tile.blockhut.alreadyclaimed";
+    @NonNls
+    public static final String MESSAGE_WARNING_NOTFORBUILDER = "tile.blockhut.notforbuilder";
+    @NonNls
+    public static final String MESSAGE_WARNING_CANNOTBUILD = "tile.blockhut.cannotbuild";
     //</editor-fold>
+
 
     //<editor-fold desc="Other keys">
 
