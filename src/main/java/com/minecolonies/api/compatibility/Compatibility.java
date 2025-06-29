@@ -7,9 +7,6 @@ import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -155,16 +152,6 @@ public final class Compatibility
     }
 
     /**
-     * Returns the damageType string falling dynamic Tree's use
-     *
-     * @return damageType
-     */
-    public static ResourceKey<DamageType> getDynamicTreeDamage()
-    {
-        return dynamicTreesCompat.getDynamicTreeDamage();
-    }
-
-    /**
      * Check if block is a Dynamic tree
      *
      * @param block the block to check.
@@ -240,18 +227,7 @@ public final class Compatibility
     }
 
     /**
-     * Check wether the item is a dynamic Sapling
-     *
-     * @param item Item to check
-     * @return true if so.
-     */
-    public static boolean isDynamicTreeSapling(final Item item)
-    {
-        return dynamicTreesCompat.checkForDynamicSapling(item);
-    }
-
-    /**
-     * Check wether the Itemstack is a dynamic Sapling
+     * Check whether the Itemstack is a dynamic Sapling
      *
      * @param stack Itemstack to check
      * @return true if it is a dynamic Sapling

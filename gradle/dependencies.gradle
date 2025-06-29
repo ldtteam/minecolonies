@@ -1,4 +1,4 @@
-repositories {
+/*repositories {
     maven {
         name "JEI"
         url 'https://maven.blamejared.com/'
@@ -11,7 +11,7 @@ repositories {
         name "Rei"
         url "https://maven.shedaniel.me/"
     }
-}
+}*/
 
 dependencies {
     implementation ("com.ldtteam:domum-ornamentum:${project.domumOrnamentumVersion}"){
@@ -40,9 +40,22 @@ dependencies {
     runtimeOnly "mezz.jei:jei-${project.jei_mcversion}-neoforge:${project.jei_version}"
 
     compileOnly "info.journeymap:journeymap-api-neoforge:${project.jmapApiVersion}"
-    if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
+    if (project.findProperty("runWithJourneymap")?.toString()?.toBoolean() == true) {
          runtimeOnly "flat:journeymap-neoforge:${project.jmapVersion}"
     }
+
+    if (project.hasProperty("dynamicTreesVersion")) {
+        if (project.findProperty("runWithDynamicTrees")?.toString()?.toBoolean() == true) {
+            implementation ("com.dtteam.dynamictrees:dynamictrees-neoforge-${project.dynamicTreesMcVersion}:${project.dynamicTreesVersion}") {
+                transitive = false
+            }
+        } else {
+            compileOnly ("com.dtteam.dynamictrees:dynamictrees-neoforge-${project.dynamicTreesMcVersion}:${project.dynamicTreesVersion}") {
+                transitive = false
+            }
+        }
+    }
+
     // replace "compileOnly" with "implementation" when you want to include it for testing
     // compileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
     // compileOnly "slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")

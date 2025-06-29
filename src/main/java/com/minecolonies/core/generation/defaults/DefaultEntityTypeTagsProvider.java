@@ -3,9 +3,12 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -31,5 +34,9 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
 
         final TagAppender<EntityType<?>> raiderTagAppender = tag(ModTags.raiders);
         ModEntities.getRaiders().forEach(raiderType -> raiderTagAppender.add(TagEntry.element(EntityType.getKey(raiderType))));
+
+        tag(TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("dynamictrees", "falling_tree_damage_immune")))
+                .add(ModEntities.CITIZEN)
+                .add(ModEntities.VISITOR);
     }
 }

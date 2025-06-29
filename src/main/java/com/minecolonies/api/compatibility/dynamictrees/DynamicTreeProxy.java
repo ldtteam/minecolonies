@@ -2,8 +2,6 @@ package com.minecolonies.api.compatibility.dynamictrees;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,16 +22,6 @@ public class DynamicTreeProxy
     public boolean isDynamicTreePresent()
     {
         return false;
-    }
-
-    /**
-     * Returns the damageType string falling dynamic Tree's use
-     *
-     * @return damageType
-     */
-    public ResourceKey<DamageType> getDynamicTreeDamage()
-    {
-        return null;
     }
 
     /**

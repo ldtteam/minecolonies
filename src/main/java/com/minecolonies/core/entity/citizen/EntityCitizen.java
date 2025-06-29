@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
@@ -98,7 +97,6 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -1269,7 +1267,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         return damageSource.typeHolder().is(DamageTypes.IN_WALL) && citizenSleepHandler.isAsleep()
-                 || Compatibility.isDynTreePresent() && damageSource.typeHolder().is(Compatibility.getDynamicTreeDamage()) || this.isInvulnerable();
+                 || this.isInvulnerable();
     }
 
     /**
