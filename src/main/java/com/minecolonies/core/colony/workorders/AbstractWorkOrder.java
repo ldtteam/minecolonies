@@ -710,7 +710,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putString(TAG_ITERATOR, iteratorType);
         compound.putBoolean(TAG_IS_CLEARED, cleared);
         compound.putBoolean(TAG_IS_REQUESTED, requested);
-        compound.putInt(TAG_STAGE, stage.ordinal());
+        compound.putInt(TAG_STAGE, stage == null ? 0 : stage.ordinal());
 
         if (box != Constants.EMPTY_AABB)
         {
@@ -746,7 +746,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeBoolean(isMirrored);
         buf.writeInt(currentLevel);
         buf.writeInt(targetLevel);
-        buf.writeInt(stage.ordinal());
+        buf.writeInt(stage == null ? 0 : stage.ordinal());
         buf.writeDouble(getBoundingBox().minX);
         buf.writeDouble(getBoundingBox().minY);
         buf.writeDouble(getBoundingBox().minZ);
