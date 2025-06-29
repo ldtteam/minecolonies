@@ -72,8 +72,8 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutKitchen;
 
-    public static AbstractBaseBlockHut<? extends AbstractBaseBlockHut<?>> blockStash;
-    public static AbstractBaseBlockHut<? extends AbstractBaseBlockHut<?>> blockPostBox;
+    public static AbstractColonyBlock<? extends AbstractColonyBlock<?>> blockStash;
+    public static AbstractColonyBlock<? extends AbstractColonyBlock<?>> blockPostBox;
 
     /**
      * Utility blocks.
@@ -121,9 +121,9 @@ public final class ModBlocks
     }
 
     @NotNull
-    public static AbstractBaseBlockHut<?>[] getHuts()
+    public static AbstractColonyBlock<?>[] getHuts()
     {
-        return new AbstractBaseBlockHut[] {
+        return new AbstractColonyBlock[] {
           blockHutTownHall,
           blockHutHome,
           blockHutTavern,

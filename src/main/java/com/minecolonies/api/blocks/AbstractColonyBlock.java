@@ -47,14 +47,14 @@ import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Abstract class for all minecolonies blocks.
+ * Abstract class for all minecolonies colony blocks.
  * <p>
- * The method {@link AbstractBaseBlockHut#getName()} is abstract.
+ * The method {@link AbstractColonyBlock#getName()} is abstract.
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBaseBlockHut<B extends AbstractBaseBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, ITickableBlockMinecolonies
+public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, ITickableBlockMinecolonies
 
 {
     /**
@@ -97,7 +97,7 @@ public abstract class AbstractBaseBlockHut<B extends AbstractBaseBlockHut<B>> ex
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
      */
-    public AbstractBaseBlockHut()
+    public AbstractColonyBlock()
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
@@ -124,7 +124,7 @@ public abstract class AbstractBaseBlockHut<B extends AbstractBaseBlockHut<B>> ex
      *
      * @param properties custom properties.
      */
-    public AbstractBaseBlockHut(final Properties properties)
+    public AbstractColonyBlock(final Properties properties)
     {
         super(properties.noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
@@ -287,57 +287,6 @@ public abstract class AbstractBaseBlockHut<B extends AbstractBaseBlockHut<B>> ex
     {
         registry.register(getRegistryName(), this);
         return (B) this;
-    }
-
-    /**
-     * Check if we got permissions to paste.
-     * @param anchor the anchor of the paste.
-     * @param player the player pasting it.
-     * @param pos the position its pasted at.
-     * @return true if fine.
-     */
-    private boolean canPaste(final Block anchor, final Player player, final BlockPos pos)
-    {
-        final IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
-
-        if (colony == null)
-        {
-            if(anchor == ModBlocks.blockHutTownHall)
-            {
-                return true;
-            }
-
-            //  Not in a colony
-            if (IColonyManager.getInstance().getIColonyByOwner(player.level(), player) == null)
-            {
-                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT).sendTo(player);
-            }
-            else
-            {
-                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY).sendTo(player);
-            }
-
-            return false;
-        }
-        else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
-        {
-            //  No permission to place hut in colony
-            MessageUtils.format(PERMISSION_OPEN_HUT, colony.getName()).sendTo(player);
-            return false;
-        }
-        else
-        {
-            return colony.getBuildingManager().canPlaceAt(anchor, pos, player);
-        }
-    }
-
-    /**
-     * Get the blueprint name.
-     * @return the name.
-     */
-    public String getBlueprintName()
-    {
-        return getBuildingEntry().getRegistryName().getPath();
     }
 
     @Override

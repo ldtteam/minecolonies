@@ -21,7 +21,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -58,7 +57,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBaseBlockHut<B> implements
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractColonyBlock<B> implements
                                                                                                                         IAnchorBlock,
                                                                                                                         INamedBlueprintAnchorBlock,
                                                                                                                         ILeveledBlueprintAnchorBlock,
