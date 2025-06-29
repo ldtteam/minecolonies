@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.workorders;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -184,4 +185,11 @@ public interface IWorkOrder
      * @return
      */
     public void setColony(IColony colony);
+
+    /**
+     * The buildings stage
+     *
+     * @return stage index
+     */
+    BuildingProgressStage getStage();
 }

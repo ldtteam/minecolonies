@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
@@ -26,12 +25,12 @@ import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -50,7 +49,10 @@ import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -61,7 +63,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.*;
-import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
+import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures. These structures have to be supplied as schematics files.
@@ -202,7 +204,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return IDLE;
         }
 
-        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingStructureHandler.Stage.CLEAR)
+        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingProgressStage.CLEAR)
         {
             pickUpCount = 0;
             return START_WORKING;
@@ -375,7 +377,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         final StructurePhasePlacementResult result;
         final StructurePlacer placer = structurePlacer.getA();
-        final BuildingStructureHandler.Stage currentStage = structurePlacer.getB().getStage();
+        final BuildingProgressStage currentStage = structurePlacer.getB().getStage();
         switch (currentStage)
         {
             case BUILD_SOLID:
@@ -707,7 +709,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   position,
                   blueprint,
                     workOrder.getRotationMirror(),
-                  this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
+                    this, new BuildingProgressStage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
             else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
@@ -717,7 +719,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   position,
                   blueprint,
                     workOrder.getRotationMirror(),
-                  this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                    this, new BuildingProgressStage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
             else
@@ -726,7 +728,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                   position,
                   blueprint,
                     workOrder.getRotationMirror(),
-                  this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
@@ -908,7 +910,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param blockPos the progressResult.
      * @param stage    the current stage.
      */
-    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final BuildingProgressStage stage)
     {
         /*
          * Override if needed.
@@ -1092,7 +1094,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      *
      * @return the progress with the current stage.
      */
-    public abstract Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos();
+    public abstract Tuple<BlockPos, BuildingProgressStage> getProgressPos();
 
     /**
      * Check if a solid substitution block should be overwritten in a specific case.

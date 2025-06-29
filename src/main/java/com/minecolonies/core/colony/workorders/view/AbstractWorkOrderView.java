@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.Level;
@@ -71,6 +72,11 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      * Level it's being upgraded to.
      */
     private int targetLevel;
+
+    /**
+     * The building stage this workorder is in
+     */
+    private BuildingProgressStage stage = null;
 
     /**
      * Translation key.
@@ -176,6 +182,12 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         this.colony = colony;
     }
 
+    @Override
+    public BuildingProgressStage getStage()
+    {
+        return stage;
+    }
+
     /**
      * Value getter.
      *
@@ -270,6 +282,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         rotationMirror = RotationMirror.values()[buf.readByte()];
         currentLevel = buf.readInt();
         targetLevel = buf.readInt();
+        stage = BuildingProgressStage.values()[buf.readInt()];
         box = new AABB(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
