@@ -107,6 +107,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutNetherWorker = new BlockHutNetherWorker().registerBlock(registry);
         ModBlocks.blockHutAlchemist = new BlockHutAlchemist().registerBlock(registry);
         ModBlocks.blockHutKitchen = new BlockHutKitchen().registerBlock(registry);
+        ModBlocks.blockHutGateHouse = new BlockHutGateHouse().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
@@ -124,6 +125,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 7f, 6, 5).registerBlock(registry);
         ModBlocks.farmland = new MinecoloniesFarmland(FARMLAND, false, 15.0).registerBlock(registry);
         ModBlocks.floodedFarmland = new MinecoloniesFarmland(FLOODED_FARMLAND, true, 13.0).registerBlock(registry);
+        ModBlocks.blockColonySign = new BlockColonySign().registerBlock(registry);
 
         // Could in the future add alternative versions of these crops that can be planted by the player and grow at a slower rate.
         ModBlocks.blockBellPepper = new MinecoloniesCropBlock(BELL_PEPPER, ModBlocks.farmland, List.of(Blocks.GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes).registerBlock(registry);
@@ -216,6 +218,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutNetherWorker.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockHutAlchemist.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockHutKitchen.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockHutGateHouse.registerBlockItem(registry, new Item.Properties());
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockRack.registerBlockItem(registry, new Item.Properties());
@@ -229,6 +232,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, new Item.Properties());
         ModBlocks.farmland.registerBlockItem(registry, new Item.Properties());
         ModBlocks.floodedFarmland.registerBlockItem(registry, new Item.Properties());
+        ModBlocks.blockColonySign.registerBlockItem(registry, new Item.Properties());
 
         ModBlocks.blockBellPepper.registerBlockItem(registry, new Item.Properties());
         ModBlocks.blockCabbage.registerBlockItem(registry, new Item.Properties());

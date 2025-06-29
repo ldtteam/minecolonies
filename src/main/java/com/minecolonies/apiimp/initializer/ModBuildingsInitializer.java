@@ -628,5 +628,20 @@ public final class ModBuildingsInitializer
                                                                                            .addBuildingModuleProducer(FURNACE)
                                                                                            .addBuildingModuleProducer(ITEMLIST_FUEL)
                                                                                            .createBuildingEntry());
+
+        ModBuildings.guardTower = DEFERRED_REGISTER.register(ModBuildings.GATE_HOUSE_ID, () -> new BuildingEntry.Builder()
+            .setBuildingBlock(ModBlocks.blockHutGateHouse)
+            .setBuildingProducer(BuildingGateHouse::new)
+            .setBuildingViewProducer(() -> BuildingGateHouse.View::new)
+            .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GATE_HOUSE_ID))
+            .addBuildingModuleProducer(KNIGHT_TOWER_WORK)
+            .addBuildingModuleProducer(RANGER_TOWER_WORK)
+            .addBuildingModuleProducer(GUARD_TOOL)
+            .addBuildingModuleProducer(GUARD_ENTITY_LIST)
+            .addBuildingModuleProducer(GUARD_SETTINGS)
+            .addBuildingModuleProducer(MIN_STOCK)
+            .addBuildingModuleProducer(BED)
+            .addBuildingModuleProducer(STATS_MODULE)
+            .createBuildingEntry());
     }
 }

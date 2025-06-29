@@ -73,6 +73,7 @@ public final class ModBlocks
     //public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockLargeQuarry;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutKitchen;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGateHouse;
 
     /**
      * Utility blocks.
@@ -92,7 +93,8 @@ public final class ModBlocks
     public static AbstractBlockGate                                                                                 blockIronGate;
     public static AbstractBlockGate                                                                                 blockWoodenGate;
     public static MinecoloniesFarmland                                                                              farmland;
-    public static MinecoloniesFarmland                                                                              floodedFarmland;
+    public static MinecoloniesFarmland                                              floodedFarmland;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockColonySign;
 
     public static MinecoloniesCropBlock blockBellPepper;
     public static MinecoloniesCropBlock blockCabbage;
@@ -173,6 +175,7 @@ public final class ModBlocks
           blockHutNetherWorker,
           blockHutAlchemist,
           blockHutKitchen,
+          blockHutGateHouse,
           blockSimpleQuarry,
           blockMediumQuarry,
           //blockLargeQuarry
