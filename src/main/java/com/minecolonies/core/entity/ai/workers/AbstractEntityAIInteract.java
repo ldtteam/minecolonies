@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers;
 
+import com.ldtteam.domumornamentum.item.interfaces.IDoItem;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_SPEED;
+import static com.minecolonies.core.placementhandlers.DoBlockPlacementHandler.getCorrectDOItem;
 
 /**
  * This is the base class of all worker AIs. Every AI implements this class with it's job type. There are some utilities within the class: - The AI will clear a full inventory at
@@ -201,7 +203,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             //add the drops to the citizen
             for (final ItemStack item : localItems)
             {
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
+                if (item.getItem() instanceof IDoItem)
+                {
+                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(getCorrectDOItem(item, curBlockState), worker.getInventoryCitizen());
+                }
+                else
+                {
+                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
+                }
             }
             onBlockDropReception(localItems);
         }

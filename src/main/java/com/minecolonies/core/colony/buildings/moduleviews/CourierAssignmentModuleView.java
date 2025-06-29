@@ -14,6 +14,8 @@ import com.minecolonies.core.client.gui.modules.SpecialAssignmentModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.CourierHiringModeMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HireFireMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -69,9 +71,9 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "entity";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/entity.png");
     }
 
     @Override

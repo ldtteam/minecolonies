@@ -71,6 +71,17 @@ public class ItemStorage
     /**
      * Creates an instance of the storage.
      *
+     * @param stack             the stack.
+     * @param amount            the amount.
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final int amount)
+    {
+        this(stack, amount, false, false);
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
      * @param stack                the stack.
      * @param ignoreDamageValue    should the damage value be ignored?
      * @param shouldIgnoreNBTValue should the nbt value be ignored?

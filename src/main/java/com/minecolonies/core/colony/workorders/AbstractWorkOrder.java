@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -144,7 +145,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     /**
      * The building stage this workorder is in
      */
-    private int stage = 0;
+    private BuildingProgressStage stage = null;
 
     /**
      * The iterator type (building method) of this work order.
@@ -674,7 +675,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
 
         if (compound.contains(TAG_STAGE))
         {
-            stage = compound.getInt(TAG_STAGE);
+            stage = BuildingProgressStage.values()[compound.getInt(TAG_STAGE)];
         }
 
         if (compound.contains(TAG_BB))
@@ -709,7 +710,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putString(TAG_ITERATOR, iteratorType);
         compound.putBoolean(TAG_IS_CLEARED, cleared);
         compound.putBoolean(TAG_IS_REQUESTED, requested);
-        compound.putInt(TAG_STAGE, stage);
+        compound.putInt(TAG_STAGE, stage.ordinal());
 
         if (box != Constants.EMPTY_AABB)
         {
@@ -745,7 +746,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeBoolean(isMirrored);
         buf.writeInt(currentLevel);
         buf.writeInt(targetLevel);
-        buf.writeInt(stage);
+        buf.writeInt(stage.ordinal());
         buf.writeDouble(getBoundingBox().minX);
         buf.writeDouble(getBoundingBox().minY);
         buf.writeDouble(getBoundingBox().minZ);
@@ -847,13 +848,13 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     }
 
     @Override
-    public int getStage()
+    public BuildingProgressStage getStage()
     {
         return stage;
     }
 
     @Override
-    public void setStage(final int stage)
+    public void setStage(final BuildingProgressStage stage)
     {
         if (stage != this.stage)
         {

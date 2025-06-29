@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -43,6 +44,16 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      * ID of the distance label inside the GUI.
      */
     private static final String TAG_DISTANCE = "dist";
+
+    /**
+     * ID of the stage label inside the GUI.
+     */
+    private static final String TAG_STAGE_TEXT = "nextstagetext";
+
+    /**
+     * ID of the stage label inside the GUI.
+     */
+    private static final String TAG_STAGE_ICON = "nextstageicon";
 
     /**
      * ID of the assign button inside the GUI.
@@ -171,6 +182,8 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
                 if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
                 {
                     rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(farmField.getSeed());
+                    rowPane.findPaneOfTypeByID(TAG_STAGE_TEXT, Text.class).setText(Component.translatable(FIELD_STATUS));
+                    rowPane.findPaneOfTypeByID(TAG_STAGE_ICON, Image.class).setImage(farmField.getFieldStage().getNextStage().getStageIcon(), true);
                 }
 
                 final String distance = Integer.toString(field.getSqDistance(buildingView));

@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignFieldMessage;
@@ -9,6 +10,8 @@ import com.minecolonies.core.network.messages.server.colony.building.fields.Assi
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,9 +44,9 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "field";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/field.png");
     }
 
     @Override

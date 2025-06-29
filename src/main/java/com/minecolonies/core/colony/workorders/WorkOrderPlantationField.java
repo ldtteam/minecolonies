@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_DECORATION_REQUEST;
-
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 /**
  * A work order that the build can take to build plantation fields.
  */
@@ -63,6 +63,21 @@ public class WorkOrderPlantationField extends AbstractWorkOrder
     public boolean canBuild(final @NotNull ICitizenData citizen)
     {
         return citizen.getJob() instanceof JobBuilder;
+    }
+    
+    /**
+     * Check if a citizen may accept this workOrder while ignoring the distance to the build location.
+     * <p>
+     * @param citizen     the citizen who is trying to build.
+     * @param position    the position of the citizen's work hut.
+     * @param level       the level of that work hut.
+     * @return true if the citizen may accept this work order.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    @Override
+    public boolean canBuildIgnoringDistance(final @NotNull ICitizenData citizen, final BlockPos position, final int level)
+    {
+        return canBuild(citizen);
     }
 
     @Override

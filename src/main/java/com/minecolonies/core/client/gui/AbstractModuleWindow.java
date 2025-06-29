@@ -5,6 +5,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -87,11 +88,11 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
                 view.getWindow().open();
             });
 
-            final String icon = view.getIcon();
+            final ResourceLocation icon = view.getIconResourceLocation();
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
+            iconImage.setImage(icon, false);
             iconImage.setSize(20, 20);
-            iconImage.setID(icon);
+            iconImage.setID(icon.getPath());
             iconImage.setPosition(-15, 13 + offset);
             iconImage.setHandler(button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
