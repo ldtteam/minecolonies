@@ -16,9 +16,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPlanter;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
@@ -100,8 +100,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IAIState pickField()
     {
-        worker.getCitizenData().setIdleAtJob(true);
-
         if (building == null || building.getBuildingLevel() < 1)
         {
             return IDLE;
@@ -110,7 +108,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
         module.claimExtensions();
 
-        if (module.hasNoExtensions())
+        if (checkForField(module))
         {
             if (worker.getCitizenData() != null)
             {
@@ -133,13 +131,26 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 currentFieldActionCount = 0;
             }
 
-            worker.getCitizenData().setIdleAtJob(false);
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
             return PLANTATION_MOVE_TO_FIELD;
         }
 
         return IDLE;
+    }
+
+    /**
+     * Ensures that we have at least one field assigned.
+     * Also sets the worker to be idle at the job if we have no assigned field.
+     *
+     * @param module the extensions assigned to the planter's hut
+     * @return false if we have at least one assigned plantation field
+     */
+    public boolean checkForField(@NotNull BuildingExtensionsModule module)
+    {
+        final boolean noFields = module.hasNoExtensions();
+        worker.getCitizenData().setIdleAtJob(noFields);
+        return noFields;
     }
 
     @Override
