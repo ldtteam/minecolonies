@@ -2895,6 +2895,6 @@
   "com.minecolonies.core.event.summary.citizen.born": "%d kid(s) were born",
   "com.minecolonies.core.event.summary.prefix": "Today ",
   "block.minecolonies.colonysign": "Colony Sign",
-  "com.minecolonies.coremod.item.sign.needcolony": "No colony set (sneak + use the sign on a building or a previous sign)",
+  "com.minecolonies.coremod.item.sign.needcolony": "No colony set (sneak + use the sign on a gate house or a previous sign)",
   "com.minecolonies.coremod.item.sign.registered": "Noted %s on the sign."
 }

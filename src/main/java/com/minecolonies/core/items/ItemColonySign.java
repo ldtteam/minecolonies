@@ -50,36 +50,36 @@ public class ItemColonySign extends BlockItem
     }
 
     @Override
-    @NotNull
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        super.useOn(ctx);
         final ItemStack sign = ctx.getPlayer().getItemInHand(ctx.getHand());
 
         final CompoundTag compound = sign.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
-
-        if (entity instanceof TileEntityColonyBuilding buildingEntity)
+        if (ctx.getPlayer().isShiftKeyDown())
         {
-            compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
-            if (!ctx.getLevel().isClientSide)
+            if (entity instanceof TileEntityColonyBuilding buildingEntity)
             {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                //todo only on gatehouse!
+                compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
+                if (!ctx.getLevel().isClientSide)
+                {
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                }
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.FAIL;
-        }
-        else if (entity instanceof TileEntityColonySign signEntity)
-        {
-            compound.putInt(TAG_COLONY, signEntity.getColonyId());
-            BlockPosUtil.write(compound, TAG_POS, ctx.getClickedPos());
-            if (!ctx.getLevel().isClientSide)
+            else if (entity instanceof TileEntityColonySign signEntity)
             {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, signEntity.getColonyName()).sendTo(ctx.getPlayer());
+                compound.putInt(TAG_COLONY, signEntity.getColonyId());
+                BlockPosUtil.write(compound, TAG_POS, ctx.getClickedPos());
+                if (!ctx.getLevel().isClientSide)
+                {
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, signEntity.getColonyName()).sendTo(ctx.getPlayer());
+                }
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.FAIL;
         }
-
-        return InteractionResult.SUCCESS;
+        return super.useOn(ctx);
     }
 
     @Override
@@ -97,8 +97,7 @@ public class ItemColonySign extends BlockItem
     }
 
     @Override
-    public void appendHoverText(
-        @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));

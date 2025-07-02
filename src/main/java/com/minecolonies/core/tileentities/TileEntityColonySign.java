@@ -7,12 +7,11 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -115,6 +114,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     {
         super.setRemoved();
         //todo update colony
+        BannerRenderer
+        // Colony keeps a linked list structure of signs, each sign can only be placed if its within x blocks of the previous sign, when anchored, easy to calc, otherwise need to ask colony for closest sign.
+        // then, we need some condition to do the final gatehouse connection, maybe right clicking it on the final gatehouse.
+        //todo need a way for the sign to ask the colony about having established the connection to enable the second sign piece.
     }
 
     /**
@@ -129,6 +132,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
             if (colony != null)
             {
                 colonyNameCache = colony.getName();
+                setChanged();
             }
         }
     }
@@ -177,10 +181,9 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
 
     /**
      * Get distance to colony.
-     * @param dimension the dimension the colony is in.
      * @return the distance in blocks.
      */
-    public int getColonyDistance(final ResourceKey<Level> dimension)
+    public int getColonyDistance()
     {
         return distance;
     }

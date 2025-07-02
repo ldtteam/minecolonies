@@ -5,13 +5,17 @@ import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -21,6 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -30,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_SIGN_COLONY_SET;
 import static com.minecolonies.core.items.ItemColonySign.TAG_COLONY;
 
 /**
@@ -90,7 +96,6 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
             return;
         }
 
-        //todo prevent placing if there is no colony id.
         final TileEntityColonySign tileEntityColonySign = (TileEntityColonySign) worldIn.getBlockEntity(pos);
         final CompoundTag stackCompound = stack.getOrCreateTag();
         if (!stackCompound.contains(TAG_COLONY))
@@ -102,6 +107,8 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
         tileEntityColonySign.setColonyAndAnchor(colony, stackCompound.contains(TAG_POS) ? BlockPosUtil.read(stackCompound, TAG_POS) : null);
         super.setPlacedBy(worldIn, pos, state, placer, stack);
         // todo register in colony as connection point.
+
+        //todo colony gets all the signs
     }
 
     @Override
