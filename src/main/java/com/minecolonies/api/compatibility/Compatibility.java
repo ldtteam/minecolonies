@@ -28,6 +28,7 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
+    public static IJeiProxy jeiProxy = new IJeiProxy() {};
     public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();

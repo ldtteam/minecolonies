@@ -7,13 +7,14 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.IJeiProxy;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.eventbus.events.CustomRecipesReloadedEvent;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.client.gui.containers.WindowCrafting;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.core.compatibility.jei.transfer.*;
@@ -51,7 +52,32 @@ public class JEIPlugin implements IModPlugin
 
     public JEIPlugin()
     {
-        WindowCrafting.JEI_REQUEST_HOOK = this::showOutputStacks;
+        Compatibility.jeiProxy = new IJeiProxy()
+        {
+            @Override
+            public boolean isLoaded()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean showRecipes(final Collection<ItemStack> stacks)
+            {
+                final IJeiRuntime jei = JEIPlugin.this.jei;
+
+                if (jei != null && !stacks.isEmpty())
+                {
+                    final IFocusFactory focusFactory = jei.getJeiHelpers().getFocusFactory();
+                    final List<IFocus<?>> focuses = stacks.stream()
+                        .<IFocus<?>>map(stack -> focusFactory.createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack))
+                        .toList();
+                    jei.getRecipesGui().show(focuses);
+                    return true;
+                }
+
+                return false;
+            }
+        };
     }
 
     @NotNull
@@ -236,17 +262,5 @@ public class JEIPlugin implements IModPlugin
     public void onRuntimeUnavailable()
     {
         this.jei = null;
-    }
-
-    private void showOutputStacks(@NotNull final List<ItemStack> stacks)
-    {
-        if (this.jei != null && !stacks.isEmpty())
-        {
-            final IFocusFactory focusFactory = this.jei.getJeiHelpers().getFocusFactory();
-            final List<IFocus<?>> focuses = stacks.stream()
-                    .<IFocus<?>>map(stack -> focusFactory.createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack))
-                    .toList();
-            this.jei.getRecipesGui().show(focuses);
-        }
     }
 }

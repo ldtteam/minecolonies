@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui.containers;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
@@ -122,7 +122,6 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      */
     private ImageButton switchButton;
 
-    @Nullable public static Consumer<List<ItemStack>> JEI_REQUEST_HOOK;
     private final Map<IRequest<?>, List<ItemStack>> requestables = new HashMap<>();
 
     /**
@@ -180,7 +179,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
             requestables.clear();
             new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
         });
-        requestsButton.visible = JEI_REQUEST_HOOK != null;
+        requestsButton.visible = Compatibility.jeiProxy.isLoaded();
         this.addRenderableWidget(requestsButton);
     }
 
@@ -210,9 +209,9 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         minecraft.setScreen(this);
 
         final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
-        if (!stacks.isEmpty() && JEI_REQUEST_HOOK != null)
+        if (!stacks.isEmpty())
         {
-            JEI_REQUEST_HOOK.accept(stacks);
+            Compatibility.jeiProxy.showRecipes(stacks);
         }
     }
 
