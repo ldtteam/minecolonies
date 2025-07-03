@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui.containers;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
@@ -128,7 +129,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
             requestables.clear();
             new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
         });
-        requestsButton.visible = WindowCrafting.JEI_REQUEST_HOOK != null;
+        requestsButton.visible = Compatibility.jeiProxy.isLoaded();
         this.addRenderableWidget(requestsButton);
     }
 
@@ -169,9 +170,9 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
         minecraft.setScreen(this);
 
         final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
-        if (!stacks.isEmpty() && WindowCrafting.JEI_REQUEST_HOOK != null)
+        if (!stacks.isEmpty())
         {
-            WindowCrafting.JEI_REQUEST_HOOK.accept(stacks);
+            Compatibility.jeiProxy.showRecipes(stacks);
         }
     }
 
