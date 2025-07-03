@@ -107,6 +107,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     }
 
     /**
+     * Provides a hook for implementing building-specific stats logic related to the crafting request.
+     * No-op hook. Override this in your subclass to customize it.
+     */
+    protected void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
+    {
+
+    }
+
+    /**
      * Initialize the crafter job and add all his tasks.
      *
      * @param job the job he has.
@@ -447,7 +456,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     resetValues();
                     return START_WORKING;
                 }
-
+                recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 if (toolSlot != -1)

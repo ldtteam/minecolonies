@@ -54,6 +54,10 @@ public class BuildingModules
       "stats_module", BuildingStatisticsModule::new,
       () -> BuildingStatisticsModuleView::new);
 
+    public static final BuildingEntry.ModuleProducer<BarracksStatisticsModule, BuildingStatisticsModuleView> BARRACKS_STATS_MODULE = new BuildingEntry.ModuleProducer<>(
+      "barracks_stats_module", BarracksStatisticsModule::new,
+      () -> BuildingStatisticsModuleView::new);
+
     /**
      * Item Lists
      */

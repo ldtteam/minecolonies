@@ -18,8 +18,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -2898,6 +2900,40 @@ public class InventoryUtils
                 invWrapper.getStackInSlot(i).shrink(quantity);
                 return;
             }
+        }
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by 1.
+     * This is "bucket-aware", in that if a full bucket is used by the decrease, an empty
+     * bucket replaces it.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     */
+    public static void reduceBucketAwareStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack)
+    {
+        reduceBucketAwareStackInItemHandler(invWrapper, itemStack, 1);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     * This is "bucket-aware", in that if a full bucket is used by the decrease, an empty
+     * bucket replaces it.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     * @param quantity   the quantity.
+     */
+    public static void reduceBucketAwareStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
+    {
+        if  (attemptReduceStackInItemHandler(invWrapper, itemStack, quantity)) 
+        {
+            if (itemStack.getItem() instanceof BucketItem && itemStack.getItem() != Items.BUCKET) 
+            {
+                addItemStackToItemHandler(invWrapper, new ItemStack(Items.BUCKET, quantity));
+            }
+            return;
         }
     }
 

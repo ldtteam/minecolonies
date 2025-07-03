@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -18,11 +19,16 @@ import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +38,11 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Florist AI class.
@@ -256,12 +267,20 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return getState();
         }
 
+        List<String> flowerDrops = getFlowerDropAtPos(world, harvestPosition);
+
         if (!mineBlock(harvestPosition))
         {
             return getState();
         }
 
         worker.getCitizenExperienceHandler().addExperience(XP_PER_FLOWER);
+
+        for (final String drop : flowerDrops)
+        {
+            StatsUtil.trackStatByName(building, FLOWERS_PICKED, drop, 1);
+        }
+
         incrementActionsDone();
         worker.decreaseSaturationForContinuousAction();
         harvestPosition = null;
@@ -339,5 +358,28 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     public Class<BuildingFlorist> getExpectedBuildingClass()
     {
         return BuildingFlorist.class;
+    }
+
+    /**
+     * Retrieves the item registry name of the first flower drop at the specified position.
+     *
+     * @param world the world in which to check for flower drops.
+     * @param pos the position to check for flower drops.
+     * @return an Optional containing the registry name of the flower drop, or an empty Optional if no flower is found.
+     */
+    protected static List<String> getFlowerDropAtPos(Level world, BlockPos pos) 
+    {
+        List<String> flowerDrops = new ArrayList<>();
+        BlockState state = world.getBlockState(pos);
+        List<ItemStack> drops = Block.getDrops(state, (ServerLevel) world, pos, null);
+        for (ItemStack drop : drops) 
+        {
+            if (drop.is(ItemTags.FLOWERS)) 
+            { 
+                flowerDrops.add(drop.getItem().getDescriptionId());
+            }
+        }
+        
+        return flowerDrops;
     }
 }

@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The structureBuilder building.
@@ -53,7 +53,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     /**
      * Progress stage of the builder.
      */
-    private BuildingStructureHandler.Stage progressStage;
+    private BuildingProgressStage progressStage;
 
     /**
      * The progress counter of the builder.
@@ -204,7 +204,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
-            progressStage = BuildingStructureHandler.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+            progressStage = BuildingProgressStage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
         }
 
         if (compound.contains(TAG_FLUIDS_REMOVE))
@@ -350,7 +350,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @param blockPos the last blockPos.
      * @param stage    the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final BuildingProgressStage stage)
     {
         this.progressPos = blockPos;
         if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null || stage != progressStage)
@@ -371,7 +371,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgress()
+    public Tuple<BlockPos, BuildingProgressStage> getProgress()
     {
         if (this.progressPos == null)
         {

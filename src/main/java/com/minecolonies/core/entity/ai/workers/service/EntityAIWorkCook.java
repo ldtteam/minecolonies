@@ -238,7 +238,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
         {
             worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().incrementBy(FOOD_SERVED, qty, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
-            StatsUtil.trackStat(building, FOOD_SERVED_DETAIL, foodName, qty);
+            StatsUtil.trackStatByName(building, FOOD_SERVED_DETAIL, foodName, qty);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             worker.decreaseSaturationForAction();
         }

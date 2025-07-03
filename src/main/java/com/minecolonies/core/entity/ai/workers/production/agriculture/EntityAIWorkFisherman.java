@@ -10,7 +10,9 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.Pond.PondState;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFisherman;
+import com.minecolonies.core.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
@@ -48,6 +50,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.StatisticsConstants.FISH_CAUGHT;
+import static com.minecolonies.api.util.constant.TranslationConstants.SUBOPTIMAL_POND;
 import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.core.entity.other.NewBobberEntity.XP_PER_CATCH;
@@ -70,6 +73,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      * The render name to render rod.
      */
     public static final String RENDER_META_ROD = "rod";
+
+    /**
+     * How close to a suboptimal pond the fisherman has to be before he complains.
+     */
+    public static final int SUBOPTIMAL_POND_COMPLAINT_DISTANCE = 12;
 
     /**
      * The maximum number of ponds to remember at one time.
@@ -277,7 +285,25 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (!walkToWater())
         {
             return getState();
+        } 
+        else 
+        {
+            /*
+             * Upon arrival at the pond the fisherman checks if the pond is suboptimal, complains about it if so,
+             * and looks for different water.
+             */
+            if (lastPathResult != null && lastPathResult.pondState == PondState.SUBOPTIMAL) 
+            {
+                worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
+                    Component.translatable(SUBOPTIMAL_POND, lastPathResult.pond.getX(), lastPathResult.pond.getY(), lastPathResult.pond.getZ()),
+                    ChatPriority.IMPORTANT,
+                    Component.translatable(SUBOPTIMAL_POND),
+                    lastPathResult.pond));
+
+                return FISHERMAN_SEARCHING_WATER;
+            }
         }
+
         return FISHERMAN_CHECK_WATER;
     }
 

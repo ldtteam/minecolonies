@@ -15,6 +15,7 @@ import com.minecolonies.core.network.messages.server.colony.building.OpenCraftin
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -182,9 +183,9 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return id;
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/" + id + ".png");
     }
 
     @Override

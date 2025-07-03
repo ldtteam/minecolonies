@@ -79,7 +79,20 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     public boolean canBuild(@NotNull final ICitizenData citizen)
     {
-        return citizen.getJob() instanceof JobBuilder;
+        return citizen.getJob() instanceof JobBuilder && citizen.getJob().getWorkBuilding().getBuildingLevel() > 0;
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     * <p>
+     * @param position position of the builders own hut.
+     * @param level    level of the builders hut.
+     * @return true if so.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    public boolean canBuildIgnoringDistance(@NotNull ICitizenData citizen, final BlockPos position, final int level)
+    {
+        return level > 0;
     }
 
     @Override

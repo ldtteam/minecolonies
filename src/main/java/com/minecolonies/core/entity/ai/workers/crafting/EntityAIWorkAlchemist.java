@@ -15,8 +15,10 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
@@ -40,6 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -49,6 +52,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_BREWED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.INGREDIENTS_HARVESTED;
 
 /**
  * Crafts brewing recipes.
@@ -168,8 +173,14 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     return IDLE;
                 }
 
+                List<ItemStack> netherwartDrops = getNetherwartDrops(walkTo.above());
+                
                 if (mineBlock(walkTo.above()))
                 {
+                    for (ItemStack netherwartDrop : netherwartDrops)
+                    {
+                        StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, netherwartDrop.getDescriptionId(), netherwartDrop.getCount());
+                    }
                     walkTo = null;
                     worker.decreaseSaturationForContinuousAction();
                     return IDLE;
@@ -204,6 +215,15 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         }
 
         return HARVEST_NETHERWART;
+    }
+
+    private List<ItemStack> getNetherwartDrops(BlockPos blockToMine)
+    {
+        final List<ItemStack> localItems = new ArrayList<>();
+        final ItemStack tool = worker.getMainHandItem();
+        localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, ItemStackUtils.getFortuneOf(tool), tool, worker));
+
+        return localItems;
     }
 
     /**
@@ -266,7 +286,9 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             if (worker.getRandom().nextInt(40) <= 0)
             {
                 worker.decreaseSaturationForContinuousAction();
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.mistletoe, 1));
+                ItemStack mistletoe = new ItemStack(ModItems.mistletoe, 1);
+                StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, mistletoe.getDescriptionId(), mistletoe.getCount());
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), mistletoe);
                 walkTo = null;
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
                 return INVENTORY_FULL;
@@ -809,9 +831,14 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      */
     private void extractFromBrewingStandSlot(final BrewingStandBlockEntity brewingStand, final int slot)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(new InvWrapper(brewingStand), slot, worker.getInventoryCitizen());
+        InvWrapper standWrapper = new InvWrapper(brewingStand);
+        String extractName = standWrapper.getStackInSlot(slot).getDescriptionId();
+        int extractQty = standWrapper.getStackInSlot(slot).getCount();
+        
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(standWrapper, slot, worker.getInventoryCitizen());
         if (slot <= 3 && slot >= 0)
         {
+            StatsUtil.trackStatByName(building, ITEMS_BREWED, extractName, extractQty);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
     }

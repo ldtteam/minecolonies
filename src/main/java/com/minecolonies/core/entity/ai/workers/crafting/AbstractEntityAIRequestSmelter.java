@@ -611,11 +611,13 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private void extractFromFurnaceSlot(final FurnaceBlockEntity furnace, final int slot)
     {
+        ItemStack stackForStats = furnace.getItem(slot).copy();
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
           new InvWrapper(furnace), slot,
           worker.getInventoryCitizen());
         if (slot == RESULT_SLOT)
         {
+            recordSmeltingBuildingStats(stackForStats);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         }
     }
@@ -874,5 +876,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         return checkIfAbleToSmelt();
+    }
+
+    /**
+     * Provides a hook for implementing building-specific stats logic related to the smelting request.
+     * No-op hook. Override this in your subclass to customize it.
+     */
+    protected void recordSmeltingBuildingStats(ItemStack cookedStack)
+    {
+
     }
 }

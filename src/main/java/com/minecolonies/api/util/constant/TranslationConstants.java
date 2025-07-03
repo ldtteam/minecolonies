@@ -319,6 +319,8 @@ public final class TranslationConstants
     @NonNls
     public static final String WATER_TOO_FAR                                                        = "entity.fisherman.messagewatertoofar";
     @NonNls
+    public static final String SUBOPTIMAL_POND                                                      = "entity.fisherman.messagesuboptimalpond";
+    @NonNls
     public static final String NO_HIVES                                                             = "entity.beekeeper.messagenohives";
     @NonNls
     public static final String NO_BEES                                                              = "entity.beekeeper.messagenobees";
@@ -520,6 +522,8 @@ public final class TranslationConstants
     public static final String BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT        = "com.minecolonies.coremod.gui.field.to_right";
     @NonNls
     public static final String BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST         = "com.minecolonies.coremod.gui.field.near";
+    @NonNls
+    public static final String FIELD_STATUS                                       = "com.minecolonies.coremod.gui.field.status";
     @NonNls
     public static final String LABEL_X_OF_Z                                       = "com.minecolonies.coremod.gui.xofz";
     @NonNls
@@ -774,8 +778,16 @@ public final class TranslationConstants
     public static final String MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT  = "tile.blockhut.messagenotownhall";
     @NonNls
     public static final String MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY = "tile.blockhut.messagetoofarfromtownhall";
-
+    @NonNls
+    public static final String MESSAGE_WARNING_NO_WORKER_ASSIGNED = "tile.blockhut.noworkerassigned";
+    @NonNls
+    public static final String MESSAGE_WARNING_ALREADY_CLAIMED = "tile.blockhut.alreadyclaimed";
+    @NonNls
+    public static final String MESSAGE_WARNING_NOTFORBUILDER = "tile.blockhut.notforbuilder";
+    @NonNls
+    public static final String MESSAGE_WARNING_CANNOTBUILD = "tile.blockhut.cannotbuild";
     //</editor-fold>
+
 
     //<editor-fold desc="Other keys">
 

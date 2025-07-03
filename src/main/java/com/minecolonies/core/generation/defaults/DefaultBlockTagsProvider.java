@@ -170,6 +170,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.MANGROVE_LOG)
                 .add(Blocks.MANGROVE_ROOTS);
 
+        tag(ModTags.extraTree)
+                .addOptionalTag(new ResourceLocation("productivebees", "nests/wood_nests"));
+
         // sadly forge doesn't provide the block form of this tag, despite providing an item tag
         tag(ModTags.mushroomBlocks)
                 .add(Blocks.BROWN_MUSHROOM)
@@ -187,7 +190,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addTag(BlockTags.LOGS)
                 .addTag(ModTags.mangroveTree)
                 .add(Blocks.MUSHROOM_STEM)
-                .addOptionalTag(new ResourceLocation("productivebees", "nests/wood_nests"));
+                .addTag(ModTags.extraTree);
 
         tag(ModTags.colonyProtectionException)
                 .addOptionalTag(new ResourceLocation("waystones", "waystones"));

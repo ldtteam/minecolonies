@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ToolModuleWindow;
 import net.minecraft.world.item.Item;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -50,9 +51,9 @@ public class ToolModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "scepter";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/scepter.png");
     }
 
     /**

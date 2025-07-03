@@ -44,7 +44,6 @@ import java.util.Map;
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FULFILLED;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.SATURATION_ICON_HEIGHT_WIDTH;
 import static com.minecolonies.core.client.gui.questlog.Constants.HIGHLIGHT_QUEST_LOG_TRACKER_DURATION;
 import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
@@ -412,8 +411,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             if (buildingView.getRange() != 0)
             {
                 final int range = buildingView.getRange();
-                final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range/2, 0, -range/2));
-                final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range/2, 0, range/2));
+                final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range, 0, -range));
+                final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range, 0, range));
 
                 box = new Box();
                 box.setLineWidth(2);
@@ -434,8 +433,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         if (buildingTuple.getB() != null)
         {
             final int range = buildingView.getRange();
-            final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range / 2, 0, -range / 2));
-            final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range / 2, 0, range / 2));
+            final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range, 0, -range));
+            final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range, 0, range));
             buildingTuple.getB().setPosition(UIPos1.getX(), UIPos1.getZ());
             buildingTuple.getB().setSize(UIPos2.getX() - UIPos1.getX(), UIPos2.getZ() - UIPos1.getZ());
         }

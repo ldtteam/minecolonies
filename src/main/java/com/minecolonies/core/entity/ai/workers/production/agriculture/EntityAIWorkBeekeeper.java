@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBeekeeper;
@@ -43,7 +44,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOW
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
+import static com.minecolonies.api.util.constant.StatisticsConstants.BREEDING_ATTEMPTS;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_COLLECTED;
 /**
  * Beekeeper AI class.
  */
@@ -362,6 +364,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
             for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
             {
+                StatsUtil.trackStatByStack(building, ITEMS_COLLECTED, stackItem, stackItem.getCount());
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
             }
             world.setBlockAndUpdate(hive, world.getBlockState(hive).setValue(BlockStateProperties.LEVEL_HONEY, 0));
@@ -375,7 +378,9 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             {
                 itemStack.shrink(1);
             }
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new ItemStack(Items.HONEY_BOTTLE, i), worker.getItemHandlerCitizen());
+            ItemStack honeyStack = new ItemStack(Items.HONEY_BOTTLE, i);
+            StatsUtil.trackStatByStack(building, ITEMS_COLLECTED, honeyStack, honeyStack.getCount());
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(honeyStack, worker.getItemHandlerCitizen());
             world.setBlockAndUpdate(hive, world.getBlockState(hive).setValue(BlockStateProperties.LEVEL_HONEY, 0));
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
             lastHarvestedBottle = true;
@@ -480,6 +485,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), worker.getMainHandItem());
             }
         }
+        StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
     }
 
     /**

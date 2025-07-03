@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -14,6 +13,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -183,15 +183,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     /**
-     * Prepares the farmer for farming. Also requests the tools and checks if the farmer has sufficient fields.
+     * Prepares the farmer for farming. Also requests the tools, the compost (if needed) and checks if the farmer has sufficient fields.
      *
      * @return the next IAIState
      */
     @NotNull
     private IAIState prepareForFarming()
     {
-        worker.getCitizenData().setIdleAtJob(true);
-
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
@@ -224,7 +222,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        if (module.hasNoExtensions())
+        if (checkForFarmField(module))
         {
             if (worker.getCitizenData() != null)
             {
@@ -236,7 +234,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final IBuildingExtension fieldToWork = module.getExtensionToWorkOn();
         if (fieldToWork instanceof FarmField farmField)
         {
-            worker.getCitizenData().setIdleAtJob(false);
+            if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()))
+            {
+                return PREPARING;
+            }
             worker.getCitizenData().setVisibleStatus(FARMING_ICON);
 
             if (farmField.getFieldStage() == FarmField.Stage.PLANTED && checkIfShouldExecute(farmField, pos -> this.findHarvestableSurface(pos) != null))
@@ -254,7 +255,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             farmField.nextState();
             module.resetCurrentExtension();
         }
+        else if (fieldToWork != null)
+        {
+            Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
+        }
         return PREPARING;
+    }
+
+    /**
+     * Ensures that we have at least one field assigned.
+     * Also sets the worker to be idle at the job if we have no assigned field.
+     *
+     * @param module the extensions assigned to the farmer's hut
+     * @return false if we have at least one assigned farm field
+     */
+    public boolean checkForFarmField(@NotNull BuildingExtensionsModule module)
+    {
+        final boolean noFields = module.hasNoExtensions();
+        worker.getCitizenData().setIdleAtJob(noFields);
+        return noFields;
     }
 
     /**
@@ -487,10 +506,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
         final IBuildingExtension field = module.getCurrentExtension();
-        if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()) || field == null)
-        {
-            return PREPARING;
-        }
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
         if (field instanceof FarmField farmField)
@@ -542,6 +557,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 shouldDumpInventory = true;
                 farmField.nextState();
+                module.markDirty();
                 module.resetCurrentExtension();
                 building.setPrevPos(null);
                 return IDLE;

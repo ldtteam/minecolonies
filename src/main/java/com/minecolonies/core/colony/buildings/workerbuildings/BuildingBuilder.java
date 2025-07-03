@@ -4,12 +4,15 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
@@ -26,12 +29,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.NetworkEvent;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * The builders building.
@@ -218,17 +224,26 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      *
      * @param orderId the id of the work order to select.
      */
-    public void setWorkOrder(int orderId)
+    public void setWorkOrder(int orderId, final NetworkEvent.Context ctxIn)
     {
+
         final ICitizenData citizen = getModule(BuildingModules.BUILDER_WORK).getFirstCitizen();
         if (citizen == null)
         {
+            MessageUtils.format(MESSAGE_WARNING_NO_WORKER_ASSIGNED).sendTo(ctxIn.getSender());
             return;
         }
 
         IServerWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (!(wo instanceof IBuilderWorkOrder) || (!wo.getClaimedBy().equals(getPosition())))
+        if (!(wo instanceof IBuilderWorkOrder))
         {
+            MessageUtils.format(MESSAGE_WARNING_NOTFORBUILDER).sendTo(ctxIn.getSender());
+            return;
+        }
+
+        if (!wo.getClaimedBy().equals(BlockPos.ZERO))
+        {
+            MessageUtils.format(MESSAGE_WARNING_ALREADY_CLAIMED).sendTo(ctxIn.getSender());
             return;
         }
 
@@ -239,13 +254,19 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (((IBuilderWorkOrder) wo).canBuild(citizen))
+        final IBuilding building = citizen.getWorkBuilding();
+        if (((IBuilderWorkOrder) wo).canBuildIgnoringDistance(citizen, building.getPosition(), building.getBuildingLevel()))
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(wo);
             wo.setClaimedBy(getID());
             getColony().getWorkManager().setDirty(true);
             markDirty();
         }
+        else 
+        {
+            MessageUtils.format(MESSAGE_WARNING_CANNOTBUILD).sendTo(ctxIn.getSender());
+        }
+        
     }
 
     @Override

@@ -4,6 +4,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
+import it.unimi.dsi.fastutil.ints.Int2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
+
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -78,4 +82,40 @@ public interface IStatisticsManager
      */
     @NotNull
     Set<String> getStatTypes();
+
+    /**
+     * Getter for all stat entries.
+     * @return the set of stat entries.
+     */
+    @NotNull
+    Set<Map.Entry<String, Int2IntLinkedOpenHashMap>> getStatEntries();
+
+    /**
+     * Clear all the statistics, this will remove all the entries from the map
+     */
+    @NotNull
+    void clear();
+
+    /**
+     * Aggregate the statistics of the source statistics manager into the target statistics manager.
+     * The target manager will be modified in place, the source manager will not be modified.
+     * @param target the manager to add the statistics to.
+     * @param source the manager to take the statistics from.
+     */
+    public static void aggregateStats(IStatisticsManager target, IStatisticsManager source)
+    {
+        for (Map.Entry<String, Int2IntLinkedOpenHashMap> entry : source.getStatEntries())
+        {
+            String statKey = entry.getKey();
+            Int2IntLinkedOpenHashMap inputMap = entry.getValue();
+
+            // Merge inputMap into targetMap
+            for (Entry dayEntry : inputMap.int2IntEntrySet())
+            {
+                int day = dayEntry.getIntKey();
+                int count = dayEntry.getIntValue();
+                target.incrementBy(statKey, count, day);
+            }
+        }
+    }
 }

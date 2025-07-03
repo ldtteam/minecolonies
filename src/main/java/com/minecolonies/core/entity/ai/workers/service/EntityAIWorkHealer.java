@@ -546,7 +546,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         final Disease disease = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
         if (disease != null)
         {
-            StatsUtil.trackStat(building, DISEASES_TREATED, disease.name(), 1);
+            StatsUtil.trackStatByName(building, DISEASES_TREATED, disease.name(), 1);
             worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(NUM_DISEASES_TREATED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
         }
     }

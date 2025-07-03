@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 /**
  * A work order that the build can take to build mine.
  */
@@ -90,6 +90,21 @@ public class WorkOrderMiner extends AbstractWorkOrder
     public boolean canBuild(@NotNull ICitizenData citizen)
     {
         return citizen.getJob() instanceof JobMiner && this.minerBuilding.equals(citizen.getWorkBuilding().getID());
+    }
+
+    /**
+     * Check if a citizen may accept this workOrder while ignoring the distance to the build location.
+     * <p>
+     * @param citizen     the citizen who is trying to build.
+     * @param position    the position of the citizen's work hut.
+     * @param level       the level of that work hut.
+     * @return true if the citizen may accept this work order.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    @Override
+    public boolean canBuildIgnoringDistance(@NotNull ICitizenData citizen,final BlockPos position, final int level)
+    {
+        return canBuild(citizen);
     }
 
     @Override

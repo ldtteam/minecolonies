@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.pathresults;
 
+import com.minecolonies.api.util.Pond.PondState;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobFindWater;
 import net.minecraft.core.BlockPos;
 
@@ -17,6 +18,11 @@ public class WaterPathResult extends PathResult<PathJobFindWater>
      * The position of the pond.
      */
     public BlockPos pond;
+
+    /*
+     * Whether this pond is suboptimal or not
+     */
+    public PondState pondState;
 
     /**
      * If the pond is empty.

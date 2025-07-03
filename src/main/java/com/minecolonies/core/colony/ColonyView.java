@@ -377,7 +377,7 @@ public final class ColonyView implements IColonyView
             {
                 for (final ColonyPlayer owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && col.getID() != colony.getID())
+                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && ((col.getID() != colony.getID()) || (col.getDimension() != colony.getDimension())))
                     {
                         allies.add(col);
                     }

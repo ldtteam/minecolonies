@@ -10,15 +10,19 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -35,6 +39,8 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.fml.common.Mod;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -742,21 +748,21 @@ public class Tree
     /**
      * Check if this is a log in the same tree type.
      *
-     * @param existingBlock the current block in the tree.
-     * @param newBlock      block to check.
+     * @param checkBlock the current block in the tree being evaluated.
+     * @param stumpBlock the block to check against.
      * @return true if this is the same type of tree; false if it's something different.
      */
     private boolean isBlockPartOfSameTree(
-      @NotNull final BlockState existingBlock,
-      @NotNull final BlockState newBlock)
+      @NotNull final BlockState checkBlock,
+      @NotNull final BlockState stumpBlock)
     {
-        if (existingBlock.is(ModTags.mangroveTree))
+        if (checkBlock.is(ModTags.mangroveTree))
         {
-            return newBlock.is(ModTags.mangroveTree);
+            return stumpBlock.is(ModTags.mangroveTree);
         }
 
-        return existingBlock.getBlock().equals(newBlock.getBlock());
-    }
+        return checkBlock.getBlock().equals(stumpBlock.getBlock()) || checkBlock.is(ModTags.extraTree);
+	}
 
     /**
      * Adds a leaf and searches for further leaves.

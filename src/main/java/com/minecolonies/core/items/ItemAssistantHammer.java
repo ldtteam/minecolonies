@@ -21,7 +21,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.interactionhandling.SimpleNotificationInteraction;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.network.messages.server.PlayerAssistantBuildRequestMessage;
 import com.minecolonies.core.placementhandlers.SolidPlaceholderPlacementHandler;
 import net.minecraft.ChatFormatting;
@@ -136,8 +136,8 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
     {
         if (workOrder.isClaimed())
         {
-            final BuildingStructureHandler.Stage stage = BuildingStructureHandler.Stage.values()[workOrder.getStage()];
-            if (stage == BuildingStructureHandler.Stage.CLEAR || stage == BuildingStructureHandler.Stage.CLEAR_NON_SOLIDS)
+            final BuildingProgressStage stage = workOrder.getStage();
+            if (stage == BuildingProgressStage.CLEAR || stage == BuildingProgressStage.CLEAR_NON_SOLIDS)
             {
                 player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notcleared"), true);
                 return;
