@@ -1518,6 +1518,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public IColonyConnectionManager getConnectionManager()
+    {
+        return null;
+    }
+
+    @Override
     public boolean isRaiding()
     {
         return this.isUnderRaid;

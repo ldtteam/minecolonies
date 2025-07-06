@@ -5,17 +5,13 @@ import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -24,8 +20,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -35,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_SIGN_COLONY_SET;
 import static com.minecolonies.core.items.ItemColonySign.TAG_COLONY;
 
 /**
@@ -43,6 +38,11 @@ import static com.minecolonies.core.items.ItemColonySign.TAG_COLONY;
  */
 public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> implements ITickableBlockMinecolonies
 {
+    /**
+     * Property if it's a sign of two connected colonies or not.
+     */
+    public static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
+
     /**
      * The hardness this block has.
      */
@@ -69,6 +69,7 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     public BlockColonySign()
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        this.registerDefaultState(this.defaultBlockState().setValue(CONNECTED, false));
     }
 
     @Override
@@ -87,9 +88,6 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     @Override
     public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
-        /*
-            Only work on server side
-        */
         if (worldIn.isClientSide)
         {
             super.setPlacedBy(worldIn, pos, state, placer, stack);
@@ -106,9 +104,6 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, worldIn.dimension());
         tileEntityColonySign.setColonyAndAnchor(colony, stackCompound.contains(TAG_POS) ? BlockPosUtil.read(stackCompound, TAG_POS) : null);
         super.setPlacedBy(worldIn, pos, state, placer, stack);
-        // todo register in colony as connection point.
-
-        //todo colony gets all the signs
     }
 
     @Override
@@ -120,7 +115,7 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
-        builder.add(HorizontalDirectionalBlock.FACING);
+        builder.add(HorizontalDirectionalBlock.FACING, CONNECTED);
     }
 
     @Nullable

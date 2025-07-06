@@ -1,6 +1,9 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -26,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -56,51 +60,154 @@ public class ItemColonySign extends BlockItem
 
         final CompoundTag compound = sign.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        final BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
         if (ctx.getPlayer().isShiftKeyDown())
         {
-            if (entity instanceof TileEntityColonyBuilding buildingEntity)
+            if (state.getBlock() == ModBlocks.blockHutGateHouse && entity instanceof TileEntityColonyBuilding buildingEntity)
             {
-                //todo only on gatehouse!
-                compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
                 if (!ctx.getLevel().isClientSide)
                 {
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                    if (buildingEntity.getColony() == null)
+                    {
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    // Attempt Connect two colonies.
+                    if (compound.contains(TAG_COLONY) && compound.getInt(TAG_COLONY) != buildingEntity.getColonyId())
+                    {
+                        final IColony sourceColony = IColonyManager.getInstance().getColonyByDimension(compound.getInt(TAG_COLONY), ctx.getLevel().dimension());
+                        if (sourceColony == null)
+                        {
+                            MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        if (!sourceColony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
+                        {
+                            MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        sourceColony.getConnectionManager().attemptEstablishConnection(ctx.getClickedPos(), buildingEntity.getColony());
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (buildingEntity.getColony().getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
+                    {
+                        compound.putInt(TAG_COLONY, buildingEntity.getColonyId());
+                        BlockPosUtil.write(compound, TAG_POS, ctx.getClickedPos());
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                    }
+                    else
+                    {
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
+                    }
                 }
                 return InteractionResult.SUCCESS;
             }
             else if (entity instanceof TileEntityColonySign signEntity)
             {
-                compound.putInt(TAG_COLONY, signEntity.getColonyId());
-                BlockPosUtil.write(compound, TAG_POS, ctx.getClickedPos());
                 if (!ctx.getLevel().isClientSide)
                 {
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, signEntity.getColonyName()).sendTo(ctx.getPlayer());
+                    final IColony colony = IColonyManager.getInstance().getColonyByDimension(signEntity.getColonyId(), ctx.getLevel().dimension());
+                    if (colony == null)
+                    {
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    // Attempt connect two colonies.
+                    if (compound.contains(TAG_COLONY) && compound.getInt(TAG_COLONY) != signEntity.getColonyId())
+                    {
+                        final IColony sourceColony = IColonyManager.getInstance().getColonyByDimension(compound.getInt(TAG_COLONY), ctx.getLevel().dimension());
+                        if (sourceColony == null)
+                        {
+                            MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        if (!sourceColony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
+                        {
+                            MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, sourceColony.getName()).sendTo(ctx.getPlayer());
+                            return InteractionResult.SUCCESS;
+                        }
+
+                        sourceColony.getConnectionManager().attemptEstablishConnection(ctx.getClickedPos(), colony);
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (colony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
+                    {
+                        compound.putInt(TAG_COLONY, signEntity.getColonyId());
+                        BlockPosUtil.write(compound, TAG_POS, ctx.getClickedPos());
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_SET, colony.getName()).sendTo(ctx.getPlayer());
+                    }
+                    else
+                    {
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, colony.getName()).sendTo(ctx.getPlayer());
+                    }
                 }
                 return InteractionResult.SUCCESS;
             }
         }
+
+        //todo if use on other colony gatehouse or sign, try connect the last sign to the clicked position (gatehouse or sign) and then establish connection with all of them.
+        // other sign needs to be unset obviously
+
+        // todo Show connected colonies in module and in townhall neighbor colonies.
+        // Make ally request in townhall, or declare war (both need acceptance for now).
+        // You can travel to allies at gate house in module ui
+
         return super.useOn(ctx);
     }
 
     @Override
     protected boolean canPlace(final BlockPlaceContext ctx, final BlockState state)
     {
+        if (!super.canPlace(ctx, state))
+        {
+            return false;
+        }
         if (!ctx.getItemInHand().getOrCreateTag().contains(TAG_COLONY))
         {
             if (ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_NEED_COLONY);
+                MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(ctx.getPlayer());
             }
             return false;
         }
-        return super.canPlace(ctx, state);
+
+        if (!ctx.getLevel().isClientSide)
+        {
+            final int colonyId = ctx.getItemInHand().getTag().getInt(TAG_COLONY);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, ctx.getLevel().dimension());
+            if (colony == null)
+            {
+                MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(ctx.getPlayer());
+                return false;
+            }
+            if (!colony.getConnectionManager().addNewConnectionNode(ctx.getClickedPos()))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI);
-        guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+        if (stack.getOrCreateTag().contains(TAG_COLONY))
+        {
+            final MutableComponent colonyHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP_COLONY, stack.getTag().getInt(TAG_COLONY));
+            colonyHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_BLUE));
+            tooltip.add(colonyHint);
+        }
+
+        final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP);
+        guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
         super.appendHoverText(stack, worldIn, tooltip, flagIn);

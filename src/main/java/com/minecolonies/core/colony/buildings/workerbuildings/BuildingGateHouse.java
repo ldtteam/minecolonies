@@ -2,9 +2,16 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.buildings.modules.GuardBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 /**
  * Gate house building.
@@ -18,8 +25,9 @@ public class BuildingGateHouse extends AbstractBuildingGuards
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
     private static final String SCHEMATIC_NAME        = "gatehouse";
-    private static final int    MAX_LEVEL             = 5;
+    private static final int    MAX_LEVEL             = 3;
     private static final int    BONUS_HP_SINGLE_GUARD = 20;
+    //todo adjust guard to behave like 1/3/5 guard depending on level.
 
     /**
      * The abstract constructor of the building.
@@ -45,23 +53,38 @@ public class BuildingGateHouse extends AbstractBuildingGuards
         return MAX_LEVEL;
     }
 
+    //todo  make visitors arrive here if it exists.
+    //todo change tag to "TAG_KNIGHT and TAG_ARCHER"
     @Override
-    public int getClaimRadius(final int newLevel)
+    public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {
-        switch (newLevel)
+        if (getLocationsFromTag(TAG_WORK).size() < 2)
         {
-            case 1:
-                return 2;
-            case 2:
-            case 3:
-                return 3;
-            case 4:
-                return 4;
-            case 5:
-                return 5;
-            default:
-                return 0;
+            Log.getLogger().error("GateHouse at " + getID().toShortString() + " missing 'work' tag for guards");
+            return getID();
         }
+
+        final GuardBuildingModule knightWorkModule = this.getModule(KNIGHT_GATE_WORK);
+        final GuardBuildingModule archerWorkModule = this.getModule(RANGER_GATE_WORK);
+
+        int firstIndex = knightWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
+        if (firstIndex != -1)
+        {
+            return getLocationsFromTag(TAG_WORK).get(firstIndex);
+        }
+        int secondIndex = archerWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
+        if (secondIndex != -1)
+        {
+            return getLocationsFromTag(TAG_WORK).get(secondIndex + firstIndex == -1 ? 0 : firstIndex);
+        }
+        return getID();
+    }
+
+    // Always guard only mode.
+    @Override
+    public String getTask()
+    {
+        return GuardTaskSetting.GUARD;
     }
 
     @Override
@@ -88,6 +111,20 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     public int getBonusHealth()
     {
         return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();
+    }
+
+    @Override
+    public void onPlacement()
+    {
+        super.onPlacement();
+        colony.getConnectionManager().addNewGateHouse(getPosition());
+    }
+
+    @Override
+    public void destroy()
+    {
+        colony.getConnectionManager().removeGateHouse(getPosition());
+        super.destroy();
     }
 
     /**

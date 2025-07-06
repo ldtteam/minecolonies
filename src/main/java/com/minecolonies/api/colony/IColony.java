@@ -282,6 +282,12 @@ public interface IColony
     ITravellingManager getTravelingManager();
 
     /**
+     * Get the connection manager of the colony.
+     * @return the connection manager.
+     */
+    IColonyConnectionManager getConnectionManager();
+
+    /**
      * Add a visiting player.
      *
      * @param player the player.

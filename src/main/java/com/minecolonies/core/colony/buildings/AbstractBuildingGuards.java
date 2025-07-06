@@ -524,7 +524,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public BlockPos getGuardPos()
+    public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {
         return guardPos;
     }

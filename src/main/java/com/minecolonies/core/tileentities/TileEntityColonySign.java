@@ -1,5 +1,6 @@
 package com.minecolonies.core.tileentities;
 
+import com.minecolonies.api.colony.ColonyConnectionNode;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.ITickable;
@@ -7,7 +8,6 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -29,6 +29,11 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     private int colonyId = -1;
 
     /**
+     * Target colony id we're trying to connect to.
+     */
+    private int targetColonyId = -1;
+
+    /**
      * Anchor position to which its supposed to point.
      */
     private BlockPos anchor = null;
@@ -39,6 +44,11 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     private String colonyNameCache = "";
 
     /**
+     * Colony name cache.
+     */
+    private String targetColonyNameCache = "";
+
+    /**
      * Rotation this is pointing to.
      */
     private float rotation;
@@ -47,6 +57,11 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
      * Distance to colony
      */
     private int distance;
+
+    /**
+     * Distance to target colony.
+     */
+    private int targetColonyDistance;
 
     /**
      * Tick offset.
@@ -76,6 +91,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         this.colonyNameCache = compound.getString(TAG_NAME);
         this.anchor = BlockPosUtil.read(compound, TAG_POS);
         this.rotation = compound.getFloat(TAG_ROTATION);
+        this.targetColonyId = compound.getInt(TAG_TARGET_COLONY_ID);
+        this.targetColonyNameCache = compound.getString(TAG_TARGET_COLONY_NAME);
+        this.distance = compound.getInt(TAG_DISTANCE);
+        this.targetColonyDistance = compound.getInt(TAG_TARGET_DISTANCE);
     }
 
     @Override
@@ -86,6 +105,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         compound.putString(TAG_NAME, this.colonyNameCache);
         BlockPosUtil.write(compound, TAG_POS, anchor);
         compound.putFloat(TAG_ROTATION, this.rotation);
+        compound.putInt(TAG_TARGET_COLONY_ID, this.targetColonyId);
+        compound.putString(TAG_TARGET_COLONY_NAME, this.targetColonyNameCache);
+        compound.putInt(TAG_DISTANCE, this.distance);
+        compound.putInt(TAG_TARGET_DISTANCE, this.targetColonyDistance);
     }
 
     @Nullable
@@ -112,12 +135,12 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     @Override
     public void setRemoved()
     {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, level.dimension());
+        if (colony != null)
+        {
+            colony.getConnectionManager().removeConnectionNode(worldPosition);
+        }
         super.setRemoved();
-        //todo update colony
-        BannerRenderer
-        // Colony keeps a linked list structure of signs, each sign can only be placed if its within x blocks of the previous sign, when anchored, easy to calc, otherwise need to ask colony for closest sign.
-        // then, we need some condition to do the final gatehouse connection, maybe right clicking it on the final gatehouse.
-        //todo need a way for the sign to ask the colony about having established the connection to enable the second sign piece.
     }
 
     /**
@@ -132,6 +155,20 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
             if (colony != null)
             {
                 colonyNameCache = colony.getName();
+                final ColonyConnectionNode node = colony.getConnectionManager().getNode(getBlockPos());
+                if (node != null)
+                {
+                    this.targetColonyId = node.getTargetColonyId();
+                    if (this.targetColonyId != -1)
+                    {
+                        final IColony targetColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, level.dimension());
+                        if (targetColony != null)
+                        {
+                            this.targetColonyDistance = (int) BlockPosUtil.dist(targetColony.getCenter(), getBlockPos());
+                            targetColonyNameCache = targetColony.getName();
+                        }
+                    }
+                }
                 setChanged();
             }
         }
@@ -146,7 +183,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     {
         this.colonyId = colony.getID();
         this.anchor = anchor == null ? colony.getCenter() : anchor;
-        this.distance = (int) colony.getCenter().distSqr(getBlockPos());
+        this.distance = (int) BlockPosUtil.dist(colony.getCenter(), getBlockPos());
 
         this.colonyNameCache = colony.getName();
 
@@ -195,5 +232,33 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     public int getColonyId()
     {
         return colonyId;
+    }
+
+    /**
+     * Get target colony id from sign, -1 if not set.
+     * @return the target colony id.
+     */
+    public int getTargetColonyId()
+    {
+        return targetColonyId;
+    }
+
+    /**
+     * Obtain the target colony name.
+     * Cached for efficiency.
+     * @return string name.
+     */
+    public String getTargetColonyName()
+    {
+        return targetColonyNameCache;
+    }
+
+    /**
+     * Get target colony distance.
+     * @return the distance in blocks.
+     */
+    public int getTargetColonyDistance()
+    {
+        return targetColonyDistance;
     }
 }
