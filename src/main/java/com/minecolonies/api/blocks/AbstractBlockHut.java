@@ -50,11 +50,8 @@ import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataPro
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Abstract class for all minecolonies blocks.
- * <p>
- * The method {@link AbstractBlockHut#getName()} is abstract.
- * <p>
- * All AbstractBlockHut[something] should extend this class.
+ * Base class for all Minecolonies Hut Blocks. Hut Blocks are the base blocks for Minecolonies buildings.
+ * Extending this class enables all the blueprint functionalities.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractColonyBlock<B> implements

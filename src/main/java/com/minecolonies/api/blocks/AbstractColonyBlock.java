@@ -47,11 +47,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Abstract class for all minecolonies colony blocks.
- * <p>
- * The method {@link AbstractColonyBlock#getName()} is abstract.
- * <p>
- * All AbstractBlockHut[something] should extend this class.
+ * Base class for all blocks that have a functionality within a colony. This applies to both buildings as well as functional blocks like postbox/stash.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, ITickableBlockMinecolonies
