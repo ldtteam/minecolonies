@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 /**
@@ -28,8 +28,6 @@ public class BuildingGateHouse extends AbstractBuildingGuards
      */
     private static final String SCHEMATIC_NAME        = "gatehouse";
     private static final int    MAX_LEVEL             = 3;
-    private static final int    BONUS_HP_SINGLE_GUARD = 20;
-    //todo adjust guard to behave like 1/3/5 guard depending on level.
 
     /**
      * The abstract constructor of the building.
@@ -92,11 +90,8 @@ public class BuildingGateHouse extends AbstractBuildingGuards
         return getBuildingLevelEquivalent() * BONUS_HEALTH_PER_LEVEL;
     }
 
-    /**
-     * Get the equivalent building level (1,3,5) for equipment, etc.
-     * @return the adjusted level.
-     */
-    private int getBuildingLevelEquivalent()
+    @Override
+    public int getBuildingLevelEquivalent()
     {
         return switch (getBuildingLevel())
         {
@@ -114,11 +109,10 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     }
 
     //todo  make visitors arrive here if it exists.
-    //todo change tag to "TAG_KNIGHT and TAG_ARCHER"
     @Override
     public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {
-        if (getLocationsFromTag(TAG_WORK).size() < 2)
+        if (getLocationsFromTag(TAG_KNIGHT).size() < 2 || getLocationsFromTag(TAG_ARCHER).size() < 2)
         {
             Log.getLogger().error("GateHouse at " + getID().toShortString() + " missing 'work' tag for guards");
             return getID();
@@ -128,14 +122,14 @@ public class BuildingGateHouse extends AbstractBuildingGuards
         final GuardBuildingModule archerWorkModule = this.getModule(RANGER_GATE_WORK);
 
         int firstIndex = knightWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
-        if (firstIndex != -1)
+        if (firstIndex >= 0)
         {
-            return getLocationsFromTag(TAG_WORK).get(firstIndex);
+            return getLocationsFromTag(TAG_KNIGHT).get(firstIndex);
         }
         int secondIndex = archerWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
-        if (secondIndex != -1)
+        if (secondIndex >= 0)
         {
-            return getLocationsFromTag(TAG_WORK).get(secondIndex + firstIndex == -1 ? 0 : firstIndex);
+            return getLocationsFromTag(TAG_ARCHER).get(secondIndex);
         }
         return getID();
     }

@@ -32,6 +32,8 @@ public final class NbtTagConstants
     public static final String TAG_LAST_ONLINE         = "lastOnlineTime";
     public static final String TAG_SOUND_PROFILE       = "soundProfile";
     public static final String TAG_CONNECTION_MANAGER  = "connectionmanager";
+    public static final String TAG_KNIGHT              = "knight";
+    public static final String TAG_ARCHER              = "archer";
 
     /**
      * @deprecated Superseeded by request-based pickup system.

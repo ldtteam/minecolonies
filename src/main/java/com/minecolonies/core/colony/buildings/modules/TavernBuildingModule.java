@@ -3,8 +3,10 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
+import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -188,7 +190,17 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.getCitizenSkillHandler().init(cost.recruitLevel());
         newCitizen.setRecruitCosts(cost.itemStack());
 
-        BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
+        BlockPos spawnPos;
+        final BlockPos gatePos = building.getColony().getBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
+        if (gatePos != null)
+        {
+            spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+        }
+        else
+        {
+            spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
+        }
+
         if (spawnPos == null)
         {
             spawnPos = building.getPosition();
