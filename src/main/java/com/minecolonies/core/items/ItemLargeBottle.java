@@ -43,7 +43,7 @@ public class ItemLargeBottle extends Item
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-            if(!player.getInventory().add(ModItems.large_milk_bottle.getDefaultInstance()))
+            if(!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
             }
