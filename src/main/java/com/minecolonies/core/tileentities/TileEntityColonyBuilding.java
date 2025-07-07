@@ -5,6 +5,7 @@ import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.RotationMirror;
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -383,35 +384,38 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             path = compound.getString(TAG_PATH);
         }
 
-        if (packName == null || packName.isEmpty())
+        if (getBlockState().getBlock() instanceof AbstractBlockHut<?>)
         {
-            final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
-            if (!tags.isEmpty())
+            if (packName == null || packName.isEmpty())
             {
-                tags.remove(DEACTIVATED);
+                final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
                 if (!tags.isEmpty())
                 {
-                    packName = BlueprintMapping.getStyleMapping(tags.get(0));
-                    if (path == null || path.isEmpty())
+                    tags.remove(DEACTIVATED);
+                    if (!tags.isEmpty())
                     {
-                        path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+                        packName = BlueprintMapping.getStyleMapping(tags.get(0));
+                        if (path == null || path.isEmpty())
+                        {
+                            path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut<?>) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+                        }
                     }
                 }
+                else if (StructurePacks.selectedPack != null)
+                {
+                    packName = StructurePacks.selectedPack.getName();
+                }
             }
-            else if (StructurePacks.selectedPack != null)
+
+            if (path == null || path.isEmpty() || path.contains("null"))
             {
-                packName = StructurePacks.selectedPack.getName();
+                path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut<?>) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
             }
-        }
 
-        if (path == null || path.isEmpty() || path.contains("null"))
-        {
-            path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
-        }
-
-        if (!path.endsWith(".blueprint"))
-        {
-            path += ".blueprint";
+            if (!path.endsWith(".blueprint"))
+            {
+                path += ".blueprint";
+            }
         }
 
         this.packMeta = packName;
@@ -566,7 +570,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             return registryName;
         }
-        return getBlockState().getBlock() instanceof AbstractBlockHut<?> ? ((AbstractBlockHut<?>) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
+        return getBlockState().getBlock() instanceof AbstractColonyBlock<?> ? ((AbstractColonyBlock<?>) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
     }
 
     @Override

@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOW
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BREEDING_ATTEMPTS_BEES;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BREEDING_ATTEMPTS;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_COLLECTED;
 /**
  * Beekeeper AI class.
@@ -485,7 +485,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), worker.getMainHandItem());
             }
         }
-        StatsUtil.trackStat(building, BREEDING_ATTEMPTS_BEES, 1);
+        StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
     }
 
     /**

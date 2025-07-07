@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.core.colony.jobs.JobCowboy;
@@ -27,7 +28,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy.MILKING_AMOUNT;
-
+import static com.minecolonies.api.util.constant.StatisticsConstants.MILKING_ATTEMPTS;
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
@@ -114,22 +115,19 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         return result;
     }
 
-    @NotNull
     @Override
-    public List<ItemStack> getExtraItemsNeeded()
+    public @NotNull List<ItemStorage> getExtraItemsNeeded()
     {
-        final List<ItemStack> list = super.getExtraItemsNeeded();
+        final List<ItemStorage> list = super.getExtraItemsNeeded();
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() &&
               !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
         {
-            final ItemStack stack = building.getMilkInputItem().copy();
-            stack.setCount(building.getSetting(MILKING_AMOUNT).getValue());
-            list.add(stack);
+            list.add(new ItemStorage(building.getMilkInputItem().copy(), building.getSetting(MILKING_AMOUNT).getValue()));
         }
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToStew() &&
               !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
         {
-            list.add(new ItemStack(Items.BOWL));
+            list.add(new ItemStorage(Items.BOWL));
         }
         return list;
     }
@@ -177,6 +175,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
 
             incrementActionsDoneAndDecSaturation();
+            StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
             worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;
         }
@@ -233,6 +232,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
 
             incrementActionsDoneAndDecSaturation();
+            StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
             worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;
         }

@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -7,6 +8,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -35,7 +37,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BREEDING_ATTEMPTS;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ANIMALS_BUTCHERED;
 
 /**
  * Abstract class for all Citizen Herder AIs
@@ -178,7 +181,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return a list of items needed or empty.
      */
     @NotNull
-    public List<ItemStack> getExtraItemsNeeded()
+    public List<ItemStorage> getExtraItemsNeeded()
     {
         return new ArrayList<>();
     }
@@ -312,9 +315,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getCount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getCount());
         }
 
-        for (final ItemStack item : getExtraItemsNeeded())
+        for (final ItemStorage items : getExtraItemsNeeded())
         {
-            checkIfRequestForItemExistOrCreateAsync(item);
+            checkIfRequestForItemExistOrCreateAsync(items.getItemStack(), items.getAmount(), items.getAmount());
         }
 
         return DECIDE;
@@ -371,6 +374,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (!toKill.isAlive())
         {
+            StatsUtil.trackStat(building, ANIMALS_BUTCHERED, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();
             fedRecently.remove(toKill.getUUID());
@@ -543,7 +547,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
             // Values taken from vanilla.
             worker.swing(InteractionHand.MAIN_HAND);
-            building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + worker.getMainHandItem().getItem().getDescriptionId());
+            StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level.broadcastEntityEvent(toFeed, (byte) 18);
@@ -643,7 +647,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
-                building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + worker.getMainHandItem().getItem().getDescriptionId());
+                StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
+                StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
                 worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
                 worker.decreaseSaturationForAction();

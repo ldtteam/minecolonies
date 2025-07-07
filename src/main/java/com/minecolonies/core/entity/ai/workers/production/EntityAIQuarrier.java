@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobQuarrier;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
@@ -53,7 +54,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_PICKAXE;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_SHOVEL;
-import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
+import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
 
 /**
  * Class which handles the quarrier behaviour.
@@ -230,7 +231,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
             structure = new BuildingStructureHandler<>(world,
                 workOrder,
-              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
+                this, new BuildingProgressStage[] {BUILD_SOLID, DECORATE, CLEAR});
             building.setTotalStages(3);
 
             if (!structure.hasBluePrint())

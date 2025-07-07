@@ -2,16 +2,19 @@ package com.minecolonies.core.placementhandlers;
 
 import com.ldtteam.domumornamentum.block.AbstractPostBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
-import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
-import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
-import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
-import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
+import com.ldtteam.domumornamentum.block.decorative.*;
+import com.ldtteam.domumornamentum.block.types.FancyTrapdoorType;
+import com.ldtteam.domumornamentum.block.types.PostType;
+import com.ldtteam.domumornamentum.block.types.TimberFrameType;
+import com.ldtteam.domumornamentum.block.types.TrapdoorType;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.util.InventoryUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
@@ -135,35 +138,71 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             {
                 return Collections.emptyList();
             }
-
-            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
-            if (blockState.getBlock() instanceof DoorBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
-            }
-            else if (blockState.getBlock() instanceof FancyDoorBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
-            }
-            else if (blockState.getBlock() instanceof TrapdoorBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
-            }
-            else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
-            }
-            else if (blockState.getBlock() instanceof PanelBlock)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(PanelBlock.TYPE).toString().toUpperCase());
-            }
-            else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
-            {
-                item.getOrCreateTag().putString("type", blockState.getValue(AbstractPostBlock.TYPE).toString().toUpperCase());
-            }
-            itemList.add(item);
+            itemList.add(getCorrectDOItem(BlockUtils.getMaterializedItemStack(null, tileEntity), blockState));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
+    }
+
+    /**
+     * Calculate the correct DO item.
+     * Considering type and, for the builder we do want the generic type to be used here.
+     * @param item the item to output.
+     * @param blockState the blockstate in the world.
+     * @return the adjusted item.
+     */
+    public static ItemStack getCorrectDOItem(final ItemStack item, final BlockState blockState)
+    {
+        if (blockState.getBlock() instanceof DoorBlock)
+        {
+            item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof FancyDoorBlock)
+        {
+            item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof TrapdoorBlock)
+        {
+            item.getOrCreateTag().putString("type", TrapdoorType.FULL.toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
+        {
+            item.getOrCreateTag().putString("type", FancyTrapdoorType.FULL.toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof PanelBlock)
+        {
+            item.getOrCreateTag().putString("type", TrapdoorType.FULL.toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
+        {
+            item.getOrCreateTag().putString("type", PostType.PLAIN.toString().toUpperCase());
+        }
+        else if (blockState.getBlock() instanceof TimberFrameBlock || blockState.getBlock() instanceof DynamicTimberFrameBlock)
+        {
+            item.getOrCreateTag().putString("type", TimberFrameType.FRAMED.toString().toUpperCase());
+
+            final ItemStack tempItem = new ItemStack(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getTimberFrames().get(2));
+            tempItem.setTag(item.getTag());
+            return tempItem;
+        }
+        return item;
+    }
+
+    @Override
+    public void handleRemoval(
+        final IStructureHandler handler,
+        final Level world,
+        final BlockPos pos)
+    {
+        if (!handler.isCreative())
+        {
+            final List<ItemStack> items = com.ldtteam.structurize.util.BlockUtils.getBlockDrops(world, pos, 0, handler.getHeldItem());
+            for (final ItemStack item : items)
+            {
+                final BlockState state = world.getBlockState(pos);
+                InventoryUtils.transferIntoNextBestSlot(getCorrectDOItem(item, state), handler.getInventory());
+            }
+        }
+        world.removeBlock(pos, false);
     }
 }

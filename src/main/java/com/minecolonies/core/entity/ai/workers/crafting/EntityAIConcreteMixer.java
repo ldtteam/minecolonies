@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.core.colony.jobs.JobConcreteMixer;
@@ -21,6 +22,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
 
 /**
  * Concrete mixer AI class.
@@ -117,6 +119,8 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         final BlockState blockToMine = world.getBlockState(posToMine);
         if (mineBlock(posToMine))
         {
+            StatsUtil.trackStatByName(building, ITEMS_CRAFTED_DETAIL, blockToMine.getBlock().getDescriptionId(), 1);
+            
             if (currentRequest != null && currentRecipeStorage != null && blockToMine.getBlock().asItem().equals(currentRecipeStorage.getPrimaryOutput().getItem()))
             {
                 currentRequest.addDelivery(new ItemStack(blockToMine.getBlock(), 1));

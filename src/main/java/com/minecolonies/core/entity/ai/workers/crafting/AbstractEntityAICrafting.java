@@ -51,6 +51,8 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static com.minecolonies.core.util.WorkerUtil.hasTooManyExternalItemsInInv;
 
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
+
 /**
  * Abstract class for the principal crafting AIs.
  */
@@ -108,13 +110,20 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     }
 
     /**
-     * Provides a hook for implementing building-specific stats logic related to the crafting request.
-     * No-op hook. Override this in your subclass to customize it.
+     * Records the crafting request in the building's statistics.
+     * Override this in your subclass to change the description of the crafting stat.
+     * @param request the request to record.
      */
-    protected void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
+    public void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
     {
+        if (recipe == null) 
+        {
+            return;
+        }
 
+        StatsUtil.trackStatByName(building, ITEMS_CRAFTED_DETAIL, recipe.getPrimaryOutput().getHoverName(), recipe.getPrimaryOutput().getCount());
     }
+
 
     /**
      * Initialize the crafter job and add all his tasks.

@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.entity.ai.workers.production.herders.EntityAIWorkChickenHerder;
@@ -11,8 +12,7 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 
 /**
  * The Chicken Herder job
@@ -70,7 +70,7 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
           .isInBuilding(getCitizen().getEntity().get().blockPosition()))
         {
-            getCitizen().getWorkBuilding().getModule(STATS_MODULE).incrementBy(ITEM_USED + ";" + pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
+            StatsUtil.trackStatByName(getCitizen().getWorkBuilding(), ITEM_OBTAINED, pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
         }
 
         return super.onStackPickUp(pickedUpStack);

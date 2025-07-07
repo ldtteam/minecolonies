@@ -48,6 +48,12 @@ public final class StatisticsConstants
      */
     public static final String ITEMS_SMELTED_DETAIL = "items_smelted_detail";
 
+   /**
+    * Husbandry building stats.
+    */    
+    public static final String BREEDING_ATTEMPTS = "breeding_attempts";
+    public static final String ANIMALS_BUTCHERED = "animals_butchered";
+
     // Cook
     public static final String FOOD_SERVED_DETAIL = "food_served_detail";
 
@@ -75,7 +81,24 @@ public final class StatisticsConstants
 
     // Apiary
     public static final String ITEMS_COLLECTED = "items_collected";
-    public static final String BREEDING_ATTEMPTS_BEES = "breeding_attempts_bees";
+
+    // Builder
+    public static final String BLOCKS_PLACED_DETAIL   = "blocks_placed_detail";
+
+    // Cowboy
+    public static final String MILKING_ATTEMPTS = "milking_attempts";
+
+    // Delivery Man
+    public static final String DELIVERIES_MADE = "deliveries_made";
+    public static final String PICKUPS_MADE = "pickups_made";
+
+    // Enchanter
+    public static final String ITEMS_ENCHANTED = "items_enchanted";
+    public static final String CITIZENS_VISITED = "citizens_visited";
+
+    // Undertaker
+    public static final String GRAVES_DUG = "graves_dug";
+    public static final String CITIZENS_RESURRECTED = "citizens_resurrected";
 }
 
 

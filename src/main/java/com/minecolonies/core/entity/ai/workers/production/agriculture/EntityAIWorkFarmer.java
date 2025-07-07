@@ -557,6 +557,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 shouldDumpInventory = true;
                 farmField.nextState();
+                module.markDirty();
                 module.resetCurrentExtension();
                 building.setPrevPos(null);
                 return IDLE;
