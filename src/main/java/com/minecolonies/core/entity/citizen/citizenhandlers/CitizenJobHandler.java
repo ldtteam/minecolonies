@@ -59,7 +59,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
         {
             if (citizen.getCitizenColonyHandler().getHomeBuilding() != null)
             {
-                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
+                switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevelEquivalent())
                 {
                     case 3:
                         citizen.setModelId(ModModelTypes.CITIZEN_ID);

@@ -10,6 +10,8 @@ import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
@@ -51,6 +53,64 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     public int getMaxBuildingLevel()
     {
         return MAX_LEVEL;
+    }
+
+    @Override
+    public int getMaxEquipmentLevel()
+    {
+        if (getBuildingLevel() >= getMaxBuildingLevel())
+        {
+            return TOOL_LEVEL_MAXIMUM;
+        }
+        else if (getBuildingLevelEquivalent() <= WOOD_HUT_LEVEL)
+        {
+            return BASIC_TOOL_LEVEL;
+        }
+        return getBuildingLevelEquivalent() - WOOD_HUT_LEVEL;
+    }
+
+    @Override
+    public int getClaimRadius(final int newLevel)
+    {
+        return switch (newLevel)
+        {
+            case 1, 2 -> 1;
+            case 3 -> 2;
+            default -> 0;
+        };
+    }
+
+    @Override
+    public int getBonusVision()
+    {
+        return BASE_VISION_RANGE + getBuildingLevelEquivalent() * VISION_RANGE_PER_LEVEL;
+    }
+
+    @Override
+    public int getBonusHealth()
+    {
+        return getBuildingLevelEquivalent() * BONUS_HEALTH_PER_LEVEL;
+    }
+
+    /**
+     * Get the equivalent building level (1,3,5) for equipment, etc.
+     * @return the adjusted level.
+     */
+    private int getBuildingLevelEquivalent()
+    {
+        return switch (getBuildingLevel())
+        {
+            case 1 -> 1;
+            case 2 -> 3;
+            case 3 -> 5;
+            default -> 0;
+        };
+    }
+
+    @Override
+    public int getBuildingLevel()
+    {
+        return super.getBuildingLevel();
     }
 
     //todo  make visitors arrive here if it exists.
@@ -105,12 +165,6 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     public boolean requiresManualTarget()
     {
         return (patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null || !shallPatrolManually()) && tempNextPatrolPoint == null;
-    }
-
-    @Override
-    public int getBonusHealth()
-    {
-        return BONUS_HP_SINGLE_GUARD + super.getBonusHealth();
     }
 
     @Override

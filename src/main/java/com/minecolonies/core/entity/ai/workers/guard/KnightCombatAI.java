@@ -315,7 +315,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;

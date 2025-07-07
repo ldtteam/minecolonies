@@ -182,7 +182,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         // + 1 Blockrange per building level for a total of +5 from building level
         if (user.getCitizenData().getWorkBuilding() != null)
         {
-            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevel();
+            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent();
         }
 
         if (target != null)
@@ -229,7 +229,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -288,7 +288,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             }
         }
 
-        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevel() * 2;
+        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevelEquivalent() * 2;
     }
 
     /**

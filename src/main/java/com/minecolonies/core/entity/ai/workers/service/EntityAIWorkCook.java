@@ -228,7 +228,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (citizenData.getHomeBuilding() != null && citizenData.getHomeBuilding().getBuildingLevel() > building.getBuildingLevel() + 1)
+        if (citizenData.getHomeBuilding() != null && citizenData.getHomeBuilding().getBuildingLevelEquivalent() > building.getBuildingLevel() + 1)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_RESTAURANT_INTERACTION), ChatPriority.BLOCKING));
         }
