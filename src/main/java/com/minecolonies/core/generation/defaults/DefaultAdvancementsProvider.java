@@ -527,18 +527,18 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
     @NotNull
     private static CriterionTriggerInstance placeStructure(@NotNull final BuildingEntry building)
     {
-        return new PlaceStructureCriterionInstance(building.getBuildingBlock().getBlueprintName());
+        return new PlaceStructureCriterionInstance(building.getBuildingBlock().getRegistryName().getPath());
     }
 
     @NotNull
     private static CriterionTriggerInstance createBuildRequest(@NotNull final BuildingEntry building, final int level)
     {
-        return new CreateBuildRequestCriterionInstance(building.getBuildingBlock().getBlueprintName(), level);
+        return new CreateBuildRequestCriterionInstance(building.getBuildingBlock().getRegistryName().getPath(), level);
     }
 
     @NotNull
     private static CriterionTriggerInstance completeBuildRequest(@NotNull final BuildingEntry building, final int level)
     {
-        return new CompleteBuildRequestCriterionInstance(building.getBuildingBlock().getBlueprintName(), level);
+        return new CompleteBuildRequestCriterionInstance(building.getBuildingBlock().getRegistryName().getPath(), level);
     }
 }

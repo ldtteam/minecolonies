@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.workorders;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -299,10 +300,10 @@ public class WorkManager implements IWorkManager
             if (order instanceof WorkOrderBuilding buildingOrder)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(buildingOrder.getLocation());
-                if (building != null)
+                if (building != null && building.getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
                 {
                     AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), level));
+                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, abstractBlockHut.getBlueprintName(), level));
                 }
             }
             else if (order instanceof WorkOrderDecoration)

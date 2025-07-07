@@ -1,5 +1,6 @@
 package com.minecolonies.api.items;
 
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import net.minecraft.world.item.BlockItem;
 
@@ -11,7 +12,7 @@ public class ItemBlockHut extends BlockItem
     /**
      * This items block.
      */
-    private AbstractBlockHut<?> block;
+    private AbstractColonyBlock<?> block;
 
     /**
      * Creates a new ItemBlockHut representing the item form of the given {@link AbstractBlockHut}.
@@ -19,7 +20,7 @@ public class ItemBlockHut extends BlockItem
      * @param block   the {@link AbstractBlockHut} this item represents.
      * @param builder the item properties to use.
      */
-    public ItemBlockHut(AbstractBlockHut<?> block, Properties builder)
+    public ItemBlockHut(AbstractColonyBlock<?> block, Properties builder)
     {
         super(block, builder);
         this.block = block;
