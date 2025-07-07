@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
@@ -960,7 +961,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public boolean checkForToolOrWeapon(@NotNull final EquipmentTypeEntry toolType)
     {
         final boolean needTool = checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
-        worker.getCitizenData().setIdleAtJob(needTool);
+        if (needTool)
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
+        }
+        else
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
+        }
         return needTool;
     }
 
@@ -1333,13 +1341,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
         {
-            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, bestSlot);
             return true;
         }
         else if (bestSlot == NO_TOOL)
         {
-            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             CitizenItemUtils.removeHeldItem(worker);
             return true;
         }

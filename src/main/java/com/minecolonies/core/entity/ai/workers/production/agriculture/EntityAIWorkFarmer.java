@@ -5,6 +5,7 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -22,9 +23,9 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.blocks.MinecoloniesFarmland;
+import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFarmer;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
@@ -190,8 +191,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @NotNull
     private IAIState prepareForFarming()
     {
+        worker.getCitizenData().setJobStatus(JobStatus.IDLE);
         if (building == null || building.getBuildingLevel() < 1)
         {
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             return PREPARING;
         }
 
@@ -222,12 +225,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        if (checkForFarmField(module))
+        if (module.hasNoExtensions())
         {
             if (worker.getCitizenData() != null)
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             return IDLE;
         }
 
@@ -236,10 +240,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (checkForToolOrWeapon(ModEquipmentTypes.hoe.get()))
             {
+                worker.getCitizenData().setJobStatus(JobStatus.STUCK);
                 return PREPARING;
             }
             worker.getCitizenData().setVisibleStatus(FARMING_ICON);
-
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             if (farmField.getFieldStage() == FarmField.Stage.PLANTED && checkIfShouldExecute(farmField, pos -> this.findHarvestableSurface(pos) != null))
             {
                 return FARMER_HARVEST;
@@ -260,20 +265,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
         }
         return PREPARING;
-    }
-
-    /**
-     * Ensures that we have at least one field assigned.
-     * Also sets the worker to be idle at the job if we have no assigned field.
-     *
-     * @param module the extensions assigned to the farmer's hut
-     * @return false if we have at least one assigned farm field
-     */
-    public boolean checkForFarmField(@NotNull BuildingExtensionsModule module)
-    {
-        final boolean noFields = module.hasNoExtensions();
-        worker.getCitizenData().setIdleAtJob(noFields);
-        return noFields;
     }
 
     /**

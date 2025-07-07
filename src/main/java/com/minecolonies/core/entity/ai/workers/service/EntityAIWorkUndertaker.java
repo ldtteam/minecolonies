@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.ai.workers.service;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -42,12 +43,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_RESURRECTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.GRAVES_DUG;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
-
-import static com.minecolonies.api.util.constant.StatisticsConstants.GRAVES_DUG;
-import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_RESURRECTED;
 /**
  * Undertaker AI class.
  */
@@ -114,7 +114,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private IAIState startWorking()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        worker.getCitizenData().setIdleAtJob(false);
 
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
@@ -127,11 +126,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final BlockEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
+                worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
         }
-
+        worker.getCitizenData().setJobStatus(JobStatus.IDLE);
         return WANDER;
     }
 
