@@ -15,7 +15,7 @@
                          label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
         </dropdown>
         <list id="stats" size="160 160" pos="20 55" emptytext="$(com.minecolonies.core.gui.modules.stats.empty)" emptycolor="black">
-            <text id="desc" size="160 13" pos="0 0" color="black"/>
+            <text id="desc" size="160 13" pos="0 0" color="black" wrap="true"/>
         </list>
         <text size="105 11" pos="20 220" textalign="MIDDLE_RIGHT" color="black"
             label="$(com.minecolonies.core.gui.modules.stats.hidezerolabel)"/>

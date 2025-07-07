@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.workorders;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -251,10 +252,10 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
-            if (building != null)
+            if (building != null && building.getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), this.getTargetLevel()));
+                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, abstractBlockHut.getBlueprintName(), this.getTargetLevel()));
             }
         }
     }

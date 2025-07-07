@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
@@ -578,14 +579,17 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
-                if (tileEntity.getStructurePack() != null)
+                if (tileEntity.getBlockState().getBlock() instanceof AbstractBlockHut<?>)
                 {
-                    building.setStructurePack(tileEntity.getStructurePack().getName());
-                    building.setBlueprintPath(tileEntity.getBlueprintPath());
-                }
-                else
-                {
-                    building.setStructurePack(colony.getStructurePack());
+                    if (tileEntity.getStructurePack() != null)
+                    {
+                        building.setStructurePack(tileEntity.getStructurePack().getName());
+                        building.setBlueprintPath(tileEntity.getBlueprintPath());
+                    }
+                    else
+                    {
+                        building.setStructurePack(colony.getStructurePack());
+                    }
                 }
 
                 if (world != null && !(building instanceof IRSComponent))

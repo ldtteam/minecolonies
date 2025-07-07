@@ -84,6 +84,21 @@ public final class StatisticsConstants
 
     // Builder
     public static final String BLOCKS_PLACED_DETAIL   = "blocks_placed_detail";
+
+    // Cowboy
+    public static final String MILKING_ATTEMPTS = "milking_attempts";
+
+    // Delivery Man
+    public static final String DELIVERIES_MADE = "deliveries_made";
+    public static final String PICKUPS_MADE = "pickups_made";
+
+    // Enchanter
+    public static final String ITEMS_ENCHANTED = "items_enchanted";
+    public static final String CITIZENS_VISITED = "citizens_visited";
+
+    // Undertaker
+    public static final String GRAVES_DUG = "graves_dug";
+    public static final String CITIZENS_RESURRECTED = "citizens_resurrected";
 }
 
 
