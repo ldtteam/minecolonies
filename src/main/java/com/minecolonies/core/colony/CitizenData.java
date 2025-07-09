@@ -1320,7 +1320,7 @@ public class CitizenData implements ICitizenData
         }
 
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
-        nbtTagCompound.putString(TAG_JOB_STATUS, jobStatus.name());
+        nbtTagCompound.putString(TAG_JOB_STATUS, Optional.ofNullable(jobStatus).orElse(JobStatus.IDLE).name());
 
         nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
         nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
@@ -1492,7 +1492,15 @@ public class CitizenData implements ICitizenData
             }
         }
 
-        this.jobStatus = JobStatus.valueOf(nbtTagCompound.getString(TAG_JOB_STATUS));
+        final String jobStateString = nbtTagCompound.getString(TAG_JOB_STATUS);
+        if (!jobStateString.isEmpty())
+        {
+            this.jobStatus = JobStatus.valueOf(jobStateString);
+        }
+        else
+        {
+            this.jobStatus = nbtTagCompound.getBoolean(TAG_IDLE) ? JobStatus.STUCK : JobStatus.IDLE;
+        }
 
         final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
