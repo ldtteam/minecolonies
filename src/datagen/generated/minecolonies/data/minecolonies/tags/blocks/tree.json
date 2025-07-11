@@ -3,9 +3,6 @@
     "#minecraft:logs",
     "#minecolonies:mangrove_tree",
     "minecraft:mushroom_stem",
-    {
-      "id": "#productivebees:nests/wood_nests",
-      "required": false
-    }
+    "#minecolonies:extra_tree"
   ]
 }
