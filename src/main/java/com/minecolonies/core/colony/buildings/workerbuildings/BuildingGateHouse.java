@@ -108,7 +108,6 @@ public class BuildingGateHouse extends AbstractBuildingGuards
         return super.getBuildingLevel();
     }
 
-    //todo  make visitors arrive here if it exists.
     @Override
     public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {

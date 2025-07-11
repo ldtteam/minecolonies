@@ -653,6 +653,7 @@ public final class ModBuildingsInitializer
             .addBuildingModuleProducer(MIN_STOCK)
             .addBuildingModuleProducer(BED)
             .addBuildingModuleProducer(STATS_MODULE)
+            .addBuildingModuleProducer(CONNECTION_MODULE)
             .createBuildingEntry());
     }
 }
