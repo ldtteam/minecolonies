@@ -3,15 +3,12 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ColonyConnectionNode;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.colony.managers.ColonyConnectionManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
@@ -21,6 +18,45 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
  */
 public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
 {
+    /**
+     * Diplomacy Status between two colonies.
+     */
+    enum DiplomacyStatus
+    {
+        ALLIES,
+        NEUTRAL,
+        HOSTILE;
+
+        /**
+         * Get translation key for the diplomacy status.
+         * @return the string key.
+         */
+        public String translationKey()
+        {
+            return "com.minecolonies.core.colony.diplomacy.status." + name().toLowerCase();
+        }
+    }
+
+    /**
+     * Diplomacy Status between two colonies.
+     */
+    enum ConnectionEventType
+    {
+        ALLY_REQUEST,
+        ALLY_CONFIRMED,
+        FEUD_STARTED,
+        NEUTRAL_SET;
+
+        /**
+         * Get translation key for the diplomacy status.
+         * @return the string key.
+         */
+        public String translationKey()
+        {
+            return "com.minecolonies.core.colony.connectionevent." + name().toLowerCase();
+        }
+    }
+
     /**
      * Connected Colony Data with:
      *
@@ -33,7 +69,7 @@ public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
         int id,
         String name,
         BlockPos pos,
-        ColonyConnectionManager.DiplomacyStatus diplomacyStatus)
+        DiplomacyStatus diplomacyStatus)
     {
 
         public CompoundTag serializeNBT()
@@ -59,12 +95,46 @@ public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
             return new ConnectedColonyData(compoundTag.getInt(TAG_ID),
                 compoundTag.getString(TAG_NAME),
                 BlockPosUtil.read(compoundTag, TAG_POS),
-                ColonyConnectionManager.DiplomacyStatus.values()[compoundTag.getInt(TAG_STATUS)]);
+                DiplomacyStatus.values()[compoundTag.getInt(TAG_STATUS)]);
         }
 
         public static ConnectedColonyData deserializeByteBuf(final FriendlyByteBuf buf)
         {
-            return new ConnectedColonyData(buf.readInt(), buf.readUtf(32767), buf.readBlockPos(), ColonyConnectionManager.DiplomacyStatus.values()[buf.readInt()]);
+            return new ConnectedColonyData(buf.readInt(), buf.readUtf(32767), buf.readBlockPos(), DiplomacyStatus.values()[buf.readInt()]);
+        }
+    }
+
+    /**
+     * Connected Event Data with:
+     *
+     * @param id              the colony id.
+     * @param connectionEventType the event type enum.
+     */
+    record ConnectionEventData(int id, ConnectionEventType connectionEventType)
+    {
+        public CompoundTag serializeNBT()
+        {
+            final CompoundTag compoundTag = new CompoundTag();
+            compoundTag.putInt(TAG_ID, id);
+            compoundTag.putInt(TAG_STATUS, connectionEventType.ordinal());
+            return compoundTag;
+        }
+
+        public void serializeByteBuf(final FriendlyByteBuf buf)
+        {
+            buf.writeInt(id);
+            buf.writeInt(connectionEventType.ordinal());
+        }
+
+        public static ConnectionEventData deserializeNBT(final CompoundTag compoundTag)
+        {
+            return new ConnectionEventData(compoundTag.getInt(TAG_ID),
+                ConnectionEventType.values()[compoundTag.getInt(TAG_STATUS)]);
+        }
+
+        public static ConnectionEventData deserializeByteBuf(final FriendlyByteBuf buf)
+        {
+            return new ConnectionEventData(buf.readInt(), ConnectionEventType.values()[buf.readInt()]);
         }
     }
 
@@ -89,9 +159,16 @@ public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
 
     /**
      * Get all directly connected colonies.
-     * @return the list of directly connected colonies.
+     * @return the map of directly connected colonies.
      */
-    Int2ObjectMap<ColonyConnectionManager.ConnectedColonyData> getDirectlyConnectedColonies();
+    Int2ObjectMap<ConnectedColonyData> getDirectlyConnectedColonies();
+
+
+    /**
+     * Get all indirectly connected colonies.
+     * @return the map of them.
+     */
+    Int2ObjectMap<ConnectedColonyData> getIndirectlyConnectedColonies();
 
     /**
      * Get a connection node.
@@ -120,9 +197,15 @@ public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
      */
     boolean attemptEstablishConnection(final BlockPos clickedPos, final IColony targetColony);
 
+    /**
+     * Serialize connection manager to view.
+     * @param buf the buf to serialize it to.
+     */
     void serializeToView(@NotNull FriendlyByteBuf buf);
 
+    /**
+     * Deserialize connection manager from buffer for client side usage.
+     * @param buf the buf to read it from.
+     */
     void deserializeFromView(@NotNull FriendlyByteBuf buf);
-
-    Collection<ColonyConnectionManager.ConnectedColonyData> getConnectedColonies();
 }

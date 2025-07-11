@@ -454,9 +454,9 @@ public class Colony implements IColony
      */
     private boolean tickTravellers()
     {
-        if (getTravelingManager() != null)
+        if (getTravellingManager() != null)
         {
-            return !getTravelingManager().onTick();
+            return !getTravellingManager().onTick();
         }
         return false;
     }
@@ -1608,7 +1608,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public TravellingManager getTravelingManager()
+    public TravellingManager getTravellingManager()
     {
         return travellingManager;
     }

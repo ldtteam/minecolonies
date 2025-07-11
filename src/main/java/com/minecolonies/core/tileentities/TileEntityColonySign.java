@@ -132,17 +132,6 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         this.load(compound);
     }
 
-    @Override
-    public void setRemoved()
-    {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, level.dimension());
-        if (colony != null)
-        {
-            colony.getConnectionManager().removeConnectionNode(worldPosition);
-        }
-        super.setRemoved();
-    }
-
     /**
      * Update method to be called by Minecraft every tick
      */

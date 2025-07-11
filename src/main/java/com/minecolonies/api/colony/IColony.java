@@ -279,7 +279,7 @@ public interface IColony
      *
      * @return the travelling manager.
      */
-    ITravellingManager getTravelingManager();
+    ITravellingManager getTravellingManager();
 
     /**
      * Get the connection manager of the colony.

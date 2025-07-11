@@ -8,6 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -104,6 +106,27 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, worldIn.dimension());
         tileEntityColonySign.setColonyAndAnchor(colony, stackCompound.contains(TAG_POS) ? BlockPosUtil.read(stackCompound, TAG_POS) : null);
         super.setPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
+    @Override
+    public void destroy(final LevelAccessor level, final BlockPos pos, final BlockState state)
+    {
+        super.destroy(level, pos, state);
+    }
+
+    @Override
+    public void onRemove(final BlockState currentState, final Level level, final BlockPos pos, final BlockState p_60518_, final boolean p_60519_)
+    {
+        super.onRemove(currentState, level, pos, p_60518_, p_60519_);
+        BlockEntity tileEntity = level.getBlockEntity(pos);
+        if (!level.isClientSide && tileEntity instanceof TileEntityColonySign tileEntityColonySign)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(tileEntityColonySign.getColonyId(), level.dimension());
+            if (colony != null)
+            {
+                colony.getConnectionManager().removeConnectionNode(pos);
+            }
+        }
     }
 
     @Override

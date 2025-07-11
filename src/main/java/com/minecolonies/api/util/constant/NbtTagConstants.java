@@ -98,6 +98,7 @@ public final class NbtTagConstants
     public static final String TAG_CONNECTIONS    = "connections";
     public static final String TAG_CONNECTION_POINT = "connectionPoint";
     public static final String TAG_GATEHOUSES     = "gatehouses";
+    public static final String TAG_CONNECTION_EVENTS = "connectionevents";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";

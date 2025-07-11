@@ -399,20 +399,6 @@ public interface IColonyView extends IColony
      */
     boolean isRaiding();
 
-    /**
-     * Get a compact list of all allies.
-     *
-     * @return the list.
-     */
-    List<CompactColonyReference> getAllies();
-
-    /**
-     * Get a compact list of all feuds.
-     *
-     * @return the list.
-     */
-    List<CompactColonyReference> getFeuds();
-
     boolean areSpiesEnabled();
 
     /**

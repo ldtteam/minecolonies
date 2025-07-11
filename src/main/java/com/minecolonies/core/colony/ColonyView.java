@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -29,6 +28,7 @@ import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.managers.ColonyConnectionManager;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
 import com.minecolonies.core.colony.managers.TravellingManager;
@@ -191,16 +191,6 @@ public final class ColonyView implements IColonyView
     private String style = "";
 
     /**
-     * The list of allies.
-     */
-    private List<CompactColonyReference> allies;
-
-    /**
-     * The list of feuds.
-     */
-    private List<CompactColonyReference> feuds;
-
-    /**
      * The research effects of the colony.
      */
     private final IResearchManager researchManager;
@@ -241,8 +231,16 @@ public final class ColonyView implements IColonyView
      */
     private final IQuestManager questManager;
 
+    /**
+     * Client side travelling manager.
+     */
     private final TravellingManager travellingManager = new TravellingManager(this);
 
+    /**
+     * Client side connection manager.
+     */
+    private final IColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
+    
     /**
      * Day in the colony.
      */
@@ -368,57 +366,6 @@ public final class ColonyView implements IColonyView
         buf.writeUtf(colony.getStructurePack());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
-        // ToDo: rework ally system
-        final List<IColony> allies = new ArrayList<>();
-        for (final ColonyPlayer player : colony.getPermissions().getFilteredPlayers(Rank::isColonyManager))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-            if (col != null)
-            {
-                for (final ColonyPlayer owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
-                {
-                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && ((col.getID() != colony.getID()) || (col.getDimension() != colony.getDimension())))
-                    {
-                        allies.add(col);
-                    }
-                }
-            }
-        }
-
-        buf.writeInt(allies.size());
-        for (final IColony col : allies)
-        {
-            buf.writeUtf(col.getName());
-            buf.writeBlockPos(col.getCenter());
-            buf.writeInt(col.getID());
-            buf.writeBoolean(col.hasTownHall());
-            buf.writeUtf(col.getDimension().location().toString());
-        }
-
-        final List<IColony> feuds = new ArrayList<>();
-        for (final ColonyPlayer player : colony.getPermissions().getFilteredPlayers(Rank::isHostile))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-            if (col != null)
-            {
-                for (final ColonyPlayer owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
-                {
-                    if (col.getPermissions().getRank(owner.getID()).isHostile())
-                    {
-                        feuds.add(col);
-                    }
-                }
-            }
-        }
-
-        buf.writeInt(feuds.size());
-        for (final IColony col : feuds)
-        {
-            buf.writeUtf(col.getName());
-            buf.writeBlockPos(col.getCenter());
-            buf.writeInt(col.getID());
-            buf.writeUtf(col.getDimension().location().toString());
-        }
 
         if (hasNewSubscribers || colony.isTicketedChunksDirty())
         {
@@ -439,8 +386,8 @@ public final class ColonyView implements IColonyView
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
         buf.writeNbt(colony.getQuestManager().serializeNBT());
         buf.writeInt(colony.getDay());
-
-        buf.writeNbt(colony.getTravelingManager().serializeNBT());
+        buf.writeNbt(colony.getTravellingManager().serializeNBT());
+        colony.getConnectionManager().serializeToView(buf);
     }
 
     /**
@@ -864,29 +811,6 @@ public final class ColonyView implements IColonyView
         this.isUnderRaid = buf.readBoolean();
         this.spiesEnabled = buf.readBoolean();
 
-        this.allies = new ArrayList<>();
-        this.feuds = new ArrayList<>();
-
-        final int noOfAllies = buf.readInt();
-        for (int i = 0; i < noOfAllies; i++)
-        {
-            allies.add(new CompactColonyReference(buf.readUtf(32767),
-                buf.readBlockPos(),
-                buf.readInt(),
-                buf.readBoolean(),
-                ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
-        }
-
-        final int noOfFeuds = buf.readInt();
-        for (int i = 0; i < noOfFeuds; i++)
-        {
-            feuds.add(new CompactColonyReference(buf.readUtf(32767),
-                buf.readBlockPos(),
-                buf.readInt(),
-                false,
-                ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
-        }
-
         final int ticketChunkCount = buf.readInt();
         if (ticketChunkCount != -1)
         {
@@ -902,6 +826,7 @@ public final class ColonyView implements IColonyView
         this.questManager.deserializeNBT(buf.readNbt());
         this.day = buf.readInt();
         this.travellingManager.deserializeNBT(buf.readNbt());
+        this.connectionManager.deserializeFromView(buf);
         return null;
     }
 
@@ -1512,7 +1437,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ITravellingManager getTravelingManager()
+    public ITravellingManager getTravellingManager()
     {
         return travellingManager;
     }
@@ -1520,7 +1445,7 @@ public final class ColonyView implements IColonyView
     @Override
     public IColonyConnectionManager getConnectionManager()
     {
-        return null;
+        return connectionManager;
     }
 
     @Override
@@ -1539,18 +1464,6 @@ public final class ColonyView implements IColonyView
     public void usedMercenaries()
     {
         mercenaryLastUseTime = world.getGameTime();
-    }
-
-    @Override
-    public List<CompactColonyReference> getAllies()
-    {
-        return allies;
-    }
-
-    @Override
-    public List<CompactColonyReference> getFeuds()
-    {
-        return feuds;
     }
 
     @Override

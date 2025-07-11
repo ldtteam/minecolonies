@@ -4,11 +4,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.managers.interfaces.IColonyConnectionManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.colony.Colony;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -24,15 +21,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class ColonyConnectionManager implements IColonyConnectionManager
 {
-    /**
-     * Diplomacy Status between two colonies.
-     */
-    public enum DiplomacyStatus
-    {
-        ALLIES,
-        NEUTRAL,
-        HOSTILE
-    }
+
 
     /**
      * All points. This is stored to nbt.
@@ -47,23 +36,28 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     /**
      * Connected colony.
      */
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * Connected colonies mapped to their gate position.
      */
-    private final Int2ObjectMap<ConnectedColonyData> directlyConnectedColonies = new Int2ObjectAVLTreeMap<>();
+    private final Int2ObjectAVLTreeMap<ConnectedColonyData> directlyConnectedColonies = new Int2ObjectAVLTreeMap<>();
 
     /**
      * Cached connection data.
      */
-    private final Int2ObjectMap<ConnectedColonyData> indirectlyConnectedColoniesCache = new Int2ObjectAVLTreeMap<>();
+    private final Int2ObjectAVLTreeMap<ConnectedColonyData> indirectlyConnectedColoniesCache = new Int2ObjectAVLTreeMap<>();
+
+    /**
+     * Connection events affecting this colony.
+     */
+    private final List<ConnectionEventData> connectionEvents = new ArrayList<>();
 
     /**
      * Create a new connection manager.
      * @param colony its colony.
      */
-    public ColonyConnectionManager(final Colony colony)
+    public ColonyConnectionManager(final IColony colony)
     {
         this.colony = colony;
     }
@@ -71,6 +65,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public boolean addNewConnectionNode(final BlockPos connectionPoint)
     {
+        //todo, does not insert between atm. That's okay, when the between is set, but if between was deleted, we need a way to insert between.
         for (final ColonyConnectionNode node : colonyConnections.values())
         {
             // Only connect to a node with correct distance.
@@ -137,7 +132,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public boolean attemptEstablishConnection(final BlockPos clickedPos, final IColony targetColony)
     {
-        BlockPos tempNode = null;
+        BlockPos tempNodePos = null;
         // Find a suitable connection point.
         for (final ColonyConnectionNode node : colonyConnections.values())
         {
@@ -146,26 +141,26 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             {
                 if (node.getPosition().distSqr(clickedPos) <= 50*50)
                 {
-                    tempNode = node.getPosition();
+                    tempNodePos = node.getPosition();
                     break;
                 }
             }
         }
 
-        if (tempNode == null)
+        if (tempNodePos == null)
         {
             MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(this.colony).forManagers();;
             return false;
         }
 
         // Make sure we're connected until the gate.
-        final BlockPos intermediateNode = tempNode;
-        while (colonyConnections.containsKey(tempNode))
+        final BlockPos intermediateNodePos = tempNodePos;
+        while (colonyConnections.containsKey(tempNodePos))
         {
-            tempNode = colonyConnections.get(tempNode).getPreviousNode();
+            tempNodePos = colonyConnections.get(tempNodePos).getPreviousNode();
         }
 
-        if (tempNode == null && !gateHouses.contains(tempNode))
+        if (tempNodePos == null && !gateHouses.contains(tempNodePos))
         {
             MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();;
             return false;
@@ -180,25 +175,44 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         }
 
         // Make sure the target colony is also connected until the gate.
-        BlockPos targetTempNode = targetNode.getPreviousNode();
-        while (targetManager.colonyConnections.containsKey(targetTempNode))
+        BlockPos targetTempNodePos = targetNode.getPreviousNode();
+        while (targetManager.colonyConnections.containsKey(targetTempNodePos))
         {
-            targetTempNode = targetManager.colonyConnections.get(targetTempNode).getPreviousNode();
+            targetTempNodePos = targetManager.colonyConnections.get(targetTempNodePos).getPreviousNode();
         }
 
-        if (targetTempNode == null && !targetManager.gateHouses.contains(targetTempNode))
+        if (targetTempNodePos == null && !targetManager.gateHouses.contains(targetTempNodePos))
         {
             MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();;
             return false;
         }
 
         // Set gate houses as connected.
-        directlyConnectedColonies.put(targetColony.getID(), new ConnectedColonyData(targetColony.getID(), targetColony.getName(), targetTempNode, DiplomacyStatus.NEUTRAL));
-        targetManager.directlyConnectedColonies.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), tempNode, DiplomacyStatus.NEUTRAL));
+        directlyConnectedColonies.put(targetColony.getID(), new ConnectedColonyData(targetColony.getID(), targetColony.getName(), targetTempNodePos, DiplomacyStatus.NEUTRAL));
+        targetManager.directlyConnectedColonies.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), tempNodePos, DiplomacyStatus.NEUTRAL));
 
         // Connect the two middle nodes.
-        colonyConnections.get(intermediateNode).alterNextNode(clickedPos);
-        targetNode.alterNextNode(intermediateNode);
+        final ColonyConnectionNode intermediateNode = colonyConnections.get(intermediateNodePos);
+        intermediateNode.alterNextNode(clickedPos);
+        intermediateNode.setTargetColonyId(targetColony.getID());
+        targetNode.alterNextNode(intermediateNodePos);
+        targetNode.setTargetColonyId(colony.getID());
+
+        tempNodePos = intermediateNodePos;
+        while (colonyConnections.containsKey(tempNodePos))
+        {
+            final ColonyConnectionNode node = colonyConnections.get(tempNodePos);
+            node.setTargetColonyId(targetColony.getID());
+            tempNodePos = node.getPreviousNode();
+        }
+
+        targetTempNodePos = targetNode.getPreviousNode();
+        while (targetManager.colonyConnections.containsKey(targetTempNodePos))
+        {
+            final ColonyConnectionNode node = targetManager.colonyConnections.get(targetTempNodePos);
+            node.setTargetColonyId(colony.getID());
+            targetTempNodePos = node.getPreviousNode();
+        }
 
         MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, colony.getName(), targetColony.getName()).sendTo(this.colony).forManagers();;
         MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, targetColony.getName(), colony.getName()).sendTo(targetColony).forManagers();;
@@ -237,7 +251,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 continue;
             }
 
-            if (!connectedColony.getName().equals(connectedColony.getName()))
+            if (!connectedColony.getName().equals(colonyEntry.name()))
             {
                 connectedColonies.put(colonyEntry.id(),
                     new ConnectedColonyData(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos(), colonyEntry.diplomacyStatus()));
@@ -257,6 +271,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     public Int2ObjectMap<ConnectedColonyData> getDirectlyConnectedColonies()
     {
         return directlyConnectedColonies;
+    }
+
+    @Override
+    public Int2ObjectMap<ConnectedColonyData> getIndirectlyConnectedColonies()
+    {
+        return indirectlyConnectedColoniesCache;
     }
 
     @Override
@@ -318,6 +338,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             connectedColony.getValue().serializeByteBuf(buf);
         }
+
+        buf.writeInt(connectionEvents.size());
+        for (final ConnectionEventData connectionEventType : connectionEvents)
+        {
+            connectionEventType.serializeByteBuf(buf);
+        }
     }
 
     @Override
@@ -336,12 +362,14 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             final ConnectedColonyData connectedColonyData = ConnectedColonyData.deserializeByteBuf(buf);
             indirectlyConnectedColoniesCache.put(connectedColonyData.id(), connectedColonyData);
         }
-    }
 
-    @Override
-    public Collection<ConnectedColonyData> getConnectedColonies()
-    {
-        return List.union(directlyConnectedColonies.values(), indirectlyConnectedColoniesCache.values());
+        connectionEvents.clear();
+        final int connectionEventSize = buf.readInt();
+        for (int i = 0; i < connectionEventSize; i++)
+        {
+            final ConnectionEventData connectionEventData = ConnectionEventData.deserializeByteBuf(buf);
+            connectionEvents.add(connectionEventData);
+        }
     }
 
     @Override
@@ -371,6 +399,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             gateHouses.add(BlockPosUtil.read((CompoundTag) tag, TAG_POS));
         }
+
+        connectionEvents.clear();
+        final ListTag connectionEventList = compound.getList(TAG_CONNECTION_EVENTS, Tag.TAG_COMPOUND);
+        for (final Tag tag : connectionEventList)
+        {
+            connectionEvents.add(ConnectionEventData.deserializeNBT((CompoundTag) tag));
+        }
     }
 
     @Override
@@ -396,7 +431,14 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             gateHouseTagList.add(BlockPosUtil.write(new CompoundTag(), TAG_POS, gateHouse));
         }
-        compoundTag.put(TAG_GATEHOUSES, connectedColonyTagList);
+        compoundTag.put(TAG_GATEHOUSES, gateHouseTagList);
+
+        @NotNull final ListTag connectionEventTagList = new ListTag();
+        for (final ConnectionEventData connectionEvent : connectionEvents)
+        {
+            connectionEventTagList.add(connectionEvent.serializeNBT());
+        }
+        compoundTag.put(TAG_CONNECTION_EVENTS, connectionEventTagList);
         return compoundTag;
     }
 }

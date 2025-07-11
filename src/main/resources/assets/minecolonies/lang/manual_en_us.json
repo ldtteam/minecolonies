@@ -2926,12 +2926,16 @@
   "com.minecolonies.core.item.colonysign.tip.colony": "Colony Id Set: %d",
   "com.minecolonies.core.item.sign.missinglink": "The link of signs does not lead back to a gate house. Fix this first before expanding the connection.",
   "com.minecolonies.core.gui.connections": "Connected Colonies",
-  "com.minecolonies.core.gui.colonylist.desc": "Connected Colony List:",
-  "com.minecolonies.core.gui.colonylist.ally": "You're Allies",
-  "com.minecolonies.core.gui.colonylist.neutral": "You're Neutral",
-  "com.minecolonies.core.gui.colonylist.feud": "You're Enemies",
+  "com.minecolonies.core.gui.colonylist.direct.desc": "Direct Connections:",
+  "com.minecolonies.core.gui.colonylist.indirect.desc": "Indirect Connections:",
+  "com.minecolonies.core.colony.diplomacy.status.ally": "§2Ally",
+  "com.minecolonies.core.colony.diplomacy.status.neutral": "§6Neutral",
+  "com.minecolonies.core.colony.diplomacy.status.hostile": "§4Enemy",
   "com.minecolonies.core.gui.colonylist.request_ally": "Request Allegiance",
-  "com.minecolonies.core.gui.colonylist.star_feud": "Start Feud",
-  "com.minecolonies.core.gui.colonylist.set_neutral": "Set Neutral"
+  "com.minecolonies.core.gui.colonylist.start_feud": "Start Feud",
+  "com.minecolonies.core.gui.colonylist.set_neutral": "Set Neutral",
+  "com.minecolonies.core.gui.colonylist.travel": "Travel",
+  "com.minecolonies.core.gui.colonylist.travel.tooltip": "Only possible for Allied colonies",
+  "com.minecolonies.core.gui.colonylist.travel.really": "Do you really want to travel to %s? [YES]"
 
 }

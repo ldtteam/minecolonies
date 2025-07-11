@@ -2,43 +2,46 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.colony.managers.interfaces.IColonyConnectionManager;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ColonyConnectionModuleView;
-import net.minecraft.client.gui.screens.Screen;
+import com.minecolonies.core.colony.managers.ColonyConnectionManager;
+import com.minecolonies.core.commands.ClickEventWithExecutable;
+import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_ICON;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionModuleWindow extends AbstractModuleWindow
 {
     /**
      * Special buttons
      */
-    private static final String REQUEST_ALLY = "requestally";
-    private static final String START_FEUD = "startfeud";
-    private static final String SET_NEUTRAL = "setneutral";
-    private static final String TELEPORT      = "tleport";
-    private static final String LIST_COLONIES = "colonylist";
+    private static final String TRAVEL      = "travel";
+    private static final String LIST_DIRECT = "directcolonylist";
+    private static final String LIST_INDIRECT = "indirectcolonylist";
 
     /**
-     * The matching module view to the window.
+     * Scrollinglists of connections.
      */
-    private final ColonyConnectionModuleView moduleView;
-
+    private final ScrollingList directConnections;
+    private final ScrollingList indirectConnections;
 
     /**
-     * Scrollinglist of the guard towers.
+     * Lists with the data from connections.
      */
-    private ScrollingList colonyList;
+    private final List<IColonyConnectionManager.ConnectedColonyData> directConnectionData;
+    private final List<IColonyConnectionManager.ConnectedColonyData> indirectConnectionData;
 
     /**
      * Constructor for the minimum stock window view.
@@ -49,50 +52,50 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     public ConnectionModuleWindow(final String res, final IBuildingView building, final ColonyConnectionModuleView moduleView)
     {
         super(building, res);
-        this.moduleView = moduleView;
 
-        colonyList = findPaneOfTypeByID(LIST_COLONIES, ScrollingList.class);
+        directConnections = findPaneOfTypeByID(LIST_DIRECT, ScrollingList.class);
+        indirectConnections = findPaneOfTypeByID(LIST_INDIRECT, ScrollingList.class);
 
-        registerButton(TELEPORT, this::teleportToColony);
-        registerButton(REQUEST_ALLY, this::requestAlly);
-        registerButton(START_FEUD, this::startFeud);
-        registerButton(SET_NEUTRAL, this::setNeutral);
+        directConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
+        indirectConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
 
-        //Neutral: [Set Ally] [Start Feud]
-        //Ally: [Set Neutral]
-        //Feud: [Set Neutral]
+        registerButton(TRAVEL, this::teleportToColony);
+
+        updateConnections(directConnections, directConnectionData);
+        updateConnections(indirectConnections, indirectConnectionData);
     }
 
-    private void setNeutral(@NotNull final Button button)
+    private IColonyConnectionManager.ConnectedColonyData getColonyDataFromPane(final @NotNull Button button)
     {
-        final int row = colonyList.getListElementIndexByPane(button);
-
-    }
-
-    private void startFeud(@NotNull final Button button)
-    {
-        final int row = colonyList.getListElementIndexByPane(button);
-
-    }
-
-    private void requestAlly(@NotNull final Button button)
-    {
-        final int row = colonyList.getListElementIndexByPane(button);
-
+        final int directRow = directConnections.getListElementIndexByPane(button);
+        if (directRow != -1)
+        {
+            return directConnectionData.get(directRow);
+        }
+        else
+        {
+            final int indirectRow = indirectConnections.getListElementIndexByPane(button);
+            return indirectConnectionData.get(indirectRow);
+        }
     }
 
     private void teleportToColony(@NotNull final Button button)
     {
-        final int row = colonyList.getListElementIndexByPane(button);
+        final IColonyConnectionManager.ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
 
+        MessageUtils.format("com.minecolonies.core.gui.colonylist.travel.really", connectedColonyData.name())
+            .withPriority(MessageUtils.MessagePriority.IMPORTANT)
+            .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id()))))
+            .sendTo(Minecraft.getInstance().player);
+        this.close();
     }
 
     /**
      * Updates the colony list.
      */
-    private void updateResourceList()
+    private void updateConnections(final ScrollingList connectionScrollList, final List<IColonyConnectionManager.ConnectedColonyData> connectionData)
     {
-        colonyList.setDataProvider(new ScrollingList.DataProvider()
+        connectionScrollList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
              * The number of rows of the list.
@@ -101,7 +104,7 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return moduleView.getColony().getConnectionManager().getConnectedColonies().size();
+                return connectionData.size();
             }
 
             /**
@@ -112,23 +115,13 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStorage resource = allItems.get(index);
-                final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
-                final String name = resource.getItemStack().getHoverName().getString();
-                resourceLabel.setText(Component.literal(name.substring(0, Math.min(17, name.length()))));
-                final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
-                if (!Screen.hasShiftDown())
-                {
-                    qtys.setText(Component.literal(Utils.format(resource.getAmount())));
-                }
-                else
-                {
-                    qtys.setText(Component.literal(Integer.toString(resource.getAmount())));
-                }
-                final Item imagesrc = resource.getItemStack().getItem();
-                final ItemStack image = new ItemStack(imagesrc, 1);
-                image.setTag(resource.getItemStack().getTag());
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
+                final IColonyConnectionManager.ConnectedColonyData colonyData = connectionData.get(index);
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colonyData.name()));
+                rowPane.findPaneOfTypeByID("distance", Text.class).setText(Component.translatable("com.minecolonies.coremod.dist.blocks", (int) BlockPosUtil.dist(colonyData.pos(), buildingView.getColony().getCenter())));
+                rowPane.findPaneOfTypeByID("state", Text.class).setText(Component.translatable(colonyData.diplomacyStatus().translationKey()));
+
+                rowPane.findPaneOfTypeByID(TRAVEL, Button.class).setEnabled(colonyData.diplomacyStatus() == ColonyConnectionManager.DiplomacyStatus.ALLIES
+                    && !colonyData.pos().equals(BlockPos.ZERO));
             }
         });
     }
