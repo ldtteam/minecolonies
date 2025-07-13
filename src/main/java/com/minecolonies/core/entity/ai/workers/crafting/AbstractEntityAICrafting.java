@@ -110,18 +110,28 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     }
 
     /**
+     * Returns the name of the crafting stat that is used in the building's statistics.
+     * Override this in your subclass to change the description of the smelting stat.
+     * @return The name of the crafting statistic.
+     */
+    protected String getCraftingStatName()
+    {
+        return ITEMS_CRAFTED_DETAIL;
+    }
+
+    /**
      * Records the crafting request in the building's statistics.
      * Override this in your subclass to change the description of the crafting stat.
      * @param request the request to record.
      */
-    public void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
+    protected void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
     {
         if (recipe == null) 
         {
             return;
         }
 
-        StatsUtil.trackStatByName(building, ITEMS_CRAFTED_DETAIL, recipe.getPrimaryOutput().getHoverName(), recipe.getPrimaryOutput().getCount());
+        StatsUtil.trackStatByName(building, getCraftingStatName(), recipe.getPrimaryOutput().getHoverName(), recipe.getPrimaryOutput().getCount());
     }
 
 

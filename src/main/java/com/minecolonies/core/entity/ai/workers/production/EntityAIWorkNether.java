@@ -59,6 +59,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DISCOVERED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.TRIPS_COMPLETED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.MINER_DEATHS;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
@@ -473,6 +476,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             if (worker.isDeadOrDying())
                             {
                                 expeditionLog.setKilled();
+                                
+                                StatsUtil.trackStat(building, MINER_DEATHS, 1);
 
                                 // Stop processing loot table data, as the worker died before finishing the trip.
                                 InventoryUtils.clearItemHandler(worker.getItemHandlerCitizen());
@@ -568,6 +573,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     {
                         worker.decreaseSaturationForContinuousAction();
                         worker.getCitizenExperienceHandler().addExperience(0.2);
+                        StatsUtil.trackStatByName(building, ITEMS_DISCOVERED, item.getHoverName(), item.getCount());
                     }
                 }
 
@@ -637,6 +643,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         job.setInNether(false);
 
         currentRecipeStorage = null;
+        StatsUtil.trackStat(building, TRIPS_COMPLETED, 1);
+
         return INVENTORY_FULL;
     }
 

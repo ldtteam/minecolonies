@@ -5,6 +5,7 @@ import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -28,6 +29,7 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
     {
         tag(ModTags.hostile).add(EntityType.SLIME);
         tag(ModTags.mobAttackBlacklist).add(EntityType.ENDERMAN, EntityType.LLAMA);
+        tag(ModTags.freeToInteractWith).addOptional(new ResourceLocation("corpse", "corpse"));
 
         final TagAppender<EntityType<?>> raiderTagAppender = tag(ModTags.raiders);
         ModEntities.getRaiders().forEach(raiderType -> raiderTagAppender.add(TagEntry.element(EntityType.getKey(raiderType))));

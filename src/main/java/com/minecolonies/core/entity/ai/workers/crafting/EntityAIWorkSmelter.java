@@ -14,6 +14,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -39,6 +40,8 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_SMELTED_DETAIL;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_BROKEN;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_ORE;
 
 /**
@@ -91,6 +94,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return IDLE;
         }
+        Component statsName = inputItem.getHoverName();
+        int quantity = inputItem.getCount();
 
         WorkerUtil.faceBlock(building.getPosition(), worker);
 
@@ -101,6 +106,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         else
         {
             worker.decreaseSaturationForContinuousAction();
+            StatsUtil.trackStatByName(building, ORES_BROKEN, statsName, quantity);
             worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
@@ -130,9 +136,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
+        StatsUtil.trackStatFromFurnace(building, ITEMS_SMELTED_DETAIL, furnace, RESULT_SLOT);
+
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
           new InvWrapper(furnace), RESULT_SLOT,
           worker.getInventoryCitizen());
+
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }

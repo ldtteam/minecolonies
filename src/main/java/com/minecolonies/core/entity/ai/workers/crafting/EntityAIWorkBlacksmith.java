@@ -30,18 +30,4 @@ public class EntityAIWorkBlacksmith extends AbstractEntityAICrafting<JobBlacksmi
         return BuildingBlacksmith.class;
     }
 
-    /**
-     * Records the crafting request in the building's statistics.
-     * @param request the request to record.
-     */
-    @Override
-    public void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
-    {
-        if (recipe == null) 
-        {
-            return;
-        }
-
-        StatsUtil.trackStatByName(building, ITEMS_CRAFTED_DETAIL, recipe.getPrimaryOutput().getDescriptionId(), recipe.getPrimaryOutput().getCount());
-    }
 }
