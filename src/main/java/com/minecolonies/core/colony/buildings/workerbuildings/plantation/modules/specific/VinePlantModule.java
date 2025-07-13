@@ -52,11 +52,11 @@ public class VinePlantModule extends PercentageHarvestPlantModule
     @Override
     public BlockState getPlantingBlockState(final Level world, final BlockPos workPosition, final BlockState blockState)
     {
-        return blockState.setValue(VineBlock.UP, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.above(), Direction.DOWN)))
-                 .setValue(VineBlock.NORTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.north(), Direction.SOUTH)))
-                 .setValue(VineBlock.SOUTH, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.south(), Direction.NORTH)))
-                 .setValue(VineBlock.WEST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.west(), Direction.EAST)))
-                 .setValue(VineBlock.EAST, Boolean.valueOf(VineBlock.isAcceptableNeighbour(world, workPosition.east(), Direction.WEST)));
+        return blockState.setValue(VineBlock.UP, VineBlock.isAcceptableNeighbour(world, workPosition.above(), Direction.UP))
+                 .setValue(VineBlock.NORTH, VineBlock.isAcceptableNeighbour(world, workPosition.north(), Direction.NORTH))
+                 .setValue(VineBlock.SOUTH, VineBlock.isAcceptableNeighbour(world, workPosition.south(), Direction.SOUTH))
+                 .setValue(VineBlock.WEST, VineBlock.isAcceptableNeighbour(world, workPosition.west(), Direction.WEST))
+                 .setValue(VineBlock.EAST, VineBlock.isAcceptableNeighbour(world, workPosition.east(), Direction.EAST));
     }
 
     @Override
