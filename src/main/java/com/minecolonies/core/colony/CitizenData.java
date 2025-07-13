@@ -236,7 +236,7 @@ public class CitizenData implements ICitizenData
     /**
      * The current status of the citizen's working (?)
      */
-    private JobStatus jobStatus;
+    private JobStatus jobStatus = JobStatus.IDLE;
 
     /**
      * The texture suffix.
@@ -1320,7 +1320,7 @@ public class CitizenData implements ICitizenData
         }
 
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
-        nbtTagCompound.putInt(TAG_JOB_STATUS, Optional.ofNullable(jobStatus).orElse(JobStatus.IDLE).ordinal());
+        nbtTagCompound.putInt(TAG_JOB_STATUS, jobStatus.ordinal());
 
         nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
         nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
@@ -1496,9 +1496,9 @@ public class CitizenData implements ICitizenData
         {
             this.jobStatus = JobStatus.values()[nbtTagCompound.getInt(TAG_JOB_STATUS)];
         }
-        else
+        else if (nbtTagCompound.getBoolean(TAG_IDLE))
         {
-            this.jobStatus = nbtTagCompound.getBoolean(TAG_IDLE) ? JobStatus.STUCK : JobStatus.IDLE;
+            this.jobStatus = JobStatus.STUCK;
         }
 
         final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
