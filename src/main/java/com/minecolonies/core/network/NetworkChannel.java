@@ -150,6 +150,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
         registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
+        registerMessage(++idx, TriggerConnectionEventMessage.class, TriggerConnectionEventMessage::new);
 
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
@@ -202,7 +203,7 @@ public class NetworkChannel
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
-        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(++idx, MarkStoryReadOnItemMessage.class, MarkStoryReadOnItemMessage::new);
         registerMessage(++idx, AlterRestaurantMenuItemMessage.class, AlterRestaurantMenuItemMessage::new);
 
         //Client side only

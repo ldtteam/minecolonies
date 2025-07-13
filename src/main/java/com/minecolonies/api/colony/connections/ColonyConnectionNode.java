@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony;
+package com.minecolonies.api.colony.connections;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;

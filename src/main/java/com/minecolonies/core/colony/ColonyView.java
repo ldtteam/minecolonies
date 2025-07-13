@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;

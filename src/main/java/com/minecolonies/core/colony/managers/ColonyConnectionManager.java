@@ -1,9 +1,15 @@
 package com.minecolonies.core.colony.managers;
 
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.managers.interfaces.IColonyConnectionManager;
+import com.minecolonies.api.colony.connections.ColonyConnectionNode;
+import com.minecolonies.api.colony.connections.ConnectedColonyData;
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
+import com.minecolonies.api.colony.connections.PendingConnectionNode;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobSignConnection;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -21,8 +27,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class ColonyConnectionManager implements IColonyConnectionManager
 {
-
-
     /**
      * All points. This is stored to nbt.
      */
@@ -54,6 +58,11 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     private final List<ConnectionEventData> connectionEvents = new ArrayList<>();
 
     /**
+     * Pending connection points. This is stored to nbt.
+     */
+    private final Map<BlockPos, PendingConnectionNode> pendingColonyConnections = new LinkedHashMap<>();
+
+    /**
      * Create a new connection manager.
      * @param colony its colony.
      */
@@ -65,51 +74,62 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public boolean addNewConnectionNode(final BlockPos connectionPoint)
     {
-        //todo, does not insert between atm. That's okay, when the between is set, but if between was deleted, we need a way to insert between.
+        int distance = Integer.MAX_VALUE;
+        ColonyConnectionNode potentialConnection = null;
         for (final ColonyConnectionNode node : colonyConnections.values())
         {
             // Only connect to a node with correct distance.
             if (node.canConnect())
             {
-                if (node.getPosition().distSqr(connectionPoint) <= 50*50)
+                final int localDistance = (int) node.getPosition().distSqr(connectionPoint);
+                if (localDistance <= 50*50 && localDistance < distance)
                 {
-                    BlockPos tempNode = node.getPreviousNode();
-                    while (colonyConnections.containsKey(tempNode))
-                    {
-                        tempNode = colonyConnections.get(tempNode).getPreviousNode();
-                    }
-
-                    if (tempNode == null && !gateHouses.contains(tempNode))
-                    {
-                        MessageUtils.format(COM_MINECOLONIES_SIGN_MISSING_LINK).sendTo(colony).forManagers();
-                        return false;
-                    }
-
-                    final ColonyConnectionNode newNode = new ColonyConnectionNode(connectionPoint);
-                    node.alterNextNode(connectionPoint);
-                    newNode.alterPreviousNode(node.getPosition());
-                    colonyConnections.put(connectionPoint, newNode);
-
-                    //todo add to pending queue
-                    return true;
+                    distance = localDistance;
+                    potentialConnection = node;
                 }
             }
         }
 
-        for (final BlockPos node : gateHouses)
+        if (potentialConnection != null)
         {
-            if (node.distSqr(connectionPoint) <= 50*50)
+            Set<BlockPos> visitedNodes = new HashSet<>();
+            BlockPos tempNode = potentialConnection.getPreviousNode();
+            while (colonyConnections.containsKey(tempNode) && !visitedNodes.contains(tempNode))
             {
-                final ColonyConnectionNode newNode = new ColonyConnectionNode(connectionPoint);
-                newNode.alterPreviousNode(node);
-                colonyConnections.put(connectionPoint, newNode);
+                tempNode = colonyConnections.get(tempNode).getPreviousNode();
+                visitedNodes.add(tempNode);
+            }
 
-                //todo add to pending queue
+            if (tempNode == null && !gateHouses.contains(tempNode))
+            {
+                MessageUtils.format(COM_MINECOLONIES_SIGN_MISSING_LINK).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+                return false;
+            }
+
+            final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, potentialConnection.getPosition()), false);
+            newNode.alterPreviousNode(potentialConnection.getPosition());
+            if (potentialConnection.getTargetColonyId() != -1)
+            {
+                newNode.setTargetColonyId(potentialConnection.getTargetColonyId());
+            }
+
+            pendingColonyConnections.put(connectionPoint, newNode);
+            return true;
+        }
+
+        for (final BlockPos gateHousePos : gateHouses)
+        {
+            if (gateHousePos.distSqr(connectionPoint) <= 50*50)
+            {
+                final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, gateHousePos), false);
+                newNode.alterPreviousNode(gateHousePos);
+
+                pendingColonyConnections.put(connectionPoint, newNode);
                 return true;
             }
         }
 
-        MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(colony).forManagers();;
+        MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();;
         return false;
     }
 
@@ -117,15 +137,20 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     public void removeConnectionNode(final BlockPos connectionPoint)
     {
         final ColonyConnectionNode colonyConnectionNode = colonyConnections.remove(connectionPoint);
-        final ColonyConnectionNode previousNode = colonyConnections.get(colonyConnectionNode.getPreviousNode());
-        if (previousNode != null)
+        if (colonyConnectionNode != null)
         {
-            previousNode.alterNextNode(BlockPos.ZERO);
-        }
-        final ColonyConnectionNode nextNode = colonyConnections.get(colonyConnectionNode.getNextNode());
-        if (nextNode != null)
-        {
-            nextNode.alterPreviousNode(BlockPos.ZERO);
+            final ColonyConnectionNode previousNode = colonyConnections.get(colonyConnectionNode.getPreviousNode());
+            if (previousNode != null)
+            {
+                previousNode.alterNextNode(BlockPos.ZERO);
+                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, previousNode.getPosition())).sendTo(this.colony).forManagers();
+            }
+            final ColonyConnectionNode nextNode = colonyConnections.get(colonyConnectionNode.getNextNode());
+            if (nextNode != null)
+            {
+                nextNode.alterPreviousNode(BlockPos.ZERO);
+                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, nextNode.getPosition())).sendTo(this.colony).forManagers();
+            }
         }
     }
 
@@ -155,9 +180,11 @@ public class ColonyConnectionManager implements IColonyConnectionManager
 
         // Make sure we're connected until the gate.
         final BlockPos intermediateNodePos = tempNodePos;
-        while (colonyConnections.containsKey(tempNodePos))
+        Set<BlockPos> visitedNodes = new HashSet<>();
+        while (colonyConnections.containsKey(tempNodePos) && !visitedNodes.contains(tempNodePos))
         {
             tempNodePos = colonyConnections.get(tempNodePos).getPreviousNode();
+            visitedNodes.add(tempNodePos);
         }
 
         if (tempNodePos == null && !gateHouses.contains(tempNodePos))
@@ -225,14 +252,123 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public void tick()
     {
-        // todo Try to path between nodes and break sign if unsuccessful and remove connection.
-        // todo maybe add those first to a pending set that we can process tick by tick.
-        //  You can not connect if the previous node is not verified yet, so we need to add that to the error.
-        // If the next node is not part of this colony, it must be part of the target colony if ID is set.
+        for (Map.Entry<BlockPos, PendingConnectionNode> pendingConnection : new ArrayList<>(pendingColonyConnections.entrySet()))
+        {
+            if (pendingConnection.getValue().getCachedPathResult() == null)
+            {
+                pendingConnection.getValue().setCachedPathResult(createSignPath(pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode()));
+            }
+            else if (pendingConnection.getValue().getCachedPathResult().isDone())
+            {
+                if (pendingConnection.getValue().getCachedPathResult().isPathReachingDestination())
+                {
+                    pendingColonyConnections.remove(pendingConnection.getKey());
+                    final ColonyConnectionNode connection = colonyConnections.get(pendingConnection.getValue().getPreviousNode());
+                    if (connection == null && !gateHouses.contains(pendingConnection.getValue().getPreviousNode()))
+                    {
+                        colony.getWorld().destroyBlock(pendingConnection.getKey(), true);
+                        MessageUtils.format(COM_MINECOLONIES_CONNECTION_PATH_FAILURE, pendingConnection.getKey().toShortString(), pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+                        continue;
+                    }
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.IMPORTANT).sendTo(colony).forManagers();
+
+                    if (connection != null)
+                    {
+                        connection.alterNextNode(pendingConnection.getValue().getPosition());
+                    }
+
+                    if (gateHouses.contains(pendingConnection.getKey()))
+                    {
+                        final ColonyConnectionNode nextNode = colonyConnections.get(pendingConnection.getValue().getNextNode());
+                        if (nextNode != null)
+                        {
+                            nextNode.alterPreviousNode(pendingConnection.getKey());
+                            final int targetColonyId = pendingConnection.getValue().getTargetColonyId();
+                            if (targetColonyId != -1)
+                            {
+                                final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, colony.getDimension());
+                                if (connectedColony != null)
+                                {
+                                    connectedColony.getConnectionManager().getDirectlyConnectedColonies().put(colony.getID(),
+                                        new ConnectedColonyData(colony.getID(),
+                                            colony.getName(),
+                                            pendingConnection.getKey(),
+                                            directlyConnectedColonies.get(targetColonyId).diplomacyStatus));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
+                    }
+
+                    if (!pendingConnection.getValue().isPathMending())
+                    {
+                        // After successful connection try to find a next connection to (for repair inbetween).
+                        int distance = Integer.MAX_VALUE;
+                        ColonyConnectionNode potentialConnection = null;
+                        for (final ColonyConnectionNode node : colonyConnections.values())
+                        {
+                            // Only connect to a node with correct distance.
+                            if (node.getPreviousNode() == BlockPos.ZERO)
+                            {
+                                final int localDistance = (int) node.getPosition().distSqr(pendingConnection.getKey());
+                                if (localDistance <= 50 * 50 && localDistance < distance)
+                                {
+                                    distance = localDistance;
+                                    potentialConnection = node;
+                                }
+                            }
+                        }
+                        if (potentialConnection != null)
+                        {
+                            final PendingConnectionNode newNode = new PendingConnectionNode(potentialConnection.getPosition(), createSignPath(potentialConnection.getPosition(), pendingConnection.getKey()), true);
+                            newNode.alterPreviousNode(pendingConnection.getKey());
+                            newNode.alterNextNode(potentialConnection.getNextNode());
+                            if (pendingConnection.getValue().getTargetColonyId() != -1)
+                            {
+                                newNode.setTargetColonyId(pendingConnection.getValue().getTargetColonyId());
+                            }
+                            else if (potentialConnection.getTargetColonyId() != -1)
+                            {
+                                newNode.setTargetColonyId(potentialConnection.getTargetColonyId());
+                            }
+
+                            pendingColonyConnections.put(newNode.getPosition(), newNode);
+                        }
+                    }
+                }
+                else
+                {
+                    if (pendingConnection.getValue().isPathMending())
+                    {
+                        continue;
+                    }
+                    colony.getWorld().destroyBlock(pendingConnection.getKey(), true);
+                    pendingColonyConnections.remove(pendingConnection.getKey());
+                    MessageUtils.format(COM_MINECOLONIES_CONNECTION_PATH_FAILURE, pendingConnection.getKey().toShortString(), pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+                }
+            }
+        }
 
         // Update connections.
         updateConnectedColonies(directlyConnectedColonies);
         updateConnectedColonies(indirectlyConnectedColoniesCache);
+    }
+
+    /**
+     * Creates and starts the pathjob towards this spawnpoint
+     *
+     * @param originPos the origin position.
+     * @param targetPos the target position.
+     * @return the path result.
+     */
+    private PathResult createSignPath(final BlockPos originPos, final BlockPos targetPos)
+    {
+        final PathJobSignConnection job = new PathJobSignConnection(colony.getWorld(), originPos, targetPos, 16);
+        job.getResult().startJob(Pathfinding.getExecutor());
+        return job.getResult();
     }
 
     /**
@@ -244,24 +380,24 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         // Update name in cache.
         for (final ConnectedColonyData colonyEntry : new ArrayList<>(connectedColonies.values()))
         {
-            final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.id(), colony.getDimension());
+            final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.id, colony.getDimension());
             if (connectedColony == null)
             {
-                connectedColonies.remove(colonyEntry.id());
+                connectedColonies.remove(colonyEntry.id);
                 continue;
             }
 
-            if (!connectedColony.getName().equals(colonyEntry.name()))
+            if (!connectedColony.getName().equals(colonyEntry.name))
             {
-                connectedColonies.put(colonyEntry.id(),
-                    new ConnectedColonyData(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos(), colonyEntry.diplomacyStatus()));
+                connectedColonies.put(colonyEntry.id,
+                    new ConnectedColonyData(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos, colonyEntry.diplomacyStatus));
             }
 
-            if (colonyEntry.diplomacyStatus() == DiplomacyStatus.ALLIES)
+            if (colonyEntry.diplomacyStatus == DiplomacyStatus.ALLIES)
             {
                 for (final ConnectedColonyData indirectConnectedColony : connectedColony.getConnectionManager().getDirectlyConnectedColonies().values())
                 {
-                    indirectlyConnectedColoniesCache.put(indirectConnectedColony.id(), indirectConnectedColony);
+                    indirectlyConnectedColoniesCache.put(indirectConnectedColony.id, indirectConnectedColony);
                 }
             }
         }
@@ -296,12 +432,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             {
                 if (node.getPosition().distSqr(gateHouseConnectionNode) <= 50*50)
                 {
-                    node.alterPreviousNode(gateHouseConnectionNode);
+                    final PendingConnectionNode newNode = new PendingConnectionNode(gateHouseConnectionNode, createSignPath(gateHouseConnectionNode, node.getPosition()), true);
+                    newNode.setTargetColonyId(node.getTargetColonyId());
+                    newNode.alterNextNode(node.getPosition());
+                    pendingColonyConnections.put(newNode.getPosition(), newNode);
                 }
             }
         }
-
-        // todo update neighboring colony if we had set blockpos zero earlier to re-activate.
     }
 
     @Override
@@ -312,16 +449,22 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (colonyConnectionNode.getPreviousNode().equals(gateHousePosition))
             {
                 colonyConnectionNode.alterPreviousNode(BlockPos.ZERO);
-            }
-            else if (colonyConnectionNode.getNextNode().equals(gateHousePosition))
-            {
-                colonyConnectionNode.alterNextNode(BlockPos.ZERO);
+                MessageUtils.format(COM_MINECOLONIES_SIGN_DISRUPTED, colonyConnectionNode.getPosition()).sendTo(this.colony).forManagers();;
             }
         }
 
        gateHouses.remove(gateHousePosition);
 
-        // todo set blockpos.zero in neighboring colony (can't teleport there for now, but connection stays)
+        // Set connected pos to zero, can't teleport to gatehouse now.
+        for (final ConnectedColonyData connectedColonyData : directlyConnectedColonies.values())
+        {
+            final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(connectedColonyData.id, colony.getDimension());
+            if (connectedColony != null)
+            {
+                connectedColony.getConnectionManager().getDirectlyConnectedColonies().put(colony.getID(),
+                    new ConnectedColonyData(colony.getID(), colony.getName(), BlockPos.ZERO, connectedColonyData.diplomacyStatus));
+            }
+        }
     }
 
     @Override
@@ -352,15 +495,15 @@ public class ColonyConnectionManager implements IColonyConnectionManager
        final int directConnectionsSize = buf.readInt();
        for (int i = 0; i < directConnectionsSize; i++)
        {
-           final ConnectedColonyData connectedColonyData = ConnectedColonyData.deserializeByteBuf(buf);
-           directlyConnectedColonies.put(connectedColonyData.id(), connectedColonyData);
+           final ConnectedColonyData connectedColonyData = new ConnectedColonyData().deserializeByteBuf(buf);
+           directlyConnectedColonies.put(connectedColonyData.id, connectedColonyData);
        }
 
         final int indirectConnectionsSize = buf.readInt();
         for (int i = 0; i < indirectConnectionsSize; i++)
         {
-            final ConnectedColonyData connectedColonyData = ConnectedColonyData.deserializeByteBuf(buf);
-            indirectlyConnectedColoniesCache.put(connectedColonyData.id(), connectedColonyData);
+            final ConnectedColonyData connectedColonyData = new ConnectedColonyData().deserializeByteBuf(buf);
+            indirectlyConnectedColoniesCache.put(connectedColonyData.id, connectedColonyData);
         }
 
         connectionEvents.clear();
@@ -375,22 +518,20 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        colonyConnections.clear();
         final ListTag connectionTagList = compound.getList(TAG_CONNECTIONS, Tag.TAG_COMPOUND);
         for (final Tag tag : connectionTagList)
         {
             final BlockPos pos = BlockPosUtil.read((CompoundTag) tag, TAG_POS);
             final ColonyConnectionNode connectionPoint = new ColonyConnectionNode(pos);
             connectionPoint.read((CompoundTag) tag);
-            colonyConnections.put(connectionPoint.getPosition(), connectionPoint);
+            colonyConnections.put(pos, connectionPoint);
         }
 
-        directlyConnectedColonies.clear();
         final ListTag connectedColonyTagList = compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND);
         for (final Tag tag : connectedColonyTagList)
         {
-            final ConnectedColonyData colonyConnectionData = ConnectedColonyData.deserializeNBT((CompoundTag) tag);
-            directlyConnectedColonies.put(colonyConnectionData.id(), colonyConnectionData);
+            final ConnectedColonyData colonyConnectionData = new ConnectedColonyData().deserializeNBT((CompoundTag) tag);
+            directlyConnectedColonies.put(colonyConnectionData.id, colonyConnectionData);
         }
 
         gateHouses.clear();
@@ -405,6 +546,15 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         for (final Tag tag : connectionEventList)
         {
             connectionEvents.add(ConnectionEventData.deserializeNBT((CompoundTag) tag));
+        }
+
+        final ListTag pendingConnectionTagList = compound.getList(TAG_PENDING, Tag.TAG_COMPOUND);
+        for (final Tag tag : pendingConnectionTagList)
+        {
+            final BlockPos pos = BlockPosUtil.read((CompoundTag) tag, TAG_POS);
+            final PendingConnectionNode colonyConnectionData = new PendingConnectionNode(pos);
+            colonyConnectionData.read((CompoundTag) tag);
+            pendingColonyConnections.put(pos, colonyConnectionData);
         }
     }
 
@@ -439,6 +589,99 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             connectionEventTagList.add(connectionEvent.serializeNBT());
         }
         compoundTag.put(TAG_CONNECTION_EVENTS, connectionEventTagList);
+
+        @NotNull final ListTag pendingConnectionTagList = new ListTag();
+        for (final PendingConnectionNode connectionEvent : pendingColonyConnections.values())
+        {
+            pendingConnectionTagList.add(connectionEvent.write());
+        }
+        compoundTag.put(TAG_PENDING, pendingConnectionTagList);
         return compoundTag;
+    }
+
+    @Override
+    public void triggerConnectionEvent(final ConnectionEventData connectionEventData)
+    {
+        final IColony originColony = IColonyManager.getInstance().getColonyByDimension(connectionEventData.id(), colony.getDimension());
+        if (originColony == null)
+        {
+            return;
+        }
+
+        connectionEvents.add(connectionEventData);
+        final ConnectedColonyData connectedColonyData;
+        final Int2ObjectMap<ConnectedColonyData> affectedMap;
+        if (directlyConnectedColonies.containsKey(connectionEventData.id()))
+        {
+            connectedColonyData = directlyConnectedColonies.get(connectionEventData.id());
+            affectedMap = directlyConnectedColonies;
+        }
+        else if (indirectlyConnectedColoniesCache.containsKey(connectionEventData.id()))
+        {
+            connectedColonyData = indirectlyConnectedColoniesCache.get(connectionEventData.id());
+            affectedMap = indirectlyConnectedColoniesCache;
+        }
+        else
+        {
+            return;
+        }
+
+        affectedMap.put(connectionEventData.id(), new ConnectedColonyData(connectionEventData.id(), originColony.getName(), connectedColonyData.pos, switch (connectionEventData.connectionEventType())
+        {
+            case ALLY_CONFIRMED -> DiplomacyStatus.ALLIES;
+            case FEUD_STARTED -> DiplomacyStatus.HOSTILE;
+            case NEUTRAL_SET -> DiplomacyStatus.NEUTRAL;
+            default -> connectedColonyData.diplomacyStatus;
+        }));
+
+        final ConnectedColonyData originConnectedColonyData;
+        final Int2ObjectMap<ConnectedColonyData> originAffectedMap;
+        final IColonyConnectionManager originColonyConnectionManager = originColony.getConnectionManager();
+        if (originColonyConnectionManager.getDirectlyConnectedColonies().containsKey(colony.getID()))
+        {
+            originConnectedColonyData = originColonyConnectionManager.getDirectlyConnectedColonies().get(colony.getID());
+            originAffectedMap = originColonyConnectionManager.getDirectlyConnectedColonies();
+        }
+        else if (originColonyConnectionManager.getIndirectlyConnectedColonies().containsKey(colony.getID()))
+        {
+            originConnectedColonyData = originColonyConnectionManager.getIndirectlyConnectedColonies().get(colony.getID());
+            originAffectedMap = originColonyConnectionManager.getIndirectlyConnectedColonies();
+        }
+        else
+        {
+            return;
+        }
+
+        originAffectedMap.put(connectionEventData.id(), new ConnectedColonyData(colony.getID(), colony.getName(), originConnectedColonyData.pos, switch (connectionEventData.connectionEventType())
+        {
+            case ALLY_CONFIRMED -> DiplomacyStatus.ALLIES;
+            case FEUD_STARTED -> DiplomacyStatus.HOSTILE;
+            case NEUTRAL_SET -> DiplomacyStatus.NEUTRAL;
+            default -> connectedColonyData.diplomacyStatus;
+        }));
+
+        colony.markDirty();
+    }
+
+    //todo: pathfinding
+
+    @Override
+    public List<ConnectionEventData> getConnectionEvents()
+    {
+        return connectionEvents;
+    }
+
+    @Override
+    public DiplomacyStatus getColonyDiplomacyStatus(final int id)
+    {
+        if (directlyConnectedColonies.containsKey(id))
+        {
+            return directlyConnectedColonies.get(id).diplomacyStatus;
+        }
+        else if (indirectlyConnectedColoniesCache.containsKey(id))
+        {
+            return indirectlyConnectedColoniesCache.get(id).diplomacyStatus;
+        }
+        return DiplomacyStatus.NEUTRAL;
     }
 }

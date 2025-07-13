@@ -6,7 +6,7 @@ import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.event.ColonyStoryListener;
-import com.minecolonies.core.network.messages.server.MarkStoryReadOnItem;
+import com.minecolonies.core.network.messages.server.MarkStoryReadOnItemMessage;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -108,7 +108,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
      */
     private void place()
     {
-        Network.getNetwork().sendToServer(new MarkStoryReadOnItem(hand));
+        Network.getNetwork().sendToServer(new MarkStoryReadOnItemMessage(hand));
         new WindowSupplies(pos, type).open();
     }
 

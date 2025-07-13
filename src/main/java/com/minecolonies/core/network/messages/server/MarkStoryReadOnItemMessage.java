@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAW_STORY;
 /**
  * Mark that for a given item the story was already read.
  */
-public class MarkStoryReadOnItem implements IMessage
+public class MarkStoryReadOnItemMessage implements IMessage
 {
     /**
      * The hand that was holding the item.
@@ -26,7 +26,7 @@ public class MarkStoryReadOnItem implements IMessage
     /**
      * Empty constructor used when registering the message
      */
-    public MarkStoryReadOnItem()
+    public MarkStoryReadOnItemMessage()
     {
         super();
     }
@@ -36,7 +36,7 @@ public class MarkStoryReadOnItem implements IMessage
      *
      * @param hand the hand with the item.
      */
-    public MarkStoryReadOnItem(final InteractionHand hand)
+    public MarkStoryReadOnItemMessage(final InteractionHand hand)
     {
         super();
         this.hand = hand;

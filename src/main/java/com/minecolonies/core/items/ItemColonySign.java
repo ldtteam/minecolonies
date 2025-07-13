@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
@@ -187,8 +188,14 @@ public class ItemColonySign extends BlockItem
                 MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(ctx.getPlayer());
                 return false;
             }
-            if (!colony.getConnectionManager().addNewConnectionNode(ctx.getClickedPos()))
+            if (colony.getConnectionManager().addNewConnectionNode(ctx.getClickedPos()))
             {
+                SoundUtils.playSuccessSound(ctx.getPlayer(), ctx.getClickedPos());
+                return true;
+            }
+            else
+            {
+                SoundUtils.playErrorSound(ctx.getPlayer(), ctx.getClickedPos());
                 return false;
             }
         }

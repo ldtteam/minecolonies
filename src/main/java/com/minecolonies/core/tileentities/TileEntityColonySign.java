@@ -1,6 +1,6 @@
 package com.minecolonies.core.tileentities;
 
-import com.minecolonies.api.colony.ColonyConnectionNode;
+import com.minecolonies.api.colony.connections.ColonyConnectionNode;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.ITickable;

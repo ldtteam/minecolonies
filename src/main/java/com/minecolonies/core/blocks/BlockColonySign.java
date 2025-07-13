@@ -117,7 +117,6 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     @Override
     public void onRemove(final BlockState currentState, final Level level, final BlockPos pos, final BlockState p_60518_, final boolean p_60519_)
     {
-        super.onRemove(currentState, level, pos, p_60518_, p_60519_);
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (!level.isClientSide && tileEntity instanceof TileEntityColonySign tileEntityColonySign)
         {
@@ -127,6 +126,7 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
                 colony.getConnectionManager().removeConnectionNode(pos);
             }
         }
+        super.onRemove(currentState, level, pos, p_60518_, p_60519_);
     }
 
     @Override

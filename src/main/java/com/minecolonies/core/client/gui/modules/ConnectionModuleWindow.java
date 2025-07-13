@@ -5,7 +5,7 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.managers.interfaces.IColonyConnectionManager;
+import com.minecolonies.api.colony.connections.ConnectedColonyData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.Network;
@@ -40,8 +40,8 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     /**
      * Lists with the data from connections.
      */
-    private final List<IColonyConnectionManager.ConnectedColonyData> directConnectionData;
-    private final List<IColonyConnectionManager.ConnectedColonyData> indirectConnectionData;
+    private final List<ConnectedColonyData> directConnectionData;
+    private final List<ConnectedColonyData> indirectConnectionData;
 
     /**
      * Constructor for the minimum stock window view.
@@ -65,7 +65,7 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
         updateConnections(indirectConnections, indirectConnectionData);
     }
 
-    private IColonyConnectionManager.ConnectedColonyData getColonyDataFromPane(final @NotNull Button button)
+    private ConnectedColonyData getColonyDataFromPane(final @NotNull Button button)
     {
         final int directRow = directConnections.getListElementIndexByPane(button);
         if (directRow != -1)
@@ -81,11 +81,11 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
 
     private void teleportToColony(@NotNull final Button button)
     {
-        final IColonyConnectionManager.ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
+        final ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
 
-        MessageUtils.format("com.minecolonies.core.gui.colonylist.travel.really", connectedColonyData.name())
+        MessageUtils.format("com.minecolonies.core.gui.colonylist.travel.really", connectedColonyData.name)
             .withPriority(MessageUtils.MessagePriority.IMPORTANT)
-            .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id()))))
+            .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id, connectedColonyData.pos))))
             .sendTo(Minecraft.getInstance().player);
         this.close();
     }
@@ -93,7 +93,7 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     /**
      * Updates the colony list.
      */
-    private void updateConnections(final ScrollingList connectionScrollList, final List<IColonyConnectionManager.ConnectedColonyData> connectionData)
+    private void updateConnections(final ScrollingList connectionScrollList, final List<ConnectedColonyData> connectionData)
     {
         connectionScrollList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -115,13 +115,13 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyConnectionManager.ConnectedColonyData colonyData = connectionData.get(index);
-                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colonyData.name()));
-                rowPane.findPaneOfTypeByID("distance", Text.class).setText(Component.translatable("com.minecolonies.coremod.dist.blocks", (int) BlockPosUtil.dist(colonyData.pos(), buildingView.getColony().getCenter())));
-                rowPane.findPaneOfTypeByID("state", Text.class).setText(Component.translatable(colonyData.diplomacyStatus().translationKey()));
+                final ConnectedColonyData colonyData = connectionData.get(index);
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colonyData.name));
+                rowPane.findPaneOfTypeByID("distance", Text.class).setText(Component.translatable("com.minecolonies.coremod.dist.blocks", (int) BlockPosUtil.dist(colonyData.pos, buildingView.getColony().getCenter())));
+                rowPane.findPaneOfTypeByID("state", Text.class).setText(Component.translatable(colonyData.diplomacyStatus.translationKey()));
 
-                rowPane.findPaneOfTypeByID(TRAVEL, Button.class).setEnabled(colonyData.diplomacyStatus() == ColonyConnectionManager.DiplomacyStatus.ALLIES
-                    && !colonyData.pos().equals(BlockPos.ZERO));
+                rowPane.findPaneOfTypeByID(TRAVEL, Button.class).setEnabled(colonyData.diplomacyStatus == ColonyConnectionManager.DiplomacyStatus.ALLIES
+                    && !colonyData.pos.equals(BlockPos.ZERO));
             }
         });
     }

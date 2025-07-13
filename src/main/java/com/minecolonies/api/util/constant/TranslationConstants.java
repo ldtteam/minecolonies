@@ -689,13 +689,19 @@ public final class TranslationConstants
     @NonNls
     public static final String URGENT                                             = ".urgent";
     @NonNls
-    public static final String COM_MINECOLONIES_SIGN_COLONY_NO_PERM               = "com.minecolonies.core.item.sign.noperm";
+    public static final String COM_MINECOLONIES_SIGN_COLONY_NO_PERM            = "com.minecolonies.core.item.sign.noperm";
     @NonNls
-    public static final String COM_MINECOLONIES_CONNECTION_FAIL                 = "com.minecolonies.core.colonyconnection.fail";
+    public static final String COM_MINECOLONIES_CONNECTION_FAIL                = "com.minecolonies.core.colonyconnection.fail";
     @NonNls
-    public static final String COM_MINECOLONIES_CONNECTION_SUCCESS              = "com.minecolonies.core.colonyconnection.success";
+    public static final String COM_MINECOLONIES_CONNECTION_SUCCESS             = "com.minecolonies.core.colonyconnection.success";
     @NonNls
-    public static final String COM_MINECOLONIES_SIGN_MISSING_LINK                 = "com.minecolonies.core.item.sign.missinglink";
+    public static final String COM_MINECOLONIES_SIGN_MISSING_LINK              = "com.minecolonies.core.item.sign.missinglink";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_CONNECTED                 = "com.minecolonies.core.item.sign.connected";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_DISRUPTED                 = "com.minecolonies.core.item.sign.disrupted";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_PATH_FAILURE        = "com.minecolonies.core.colonyconnection.path.failure";
     //<editor-fold desc="Partial keys">
 
     @NonNls

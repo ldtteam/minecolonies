@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
