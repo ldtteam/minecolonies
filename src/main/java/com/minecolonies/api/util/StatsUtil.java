@@ -15,28 +15,28 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
  */
 public class StatsUtil 
 {
-    /**
-     * Safely return the name of the item in the given slot of the given furnace for use in statistics.
-     * Returns empty if no furnace, or no item in the slot.
-     *
-     * @param furnace the furnace to get the item from.
-     * @param slot    the slot to get the item from.
-     * @return the name of the item.
-     */
-    public static String nameForStats(final FurnaceBlockEntity furnace, final int slot)
-    {
-        String name = "";
 
+    
+    /**
+     * Tracks a statistic for a given building based on the items in a furnace slot.
+     * Retrieves the item from the specified slot in the furnace, and if an item is present,
+     * tracks the statistic using the item's display name and count.
+     *
+     * @param building the building to track the stat for.
+     * @param statName the identifier for the stat.
+     * @param furnace the furnace block entity to retrieve the item from.
+     * @param slot the slot number in the furnace to check for items.
+     */
+    public static void trackStatFromFurnace(IBuilding building, final String statName, final FurnaceBlockEntity furnace, final int slot)
+    {
         if (furnace != null) 
         {
             ItemStack item = furnace.getItem(slot);
             if (item != null) 
             {
-                name = item.getDescriptionId();
+                trackStatByName(building, statName, item.getHoverName(), item.getCount());
             }
         }
-
-        return name;
     }
 
     /**
@@ -72,7 +72,7 @@ public class StatsUtil
             return;
         }
 
-        trackStatByName(building, statIdentifier, stack.getDescriptionId(), count);
+        trackStatByName(building, statIdentifier, stack.getHoverName(), count);
     }
 
     /**
@@ -144,10 +144,6 @@ public class StatsUtil
         {
             statsModule.incrementBy(statIdentifier, count);
         } 
-        else 
-        {
-            Log.getLogger().error("Attempt to track stats on a building that has no statistics module: {}", building);
-        }
     }
 
 }

@@ -881,6 +881,16 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     /**
+     * Returns the name of the smelting stat that is used in the building's statistics.
+     * Override this in your subclass to change the description of the smelting stat.
+     * @return the name of the smelting stat.
+     */
+    protected String getSmeltingStatName()
+    {
+        return ITEMS_SMELTED_DETAIL;
+    }
+
+    /**
      * Records the smelting request in the building's statistics.
      * Override this in your subclass to change the description of the smelting stat.
      *
@@ -893,6 +903,6 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return;
         }
         
-        StatsUtil.trackStatByName(building, ITEMS_SMELTED_DETAIL, cookedStack.getHoverName(), cookedStack.getCount());
+        StatsUtil.trackStatByName(building, getSmeltingStatName(), cookedStack.getHoverName(), cookedStack.getCount());
     }
 }

@@ -99,6 +99,17 @@ public final class StatisticsConstants
     // Undertaker
     public static final String GRAVES_DUG = "graves_dug";
     public static final String CITIZENS_RESURRECTED = "citizens_resurrected";
+
+    // Smelter
+    public static final String ORES_BROKEN = "ores_broken";
+
+    // Nether Miner
+    public static final String ITEMS_DISCOVERED = "items_discovered";
+    public static final String TRIPS_COMPLETED = "trips_completed";
+    public static final String MINER_DEATHS = "miner_deaths";
+
+    // Chef
+    public static final String FOOD_COOKED_DETAIL = "food_cooked_detail";
 }
 
 
