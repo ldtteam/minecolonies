@@ -15,9 +15,19 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class PendingConnectionNode extends ColonyConnectionNode
 {
     /**
-     * If it is trying to mend a path, we won't destroy the origin pos.
+     * The different connection types.
      */
-    private boolean isPathMending;
+    public enum PendingConnectionType
+    {
+        DEFAULT,
+        FIX_PATH,
+        CONNECT_COLONY
+    }
+
+    /**
+     * The connection type.
+     */
+    private PendingConnectionType connectionType;
 
     /**
      * Cached path result.
@@ -28,16 +38,16 @@ public class PendingConnectionNode extends ColonyConnectionNode
      * Create a new pending node.
      * @param pos it's pos.
      * @param pathResult the path result.
-     * @param isPathMending if it's path fixing one.
+     * @param connectionType the connection type.
      */
     public PendingConnectionNode(
         final BlockPos pos,
         final PathResult<PathJobMoveToLocation> pathResult,
-        final boolean isPathMending)
+        final PendingConnectionType connectionType)
     {
         super(pos);
         this.cachedPathResult = pathResult;
-        this.isPathMending = isPathMending;
+        this.connectionType = connectionType;
     }
 
     /**
@@ -55,7 +65,7 @@ public class PendingConnectionNode extends ColonyConnectionNode
     public CompoundTag write()
     {
         final CompoundTag compound = super.write();
-        compound.putBoolean(TAG_MENDING, isPathMending);
+        compound.putInt(TAG_CONNECTION_TYPE, connectionType.ordinal());
         return compound;
     }
 
@@ -67,16 +77,16 @@ public class PendingConnectionNode extends ColonyConnectionNode
     public void read(@NotNull final CompoundTag compound)
     {
         super.read(compound);
-        this.isPathMending = compound.getBoolean(TAG_MENDING);
+        this.connectionType = PendingConnectionType.values()[compound.getInt(TAG_CONNECTION_TYPE)];
     }
 
     /**
-     * If this is a regular connection, or a mending connection (pending connection does not destroy sign if fail to path).
-     * @return true if mending.
+     * If this is a regular connection, or a mending connection (pending connection does not destroy sign if fail to path) or a colony connection.
+     * @return the enum type.
      */
-    public boolean isPathMending()
+    public PendingConnectionType getPendingConnectionType()
     {
-        return isPathMending;
+        return connectionType;
     }
 
     /**

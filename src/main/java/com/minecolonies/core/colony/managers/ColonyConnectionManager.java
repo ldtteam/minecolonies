@@ -106,7 +106,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 return false;
             }
 
-            final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, potentialConnection.getPosition()), false);
+            final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, potentialConnection.getPosition()), PendingConnectionNode.PendingConnectionType.DEFAULT);
             newNode.alterPreviousNode(potentialConnection.getPosition());
             if (potentialConnection.getTargetColonyId() != -1)
             {
@@ -121,7 +121,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             if (gateHousePos.distSqr(connectionPoint) <= 50*50)
             {
-                final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, gateHousePos), false);
+                final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, gateHousePos), PendingConnectionNode.PendingConnectionType.DEFAULT);
                 newNode.alterPreviousNode(gateHousePos);
 
                 pendingColonyConnections.put(connectionPoint, newNode);
@@ -129,7 +129,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             }
         }
 
-        MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();;
+        MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
         return false;
     }
 
@@ -155,97 +155,34 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     }
 
     @Override
-    public boolean attemptEstablishConnection(final BlockPos clickedPos, final IColony targetColony)
+    public boolean attemptEstablishConnection(final BlockPos targetColonyConnectionPos, final IColony targetColony)
     {
-        BlockPos tempNodePos = null;
+        BlockPos thisColonyConnectionPos = null;
         // Find a suitable connection point.
         for (final ColonyConnectionNode node : colonyConnections.values())
         {
             // Only connect to a node with correct distance.
             if (node.canConnect())
             {
-                if (node.getPosition().distSqr(clickedPos) <= 50*50)
+                if (node.getPosition().distSqr(targetColonyConnectionPos) <= 50*50)
                 {
-                    tempNodePos = node.getPosition();
+                    thisColonyConnectionPos = node.getPosition();
                     break;
                 }
             }
         }
 
-        if (tempNodePos == null)
+        if (thisColonyConnectionPos == null)
         {
-            MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(this.colony).forManagers();;
+            MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(this.colony).forManagers();
             return false;
         }
 
-        // Make sure we're connected until the gate.
-        final BlockPos intermediateNodePos = tempNodePos;
-        Set<BlockPos> visitedNodes = new HashSet<>();
-        while (colonyConnections.containsKey(tempNodePos) && !visitedNodes.contains(tempNodePos))
-        {
-            tempNodePos = colonyConnections.get(tempNodePos).getPreviousNode();
-            visitedNodes.add(tempNodePos);
-        }
+        final PendingConnectionNode newNode = new PendingConnectionNode(thisColonyConnectionPos, createSignPath(thisColonyConnectionPos, targetColonyConnectionPos), PendingConnectionNode.PendingConnectionType.CONNECT_COLONY);
+        newNode.alterPreviousNode(targetColonyConnectionPos);
+        newNode.setTargetColonyId(targetColony.getID());
 
-        if (tempNodePos == null && !gateHouses.contains(tempNodePos))
-        {
-            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();;
-            return false;
-        }
-
-        final ColonyConnectionManager targetManager = (ColonyConnectionManager) targetColony.getConnectionManager();
-        final ColonyConnectionNode targetNode = targetManager.colonyConnections.get(clickedPos);
-        if (!targetNode.canConnect())
-        {
-            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
-            return false;
-        }
-
-        // Make sure the target colony is also connected until the gate.
-        BlockPos targetTempNodePos = targetNode.getPreviousNode();
-        while (targetManager.colonyConnections.containsKey(targetTempNodePos))
-        {
-            targetTempNodePos = targetManager.colonyConnections.get(targetTempNodePos).getPreviousNode();
-        }
-
-        if (targetTempNodePos == null && !targetManager.gateHouses.contains(targetTempNodePos))
-        {
-            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();;
-            return false;
-        }
-
-        // Set gate houses as connected.
-        directlyConnectedColonies.put(targetColony.getID(), new ConnectedColonyData(targetColony.getID(), targetColony.getName(), targetTempNodePos, DiplomacyStatus.NEUTRAL));
-        targetManager.directlyConnectedColonies.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), tempNodePos, DiplomacyStatus.NEUTRAL));
-
-        // Connect the two middle nodes.
-        final ColonyConnectionNode intermediateNode = colonyConnections.get(intermediateNodePos);
-        intermediateNode.alterNextNode(clickedPos);
-        intermediateNode.setTargetColonyId(targetColony.getID());
-        targetNode.alterNextNode(intermediateNodePos);
-        targetNode.setTargetColonyId(colony.getID());
-
-        tempNodePos = intermediateNodePos;
-        while (colonyConnections.containsKey(tempNodePos))
-        {
-            final ColonyConnectionNode node = colonyConnections.get(tempNodePos);
-            node.setTargetColonyId(targetColony.getID());
-            tempNodePos = node.getPreviousNode();
-        }
-
-        targetTempNodePos = targetNode.getPreviousNode();
-        while (targetManager.colonyConnections.containsKey(targetTempNodePos))
-        {
-            final ColonyConnectionNode node = targetManager.colonyConnections.get(targetTempNodePos);
-            node.setTargetColonyId(colony.getID());
-            targetTempNodePos = node.getPreviousNode();
-        }
-
-        MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, colony.getName(), targetColony.getName()).sendTo(this.colony).forManagers();;
-        MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, targetColony.getName(), colony.getName()).sendTo(targetColony).forManagers();;
-
-        // todo Set connection as pending for pathfinding.
-        colony.markDirty();
+        pendingColonyConnections.put(thisColonyConnectionPos, newNode);
         return true;
     }
 
@@ -264,13 +201,23 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 {
                     pendingColonyConnections.remove(pendingConnection.getKey());
                     final ColonyConnectionNode connection = colonyConnections.get(pendingConnection.getValue().getPreviousNode());
-                    if (connection == null && !gateHouses.contains(pendingConnection.getValue().getPreviousNode()))
+                    if (pendingConnection.getValue().getPendingConnectionType() == PendingConnectionNode.PendingConnectionType.DEFAULT)
                     {
-                        colony.getWorld().destroyBlock(pendingConnection.getKey(), true);
-                        MessageUtils.format(COM_MINECOLONIES_CONNECTION_PATH_FAILURE, pendingConnection.getKey().toShortString(), pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
-                        continue;
+                        if (connection == null && !gateHouses.contains(pendingConnection.getValue().getPreviousNode()))
+                        {
+                            colony.getWorld().destroyBlock(pendingConnection.getKey(), true);
+                            MessageUtils.format(COM_MINECOLONIES_CONNECTION_PATH_FAILURE,
+                                pendingConnection.getKey().toShortString(),
+                                pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+                            continue;
+                        }
+                        colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
                     }
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPreviousNode().toShortString()).withPriority(MessageUtils.MessagePriority.IMPORTANT).sendTo(colony).forManagers();
+
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPreviousNode().toShortString())
+                        .withPriority(MessageUtils.MessagePriority.IMPORTANT)
+                        .sendTo(colony)
+                        .forManagers();
 
                     if (connection != null)
                     {
@@ -298,12 +245,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                             }
                         }
                     }
-                    else
-                    {
-                        colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
-                    }
 
-                    if (!pendingConnection.getValue().isPathMending())
+                    if (pendingConnection.getValue().getPendingConnectionType() == PendingConnectionNode.PendingConnectionType.CONNECT_COLONY)
+                    {
+                        connectToColony(pendingConnection.getKey(), pendingConnection.getValue().getTargetColonyId(), pendingConnection.getValue().getPreviousNode());
+                    }
+                    else if (pendingConnection.getValue().getPendingConnectionType() == PendingConnectionNode.PendingConnectionType.DEFAULT)
                     {
                         // After successful connection try to find a next connection to (for repair inbetween).
                         int distance = Integer.MAX_VALUE;
@@ -311,7 +258,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                         for (final ColonyConnectionNode node : colonyConnections.values())
                         {
                             // Only connect to a node with correct distance.
-                            if (node.getPreviousNode() == BlockPos.ZERO)
+                            if (node.getPreviousNode().equals(BlockPos.ZERO) && !node.getPosition().equals(pendingConnection.getKey()))
                             {
                                 final int localDistance = (int) node.getPosition().distSqr(pendingConnection.getKey());
                                 if (localDistance <= 50 * 50 && localDistance < distance)
@@ -323,7 +270,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                         }
                         if (potentialConnection != null)
                         {
-                            final PendingConnectionNode newNode = new PendingConnectionNode(potentialConnection.getPosition(), createSignPath(potentialConnection.getPosition(), pendingConnection.getKey()), true);
+                            final PendingConnectionNode newNode = new PendingConnectionNode(potentialConnection.getPosition(), createSignPath(potentialConnection.getPosition(), pendingConnection.getKey()), PendingConnectionNode.PendingConnectionType.FIX_PATH);
                             newNode.alterPreviousNode(pendingConnection.getKey());
                             newNode.alterNextNode(potentialConnection.getNextNode());
                             if (pendingConnection.getValue().getTargetColonyId() != -1)
@@ -341,7 +288,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 }
                 else
                 {
-                    if (pendingConnection.getValue().isPathMending())
+                    if (pendingConnection.getValue().getPendingConnectionType() != PendingConnectionNode.PendingConnectionType.DEFAULT)
                     {
                         continue;
                     }
@@ -355,6 +302,97 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         // Update connections.
         updateConnectedColonies(directlyConnectedColonies);
         updateConnectedColonies(indirectlyConnectedColoniesCache);
+    }
+
+    /**
+     * Handle the connection between two colonies. Make sure both gates are reachable.
+     * @param thisColonyConnectionPos the connection pos in this colony.
+     * @param targetColonyId the target colony id.
+     * @param targetColonyConnectionPos the connection pos in the target colony.
+     */
+    private void connectToColony(final BlockPos thisColonyConnectionPos, final int targetColonyId, final BlockPos targetColonyConnectionPos)
+    {
+        final IColony targetColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, colony.getDimension());
+        if (targetColony == null)
+        {
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            return;
+        }
+        // Make sure we're connected until the gate.
+        BlockPos thisColonyGatePos = thisColonyConnectionPos;
+        Set<BlockPos> visitedNodes = new HashSet<>();
+        while (colonyConnections.containsKey(thisColonyGatePos))
+        {
+            thisColonyGatePos = colonyConnections.get(thisColonyGatePos).getPreviousNode();
+            if (!visitedNodes.add(thisColonyGatePos))
+            {
+                break;
+            }
+        }
+
+        if (thisColonyGatePos == null || !gateHouses.contains(thisColonyGatePos))
+        {
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            return;
+        }
+
+        final ColonyConnectionManager targetManager = (ColonyConnectionManager) targetColony.getConnectionManager();
+        final ColonyConnectionNode targetNode = targetManager.colonyConnections.get(targetColonyConnectionPos);
+        if (!targetNode.canConnect())
+        {
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            return;
+        }
+
+        // Make sure the target colony is also connected until the gate.
+        BlockPos targetColonyGatePos = targetNode.getPreviousNode();
+        visitedNodes = new HashSet<>();
+        while (targetManager.colonyConnections.containsKey(targetColonyGatePos))
+        {
+            targetColonyGatePos = targetManager.colonyConnections.get(targetColonyGatePos).getPreviousNode();
+            if (!visitedNodes.add(targetColonyGatePos))
+            {
+                break;
+            }
+        }
+
+        if (targetColonyGatePos == null || !targetManager.gateHouses.contains(targetColonyGatePos))
+        {
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            return;
+        }
+
+        // Set gate houses as connected.
+        directlyConnectedColonies.put(targetColony.getID(), new ConnectedColonyData(targetColony.getID(), targetColony.getName(), targetColonyGatePos, DiplomacyStatus.NEUTRAL));
+        targetManager.directlyConnectedColonies.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), thisColonyGatePos, DiplomacyStatus.NEUTRAL));
+
+        // Connect the two middle nodes.
+        final ColonyConnectionNode intermediateNode = colonyConnections.get(thisColonyConnectionPos);
+        intermediateNode.alterNextNode(targetColonyConnectionPos);
+        intermediateNode.setTargetColonyId(targetColony.getID());
+        targetNode.alterNextNode(thisColonyConnectionPos);
+        targetNode.setTargetColonyId(colony.getID());
+
+        thisColonyGatePos = thisColonyConnectionPos;
+        while (colonyConnections.containsKey(thisColonyGatePos))
+        {
+            final ColonyConnectionNode node = colonyConnections.get(thisColonyGatePos);
+            node.setTargetColonyId(targetColony.getID());
+            thisColonyGatePos = node.getPreviousNode();
+        }
+
+        targetColonyGatePos = targetNode.getPreviousNode();
+        while (targetManager.colonyConnections.containsKey(targetColonyGatePos))
+        {
+            final ColonyConnectionNode node = targetManager.colonyConnections.get(targetColonyGatePos);
+            node.setTargetColonyId(colony.getID());
+            targetColonyGatePos = node.getPreviousNode();
+        }
+
+        MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, colony.getName(), targetColony.getName()).sendTo(this.colony).forManagers();
+        MessageUtils.format(COM_MINECOLONIES_CONNECTION_SUCCESS, targetColony.getName(), colony.getName()).sendTo(targetColony).forManagers();
+
+        colony.markDirty();
     }
 
     /**
@@ -432,7 +470,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             {
                 if (node.getPosition().distSqr(gateHouseConnectionNode) <= 50*50)
                 {
-                    final PendingConnectionNode newNode = new PendingConnectionNode(gateHouseConnectionNode, createSignPath(gateHouseConnectionNode, node.getPosition()), true);
+                    final PendingConnectionNode newNode = new PendingConnectionNode(gateHouseConnectionNode, createSignPath(gateHouseConnectionNode, node.getPosition()), PendingConnectionNode.PendingConnectionType.FIX_PATH);
                     newNode.setTargetColonyId(node.getTargetColonyId());
                     newNode.alterNextNode(node.getPosition());
                     pendingColonyConnections.put(newNode.getPosition(), newNode);
@@ -449,7 +487,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (colonyConnectionNode.getPreviousNode().equals(gateHousePosition))
             {
                 colonyConnectionNode.alterPreviousNode(BlockPos.ZERO);
-                MessageUtils.format(COM_MINECOLONIES_SIGN_DISRUPTED, colonyConnectionNode.getPosition()).sendTo(this.colony).forManagers();;
+                MessageUtils.format(COM_MINECOLONIES_SIGN_DISRUPTED, colonyConnectionNode.getPosition()).sendTo(this.colony).forManagers();
             }
         }
 
