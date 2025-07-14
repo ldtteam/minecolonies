@@ -672,7 +672,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             default -> connectedColonyData.diplomacyStatus;
         };
 
-        affectedMap.put(connectionEventData.id(), new ConnectedColonyData(connectionEventData.id(), originColony.getName(), connectedColonyData.pos, diplomacyStatus));
+        affectedMap.put(connectionEventData.id(), new ConnectedColonyData(originColony.getID(), originColony.getName(), connectedColonyData.pos, diplomacyStatus));
 
         final ConnectedColonyData originConnectedColonyData;
         final TreeMap<Integer, ConnectedColonyData> originAffectedMap;
