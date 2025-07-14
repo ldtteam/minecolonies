@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_SMELTED_DETAIL;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_BAKED_DETAIL;
 /**
  * Baker AI class.
@@ -71,34 +72,12 @@ public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, 
     }
 
     /**
-     * Records the crafting request in the building's statistics.
-     * @param request the request to record.
+     * Returns the name of the smelting stat that is used in the building's statistics.
+     * @return the name of the smelting stat.
      */
-    @Override
-    public void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
+    protected String getSmeltingStatName()
     {
-        if (recipe == null) 
-        {
-            return;
-        }
-
-        StatsUtil.trackStatByName(building, ITEMS_CRAFTED_DETAIL, recipe.getPrimaryOutput().getDescriptionId(), recipe.getPrimaryOutput().getCount());
-    }
-
-    /**
-     * Records the smelting request in the building's statistics.
-     *
-     * @param cookedStack the item stack that has been smelted.
-     */
-    @Override
-    protected void recordSmeltingBuildingStats(ItemStack cookedStack)
-    {
-        if (cookedStack == null) 
-        {
-            return;
-        }
-        
-        StatsUtil.trackStatByName(building, ITEMS_BAKED_DETAIL, cookedStack.getDescriptionId(),cookedStack.getCount());
+        return ITEMS_BAKED_DETAIL;
     }
 
 }

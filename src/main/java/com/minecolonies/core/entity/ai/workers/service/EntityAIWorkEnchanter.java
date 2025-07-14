@@ -47,6 +47,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_VISITED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
 
 /**
  * Enchanter AI class.
@@ -481,17 +482,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     }
 
     /**
-     * Records the crafting request in the building's statistics.
-     * @param request the request to record.
+     * Returns the name of the crafting stat used in the building's statistics.
+     * @return The name of the enchanting statistic.
      */
-    @Override
-    public void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
-    {
-        if (recipe == null) 
-        {
-            return;
-        }
 
-        StatsUtil.trackStatByName(building, ITEMS_ENCHANTED, recipe.getPrimaryOutput().getDescriptionId(), recipe.getPrimaryOutput().getCount());
+    protected String getCraftingStatName()
+    {
+        return ITEMS_ENCHANTED;
     }
 }

@@ -252,10 +252,10 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
-            if (building != null && building.getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
+            if (building != null)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, abstractBlockHut.getBlueprintName(), this.getTargetLevel()));
+                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getRegistryName().getPath(), this.getTargetLevel()));
             }
         }
     }

@@ -300,10 +300,10 @@ public class WorkManager implements IWorkManager
             if (order instanceof WorkOrderBuilding buildingOrder)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(buildingOrder.getLocation());
-                if (building != null && building.getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
+                if (building != null)
                 {
                     AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, abstractBlockHut.getBlueprintName(), level));
+                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, building.getBuildingType().getRegistryName().getPath(), level));
                 }
             }
             else if (order instanceof WorkOrderDecoration)

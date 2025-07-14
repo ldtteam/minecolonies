@@ -19,6 +19,8 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -133,6 +135,26 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
             context.getSource()
                 .sendSuccess(() -> Component.literal("Stuck level: " + ((IMinecoloniesNavigator) entityCitizen.getNavigation()).getStuckHandler().getStuckLevel()), false);
+        }
+
+        if (citizenData.getCitizenFoodHandler() != null)
+        {
+            String lastEaten = "";
+
+            for (final Item item : citizenData.getCitizenFoodHandler().getLastEatenFoods())
+            {
+                ItemStack stack = new ItemStack(item);
+                lastEaten = lastEaten + stack.getHoverName().getString() + ", ";
+            }
+
+            final String lastEatenCompiled = lastEaten.substring(0, lastEaten.length() - 2);
+
+            context.getSource()
+                .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_FOOD,
+                    citizenData.getCitizenFoodHandler().hasFullFoodHistory(),
+                    citizenData.getCitizenFoodHandler().getFoodHappinessStats().quality(),
+                    citizenData.getCitizenFoodHandler().getFoodHappinessStats().diversity(),
+                    lastEatenCompiled), false);
         }
 
         return 1;

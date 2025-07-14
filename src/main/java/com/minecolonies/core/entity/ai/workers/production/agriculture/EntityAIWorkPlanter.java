@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverabl
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -16,9 +17,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPlanter;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
@@ -100,10 +101,10 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private IAIState pickField()
     {
-        worker.getCitizenData().setIdleAtJob(true);
-
+        worker.getCitizenData().setJobStatus(JobStatus.IDLE);
         if (building == null || building.getBuildingLevel() < 1)
         {
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             return IDLE;
         }
 
@@ -116,6 +117,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             return IDLE;
         }
 
@@ -133,9 +135,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 currentFieldActionCount = 0;
             }
 
-            worker.getCitizenData().setIdleAtJob(false);
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             return PLANTATION_MOVE_TO_FIELD;
         }
 

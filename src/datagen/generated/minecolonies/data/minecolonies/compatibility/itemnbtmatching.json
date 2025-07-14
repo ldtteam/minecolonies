@@ -55,6 +55,22 @@
         "children": [
           {
             "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/dark_oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:blocktiledpaperwall"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
           }
         ],
         "key": "textureData"
@@ -180,6 +196,22 @@
       }
     ],
     "item": "domum_ornamentum:down_gated"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/dark_oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:dynamic_timberframe"
   },
   {
     "checkednbtkeys": [

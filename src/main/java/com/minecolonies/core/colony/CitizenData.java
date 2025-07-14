@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -233,9 +234,9 @@ public class CitizenData implements ICitizenData
     protected final Map<Component, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
-     * If idle at job.
+     * The current status of the citizen's working (?)
      */
-    private boolean idle;
+    private JobStatus jobStatus = JobStatus.IDLE;
 
     /**
      * The texture suffix.
@@ -1319,7 +1320,7 @@ public class CitizenData implements ICitizenData
         }
 
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
-        nbtTagCompound.putBoolean(TAG_IDLE, idle);
+        nbtTagCompound.putInt(TAG_JOB_STATUS, jobStatus.ordinal());
 
         nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
         nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
@@ -1491,7 +1492,14 @@ public class CitizenData implements ICitizenData
             }
         }
 
-        this.idle = nbtTagCompound.getBoolean(TAG_IDLE);
+        if (nbtTagCompound.contains(TAG_JOB_STATUS))
+        {
+            this.jobStatus = JobStatus.values()[nbtTagCompound.getInt(TAG_JOB_STATUS)];
+        }
+        else if (nbtTagCompound.getBoolean(TAG_IDLE))
+        {
+            this.jobStatus = JobStatus.STUCK;
+        }
 
         final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
@@ -1660,16 +1668,25 @@ public class CitizenData implements ICitizenData
         }
     }
 
+    /**
+     * @return true if the citizen's job status is {@link JobStatus#STUCK}.
+     */
     @Override
     public boolean isIdleAtJob()
     {
-        return this.idle;
+        return this.jobStatus == JobStatus.STUCK;
     }
 
     @Override
-    public void setIdleAtJob(final boolean idle)
+    public JobStatus getJobStatus()
     {
-        this.idle = idle;
+        return this.jobStatus;
+    }
+
+    @Override
+    public void setJobStatus(final JobStatus status)
+    {
+        this.jobStatus = status;
     }
 
     @Override

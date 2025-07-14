@@ -2,6 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
@@ -201,11 +202,16 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     boolean isIdleAtJob();
 
     /**
-     * Set idle at job.
-     *
-     * @param idle true if so.
+     * Queries the citizen's job status.
      */
-    void setIdleAtJob(final boolean idle);
+    JobStatus getJobStatus();
+
+    /**
+     * Set the working status of the citizen.
+     *
+     * @param status the job status
+     */
+    void setJobStatus(final JobStatus status);
 
     /**
      * Gets the entity
