@@ -45,12 +45,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     /**
      * Connected colonies mapped to their gate position.
      */
-    private final Int2ObjectAVLTreeMap<ConnectedColonyData> directlyConnectedColonies = new Int2ObjectAVLTreeMap<>();
+    private final TreeMap<Integer, ConnectedColonyData> directlyConnectedColonies = new TreeMap<>();
 
     /**
      * Cached connection data.
      */
-    private final Int2ObjectAVLTreeMap<ConnectedColonyData> indirectlyConnectedColoniesCache = new Int2ObjectAVLTreeMap<>();
+    private final TreeMap<Integer, ConnectedColonyData> indirectlyConnectedColoniesCache = new TreeMap<>();
 
     /**
      * Connection events affecting this colony.
@@ -413,7 +413,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
      * Go through connected colonies and check for potential neighbors and update name, or remove if necessary.
      * @param connectedColonies the list of connected colonies to process.
      */
-    private void updateConnectedColonies(final Int2ObjectMap<ConnectedColonyData> connectedColonies)
+    private void updateConnectedColonies(final TreeMap<Integer, ConnectedColonyData> connectedColonies)
     {
         // Update name in cache.
         for (final ConnectedColonyData colonyEntry : new ArrayList<>(connectedColonies.values()))
@@ -442,13 +442,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     }
 
     @Override
-    public Int2ObjectMap<ConnectedColonyData> getDirectlyConnectedColonies()
+    public TreeMap<Integer, ConnectedColonyData> getDirectlyConnectedColonies()
     {
         return directlyConnectedColonies;
     }
 
     @Override
-    public Int2ObjectMap<ConnectedColonyData> getIndirectlyConnectedColonies()
+    public TreeMap<Integer, ConnectedColonyData> getIndirectlyConnectedColonies()
     {
         return indirectlyConnectedColoniesCache;
     }
@@ -509,13 +509,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(directlyConnectedColonies.size());
-        for (final Int2ObjectMap.Entry<ConnectedColonyData> connectedColony : directlyConnectedColonies.int2ObjectEntrySet())
+        for (final Map.Entry<Integer, ConnectedColonyData> connectedColony : directlyConnectedColonies.entrySet())
         {
             connectedColony.getValue().serializeByteBuf(buf);
         }
 
         buf.writeInt(indirectlyConnectedColoniesCache.size());
-        for (final Int2ObjectMap.Entry<ConnectedColonyData> connectedColony : indirectlyConnectedColoniesCache.int2ObjectEntrySet())
+        for (final Map.Entry<Integer, ConnectedColonyData> connectedColony : indirectlyConnectedColoniesCache.entrySet())
         {
             connectedColony.getValue().serializeByteBuf(buf);
         }
@@ -608,7 +608,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         compoundTag.put(TAG_CONNECTIONS, connectionTagList);
 
         @NotNull final ListTag connectedColonyTagList = new ListTag();
-        for (final Int2ObjectMap.Entry<ConnectedColonyData> entry : directlyConnectedColonies.int2ObjectEntrySet())
+        for (final Map.Entry<Integer, ConnectedColonyData> entry : directlyConnectedColonies.entrySet())
         {
             connectedColonyTagList.add(entry.getValue().serializeNBT());
         }
@@ -648,7 +648,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
 
         connectionEvents.add(connectionEventData);
         final ConnectedColonyData connectedColonyData;
-        final Int2ObjectMap<ConnectedColonyData> affectedMap;
+        final TreeMap<Integer, ConnectedColonyData> affectedMap;
         if (directlyConnectedColonies.containsKey(connectionEventData.id()))
         {
             connectedColonyData = directlyConnectedColonies.get(connectionEventData.id());
@@ -664,16 +664,18 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             return;
         }
 
-        affectedMap.put(connectionEventData.id(), new ConnectedColonyData(connectionEventData.id(), originColony.getName(), connectedColonyData.pos, switch (connectionEventData.connectionEventType())
+        final DiplomacyStatus diplomacyStatus = switch (connectionEventData.connectionEventType())
         {
             case ALLY_CONFIRMED -> DiplomacyStatus.ALLIES;
             case FEUD_STARTED -> DiplomacyStatus.HOSTILE;
             case NEUTRAL_SET -> DiplomacyStatus.NEUTRAL;
             default -> connectedColonyData.diplomacyStatus;
-        }));
+        };
+
+        affectedMap.put(connectionEventData.id(), new ConnectedColonyData(connectionEventData.id(), originColony.getName(), connectedColonyData.pos, diplomacyStatus));
 
         final ConnectedColonyData originConnectedColonyData;
-        final Int2ObjectMap<ConnectedColonyData> originAffectedMap;
+        final TreeMap<Integer, ConnectedColonyData> originAffectedMap;
         final IColonyConnectionManager originColonyConnectionManager = originColony.getConnectionManager();
         if (originColonyConnectionManager.getDirectlyConnectedColonies().containsKey(colony.getID()))
         {
@@ -690,18 +692,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             return;
         }
 
-        originAffectedMap.put(connectionEventData.id(), new ConnectedColonyData(colony.getID(), colony.getName(), originConnectedColonyData.pos, switch (connectionEventData.connectionEventType())
-        {
-            case ALLY_CONFIRMED -> DiplomacyStatus.ALLIES;
-            case FEUD_STARTED -> DiplomacyStatus.HOSTILE;
-            case NEUTRAL_SET -> DiplomacyStatus.NEUTRAL;
-            default -> connectedColonyData.diplomacyStatus;
-        }));
+        originAffectedMap.put(connectionEventData.id(), new ConnectedColonyData(colony.getID(), colony.getName(), originConnectedColonyData.pos, diplomacyStatus));
 
         colony.markDirty();
     }
-
-    //todo: pathfinding
 
     @Override
     public List<ConnectionEventData> getConnectionEvents()

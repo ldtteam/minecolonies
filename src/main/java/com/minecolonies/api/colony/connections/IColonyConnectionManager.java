@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.connections;
 
 import com.minecolonies.api.colony.IColony;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,6 +8,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.TreeMap;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
@@ -119,14 +119,14 @@ public interface IColonyConnectionManager extends INBTSerializable<CompoundTag>
      * Get all directly connected colonies.
      * @return the map of directly connected colonies.
      */
-    Int2ObjectMap<ConnectedColonyData> getDirectlyConnectedColonies();
+    TreeMap<Integer, ConnectedColonyData> getDirectlyConnectedColonies();
 
 
     /**
      * Get all indirectly connected colonies.
      * @return the map of them.
      */
-    Int2ObjectMap<ConnectedColonyData> getIndirectlyConnectedColonies();
+    TreeMap<Integer, ConnectedColonyData> getIndirectlyConnectedColonies();
 
     /**
      * Get a connection node.
