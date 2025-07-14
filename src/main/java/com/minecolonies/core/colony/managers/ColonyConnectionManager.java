@@ -51,9 +51,9 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     private final TreeMap<Integer, ConnectedColonyData> indirectlyConnectedColoniesCache = new TreeMap<>();
 
     /**
-     * Connection events affecting this colony.
+     * Connection events affecting this colony. From colony id invoking the event, to event data.
      */
-    private final List<ConnectionEventData> connectionEvents = new ArrayList<>();
+    private final Map<Integer, ConnectionEventData> connectionEvents = new TreeMap<>();
 
     /**
      * Pending connection points. This is stored to nbt.
@@ -526,7 +526,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         }
 
         buf.writeInt(connectionEvents.size());
-        for (final ConnectionEventData connectionEventType : connectionEvents)
+        for (final ConnectionEventData connectionEventType : connectionEvents.values())
         {
             connectionEventType.serializeByteBuf(buf);
         }
@@ -554,7 +554,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         for (int i = 0; i < connectionEventSize; i++)
         {
             final ConnectionEventData connectionEventData = ConnectionEventData.deserializeByteBuf(buf);
-            connectionEvents.add(connectionEventData);
+            connectionEvents.put(connectionEventData.id(), connectionEventData);
         }
     }
 
@@ -588,7 +588,8 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         final ListTag connectionEventList = compound.getList(TAG_CONNECTION_EVENTS, Tag.TAG_COMPOUND);
         for (final Tag tag : connectionEventList)
         {
-            connectionEvents.add(ConnectionEventData.deserializeNBT((CompoundTag) tag));
+            final ConnectionEventData connectionEventData = ConnectionEventData.deserializeNBT((CompoundTag) tag);
+            connectionEvents.put(connectionEventData.id(), connectionEventData);
         }
 
         final ListTag pendingConnectionTagList = compound.getList(TAG_PENDING, Tag.TAG_COMPOUND);
@@ -627,7 +628,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         compoundTag.put(TAG_GATEHOUSES, gateHouseTagList);
 
         @NotNull final ListTag connectionEventTagList = new ListTag();
-        for (final ConnectionEventData connectionEvent : connectionEvents)
+        for (final ConnectionEventData connectionEvent : connectionEvents.values())
         {
             connectionEventTagList.add(connectionEvent.serializeNBT());
         }
@@ -652,8 +653,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             return;
         }
 
-        // todo make events a map with one entry per colony id!
-        connectionEvents.add(connectionEventData);
+        connectionEvents.put(connectionEventData.id(), connectionEventData);
         final ConnectedColonyData connectedColonyData;
         final TreeMap<Integer, ConnectedColonyData> affectedMap;
         if (directlyConnectedColonies.containsKey(originColonyId))
@@ -707,7 +707,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public List<ConnectionEventData> getConnectionEvents()
     {
-        return connectionEvents;
+        return new ArrayList<>(connectionEvents.values());
     }
 
     @Override

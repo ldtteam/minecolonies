@@ -131,6 +131,7 @@ public class WindowAlliancePage extends AbstractWindowTownHall
         indirectConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
         updateConnections(directConnections, directConnectionData);
         updateConnections(indirectConnections, indirectConnectionData);
+        updateEvents();
     }
 
     /**
