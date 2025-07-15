@@ -108,7 +108,7 @@ public class BuildingCook extends AbstractBuilding
         if (sitPositions.isEmpty())
         {
             Log.getLogger().error("Restaurant without sitting position. Style: {}", getStructurePack());
-            return getPosition();
+            return null;
         }
 
         lastSitting++;
