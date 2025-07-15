@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
@@ -106,7 +107,8 @@ public class BuildingCook extends AbstractBuilding
 
         if (sitPositions.isEmpty())
         {
-            return null;
+            Log.getLogger().error("Restaurant without sitting position. Style: {}", getStructurePack());
+            return getPosition();
         }
 
         lastSitting++;
