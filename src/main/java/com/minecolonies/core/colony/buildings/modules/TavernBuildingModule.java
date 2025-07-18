@@ -176,7 +176,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Nullable
     public IVisitorData spawnVisitor()
     {
-        final RecruitmentItemsListener.RecruitCostResult cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
+        final RecruitmentItemsListener.RecruitCost cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
         if (cost == null)
         {
             return null;
@@ -186,7 +186,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.setBedPos(building.getPosition());
         newCitizen.setHomeBuilding(building);
         newCitizen.getCitizenSkillHandler().init(cost.recruitLevel());
-        newCitizen.setRecruitCosts(cost.itemStack());
+        newCitizen.setRecruitCosts(cost.recruitItem());
 
         BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
         if (spawnPos == null)
@@ -197,7 +197,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         if (newCitizen.getEntity().isPresent())
         {
-            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots().getDefaultInstance());
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots());
         }
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
