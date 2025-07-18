@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.connections.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobSignConnection;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -187,7 +188,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             if (pendingConnection.getValue().getCachedPathResult() == null)
             {
-                pendingConnection.getValue().setCachedPathResult(createSignPath(pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode()));
+                if (WorldUtil.isBlockLoaded(colony.getWorld(), pendingConnection.getKey()))
+                {
+                    pendingConnection.getValue().setCachedPathResult(createSignPath(pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode()));
+                }
             }
             else if (pendingConnection.getValue().getCachedPathResult().isDone())
             {
