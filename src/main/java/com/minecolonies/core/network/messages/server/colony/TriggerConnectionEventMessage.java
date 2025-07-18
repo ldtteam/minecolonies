@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.connections.ConnectionEvent;
 import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.Log;
@@ -18,7 +19,7 @@ public class TriggerConnectionEventMessage extends AbstractColonyServerMessage
     /**
      * Set the connection event data.
      */
-    private IColonyConnectionManager.ConnectionEventData connectionEventData;
+    private ConnectionEvent connectionEventData;
 
     /**
      * Target colony id.
@@ -30,7 +31,7 @@ public class TriggerConnectionEventMessage extends AbstractColonyServerMessage
 
     }
 
-    public TriggerConnectionEventMessage(final IColony colony, final IColonyConnectionManager.ConnectionEventData coreConnectionEventData, final int targetColonyId)
+    public TriggerConnectionEventMessage(final IColony colony, final ConnectionEvent coreConnectionEventData, final int targetColonyId)
     {
         super(colony);
         this.connectionEventData = coreConnectionEventData;
@@ -69,7 +70,7 @@ public class TriggerConnectionEventMessage extends AbstractColonyServerMessage
     @Override
     protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
-        connectionEventData = IColonyConnectionManager.ConnectionEventData.deserializeByteBuf(buf);
+        connectionEventData = ConnectionEvent.deserializeByteBuf(buf);
         targetColonyId = buf.readInt();
     }
 }

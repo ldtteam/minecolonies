@@ -1,10 +1,7 @@
 package com.minecolonies.core.colony.managers;
 
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.connections.ColonyConnectionNode;
-import com.minecolonies.api.colony.connections.ConnectedColonyData;
-import com.minecolonies.api.colony.connections.IColonyConnectionManager;
-import com.minecolonies.api.colony.connections.PendingConnectionNode;
+import com.minecolonies.api.colony.connections.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
@@ -17,16 +14,18 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.connections.ConnectionEventType.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class ColonyConnectionManager implements IColonyConnectionManager
 {
     /**
-     * All points. This is stored to nbt.
+     * There are the individual connection points. The position represents the position a sign is at.
      */
     private final Map<BlockPos, ColonyConnectionNode> colonyConnections = new LinkedHashMap<>();
 
@@ -43,17 +42,17 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     /**
      * Connected colonies mapped to their gate position.
      */
-    private final TreeMap<Integer, ConnectedColonyData> directlyConnectedColonies = new TreeMap<>();
+    private final TreeMap<Integer, ColonyConnection> directlyConnectedColonies = new TreeMap<>();
 
     /**
      * Cached connection data.
      */
-    private final TreeMap<Integer, ConnectedColonyData> indirectlyConnectedColoniesCache = new TreeMap<>();
+    private final TreeMap<Integer, ColonyConnection> indirectlyConnectedColoniesCache = new TreeMap<>();
 
     /**
      * Connection events affecting this colony. From colony id invoking the event, to event data.
      */
-    private final Map<Integer, ConnectionEventData> connectionEvents = new TreeMap<>();
+    private final Map<Integer, ConnectionEvent> connectionEvents = new TreeMap<>();
 
     /**
      * Pending connection points. This is stored to nbt.
@@ -69,17 +68,22 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         this.colony = colony;
     }
 
-    @Override
-    public boolean addNewConnectionNode(final BlockPos connectionPoint)
+    /**
+     * Get the closest node with an open nextNode connection.
+     * @param pos the pos the connection point is at.
+     * @return a possible node or null.
+     */
+    @Nullable
+    private ColonyConnectionNode getClosestNodeWithOpenConnection(final BlockPos pos)
     {
         int distance = Integer.MAX_VALUE;
         ColonyConnectionNode potentialConnection = null;
         for (final ColonyConnectionNode node : colonyConnections.values())
         {
             // Only connect to a node with correct distance.
-            if (node.canConnect())
+            if (!node.hasNextNode())
             {
-                final int localDistance = (int) node.getPosition().distSqr(connectionPoint);
+                final int localDistance = (int) node.getPosition().distSqr(pos);
                 if (localDistance <= 50*50 && localDistance < distance)
                 {
                     distance = localDistance;
@@ -87,7 +91,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 }
             }
         }
+        return potentialConnection;
+    }
 
+    @Override
+    public boolean addNewConnectionNode(final BlockPos connectionPoint)
+    {
+        final ColonyConnectionNode potentialConnection = getClosestNodeWithOpenConnection(connectionPoint);
         if (potentialConnection != null)
         {
             Set<BlockPos> visitedNodes = new HashSet<>();
@@ -155,32 +165,18 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public boolean attemptEstablishConnection(final BlockPos targetColonyConnectionPos, final IColony targetColony)
     {
-        BlockPos thisColonyConnectionPos = null;
-        // Find a suitable connection point.
-        for (final ColonyConnectionNode node : colonyConnections.values())
-        {
-            // Only connect to a node with correct distance.
-            if (node.canConnect())
-            {
-                if (node.getPosition().distSqr(targetColonyConnectionPos) <= 50*50)
-                {
-                    thisColonyConnectionPos = node.getPosition();
-                    break;
-                }
-            }
-        }
-
+        final ColonyConnectionNode thisColonyConnectionPos = getClosestNodeWithOpenConnection(targetColonyConnectionPos);
         if (thisColonyConnectionPos == null)
         {
             MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(this.colony).forManagers();
             return false;
         }
 
-        final PendingConnectionNode newNode = new PendingConnectionNode(thisColonyConnectionPos, createSignPath(thisColonyConnectionPos, targetColonyConnectionPos), PendingConnectionNode.PendingConnectionType.CONNECT_COLONY);
+        final PendingConnectionNode newNode = new PendingConnectionNode(thisColonyConnectionPos.getPosition(), createSignPath(thisColonyConnectionPos.getPosition(), targetColonyConnectionPos), PendingConnectionNode.PendingConnectionType.CONNECT_COLONY);
         newNode.alterPreviousNode(targetColonyConnectionPos);
         newNode.setTargetColonyId(targetColony.getID());
 
-        pendingColonyConnections.put(thisColonyConnectionPos, newNode);
+        pendingColonyConnections.put(thisColonyConnectionPos.getPosition(), newNode);
         return true;
     }
 
@@ -235,7 +231,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                                 if (connectedColony != null)
                                 {
                                     connectedColony.getConnectionManager().getDirectlyConnectedColonies().put(colony.getID(),
-                                        new ConnectedColonyData(colony.getID(),
+                                        new ColonyConnection(colony.getID(),
                                             colony.getName(),
                                             pendingConnection.getKey(),
                                             directlyConnectedColonies.get(targetColonyId).diplomacyStatus));
@@ -336,7 +332,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
 
         final ColonyConnectionManager targetManager = (ColonyConnectionManager) targetColony.getConnectionManager();
         final ColonyConnectionNode targetNode = targetManager.colonyConnections.get(targetColonyConnectionPos);
-        if ((targetNode != null && !targetNode.canConnect()) && !targetManager.gateHouses.contains(targetColonyConnectionPos))
+        if ((targetNode != null && targetNode.hasNextNode()) && !targetManager.gateHouses.contains(targetColonyConnectionPos))
         {
             MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
             return;
@@ -361,8 +357,8 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         }
 
         // Set gate houses as connected.
-        directlyConnectedColonies.put(targetColony.getID(), new ConnectedColonyData(targetColony.getID(), targetColony.getName(), targetColonyGatePos, DiplomacyStatus.NEUTRAL));
-        targetManager.directlyConnectedColonies.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), thisColonyGatePos, DiplomacyStatus.NEUTRAL));
+        directlyConnectedColonies.put(targetColony.getID(), new ColonyConnection(targetColony.getID(), targetColony.getName(), targetColonyGatePos, DiplomacyStatus.NEUTRAL));
+        targetManager.directlyConnectedColonies.put(colony.getID(), new ColonyConnection(colony.getID(), colony.getName(), thisColonyGatePos, DiplomacyStatus.NEUTRAL));
 
         // Connect the two middle nodes.
         final ColonyConnectionNode intermediateNode = colonyConnections.get(thisColonyConnectionPos);
@@ -415,10 +411,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
      * Go through connected colonies and check for potential neighbors and update name, or remove if necessary.
      * @param connectedColonies the list of connected colonies to process.
      */
-    private void updateConnectedColonies(final TreeMap<Integer, ConnectedColonyData> connectedColonies)
+    private void updateConnectedColonies(final TreeMap<Integer, ColonyConnection> connectedColonies)
     {
         // Update name in cache.
-        for (final ConnectedColonyData colonyEntry : new ArrayList<>(connectedColonies.values()))
+        for (final ColonyConnection colonyEntry : new ArrayList<>(connectedColonies.values()))
         {
             final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.id, colony.getDimension());
             if (connectedColony == null)
@@ -430,12 +426,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (!connectedColony.getName().equals(colonyEntry.name))
             {
                 connectedColonies.put(colonyEntry.id,
-                    new ConnectedColonyData(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos, colonyEntry.diplomacyStatus));
+                    new ColonyConnection(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos, colonyEntry.diplomacyStatus));
             }
 
             if (colonyEntry.diplomacyStatus == DiplomacyStatus.ALLIES)
             {
-                for (final ConnectedColonyData indirectConnectedColony : connectedColony.getConnectionManager().getDirectlyConnectedColonies().values())
+                for (final ColonyConnection indirectConnectedColony : connectedColony.getConnectionManager().getDirectlyConnectedColonies().values())
                 {
                     if (!directlyConnectedColonies.containsKey(indirectConnectedColony.id) && indirectConnectedColony.id != colony.getID())
                     {
@@ -447,13 +443,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     }
 
     @Override
-    public TreeMap<Integer, ConnectedColonyData> getDirectlyConnectedColonies()
+    public TreeMap<Integer, ColonyConnection> getDirectlyConnectedColonies()
     {
         return directlyConnectedColonies;
     }
 
     @Override
-    public TreeMap<Integer, ConnectedColonyData> getIndirectlyConnectedColonies()
+    public TreeMap<Integer, ColonyConnection> getIndirectlyConnectedColonies()
     {
         return indirectlyConnectedColoniesCache;
     }
@@ -499,13 +495,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
        gateHouses.remove(gateHousePosition);
 
         // Set connected pos to zero, can't teleport to gatehouse now.
-        for (final ConnectedColonyData connectedColonyData : directlyConnectedColonies.values())
+        for (final ColonyConnection connectedColonyData : directlyConnectedColonies.values())
         {
             final IColony connectedColony = IColonyManager.getInstance().getColonyByDimension(connectedColonyData.id, colony.getDimension());
             if (connectedColony != null)
             {
                 connectedColony.getConnectionManager().getDirectlyConnectedColonies().put(colony.getID(),
-                    new ConnectedColonyData(colony.getID(), colony.getName(), BlockPos.ZERO, connectedColonyData.diplomacyStatus));
+                    new ColonyConnection(colony.getID(), colony.getName(), BlockPos.ZERO, connectedColonyData.diplomacyStatus));
             }
         }
     }
@@ -514,19 +510,19 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(directlyConnectedColonies.size());
-        for (final Map.Entry<Integer, ConnectedColonyData> connectedColony : directlyConnectedColonies.entrySet())
+        for (final Map.Entry<Integer, ColonyConnection> connectedColony : directlyConnectedColonies.entrySet())
         {
             connectedColony.getValue().serializeByteBuf(buf);
         }
 
         buf.writeInt(indirectlyConnectedColoniesCache.size());
-        for (final Map.Entry<Integer, ConnectedColonyData> connectedColony : indirectlyConnectedColoniesCache.entrySet())
+        for (final Map.Entry<Integer, ColonyConnection> connectedColony : indirectlyConnectedColoniesCache.entrySet())
         {
             connectedColony.getValue().serializeByteBuf(buf);
         }
 
         buf.writeInt(connectionEvents.size());
-        for (final ConnectionEventData connectionEventType : connectionEvents.values())
+        for (final ConnectionEvent connectionEventType : connectionEvents.values())
         {
             connectionEventType.serializeByteBuf(buf);
         }
@@ -538,14 +534,14 @@ public class ColonyConnectionManager implements IColonyConnectionManager
        final int directConnectionsSize = buf.readInt();
        for (int i = 0; i < directConnectionsSize; i++)
        {
-           final ConnectedColonyData connectedColonyData = new ConnectedColonyData().deserializeByteBuf(buf);
+           final ColonyConnection connectedColonyData = new ColonyConnection().deserializeByteBuf(buf);
            directlyConnectedColonies.put(connectedColonyData.id, connectedColonyData);
        }
 
         final int indirectConnectionsSize = buf.readInt();
         for (int i = 0; i < indirectConnectionsSize; i++)
         {
-            final ConnectedColonyData connectedColonyData = new ConnectedColonyData().deserializeByteBuf(buf);
+            final ColonyConnection connectedColonyData = new ColonyConnection().deserializeByteBuf(buf);
             indirectlyConnectedColoniesCache.put(connectedColonyData.id, connectedColonyData);
         }
 
@@ -553,7 +549,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         final int connectionEventSize = buf.readInt();
         for (int i = 0; i < connectionEventSize; i++)
         {
-            final ConnectionEventData connectionEventData = ConnectionEventData.deserializeByteBuf(buf);
+            final ConnectionEvent connectionEventData = ConnectionEvent.deserializeByteBuf(buf);
             connectionEvents.put(connectionEventData.id(), connectionEventData);
         }
     }
@@ -573,7 +569,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         final ListTag connectedColonyTagList = compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND);
         for (final Tag tag : connectedColonyTagList)
         {
-            final ConnectedColonyData colonyConnectionData = new ConnectedColonyData().deserializeNBT((CompoundTag) tag);
+            final ColonyConnection colonyConnectionData = new ColonyConnection().deserializeNBT((CompoundTag) tag);
             directlyConnectedColonies.put(colonyConnectionData.id, colonyConnectionData);
         }
 
@@ -588,7 +584,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         final ListTag connectionEventList = compound.getList(TAG_CONNECTION_EVENTS, Tag.TAG_COMPOUND);
         for (final Tag tag : connectionEventList)
         {
-            final ConnectionEventData connectionEventData = ConnectionEventData.deserializeNBT((CompoundTag) tag);
+            final ConnectionEvent connectionEventData = ConnectionEvent.deserializeNBT((CompoundTag) tag);
             connectionEvents.put(connectionEventData.id(), connectionEventData);
         }
 
@@ -614,7 +610,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         compoundTag.put(TAG_CONNECTIONS, connectionTagList);
 
         @NotNull final ListTag connectedColonyTagList = new ListTag();
-        for (final Map.Entry<Integer, ConnectedColonyData> entry : directlyConnectedColonies.entrySet())
+        for (final Map.Entry<Integer, ColonyConnection> entry : directlyConnectedColonies.entrySet())
         {
             connectedColonyTagList.add(entry.getValue().serializeNBT());
         }
@@ -628,7 +624,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         compoundTag.put(TAG_GATEHOUSES, gateHouseTagList);
 
         @NotNull final ListTag connectionEventTagList = new ListTag();
-        for (final ConnectionEventData connectionEvent : connectionEvents.values())
+        for (final ConnectionEvent connectionEvent : connectionEvents.values())
         {
             connectionEventTagList.add(connectionEvent.serializeNBT());
         }
@@ -644,7 +640,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     }
 
     @Override
-    public void triggerConnectionEvent(final ConnectionEventData connectionEventData)
+    public void triggerConnectionEvent(final ConnectionEvent connectionEventData)
     {
         final int originColonyId = connectionEventData.id();
         final IColony originColony = IColonyManager.getInstance().getColonyByDimension(originColonyId, colony.getDimension());
@@ -654,8 +650,8 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         }
 
         connectionEvents.put(connectionEventData.id(), connectionEventData);
-        final ConnectedColonyData connectedColonyData;
-        final TreeMap<Integer, ConnectedColonyData> affectedMap;
+        final ColonyConnection connectedColonyData;
+        final TreeMap<Integer, ColonyConnection> affectedMap;
         if (directlyConnectedColonies.containsKey(originColonyId))
         {
             connectedColonyData = directlyConnectedColonies.get(originColonyId);
@@ -679,10 +675,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             default -> connectedColonyData.diplomacyStatus;
         };
 
-        affectedMap.put(originColonyId, new ConnectedColonyData(originColonyId, originColony.getName(), connectedColonyData.pos, diplomacyStatus));
+        affectedMap.put(originColonyId, new ColonyConnection(originColonyId, originColony.getName(), connectedColonyData.pos, diplomacyStatus));
 
-        final ConnectedColonyData originConnectedColonyData;
-        final TreeMap<Integer, ConnectedColonyData> originAffectedMap;
+        final ColonyConnection originConnectedColonyData;
+        final TreeMap<Integer, ColonyConnection> originAffectedMap;
         final IColonyConnectionManager originColonyConnectionManager = originColony.getConnectionManager();
         if (originColonyConnectionManager.getDirectlyConnectedColonies().containsKey(colony.getID()))
         {
@@ -699,13 +695,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             return;
         }
 
-        originAffectedMap.put(colony.getID(), new ConnectedColonyData(colony.getID(), colony.getName(), originConnectedColonyData.pos, diplomacyStatus));
+        originAffectedMap.put(colony.getID(), new ColonyConnection(colony.getID(), colony.getName(), originConnectedColonyData.pos, diplomacyStatus));
         originColony.markDirty();
         colony.markDirty();
     }
 
     @Override
-    public List<ConnectionEventData> getConnectionEvents()
+    public List<ConnectionEvent> getConnectionEvents()
     {
         return new ArrayList<>(connectionEvents.values());
     }

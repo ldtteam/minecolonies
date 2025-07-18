@@ -4,8 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.connections.ConnectedColonyData;
-import com.minecolonies.api.colony.connections.IColonyConnectionManager;
+import com.minecolonies.api.colony.connections.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -52,8 +51,8 @@ public class WindowAlliancePage extends AbstractWindowTownHall
     /**
      * Lists with the data from connections.
      */
-    private List<ConnectedColonyData> directConnectionData;
-    private List<ConnectedColonyData> indirectConnectionData;
+    private List<ColonyConnection> directConnectionData;
+    private List<ColonyConnection> indirectConnectionData;
 
     /**
      * Constructor for the town hall window.
@@ -83,33 +82,33 @@ public class WindowAlliancePage extends AbstractWindowTownHall
 
     private void setNeutral(@NotNull final Button button)
     {
-        final ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
-        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new IColonyConnectionManager.ConnectionEventData(building.getColony().getID(), building.getColony().getName(),
-            IColonyConnectionManager.ConnectionEventType.NEUTRAL_SET), connectedColonyData.id));
+        final ColonyConnection connectedColonyData = getColonyDataFromPane(button);
+        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new ConnectionEvent(building.getColony().getID(), building.getColony().getName(),
+            ConnectionEventType.NEUTRAL_SET), connectedColonyData.id));
     }
 
     private void startFeud(@NotNull final Button button)
     {
-        final ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
-        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new IColonyConnectionManager.ConnectionEventData(building.getColony().getID(), building.getColony().getName(),
-            IColonyConnectionManager.ConnectionEventType.FEUD_STARTED), connectedColonyData.id));
+        final ColonyConnection connectedColonyData = getColonyDataFromPane(button);
+        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new ConnectionEvent(building.getColony().getID(), building.getColony().getName(),
+            ConnectionEventType.FEUD_STARTED), connectedColonyData.id));
     }
 
     private void requestAlly(@NotNull final Button button)
     {
-        final ConnectedColonyData connectedColonyData = getColonyDataFromPane(button);
-        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new IColonyConnectionManager.ConnectionEventData(building.getColony().getID(), building.getColony().getName(),
-            IColonyConnectionManager.ConnectionEventType.ALLY_REQUEST), connectedColonyData.id));
+        final ColonyConnection connectedColonyData = getColonyDataFromPane(button);
+        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new ConnectionEvent(building.getColony().getID(), building.getColony().getName(),
+            ConnectionEventType.ALLY_REQUEST), connectedColonyData.id));
     }
 
     private void acceptAlly(@NotNull final Button button)
     {
-        final IColonyConnectionManager.ConnectionEventData connectedColonyData = building.getColony().getConnectionManager().getConnectionEvents().get(connectionEvents.getListElementIndexByPane(button));
-        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new IColonyConnectionManager.ConnectionEventData(building.getColony().getID(), building.getColony().getName(),
-            IColonyConnectionManager.ConnectionEventType.ALLY_CONFIRMED), connectedColonyData.id()));
+        final ConnectionEvent connectedColonyData = building.getColony().getConnectionManager().getConnectionEvents().get(connectionEvents.getListElementIndexByPane(button));
+        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new ConnectionEvent(building.getColony().getID(), building.getColony().getName(),
+            ConnectionEventType.ALLY_CONFIRMED), connectedColonyData.id()));
     }
 
-    private ConnectedColonyData getColonyDataFromPane(final @NotNull Button button)
+    private ColonyConnection getColonyDataFromPane(final @NotNull Button button)
     {
         final int directRow = directConnections.getListElementIndexByPane(button);
         if (directRow != -1)
@@ -137,7 +136,7 @@ public class WindowAlliancePage extends AbstractWindowTownHall
     /**
      * Updates the colony list.
      */
-    private void updateConnections(final ScrollingList connectionScrollList, final List<ConnectedColonyData> connectionData)
+    private void updateConnections(final ScrollingList connectionScrollList, final List<ColonyConnection> connectionData)
     {
         connectionScrollList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -161,15 +160,15 @@ public class WindowAlliancePage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ConnectedColonyData colonyData = connectionData.get(index);
+                final ColonyConnection colonyData = connectionData.get(index);
                 rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colonyData.name));
                 rowPane.findPaneOfTypeByID("distance", Text.class)
                     .setText(Component.translatable("com.minecolonies.coremod.dist.blocks", (int) BlockPosUtil.dist(colonyData.pos, buildingView.getColony().getCenter())));
                 rowPane.findPaneOfTypeByID("state", Text.class).setText(Component.translatable(colonyData.diplomacyStatus.translationKey()));
 
-                rowPane.findPaneOfTypeByID("requestally", Button.class).setVisible(colonyData.diplomacyStatus == ColonyConnectionManager.DiplomacyStatus.NEUTRAL);
-                rowPane.findPaneOfTypeByID("startfeud", Button.class).setVisible(colonyData.diplomacyStatus == ColonyConnectionManager.DiplomacyStatus.NEUTRAL);
-                rowPane.findPaneOfTypeByID("setneutral", Button.class).setVisible(colonyData.diplomacyStatus != ColonyConnectionManager.DiplomacyStatus.NEUTRAL);
+                rowPane.findPaneOfTypeByID("requestally", Button.class).setVisible(colonyData.diplomacyStatus == DiplomacyStatus.NEUTRAL);
+                rowPane.findPaneOfTypeByID("startfeud", Button.class).setVisible(colonyData.diplomacyStatus == DiplomacyStatus.NEUTRAL);
+                rowPane.findPaneOfTypeByID("setneutral", Button.class).setVisible(colonyData.diplomacyStatus != DiplomacyStatus.NEUTRAL);
             }
         });
     }
@@ -201,14 +200,14 @@ public class WindowAlliancePage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final List<IColonyConnectionManager.ConnectionEventData> list = building.getColony().getConnectionManager().getConnectionEvents();
+                final List<ConnectionEvent> list = building.getColony().getConnectionManager().getConnectionEvents();
                 final int revIndex = list.size() - 1 - index;
-                final IColonyConnectionManager.ConnectionEventData eventData = list.get(revIndex);
-                final IColonyConnectionManager.DiplomacyStatus diplomacyStatus = building.getColony().getConnectionManager().getColonyDiplomacyStatus(eventData.id());
+                final ConnectionEvent eventData = list.get(revIndex);
+                final DiplomacyStatus diplomacyStatus = building.getColony().getConnectionManager().getColonyDiplomacyStatus(eventData.id());
                 rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(eventData.name()));
                 rowPane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable(eventData.connectionEventType().translationKey()));
 
-                rowPane.findPaneOfTypeByID("acceptally", Button.class).setVisible(eventData.connectionEventType() == IColonyConnectionManager.ConnectionEventType.ALLY_REQUEST && diplomacyStatus != ColonyConnectionManager.DiplomacyStatus.ALLIES);
+                rowPane.findPaneOfTypeByID("acceptally", Button.class).setVisible(eventData.connectionEventType() == ConnectionEventType.ALLY_REQUEST && diplomacyStatus != DiplomacyStatus.ALLIES);
             }
         });
     }

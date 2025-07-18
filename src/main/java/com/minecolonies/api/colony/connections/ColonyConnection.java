@@ -11,9 +11,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STATUS;
 /**
  * Small storage class to hold colony connection data.
  */
-public class ConnectedColonyData
+public class ColonyConnection
 {
-    public IColonyConnectionManager.DiplomacyStatus diplomacyStatus;
+    public DiplomacyStatus diplomacyStatus;
     public int                                      id;
     public String                                   name;
     public BlockPos                                 pos;
@@ -26,11 +26,11 @@ public class ConnectedColonyData
      * @param pos             the colony gate position (cached).
      * @param diplomacyStatus the diplomacy status of the two colonies.
      */
-    public ConnectedColonyData(
+    public ColonyConnection(
         int id,
         String name,
         BlockPos pos,
-        IColonyConnectionManager.DiplomacyStatus diplomacyStatus)
+        DiplomacyStatus diplomacyStatus)
     {
         this.id = id;
         this.name = name;
@@ -41,7 +41,7 @@ public class ConnectedColonyData
     /**
      * Constructor for deserialization/serialization.
      */
-    public ConnectedColonyData()
+    public ColonyConnection()
     {
         // noop
     }
@@ -56,12 +56,12 @@ public class ConnectedColonyData
         return compoundTag;
     }
 
-    public ConnectedColonyData deserializeNBT(final CompoundTag compoundTag)
+    public ColonyConnection deserializeNBT(final CompoundTag compoundTag)
     {
         this.id = compoundTag.getInt(TAG_ID);
         this.name = compoundTag.getString(TAG_NAME);
         this.pos = BlockPosUtil.read(compoundTag, TAG_POS);
-        this.diplomacyStatus = IColonyConnectionManager.DiplomacyStatus.values()[compoundTag.getInt(TAG_STATUS)];
+        this.diplomacyStatus = DiplomacyStatus.values()[compoundTag.getInt(TAG_STATUS)];
         return this;
     }
 
@@ -73,12 +73,12 @@ public class ConnectedColonyData
         buf.writeInt(diplomacyStatus.ordinal());
     }
 
-    public ConnectedColonyData deserializeByteBuf(final FriendlyByteBuf buf)
+    public ColonyConnection deserializeByteBuf(final FriendlyByteBuf buf)
     {
         this.id = buf.readInt();
         this.name = buf.readUtf();
         this.pos = buf.readBlockPos();
-        this.diplomacyStatus = IColonyConnectionManager.DiplomacyStatus.values()[buf.readInt()];
+        this.diplomacyStatus = DiplomacyStatus.values()[buf.readInt()];
         return this;
     }
 }

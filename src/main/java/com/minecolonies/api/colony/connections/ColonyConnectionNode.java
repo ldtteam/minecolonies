@@ -134,8 +134,8 @@ public class ColonyConnectionNode
      * If another node can connect to this.
      * @return true if so.
      */
-    public boolean canConnect()
+    public boolean hasNextNode()
     {
-        return nextNode.equals(BlockPos.ZERO);
+        return !nextNode.equals(BlockPos.ZERO);
     }
 }

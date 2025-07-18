@@ -30,7 +30,7 @@ import static com.minecolonies.core.blocks.BlockColonySign.CONNECTED;
 public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEntityColonySign>
 {
     /**
-     * The model of the scarecrow.
+     * The models of the signs.
      */
     private final BakedModel model;
     private final BakedModel model2;
@@ -104,6 +104,15 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
         }
     }
 
+    /**
+     * Render the name and distance on the sign at offset.
+     * @param colonyName the name.
+     * @param matrixStack the stack.
+     * @param buffer the buffer.
+     * @param combinedLight the light.
+     * @param distance the distance to the colony.
+     * @param offset the offset to render it at.
+     */
     private void renderColonyNameOnSign(final String colonyName, final PoseStack matrixStack, final @NotNull MultiBufferSource buffer, final int combinedLight, final int distance, final int offset)
     {
         final int textWidth = Minecraft.getInstance().font.width(colonyName);
@@ -123,6 +132,15 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
         }
     }
 
+    /**
+     * Utility ro render a single block (the sign model).
+     * @param state the state of the sign.
+     * @param pose the poststack.
+     * @param buffer the buffer.
+     * @param combinedLight light combined.
+     * @param combinedOverlay overlay.
+     * @param connected if two colonies are connected.
+     */
     private void renderSingleBlock(final BlockState state, final PoseStack pose, final MultiBufferSource buffer, final int combinedLight, final int combinedOverlay, final boolean connected)
     {
         final BakedModel usedModel = connected ? model2 : model;
@@ -142,6 +160,15 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
         }
     }
 
+    /**
+     * Text render utility.
+     * @param matrixStack the matrix stack.
+     * @param buffer the buffer.
+     * @param combinedLight the light.
+     * @param text the text to render.
+     * @param line the line of the text.
+     * @param offset additional offset.
+     */
     private void renderText(final PoseStack matrixStack, final MultiBufferSource buffer, final int combinedLight, String text, final int line, final float offset)
     {
         final int maxSize = 20;
