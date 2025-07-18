@@ -36,8 +36,8 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     /**
      * Json constants
      */
-    private static final String KEY_ITEM   = "item";
-    private static final String KEY_RARITY = "rarity";
+    public static final String KEY_ITEM   = "item";
+    public static final String KEY_RARITY = "rarity";
 
     /**
      * The current map of recruitment costs.

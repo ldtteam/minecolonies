@@ -3,6 +3,7 @@ package com.minecolonies.core.generation.defaults;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.datalistener.RecruitmentItemsListener;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -103,8 +104,8 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
         final ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
 
         final JsonObject object = new JsonObject();
-        object.addProperty("item", itemId.toString());
-        object.addProperty("recruitLevel", rarity);
+        object.addProperty(RecruitmentItemsListener.KEY_ITEM, itemId.toString());
+        object.addProperty(RecruitmentItemsListener.KEY_RARITY, rarity);
 
         return DataProvider.saveStable(cachedOutput, object, outputProvider.json(new ResourceLocation(Constants.MOD_ID, itemId.getPath())));
     }
