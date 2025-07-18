@@ -118,7 +118,7 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
 
             final int recruitLevel = rarity * 3 + 15;
             recruitCosts.putIfAbsent(rarity, new ArrayList<>());
-            recruitCosts.get(rarity).add(new RecruitCost(new ItemStack(item, recruitLevel / rarity - MathUtils.RANDOM.nextInt(3)), recruitLevel, RARITY_TO_BOOT_MAP.get(rarity)));
+            recruitCosts.get(rarity).add(new RecruitCost(new ItemStack(item, (recruitLevel * 3 / rarity) - MathUtils.RANDOM.nextInt(3)), recruitLevel, RARITY_TO_BOOT_MAP.get(rarity)));
         }
 
         for (int i = 1; i < 10; i++)
