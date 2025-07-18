@@ -444,7 +444,7 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
-        buf.writeNbt(colony.getQuestManager().serializeNBT(buf.registryAccess()));
+        colony.getQuestManager().serialize(buf, hasNewSubscribers);
         buf.writeInt(colony.getDay());
 
         buf.writeNbt(colony.getTravelingManager().serializeNBT(buf.registryAccess()));
@@ -922,7 +922,7 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
-        this.questManager.deserializeNBT(buf.registryAccess(), buf.readNbt());
+        this.questManager.deserialize(buf);
         this.day = buf.readInt();
         this.travellingManager.deserializeNBT(buf.registryAccess(), buf.readNbt());
     }

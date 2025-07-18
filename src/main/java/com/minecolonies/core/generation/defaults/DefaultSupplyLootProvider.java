@@ -50,24 +50,24 @@ public class DefaultSupplyLootProvider implements LootTableSubProvider
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyCamp)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.01f))
                                         .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new SupplyData(false, true, -1)))
                                         .apply(SetNameFunction.setName(Component.translatableEscape("item.minecolonies.supply.free", ModItems.supplyCamp.getDescription()), SetNameFunction.Target.ITEM_NAME)))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.2f))
-                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4))))
                         ));
 
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_SHIP_LT),
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyChest)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.01f))
                                        .apply(SetComponentsFunction.setComponent(ModDataComponents.SUPPLY_COMPONENT.value(), new SupplyData(false, true, -1)))
                                         .apply(SetNameFunction.setName(Component.translatableEscape("item.minecolonies.supply.free", ModItems.supplyChest.getDescription()), SetNameFunction.Target.ITEM_NAME)))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.2f))
-                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4))))
                         ));
     }
 }
