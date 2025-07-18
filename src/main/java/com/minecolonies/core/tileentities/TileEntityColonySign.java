@@ -147,14 +147,43 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
                 final ColonyConnectionNode node = colony.getConnectionManager().getNode(getBlockPos());
                 if (node != null)
                 {
+                    final BlockPos previousNodePos = node.getPreviousNode();
+                    if (!previousNodePos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(level, previousNodePos))
+                    {
+                        if (level.getBlockEntity(previousNodePos) instanceof TileEntityColonySign tileEntityColonySign)
+                        {
+                            this.distance = (int) BlockPosUtil.dist(previousNodePos, getBlockPos()) + tileEntityColonySign.distance;
+                        }
+                        else
+                        {
+                            this.distance = (int) BlockPosUtil.dist(previousNodePos, getBlockPos());
+                        }
+
+                        setChanged();
+                    }
+
                     this.targetColonyId = node.getTargetColonyId();
                     if (this.targetColonyId != -1)
                     {
+                        final BlockPos nextNodePos = node.getNextNode();
+                        if (!nextNodePos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(level, nextNodePos))
+                        {
+                            if (level.getBlockEntity(nextNodePos) instanceof TileEntityColonySign tileEntityColonySign)
+                            {
+                                this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos()) + tileEntityColonySign.targetColonyDistance;
+                            }
+                            else
+                            {
+                                this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos());
+                            }
+                            setChanged();
+                        }
+
                         final IColony targetColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, level.dimension());
                         if (targetColony != null)
                         {
-                            this.targetColonyDistance = (int) BlockPosUtil.dist(targetColony.getCenter(), getBlockPos());
                             targetColonyNameCache = targetColony.getName();
+                            setChanged();
                         }
                     }
                 }
