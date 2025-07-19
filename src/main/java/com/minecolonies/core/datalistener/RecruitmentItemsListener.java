@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -28,6 +29,21 @@ import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_REC
  */
 public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
 {
+    /**
+     * Base recruitment level.
+     */
+    public static int BASE_RECRUIT_LEVEL = 15;
+
+    /**
+     * Max rarity.
+     */
+    public static int MAX_RARITY = 9;
+
+    /**
+     * Base item count. Per level of rarity it's that much less.
+     */
+    public static int BASE_ITEM_COUNT = 5;
+
     /**
      * Gson instance
      */
@@ -77,7 +93,16 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     public static RecruitCost getRandomRecruitCost(final int buildingLevel)
     {
         // Number between 1-9
-        final int rarity = ColonyConstants.rand.nextInt(1, 3 * buildingLevel + 1);
+        final int limit = 3 * buildingLevel + 1;
+        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,0.5);
+        if (rarity < 0)
+        {
+            rarity = 1;
+        }
+        else if (rarity > limit)
+        {
+            rarity = limit;
+        }
         final List<RecruitCost> recruitCostsAtTier = RECRUIT_COSTS.get(rarity);
         return recruitCostsAtTier.get(ColonyConstants.rand.nextInt(recruitCostsAtTier.size()));
     }
@@ -110,18 +135,20 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
                 continue;
             }
 
-            if (rarity > 9 || rarity < 1)
+            if (rarity > MAX_RARITY || rarity < 1)
             {
                 Log.getLogger().error("Recruit cost with invalid recruitLevel {} needs to be between 1-9", rarity);
                 continue;
             }
 
-            final int recruitLevel = rarity * 3 + 15;
+            //todo this calc results in the low levels being correct, and the high levels all around the 15 base recruit + random, this doesn't work.
+            final int count = BASE_ITEM_COUNT * (MAX_RARITY + 1 - rarity);
+            final int recruitLevel = BASE_RECRUIT_LEVEL + rarity * rarity / 2;
             recruitCosts.putIfAbsent(rarity, new ArrayList<>());
-            recruitCosts.get(rarity).add(new RecruitCost(new ItemStack(item, (recruitLevel * 3 / rarity) - MathUtils.RANDOM.nextInt(3)), recruitLevel, RARITY_TO_BOOT_MAP.get(rarity)));
+            recruitCosts.get(rarity).add(new RecruitCost(new ItemStack(item, count), recruitLevel, RARITY_TO_BOOT_MAP.get(rarity)));
         }
 
-        for (int i = 1; i < 10; i++)
+        for (int i = 1; i <= MAX_RARITY; i++)
         {
             if (recruitCosts.getOrDefault(i, new ArrayList<>()).isEmpty())
             {
