@@ -59,6 +59,8 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, Items.COOKIE, 4),
             makeRecruitmentItem(cachedOutput, Items.REDSTONE, 4),
             makeRecruitmentItem(cachedOutput, Items.LAPIS_LAZULI, 4),
+            makeRecruitmentItem(cachedOutput, Items.QUARTZ, 4),
+            makeRecruitmentItem(cachedOutput, Items.AMETHYST_CLUSTER, 4),
 
             makeRecruitmentItem(cachedOutput, Items.HONEYCOMB, 5),
             makeRecruitmentItem(cachedOutput, Items.HONEY_BOTTLE, 5),
@@ -68,6 +70,7 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, ModItems.pasta_plain, 5),
             makeRecruitmentItem(cachedOutput, ModItems.pottage, 5),
 
+            makeRecruitmentItem(cachedOutput, Items.FIREWORK_STAR, 6),
             makeRecruitmentItem(cachedOutput, Items.INK_SAC, 6),
             makeRecruitmentItem(cachedOutput, Items.BLAZE_POWDER, 6),
             makeRecruitmentItem(cachedOutput, Items.SPIDER_EYE, 6),
@@ -76,6 +79,7 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, ModItems.steak_dinner, 7),
             makeRecruitmentItem(cachedOutput, ModItems.hand_pie, 7),
             makeRecruitmentItem(cachedOutput, ModItems.schnitzel, 7),
+            makeRecruitmentItem(cachedOutput, Items.GLOW_INK_SAC, 7),
 
             makeRecruitmentItem(cachedOutput, Items.DIAMOND, 8),
             makeRecruitmentItem(cachedOutput, Items.EMERALD, 8),
@@ -89,7 +93,9 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, Items.GHAST_TEAR, 9),
             makeRecruitmentItem(cachedOutput, Items.EXPERIENCE_BOTTLE, 9),
             makeRecruitmentItem(cachedOutput, Items.ENCHANTED_BOOK, 9),
-            makeRecruitmentItem(cachedOutput, Items.GOLDEN_APPLE, 9));
+            makeRecruitmentItem(cachedOutput, Items.GOLDEN_APPLE, 9),
+            makeRecruitmentItem(cachedOutput, Items.PHANTOM_MEMBRANE, 9),
+            makeRecruitmentItem(cachedOutput, Items.SHULKER_SHELL, 9));
     }
 
     @Override
