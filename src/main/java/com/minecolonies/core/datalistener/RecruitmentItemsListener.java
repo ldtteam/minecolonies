@@ -5,7 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -28,6 +30,21 @@ import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_REC
 public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
 {
     /**
+     * Base recruitment level.
+     */
+    public static int BASE_RECRUIT_LEVEL = 15;
+
+    /**
+     * Max rarity.
+     */
+    public static int MAX_RARITY = 9;
+
+    /**
+     * Base item count. Per level of rarity it's that much less.
+     */
+    public static int BASE_ITEM_COUNT = 5;
+
+    /**
      * Gson instance
      */
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -35,26 +52,28 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     /**
      * Json constants
      */
-    private static final String KEY_ITEM   = "item";
-    private static final String KEY_RARITY = "rarity";
+    public static final String KEY_ITEM   = "item";
+    public static final String KEY_RARITY = "rarity";
 
     /**
      * The current map of recruitment costs.
      */
-    private static Map<RecruitmentTiers, List<RecruitCost>> RECRUIT_COSTS = new HashMap<>();
+    private static Map<Integer, List<RecruitCost>> RECRUIT_COSTS = new HashMap<>();
 
     /**
-     * The result for the recruit cost, indicating the stack to recruit with, the level for the citizen and which boots they have to get.
-     *
-     * @param itemStack    the recruit cost.
-     * @param recruitLevel the recruit level.
-     * @param boots        the boots they have to wear.
+     *  Map of recruitLevel to boot tier.
      */
-    public record RecruitCostResult(
-        ItemStack itemStack,
-        int recruitLevel,
-        Item boots)
-    {}
+    private static final Map<Integer, ItemStack> RARITY_TO_BOOT_MAP = Map.ofEntries(
+        Map.entry(1, new ItemStack(Items.LEATHER_BOOTS)),
+        Map.entry(2, new ItemStack(Items.LEATHER_BOOTS)),
+        Map.entry(3, new ItemStack(Items.GOLDEN_BOOTS)),
+        Map.entry(4, new ItemStack(Items.GOLDEN_BOOTS)),
+        Map.entry(5, new ItemStack(Items.IRON_BOOTS)),
+        Map.entry(6, new ItemStack(Items.IRON_BOOTS)),
+        Map.entry(7, new ItemStack(Items.DIAMOND_BOOTS)),
+        Map.entry(8, new ItemStack(Items.DIAMOND_BOOTS)),
+        Map.entry(9, new ItemStack(Items.NETHERITE_BOOTS))
+    );
 
     /**
      * Default constructor.
@@ -71,29 +90,27 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
      * @return a random recruit cost.
      */
     @Nullable
-    public static RecruitCostResult getRandomRecruitCost(final int buildingLevel)
+    public static RecruitCost getRandomRecruitCost(final int buildingLevel)
     {
-        final int recruitTier = ColonyConstants.rand.nextInt(1, 10 * buildingLevel + 1);
-        final Map.Entry<RecruitmentTiers, List<RecruitCost>> tierAndCosts = RECRUIT_COSTS.entrySet()
-            .stream()
-            .filter(f -> !f.getValue().isEmpty())
-            .filter(f -> recruitTier <= f.getKey().maxLevel)
-            .min(Comparator.comparingInt(f -> f.getKey().maxLevel))
-            .orElse(null);
-        if (tierAndCosts == null)
+        // Number between 1-9
+        final int limit = 3 * buildingLevel + 1;
+        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,0.5);
+        if (rarity < 0)
         {
-            return null;
+            rarity = 1;
         }
-
-        final int recruitLevel = recruitTier + 15;
-        final RecruitCost recruitCost = tierAndCosts.getValue().get(ColonyConstants.rand.nextInt(tierAndCosts.getValue().size()));
-        return new RecruitCostResult(new ItemStack(recruitCost.item, (int) Math.round(recruitLevel * 3.0d / recruitCost.rarity)), recruitLevel, tierAndCosts.getKey().boots);
+        else if (rarity > limit)
+        {
+            rarity = limit;
+        }
+        final List<RecruitCost> recruitCostsAtTier = RECRUIT_COSTS.get(rarity);
+        return recruitCostsAtTier.get(ColonyConstants.rand.nextInt(recruitCostsAtTier.size()));
     }
 
     @Override
     protected void apply(final @NotNull Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
     {
-        final Map<RecruitmentTiers, List<RecruitCost>> recruitCosts = new HashMap<>();
+        final Map<Integer, List<RecruitCost>> recruitCosts = new HashMap<>();
 
         if (jsonElementMap.isEmpty())
         {
@@ -114,59 +131,43 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
 
             if (item == Items.AIR)
             {
-                throw new IllegalArgumentException("Recruit cost '" + entry.getKey() + "' item not allowed to be air");
+                Log.getLogger().error("Recruit cost '" + entry.getKey() + "' item not allowed to be air");
+                continue;
             }
 
-            for (final RecruitmentTiers tier : RecruitmentTiers.values())
+            if (rarity > MAX_RARITY || rarity < 1)
             {
-                if (rarity >= tier.minRarity)
-                {
-                    recruitCosts.putIfAbsent(tier, new ArrayList<>());
-                    recruitCosts.get(tier).add(new RecruitCost(item, rarity));
-                }
+                Log.getLogger().error("Recruit cost with invalid recruitLevel {} needs to be between 1-9", rarity);
+                continue;
             }
+
+            //todo this calc results in the low levels being correct, and the high levels all around the 15 base recruit + random, this doesn't work.
+            final int count = BASE_ITEM_COUNT * (MAX_RARITY + 1 - rarity);
+            final int recruitLevel = BASE_RECRUIT_LEVEL + rarity * rarity / 2;
+            recruitCosts.putIfAbsent(rarity, new ArrayList<>());
+            recruitCosts.get(rarity).add(new RecruitCost(new ItemStack(item, count), recruitLevel, RARITY_TO_BOOT_MAP.get(rarity)));
         }
 
-        for (final Map.Entry<RecruitmentTiers, List<RecruitCost>> entry : recruitCosts.entrySet())
+        for (int i = 1; i <= MAX_RARITY; i++)
         {
-            if (entry.getValue().isEmpty())
+            if (recruitCosts.getOrDefault(i, new ArrayList<>()).isEmpty())
             {
-                Log.getLogger().error("No recruitment items found for tier {}. This tier requires items with a rarity of at least {}.", entry.getKey(), entry.getKey().minRarity);
+                Log.getLogger().error("No recruitment items found for rarity of {}.", i);
             }
         }
 
         RECRUIT_COSTS = Collections.unmodifiableMap(recruitCosts);
     }
 
-    private enum RecruitmentTiers
-    {
-        LEATHER(5, 0, Items.LEATHER_BOOTS),
-        GOLD(10, 2, Items.GOLDEN_BOOTS),
-        IRON(20, 4, Items.IRON_BOOTS),
-        DIAMOND(30, 6, Items.DIAMOND_BOOTS);
-
-        private final int maxLevel;
-
-        private final int minRarity;
-
-        private final Item boots;
-
-        RecruitmentTiers(final int maxLevel, final int minRarity, final Item boots)
-        {
-            this.maxLevel = maxLevel;
-            this.minRarity = minRarity;
-            this.boots = boots;
-        }
-    }
-
     /**
-     * A possible recruit cost item.
-     *
-     * @param item   the item to recruit with.
-     * @param rarity the rarity of the given item.
+     * A recruit cost item.
+     * @param boots the boots the visitor will wear.
+     * @param recruitItem   the item to recruit with.
+     * @param recruitLevel the recruitLevel of the given item.
      */
-    private record RecruitCost(
-        Item item,
-        int rarity)
+    public record RecruitCost(
+        ItemStack recruitItem,
+        int recruitLevel,
+        ItemStack boots)
     {}
 }

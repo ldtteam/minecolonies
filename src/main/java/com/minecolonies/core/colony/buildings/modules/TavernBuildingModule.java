@@ -10,6 +10,8 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.StatsUtil;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
@@ -26,6 +28,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +42,7 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
-
+import static com.minecolonies.api.util.constant.StatisticsConstants.NEW_VISITORS;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
@@ -178,7 +181,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Nullable
     public IVisitorData spawnVisitor()
     {
-        final RecruitmentItemsListener.RecruitCostResult cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
+        final RecruitmentItemsListener.RecruitCost cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
         if (cost == null)
         {
             return null;
@@ -188,7 +191,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.setBedPos(building.getPosition());
         newCitizen.setHomeBuilding(building);
         newCitizen.getCitizenSkillHandler().init(cost.recruitLevel());
-        newCitizen.setRecruitCosts(cost.itemStack());
+
+        final ItemStack recruitCostItem = cost.recruitItem().copy();
+        recruitCostItem.setCount(recruitCostItem.getCount() + MathUtils.RANDOM.nextInt(3));
+        newCitizen.setRecruitCosts(recruitCostItem);
 
         BlockPos spawnPos;
         final BlockPos gatePos = building.getColony().getBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
@@ -209,9 +215,11 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         if (newCitizen.getEntity().isPresent())
         {
-            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots().getDefaultInstance());
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots());
         }
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+
+        StatsUtil.trackStat(building, NEW_VISITORS, 1);
 
         externalCitizens.add(newCitizen.getId());
         return newCitizen;

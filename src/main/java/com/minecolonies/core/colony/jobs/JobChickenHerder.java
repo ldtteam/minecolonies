@@ -70,7 +70,7 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
         if (getCitizen().getWorkBuilding() != null && getCitizen().getEntity().isPresent() && getCitizen().getWorkBuilding()
           .isInBuilding(getCitizen().getEntity().get().blockPosition()))
         {
-            StatsUtil.trackStatByName(getCitizen().getWorkBuilding(), ITEM_OBTAINED, pickedUpStack.getItem().getDescriptionId(), pickedUpStack.getCount());
+            StatsUtil.trackStatByName(getCitizen().getWorkBuilding(), ITEM_OBTAINED, pickedUpStack.getHoverName(), pickedUpStack.getCount());
         }
 
         return super.onStackPickUp(pickedUpStack);

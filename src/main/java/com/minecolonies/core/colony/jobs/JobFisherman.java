@@ -4,6 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman;
 import net.minecraft.core.BlockPos;
@@ -12,12 +13,15 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 
 /**
  * The fisherman's job class. implements some useful things for him.
@@ -174,6 +178,20 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     public void removeFromPonds(final Tuple<BlockPos, BlockPos> pond)
     {
         this.ponds.remove(pond);
+    }
+
+    /**
+     * Records in hut statistics what the Fisherperson has collected.
+     *
+     * @param pickedUpStack The stack that is being picked up.
+     * @return true when the stack has been used to resolve a request, false when not.
+     */
+    @Override
+    public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
+    {
+        StatsUtil.trackStatByName(getCitizen().getWorkBuilding(), ITEM_OBTAINED, pickedUpStack.getHoverName(), pickedUpStack.getCount());
+
+        return super.onStackPickUp(pickedUpStack);
     }
 }
 

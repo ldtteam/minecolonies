@@ -101,7 +101,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
 
         if (!WorldUtil.setBlockState(world, pos, placementState, Constants.UPDATE_FLAG))
         {
-                return ActionProcessingResult.PASS;
+            return ActionProcessingResult.PASS;
         }
 
         if (tileEntityData != null)
@@ -179,8 +179,6 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         }
         else if (blockState.getBlock() instanceof TimberFrameBlock || blockState.getBlock() instanceof DynamicTimberFrameBlock)
         {
-            item.getOrCreateTag().putString("type", TimberFrameType.FRAMED.toString().toUpperCase());
-
             final ItemStack tempItem = new ItemStack(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getTimberFrames().get(2));
             tempItem.setTag(item.getTag());
             return tempItem;

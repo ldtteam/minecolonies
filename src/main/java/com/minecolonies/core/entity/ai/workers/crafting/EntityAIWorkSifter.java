@@ -9,6 +9,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -24,6 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.SIFTER_NO_MESH;
+
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 
 /**
  * Sifter AI class.
@@ -183,10 +189,18 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             {
                 incrementActionsDoneAndDecSaturation();
             }
-            if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers()))
+
+            StatsUtil.trackStatByName(building, ITEM_USED, inputItem.getHoverName(), inputItem.getCount()); 
+            List<ItemStack> outputs = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), sifterBuilding.getHandlers(), true);
+            if (outputs == null)
             {
                 currentRecipeStorage = null;
                 return getState();
+            }    
+
+            for (ItemStack stackForStats : outputs)
+            {
+                StatsUtil.trackStatByName(building, ITEM_OBTAINED, stackForStats.getHoverName(), stackForStats.getCount());
             }
 
             worker.decreaseSaturationForContinuousAction();
