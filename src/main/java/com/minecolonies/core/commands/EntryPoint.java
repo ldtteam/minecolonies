@@ -3,6 +3,7 @@ package com.minecolonies.core.commands;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.commands.citizencommands.*;
 import com.minecolonies.core.commands.colonycommands.*;
+import com.minecolonies.core.commands.querycommands.*;
 import com.minecolonies.core.commands.colonycommands.requestsystem.CommandRSReset;
 import com.minecolonies.core.commands.colonycommands.requestsystem.CommandRSResetAll;
 import com.minecolonies.core.commands.generalcommands.*;
@@ -79,6 +80,12 @@ public class EntryPoint
             .addNode(new CommandTrackType().build());
 
         /*
+        * Query commands subtree
+         */
+        final CommandTree queryCommands = new CommandTree("query")
+            .addNode(new CommandQueryIdleBuilders().build());
+
+        /*
          * Root minecolonies command tree, all subtrees are added here.
          */
         final CommandTree minecoloniesRoot = new CommandTree(Constants.MOD_ID)
@@ -86,6 +93,7 @@ public class EntryPoint
             .addNode(colonyCommands)
             .addNode(new CommandHomeTeleport().build())
             .addNode(citizenCommands)
+            .addNode(queryCommands)
             .addNode(new CommandWhereAmI().build())
             .addNode(new CommandWhoAmI().build())
             .addNode(new CommandGetRanks().build())
@@ -106,6 +114,7 @@ public class EntryPoint
             .addNode(colonyCommands)
             .addNode(new CommandHomeTeleport().build())
             .addNode(citizenCommands)
+            .addNode(queryCommands)
             .addNode(new CommandWhereAmI().build())
             .addNode(new CommandWhoAmI().build())
             .addNode(new CommandGetRanks().build())
