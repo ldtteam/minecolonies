@@ -8,6 +8,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -929,7 +930,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               && getPosition() != null
               && WorldUtil.isBlockLoaded(colony.getWorld(), getPosition())
               && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
-              && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
+              && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractColonyBlock<?>)
         {
             final BlockEntity te = colony.getWorld().getBlockEntity(getPosition());
             if (te instanceof TileEntityColonyBuilding)
