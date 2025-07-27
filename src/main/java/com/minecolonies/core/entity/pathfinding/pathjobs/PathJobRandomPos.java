@@ -9,6 +9,7 @@ import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,10 +35,20 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
     private final int maxDistToDest;
 
     /**
+     * If inside paths should be preferred.
+     */
+    private boolean preferInside = false;
+
+    /**
      * Box restriction area
      */
     private AABB     restrictionBox = null;
     private BlockPos restrictionBoxCenter = null;
+
+    /**
+     * Mutable blockpos to use where necessary.
+     */
+    private final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -119,6 +130,60 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
         this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
     }
 
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world            world the entity is in.
+     * @param start            starting location.
+     * @param minDistFromStart how far to move away.
+     * @param range            max range to search.
+     * @param entity           the entity.
+     * @param preferInside        if the entity should try to stay inside.
+     */
+    public PathJobRandomPos(
+        final Level world,
+        @NotNull final BlockPos start,
+        final int minDistFromStart,
+        final int range,
+        final Mob entity,
+        final BlockPos startRestriction,
+        final BlockPos endRestriction,
+        final boolean preferInside)
+    {
+        super(world, start, range, new PathResult<PathJobRandomPos>(), entity);
+
+        restrictionBox = new AABB(Math.min(startRestriction.getX(), endRestriction.getX()),
+            Math.min(startRestriction.getY(), endRestriction.getY()),
+            Math.min(startRestriction.getZ(), endRestriction.getZ()),
+            Math.max(startRestriction.getX(), endRestriction.getX()),
+            Math.max(startRestriction.getY(), endRestriction.getY()),
+            Math.max(startRestriction.getZ(), endRestriction.getZ()));
+        restrictionBoxCenter = BlockPos.containing(restrictionBox.getCenter());
+        this.minDistFromStart = minDistFromStart;
+        this.maxDistToDest = -1;
+        this.preferInside = preferInside;
+        this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
+    }
+
+    /**
+     * Check if there is space a few blocks above without solid blocks.
+     * @param x x pos.
+     * @param y y pos.
+     * @param z z pos.
+     * @return true if so.
+     */
+    private boolean hasSpaceAbove(final int x, final int y, final int z)
+    {
+        for (int i = 1; i < 5; i++)
+        {
+            if (cachedBlockLookup.getBlockState(x,y+i+1,z).isSolid())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
@@ -140,6 +205,11 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
               && SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                    == SurfaceType.WALKABLE)
         {
+            if (preferInside && hasSpaceAbove(n.x,n.y,n.z))
+            {
+                return false;
+            }
+
             return true;
         }
         return false;

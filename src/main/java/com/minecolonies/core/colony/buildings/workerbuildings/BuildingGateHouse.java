@@ -12,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_ARCHER;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_KNIGHT;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 /**

@@ -457,4 +457,10 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return the instance of the handler
      */
     ICitizenFoodHandler getCitizenFoodHandler();
+
+    /**
+     * Get leisure time. Time in ticks citizens might be wanting to do leisure instead of work.
+     * @return the leftover leisure time.
+     */
+    int getLeisureTime();
 }

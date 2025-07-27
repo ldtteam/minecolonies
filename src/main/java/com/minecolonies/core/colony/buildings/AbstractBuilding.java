@@ -73,6 +73,8 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -89,6 +91,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.BUILDING_SIGN;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -756,6 +759,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onColonyTick(final IColony colony)
     {
         getModulesByType(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
+        for (final BlockPos buildingSignPos : getLocationsFromTag(BUILDING_SIGN))
+        {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), buildingSignPos))
+            {
+                final BlockEntity blockEntity = colony.getWorld().getBlockEntity(buildingSignPos);
+                if (blockEntity instanceof SignBlockEntity signBlockEntity)
+                {
+                    SignText signText = new SignText();
+                    signText = signText.setMessage(0, Component.translatable(getBuildingDisplayName()));
+                    signText = signText.setMessage(1, Component.literal(getBuildingLevel() + ""));
+                    signBlockEntity.setText(signText, true);
+                    signBlockEntity.setText(signText, false);
+                }
+            }
+        }
+
+
     }
 
     /**

@@ -3,10 +3,10 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
-import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -39,9 +39,9 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.MAX_STORY;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.NEW_VISITORS;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
@@ -200,7 +200,23 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         final BlockPos gatePos = building.getColony().getBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
         if (gatePos != null)
         {
-            spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+            final IBuilding gateHouseBuilding = building.getColony().getBuildingManager().getBuilding(gatePos);
+            if (gateHouseBuilding != null)
+            {
+                final List<BlockPos> gatePositions = gateHouseBuilding.getLocationsFromTag(TAG_GATE);
+                if (gatePositions.isEmpty())
+                {
+                    spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+                }
+                else
+                {
+                    spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePositions.get(MathUtils.RANDOM.nextInt(gatePositions.size())));
+                }
+            }
+            else
+            {
+                spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+            }
         }
         else
         {

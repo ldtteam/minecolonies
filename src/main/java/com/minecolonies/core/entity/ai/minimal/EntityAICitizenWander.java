@@ -162,7 +162,8 @@ public class EntityAICitizenWander implements IStateAI
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
-                EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners());
+                EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), citizen.level.isRaining());
+                citizen.getCitizenAI().setCurrentDelay(30);
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                   && citizen.getRandom().nextInt(100) < 5)

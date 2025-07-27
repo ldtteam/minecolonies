@@ -243,7 +243,7 @@ public class EntityNavigationUtils
      *
      * @return True when arrived
      */
-    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners)
+    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
         boolean isOnRightTask = (nav.getPathResult() != null && nav.getPathResult().getJob() instanceof PathJobRandomPos);
@@ -256,10 +256,20 @@ public class EntityNavigationUtils
                 return true;
             }
 
-            nav.walkToRandomPos(range, speedFactor, corners);
+            nav.walkToRandomPos(range, speedFactor, corners, preferInside);
         }
 
         return false;
+    }
+
+    /**
+     * Walks to a random position a given distance away within the provided box
+     *
+     * @return True when arrived
+     */
+    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners)
+    {
+        return walkToRandomPosWithin(entity, range, speedFactor, corners, false);
     }
 
     /**

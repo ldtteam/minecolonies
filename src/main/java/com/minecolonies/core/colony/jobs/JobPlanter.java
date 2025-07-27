@@ -8,6 +8,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.PLANTATION_FIELDS;
+
 /**
  * Class of the planter job.
  */
@@ -46,5 +48,16 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
         return damageSource.typeHolder().is(DamageTypes.CACTUS);
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        if (workBuilding.getModule(PLANTATION_FIELDS).getExtensionToWorkOn() == null)
+        {
+            return false;
+        }
+
+        return super.hasWorkToDo();
     }
 }

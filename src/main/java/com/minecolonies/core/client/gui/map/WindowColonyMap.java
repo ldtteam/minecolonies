@@ -474,10 +474,10 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 citizenView.addChild(citizenImage);
                 dragView.addChild(citizenView);
 
-                if (data.hasVisibleInteractions())
+                if (data.hasVisibleStatus())
                 {
                     final Image interactionImage = new Image();
-                    interactionImage.setImage(data.getInteractionIcon(), false);
+                    interactionImage.setImage(data.getStatusIcon(), false);
                     interactionImage.setSize(6, 6);
                     interactionImage.setPosition(-3, -3);
                     citizenView.addChild(interactionImage);

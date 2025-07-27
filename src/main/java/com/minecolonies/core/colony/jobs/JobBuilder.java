@@ -34,4 +34,10 @@ public class JobBuilder extends AbstractJobStructure<EntityAIStructureBuilder, J
     {
         return new EntityAIStructureBuilder(this);
     }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        return hasWorkOrder();
+    }
 }

@@ -212,15 +212,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final double speedFactor,
       final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
     {
+        return walkToRandomPos(range, speedFactor, corners, false);
+    }
+
+    @Override
+    protected PathResult<PathJobRandomPos> walkToRandomPos(
+        final int range,
+        final double speedFactor,
+        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
+    {
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
 
         final PathResult<PathJobRandomPos> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
-          start,
+            start,
             range,
-          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity,
-          corners.getA(),
-          corners.getB()), null, speedFactor, true);
+            (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
+            ourEntity,
+            corners.getA(),
+            corners.getB(), preferInside), null, speedFactor, true);
 
         if (result == null)
         {

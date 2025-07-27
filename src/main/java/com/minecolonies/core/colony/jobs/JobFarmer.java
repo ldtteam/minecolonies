@@ -1,10 +1,13 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFarmer;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.FARMER_FIELDS;
 
 /**
  * Job class of the farmer, handles his fields.
@@ -36,5 +39,16 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
     public EntityAIWorkFarmer generateAI()
     {
         return new EntityAIWorkFarmer(this);
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        if (workBuilding.getModule(FARMER_FIELDS).getExtensionToWorkOn() == null)
+        {
+            return false;
+        }
+
+        return super.hasWorkToDo();
     }
 }

@@ -391,7 +391,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        if (randomDist < 3)
+        if (randomDist < 3 || (isRaining && (townHall == null || townHall.getBuildingLevel() < 1)))
         {
             building = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
             if (building != null)
@@ -402,7 +402,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (isRaining)
         {
-            return null;
+            return townHall == null ? null : townHall.getPosition();
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));

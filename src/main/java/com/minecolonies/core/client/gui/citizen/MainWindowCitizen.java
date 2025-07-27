@@ -41,7 +41,9 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         this.citizen = citizen;
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
-        if (citizen.getVisibleStatus() == null)
+
+        // Don't render it in UI if it's already rendered overhead.
+        if (citizen.getVisibleStatus() == null || citizen.getVisibleStatus().shouldRender())
         {
             statusIcon.setVisible(false);
         }
