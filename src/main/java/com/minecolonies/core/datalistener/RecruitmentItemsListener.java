@@ -99,9 +99,9 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
         {
             rarity = 1;
         }
-        else if (rarity > limit)
+        else if (rarity >= limit)
         {
-            rarity = limit;
+            rarity = limit - 1;
         }
         final List<RecruitCost> recruitCostsAtTier = RECRUIT_COSTS.get(rarity);
         return recruitCostsAtTier.get(ColonyConstants.rand.nextInt(recruitCostsAtTier.size()));
