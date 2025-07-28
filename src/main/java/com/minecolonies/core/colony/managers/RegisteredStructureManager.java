@@ -23,10 +23,7 @@ import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
@@ -360,14 +357,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         final boolean isRaining = colony.getWorld().isRaining();
 
-        IBuilding building = null;
+        BlockPos building = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
         {
-            building = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            building = townHall != null && townHall.getBuildingLevel() >= 3 ? townHall.getPosition() : null;
             if (building != null)
             {
-                return building.getPosition();
+                return building;
             }
         }
 
@@ -375,28 +372,29 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (!isRaining && RANDOM.nextBoolean())
             {
-                building = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
-                    return building.getPosition();
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+            }
+            else if (RANDOM.nextBoolean())
+            {
+                building = getRandomBuilding(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
             }
             else
             {
-                building = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
-                    return building.getPosition();
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingUniversity && b.getBuildingLevel() >= 1);
             }
+        }
+
+        if (building != null)
+        {
+            return building;
         }
 
         if (randomDist < 3 || (isRaining && (townHall == null || townHall.getBuildingLevel() < 1)))
         {
-            building = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
+            building = getRandomBuilding(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
             if (building != null)
             {
-                return building.getPosition();
+                return building;
             }
         }
 

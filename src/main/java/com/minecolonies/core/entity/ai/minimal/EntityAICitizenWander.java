@@ -5,7 +5,9 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.CitizenAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.education.EntityAIStudy;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -22,7 +24,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenWander.WanderState.*;
 
 /**
@@ -114,9 +116,16 @@ public class EntityAICitizenWander implements IStateAI
         }
 
         final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
-        if (blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary)
+        if (blockEntity instanceof TileEntityColonyBuilding tileEntityColonyBuilding)
         {
-            walkTo = ((BuildingLibrary) ((TileEntityColonyBuilding) blockEntity).getBuilding()).getRandomBookShelf();
+            if (tileEntityColonyBuilding.getBuilding() instanceof BuildingLibrary buildingLibrary)
+            {
+                walkTo = buildingLibrary.getRandomBookShelf();
+            }
+            else if(tileEntityColonyBuilding.getBuilding() instanceof BuildingUniversity buildingUniversity)
+            {
+                walkTo = buildingUniversity.getRandomBookShelf();
+            }
         }
 
         return READ_A_BOOK;
@@ -152,11 +161,6 @@ public class EntityAICitizenWander implements IStateAI
             return WANDER_AT_LEISURE_SITE;
         }
 
-        if (citizen.isPassenger())
-        {
-            return WANDER_AT_LEISURE_SITE;
-        }
-
         final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
         if (blockEntity instanceof IBlueprintDataProviderBE)
         {
@@ -165,17 +169,50 @@ public class EntityAICitizenWander implements IStateAI
                 EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), citizen.level.isRaining());
                 citizen.getCitizenAI().setCurrentDelay(30);
             }
-            if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
+            if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding
+                && (((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
+                || ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingUniversity)
                   && citizen.getRandom().nextInt(100) < 5)
             {
                 return READ_A_BOOK;
             }
             else
             {
+                final Map<String, Set<BlockPos>> map = ((IBlueprintDataProviderBE) blockEntity).getWorldTagNamePosMap();
+                final List<BlockPos> sittingPos = new ArrayList<>(map.getOrDefault(TAG_SITTING, Collections.emptySet()));
+                final List<BlockPos> insideSittingPos = new ArrayList<>(map.getOrDefault(TAG_SIT_IN, Collections.emptySet()));
+                final List<BlockPos> outsideSittingPos = new ArrayList<>(map.getOrDefault(TAG_SIT_OUT, Collections.emptySet()));
+
+                final List<BlockPos> insideStandingPos = new ArrayList<>(map.getOrDefault(TAG_STAND_IN, Collections.emptySet()));
+                final List<BlockPos> outsideStandingPos = new ArrayList<>(map.getOrDefault(TAG_STAND_OUT, Collections.emptySet()));
+
                 if (walkTo == null)
                 {
-                    final Map<String, Set<BlockPos>> map = ((IBlueprintDataProviderBE) blockEntity).getWorldTagNamePosMap();
-                    final List<BlockPos> sittingPos = new ArrayList<>(map.getOrDefault(TAG_SITTING, Collections.emptySet()));
+                    if (citizen.level.isRaining())
+                    {
+                        if (!insideSittingPos.isEmpty() && MathUtils.RANDOM.nextBoolean())
+                        {
+                            walkTo = insideSittingPos.get(citizen.getRandom().nextInt(insideSittingPos.size()));
+                            return WANDER_AT_LEISURE_SITE;
+                        }
+                        else if (!insideStandingPos.isEmpty())
+                        {
+                            walkTo = insideStandingPos.get(citizen.getRandom().nextInt(insideStandingPos.size()));
+                            return WANDER_AT_LEISURE_SITE;
+                        }
+                    }
+
+                    if (!outsideSittingPos.isEmpty() && MathUtils.RANDOM.nextBoolean())
+                    {
+                        walkTo = outsideSittingPos.get(citizen.getRandom().nextInt(outsideSittingPos.size()));
+                        return WANDER_AT_LEISURE_SITE;
+                    }
+                    else if (!outsideStandingPos.isEmpty())
+                    {
+                        walkTo = outsideStandingPos.get(citizen.getRandom().nextInt(outsideStandingPos.size()));
+                        return WANDER_AT_LEISURE_SITE;
+                    }
+
                     if (!sittingPos.isEmpty())
                     {
                         walkTo = sittingPos.get(citizen.getRandom().nextInt(sittingPos.size()));
@@ -184,7 +221,11 @@ public class EntityAICitizenWander implements IStateAI
                 }
                 else
                 {
-                    SittingEntity.sitDown(walkTo, citizen, TICKS_SECOND * 60);
+                    if (sittingPos.contains(walkTo) || insideSittingPos.contains(walkTo) || outsideSittingPos.contains(walkTo))
+                    {
+                        SittingEntity.sitDown(walkTo, citizen, TICKS_SECOND * 60);
+                    }
+                    citizen.getCitizenAI().setCurrentDelay(30);
                     walkTo = null;
                 }
             }
