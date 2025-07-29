@@ -425,7 +425,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return GET_RECIPE;
         }
 
-        if (!walkToBuilding())
+        if (!walkToTaggedWorkPos())
         {
             return getState();
         }

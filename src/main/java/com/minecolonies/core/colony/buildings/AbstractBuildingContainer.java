@@ -197,7 +197,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         if (tileEntity != null)
         {
-            return new ArrayList<>(tileEntity.getWorldTagNamePosMap().getOrDefault(tagName, Collections.emptySet()));
+            return tileEntity.getCachedWorldTagNamePosMap().getOrDefault(tagName, Collections.emptyList());
         }
         return Collections.emptyList();
     }

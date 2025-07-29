@@ -72,6 +72,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.WORKER_AI_EXCEPTION;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract.RENDER_META_WORKING;
@@ -174,6 +175,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * The building of the citizen.
      */
     public final B building;
+
+    /**
+     * Working pos index. Initialized with -1, not saved.
+     */
+    public int workPosIndex = -1;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -786,6 +792,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         return EntityNavigationUtils.walkToBuilding(worker, ownBuilding);
     }
+
+    /**
+     * Walk the worker to a tagged workpos in building, or the building pos if non existent.
+     *
+     * @return true while walking
+     */
+    protected final boolean walkToTaggedWorkPos()
+    {
+        if (building == null)
+        {
+            return walkToBuilding();
+        }
+
+        final List<BlockPos> workTags = building.getLocationsFromTag(TAG_WORK);
+        if (workTags.isEmpty())
+        {
+            return walkToBuilding();
+        }
+
+        if (workPosIndex == -1 || (MathUtils.RANDOM.nextInt(10) <= 0 && worker.getNavigation().isDone()))
+        {
+            workPosIndex = MathUtils.RANDOM.nextInt(workTags.size());
+        }
+
+        return EntityNavigationUtils.walkToPosInBuilding(worker, workTags.get(workPosIndex), building, WOKR_IN_BUILDING_DIST);
+    }
+
 
     /**
      * Walk the worker to the given building.

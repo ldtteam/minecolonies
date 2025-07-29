@@ -20,9 +20,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProviderBE
@@ -52,7 +50,17 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     /**
      * Check if the building might have old data.
      */
-    private int version = 0;
+    private int                        version = 0;
+
+    /**
+     * Tag map cache.
+     */
+    private Map<String, Set<BlockPos>> worldTagMapCache = null;
+
+    /**
+     * List based tag map cache.
+     */
+    private Map<String, List<BlockPos>> worldTagMapCacheWithList;
 
     public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state)
     {
@@ -206,9 +214,39 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
+    public Map<String, Set<BlockPos>> getWorldTagNamePosMap()
+    {
+        if (worldTagMapCache == null)
+        {
+            worldTagMapCache = IBlueprintDataProviderBE.super.getWorldTagNamePosMap();
+        }
+        return worldTagMapCache;
+    }
+
+    /**
+     * Get a list version of the positioned tags, mapped from tag name to position.
+     * @return the list version.
+     */
+    public Map<String, List<BlockPos>> getCachedWorldTagNamePosMap()
+    {
+        if (worldTagMapCacheWithList == null)
+        {
+            final Map<String, Set<BlockPos>> worldTagNamePosMap = getWorldTagNamePosMap();
+            worldTagMapCacheWithList = new HashMap<>();
+            for (final Map.Entry<String, Set<BlockPos>> entry : worldTagNamePosMap.entrySet())
+            {
+                worldTagMapCacheWithList.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+            }
+        }
+        return worldTagMapCacheWithList;
+    }
+
+    @Override
     public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
     {
         tagPosMap = positionedTags;
+        worldTagMapCache = null;
+        worldTagMapCacheWithList = null;
         setChanged();
     }
 

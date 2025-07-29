@@ -480,9 +480,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             final BlockEntity blockEntity = colony.getWorld().getBlockEntity(buildingSignPos);
                             if (blockEntity instanceof SignBlockEntity signBlockEntity)
                             {
-                                //todo maybe we make this a custom renderer?
-                                //todo this makes the sign non player editable, funny right.
-
                                 //todo make crafters and couriers sit in the warehouse building on sit_in/sit/sit_out tags
                                 //todo make crafters work at "work" tag locations
                                 SignText signText = new SignText();
