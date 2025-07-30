@@ -2956,7 +2956,7 @@
   "com.minecolonies.core.gui.connectionevent.feud_started": "§4Declared a Feud!",
   "com.minecolonies.core.gui.connectionevent.neutral_set": "§6Set Relationship to Neutral!",
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
-  "com.minecolonies.core.item.sign.connected": "Successfully connected sign to %s",
+  "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
   "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s"
 }

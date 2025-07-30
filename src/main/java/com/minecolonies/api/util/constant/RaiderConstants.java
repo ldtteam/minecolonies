@@ -73,6 +73,8 @@ public final class RaiderConstants
      */
     public static final double AI_MOVE_SPEED      = 2.0D;
     public static final float  MAX_WATCH_DISTANCE = 8.0F;
+    public static final double MAX_KNIGHT_RAIDER_PERSECUTION_DISTANCE = 64;
+    public static final double MAX_ARCHER_RAIDER_PERSECUTION_DISTANCE = MAX_KNIGHT_RAIDER_PERSECUTION_DISTANCE + 16;
 
     /**
      * Values used for mob attributes.
@@ -82,7 +84,7 @@ public final class RaiderConstants
     public static final double ARMOR                       = 1D;
     public static final double CHIEF_BONUS_ARMOR           = 2D;
     public static final double BARBARIAN_BASE_HEALTH       = 10;
-    public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.025;
+    public static final double BARBARIAN_HEALTH_MULTIPLIER      = 0.025;
 
     /**
      * Private constructor to hide implicit one.
