@@ -153,13 +153,6 @@ public class ItemColonySign extends BlockItem
             }
         }
 
-        //todo if use on other colony gatehouse or sign, try connect the last sign to the clicked position (gatehouse or sign) and then establish connection with all of them.
-        // other sign needs to be unset obviously
-
-        // todo Show connected colonies in module and in townhall neighbor colonies.
-        // Make ally request in townhall, or declare war (both need acceptance for now).
-        // You can travel to allies at gate house in module ui
-
         return super.useOn(ctx);
     }
 

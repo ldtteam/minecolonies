@@ -172,9 +172,20 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
+    public boolean shouldIdle()
+    {
+        return super.shouldIdle() && walkTo == null;
+    }
+
+    @Override
     protected IAIState decide()
     {
-        if ((walkTo == null && !walkToBuilding()) || job.getCurrentTask() == null)
+        if (job.getCurrentTask() == null)
+        {
+            return IDLE;
+        }
+
+        if (walkTo == null && !walkToBuilding())
         {
             return START_WORKING;
         }

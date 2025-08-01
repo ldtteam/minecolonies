@@ -188,7 +188,7 @@ public class EntityAICitizenWander implements IStateAI
 
                 if (walkTo == null)
                 {
-                    if (citizen.level.isRaining())
+                    if (citizen.level.isRaining() || MathUtils.RANDOM.nextBoolean())
                     {
                         if (!insideSittingPos.isEmpty() && MathUtils.RANDOM.nextBoolean())
                         {
@@ -223,9 +223,9 @@ public class EntityAICitizenWander implements IStateAI
                 {
                     if (sittingPos.contains(walkTo) || insideSittingPos.contains(walkTo) || outsideSittingPos.contains(walkTo))
                     {
-                        SittingEntity.sitDown(walkTo, citizen, TICKS_SECOND * 60);
+                        SittingEntity.sitDown(walkTo, citizen, TICKS_SECOND * 30);
                     }
-                    citizen.getCitizenAI().setCurrentDelay(30);
+                    citizen.getCitizenAI().setCurrentDelay(TICKS_SECOND * 30);
                     walkTo = null;
                 }
             }

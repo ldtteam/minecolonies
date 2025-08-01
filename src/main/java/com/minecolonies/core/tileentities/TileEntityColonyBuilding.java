@@ -481,7 +481,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             if (blockEntity instanceof SignBlockEntity signBlockEntity)
                             {
                                 //todo make crafters and couriers sit in the warehouse building on sit_in/sit/sit_out tags
-                                //todo make crafters work at "work" tag locations
                                 SignText signText = new SignText();
                                 final String nameText = Component.translatable(buildingView.getBuildingDisplayName()).getString();
 

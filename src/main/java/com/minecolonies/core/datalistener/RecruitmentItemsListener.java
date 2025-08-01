@@ -141,7 +141,6 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
                 continue;
             }
 
-            //todo this calc results in the low levels being correct, and the high levels all around the 15 base recruit + random, this doesn't work.
             final int count = BASE_ITEM_COUNT * (MAX_RARITY + 1 - rarity);
             final int recruitLevel = BASE_RECRUIT_LEVEL + rarity * rarity / 2;
             recruitCosts.putIfAbsent(rarity, new ArrayList<>());

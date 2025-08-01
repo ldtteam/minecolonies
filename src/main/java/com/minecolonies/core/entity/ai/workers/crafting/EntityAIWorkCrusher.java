@@ -69,30 +69,13 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     protected IAIState decide()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (job.getTaskQueue().isEmpty())
+        if (job.getTaskQueue().isEmpty() || job.getCurrentTask() == null)
         {
             if (building.getCurrentDailyQuantity() < building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue())
             {
                 return CRUSH;
             }
 
-            if (worker.getNavigation().isDone())
-            {
-                if (building.isInBuilding(worker.blockPosition()))
-                {
-                    setDelay(TICKS_20 * 20);
-                    EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
-                }
-                else
-                {
-                    walkToBuilding();
-                }
-            }
-            return IDLE;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
             return IDLE;
         }
 
@@ -108,6 +91,12 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
 
         return getNextCraftingState();
+    }
+
+    @Override
+    public boolean shouldIdle()
+    {
+        return super.shouldIdle() && building.getCurrentDailyQuantity() >= building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue();
     }
 
     /**

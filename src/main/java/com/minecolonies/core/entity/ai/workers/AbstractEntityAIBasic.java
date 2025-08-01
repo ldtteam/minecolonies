@@ -811,7 +811,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return walkToBuilding();
         }
 
-        if (workPosIndex == -1 || (MathUtils.RANDOM.nextInt(10) <= 0 && worker.getNavigation().isDone()))
+        if (workPosIndex == -1 || (MathUtils.RANDOM.nextInt(30) <= 0 && worker.getNavigation().isDone()))
         {
             workPosIndex = MathUtils.RANDOM.nextInt(workTags.size());
         }

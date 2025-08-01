@@ -13,18 +13,14 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ColonyConstants;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
@@ -42,12 +38,15 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static com.minecolonies.core.util.WorkerUtil.hasTooManyExternalItemsInInv;
 
@@ -99,6 +98,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     private boolean dumped = false;
 
     /**
+     * Idle pos.
+     */
+    public BlockPos idlePos = null;
+
+    /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
      * actions :-)
      *
@@ -147,7 +151,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, () -> START_WORKING, 1),
+          new AITarget(IDLE, this::idle, TICKS_SECOND),
           new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
           new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
           new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
@@ -162,6 +166,97 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         worker.setRenderMetadata(getState() == CRAFT ? RENDER_META_WORKING : "");
     }
 
+    protected IAIState idle()
+    {
+        if (!shouldIdle())
+        {
+            return START_WORKING;
+        }
+
+        if ((idlePos != null && !walkToSafePos(idlePos)) || !worker.getNavigation().isDone())
+        {
+            return IDLE;
+        }
+
+        if (!building.isInBuilding(worker.blockPosition()))
+        {
+            walkToBuilding();
+            return IDLE;
+        }
+
+        setDelay(TICKS_20 * 20);
+
+        if (idlePos != null)
+        {
+            if (building.getLocationsFromTag(TAG_SITTING).contains(idlePos)
+                || building.getLocationsFromTag(TAG_SIT_IN).contains(idlePos)
+                || building.getLocationsFromTag(TAG_SIT_OUT).contains(idlePos))
+            {
+                SittingEntity.sitDown(idlePos, worker, TICKS_SECOND * 20);
+                idlePos = null;
+                return IDLE;
+            }
+            idlePos = null;
+        }
+
+        if (MathUtils.RANDOM.nextBoolean())
+        {
+            final List<BlockPos> sitPositions = new ArrayList<>(building.getLocationsFromTag(TAG_SITTING));
+            sitPositions.addAll(building.getLocationsFromTag(TAG_SIT_IN));
+            if (worker.level.isRaining())
+            {
+                if (!sitPositions.isEmpty())
+                {
+                    idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
+                    return IDLE;
+                }
+            }
+            else
+            {
+                sitPositions.addAll(building.getLocationsFromTag(TAG_SIT_OUT));
+                if (!sitPositions.isEmpty())
+                {
+                    idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
+                    return IDLE;
+                }
+            }
+        }
+
+        if (MathUtils.RANDOM.nextBoolean())
+        {
+            final List<BlockPos> standPositions = new ArrayList<>(building.getLocationsFromTag(TAG_STAND_IN));
+            if (worker.level.isRaining())
+            {
+                if (!standPositions.isEmpty())
+                {
+                    idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
+                    return IDLE;
+                }
+            }
+            else
+            {
+                standPositions.addAll(building.getLocationsFromTag(TAG_STAND_OUT));
+                if (!standPositions.isEmpty())
+                {
+                    idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
+                    return IDLE;
+                }
+            }
+        }
+
+        EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
+        return IDLE;
+    }
+
+    /**
+     * If the crafter should go in idle mode or not.
+     * @return true if so.
+     */
+    public boolean shouldIdle()
+    {
+        return job.getTaskQueue().isEmpty() || job.getCurrentTask() == null;
+    }
+
     /**
      * Main method to decide on what to do.
      *
@@ -169,28 +264,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState decide()
     {
+        if (shouldIdle())
+        {
+            return IDLE;
+        }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (job.getTaskQueue().isEmpty())
-        {
-            if (worker.getNavigation().isDone())
-            {
-                if (building.isInBuilding(worker.blockPosition()) && ColonyConstants.rand.nextInt(20) != 0)
-                {
-                    setDelay(TICKS_20 * 20);
-                    EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
-                }
-                else
-                {
-                    walkToBuilding();
-                }
-            }
-            return IDLE;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
-            return IDLE;
-        }
 
         if (!walkToBuilding())
         {
