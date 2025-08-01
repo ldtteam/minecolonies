@@ -754,8 +754,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case GuardTaskSetting.PATROL:
-                return MAX_PATROL_DERIVATION;
             case GuardTaskSetting.PATROL_MINE:
+                return MAX_PATROL_DERIVATION;
             case GuardTaskSetting.FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
             default:

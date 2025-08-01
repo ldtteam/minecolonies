@@ -162,13 +162,10 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     }
 
     @Override
-    public void setBuildingLevel(final int level)
+    public void onPlacement()
     {
-        super.setBuildingLevel(level);
-        if (level >= 1)
-        {
-            colony.getConnectionManager().addNewGateHouse(getPosition());
-        }
+        super.onPlacement();
+        colony.getConnectionManager().addNewGateHouse(getPosition());
     }
 
     @Override
