@@ -164,12 +164,12 @@ public class EntityAICitizenWander implements IStateAI
         final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
         if (blockEntity instanceof IBlueprintDataProviderBE)
         {
-            if (walkTo == null && citizen.getRandom().nextBoolean())
+            if (walkTo == null && citizen.getRandom().nextInt(10) <= 0)
             {
                 EntityNavigationUtils.walkToRandomPosWithin(citizen, 10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), citizen.level.isRaining());
                 citizen.getCitizenAI().setCurrentDelay(30);
             }
-            if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding
+            else if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding
                 && (((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary
                 || ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingUniversity)
                   && citizen.getRandom().nextInt(100) < 5)
@@ -193,7 +193,14 @@ public class EntityAICitizenWander implements IStateAI
                         if (!insideSittingPos.isEmpty() && MathUtils.RANDOM.nextBoolean())
                         {
                             walkTo = insideSittingPos.get(citizen.getRandom().nextInt(insideSittingPos.size()));
-                            return WANDER_AT_LEISURE_SITE;
+                            if (SittingEntity.isSittingPosOccupied(walkTo, citizen.level))
+                            {
+                                walkTo = null;
+                            }
+                            else
+                            {
+                                return WANDER_AT_LEISURE_SITE;
+                            }
                         }
                         else if (!insideStandingPos.isEmpty())
                         {
@@ -205,7 +212,14 @@ public class EntityAICitizenWander implements IStateAI
                     if (!outsideSittingPos.isEmpty() && MathUtils.RANDOM.nextBoolean())
                     {
                         walkTo = outsideSittingPos.get(citizen.getRandom().nextInt(outsideSittingPos.size()));
-                        return WANDER_AT_LEISURE_SITE;
+                        if (SittingEntity.isSittingPosOccupied(walkTo, citizen.level))
+                        {
+                            walkTo = null;
+                        }
+                        else
+                        {
+                            return WANDER_AT_LEISURE_SITE;
+                        }
                     }
                     else if (!outsideStandingPos.isEmpty())
                     {
@@ -216,7 +230,14 @@ public class EntityAICitizenWander implements IStateAI
                     if (!sittingPos.isEmpty())
                     {
                         walkTo = sittingPos.get(citizen.getRandom().nextInt(sittingPos.size()));
-                        return WANDER_AT_LEISURE_SITE;
+                        if (SittingEntity.isSittingPosOccupied(walkTo, citizen.level))
+                        {
+                            walkTo = null;
+                        }
+                        else
+                        {
+                            return WANDER_AT_LEISURE_SITE;
+                        }
                     }
                 }
                 else
