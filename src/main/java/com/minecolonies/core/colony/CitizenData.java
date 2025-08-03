@@ -1608,11 +1608,12 @@ public class CitizenData implements ICitizenData
             return;
         }
 
+        final int homeBuildingLevel = homeBuilding == null ? 1 : homeBuilding.getBuildingLevel();
         if (leisureTime > 0)
         {
             leisureTime -= tickRate;
         }
-        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * 30 / tickRate) <= 0)
+        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * (60 / (homeBuildingLevel / 2)) / tickRate) <= 0)
         {
             leisureTime = (int) (TICKS_SECOND * 60 * 3.0);
         }
