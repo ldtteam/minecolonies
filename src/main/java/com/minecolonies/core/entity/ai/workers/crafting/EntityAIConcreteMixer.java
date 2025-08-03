@@ -172,9 +172,9 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     }
 
     @Override
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return super.shouldIdle() && walkTo == null;
+        return super.hasWorkToDo() || walkTo != null;
     }
 
     @Override

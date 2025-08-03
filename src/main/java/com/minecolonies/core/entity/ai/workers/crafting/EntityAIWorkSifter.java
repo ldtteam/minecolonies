@@ -94,9 +94,9 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
     }
 
     @Override
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return super.shouldIdle() && building.getCurrentDailyQuantity() >= building.getMaxDailyQuantity();
+        return super.hasWorkToDo() || building.getCurrentDailyQuantity() < building.getMaxDailyQuantity();
     }
 
     /**

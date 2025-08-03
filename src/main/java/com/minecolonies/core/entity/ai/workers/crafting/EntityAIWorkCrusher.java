@@ -1,19 +1,16 @@
 package com.minecolonies.core.entity.ai.workers.crafting;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.core.colony.jobs.JobCrusher;
-import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
@@ -24,8 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
@@ -94,9 +89,9 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     }
 
     @Override
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return super.shouldIdle() && building.getCurrentDailyQuantity() >= building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue();
+        return super.hasWorkToDo() || building.getCurrentDailyQuantity() < building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue();
     }
 
     /**

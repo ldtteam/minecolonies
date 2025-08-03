@@ -178,9 +178,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     @Override
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return false;
+        return true;
     }
 
     @Override

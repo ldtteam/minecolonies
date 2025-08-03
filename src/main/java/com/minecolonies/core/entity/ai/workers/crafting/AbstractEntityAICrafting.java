@@ -151,6 +151,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           /*
            * Check if tasks should be executed.
            */
+          new AITarget(IDLE, this::hasWorkToDo, () -> START_WORKING, TICKS_SECOND),
           new AITarget(IDLE, this::idle, TICKS_SECOND),
           new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
           new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
@@ -168,11 +169,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
     protected IAIState idle()
     {
-        if (!shouldIdle())
-        {
-            return START_WORKING;
-        }
-
         if ((idlePos != null && !walkToSafePos(idlePos)) || !worker.getNavigation().isDone())
         {
             return IDLE;
@@ -252,9 +248,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      * If the crafter should go in idle mode or not.
      * @return true if so.
      */
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return job.getTaskQueue().isEmpty() || job.getCurrentTask() == null;
+        return !job.getTaskQueue().isEmpty() && job.getCurrentTask() != null;
     }
 
     /**
@@ -264,7 +260,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState decide()
     {
-        if (shouldIdle())
+        if (!hasWorkToDo())
         {
             return IDLE;
         }

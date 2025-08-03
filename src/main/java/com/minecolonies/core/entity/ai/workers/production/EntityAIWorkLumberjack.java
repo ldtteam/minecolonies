@@ -209,9 +209,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     @Override
-    public boolean shouldIdle()
+    public boolean hasWorkToDo()
     {
-        return false;
+        return true;
     }
 
     /**
