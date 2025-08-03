@@ -58,6 +58,11 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFT
 public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
 {
     /**
+     * Allow transitioning to any other state, otherwise stay in current.
+     */
+    public static IAIState NO_CHANGE = null;
+
+    /**
      * Time the worker delays until the next hit.
      */
     protected static final int HIT_DELAY = 10;
@@ -171,13 +176,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         if ((idlePos != null && !walkToSafePos(idlePos)) || !worker.getNavigation().isDone())
         {
-            return IDLE;
+            return NO_CHANGE;
         }
 
         if (!building.isInBuilding(worker.blockPosition()))
         {
             walkToBuilding();
-            return IDLE;
+            return NO_CHANGE;
         }
 
         setDelay(TICKS_20 * 20);
@@ -190,7 +195,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 SittingEntity.sitDown(idlePos, worker, TICKS_SECOND * 20);
                 idlePos = null;
-                return IDLE;
+                return NO_CHANGE;
             }
             idlePos = null;
         }
@@ -204,7 +209,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (!sitPositions.isEmpty())
                 {
                     idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
-                    return IDLE;
+                    return NO_CHANGE;
                 }
             }
             else
@@ -213,7 +218,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (!sitPositions.isEmpty())
                 {
                     idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
-                    return IDLE;
+                    return NO_CHANGE;
                 }
             }
         }
@@ -226,7 +231,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (!standPositions.isEmpty())
                 {
                     idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
-                    return IDLE;
+                    return NO_CHANGE;
                 }
             }
             else
@@ -235,13 +240,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (!standPositions.isEmpty())
                 {
                     idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
-                    return IDLE;
+                    return NO_CHANGE;
                 }
             }
         }
 
         EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
-        return IDLE;
+        return NO_CHANGE;
     }
 
     /**
