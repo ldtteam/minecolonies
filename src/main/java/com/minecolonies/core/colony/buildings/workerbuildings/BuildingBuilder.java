@@ -11,13 +11,11 @@ import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
@@ -30,7 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -149,7 +146,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        final ICitizenData citizen = getModule(BuildingModules.BUILDER_WORK).getFirstCitizen();
         if (citizen == null)
         {
             return;

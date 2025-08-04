@@ -244,7 +244,6 @@ public class CitizenAI implements IStateAI
         }
 
         if (citizen.getCitizenJobHandler().getColonyJob() != null
-            && citizen.getCitizenJobHandler().getColonyJob().hasWorkToDo()
             && citizen.getCitizenData().getLeisureTime() <= 0)
         {
             citizen.setVisibleStatusIfNone(WORKING);
