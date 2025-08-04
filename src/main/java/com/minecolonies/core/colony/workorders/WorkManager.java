@@ -419,7 +419,7 @@ public class WorkManager implements IWorkManager
 
                     if (predicate.test(building))
                     {
-                        citizen.getJob(JobBuilder.class).setWorkOrder(order);
+                        abstractJobStructure.setWorkOrder(order);
                         order.setClaimedBy(building.getID());
                         return;
                     }
