@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -67,8 +68,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 10)
+          new AITarget(IDLE, START_WORKING, 10),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
