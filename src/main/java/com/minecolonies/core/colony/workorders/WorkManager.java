@@ -15,6 +15,10 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -372,16 +376,54 @@ public class WorkManager implements IWorkManager
         @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
         while (iter.hasNext())
         {
-            final IServerWorkOrder o = iter.next();
-            if (!o.isValid(this.colony))
+            final IServerWorkOrder order = iter.next();
+            if (!order.isValid(this.colony))
             {
                 iter.remove();
                 dirty = true;
+                continue;
             }
-            else if (o.isDirty())
+            else if (order.isDirty())
             {
                 dirty = true;
-                o.resetChange();
+                order.resetChange();
+            }
+
+            tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
+        }
+
+        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        {
+            tryAssignWorkOrder(wo, wo::canBuild);
+        }
+    }
+
+    private void tryAssignWorkOrder(final IServerWorkOrder order, Predicate<IBuilding> predicate)
+    {
+        for (IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof AbstractBuildingStructureBuilder)
+            {
+                final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+                if (citizen == null)
+                {
+                    return;
+                }
+
+                if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
+                {
+                    if (abstractJobStructure.hasWorkOrder())
+                    {
+                        continue;
+                    }
+
+                    if (predicate.test(building))
+                    {
+                        citizen.getJob(JobBuilder.class).setWorkOrder(order);
+                        order.setClaimedBy(building.getID());
+                        return;
+                    }
+                }
             }
         }
     }

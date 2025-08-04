@@ -67,8 +67,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 100),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
+          new AITarget(IDLE, START_WORKING, 1),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 10)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -100,7 +100,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            building.searchWorkOrder();
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             worker.getCitizenData().setStatusPosition(null);
             return false;
@@ -338,5 +337,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getImportantMessageEntityPlayers());
+    }
+
+    @Override
+    public boolean canGoIdle()
+    {
+        return !job.hasWorkOrder();
     }
 }

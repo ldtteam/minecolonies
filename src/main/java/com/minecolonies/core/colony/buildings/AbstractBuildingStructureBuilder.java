@@ -340,11 +340,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     /**
-     * Search a workOrder for the worker.
-     */
-    public abstract void searchWorkOrder();
-
-    /**
      * Set the progress position of the builder.
      *
      * @param blockPos the last blockPos.

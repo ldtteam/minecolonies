@@ -40,15 +40,4 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
     {
         return new EntityAIWorkFarmer(this);
     }
-
-    @Override
-    public boolean hasWorkToDo()
-    {
-        if (workBuilding.getModule(FARMER_FIELDS).getExtensionToWorkOn() == null)
-        {
-            return false;
-        }
-
-        return super.hasWorkToDo();
-    }
 }

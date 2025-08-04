@@ -1939,4 +1939,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         IPermissions permissions = building.getColony().getPermissions();
         return FakePlayerFactory.get((ServerLevel) world, new GameProfile(permissions.getOwner(), permissions.getOwnerName()));
     }
+
+    /**
+     * If the worker currently has work to do or could also just wander around.
+     * @return true if can go idle.
+     */
+    public boolean canGoIdle()
+    {
+        return false;
+    }
 }

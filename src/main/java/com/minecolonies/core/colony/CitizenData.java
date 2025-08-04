@@ -1613,7 +1613,7 @@ public class CitizenData implements ICitizenData
         {
             leisureTime -= tickRate;
         }
-        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * (60 / (homeBuildingLevel / 2)) / tickRate) <= 0)
+        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * (int) (60 / (homeBuildingLevel / 2.0)) / tickRate) <= 0)
         {
             leisureTime = (int) (TICKS_SECOND * 60 * 3.0);
         }

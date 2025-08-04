@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.core.colony.jobs.JobBuilder;
+import com.minecolonies.core.colony.workorders.WorkManager;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -146,79 +147,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         return getSetting(MODE).getValue().equals(MANUAL_SETTING);
     }
 
-    @Override
-    public void searchWorkOrder()
-    {
-        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizen == null)
-        {
-            return;
-        }
-
-        final List<IServerWorkOrder> list =
-            getColony().getWorkManager().getOrderedList(wo -> (wo instanceof IBuilderWorkOrder && ((IBuilderWorkOrder) wo).canBuild(citizen)), getPosition());
-        list.sort((a, b) -> {
-            if (a.getWorkOrderType() == WorkOrderType.REMOVE)
-            {
-                return -1;
-            }
-            if (b.getWorkOrderType() == WorkOrderType.REMOVE)
-            {
-                return 1;
-            }
-            return 0;
-        });
-
-        final IServerWorkOrder order = list.stream().filter(w -> w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
-        if (order != null)
-        {
-            citizen.getJob(JobBuilder.class).setWorkOrder(order);
-            order.setClaimedBy(getID());
-            return;
-        }
-
-        if (getManualMode())
-        {
-            return;
-        }
-
-        for (final IServerWorkOrder wo : list)
-        {
-            double distanceToBuilder = Double.MAX_VALUE;
-
-            if (wo instanceof WorkOrderBuilding workOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !workOrderBuilding.canBuild(citizen))
-            {
-                continue;
-            }
-
-            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
-            {
-                final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
-
-                if (job == null || otherBuilder.getWorkBuilding() == null || citizen.getId() == otherBuilder.getId())
-                {
-                    continue;
-                }
-
-                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding workOrderBuilding && workOrderBuilding.canBuild(otherBuilder))
-                {
-                    final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getLocation());
-                    if (distance < distanceToBuilder)
-                    {
-                        distanceToBuilder = distance;
-                    }
-                }
-            }
-
-            if (citizen.getWorkBuilding().getID().distSqr(wo.getLocation()) < distanceToBuilder)
-            {
-                citizen.getJob(JobBuilder.class).setWorkOrder(wo);
-                wo.setClaimedBy(getID());
-                return;
-            }
-        }
-    }
-
     /**
      * Sets the work order with the given id as the work order for this buildings citizen.
      *
@@ -226,7 +154,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     public void setWorkOrder(int orderId, final NetworkEvent.Context ctxIn)
     {
-
         final ICitizenData citizen = getModule(BuildingModules.BUILDER_WORK).getFirstCitizen();
         if (citizen == null)
         {
@@ -255,7 +182,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
 
         final IBuilding building = citizen.getWorkBuilding();
-        if (((IBuilderWorkOrder) wo).canBuildIgnoringDistance(citizen, building.getPosition(), building.getBuildingLevel()))
+        if (((IBuilderWorkOrder) wo).canBuildIgnoringDistance(building, building.getPosition(), building.getBuildingLevel()))
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(wo);
             wo.setClaimedBy(getID());
@@ -266,7 +193,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         {
             MessageUtils.format(MESSAGE_WARNING_CANNOTBUILD).sendTo(ctxIn.getSender());
         }
-        
     }
 
     @Override

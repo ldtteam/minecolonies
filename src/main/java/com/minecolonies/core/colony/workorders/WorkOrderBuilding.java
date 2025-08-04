@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -152,7 +151,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBuild(@NotNull final ICitizenData citizen)
+    public boolean canBuild(final IBuilding building)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
@@ -160,9 +159,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         //  - OR the WorkOrder is for the TownHall
         //  - OR the WorkOrder is not farther away than 100 blocks from any builder and not manually assigned
 
-        final IBuilding building = citizen.getWorkBuilding();
-        return canBuildIgnoringDistance(citizen, building.getPosition(), building.getBuildingLevel())
-                 && (citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ
+        return canBuildIgnoringDistance(building, building.getPosition(), building.getBuildingLevel())
+                 && (building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ
                  || (isClaimed() && getClaimedBy().equals(building.getPosition())));
     }
 
@@ -174,7 +172,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
      * @return true if so.
      */
     @Override
-    public boolean canBuildIgnoringDistance(@NotNull ICitizenData citizen, @NotNull final BlockPos builderLocation, final int builderLevel)
+    public boolean canBuildIgnoringDistance(@NotNull IBuilding building, @NotNull final BlockPos builderLocation, final int builderLevel)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built

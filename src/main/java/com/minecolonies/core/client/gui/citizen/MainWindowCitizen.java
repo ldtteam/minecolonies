@@ -41,8 +41,13 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         this.citizen = citizen;
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
-        if (citizen.getVisibleStatus() != null)
+        if (citizen.getVisibleStatus() == null)
         {
+            statusIcon.hide();
+        }
+        else
+        {
+            statusIcon.show();
             statusIcon.setImage(citizen.getVisibleStatus().getIcon(), false);
             PaneBuilders.tooltipBuilder()
                 .append(Component.translatable(citizen.getVisibleStatus().getTranslationKey()))

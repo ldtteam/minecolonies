@@ -315,13 +315,4 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      * @return
      */
     boolean assignTo(IAssignsJob module);
-
-    /**
-     * If the worker currently has work to do or could also just wander around.
-     * @return true if has sth to do.
-     */
-    default boolean hasWorkToDo()
-    {
-        return true;
-    }
 }
