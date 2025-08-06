@@ -198,7 +198,7 @@ public class SittingEntity extends Entity
      */
     public static boolean isSittingPosOccupied(final BlockPos pos, final Level world)
     {
-        return existingSittingEntities.putIfAbsent(world.dimension(), new HashSet<>()).contains(pos);
+        return existingSittingEntities.computeIfAbsent(world.dimension(), k -> new HashSet<>()).contains(pos);
     }
 
     /**

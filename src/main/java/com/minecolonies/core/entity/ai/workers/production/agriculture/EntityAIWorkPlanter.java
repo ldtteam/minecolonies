@@ -110,8 +110,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-        module.claimExtensions();
-
         if (module.hasNoExtensions())
         {
             if (worker.getCitizenData() != null)
@@ -419,7 +417,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     {
         IAIState state = super.decide();
 
-        if (state == IDLE)
+        if (state == IDLE || state == START_WORKING)
         {
             return PREPARING;
         }

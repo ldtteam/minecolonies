@@ -171,7 +171,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         IAIState state = super.decide();
 
-        if (state == IDLE)
+        if (state == IDLE || state == START_WORKING)
         {
             return PREPARING;
         }
@@ -206,8 +206,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-        module.claimExtensions();
-
         if (module.getOwnedExtensions().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
