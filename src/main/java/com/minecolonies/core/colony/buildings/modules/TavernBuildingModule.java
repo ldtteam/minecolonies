@@ -193,7 +193,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.getCitizenSkillHandler().init(cost.recruitLevel());
 
         final ItemStack recruitCostItem = cost.recruitItem().copy();
-        recruitCostItem.setCount(recruitCostItem.getCount() + MathUtils.RANDOM.nextInt(3));
+        recruitCostItem.setCount(Math.min(cost.recruitItem().getMaxStackSize(), recruitCostItem.getCount() + MathUtils.RANDOM.nextInt(3)));
         newCitizen.setRecruitCosts(recruitCostItem);
 
         BlockPos spawnPos;
