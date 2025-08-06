@@ -39,7 +39,6 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, Items.SUGAR, 1),
             makeRecruitmentItem(cachedOutput, Items.EGG, 1),
 
-            makeRecruitmentItem(cachedOutput, Items.BEETROOT_SOUP, 2),
             makeRecruitmentItem(cachedOutput, Items.MUSHROOM_STEW, 2),
             makeRecruitmentItem(cachedOutput, Items.FEATHER, 2),
             makeRecruitmentItem(cachedOutput, Items.FLINT, 2),
