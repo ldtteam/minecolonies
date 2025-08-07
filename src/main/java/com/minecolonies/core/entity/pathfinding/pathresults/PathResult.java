@@ -1,9 +1,13 @@
 package com.minecolonies.core.entity.pathfinding.pathresults;
 
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.Network;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
@@ -284,7 +288,18 @@ public class PathResult<T extends AbstractPathJob>
 
             if (!watchers.isEmpty())
             {
-                Log.getLogger().info(" Finished pathjob:" + job + " reaches: " + path.canReach() + " path target:" + path.getTarget());
+                final Component debugInfo = Component.literal(" Finished pathjob:")
+                    .withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(job.toString()))
+                    .append(Component.literal(" reaches: " + path.canReach())
+                        .withStyle(path.canReach() ? ChatFormatting.GREEN : ChatFormatting.RED)
+                        .append(Component.literal(" path target:" + path.getTarget()).withStyle(ChatFormatting.BLUE)));
+                Log.getLogger().info(debugInfo.getString());
+
+                for (final ServerPlayer player : watchers)
+                {
+                    Network.getNetwork().sendToPlayer(new DebugOutputMessage(debugInfo, false), player);
+                }
             }
         }
         catch (InterruptedException | ExecutionException e)

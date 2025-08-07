@@ -7,6 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.*;
 import com.minecolonies.core.network.messages.client.colony.*;
@@ -264,6 +268,12 @@ public class NetworkChannel
 
         // Assistant block place request
         registerMessage(++idx, PlayerAssistantBuildRequestMessage.class, PlayerAssistantBuildRequestMessage::new);
+
+        // Debug messages
+        registerMessage(++idx, QueryCitizenAIHistoryMessage.class, QueryCitizenAIHistoryMessage::new);
+        registerMessage(++idx, DebugEnablePathfindingMessage.class, DebugEnablePathfindingMessage::new);
+        registerMessage(++idx, DebugOutputMessage.class, DebugOutputMessage::new);
+        registerMessage(++idx, DebugEnableMessage.class, DebugEnableMessage::new);
     }
 
     private void setupInternalMessages()

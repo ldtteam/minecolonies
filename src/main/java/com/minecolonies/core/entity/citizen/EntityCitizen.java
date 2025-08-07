@@ -51,6 +51,7 @@ import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.datalistener.DiseasesListener;
+import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.entity.ai.minimal.*;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
@@ -395,13 +396,24 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
 
-            if (citizenData.getJob() != null)
+            if (DebugPlayerManager.hasDebugEnabled(player))
             {
-                ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+                getCitizenAI().setHistoryEnabled(true, 20);
+                if (getCitizenJobHandler().getColonyJob() != null)
+                {
+                    getCitizenJobHandler().getWorkAI().getStateAI().setHistoryEnabled(true, 20);
+                }
             }
+            else
+            {
+                if (citizenData.getJob() != null)
+                {
+                    ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+                }
 
-            getNavigation().stop();
-            getLookControl().setLookAt(player);
+                getNavigation().stop();
+                getLookControl().setLookAt(player);
+            }
         }
 
         return InteractionResult.SUCCESS;

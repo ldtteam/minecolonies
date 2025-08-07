@@ -2,11 +2,10 @@ package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.IBooleanConditionSupplier;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.IStateSupplier;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 /**
  * Basic event for statemachines, consists of a condition and a statesupplier to transition the statemachine into. Events are always executed before any state transitions happen.
@@ -20,8 +19,8 @@ public class BasicEvent extends BasicTransition<IAIState> implements IStateMachi
 
     public BasicEvent(
       @NotNull final IStateEventType eventType,
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<IAIState> nextState)
+        @NotNull final IBooleanConditionSupplier condition,
+        @NotNull final IStateSupplier<IAIState> nextState)
     {
         super(condition, nextState);
         this.eventType = eventType;
