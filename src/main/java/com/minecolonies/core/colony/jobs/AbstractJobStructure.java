@@ -2,13 +2,11 @@ package com.minecolonies.core.colony.jobs;
 
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
@@ -19,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
 /**
  * Common job object for all structure AIs.
@@ -118,10 +115,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                             if (te instanceof IBlueprintDataProviderBE)
                             {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
-                                final String schematicPath = tagData.getString(TAG_NAME);
-                                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
-
-                                tagData.putString(TAG_NAME, location);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
 
                                 try
@@ -130,7 +123,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                                 }
                                 catch (final Exception e)
                                 {
-                                    Log.getLogger().warn("Broken deco-controller at: " + x + " " + y + " " + z);
+                                    Log.getLogger().warn("Broken deco-controller at: {} {} {}", x, y, z);
                                 }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();
