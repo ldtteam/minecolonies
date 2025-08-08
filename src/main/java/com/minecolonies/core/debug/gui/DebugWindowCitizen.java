@@ -58,12 +58,6 @@ public class DebugWindowCitizen extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onOpened()
-    {
-        super.onOpened();
-    }
-
-    @Override
     public void onUpdate()
     {
         super.onUpdate();

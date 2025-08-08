@@ -55,7 +55,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
             findPaneByID("debugIcon").setVisible(true);
             registerButton("debugTab", () -> new DebugWindowCitizen(citizen).open());
             registerButton("debugIcon", () -> new DebugWindowCitizen(citizen).open());
-            PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("debugIcon")).build().setText(Component.translatable("com.minecolonies.coremod.debug.gui.tabicon"));
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.coremod.debug.gui.tabicon"), findPaneByID("debugIcon"));
         }
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
