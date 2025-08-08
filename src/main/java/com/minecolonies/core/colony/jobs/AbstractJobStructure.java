@@ -112,10 +112,10 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                 {
                     for (short z = 0; z < blueprint.getSizeZ(); z++)
                     {
-                        final BlockPos offset = new BlockPos(x, y, z);
                         final CompoundTag compoundNBT = tileEntityData[y][z][x];
                         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
+                            final BlockPos offset = new BlockPos(x, y, z);
                             final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
                             if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
