@@ -107,23 +107,28 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                 {
                     for (short z = 0; z < blueprint.getSizeZ(); z++)
                     {
+                        final BlockPos offset = new BlockPos(x, y, z);
                         final CompoundTag compoundNBT = tileEntityData[y][z][x];
                         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
-                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE)
+                            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
                             {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
+                                if (blueprint.getPrimaryBlockOffset().equals(offset))
+                                {
+                                    tagData.putString(NbtTagConstants.TAG_PATH, StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), tagData.getString(TAG_SCHEMATIC_NAME))) + ".blueprint");
+                                }
 
                                 try
                                 {
-                                    ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                    blueprintDataProviderBE.readSchematicDataFromNBT(compoundNBT);
                                 }
                                 catch (final Exception e)
                                 {
-                                    Log.getLogger().warn("Broken deco-controller at: {} {} {}", x, y, z);
+                                    Log.getLogger().warn("Broken deco-controller at: {}", offset);
                                 }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();

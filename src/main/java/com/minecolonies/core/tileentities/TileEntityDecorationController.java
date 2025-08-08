@@ -2,7 +2,6 @@ package com.minecolonies.core.tileentities;
 
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
@@ -146,7 +145,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
 
         this.packName = blueprintDataProvider.getString(TAG_PACK);
-        this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
+        this.schematicPath = blueprintDataProvider.getString(TAG_PATH);
     }
 
     @Override
