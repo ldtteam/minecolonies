@@ -146,7 +146,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
 
         this.packName = blueprintDataProvider.getString(TAG_PACK);
-        this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
+        this.schematicPath = blueprintDataProvider.getString(TAG_PATH);
     }
 
     @Override
