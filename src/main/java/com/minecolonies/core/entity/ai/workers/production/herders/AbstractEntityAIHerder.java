@@ -15,6 +15,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -36,9 +37,7 @@ import java.util.stream.Stream;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.BREEDING_ATTEMPTS;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ANIMALS_BUTCHERED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 
 /**
  * Abstract class for all Citizen Herder AIs
@@ -616,11 +615,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null)
         {
-            return walkToWorkPos(animal.blockPosition());
+            return !EntityNavigationUtils.walkToPos(worker, animal.blockPosition(), 2, true);
         }
         else
         {
-            return true;
+            return false;
         }
     }
 

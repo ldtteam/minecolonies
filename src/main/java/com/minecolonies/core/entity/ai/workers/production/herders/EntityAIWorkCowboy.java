@@ -13,10 +13,14 @@ import com.minecolonies.core.colony.jobs.JobCowboy;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.util.FakePlayer;
@@ -27,8 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy.MILKING_AMOUNT;
 import static com.minecolonies.api.util.constant.StatisticsConstants.MILKING_ATTEMPTS;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy.MILKING_AMOUNT;
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
@@ -155,22 +159,25 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final Cow cow = searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow) && !a.isBaby()).stream()
-                          .map(a -> (Cow) a).findFirst().orElse(null);
+        final Animal animal = searchForAnimals(a -> (a instanceof Cow || a instanceof Goat) && !(a instanceof MushroomCow) && !a.isBaby()).stream()
+                          .findFirst().orElse(null);
 
-        if (cow == null)
+        if (animal == null)
         {
             milkCoolDown = MILK_COOL_DOWN;
             return DECIDE;
         }
 
-        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(building.getMilkInputItem().getItem(), building.getMilkInputItem().getCount()))) && !walkingToAnimal(cow))
+        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(building.getMilkInputItem().getItem(), building.getMilkInputItem().getCount()))) && !walkingToAnimal(animal))
         {
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), building.getMilkOutputItem()))
             {
                 building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onMilked();
                 CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(building.getMilkOutputItem().getItem()));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), building.getMilkInputItem());
+
+                final SoundEvent sound = animal instanceof Goat goat ? goat.getMilkingSound() : SoundEvents.COW_MILK;
+                worker.queueSound(sound, animal.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
             }
 
             incrementActionsDoneAndDecSaturation();
@@ -179,7 +186,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             return INVENTORY_FULL;
         }
 
-        return DECIDE;
+        return getState();
     }
 
     /**
@@ -225,6 +232,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
                     building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
                     CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(fakePlayer.getMainHandItem().getItem()));
                     InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
+                    worker.queueSound(SoundEvents.MOOSHROOM_MILK, mooshroom.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
                 }
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
@@ -235,7 +243,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             return INVENTORY_FULL;
         }
 
-        return DECIDE;
+        return getState();
     }
 
     @Override

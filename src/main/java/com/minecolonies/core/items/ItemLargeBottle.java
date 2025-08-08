@@ -11,6 +11,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -43,6 +44,16 @@ public class ItemLargeBottle extends Item
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
+            if(!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
+            {
+                player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
+            }
+            stack.shrink(1);
+            return InteractionResult.SUCCESS;
+        }
+        else if (entity instanceof final Goat goat && !entity.isBaby())
+        {
+            player.playSound(goat.getMilkingSound(), 1.0F, 1.0F);
             if(!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
