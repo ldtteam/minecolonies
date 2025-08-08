@@ -132,7 +132,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         {
             new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
         }
-        if (anchor.getBlock() instanceof AbstractBlockHut<?>)
+        if (anchor.getBlock() instanceof AbstractBlockHut<?> anchorBlock)
         {
             if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/"))
             {
@@ -141,10 +141,10 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 return;
             }
 
-            final ItemStack stack = new ItemStack(anchor.getBlock());
-            if (EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
+            final ItemStack stack = new ItemStack(anchorBlock);
+            if (EventHandler.onBlockHutPlaced(world, player, anchorBlock, blockPos))
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchorBlock);
                 if (slot == -1 && !player.isCreative())
                 {
                     SoundUtils.playErrorSound(player, player.blockPosition());
@@ -163,7 +163,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                 world.destroyBlock(blockPos, true);
                 world.setBlockAndUpdate(blockPos, anchor);
-                ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+                anchorBlock.onBlockPlacedByBuildTool(world,
                   blockPos,
                   anchor,
                   player,
@@ -185,10 +185,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     // Townhall Placement
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                     InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
+                    AdvancementTriggers.PLACE_STRUCTURE.get().trigger((ServerPlayer) player, anchorBlock.getBlueprintName());
                     return;
                 }
 
-                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.get().trigger(playerMP, ((AbstractBlockHut<?>) anchor.getBlock()).getBlueprintName()));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(tempColony, playerMP -> AdvancementTriggers.PLACE_STRUCTURE.get().trigger(playerMP, anchorBlock.getBlueprintName()));
 
                 int level = 0;
                 boolean finishedUpgrade = false;
@@ -215,7 +216,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, blockPos);
                 if (building == null)
                 {
-                    if (!(anchor.getBlock() instanceof BlockHutTownHall))
+                    if (!(anchorBlock instanceof BlockHutTownHall))
                     {
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         Log.getLogger().error("BuildTool: building is null!", new Exception());
