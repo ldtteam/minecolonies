@@ -112,7 +112,7 @@ public class BuildingCook extends AbstractBuilding
             }
             else
             {
-                final BlockPos pos = getLocationsFromTag(TAG_SIT_OUT).get(rng - sittingSize - sitInSize );
+                final BlockPos pos = getLocationsFromTag(TAG_SIT_OUT).get(rng - sittingSize - sitInSize);
                 if (!SittingEntity.isSittingPosOccupied(pos, colony.getWorld()))
                 {
                     return pos;
