@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
+import com.ldtteam.structurize.client.gui.WindowTagTool;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -83,6 +84,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
+
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
@@ -143,6 +146,18 @@ public class MineColonies
             forgeBus.register(ClientEventHandler.class);
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
             modBus.register(ClientRegistryHandler.class);
+
+            WindowTagTool.TAG_OPTIONS.add(TAG_WORK);
+            WindowTagTool.TAG_OPTIONS.add(TAG_SIT_IN);
+            WindowTagTool.TAG_OPTIONS.add(TAG_SIT_OUT);
+            WindowTagTool.TAG_OPTIONS.add(TAG_STAND_IN);
+            WindowTagTool.TAG_OPTIONS.add(TAG_STAND_OUT);
+            WindowTagTool.TAG_OPTIONS.add(TAG_SITTING);
+            WindowTagTool.TAG_OPTIONS.add(BUILDING_SIGN);
+
+            WindowTagTool.TAG_OPTIONS.add(TAG_GATE);
+            WindowTagTool.TAG_OPTIONS.add(TAG_KNIGHT);
+            WindowTagTool.TAG_OPTIONS.add(TAG_ARCHER);
         }
 
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);
@@ -432,7 +447,8 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
+    {
         event.registerItem(new IClientItemExtensions() {
             @NotNull
             @Override

@@ -2964,5 +2964,16 @@
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
-  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s"
+  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
+
+  "com.ldtteam.tag.tooltip.work": "Position a citizen would stand to work",
+  "com.ldtteam.tag.tooltip.sit_in": "Inside (under roof) sitting position",
+  "com.ldtteam.tag.tooltip.sit_out": "Outdoor sitting position",
+  "com.ldtteam.tag.tooltip.stand_in": "Inside (under roof) position to stand at",
+  "com.ldtteam.tag.tooltip.stand_out": "Outdoor position to stand at",
+  "com.ldtteam.tag.tooltip.building_sign": "Position of a sign that should mirror the building name and level",
+
+  "com.ldtteam.tag.tooltip.knight": "Position for knights to guard the Gate",
+  "com.ldtteam.tag.tooltip.archer": "Positions for archers to guard the gate",
+  "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside"
 }
