@@ -2,7 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
-import com.ldtteam.structurize.client.gui.WindowTagTool;
+import com.ldtteam.structurize.api.TagManager;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -24,9 +24,12 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockPlantationField;
+import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -147,17 +150,22 @@ public class MineColonies
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
             modBus.register(ClientRegistryHandler.class);
 
-            WindowTagTool.TAG_OPTIONS.add(TAG_WORK);
-            WindowTagTool.TAG_OPTIONS.add(TAG_SIT_IN);
-            WindowTagTool.TAG_OPTIONS.add(TAG_SIT_OUT);
-            WindowTagTool.TAG_OPTIONS.add(TAG_STAND_IN);
-            WindowTagTool.TAG_OPTIONS.add(TAG_STAND_OUT);
-            WindowTagTool.TAG_OPTIONS.add(TAG_SITTING);
-            WindowTagTool.TAG_OPTIONS.add(BUILDING_SIGN);
+            TagManager.registerGlobalTagOption(TAG_WORK);
+             TagManager.registerGlobalTagOption(TAG_SIT_IN);
+             TagManager.registerGlobalTagOption(TAG_SIT_OUT);
+             TagManager.registerGlobalTagOption(TAG_STAND_IN);
+             TagManager.registerGlobalTagOption(TAG_STAND_OUT);
+             TagManager.registerGlobalTagOption(TAG_SITTING);
+             TagManager.registerGlobalTagOption(BUILDING_SIGN);
 
-            WindowTagTool.TAG_OPTIONS.add(TAG_GATE);
-            WindowTagTool.TAG_OPTIONS.add(TAG_KNIGHT);
-            WindowTagTool.TAG_OPTIONS.add(TAG_ARCHER);
+             TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
+             TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
+             TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+
+             for (final String fieldTag : SchematicTagConstants.getPlantationTags())
+             {
+                 TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
+             }
         }
 
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);

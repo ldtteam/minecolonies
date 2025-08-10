@@ -59,4 +59,23 @@ public class SchematicTagConstants
     public static final String CRIMSON_CROP      = "crimsonp_ground";
     public static final String WARPED_FIELD      = "warpedp_field";
     public static final String WARPED_CROP       = "warpedp_ground";
+
+    public static String[] getPlantationTags()
+    {
+        return new String[] {
+            SUGAR_FIELD,       SUGAR_CROP,
+            CACTUS_FIELD,      CACTUS_CROP,
+            BAMBOO_FIELD,      BAMBOO_CROP,
+            COCOA_FIELD,       COCOA_CROP,
+            VINE_FIELD,        VINE_CROP,
+            KELP_FIELD,        KELP_CROP,
+            SEA_GRASS_FIELD,   SEA_GRASS_CROP,
+            SEA_PICKLE_FIELD,  SEA_PICKLE_CROP,
+            GLOW_BERRY_FIELD,  GLOW_BERRY_CROP,
+            WEEPY_VINE_FIELD,  WEEPY_VINE_CROP,
+            TWISTY_VINE_FIELD, TWISTY_VINE_CROP,
+            CRIMSON_FIELD,     CRIMSON_CROP,
+            WARPED_FIELD,      WARPED_CROP
+        };
+    }
 }
