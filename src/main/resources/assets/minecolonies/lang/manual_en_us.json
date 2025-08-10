@@ -2965,6 +2965,7 @@
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
   "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
+  "com.minecolonies.coremod.debug.gui.tabicon": "Debugging Options",
 
   "com.ldtteam.tag.tooltip.work": "Position a citizen would stand to work",
   "com.ldtteam.tag.tooltip.sit_in": "Inside (under roof) sitting position",

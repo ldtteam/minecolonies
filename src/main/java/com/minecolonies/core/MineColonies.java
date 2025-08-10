@@ -34,6 +34,10 @@ import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.event.*;
 import com.minecolonies.core.network.messages.PermissionsMessage;
@@ -398,6 +402,8 @@ public class MineColonies
         InteractionClose.TYPE.register(registry);
         AlterRestaurantMenuItemMessage.TYPE.register(registry);
         TriggerConnectionEventMessage.TYPE.register(registry);
+        QueryCitizenAIHistoryMessage.TYPE.register(registry);
+        DebugEnablePathfindingMessage.TYPE.register(registry);
 
         //Client side only
         BlockParticleEffectMessage.TYPE.register(registry);
@@ -423,6 +429,8 @@ public class MineColonies
         SaveStructureNBTMessage.TYPE.register(registry);
         GlobalQuestSyncMessage.TYPE.register(registry);
         GlobalDiseaseSyncMessage.TYPE.register(registry);
+        DebugEnableMessage.TYPE.register(registry);
+        DebugOutputMessage.TYPE.register(registry);
 
         OpenBuildingUIMessage.TYPE.register(registry);
         OpenCantFoundColonyWarningMessage.TYPE.register(registry);
