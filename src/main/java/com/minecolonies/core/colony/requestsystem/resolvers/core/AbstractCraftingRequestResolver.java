@@ -182,7 +182,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         for (final var module : building.getModulesByType(WorkerBuildingModule.class))
         {
-            if (module.getJobEntry() == jobEntry)
+            if (module.getJobEntry() == jobEntry && module.hasAssignedCitizen())
             {
                 return true;
             }
