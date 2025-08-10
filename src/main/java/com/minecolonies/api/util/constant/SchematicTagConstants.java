@@ -1,9 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
-import com.minecolonies.core.colony.buildingextensions.PlantationField;
-import net.minecraft.world.item.Items;
-
 /**
  * Class which holds the tags used in schematics
  */
