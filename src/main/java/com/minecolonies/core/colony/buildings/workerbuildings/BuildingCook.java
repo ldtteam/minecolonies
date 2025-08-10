@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -11,12 +10,10 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
@@ -77,7 +74,7 @@ public class BuildingCook extends AbstractBuilding
     {
         if (getLocationsFromTag(TAG_SITTING).isEmpty() && getLocationsFromTag(TAG_SIT_IN).isEmpty() && getLocationsFromTag(TAG_SIT_OUT).isEmpty())
         {
-            Log.getLogger().error("Restaurant without sitting position. Style: {}", getStructurePack());
+            Log.getLogger().error("Restaurant without sitting position. Style: {} Schematic: {}", getStructurePack(), getTileEntity().getBlueprintPath());
             return null;
         }
 
