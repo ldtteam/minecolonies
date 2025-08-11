@@ -24,19 +24,19 @@ public class VisibleCitizenStatus
      * General public Icons
      */
     public final static VisibleCitizenStatus EAT         =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), MESSAGE_INFO_CITIZEN_STATUS_HUNGRY);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), MESSAGE_INFO_CITIZEN_STATUS_HUNGRY, true);
     public final static VisibleCitizenStatus HOUSE       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), MESSAGE_INFO_CITIZEN_STATUS_IDLE);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), MESSAGE_INFO_CITIZEN_STATUS_IDLE, true);
     public final static VisibleCitizenStatus RAIDED      =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/raid_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_RAID);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/raid_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_RAID, true);
     public final static VisibleCitizenStatus MOURNING    =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/mourning.png"), MESSAGE_INFO_CITIZEN_STATUS_MOURNING);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/mourning.png"), MESSAGE_INFO_CITIZEN_STATUS_MOURNING, true);
     public final static VisibleCitizenStatus BAD_WEATHER =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bad_weather.png"), MESSAGE_INFO_CITIZEN_STATUS_RAINING);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bad_weather.png"), MESSAGE_INFO_CITIZEN_STATUS_RAINING, true);
     public final static VisibleCitizenStatus SLEEP       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bed_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SLEEPING);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bed_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SLEEPING, true);
     public final static VisibleCitizenStatus SICK        =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/sick_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SICK);
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/small_sick_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SICK, true);
     public final static VisibleCitizenStatus WORKING     =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/working.png"), MESSAGE_INFO_CITIZEN_STATUS_WORKING);
 
@@ -47,6 +47,7 @@ public class VisibleCitizenStatus
 
     private final ResourceLocation icon;
     private final String           translationKey;
+    private boolean                render;
 
     public VisibleCitizenStatus(final ResourceLocation icon, final String translationKey)
     {
@@ -59,7 +60,15 @@ public class VisibleCitizenStatus
         }
         this.id = idCounter++;
         visibleStatusMap.put(id, this);
+        this.render = false;
     }
+
+    public VisibleCitizenStatus(final ResourceLocation icon, final String translationKey, final boolean render)
+    {
+        this(icon, translationKey);
+        this.render = render;
+    }
+
 
     /**
      * Returns the Icon to use
@@ -98,6 +107,15 @@ public class VisibleCitizenStatus
     public static VisibleCitizenStatus getForId(final int id)
     {
         return visibleStatusMap.get(id);
+    }
+
+    /**
+     * If this icon should render over citizen heads.
+     * @return true if so.
+     */
+    public boolean shouldRender()
+    {
+        return this.render;
     }
 
     /**

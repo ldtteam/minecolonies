@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowRequestTree;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.core.debug.DebugPlayerManager;
+import com.minecolonies.core.debug.gui.DebugWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -46,6 +48,15 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
         registerButton("familyTab", () -> new FamilyWindowCitizen(citizen).open());
         registerButton("familyIcon", () -> new FamilyWindowCitizen(citizen).open());
         PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("familyIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.citizen.family"));
+
+        if (DebugPlayerManager.hasDebugEnabled(mc.player))
+        {
+            findPaneByID("debugTab").setVisible(true);
+            findPaneByID("debugIcon").setVisible(true);
+            registerButton("debugTab", () -> new DebugWindowCitizen(citizen).open());
+            registerButton("debugIcon", () -> new DebugWindowCitizen(citizen).open());
+            PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.coremod.debug.gui.tabicon"), findPaneByID("debugIcon"));
+        }
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 

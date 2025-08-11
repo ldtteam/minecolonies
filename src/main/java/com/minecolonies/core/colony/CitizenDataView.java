@@ -482,8 +482,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public boolean hasVisibleInteractions()
+    public boolean hasVisibleStatus()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return true;
+        }
+
         if (sortedInteractions.isEmpty())
         {
             return false;
@@ -531,8 +536,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
+    public ResourceLocation getStatusIcon()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return statusIcon.getIcon();
+        }
+
         if (sortedInteractions == null || sortedInteractions.isEmpty())
         {
             return null;
@@ -545,7 +555,7 @@ public class CitizenDataView implements ICitizenDataView
             {
                 icon = BLOCKING_RESOURCE;
             }
-            else if (hasVisibleInteractions())
+            else if (hasVisibleStatus())
             {
                 icon = PENDING_RESOURCE;
             }

@@ -10,7 +10,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -23,6 +23,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobQuarrier;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
@@ -53,7 +54,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_PICKAXE;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_SHOVEL;
-import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
+import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
 
 /**
  * Class which handles the quarrier behaviour.
@@ -212,7 +213,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     @Override
     public void loadStructure(
-      @NotNull final IWorkOrder workOrder,
+        @NotNull final IBuilderWorkOrder workOrder,
       final BlockPos position,
       final boolean removal)
     {
@@ -230,7 +231,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
             structure = new BuildingStructureHandler<>(world,
                 workOrder,
-              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
+                this, new BuildingProgressStage[] {BUILD_SOLID, DECORATE, CLEAR});
             building.setTotalStages(3);
 
             if (!structure.hasBluePrint())

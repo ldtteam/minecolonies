@@ -228,7 +228,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (citizenData.getHomeBuilding() != null && citizenData.getHomeBuilding().getBuildingLevel() > building.getBuildingLevel() + 1)
+        if (citizenData.getHomeBuilding() != null && citizenData.getHomeBuilding().getBuildingLevelEquivalent() > building.getBuildingLevel() + 1)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_RESTAURANT_INTERACTION), ChatPriority.BLOCKING));
         }
@@ -238,7 +238,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
         {
             worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().incrementBy(FOOD_SERVED, qty, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
-            StatsUtil.trackStat(building, FOOD_SERVED_DETAIL, foodName, qty);
+            StatsUtil.trackStatByName(building, FOOD_SERVED_DETAIL, foodName, qty);
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             worker.decreaseSaturationForAction();
         }

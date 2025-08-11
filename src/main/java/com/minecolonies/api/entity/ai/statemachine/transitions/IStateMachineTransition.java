@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.ai.statemachine.transitions;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import net.minecraft.network.chat.Component;
 
 /**
  * Transition type for Statemachines
@@ -27,4 +28,11 @@ public interface IStateMachineTransition<S extends IState>
      * @return true if ready to transition to next state
      */
     boolean checkCondition();
+
+    /**
+     * Get the name of this transition
+     *
+     * @return name
+     */
+    Component getName();
 }

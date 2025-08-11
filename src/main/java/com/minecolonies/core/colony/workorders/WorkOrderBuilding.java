@@ -151,7 +151,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBuild(@NotNull final ICitizenData citizen)
+    public boolean canBuild(final IBuilding building)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
@@ -159,10 +159,9 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         //  - OR the WorkOrder is for the TownHall
         //  - OR the WorkOrder is not farther away than 100 blocks from any builder and not manually assigned
 
-        final IBuilding building = citizen.getWorkBuilding();
-        return canBuildIgnoringDistance(building.getPosition(), building.getBuildingLevel())
-                 && (citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ
-                 || (isClaimed() && getClaimedBy().equals(building.getPosition())));
+        return building instanceof BuildingBuilder
+            && canBuildIgnoringDistance(building, building.getPosition(), building.getBuildingLevel())
+            && (building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**
@@ -172,7 +171,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
      * @param builderLevel    level of the builders hut.
      * @return true if so.
      */
-    private boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
+    @Override
+    public boolean canBuildIgnoringDistance(@NotNull IBuilding building, @NotNull final BlockPos builderLocation, final int builderLevel)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
@@ -253,7 +253,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
             if (building != null)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), this.getTargetLevel()));
+                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getRegistryName().getPath(), this.getTargetLevel()));
             }
         }
     }

@@ -1,22 +1,48 @@
 <window size="524 243" >
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
 
-    <text size="148 11" pos="101 60" style="bold" color="green"
-           label="$(com.minecolonies.coremod.gui.townhall.allies)"/>
-    <list id="allies" size="150 75" pos="101 70">
-        <box size="100% 25" linewidth="1">
-            <text id="name" size="100 12" pos="5 0" color="black"/>
-            <text id="dist" size="40 13" pos="112 12" color="black"/>
-            <button id="tp" size="100 12" pos="5 12" label="$(com.minecolonies.coremod.permission.teleport_to_colony)"/>
+    <text id="desc" size="170 10" textalign="MIDDLE" pos="95 60" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.connectioneventlist.desc)"/>
+    <list id="connectioneventlist" size="160 140" pos="98 70">
+        <box size="100% 40" linewidth="1">
+            <text id="name" size="140 12" pos="2 1" color="black"/>
+            <text id="desc" size="140 12" pos="2 10" color="black"/>
+
+            <button id="acceptally" size="86 17" label="$(com.minecolonies.core.gui.connectioneventlist.accept_ally)" pos="2 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
         </box>
     </list>
 
-    <text size="148 11" pos="101 160" style="bold" color="red"
-           label="$(com.minecolonies.coremod.gui.townhall.feuds)"/>
-    <list id="feuds" size="150 50" pos="101 170">
-        <box size="100% 25" linewidth="1">
-            <text id="name" size="100 12" pos="5 0" color="black"/>
-            <text id="dist" size="40 12" pos="105 0" color="black"/>
+
+    <text id="desc" size="170 10" textalign="MIDDLE" pos="260 25" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.direct.desc)"/>
+    <list id="directcolonylist" size="170 80" pos="263 35">
+        <box size="100% 40" linewidth="1">
+            <text id="name" size="140 12" pos="2 1" color="black"/>
+            <text id="distance" size="80 12" pos="70 10" color="black"/>
+            <text id="state" size="100% 12" pos="2 10" color="black"/>
+
+            <button id="requestally" size="86 17" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
+            <button id="startfeud" size="71 17" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png" color="black" textscale="0.8"/>
+
+            <button id="setneutral" size="86 17" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" visible="false" textscale="0.8"/>
+        </box>
+    </list>
+    <text id="desc" size="170 10" textalign="MIDDLE"  pos="260 120" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
+    <list id="indirectcolonylist" size="164 80" pos="263 135">
+        <box size="100% 40" linewidth="1">
+            <text id="name" size="140 12" pos="2 1" color="black"/>
+            <text id="distance" size="80 12" pos="70 10" color="black"/>
+            <text id="state" size="100% 12" pos="2 10" color="black"/>
+
+            <button id="requestally" size="86 17" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
+            <button id="startfeud" size="64 17" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_small.png" color="black" textscale="0.8"/>
+
+            <button id="setneutral" size="86 17" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" visible="false" textscale="0.8"/>
         </box>
     </list>
 

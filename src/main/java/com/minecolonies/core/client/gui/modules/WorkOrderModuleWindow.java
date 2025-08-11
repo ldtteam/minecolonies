@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.Network;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * BOWindow for the builder hut workorder list.
@@ -147,6 +149,8 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
     {
         final IWorkOrderView order = workOrders.get(index);
+        boolean buttonEnabled = true;
+        String disabledMessage = "";
 
         Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class);
         PaneBuilders.tooltipBuilder()
@@ -157,13 +161,36 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class)
           .setText(Component.translatable("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
+        if (buildingView.getAllAssignedCitizens().isEmpty())
+        {
+            disabledMessage = MESSAGE_WARNING_NO_WORKER_ASSIGNED;
+            buttonEnabled = false;
+        }
+        if (!order.getClaimedBy().equals(BlockPos.ZERO))
+        {
+            disabledMessage = MESSAGE_WARNING_ALREADY_CLAIMED;
+            buttonEnabled = false; 
+        }
+        if (!order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()))
+        {
+            disabledMessage = MESSAGE_WARNING_CANNOTBUILD;
+            buttonEnabled = false;
+        }
+
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {
             rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.cancel"));
         }
         else if (manualMode)
         {
-            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.select"));
+            Button assign = rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class);
+            assign.setText(Component.translatable("com.minecolonies.coremod.gui.builder.select"));
+
+            if (!buttonEnabled)
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(assign).build().setText(Component.translatable(disabledMessage));
+                assign.setEnabled(false);
+            }
         }
     }
 

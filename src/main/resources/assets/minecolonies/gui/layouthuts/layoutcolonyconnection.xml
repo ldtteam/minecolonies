@@ -1,0 +1,26 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+    size="190 244" >
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text id="desc" size="170 10" textalign="MIDDLE" pos="10 15" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.direct.desc)"/>
+    <list id="directcolonylist" size="164 80" pos="13 25">
+        <box size="100% 40" linewidth="1">
+            <text id="name" size="140 12" pos="2 1" color="black"/>
+            <text id="distance" size="80 12" pos="70 10" color="black"/>
+            <text id="state" size="100% 12" pos="2 10" color="black"/>
+
+            <button id="travel" size="86 17" label="$(com.minecolonies.core.gui.colonylist.travel)" pos="32 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" tooltip="$(com.minecolonies.core.gui.colonylist.travel.tooltip)"/>
+        </box>
+    </list>
+    <text id="desc" size="170 10" textalign="MIDDLE" pos="10 110" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
+    <list id="indirectcolonylist" size="164 80" pos="13 125">
+        <box size="100% 40" linewidth="1">
+            <text id="name" size="140 12" pos="2 1" color="black"/>
+            <text id="distance" size="80 12" pos="70 10" color="black"/>
+            <text id="state" size="100% 12" pos="2 10" color="black"/>
+
+            <button id="travel" size="86 17" label="$(com.minecolonies.core.gui.colonylist.travel)" pos="32 22"
+                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" tooltip="$(com.minecolonies.core.gui.colonylist.travel.tooltip)"/>
+        </box>
+    </list>
+</window>

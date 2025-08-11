@@ -180,7 +180,8 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && build.getBuildingType() != ModBuildings.miner.get())
+                                             && build.getBuildingType() != ModBuildings.miner.get()
+                                             && build.getBuildingLevel() > 0)
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
                           .collect(Collectors.toList()));

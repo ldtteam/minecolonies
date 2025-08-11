@@ -212,15 +212,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final double speedFactor,
       final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
     {
+        return walkToRandomPos(range, speedFactor, corners, false);
+    }
+
+    @Override
+    protected PathResult<PathJobRandomPos> walkToRandomPos(
+        final int range,
+        final double speedFactor,
+        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
+    {
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
 
         final PathResult<PathJobRandomPos> result = setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
-          start,
+            start,
             range,
-          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity,
-          corners.getA(),
-          corners.getB()), null, speedFactor, true);
+            (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
+            ourEntity,
+            corners.getA(),
+            corners.getB(), preferInside), null, speedFactor, true);
 
         if (result == null)
         {
@@ -268,7 +277,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
         super.stop();
 
-        if (dest != null && !dest.equals(BlockPos.ZERO))
+        if (dest != null)
         {
             if (job.getStart().distSqr(dest) > 900 * 900)
             {
@@ -289,6 +298,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
                     ourEntity.moveTo(dest.getX(), dest.getY(), dest.getZ());
                 }
+
+                pauseTicks = 20 * 300;
                 return null;
             }
         }

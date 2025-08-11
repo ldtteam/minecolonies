@@ -1,15 +1,24 @@
 package com.minecolonies.core.entity.ai.workers.crafting;
 
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.core.colony.jobs.JobBaker;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_SMELTED_DETAIL;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_BAKED_DETAIL;
 /**
  * Baker AI class.
  */
@@ -61,4 +70,14 @@ public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, 
     {
         return true;
     }
+
+    /**
+     * Returns the name of the smelting stat that is used in the building's statistics.
+     * @return the name of the smelting stat.
+     */
+    protected String getSmeltingStatName()
+    {
+        return ITEMS_BAKED_DETAIL;
+    }
+
 }

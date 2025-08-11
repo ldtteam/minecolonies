@@ -424,7 +424,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
 
-                    if (citizen.getColony().getTravelingManager().isTravelling(citizen))
+                    if (citizen.getColony().getTravellingManager().isTravelling(citizen))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     }

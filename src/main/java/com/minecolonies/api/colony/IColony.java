@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -279,7 +280,13 @@ public interface IColony
      *
      * @return the travelling manager.
      */
-    ITravellingManager getTravelingManager();
+    ITravellingManager getTravellingManager();
+
+    /**
+     * Get the connection manager of the colony.
+     * @return the connection manager.
+     */
+    IColonyConnectionManager getConnectionManager();
 
     /**
      * Add a visiting player.

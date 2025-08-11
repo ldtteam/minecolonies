@@ -2,15 +2,17 @@ package com.minecolonies.core.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_DECORATION_REQUEST;
-
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 /**
  * A work order that the build can take to build plantation fields.
  */
@@ -60,9 +62,24 @@ public class WorkOrderPlantationField extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBuild(final @NotNull ICitizenData citizen)
+    public boolean canBuild(final IBuilding building)
     {
-        return citizen.getJob() instanceof JobBuilder;
+        return building instanceof BuildingBuilder;
+    }
+    
+    /**
+     * Check if a citizen may accept this workOrder while ignoring the distance to the build location.
+     * <p>
+     * @param building    the building that is assigned.
+     * @param position    the position of the citizen's work hut.
+     * @param level       the level of that work hut.
+     * @return true if the citizen may accept this work order.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    @Override
+    public boolean canBuildIgnoringDistance(final @NotNull IBuilding building, final BlockPos position, final int level)
+    {
+        return canBuild(building);
     }
 
     @Override

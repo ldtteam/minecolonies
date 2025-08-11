@@ -5,7 +5,7 @@
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "item": "minecolonies:durum"
     },
     {
       "item": "minecolonies:large_soy_milk_bottle"

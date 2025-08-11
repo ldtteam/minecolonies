@@ -40,6 +40,8 @@ public class CommandTranslationConstants
     @NonNls
     public static final String COMMAND_CITIZEN_INFO_JOB                      = "com.minecolonies.command.citizeninfo.job";
     @NonNls
+    public static final String COMMAND_CITIZEN_INFO_FOOD                     = "com.minecolonies.command.citizeninfo.food";
+    @NonNls
     public static final String COMMAND_CITIZEN_INFO_NO_JOB                   = "com.minecolonies.command.citizeninfo.jobnull";
     @NonNls
     public static final String COMMAND_CITIZEN_INFO_ACTIVITY                 = "com.minecolonies.command.citizeninfo.activity";

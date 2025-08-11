@@ -7,7 +7,7 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -72,6 +72,8 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -415,7 +417,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * Destroys the block. Calls {@link #onDestroyed()}.
      */
     @Override
-    public final void destroy()
+    public void destroy()
     {
         onDestroyed();
         colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
@@ -929,7 +931,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               && getPosition() != null
               && WorldUtil.isBlockLoaded(colony.getWorld(), getPosition())
               && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
-              && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
+              && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractColonyBlock<?>)
         {
             final BlockEntity te = colony.getWorld().getBlockEntity(getPosition());
             if (te instanceof TileEntityColonyBuilding)

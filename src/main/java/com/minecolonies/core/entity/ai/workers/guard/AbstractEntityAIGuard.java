@@ -427,7 +427,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public void guardMovement()
     {
-        walkToSafePos(buildingGuards.getGuardPos());
+        walkToSafePos(buildingGuards.getGuardPos(worker));
     }
 
     /**
@@ -450,7 +450,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return ACTIONS_UNTIL_DUMPING * building.getBuildingLevel();
+        return ACTIONS_UNTIL_DUMPING * building.getBuildingLevelEquivalent();
     }
 
     /**
@@ -736,7 +736,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             case GuardTaskSetting.FOLLOW:
                 return buildingGuards.getPositionToFollow();
             default:
-                return buildingGuards.getGuardPos();
+                return buildingGuards.getGuardPos(worker);
         }
     }
 
@@ -754,8 +754,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case GuardTaskSetting.PATROL:
-            case GuardTaskSetting.PATROL_MINE:
                 return MAX_PATROL_DERIVATION;
+            case GuardTaskSetting.PATROL_MINE:
             case GuardTaskSetting.FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
             default:

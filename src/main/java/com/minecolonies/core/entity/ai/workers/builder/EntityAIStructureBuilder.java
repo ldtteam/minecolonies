@@ -16,6 +16,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveCloseToXNearY;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -66,8 +68,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 100),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
+          new AITarget(IDLE, START_WORKING, 10),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -99,8 +101,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            building.searchWorkOrder();
-            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.setProgressPos(null, BuildingProgressStage.CLEAR);
             worker.getCitizenData().setStatusPosition(null);
             return false;
         }
@@ -337,5 +338,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getImportantMessageEntityPlayers());
+    }
+
+    @Override
+    public boolean canGoIdle()
+    {
+        return !job.hasWorkOrder();
     }
 }

@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -233,9 +234,9 @@ public class CitizenData implements ICitizenData
     protected final Map<Component, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
-     * If idle at job.
+     * The current status of the citizen's working (?)
      */
-    private boolean idle;
+    private JobStatus jobStatus = JobStatus.IDLE;
 
     /**
      * The texture suffix.
@@ -337,6 +338,11 @@ public class CitizenData implements ICitizenData
      * Texture UUID.
      */
     private UUID textureUUID;
+
+    /**
+     * Citizen leisure time in ticks.
+     */
+    private int leisureTime;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -918,18 +924,18 @@ public class CitizenData implements ICitizenData
         }
 
         //Check if we are traveling, we don't spawn an entity if we are traveling.
-        if (getColony().getTravelingManager().isTravelling(this))
+        if (getColony().getTravellingManager().isTravelling(this))
         {
             return;
         }
 
         boolean spawnVisible;
         //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
-        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
+        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravellingManager().getTravellingTargetFor(this);
         if (travelingTargetCandidate.isPresent())
         {
             //We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
-            getColony().getTravelingManager().finishTravellingFor(this);
+            getColony().getTravellingManager().finishTravellingFor(this);
             nextRespawnPos = travelingTargetCandidate.get();
             spawnVisible = false;
             lastPosition = nextRespawnPos;
@@ -1179,6 +1185,7 @@ public class CitizenData implements ICitizenData
     public void setAsleep(final boolean asleep)
     {
         isAsleep = asleep;
+        leisureTime = 0;
     }
 
     @Override
@@ -1319,7 +1326,7 @@ public class CitizenData implements ICitizenData
         }
 
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
-        nbtTagCompound.putBoolean(TAG_IDLE, idle);
+        nbtTagCompound.putInt(TAG_JOB_STATUS, jobStatus.ordinal());
 
         nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
         nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
@@ -1339,7 +1346,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
         nbtTagCompound.putBoolean(TAG_ACTIVE, this.isWorking);
-
+        nbtTagCompound.putInt(TAG_LEISURE, this.leisureTime);
 
         @NotNull final ListTag avQuestNBT = new ListTag();
         for (final ResourceLocation quest : availableQuests)
@@ -1491,7 +1498,14 @@ public class CitizenData implements ICitizenData
             }
         }
 
-        this.idle = nbtTagCompound.getBoolean(TAG_IDLE);
+        if (nbtTagCompound.contains(TAG_JOB_STATUS))
+        {
+            this.jobStatus = JobStatus.values()[nbtTagCompound.getInt(TAG_JOB_STATUS)];
+        }
+        else if (nbtTagCompound.getBoolean(TAG_IDLE))
+        {
+            this.jobStatus = JobStatus.STUCK;
+        }
 
         final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
@@ -1511,6 +1525,7 @@ public class CitizenData implements ICitizenData
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
         this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
+        this.leisureTime = nbtTagCompound.getInt(TAG_LEISURE);
 
         @NotNull final ListTag availQuestNbt = nbtTagCompound.getList(TAG_AV_QUESTS, TAG_STRING);
         for (int i = 0; i < availQuestNbt.size(); i++)
@@ -1593,6 +1608,16 @@ public class CitizenData implements ICitizenData
             return;
         }
 
+        final int homeBuildingLevel = homeBuilding == null ? 1 : homeBuilding.getBuildingLevel();
+        if (leisureTime > 0)
+        {
+            leisureTime -= tickRate;
+        }
+        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * (int) (60 / (homeBuildingLevel / 2.0)) / tickRate) <= 0)
+        {
+            leisureTime = (int) (TICKS_SECOND * 60 * 3.0);
+        }
+
         if (interactedRecently > 0)
         {
             interactedRecently -= TICKS_SECOND * 3;
@@ -1660,16 +1685,25 @@ public class CitizenData implements ICitizenData
         }
     }
 
+    /**
+     * @return true if the citizen's job status is {@link JobStatus#STUCK}.
+     */
     @Override
     public boolean isIdleAtJob()
     {
-        return this.idle;
+        return this.jobStatus == JobStatus.STUCK;
     }
 
     @Override
-    public void setIdleAtJob(final boolean idle)
+    public JobStatus getJobStatus()
     {
-        this.idle = idle;
+        return this.jobStatus;
+    }
+
+    @Override
+    public void setJobStatus(final JobStatus status)
+    {
+        this.jobStatus = status;
     }
 
     @Override
@@ -2071,5 +2105,11 @@ public class CitizenData implements ICitizenData
     public double getDiseaseModifier()
     {
         return citizenFoodHandler.getDiseaseModifier(getJob() == null ? 1 : getJob().getDiseaseModifier());
+    }
+
+    @Override
+    public int getLeisureTime()
+    {
+        return this.leisureTime;
     }
 }

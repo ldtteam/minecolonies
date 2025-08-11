@@ -122,20 +122,34 @@ public final class TeleportHelper
     /**
      * Teleports the player to the given colony.
      *
-     * @param colony the colony to teleport to.
      * @param player the player to teleport.
+     * @param colony the colony to teleport to.
      */
     public static void colonyTeleport(@NotNull final ServerPlayer player, @NotNull final IColony colony)
     {
-        BlockPos position;
+        colonyTeleport(player, colony, null);
+    }
 
-        if (colony.getBuildingManager().getTownHall() != null)
+    /**
+     * Teleports the player to the given colony.
+     *
+     * @param player the player to teleport.
+     * @param colony the colony to teleport to.
+     * @param pos the preferred position to teleport to.
+     */
+    public static void colonyTeleport(@NotNull final ServerPlayer player, @NotNull final IColony colony, final BlockPos pos)
+    {
+        BlockPos position = pos;
+        if (pos == null)
         {
-            position = colony.getBuildingManager().getTownHall().getPosition();
-        }
-        else
-        {
-            position = colony.getCenter();
+            if (colony.getBuildingManager().getTownHall() != null)
+            {
+                position = colony.getBuildingManager().getTownHall().getPosition();
+            }
+            else
+            {
+                position = colony.getCenter();
+            }
         }
 
         final ServerLevel world = player.getServer().getLevel(colony.getDimension());

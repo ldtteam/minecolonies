@@ -146,7 +146,7 @@ public class BuildingCowboy extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStorage(Items.WHEAT, 2));
         }
 
         @Override

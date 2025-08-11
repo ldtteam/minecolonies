@@ -44,9 +44,17 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
         buf.writeInt(workOrder);
     }
 
+    /**
+     * Executes the action of setting a workorder on the builder.
+     *
+     * @param ctxIn            NetworkEvent.Context of the packet.
+     * @param isLogicalServer  Whether the server is logical.
+     * @param colony           Colony the building is in.
+     * @param building         The builder to set the workorder on.
+     */
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingBuilder building)
     {
-        building.setWorkOrder(workOrder);
+        building.setWorkOrder(workOrder, ctxIn);
     }
 }

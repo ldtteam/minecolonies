@@ -1,13 +1,13 @@
 package com.minecolonies.core.colony.workorders;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
-import com.minecolonies.core.colony.jobs.JobMiner;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.STORAGE_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-
+import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 /**
  * A work order that the build can take to build mine.
  */
@@ -87,9 +87,24 @@ public class WorkOrderMiner extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBuild(@NotNull ICitizenData citizen)
+    public boolean canBuild(IBuilding building)
     {
-        return citizen.getJob() instanceof JobMiner && this.minerBuilding.equals(citizen.getWorkBuilding().getID());
+        return building instanceof BuildingMiner && this.minerBuilding.equals(building.getID());
+    }
+
+    /**
+     * Check if a citizen may accept this workOrder while ignoring the distance to the build location.
+     * <p>
+     * @param building    the assigned building.
+     * @param position    the position of the citizen's work hut.
+     * @param level       the level of that work hut.
+     * @return true if the citizen may accept this work order.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    @Override
+    public boolean canBuildIgnoringDistance(@NotNull IBuilding building,final BlockPos position, final int level)
+    {
+        return canBuild(building);
     }
 
     @Override

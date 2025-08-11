@@ -6,13 +6,22 @@ import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEven
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineOneTimeEvent;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
 import com.minecolonies.api.util.Log;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static java.time.temporal.ChronoField.*;
 
 /**
  * Basic statemachine class, can be used for any Transition typed which extends the transition interface. It contains the current state and a hashmap for events and transitions,
@@ -50,6 +59,20 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      */
     @NotNull
     private final Consumer<RuntimeException> exceptionHandler;
+
+    /**
+     * State history allows tracking of state changes over time, enabled by default in dev
+     */
+    private boolean     historyEnabled = !FMLEnvironment.production;
+    private int         historyIndex   = -1;
+    private Component[] stateHistory   = new Component[20];
+
+    DateTimeFormatter SIMPLE_TIME = new DateTimeFormatterBuilder()
+        .appendValue(HOUR_OF_DAY, 2)
+        .appendLiteral(':')
+        .appendValue(MINUTE_OF_HOUR, 2)
+        .appendLiteral(':')
+        .appendValue(SECOND_OF_MINUTE, 2).toFormatter();
 
     /**
      * Construct a new StateMachine
@@ -149,12 +172,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         return transitionToNext(transition);
     }
 
-    /**
-     * Continuation of checkTransition. applies the transition and changes the state. if the state is null, execute more transitions and don't change state.
-     *
-     * @param transition the transitions we're looking at
-     * @return true if did transition to a new state
-     */
+    @Override
     public boolean transitionToNext(@NotNull final T transition)
     {
         final S newState;
@@ -187,6 +205,15 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
                     reset();
                     return true;
                 }
+
+                if (historyEnabled)
+                {
+                    historyIndex = (historyIndex + 1) % stateHistory.length;
+                    stateHistory[historyIndex] = Component.literal(LocalTime.now().format(SIMPLE_TIME) + " ")
+                        .withStyle(ChatFormatting.GRAY)
+                        .append(transition.getName())
+                        .append(Component.literal("->").append(Component.literal(newState.toString()).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                }
             }
 
             state = newState;
@@ -202,6 +229,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      */
     protected void onException(final RuntimeException e)
     {
+        historyEnabled = true;
         exceptionHandler.accept(e);
     }
 
@@ -210,6 +238,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      *
      * @return The current IAIState.
      */
+    @Override
     public final S getState()
     {
         return state;
@@ -218,9 +247,42 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     /**
      * Resets the statemachine
      */
+    @Override
     public void reset()
     {
         state = initState;
         currentStateTransitions = transitionMap.get(initState);
+    }
+
+    @Override
+    public void setHistoryEnabled(boolean enabled, final int memorySize)
+    {
+        if (enabled == historyEnabled && memorySize == stateHistory.length)
+        {
+            return;
+        }
+
+        historyEnabled = enabled;
+        stateHistory = new Component[memorySize];
+    }
+
+    @Override
+    public Component getHistory()
+    {
+        MutableComponent history = Component.literal("Current state:").append(Component.literal(state + "\n").withStyle(ChatFormatting.GOLD));
+        int index = historyIndex;
+        for (int i = 0; i < stateHistory.length; i++)
+        {
+            index = ((index + 1) + stateHistory.length) % stateHistory.length;
+            Component entry = stateHistory[index];
+            if (entry == null)
+            {
+                continue;
+            }
+
+            history.append(entry).append("\n");
+        }
+
+        return history;
     }
 }

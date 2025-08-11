@@ -1387,9 +1387,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     return true;
                 }
 
-                if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1 && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW
-                                                                                                                                           || block.getValue(SnowLayerBlock.LAYERS)
-                                                                                                                                                == 1))
+                if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1
+                    && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
                 {
                     final BlockPathTypes pathType = block.getBlockPathType(world, tempWorldPos.set(x, y, z), entity);
                     if (pathType == null || pathType.getDanger() == null)
@@ -1548,6 +1547,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         for (int i = 2; i <= (pathingOptions.canDrop ? 10 : 2); i++)
         {
             final BlockState below = cachedBlockLookup.getBlockState(x, y - i, z);
+            if (!canLeaveBlock(x, y - 1, z, x, y, z, false))
+            {
+                return Integer.MIN_VALUE;
+            }
             if (SurfaceType.getSurfaceType(world, below, tempWorldPos.set(x, y - i, z), getPathingOptions()) == SurfaceType.WALKABLE)
             {
                 //  Level path
@@ -1601,26 +1604,32 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         int parentX = parent == null ? start.getX() : parent.x;
         int parentY = parent == null ? start.getY() : parent.y;
         int parentZ = parent == null ? start.getZ() : parent.z;
-        if (head)
-        {
-            parentY++;
-        }
+        return canLeaveBlock(x, y, z, parentX, head ? parentY + 1 : parentY, parentZ, head);
+    }
 
+    /**
+     * Check if we can leave the block at this pos.
+     *
+     * @return true if so.
+     */
+    private boolean canLeaveBlock(final int x, final int y, final int z, final int parentX, final int parentY, final int parentZ, final boolean head)
+    {
         final int dY = y - parentY;
 
-        final BlockState parentBlock = cachedBlockLookup.getBlockState(parentX, parentY, parentZ);
-        if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
+        final BlockState parentBlockState = cachedBlockLookup.getBlockState(parentX, parentY, parentZ);
+        final Block parentBlock = parentBlockState.getBlock();
+        if (parentBlock instanceof TrapDoorBlock || parentBlock instanceof PanelBlock)
         {
-            if (!parentBlock.getValue(TrapDoorBlock.OPEN))
+            if (!parentBlockState.getValue(TrapDoorBlock.OPEN))
             {
                 if (dY != 0)
                 {
-                    if (parentBlock.getBlock() instanceof TrapDoorBlock)
+                    if (parentBlock instanceof TrapDoorBlock)
                     {
                         return true;
                     }
-                    return (head && parentBlock.getValue(PanelBlock.HALF) == Half.TOP && dY < 0) || (!head && parentBlock.getValue(PanelBlock.HALF) == Half.BOTTOM
-                                                                                                       && dY > 0);
+                    return (head && parentBlockState.getValue(PanelBlock.HALF) == Half.TOP && dY < 0)
+                        || (!head && parentBlockState.getValue(PanelBlock.HALF) == Half.BOTTOM && dY > 0);
                 }
                 return true;
             }
@@ -1628,11 +1637,22 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
                 final Direction direction = BlockPosUtil.getXZFacing(parentX, parentZ, x, z);
-                final Direction facing = parentBlock.getValue(TrapDoorBlock.FACING);
+                final Direction facing = parentBlockState.getValue(TrapDoorBlock.FACING);
                 if (direction == facing.getOpposite())
                 {
                     return false;
                 }
+            }
+        }
+        else if (parentBlock instanceof FloatingCarpetBlock)
+        {
+            if (dY < 0)
+            {
+                return head;
+            }
+            else if (dY > 0)
+            {
+                return !head;
             }
         }
         return true;

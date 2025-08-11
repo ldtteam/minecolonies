@@ -7,6 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.*;
 import com.minecolonies.core.network.messages.client.colony.*;
@@ -150,6 +154,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
         registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
+        registerMessage(++idx, TriggerConnectionEventMessage.class, TriggerConnectionEventMessage::new);
 
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
@@ -202,7 +207,7 @@ public class NetworkChannel
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
-        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(++idx, MarkStoryReadOnItemMessage.class, MarkStoryReadOnItemMessage::new);
         registerMessage(++idx, AlterRestaurantMenuItemMessage.class, AlterRestaurantMenuItemMessage::new);
 
         //Client side only
@@ -263,6 +268,12 @@ public class NetworkChannel
 
         // Assistant block place request
         registerMessage(++idx, PlayerAssistantBuildRequestMessage.class, PlayerAssistantBuildRequestMessage::new);
+
+        // Debug messages
+        registerMessage(++idx, QueryCitizenAIHistoryMessage.class, QueryCitizenAIHistoryMessage::new);
+        registerMessage(++idx, DebugEnablePathfindingMessage.class, DebugEnablePathfindingMessage::new);
+        registerMessage(++idx, DebugOutputMessage.class, DebugOutputMessage::new);
+        registerMessage(++idx, DebugEnableMessage.class, DebugEnableMessage::new);
     }
 
     private void setupInternalMessages()

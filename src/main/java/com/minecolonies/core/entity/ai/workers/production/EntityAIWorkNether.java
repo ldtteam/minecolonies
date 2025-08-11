@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
@@ -58,6 +59,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DISCOVERED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.TRIPS_COMPLETED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.MINER_DEATHS;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
@@ -163,7 +167,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void goToVault()
     {
         worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
-        worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
+        worker.getCitizenData().getColony().getTravellingManager().startTravellingTo(
             worker.getCitizenData(),
             building.getPortalLocation(),
             job.getCraftedResults().size() * 20 //One second of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
@@ -176,13 +180,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected IAIState decide()
     {
         //Check if we are traveling, we don't spawn an entity if we are traveling.
-        if (worker.getCitizenData().getColony().getTravelingManager().isTravelling(worker.getCitizenData()) || job.isInNether())
+        if (worker.getCitizenData().getColony().getTravellingManager().isTravelling(worker.getCitizenData()) || job.isInNether())
         {
             return NETHER_AWAY;
         }
 
         //Now check if travelling finished.
-        final Optional<BlockPos> travelingTarget = worker.getCitizenData().getColony().getTravelingManager().getTravellingTargetFor(worker.getCitizenData());
+        final Optional<BlockPos> travelingTarget = worker.getCitizenData().getColony().getTravellingManager().getTravellingTargetFor(worker.getCitizenData());
         if (travelingTarget.isPresent())
         {
             worker.getCitizenData().setNextRespawnPosition(EntityUtils.getSpawnPoint(job.getColony().getWorld(), travelingTarget.get()));
@@ -245,7 +249,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         boolean missingLighter = checkForToolOrWeapon(ModEquipmentTypes.flint_and_steel.get());
         if (missingAxe || missingPick || missingShovel || missingSword || missingLighter)
         {
-            worker.getCitizenData().setIdleAtJob(true);
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             setDelay(60);
             return IDLE;
         }
@@ -256,7 +260,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
             if (building.isReadyForTrip())
             {
-                worker.getCitizenData().setIdleAtJob(true);
+                worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             }
 
             if (currentRecipeStorage == null && building.shallClosePortalOnReturn())
@@ -274,7 +278,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             if (!building.isReadyForTrip())
             {
-                worker.getCitizenData().setIdleAtJob(false);
+                worker.getCitizenData().setJobStatus(JobStatus.IDLE);
                 setDelay(120);
                 return IDLE;
             }
@@ -292,7 +296,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if (checkResult == GET_RECIPE)
             {
                 currentRecipeStorage = null;
-                worker.getCitizenData().setIdleAtJob(true);
+                worker.getCitizenData().setJobStatus(JobStatus.STUCK);
                 setDelay(60);
                 return IDLE;
             }
@@ -317,7 +321,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (currentRecipeStorage == null)
         {
             job.setInNether(false);
-            worker.getCitizenData().setIdleAtJob(true);
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
             return IDLE;
         }
 
@@ -353,12 +357,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 }
 
                 goToVault();
-                worker.getCitizenData().setIdleAtJob(false);
+                worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return NETHER_AWAY;
             }
             return NETHER_OPENPORTAL;
         }
-        worker.getCitizenData().setIdleAtJob(true);
+        worker.getCitizenData().setJobStatus(JobStatus.STUCK);
         return IDLE;
     }
 
@@ -472,6 +476,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             if (worker.isDeadOrDying())
                             {
                                 expeditionLog.setKilled();
+                                
+                                StatsUtil.trackStat(building, MINER_DEATHS, 1);
 
                                 // Stop processing loot table data, as the worker died before finishing the trip.
                                 InventoryUtils.clearItemHandler(worker.getItemHandlerCitizen());
@@ -567,6 +573,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     {
                         worker.decreaseSaturationForContinuousAction();
                         worker.getCitizenExperienceHandler().addExperience(0.2);
+                        StatsUtil.trackStatByName(building, ITEMS_DISCOVERED, item.getHoverName(), item.getCount());
                     }
                 }
 
@@ -631,11 +638,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return getState();
         }
 
-        worker.getCitizenData().setIdleAtJob(true);
+        worker.getCitizenData().setJobStatus(JobStatus.STUCK);
         worker.setInvisible(false);
         job.setInNether(false);
 
         currentRecipeStorage = null;
+        StatsUtil.trackStat(building, TRIPS_COMPLETED, 1);
+
         return INVENTORY_FULL;
     }
 

@@ -2,7 +2,9 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Pond;
+import com.minecolonies.api.util.Pond.PondState;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
@@ -77,7 +79,9 @@ public class PathJobFindWater extends AbstractPathJob implements ISearchPathJob
         }
 
         final MutableBlockPos problemPos = debugDrawEnabled ? BlockPos.ZERO.mutable() : null;
-        if (n.isSwimming() && Pond.checkPond(world, tempWorldPos.set(n.x, n.y - 1, n.z), problemPos))
+        PondState pondState = Pond.checkPond(world, tempWorldPos.set(n.x, n.y - 1, n.z), problemPos);
+
+        if (n.isSwimming() && pondState != PondState.INVALID)
         {
             for (Tuple<BlockPos, BlockPos> existingPond : ponds)
             {
@@ -93,7 +97,9 @@ public class PathJobFindWater extends AbstractPathJob implements ISearchPathJob
             if (path != null && path.canReach())
             {
                 getResult().pond = new BlockPos(n.x, n.y, n.z);
+                getResult().pondState = pondState;
                 getResult().parent = path.getTarget();
+                
                 return true;
             }
         }

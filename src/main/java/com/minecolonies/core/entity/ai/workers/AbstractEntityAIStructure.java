@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -30,6 +30,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -61,7 +62,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.*;
-import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
+import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures. These structures have to be supplied as schematics files.
@@ -177,7 +178,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 10),
           /*
            * Build the structure and foundation of the building.
            */
@@ -202,7 +203,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return IDLE;
         }
 
-        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingStructureHandler.Stage.CLEAR)
+        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingProgressStage.CLEAR)
         {
             pickUpCount = 0;
             return START_WORKING;
@@ -375,7 +376,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         final StructurePhasePlacementResult result;
         final StructurePlacer placer = structurePlacer.getA();
-        final BuildingStructureHandler.Stage currentStage = structurePlacer.getB().getStage();
+        final BuildingProgressStage currentStage = structurePlacer.getB().getStage();
         switch (currentStage)
         {
             case BUILD_SOLID:
@@ -685,7 +686,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param isMirrored  is the structure mirroed?
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final boolean removal)
+    public void loadStructure(@NotNull final IBuilderWorkOrder workOrder, final BlockPos position, final boolean removal)
     {
         this.loadingBlueprint = true;
         workOrder.loadBlueprint(world, (blueprint -> {
@@ -706,7 +707,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                  this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
+                    this, new BuildingProgressStage[] {REMOVE_WATER, REMOVE});
                 building.setTotalStages(2);
             }
             else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
@@ -714,14 +715,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                  this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                    this, new BuildingProgressStage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(5);
             }
             else
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                  this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
@@ -903,7 +904,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param blockPos the progressResult.
      * @param stage    the current stage.
      */
-    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final BuildingProgressStage stage)
     {
         /*
          * Override if needed.
@@ -1010,7 +1011,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected boolean isThereAStructureToBuild()
     {
-        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || job.getWorkOrder() == null)
         {
             return false;
         }
@@ -1087,7 +1088,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      *
      * @return the progress with the current stage.
      */
-    public abstract Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos();
+    public abstract Tuple<BlockPos, BuildingProgressStage> getProgressPos();
 
     /**
      * Check if a solid substitution block should be overwritten in a specific case.

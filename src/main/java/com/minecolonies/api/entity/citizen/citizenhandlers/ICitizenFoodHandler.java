@@ -5,6 +5,8 @@ import net.minecraft.world.item.Item;
 
 import java.util.Queue;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Citizen food handler interface.
  */
@@ -66,4 +68,10 @@ public interface ICitizenFoodHandler
      * @return true if so.
      */
     boolean hasFullFoodHistory();
+
+    /**
+     * Get the list of last eaten food items.
+     * @return the last eaten food items.
+     */
+    ImmutableList<Item> getLastEatenFoods();
 }

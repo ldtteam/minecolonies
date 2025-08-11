@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -126,9 +127,9 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "inventory";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/inventory.png");
     }
 
     @Override

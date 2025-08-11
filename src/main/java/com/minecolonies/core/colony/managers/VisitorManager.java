@@ -14,14 +14,13 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.VisitorData;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -167,9 +166,7 @@ public class VisitorManager implements IVisitorManager
     @Override
     public void sendPackets(@NotNull final Set<ServerPlayer> closeSubscribers, @NotNull final Set<ServerPlayer> newSubscribers)
     {
-        Set<ServerPlayer> players = new HashSet<>(newSubscribers);
-        players.addAll(closeSubscribers);
-        Set<IVisitorData> toSend = new HashSet<>();
+        Set<IVisitorData> toSend = null;
         boolean refresh = !newSubscribers.isEmpty() || this.isDirty;
 
         if (refresh)
@@ -187,16 +184,24 @@ public class VisitorManager implements IVisitorManager
             {
                 if (data.isDirty())
                 {
+                    if (toSend == null)
+                    {
+                        toSend = new HashSet<>();
+                    }
+
                     toSend.add(data);
                 }
                 data.clearDirty();
             }
         }
 
-        if (toSend.isEmpty())
+        if (toSend == null || toSend.isEmpty())
         {
             return;
         }
+
+        Set<ServerPlayer> players = new HashSet<>(newSubscribers);
+        players.addAll(closeSubscribers);
 
         final ColonyVisitorViewDataMessage message = new ColonyVisitorViewDataMessage(colony, toSend, refresh);
 

@@ -1,9 +1,11 @@
 package com.minecolonies.core.colony.buildings.modules;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -21,7 +23,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Abstract class to list all extensions (assigned) to a building.
  */
-public abstract class BuildingExtensionsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingModule
+public abstract class BuildingExtensionsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingModule, ITickingModule
 {
     /**
      * NBT tag to store assign manually.
@@ -44,6 +46,12 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
      * Building extensions should be assigned manually to the citizen.
      */
     private boolean shouldAssignManually = false;
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        claimExtensions();
+    }
 
     @Override
     public void deserializeNBT(final CompoundTag compound)
@@ -183,7 +191,10 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
         {
             for (final IBuildingExtension extension : getFreeExtensions())
             {
-                assignExtension(extension);
+                if (assignExtension(extension))
+                {
+                    break;
+                }
             }
         }
     }
@@ -203,13 +214,15 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
      *
      * @param extension the building extension to add.
      */
-    public void assignExtension(final IBuildingExtension extension)
+    public boolean assignExtension(final IBuildingExtension extension)
     {
         if (canAssignExtension(extension))
         {
             extension.setBuilding(building.getID());
             markDirty();
+            return true;
         }
+        return false;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IGuardBuilding extends IBuilding
@@ -89,7 +90,7 @@ public interface IGuardBuilding extends IBuilding
      *
      * @return the {@link BlockPos} of the guard position.
      */
-    BlockPos getGuardPos();
+    BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker);
 
     /**
      * Set where the guard should guard.

@@ -17,7 +17,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -1031,7 +1031,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             job.setWorkOrder(null);
             resetCurrentStructure();
             building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
 

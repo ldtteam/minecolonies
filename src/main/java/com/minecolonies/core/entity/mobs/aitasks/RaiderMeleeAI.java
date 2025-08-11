@@ -4,8 +4,10 @@ import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -101,7 +103,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreat
     @Override
     protected boolean isWithinPersecutionDistance(final LivingEntity target)
     {
-        return true;
+        return BlockPosUtil.getDistanceSquared(user.blockPosition(), target.blockPosition()) <= RaiderConstants.MAX_MELEE_RAIDER_PERSECUTION_DISTANCE * RaiderConstants.MAX_MELEE_RAIDER_PERSECUTION_DISTANCE;
     }
 
     @Override

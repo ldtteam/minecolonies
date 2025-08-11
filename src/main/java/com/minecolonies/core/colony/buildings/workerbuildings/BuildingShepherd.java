@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -94,7 +95,7 @@ public class BuildingShepherd extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStorage(Items.WHEAT, 2));
         }
 
         @NotNull

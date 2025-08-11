@@ -300,7 +300,7 @@ public class EntityAIEatTask implements IStateAI
             }
         }
 
-        if (EntityNavigationUtils.walkToPos(citizen, eatPos, 2, true))
+        if (eatPos != null && EntityNavigationUtils.walkToPos(citizen, eatPos, 2, true))
         {
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating
@@ -362,7 +362,7 @@ public class EntityAIEatTask implements IStateAI
         }
 
         eatPos = findPlaceToEat();
-        if (eatPos != null)
+        if (restaurant != null)
         {
             return GO_TO_EAT_POS;
         }

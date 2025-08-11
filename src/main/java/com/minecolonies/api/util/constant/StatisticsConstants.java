@@ -31,11 +31,28 @@ public final class StatisticsConstants
     public static final String ITEM_USED     = "item_used";
     public static final String ITEM_OBTAINED = "item_obtained";
     public static final String MOB_KILLED    = "mob_killed";
+    public static final String LEVELS_GAINED = "levels_gained";
 
     /**
      * Specific building stats.
      */
     public static final String INT_LEVELED = "int_leveled";
+
+    /**
+     * Crafting building stats.
+     */
+    public static final String ITEMS_CRAFTED_DETAIL = "items_crafted_detail";
+
+    /**
+     * Smelting building stats.
+     */
+    public static final String ITEMS_SMELTED_DETAIL = "items_smelted_detail";
+
+   /**
+    * Husbandry building stats.
+    */    
+    public static final String BREEDING_ATTEMPTS = "breeding_attempts";
+    public static final String ANIMALS_BUTCHERED = "animals_butchered";
 
     // Cook
     public static final String FOOD_SERVED_DETAIL = "food_served_detail";
@@ -43,5 +60,68 @@ public final class StatisticsConstants
     // Hospital
     public static final String DISEASES_TREATED = "diseases_treated";
     public static final String NUM_DISEASES_TREATED = "num_diseases_treated";
+
+    // Florist
+    public static final String FLOWERS_PICKED = "flowers_picked";
+
+    // Composter
+    public static final String ITEMS_COMPOSTED = "items_composted";
+    public static final String PRODUCT_COLLECTED = "product_collected";
+
+    // Archery Training
+    public static final String ARROWS_FIRED = "arrows_fired";
+    public static final String ARROWS_HIT = "arrows_hit";
+
+    // Alchemist
+    public static final String ITEMS_BREWED = "items_brewed";
+    public static final String INGREDIENTS_HARVESTED = "ingredients_harvested";
+
+    // Bakery
+    public static final String ITEMS_BAKED_DETAIL = "items_baked_detail";
+
+    // Apiary
+    public static final String ITEMS_COLLECTED = "items_collected";
+
+    // Builder
+    public static final String BLOCKS_PLACED_DETAIL   = "blocks_placed_detail";
+
+    // Cowboy
+    public static final String MILKING_ATTEMPTS = "milking_attempts";
+
+    // Delivery Man
+    public static final String DELIVERIES_MADE = "deliveries_made";
+    public static final String PICKUPS_MADE = "pickups_made";
+
+    // Enchanter
+    public static final String ITEMS_ENCHANTED = "items_enchanted";
+    public static final String CITIZENS_VISITED = "citizens_visited";
+
+    // Undertaker
+    public static final String GRAVES_DUG = "graves_dug";
+    public static final String CITIZENS_RESURRECTED = "citizens_resurrected";
+
+    // Smelter
+    public static final String ORES_BROKEN = "ores_broken";
+
+    // Nether Miner
+    public static final String ITEMS_DISCOVERED = "items_discovered";
+    public static final String TRIPS_COMPLETED = "trips_completed";
+    public static final String MINER_DEATHS = "miner_deaths";
+
+    // Chef
+    public static final String FOOD_COOKED_DETAIL = "food_cooked_detail";
+
+    // Teacher
+    public static final String LESSONS_GIVEN = "lessons_given";
+
+    // Tavern
+    public static final String NEW_VISITORS = "new_visitors";
+    public static final String VISITORS_RECRUITED = "visitors_recruited";
+    public static final String VISITORS_ABSCONDED = "visitors_absconded";
+
+    // University
+    public static final String RESEARCH_COMPLETED = "research_completed";
 }
+
+
 

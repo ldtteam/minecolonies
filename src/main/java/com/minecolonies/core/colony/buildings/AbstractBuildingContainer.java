@@ -192,17 +192,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         return locations.isEmpty() ? null : locations.get(0);
     }
 
-    /**
-     * Gets the list of tags, and finds all locations registered there.
-     * @param tagName the name of the tag to query
-     * @return all the matching BlockPos, or an empty list if not found
-     */
-    @NotNull
-    protected List<BlockPos> getLocationsFromTag(@NotNull final String tagName)
+    @Override
+    public List<BlockPos> getLocationsFromTag(@NotNull final String tagName)
     {
         if (tileEntity != null)
         {
-            return new ArrayList<>(tileEntity.getWorldTagNamePosMap().getOrDefault(tagName, Collections.emptySet()));
+            return tileEntity.getCachedWorldTagNamePosMap().getOrDefault(tagName, Collections.emptyList());
         }
         return Collections.emptyList();
     }

@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
@@ -13,6 +14,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -144,7 +146,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     /**
      * The building stage this workorder is in
      */
-    private int stage = 0;
+    private BuildingProgressStage stage = null;
 
     /**
      * The iterator type (building method) of this work order.
@@ -385,6 +387,11 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public final void setClaimedBy(BlockPos claimedBy)
     {
+        if (this.claimedBy != BlockPos.ZERO && !this.claimedBy.equals(claimedBy) && claimedBy != null)
+        {
+            Log.getLogger().warn("Claiming an already claimed workorder! " + claimedBy + " " + this, new Exception());
+        }
+
         changed = true;
         this.claimedBy = claimedBy;
         if (claimedBy == null)
@@ -610,7 +617,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
      * @param citizen the citizen attempting to perform the work order
      * @return true if it can be built
      */
-    public abstract boolean canBuild(@NotNull final ICitizenData citizen);
+    public abstract boolean canBuild(final IBuilding citizen);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
@@ -674,7 +681,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
 
         if (compound.contains(TAG_STAGE))
         {
-            stage = compound.getInt(TAG_STAGE);
+            stage = BuildingProgressStage.values()[compound.getInt(TAG_STAGE)];
         }
 
         if (compound.contains(TAG_BB))
@@ -709,7 +716,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         compound.putString(TAG_ITERATOR, iteratorType);
         compound.putBoolean(TAG_IS_CLEARED, cleared);
         compound.putBoolean(TAG_IS_REQUESTED, requested);
-        compound.putInt(TAG_STAGE, stage);
+        compound.putInt(TAG_STAGE, stage == null ? 0 : stage.ordinal());
 
         if (box != Constants.EMPTY_AABB)
         {
@@ -745,7 +752,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
         buf.writeBoolean(isMirrored);
         buf.writeInt(currentLevel);
         buf.writeInt(targetLevel);
-        buf.writeInt(stage);
+        buf.writeInt(stage == null ? 0 : stage.ordinal());
         buf.writeDouble(getBoundingBox().minX);
         buf.writeDouble(getBoundingBox().minY);
         buf.writeDouble(getBoundingBox().minZ);
@@ -847,13 +854,13 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     }
 
     @Override
-    public int getStage()
+    public BuildingProgressStage getStage()
     {
         return stage;
     }
 
     @Override
-    public void setStage(final int stage)
+    public void setStage(final BuildingProgressStage stage)
     {
         if (stage != this.stage)
         {

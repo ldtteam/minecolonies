@@ -2,8 +2,6 @@ package com.minecolonies.api.util;
 
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
-import java.util.Map;
-
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.core.colony.buildings.modules.BuildingStatisticsModule;
 
@@ -17,28 +15,28 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
  */
 public class StatsUtil 
 {
-    /**
-     * Safely return the name of the item in the given slot of the given furnace for use in statistics.
-     * Returns empty if no furnace, or no item in the slot.
-     *
-     * @param furnace the furnace to get the item from.
-     * @param slot    the slot to get the item from.
-     * @return the name of the item.
-     */
-    public static String nameForStats(final FurnaceBlockEntity furnace, final int slot)
-    {
-        String name = "";
 
+    
+    /**
+     * Tracks a statistic for a given building based on the items in a furnace slot.
+     * Retrieves the item from the specified slot in the furnace, and if an item is present,
+     * tracks the statistic using the item's display name and count.
+     *
+     * @param building the building to track the stat for.
+     * @param statName the identifier for the stat.
+     * @param furnace the furnace block entity to retrieve the item from.
+     * @param slot the slot number in the furnace to check for items.
+     */
+    public static void trackStatFromFurnace(IBuilding building, final String statName, final FurnaceBlockEntity furnace, final int slot)
+    {
         if (furnace != null) 
         {
             ItemStack item = furnace.getItem(slot);
             if (item != null) 
             {
-                name = item.getDescriptionId();
+                trackStatByName(building, statName, item.getHoverName(), item.getCount());
             }
         }
-
-        return name;
     }
 
     /**
@@ -74,17 +72,18 @@ public class StatsUtil
             return;
         }
 
-        trackStat(building, statIdentifier, stack.getDescriptionId(), count);
+        trackStatByName(building, statIdentifier, stack.getHoverName(), count);
     }
 
     /**
      * Track a stat for a given building using the standard STATS_MODULE, with some null safety built in.
+     * Used for a stats where the category has a detailed breakdown by name.
      * @param building the building to track the stat for.
      * @param statIdentifier the identifier for the stat.
      * @param displayName the display name of the item to track the stat for.
      * @param count the number of the item to track the stat for.
      */
-    public static void trackStat(IBuilding building, String statIdentifier, String displayName, int count) 
+    public static void trackStatByName(IBuilding building, String statIdentifier, String displayName, int count) 
     {
         if (building == null) 
         {
@@ -98,19 +97,22 @@ public class StatsUtil
         if (statsModule != null) 
         {
             statsModule.incrementBy(statKey, count);
-        } else {
+        } 
+        else 
+        {
             Log.getLogger().error("Attempt to track stats on a building that has no statistics module: {}", building);
         }
     }
 
     /**
      * Track a stat for a given building using the standard STATS_MODULE, with some null safety built in.
+     * Used for a stats where the category has a detailed breakdown by name.
      * @param building the building to track the stat for.
      * @param statIdentifier the identifier for the stat.
      * @param displayName the display name of the item to track the stat for, as a Component.
      * @param count the number of the item to track the stat for.
      */
-    public static void trackStat(IBuilding building, String statIdentifier, Component displayName, int count) 
+    public static void trackStatByName(IBuilding building, String statIdentifier, Component displayName, int count) 
     {
         if (displayName == null) 
         {
@@ -118,7 +120,30 @@ public class StatsUtil
             return;
         }
 
-        trackStat(building, statIdentifier, displayName.getString(), count);
+        trackStatByName(building, statIdentifier, displayName.getString(), count);
+    }
+
+    /**
+     * Track a stat for a given building using the standard STATS_MODULE, with some null safety built in.
+     * Used for a simple category count - with no additional breakdown by name.
+     * @param building the building to track the stat for.
+     * @param statIdentifier the identifier for the stat.
+     * @param count the number of the item to track the stat for.
+     */
+    public static void trackStat(IBuilding building, String statIdentifier, int count) 
+    {
+        if (building == null) 
+        {
+            Log.getLogger().warn("Attempted to track stat '{}' with null building: ", statIdentifier);
+            return;
+        }
+
+        BuildingStatisticsModule statsModule = building.getModule(STATS_MODULE);
+        
+        if (statsModule != null) 
+        {
+            statsModule.incrementBy(statIdentifier, count);
+        } 
     }
 
 }

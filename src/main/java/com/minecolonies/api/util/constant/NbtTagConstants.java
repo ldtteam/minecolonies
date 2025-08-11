@@ -31,6 +31,7 @@ public final class NbtTagConstants
     public static final String TAG_PRIO                = "prio";
     public static final String TAG_LAST_ONLINE         = "lastOnlineTime";
     public static final String TAG_SOUND_PROFILE       = "soundProfile";
+    public static final String TAG_CONNECTION_MANAGER  = "connectionmanager";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -48,6 +49,8 @@ public final class NbtTagConstants
     public static final String TAG_SAP_LEAF               = "tagSapLeaves";
     public static final String TAG_BLOCK                  = "block";
     public static final String TAG_POS                    = "pos";
+    public static final String TAG_PREV_POS               = "prevpos";
+    public static final String TAG_NEXT_POS               = "nextpos";
     public static final String TAG_PLANTGROUND            = "plantGround";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
@@ -56,6 +59,11 @@ public final class NbtTagConstants
     public static final String TAG_QUEST_MANAGER          = "quest_manager";
     public static final String TAG_GRAVE_MANAGER          = "graveManager";
     public static final String TAG_COLONY_ID              = "colony";
+    public static final String TAG_TARGET_COLONY_ID       = "targetcolony";
+    public static final String TAG_TARGET_COLONY_NAME     = "targetname";
+    public static final String TAG_DISTANCE               = "distance";
+    public static final String TAG_TARGET_DISTANCE        = "targetdistance";
+
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
@@ -80,11 +88,18 @@ public final class NbtTagConstants
     public static final String TAG_TYPE           = "Type";
     public static final String TAG_MERCENARY_TIME = "mercenaryUseTime";
     public static final String TAG_IDLE           = "idle";
+    public static final String TAG_JOB_STATUS     = "jobStatus";
     public static final String TAG_PURGED_MOBS    = "purgedMobs";
     public static final String TAG_RESERVED       = "reserved";
     public static final String TAG_DESC           = "desc";
     public static final String TAG_BREWING_STAND  = "brewingStand";
     public static final String TAG_SUMMARIZE      = "summarize";
+    public static final String TAG_CONNECTIONS    = "connections";
+    public static final String TAG_CONNECTION_POINT = "connectionPoint";
+    public static final String TAG_GATEHOUSES     = "gatehouses";
+    public static final String TAG_CONNECTION_EVENTS = "connectionevents";
+    public static final String TAG_PENDING         = "pending";
+    public static final String TAG_CONNECTION_TYPE = "connectiontype";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";
@@ -749,7 +764,6 @@ public final class NbtTagConstants
      */
     public static final String TAG_CELL           = "cell";
     public static final String TAG_WORKING_OFFSET = "workingoffset";
-    public static final String TAG_PREV_POS       = "prevpos";
 
     /**
      * Private constructor to hide the implicit one.

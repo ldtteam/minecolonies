@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.ai.workers.service;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -11,6 +12,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
@@ -41,10 +43,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_RESURRECTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.GRAVES_DUG;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
-
 /**
  * Undertaker AI class.
  */
@@ -111,7 +114,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private IAIState startWorking()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        worker.getCitizenData().setIdleAtJob(false);
 
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
@@ -124,11 +126,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final BlockEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
+                worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
         }
-
+        worker.getCitizenData().setJobStatus(JobStatus.IDLE);
         return WANDER;
     }
 
@@ -256,6 +259,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             worker.decreaseSaturationForAction();
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
+            StatsUtil.trackStat(building, GRAVES_DUG, 1);
+            building.getColony().getStatisticsManager().increment(GRAVES_DUG, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
             return BURY_CITIZEN;
         }
 
@@ -350,6 +355,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                                                    .getCitizenManager()
                                                    .resurrectCivilianData(graveData.getCitizenDataNBT(), true, world, gravePos);
                 MessageUtils.format(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()).sendTo(buildingGraveyard.getColony()).forManagers();
+                StatsUtil.trackStat(building, CITIZENS_RESURRECTED, 1);
+                building.getColony().getStatisticsManager().increment(CITIZENS_RESURRECTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 worker.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().updateCitizenMourn(citizenData, false);
                 AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(),
                   playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));

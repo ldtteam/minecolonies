@@ -264,8 +264,8 @@ public class ClientRegistryHandler
     @SubscribeEvent
     public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
     {
-        event.register(ModItems.clipboard, new ClipBoardDecorator());
         event.register(ModItems.colonyMap, new ColonyMapDecorator());
+        event.register(ModItems.clipboard, new ClipBoardDecorator());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -345,6 +345,7 @@ public class ClientRegistryHandler
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG.get(), TileEntityColonyFlagRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE.get(), TileEntityNamedGraveRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.DECO_CONTROLLER.get(), TileEntityDecoControllerRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_SIGN.get(), TileEntityColonySignRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
