@@ -200,7 +200,7 @@ public interface IRegisteredStructureManager
     IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
 
     /**
-     * Calculate a good cook for a certain citizen.
+     * Searches for the closest building to a given citizen.
      *
      * @param citizen  the citizen.
      * @param building the type of building.
@@ -209,7 +209,7 @@ public interface IRegisteredStructureManager
     BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building);
 
     /**
-     * Calculate a good cook for a certain citizen.
+     * Searches for the closest building to a given citizen, with an additional filter predicate.
      *
      * @param citizen  the citizen.
      * @param building the type of building.
@@ -219,7 +219,7 @@ public interface IRegisteredStructureManager
     <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter);
 
     /**
-     * Calculate a good building for a certain pos.
+     * Searches for the closest building to a given position.
      *
      * @param pos      the pos.
      * @param building the building class type.
@@ -228,7 +228,7 @@ public interface IRegisteredStructureManager
     BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building);
 
     /**
-     * Calculate a good building for a certain pos.
+     * Searches for the closest building to a given position, with an additional filter predicate.
      *
      * @param pos      the pos.
      * @param building the building class type.

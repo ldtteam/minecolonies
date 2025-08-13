@@ -51,7 +51,7 @@ public class EntityAIEatTask implements IStateAI
     /**
      * Predicate for matching valid restaurants to navigate to.
      */
-    private static final Predicate<BuildingCook> VALID_RESTAURANTS = restaurant -> restaurant.getModule(BuildingModules.COOK_WORK).hasAssignedCitizen();
+    private static final Predicate<BuildingCook> STAFFED_RESTAURANTS = buildingCook -> buildingCook.getModule(BuildingModules.COOK_WORK).hasAssignedCitizen();
 
     /**
      * Max waiting time for food in minutes.
@@ -452,7 +452,7 @@ public class EntityAIEatTask implements IStateAI
             ? citizenData.getWorkBuilding().getPosition()
             : citizenData.getHomeBuilding() != null ? citizenData.getHomeBuilding().getPosition() : citizen.blockPosition();
 
-        restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class, VALID_RESTAURANTS);
+        restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class, STAFFED_RESTAURANTS);
         if (restaurantPos == null)
         {
             restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class);
