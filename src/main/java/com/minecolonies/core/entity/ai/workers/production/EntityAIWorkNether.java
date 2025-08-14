@@ -410,7 +410,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     job.addCraftedResultsList(result);
                 }
 
-                goToVault();
                 worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return NETHER_AWAY;
             }
