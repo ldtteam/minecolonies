@@ -14,9 +14,7 @@ import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -251,6 +249,16 @@ public class BuildingNetherWorker extends AbstractBuilding
             return portalLocation.above();
         }
         return null;
+    }
+
+    /**
+     * Get the tagged location where the worker can hide while "away" in the nether
+     *
+     * @return the tagged location, null if not available.
+     */
+    public BlockPos getVaultLocation()
+    {
+        return getFirstLocationFromTag("vault");
     }
 
     /**
