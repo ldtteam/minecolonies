@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -90,17 +89,7 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     @Nullable
     public static RecruitCost getRandomRecruitCost(final int buildingLevel)
     {
-        // Number between 1-9
-        final int limit = 3 * buildingLevel + 1;
-        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,0.5);
-        if (rarity <= 0)
-        {
-            rarity = 1;
-        }
-        else if (rarity >= limit)
-        {
-            rarity = limit - 1;
-        }
+        final int rarity = ColonyConstants.rand.nextInt(1, 3 * buildingLevel + 1);
         final List<RecruitCost> recruitCostsAtTier = RECRUIT_COSTS.get(rarity);
         return recruitCostsAtTier.get(ColonyConstants.rand.nextInt(recruitCostsAtTier.size()));
     }
