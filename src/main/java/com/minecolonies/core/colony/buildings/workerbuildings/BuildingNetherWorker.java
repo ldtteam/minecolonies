@@ -251,6 +251,16 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     /**
+     * Get the tagged location where the worker can hide while "away" in the nether
+     *
+     * @return the tagged location, null if not available.
+     */
+    public BlockPos getVaultLocation()
+    {
+        return getFirstLocationFromTag("vault");
+    }
+
+    /**
      * Get the max per period, potentially modified by research
      *
      * @return
