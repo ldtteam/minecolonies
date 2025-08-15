@@ -25,12 +25,10 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWork
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.items.ItemAdventureToken;
-import com.minecolonies.core.util.TeleportHelper;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -46,9 +44,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
-import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -77,16 +72,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      * Delay for each of the crafting operations.
      */
     private static final int TICK_DELAY = 40;
-
-    /**
-     * Objective to use to pass the hut level to the loottable
-     */
-    private static final String OBJECTIVE_HUT_LEVEL = "HutLevel";
-
-    /**
-     * Objective to use to pass the worker's secondary skill level to the loottable
-     */
-    private static final String OBJECTIVE_SECONDARY_SKILL = "SecSkillLevel";
 
     /**
      * Multiplier for damage reduction.
@@ -188,50 +173,33 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void goToVault()
     {
         worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
-        worker.setInvisible(true);
-        worker.setSilent(true);
-        BlockPos vaultPos = building.getVaultLocation();
-        if (vaultPos != null)
-        {
-            TeleportHelper.teleportCitizen(worker, world, vaultPos);
-        }
-    }
+        worker.getCitizenData().getColony().getTravellingManager().startTravellingTo(
+            worker.getCitizenData(),
+            building.getPortalLocation(),
+            job.getCraftedResults().size() * 400 //Twenty seconds of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
+        );
 
-    private void returnFromVault(final boolean force)
-    {
-        BlockPos vaultPos = building.getVaultLocation();
-        BlockPos portalPos = building.getPortalLocation();
-        if (portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
-        {
-            TeleportHelper.teleportCitizen(worker, world, portalPos);
-            worker.setSilent(false);
-            worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
-
-            if (!force)
-            {
-                return;
-            }
-        }
-        worker.setInvisible(false);
-        worker.setSilent(false);
+        worker.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override
     protected IAIState decide()
     {
-        if (job.isInNether())
+        //Check if we are traveling, we don't spawn an entity if we are traveling.
+        if (worker.getCitizenData().getColony().getTravellingManager().isTravelling(worker.getCitizenData()) || job.isInNether())
         {
-            if (!worker.isInvisible())
-            {
-                goToVault();
-            }
             return NETHER_AWAY;
         }
 
-        if (worker.isInvisible())
+        //Now check if travelling finished.
+        final Optional<BlockPos> travelingTarget = worker.getCitizenData().getColony().getTravellingManager().getTravellingTargetFor(worker.getCitizenData());
+        if (travelingTarget.isPresent())
         {
-            returnFromVault(true);
+            worker.getCitizenData().setNextRespawnPosition(EntityUtils.getSpawnPoint(job.getColony().getWorld(), travelingTarget.get()));
+            worker.getCitizenData().updateEntityIfNecessary();
         }
+
+        job.setInNether(false);
 
         IAIState crafterState = super.decide();
 
@@ -363,24 +331,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return IDLE;
         }
 
-        // Set up Objectives and scores.
-        if (!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
-        {
-            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, Component.literal("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER);
-        }
-        if (!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
-        {
-            world.getScoreboard()
-              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, Component.literal("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
-        }
-        final Objective hutLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL);
-        final Objective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);
-
-        Score s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), hutLevelObjective);
-        s.setScore(building.getBuildingLevel());
-        s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), secondarySkillLevelObjective);
-        s.setScore(getSecondarySkillLevel());
-
         final ExpeditionLog expeditionLog = building.getFirstModuleOccurance(ExpeditionLogModule.class).getLog();
         expeditionLog.reset();
         expeditionLog.setStatus(ExpeditionLog.Status.STARTING);
@@ -397,7 +347,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     return getState();
                 }
-                goToVault();
                 building.recordTrip();
                 job.setInNether(true);
 
@@ -413,6 +362,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     job.addCraftedResultsList(result);
                 }
 
+                goToVault();
                 worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return NETHER_AWAY;
             }
@@ -427,27 +377,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState stayInNether()
     {
-        if (building.getVaultLocation() == null)
-        {
-            //Ensure we stay put in the portal
-            final BlockPos portal = building.getPortalLocation();
-            if (portal != null && !walkToWorkPos(portal))
-            {
-                return getState();
-            }
-            if (!worker.isInvisible())
-            {
-                worker.setInvisible(true);
-            }
-        }
-
         final ExpeditionLog expeditionLog = building.getFirstModuleOccurance(ExpeditionLogModule.class).getLog();
 
         //This is the adventure loop. 
         if (!job.getCraftedResults().isEmpty())
         {
-            ItemStack currStack = job.getCraftedResults().poll();
-            if (currStack.getItem() instanceof ItemAdventureToken)
+            for (ItemStack currStack : job.getCraftedResults())
             {
                 if (currStack.getItem() instanceof ItemAdventureToken)
                 {
@@ -547,7 +482,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             if (worker.isDeadOrDying())
                             {
                                 expeditionLog.setKilled();
-
+                                
                                 StatsUtil.trackStat(building, MINER_DEATHS, 1);
 
                                 // Stop processing loot table data, as the worker died before finishing the trip.
@@ -629,6 +564,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     setDelay(itemDelay);
                 }
             }
+            job.getCraftedResults().clear();
             return getState();
         }
 
@@ -637,14 +573,17 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if (!worker.isDeadOrDying())
             {
                 expeditionLog.setStatus(ExpeditionLog.Status.RETURNING_HOME);
-                ItemStack item = job.getProcessedResults().poll();
-                if (InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), item))
+                for (ItemStack item : job.getProcessedResults())
                 {
-                    worker.decreaseSaturationForContinuousAction();
-                    worker.getCitizenExperienceHandler().addExperience(0.2);
-                    StatsUtil.trackStatByName(building, ITEMS_DISCOVERED, item.getHoverName(), item.getCount());
+                    if (InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), item))
+                    {
+                        worker.decreaseSaturationForContinuousAction();
+                        worker.getCitizenExperienceHandler().addExperience(0.2);
+                        StatsUtil.trackStatByName(building, ITEMS_DISCOVERED, item.getHoverName(), item.getCount());
+                    }
                 }
 
+                job.getProcessedResults().clear();
                 return getState();
             }
             else
@@ -694,13 +633,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState returnFromNether()
     {
-        if (worker.isInvisible())
-        {
-            // we deliberately let this loop twice to give the worker time to teleport before becoming visible again
-            returnFromVault(false);
-            return getState();
-        }
-
         //Shutdown Portal
         if (building.shallClosePortalOnReturn() && world.getBlockState(building.getPortalLocation()).is(Blocks.NETHER_PORTAL))
         {
