@@ -10,8 +10,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/junctionb1",
@@ -19,8 +18,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 4,
       "element": {
         "location": "minecolonies:colonial/junctionc1",
@@ -28,8 +26,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straighta1",
@@ -37,8 +34,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straightb1",
@@ -46,8 +42,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:colonial/straightc1",
@@ -55,8 +50,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:colonial/fountain",
@@ -64,8 +58,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:colonial/park",
@@ -73,8 +66,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:colonial/parkway",
@@ -82,8 +74,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 3,
       "element": {
         "element_type": "minecraft:empty_pool_element"

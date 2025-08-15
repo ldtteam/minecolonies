@@ -1,21 +1,22 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
 
-    <text size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.graves):"/>
-    <list id="graves" size="164 102" pos="13 30">
-        <box size="100% 34" linewidth="1">
-            <text id="name" color="black" pos="20 2" size="130 9"/>
-            <text id="dist" color="black" pos="20 12" size="65 9"/>
-            <text id="dir" color="black" pos="20 22" size="65 9"/>
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.graves):" pos="30 14" size="130 11" textalign="MIDDLE" />
+    <list id="graves" pos="13 30" size="164 102">
+        <box linewidth="1" size="100% 34">
+            <text id="name" color="black" pos="20 2" size="130 9" />
+            <text id="dist" color="black" pos="20 12" size="65 9" />
+            <text id="dir" color="black" pos="20 22" size="65 9" />
         </box>
     </list>
 
-    <text size="130 11" pos="30 134" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.rip):"/>
-    <list id="citizen" size="164 60" pos="13 145">
-        <box size="100% 12" linewidth="1">
-            <text id="citizenName" color="black" pos="20 2" size="130 9"/>
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.rip):" pos="30 134" size="130 11" textalign="MIDDLE" />
+    <list id="citizen" pos="13 145" size="164 60">
+        <box linewidth="1" size="100% 12">
+            <text id="citizenName" color="black" pos="20 2" size="130 9" />
         </box>
     </list>
 

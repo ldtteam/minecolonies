@@ -6,8 +6,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 2500000
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -16,8 +15,7 @@
           "level": 2
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -49,16 +47,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, I can't help right now.",
           "result": {
             "type": "minecolonies:cancel"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:killentity",
       "details": {
         "target": 0,
@@ -66,8 +62,7 @@
         "qty": 2,
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
@@ -92,8 +87,7 @@
           "count": 2
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,

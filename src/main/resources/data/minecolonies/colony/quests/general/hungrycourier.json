@@ -6,8 +6,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 50000000
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -16,8 +15,7 @@
           "level": 3
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -55,8 +53,7 @@
                     }
                   ]
                 }
-              },
-              {
+              }, {
                 "answer": "I'm sorry, I don't have any food on me.",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -73,16 +70,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Sorry, I'm in a rush right now!",
           "result": {
             "type": "minecolonies:cancel"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -91,8 +86,7 @@
         },
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
@@ -116,8 +110,7 @@
           "id": "minecraft:gold_ingot"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,

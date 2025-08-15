@@ -6,8 +6,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 2500000
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -16,8 +15,7 @@
           "level": 2
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -46,22 +44,19 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "I have no concerns, sure!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Uhh, just three?",
                 "result": {
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "I suddenly don't feel like being part of this.",
                 "result": {
                   "type": "minecolonies:advanceobjective",
@@ -70,14 +65,12 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, I can't help right now.",
           "result": {
             "type": "minecolonies:cancel"
           }
-        },
-        {
+        }, {
           "answer": "I won't be able to help you with that.",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -85,8 +78,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -96,8 +88,7 @@
         },
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "The flesh you delivered me seemed a bit cold. I feel I require warm zombie flesh. Three again please",
@@ -108,15 +99,13 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 3
           }
-        },
-        {
+        }, {
           "answer": "Uhhh, I get to kill some more zombies. Sure!",
           "result": {
             "type": "minecolonies:advanceobjective",
             "go-to": 3
           }
-        },
-        {
+        }, {
           "answer": "I suddenly don't feel like being part of this anymore.",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -124,8 +113,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:killentity",
       "unlocks-rewards": [0, 1],
       "details": {
@@ -134,8 +122,7 @@
         "qty": 3,
         "next-objective": 4
       }
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -145,8 +132,7 @@
         },
         "next-objective": 5
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Splendid! This looks just perfect! But I'm afraid I need something new! Fetch me 2 fresh spider eyes.",
@@ -157,15 +143,13 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 6
           }
-        },
-        {
+        }, {
           "answer": "On it!",
           "result": {
             "type": "minecolonies:advanceobjective",
             "go-to": 6
           }
-        },
-        {
+        }, {
           "answer": "I hate spiders. No way!",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -173,8 +157,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -184,8 +167,7 @@
         },
         "next-objective": 7
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Hehehehehe! Perfect! Now I just need something to fuel the reaction. Gun powder would be perfect!",
@@ -196,15 +178,13 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 8
           }
-        },
-        {
+        }, {
           "answer": "One creeper for the gun powder or stealing some from the guards? No problem!",
           "result": {
             "type": "minecolonies:advanceobjective",
             "go-to": 8
           }
-        },
-        {
+        }, {
           "answer": "This sounds concerning. I want out!",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -212,8 +192,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -222,8 +201,7 @@
         },
         "next-objective": 9
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Splendid! Let me mix them together real quick!",
@@ -236,8 +214,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "unlocks-rewards": [0],
       "target": 0,
@@ -262,12 +239,13 @@
           "components": {
             "minecraft:item_name": "{\"translate\":\"com.minecolonies.alchemyquestpotion.name\"}",
             "minecraft:lore": ["{\"translate\":\"com.minecolonies.alchemyquestpotion.lore\"}"],
-            "minecraft:potion_contents": { "potion": "minecraft:poison" }
+            "minecraft:potion_contents": {
+              "potion": "minecraft:poison"
+            }
           }
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,

@@ -14,8 +14,7 @@
             "block": "minecraft:water",
             "predicate_type": "minecraft:block_match"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Properties": {
               "snowy": "false"

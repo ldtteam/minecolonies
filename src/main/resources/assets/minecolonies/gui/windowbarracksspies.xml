@@ -1,15 +1,15 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133"
+<window size="190 133" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
+    <image size="100% 100%" source="minecolonies:textures/gui/citizen/colonist_paper.png" />
 
-    <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" color="black"/>
+    <button id="cancel" color="black" pos="165 5"
+            size="14 15" source="minecolonies:textures/gui/button_x.png" />
 
-    <text id="text" size="150 85" pos="15 5" color="black"/>
-    <itemicon id="hireSpiesIcon" size="25 25" pos="15 90"/>
-    <text id="amount" size="15 15" pos="45 96" color="black"/>
-    <button id="hireSpies" size="86 17" pos="65 98" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
-                 label="$(com.minecolonies.coremod.gui.barracks.spieshire)"/>
+    <text id="text" color="black" pos="15 5" size="150 85" />
+    <itemicon id="hireSpiesIcon" pos="15 90" size="25 25" />
+    <text id="amount" color="black" pos="45 96" size="15 15" />
+    <button id="hireSpies" color="black" disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png" label="$(com.minecolonies.coremod.gui.barracks.spieshire)"
+            pos="65 98"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
 </window>

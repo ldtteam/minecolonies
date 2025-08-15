@@ -1,17 +1,17 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="400 244"
+<window size="400 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
+    <image size="400 244" source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" />
 
-    <button id="cancel" size="14 15" pos="375 10" source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+    <button id="cancel" pos="375 10" size="14 15" source="minecolonies:textures/gui/button_x.png" textcolor="black" />
 
-    <text id="text" size="340 195" color="black" pos="40 15" textscale="0.8" textalign="MIDDLE"/>
+    <text id="text" color="black" pos="40 15" size="340 195" textalign="MIDDLE" textscale="0.8" />
 
-    <button id="colonyStylePicker" size="129 17" pos="60 215" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"
-                 label="$(com.minecolonies.core.gui.supplies.selectstyle)"/>
+    <button id="colonyStylePicker" disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" label="$(com.minecolonies.core.gui.supplies.selectstyle)" pos="60 215"
+            size="129 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+            textcolor="black" />
 
-    <button id="place" size="129 17" pos="220 215" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png"/>
+    <button id="place" disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" pos="220 215" size="129 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+            textcolor="black" />
 </window>

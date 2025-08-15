@@ -15,17 +15,13 @@
     "alternate-output": [
       {
         "id": "[NS]:stripped_[PATH]"
-      },
-      {
+      }, {
         "id": "[NS]:[PATH:_stem=_hyphae]"
-      },
-      {
+      }, {
         "id": "[NS]:stripped_[PATH:_stem=_hyphae]"
-      },
-      {
+      }, {
         "id": "[NS]:[PATH:_stem=_wood]"
-      },
-      {
+      }, {
         "id": "[NS]:stripped_[PATH:_stem=_wood]"
       }
     ],

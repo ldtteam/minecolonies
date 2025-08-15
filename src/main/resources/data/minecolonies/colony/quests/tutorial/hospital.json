@@ -14,10 +14,9 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -39,8 +38,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -58,14 +56,12 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
-        },
-        {
+        }, {
           "answer": "Already done!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -82,16 +78,14 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:research",
       "details": {
         "type": "minecolonies:civilian/stamina",
         "target": 0,
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Now that the research is done, the process is the same. Craft and place the hut, then let the builder build it! You know the drill, craft the hospital hut block in a crafting bench. This time surround a carrot with planks and the build tool at the top.",
@@ -102,16 +96,14 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 3
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "type": "minecolonies:hospital",
@@ -121,9 +113,8 @@
         "target": 0,
         "next-objective": 4
       }
-    },
-    {
-      "unlocks-rewards": [0,1],
+    }, {
+      "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Awesome. I feel much better now knowing there is a hospital in the colony! Here, take this for an initial stock of medicine in the hospital!",
@@ -147,8 +138,7 @@
           "count": 8
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:item",
       "details": {
         "item": {

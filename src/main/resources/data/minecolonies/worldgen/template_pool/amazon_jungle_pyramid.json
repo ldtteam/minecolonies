@@ -10,8 +10,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_boss2",
@@ -19,8 +18,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_corner",
@@ -28,8 +26,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_intersection",
@@ -37,8 +34,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_ladder",
@@ -46,8 +42,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_pit_shaft",
@@ -55,8 +50,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_ruined_spawner_shaft",
@@ -64,8 +58,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_ruined_spawner_shaft_deadend",
@@ -73,8 +66,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_ruined_shaft",
@@ -82,8 +74,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_spawner_corner",
@@ -91,8 +82,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_spawner_intersection",
@@ -100,8 +90,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_spawner_shaft",
@@ -109,8 +98,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_tnt_shaft",
@@ -118,8 +106,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:camps/amazon/amazon_jungle_trapped_corner",

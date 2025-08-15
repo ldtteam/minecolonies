@@ -1,19 +1,20 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text id="desc" color="black" pos="30 14" size="130 11" textalign="MIDDLE" />
 
-    <text size="148 11" pos="201 28" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.townhall.workorders)"/>
+    <text label="$(com.minecolonies.coremod.gui.townhall.workorders)" pos="201 28" size="148 11" textalign="MIDDLE" />
 
-    <list id="workOrders" size="164 154" pos="13 35" emptytext="$(com.minecolonies.coremod.gui.townhall.workorders.empty)" emptycolor="black">
-        <box size="100% 30" linewidth="1">
-            <text id="buildingName" size="150 12" pos="2 2" color="black"/>
-            <text id="buildingPos" size="50 12" pos="2 17" color="blue"/>
+    <list id="workOrders" emptycolor="black" emptytext="$(com.minecolonies.coremod.gui.townhall.workorders.empty)" pos="13 35" size="164 154">
+        <box linewidth="1" size="100% 30">
+            <text id="buildingName" color="black" pos="2 2" size="150 12" />
+            <text id="buildingPos" color="blue" pos="2 17" size="50 12" />
             <button id="manage"
-                    size="64 17"
-                    pos="80 13"
                     color="black"
-                    source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+                    pos="80 13"
+                    size="64 17"
+                    source="minecolonies:textures/gui/builderhut/builder_button_small.png" />
         </box>
     </list>
 </window>

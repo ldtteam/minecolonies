@@ -7,11 +7,10 @@
       "element": {
         "location": "minecolonies:caledonia/builder1",
         "processors": "minecolonies:caledonia/placeholder_replacement",
-		    "projection": "rigid",
+        "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:caledonia/builder2",
@@ -19,8 +18,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:caledonia/cook1",
@@ -28,8 +26,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 5,
       "element": {
         "location": "minecolonies:caledonia/courier1",
@@ -37,8 +34,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:caledonia/farm1",
@@ -46,8 +42,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:caledonia/field",
@@ -55,8 +50,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 10,
       "element": {
         "location": "minecolonies:caledonia/forester1",
@@ -64,8 +58,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:caledonia/forester2",
@@ -73,8 +66,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 12,
       "element": {
         "location": "minecolonies:caledonia/guardtower1",
@@ -82,8 +74,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:caledonia/guardtower2",
@@ -91,8 +82,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 20,
       "element": {
         "location": "minecolonies:caledonia/house1",
@@ -100,8 +90,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 2,
       "element": {
         "location": "minecolonies:caledonia/house2",
@@ -109,8 +98,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 8,
       "element": {
         "location": "minecolonies:caledonia/mine1",
@@ -118,8 +106,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 7,
       "element": {
         "location": "minecolonies:caledonia/tavern1",
@@ -127,8 +114,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 5,
       "element": {
         "location": "minecolonies:caledonia/warehouse1",
@@ -136,12 +122,11 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 20,
       "element": {
         "element_type": "minecraft:empty_pool_element"
       }
     }
- ]
+  ]
 }

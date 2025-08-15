@@ -14,12 +14,10 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
-    },
-    {
+      "state": {}
+    }, {
       "type": "minecolonies:unlock"
     }
   ],
@@ -42,8 +40,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "On it!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -67,8 +64,7 @@
                     }
                   ]
                 }
-              },
-              {
+              }, {
                 "answer": "I already finished building the hut!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -86,16 +82,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back, were you able to start the build request?",
@@ -114,8 +108,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -139,8 +132,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I already finished building the hut!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -155,16 +147,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back, were you able to check out the resource requirement list?",
@@ -193,8 +183,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -218,8 +207,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I already finished building the hut!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -234,16 +222,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "type": "minecolonies:builder",
@@ -253,8 +239,7 @@
         "target": 0,
         "next-objective": 4
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,

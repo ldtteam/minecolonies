@@ -10,8 +10,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:warpednetherlands/straight_both",
@@ -19,8 +18,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:warpednetherlands/straight_right",
@@ -28,8 +26,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:warpednetherlands/straight_left",

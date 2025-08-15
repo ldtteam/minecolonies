@@ -4,8 +4,7 @@
       "apply": {
         "model": "minecolonies:block/blockconstructiontape_center"
       }
-    },
-    {
+    }, {
       "when": {
         "north": "false",
         "east": "false",
@@ -16,8 +15,7 @@
         "model": "minecolonies:block/blockconstructiontape_corner",
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "north": "true",
         "east": "false",
@@ -28,8 +26,7 @@
         "model": "minecolonies:block/blockconstructiontape_corner",
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "north": "true",
         "east": "true",
@@ -40,8 +37,7 @@
         "model": "minecolonies:block/blockconstructiontape_corner",
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "north": "false",
         "east": "true",
@@ -62,8 +58,7 @@
         "model": "minecolonies:block/blockconstructiontape",
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "east": "true"
       },
@@ -72,8 +67,7 @@
         "y": 90,
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "south": "true"
       },
@@ -82,8 +76,7 @@
         "y": 180,
         "uvlock": true
       }
-    },
-    {
+    }, {
       "when": {
         "west": "true"
       },
@@ -92,8 +85,7 @@
         "y": 270,
         "uvlock": true
       }
-    },
-    {
+    }, {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
       "when": {
         "facing": "east|west",
@@ -106,8 +98,7 @@
         "model": "minecolonies:block/blockconstructiontape",
         "uvlock": true
       }
-    },
-    {
+    }, {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
       "when": {
         "facing": "east|west",
@@ -121,8 +112,7 @@
         "y": 180,
         "uvlock": true
       }
-    },
-    {
+    }, {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
       "when": {
         "facing": "north|south",
@@ -136,8 +126,7 @@
         "y": 90,
         "uvlock": true
       }
-    },
-    {
+    }, {
       "__comment": "A compatibility condition. If you see this in 1.16+, please remove it",
       "when": {
         "facing": "north|south",

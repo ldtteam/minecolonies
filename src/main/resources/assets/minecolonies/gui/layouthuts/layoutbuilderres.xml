@@ -1,23 +1,24 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text id="desc" color="black" pos="30 14" size="130 11" textalign="MIDDLE" />
 
-    <text size="164 11" pos="13 29" id="constructionName" textalign="MIDDLE" label="" color="black"/>
-    <text size="164 11" pos="13 40" id="stepprogress" textalign="MIDDLE" label="" color="black"/>
-    <text size="164 11" pos="13 51" id="progress" textalign="MIDDLE" label="" color="black"/>
-    <list id="resources" size="164 163" pos="13 62">
-        <box size="100% 30" linewidth="1">
-            <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
-            <text id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
-            <text id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
-            <text id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
+    <text id="constructionName" color="black" label="" pos="13 29" size="164 11" textalign="MIDDLE" />
+    <text id="stepprogress" color="black" label="" pos="13 40" size="164 11" textalign="MIDDLE" />
+    <text id="progress" color="black" label="" pos="13 51" size="164 11" textalign="MIDDLE" />
+    <list id="resources" pos="13 62" size="164 163">
+        <box linewidth="1" size="100% 30">
+            <itemicon id="resourceIcon" pos="1 1" size="16 16" />
+            <text id="resourceName" color="black" pos="20 3" size="100 12" textalign="MIDDLE_LEFT" />
+            <text id="resourceMissing" color="black" pos="2 18" size="50 12" textalign="MIDDLE_LEFT" />
+            <text id="resourceAvailableNeeded" color="black" pos="0 18" size="100% 12" textalign="MIDDLE" />
 
-            <button id="resourceAdd" size="14 15" label="↥" pos="100 12"
-                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
+            <button id="resourceAdd" color="black" label="↥" pos="100 12"
+                    size="14 15" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" />
 
-            <text id="resourceId" size="1 1" pos="100 100"/>
-            <text id="resourceQuantity" size="1 1" pos="100 100"/>
+            <text id="resourceId" pos="100 100" size="1 1" />
+            <text id="resourceQuantity" pos="100 100" size="1 1" />
         </box>
     </list>
 </window>

@@ -1,14 +1,13 @@
 {
   "processors": [
     {
-      "blocks":[
+      "blocks": [
         {
-          "Name":"structurize:blocksubstitution"
+          "Name": "structurize:blocksubstitution"
         }
       ],
       "processor_type": "minecraft:block_ignore"
-    },
-    {
+    }, {
       "rules": [
         {
           "output_state": {
@@ -24,8 +23,7 @@
         }
       ],
       "processor_type": "minecraft:rule"
-    },
-    {
+    }, {
       "processor_type": "minecraft:block_age",
       "mossiness": 0.15
     }

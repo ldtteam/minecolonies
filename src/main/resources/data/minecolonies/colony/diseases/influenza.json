@@ -1,14 +1,13 @@
 {
-	"name": "com.minecolonies.coremod.diseases.influenza",
-	"rarity": 100,
-	"items": [
-		{
-			"id": "minecraft:carrot",
-			"count": 1
-		},
-		{
-			"id": "minecraft:potato",
-			"count": 1
-		}
-	]
+  "name": "com.minecolonies.coremod.diseases.influenza",
+  "rarity": 100,
+  "items": [
+    {
+      "id": "minecraft:carrot",
+      "count": 1
+    }, {
+      "id": "minecraft:potato",
+      "count": 1
+    }
+  ]
 }

@@ -1,13 +1,16 @@
-<window size="350 170" lightbox="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <switch id="head" size="100% 100%" pos="0 0">
+<window lightbox="true"
+        size="350 170"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <switch id="head" pos="0 0" size="100% 100%">
         <view id="interactionView">
-            <gradient id="gradient" size="300 170" pos="20 0"/>
-            <text id="chat" size="250 100" color="white" pos="30 15"/>
-            <box id="responseOptions" size="270 70" pos="30 100" linewidth="0"/>
+            <gradient id="gradient" pos="20 0" size="300 170" />
+            <text id="chat" color="white" pos="30 15" size="250 100" />
+            <box id="responseOptions" linewidth="0" pos="30 100" size="270 70" />
 
-            <itemicon id="requestItem" size="32 32" pos="30 60"/>
+            <itemicon id="requestItem" pos="30 60" size="32 32" />
         </view>
     </switch>
-    <button id="cancel" pos="303 1" size="14 15"
-                 source="minecolonies:textures/gui/button_x.png" color="black" tooltip="$(com.minecolonies.core.exit_interactions)"/>
+    <button id="cancel" color="black" pos="303 1"
+            size="14 15" source="minecolonies:textures/gui/button_x.png" tooltip="$(com.minecolonies.core.exit_interactions)" />
 </window>

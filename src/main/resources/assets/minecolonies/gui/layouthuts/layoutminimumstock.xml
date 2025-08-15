@@ -1,19 +1,20 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
-     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-            <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-                   label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
-    <list id="resourcesstock" size="170 180" pos="13 50" emptytext="$(com.minecolonies.coremod.gui.warehouse.stock.empty)" emptycolor="black">
-                <box size="100% 17" linewidth="1">
-                    <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
-                    <text id="resourceName" size="90 12" pos="20 1" color="black"/>
-                    <text id="resourceQty" size="12 12" pos="115 1" color="black"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.warehouse.stock)" pos="30 14" size="130 11"
+          textalign="MIDDLE" />
+    <list id="resourcesstock" emptycolor="black" emptytext="$(com.minecolonies.coremod.gui.warehouse.stock.empty)" pos="13 50" size="170 180">
+        <box linewidth="1" size="100% 17">
+            <itemicon id="resourceIcon" pos="0 0" size="17 17" />
+            <text id="resourceName" color="black" pos="20 1" size="90 12" />
+            <text id="resourceQty" color="black" pos="115 1" size="12 12" />
 
-                    <button label="X" id="removeStock" pos="130 1" size="29 15"
-                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="red"/>
-                </box>
-            </list>
-            <button id="addStock" size="86 17" pos="50 30" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                         label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
+            <button id="removeStock" color="red" label="X" pos="130 1"
+                    size="29 15" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
+        </box>
+    </list>
+    <button id="addStock" color="black" label="$(com.minecolonies.coremod.gui.warehouse.add)" pos="50 30"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
 </window>

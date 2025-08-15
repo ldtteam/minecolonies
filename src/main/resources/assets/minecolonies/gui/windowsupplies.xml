@@ -1,7 +1,14 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        size="420 240">
+<window size="420 240"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
-    <layout source="structurize:gui/layoutmanipulation.xml"/>
+    <layout source="structurize:gui/layoutmanipulation.xml" />
 
-    <button id="switch" source="structurize:textures/gui/buildtool/button_medium.png" label="$(structurize.gui.buildtool.switchpack)" size="86 17" pos="5 5" textcolor="black" texthovercolor="gray"/>
+    <button id="switch"
+            label="$(structurize.gui.buildtool.switchpack)"
+            pos="5 5"
+            size="86 17"
+            source="structurize:textures/gui/buildtool/button_medium.png"
+            textcolor="black"
+            texthovercolor="gray" />
 </window>

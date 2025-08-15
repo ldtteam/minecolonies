@@ -5,8 +5,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 0
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -15,8 +14,7 @@
           "level": 3
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -26,8 +24,7 @@
         },
         "count": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -37,12 +34,10 @@
           }
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:questreputation",
       "qty": 0.5
-    },
-    {
+    }, {
       "type": "minecolonies:unlock"
     }
   ],
@@ -66,20 +61,17 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Sorry, I don't have time right now!",
                 "result": {
                   "type": "minecolonies:return"
                 }
-              },
-              {
+              }, {
                 "answer": "We don't have any apples right now!",
                 "result": {
                   "type": "minecolonies:cancel"
                 }
-              },
-              {
+              }, {
                 "answer": "Could I bring you a baked potato?",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -97,16 +89,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I don't have time right now!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -115,8 +105,7 @@
         },
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -125,8 +114,7 @@
         },
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:breakblock",
       "details": {
         "target": 0,
@@ -134,8 +122,7 @@
         "qty": 10,
         "next-objective": 4
       }
-    },
-    {
+    }, {
       "type": "minecolonies:placeblock",
       "unlocks-rewards": [0, 1, 2, 3, 4, 5],
       "details": {
@@ -144,8 +131,7 @@
         "qty": 10,
         "next-objective": 5
       }
-    },
-    {
+    }, {
       "type": "minecolonies:killentity",
       "details": {
         "target": 0,
@@ -153,8 +139,7 @@
         "qty": 10,
         "next-objective": 6
       }
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "target": 0,
@@ -173,50 +158,43 @@
           "id": "minecraft:gold_ingot"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:skill",
       "details": {
         "target": 0,
         "skill": "Strength",
         "qty": 1
       }
-    },
-    {
+    }, {
       "type": "minecolonies:research",
       "details": {
         "id": "this"
       }
-    },
-    {
+    }, {
       "type": "minecolonies:raid",
       "details": {
         "change": -1
       }
-    },
-    {
+    }, {
       "type": "minecolonies:relationship",
       "details": {
         "target1": 0,
         "target2": 1,
         "type": "couple"
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,
         "qty": 1,
         "days": 7
       }
-    },
-    {
+    }, {
       "type": "minecolonies:questreputation",
       "details": {
         "qty": 0.5
       }
-    },
-    {
+    }, {
       "type": "minecolonies:unlockquest",
       "details": {
         "id": "minecolonies:questtemplate"

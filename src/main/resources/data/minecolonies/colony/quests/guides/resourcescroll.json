@@ -14,8 +14,7 @@
           "level": 1
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -38,14 +37,12 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 1
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, I don't have the time right now.",
           "result": {
             "type": "minecolonies:return"
           }
-        },
-        {
+        }, {
           "answer": "I already know what it does!",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -53,8 +50,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -63,8 +59,7 @@
         },
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "unlocks-rewards": [0],
       "target": 0,

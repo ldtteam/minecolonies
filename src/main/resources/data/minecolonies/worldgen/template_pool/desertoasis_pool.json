@@ -10,8 +10,7 @@
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "element_type": "minecraft:empty_pool_element"

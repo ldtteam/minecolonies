@@ -1,10 +1,10 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsminwoinv.xml"/>
-    <button id="inventory" size="86 17" pos="52 214" color="black"
-            source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-            label="$(container.inventory)"/>
-    <button id="allinventory" size="17 17" pos="159 214" color="black"
-            source="minecolonies:textures/gui/chest.png"
-            label="" tooltip="$(com.minecolonies.core.building.inv_sum)"/>
+    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsminwoinv.xml" />
+    <button id="inventory" color="black" label="$(container.inventory)" pos="52 214"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
+    <button id="allinventory" color="black" label="" pos="159 214"
+            size="17 17"
+            source="minecolonies:textures/gui/chest.png" tooltip="$(com.minecolonies.core.building.inv_sum)" />
 </window>
